@@ -31,6 +31,10 @@ app.use(function(req, res, next) {
 });
 
 app.get("/", (req, res) => {
+    const sqlInsert = "SELECT * FROM login";
+    con.query(sqlInsert, (error, result) => {
+        res.send("Data send to the Database")
+    })
     res.send("Active");
 });
 
