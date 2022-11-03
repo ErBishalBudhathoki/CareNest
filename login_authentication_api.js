@@ -4,7 +4,8 @@ const mysql = require("mysql");
 
 var app = express();
 
-var con = mysql.createConnection({
+var con = mysql.createPool({
+    connectionLimit : 10,
     host: 'sql113.epizy.com',
     user: 'epiz_31245973',
     password: 'REDACTED',
@@ -18,6 +19,25 @@ con.connect(function (err) {
     }
     console.log('Connection established');
 });
+
+app.get('', (req, res) => {
+    con.getConnection((err, connection) => {
+        if(err) throw err
+        console.log('connected as id ' + connection.threadId)
+        connection.query('SELECT * from beers', (err, rows) => {
+            connection.release() // return the connection to pool
+
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            // if(err) throw err
+            console.log('The data from beer table are: \n', rows)
+        })
+    })
+})
 
 app.use(bodyParser.urlencoded({
     extended: true
