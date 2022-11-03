@@ -5,10 +5,11 @@ const mysql = require("mysql");
 var app = express();
 
 var con = mysql.createConnection({
-    host: 'sql113.epizy.com',
+    host: 'sql113.epizy.com', port: 3306,
     user: 'epiz_31245973',
     password: 'REDACTED',
-    database: 'epiz_31245973_login'
+    database: 'epiz_31245973_login',
+    multipleStatements: true
 });
 
 con.connect(function(err) {
@@ -41,14 +42,48 @@ app.use(function(req, res, next) {
 });
 
 app.get("/", (req, res) => {
-    const sqlInsert = "SELECT * FROM login";
-    con.query(sqlInsert, (error, result) => {
-        res.send("Data send to the Database");
-        error.send(error)
-    })
+   
     res.send("Active");
 });
+app.post('/getlogin', function(req, res) {
 
+    var username = req.body.username,
+        password = req.body.password;
+
+    if (!username || !password) {
+        return res
+            .status(400)
+            .jsonp({
+                error: "Needs a json body with { username: <username>, password: <password>}"
+            });
+    }
+
+    if (username !== password) {
+        return res
+            .status(401)
+            .jsonp({
+                error: "Authentication failied.",
+            });
+    }
+    const sqlInsert = "SELECT * FROM login";
+    con.query(sqlInsert, (error, result) => {
+        if(error){
+            res.send(error)
+        } else {
+            res.send(result)
+        }
+    });
+
+    return res
+        .status(200)
+        .jsonp({
+            'userId': '1908789',
+            'username': username,
+            'name': 'Peter Clarke',
+            'lastLogin': "23 March 2020 03:34 PM",
+            'email': 'x7uytx@mundanecode.com'
+        });
+});
 app.post('/user/login', function(req, res) {
 
     var username = req.body.username,
