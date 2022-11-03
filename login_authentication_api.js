@@ -20,7 +20,7 @@ con.connect(function (err) {
     console.log('Connection established');
 });
 
-app.get('', (req, res) => {
+app.get('/', (req, res) => {
     con.getConnection((err, connection) => {
         if(err) throw err
         console.log('connected as id ' + connection.threadId)
@@ -50,13 +50,13 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.get("/", (req, res) => {
-    const sqlInsert = "SELECT * FROM login";
-    con.query(sqlInsert, (error, result) => {
-        res.send("Data send to the Database")
-    })
-    res.send("Active");
-});
+// app.get("/", (req, res) => {
+//     const sqlInsert = "SELECT * FROM login";
+//     con.query(sqlInsert, (error, result) => {
+//         res.send("Data send to the Database")
+//     })
+//     res.send("Active");
+// });
 
 app.post('/user/login', function(req, res) {
 
