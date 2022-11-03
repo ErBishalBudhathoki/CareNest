@@ -4,7 +4,6 @@
   "description": "flutter backend",
   "main": "login_authentication_api.js",
   "scripts": {
-    "start": "login_authentication_api.js"
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Bishal",
@@ -12,5 +11,14 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "express": "^4.18.2"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BishalBudhathoki/backend_rest_api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BishalBudhathoki/backend_rest_api/issues"
+  },
+  "homepage": "https://github.com/BishalBudhathoki/backend_rest_api#readme"
 }
