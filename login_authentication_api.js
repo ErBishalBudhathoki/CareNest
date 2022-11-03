@@ -14,6 +14,10 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.get("/", (req, res) => {
+    res.send("Active");
+});
+
 app.post('/user/login', function(req, res) {
 
     var username = req.body.username,
