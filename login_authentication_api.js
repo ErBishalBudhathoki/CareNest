@@ -4,8 +4,7 @@ const mysql = require("mysql");
 
 var app = express();
 
-var con = mysql.createPool({
-    connectionLimit : 10,
+var con = mysql.createConnection({
     host: 'sql113.epizy.com',
     user: 'epiz_31245973',
     password: 'REDACTED',
@@ -20,24 +19,7 @@ con.connect(function (err) {
     console.log('Connection established');
 });
 
-app.get('/', (req, res) => {
-    con.getConnection((err, connection) => {
-        if(err) throw err
-        console.log('connected as id ' + connection.threadId)
-        connection.query('SELECT * from login', (err, rows) => {
-            connection.release() // return the connection to pool
 
-            if (!err) {
-                res.send(rows)
-            } else {
-                console.log(err)
-            }
-
-            // if(err) throw err
-            console.log('The data from beer table are: \n', rows)
-        })
-    })
-})
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -50,13 +32,14 @@ app.use(function(req, res, next) {
     next();
 });
 
-// app.get("/", (req, res) => {
-//     const sqlInsert = "SELECT * FROM login";
-//     con.query(sqlInsert, (error, result) => {
-//         res.send("Data send to the Database")
-//     })
-//     res.send("Active");
-// });
+app.get("/", (req, res) => {
+    const sqlInsert = "SELECT * FROM login";
+    con.query(sqlInsert, (error, result) => {
+        res.send("Data send to the Database");
+        error.send(error)
+    })
+    res.send("Active");
+});
 
 app.post('/user/login', function(req, res) {
 
