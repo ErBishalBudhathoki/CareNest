@@ -4,6 +4,7 @@
   "description": "flutter backend",
   "main": "login_authentication_api.js",
   "scripts": {
+    "start": "json-server login_authentication_api.js"
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Bishal",
