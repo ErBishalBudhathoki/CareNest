@@ -11,14 +11,22 @@ var con = mysql.createConnection({
     database: 'epiz_31245973_login'
 });
 
-con.connect(function (err) {
-    if (err) {
-        console.log('Error connecting to Db');
-        return;
+con.connect(function(err) {
+    if(err){
+      console.log("Error in the connection")
+      console.log(err)
     }
-    console.log('Connection established');
-});
-
+    else{
+      console.log(`Database Connected`)
+      connection.query(`SHOW DATABASES`, 
+      function (err, result) {
+        if(err)
+          console.log(`Error executing the query - ${err}`)
+        else
+          console.log("Result: ",result) 
+      })
+    }
+})
 
 
 app.use(bodyParser.urlencoded({
