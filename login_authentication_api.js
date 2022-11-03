@@ -24,7 +24,7 @@ app.get('', (req, res) => {
     con.getConnection((err, connection) => {
         if(err) throw err
         console.log('connected as id ' + connection.threadId)
-        connection.query('SELECT * from beers', (err, rows) => {
+        connection.query('SELECT * from login', (err, rows) => {
             connection.release() // return the connection to pool
 
             if (!err) {
