@@ -1,7 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mysql = require("mysql");
 
 var app = express();
+
+var con = mysql.createConnection({
+    host: 'sql113.epizy.com',
+    user: 'epiz_31245973',
+    password: 'REDACTED_MONGODB_PASSWORD',
+    database: 'epiz_31245973_login'
+});
+
+con.connect(function (err) {
+    if (err) {
+        console.log('Error connecting to Db');
+        return;
+    }
+    console.log('Connection established');
+});
 
 app.use(bodyParser.urlencoded({
     extended: true
