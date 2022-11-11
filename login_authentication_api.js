@@ -4,30 +4,52 @@ const mysql = require("mysql");
 
 var app = express();
 
-var con = mysql.createConnection({
-    host: 'sql113.epizy.com', port: 3306,
-    user: 'epiz_31245973',
-    password: 'REDACTED',
-    database: 'epiz_31245973_login',
-    multipleStatements: true
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://username:password@cluster.mongodb.net/invoice?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+MongoClient.connect(uri, function(err, db)  {
+  if (err) throw err;
+  var dbo = db.db("Invoice");
+  dbo.collection("login").findOne({}, function(err, result) {
+    if (err) throw err;
+    console.log(result.email);
+    db.close();
+  });
+//   const collection = client.db("Invoice").collection("login");
+//   // perform actions on the collection object
+//   collection.insertOne({ 
+//     "email": "bishalkc331@gmail.com", "password": "root123" });
+//     if(err) console.log(err);
+//   client.close();
 });
 
-con.connect(function(err) {
-    if(err){
-      console.log("Error in the connection")
-      console.log(err)
-    }
-    else{
-      console.log(`Database Connected`)
-      connection.query(`SHOW DATABASES`, 
-      function (err, result) {
-        if(err)
-          console.log(`Error executing the query - ${err}`)
-        else
-          console.log("Result: ",result) 
-      })
-    }
-})
+// var con = mysql.createConnection({
+//     host: 'sql164110.byetcluster.com',
+//     user: 'epiz_31245973',
+//     password: 'REDACTED',
+//     database: 'epiz_31245973_login',
+//     multipleStatements: true,
+//     connectTimeout: 90000
+// });
+
+// con.connect(function(err) {
+//     if(err){
+//       console.log("Error in the connection")
+//       console.log(err)
+//     }
+//     else{
+//       console.log(`Database Connected`)
+//       connection.query(`SHOW DATABASES`, 
+//       function (err, result) {
+//         if(err)
+//           console.log(`Error executing the query - ${err}`)
+//         else
+//           console.log("Result: ",result) 
+//       })
+//     }
+// })
 
 
 app.use(bodyParser.urlencoded({
@@ -40,12 +62,152 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     next();
 });
-
 app.get("/", (req, res) => {
-   
     res.send("Active");
 });
-app.post('/getlogin', function(req, res) {
+app.get("/login/:email/:password", (req, res) => {
+    var emails = req.params.email;
+    var passwords = req.params.password;
+    MongoClient.connect(uri, function(err, db)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        dbo.collection("login").findOne({email:emails,password:passwords}, function(err, result) {
+          if (err) throw err;
+          //if email not found
+            if(result == null){
+                console.log("Email not found");	
+                return res
+                .status(400)
+                .jsonp({
+                    'message': "user not found",
+                });
+            } else {
+                console.log("User found" +result._id, emails, passwords );
+                return res
+                .status(200)
+                .jsonp({
+                    'message': 'user found',
+                });
+            }
+          //console.log(result.email);
+          //res.send(result.email);
+         
+          db.close();
+        });
+    });
+    //res.send("Active");
+});
+app.get("/initData/:email", (req, res) => {
+    var email = req.params.email;
+    MongoClient.connect(uri, function(err, db)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        dbo.collection("login").findOne({email}, function(err, result) {
+          if (err) throw err;
+          //if email not found
+            if(result == null){
+                return res
+                .status(400)
+                .jsonp({
+                    'firstName': '',
+                    'lastName': '',
+                });
+            } else {
+                return res
+                .status(200)
+                .jsonp({
+                    'firstName': result.firstName,
+                    'lastName': result.lastName,
+                });
+            }
+          //console.log(result.email);
+          //res.send(result.email);
+         
+          db.close();
+        });
+    });
+    //res.send("Active");
+});
+app.get("/hello/:email", (req, res) => {
+    var email = req.params.email;
+    MongoClient.connect(uri, function(err, db)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        dbo.collection("login").findOne({email}, function(err, result) {
+          if (err) throw err;
+          //console.log(result.email);
+          //res.send(result.email);
+          return res
+            .status(200)
+            .jsonp({
+                'email': result.email,
+                'password': result.password,
+            });
+          db.close();
+        });
+    });
+    //res.send("Active");
+});
+app.get("/checkEmail/:email", (req, res) => {
+    var email = req.params.email;
+    MongoClient.connect(uri, function(err, db)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        dbo.collection("login").findOne({email}, function(err, result) {
+          if (err) throw err;
+          //if email not found
+            if(result == null){
+                return res
+                .status(400)
+                .jsonp({
+                    'email': "Email not found",
+                });
+            } else {
+                return res
+                .status(200)
+                .jsonp({
+                    'email': result.email,
+                });
+            }
+          //console.log(result.email);
+          //res.send(result.email);
+         
+          db.close();
+        });
+    });
+    //res.send("Active");
+});
+app.post('/signup/:email', function(req, res) {
+
+    var firstName = req.body.firstName,
+        lastName = req.body.lastName,
+        email = req.body.email,
+        password = req.body.password;
+        var emails = req.params.email;
+
+        MongoClient.connect(uri, function(err, db)  {
+            if (err) throw err;
+            var dbo = db.db("Invoice");
+                dbo.collection("login").insertOne({firstName, lastName, email, password}, {unique:true} ,function(err, result) {
+                    if (err) throw err;
+                    console.log(result.email);
+                    //res.send(result.email);
+                    
+                    db.close();
+              });
+            
+           
+        });
+        return res
+                .status(200)
+                .jsonp({
+                    'firstName': firstName,
+                    'lastName': lastName,
+                    'email': email,
+                    'password': password,
+                });
+});
+app.get('/getlogin', function(req, res) {
 
     var username = req.body.username,
         password = req.body.password;
