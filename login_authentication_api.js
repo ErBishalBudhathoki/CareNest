@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mysql = require("mysql");
+// const mysql = require("mysql");
 
 var app = express();
 
@@ -327,7 +327,7 @@ if (app.get('env') === 'development') {
 }
 
 
-var port = process.env.PORT || 9001;
+var port = process.env.uri || 9001;
 
 const server = app.listen(port, function() {
     console.log('Server up at http://localhost:' + port);
