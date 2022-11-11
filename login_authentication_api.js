@@ -9,7 +9,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://username:password@cluster.mongodb.net/invoice?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-MongoClient.connect(uri, function(err, db)  {
+MongoClient.connect(port, function(err, db)  {
   if (err) throw err;
   var dbo = db.db("Invoice");
   dbo.collection("login").findOne({}, function(err, result) {
@@ -68,7 +68,7 @@ app.get("/", (req, res) => {
 app.get("/login/:email/:password", (req, res) => {
     var emails = req.params.email;
     var passwords = req.params.password;
-    MongoClient.connect(uri, function(err, db)  {
+    MongoClient.connect(port, function(err, db)  {
         if (err) throw err;
         var dbo = db.db("Invoice");
         dbo.collection("login").findOne({email:emails,password:passwords}, function(err, result) {
@@ -327,7 +327,7 @@ if (app.get('env') === 'development') {
 }
 
 
-var port = process.env.uri || 9001;
+var port = process.env.MONGODB_URL || 9001;
 
 const server = app.listen(port, function() {
     console.log('Server up at http://localhost:' + port);
