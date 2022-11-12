@@ -5,6 +5,29 @@ const mysql = require("mysql");
 var app = express();
 
 
+
+var port = process.env.PORT || 9001;
+
+const server = app.listen(port, function() {
+    console.log('Server up at http://localhost:' + port);
+});
+
+process.on('SIGTERM', () => {
+    console.info('SIGTERM signal received.');
+    console.log('Closing http server.');
+    server.close(() => {
+        console.log('Http server closed.');
+    });
+});
+
+process.on('SIGINT', () => {
+    console.info('SIGINT signal received.');
+    console.log('Closing http server.');
+    server.close(() => {
+        console.log('Http server closed.');
+    });
+});
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://username:password@cluster.mongodb.net/invoice?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -326,25 +349,3 @@ if (app.get('env') === 'development') {
     });
 }
 
-
-var port = process.env.PORT || 9001;
-
-const server = app.listen(port, function() {
-    console.log('Server up at http://localhost:' + port);
-});
-
-process.on('SIGTERM', () => {
-    console.info('SIGTERM signal received.');
-    console.log('Closing http server.');
-    server.close(() => {
-        console.log('Http server closed.');
-    });
-});
-
-process.on('SIGINT', () => {
-    console.info('SIGINT signal received.');
-    console.log('Closing http server.');
-    server.close(() => {
-        console.log('Http server closed.');
-    });
-});
