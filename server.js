@@ -5,32 +5,18 @@ const mysql = require("mysql");
 var app = express();
 
 var PORT = process.env.PORT || 9001;
-
-const server = app.listen(PORT, function() {
-    console.log('Server up at http://localhost:' + PORT);
-});
-
-process.on('SIGTERM', () => {
-    console.info('SIGTERM signal received.');
-    console.log('Closing http server.');
-    server.close(() => {
-        console.log('Http server closed.');
-    });
-});
-
-process.on('SIGINT', () => {
-    console.info('SIGINT signal received.');
-    console.log('Closing http server.');
-    server.close(() => {
-        console.log('Http server closed.');
-    });
-});
-
+const serverOptions = {
+    poolsize:100 ,
+    socketOptions:{
+        socketTimeoutMS: 6000000
+        }
+    };
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://username:password@cluster.mongodb.net/invoice?retryWrites=true&w=majority";
-const client = new MongoClient(process.env.MONGODB_URI || uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
-MongoClient.connect(process.env.MONGODB_URI || uri, function(err, db)  {
+const client = new MongoClient(  process.env.MONGODB_URI || uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+// process.env.MONGODB_URI ||
+MongoClient.connect( process.env.MONGODB_URI || uri, function(err, db)  {
+    
   if (err) throw err;
   var dbo = db.db("Invoice");
   dbo.collection("login").findOne({}, function(err, result) {
@@ -83,9 +69,11 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     next();
 });
+
 app.get("/", (req, res) => {
     res.send("Active");
 });
+
 app.get("/login/:email/:password", (req, res) => {
     var emails = req.params.email;
     var passwords = req.params.password;
@@ -100,14 +88,14 @@ app.get("/login/:email/:password", (req, res) => {
                 return res
                 .status(400)
                 .jsonp({
-                    'message': "user not found",
+                    message: "user not found",
                 });
             } else {
                 console.log("User found" +result._id, emails, passwords );
                 return res
                 .status(200)
                 .jsonp({
-                    'message': 'user found',
+                    message: 'user found',
                 });
             }
           //console.log(result.email);
@@ -228,6 +216,76 @@ app.post('/signup/:email', function(req, res) {
                     'password': password,
                 });
 });
+
+app.post('/addClient', function(req, res) {
+
+    var client = {
+        clientFirstName: req.body.clientFirstName,
+        clientLastName: req.body.clientLastName,
+        clientEmail: req.body.clientEmail,
+        clientPhone: req.body.clientPhone,
+        clientAddress: req.body.clientAddress,
+        clientCity: req.body.clientCity,
+        clientState: req.body.clientState,
+        clientZip: req.body.clientZip,
+    } 
+
+        MongoClient.connect(uri, function(err, db)  {
+            if (err) throw err;
+            var dbo = db.db("Invoice");
+                // dbo.collection("clientDetails").createIndex({clientId: 2}, {unique:true} );
+                dbo.collection("clientDetails").insertOne(
+                  client
+                , {unique: true, upsert: true} ,function(err, result) {
+                    if (err) throw err;
+                    //res.send(result.email);
+                    // console.log(firstName, lastName, email, phone, address, city, state, zip);
+                    db.close();
+              });
+            
+           
+        });
+        return res
+                .status(200)
+                .jsonp({
+                    message: 'success',
+                });
+});
+
+app.post('/addBusiness', function(req, res) {
+
+    var business = {
+        businessName: req.body.businessName,
+        businessEmail: req.body.businessEmail,
+        businessPhone: req.body.businessPhone,
+        businessAddress: req.body.businessAddress,
+        businessCity: req.body.businessCity,
+        businessState: req.body.businessState,
+        businessZip: req.body.businessZip,
+    } 
+
+        MongoClient.connect(uri, function(err, db)  {
+            if (err) throw err;
+            var dbo = db.db("Invoice");
+                // dbo.collection("clientDetails").createIndex({clientId: 2}, {unique:true} );
+                dbo.collection("businessDetails").insertOne(
+                  business
+                , {unique: true, upsert: true} ,function(err, result) {
+                    if (err) throw err;
+                    //res.send(result.email);
+                    // console.log(firstName, lastName, email, phone, address, city, state, zip);
+                    db.close();
+              });
+            
+           
+        });
+        return res
+                .status(200)
+                .jsonp({
+                    message: 'success',
+                });
+});
+
 app.get('/getlogin', function(req, res) {
 
     var username = req.body.username,
@@ -245,7 +303,7 @@ app.get('/getlogin', function(req, res) {
         return res
             .status(401)
             .jsonp({
-                error: "Authentication failied.",
+                error: "Authentication failed.",
             });
     }
     const sqlInsert = "SELECT * FROM login";
@@ -346,4 +404,25 @@ if (app.get('env') === 'development') {
         });
     });
 }
+
+const server = app.listen(PORT, function() {
+    console.log('Server up at http://localhost:' + PORT);
+});
+
+process.on('SIGTERM', () => {
+    console.info('SIGTERM signal received.');
+    console.log('Closing http server.');
+    server.close(() => {
+        console.log('Http server closed.');
+    });
+});
+
+process.on('SIGINT', () => {
+    console.info('SIGINT signal received.');
+    console.log('Closing http server.');
+    server.close(() => {
+        console.log('Http server closed.');
+    });
+});
+
 
