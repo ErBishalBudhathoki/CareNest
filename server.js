@@ -106,6 +106,75 @@ app.get("/login/:email/:password", (req, res) => {
     });
     //res.send("Active");
 });
+
+app.get("/getUsers/", (req, res) => {
+    //var email = req.params.email;
+    MongoClient.connect(uri, function(err, db)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        var apt = dbo.collection("login").find({}).toArray(function(err, login) {
+            var list = []; 
+          if (err) throw err;
+          //if email not found
+            if(login == null){
+                return res
+                .status(400)
+                .jsonp({
+                    'firstName': '',
+                    'lastName': '',
+                    'email': '',
+                });
+            } else {
+                console.log("User found" +login[0].toString());
+                for(var i = 0; i < login.length; i++){
+                    list.push(login[i]);
+                     console.log(list);
+                }
+                return res.send(JSON.stringify(list)); 
+            }
+
+          db.close();
+        });
+        console.log(apt);
+       
+    });
+    //res.send("Active");
+});
+
+app.get("/getClients/", (req, res) => {
+    //var email = req.params.email;
+    MongoClient.connect(uri, function(err, db)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        var apt = dbo.collection("clientDetails").find({}).toArray(function(err, clientDetails) {
+            var list = []; 
+          if (err) throw err;
+          //if email not found
+            if(clientDetails == null){
+                return res
+                .status(400)
+                .jsonp({
+                    'clientFirstName': '',
+                    'clientLastName': '',
+                    'clientEmail': '',
+                });
+            } else {
+                console.log("Client found" +clientDetails[0].toString()); 
+                for(var i = 0; i < clientDetails.length; i++){
+                    list.push(clientDetails[i]);
+                     console.log(list);
+                }
+                return res.send(JSON.stringify(list)); 
+            }
+
+          db.close();
+        });
+        console.log(apt);
+       
+    });
+    //res.send("Active");
+});
+
 app.get("/initData/:email", (req, res) => {
     var email = req.params.email;
     MongoClient.connect(uri, function(err, db)  {
@@ -186,7 +255,61 @@ app.get("/checkEmail/:email", (req, res) => {
     });
     //res.send("Active");
 });
-app.post('/signup/:email', function(req, res) {
+app.get("/getClientDetails/:email", (req, res) => {
+    var email = req.params.email;
+    MongoClient.connect(uri, function(err, db)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        dbo.collection("clientDetails").findOne({email}, function(err, result) {
+          if (err) throw err;
+          //if email not found
+            if(result == null){
+                return res
+                .status(400)
+                .jsonp({
+                    'email': "Client not found",
+                });
+            } else {
+                return res
+                .status(200)
+                .jsonp({
+                    'clientFirstName': result.clientFirstName,
+                    'clientLastName': result.clientLastName,
+                    'clientAddress': result.clientAddress,
+                    'clientCity': result.clientCity,
+                });
+            }
+          //console.log(result.email);
+          //res.send(result.email);
+         
+          db.close();
+        });
+    });
+    //res.send("Active");
+});
+
+function setAssignedClient(email) {
+    console.log('Set assigned called');
+   try {
+    MongoClient.connect(uri, function(err, db, res)  {
+        if (err) throw err;
+        var dbo = db.db("Invoice");
+        var myquery = { employeeEmail: email };
+        //var newvalues = { $set: {assignedClient: assignedClient} };
+        dbo.collection("assignedClient").insertOne(myquery, function(err, result) {
+            if (err) throw err;
+            console.log("1 document inserted",result.body);
+            db.close();
+            });
+           
+    });
+   
+   } catch(error){
+    console.log("error");
+   }
+    
+}
+app.post('/signup/:email', function(req, res)  {
 
     var firstName = req.body.firstName,
         lastName = req.body.lastName,
@@ -203,10 +326,12 @@ app.post('/signup/:email', function(req, res) {
                     //res.send(result.email);
                     
                     db.close();
+                    
               });
             
            
         });
+        setAssignedClient(email);
         return res
                 .status(200)
                 .jsonp({
@@ -237,7 +362,14 @@ app.post('/addClient', function(req, res) {
                 dbo.collection("clientDetails").insertOne(
                   client
                 , {unique: true, upsert: true} ,function(err, result) {
-                    if (err) throw err;
+                    if (err) {
+                        console.log(err);
+                        return res
+                        .status(400)
+                        .jsonp({
+                            message: "error",
+                        });
+                    }
                     //res.send(result.email);
                     // console.log(firstName, lastName, email, phone, address, city, state, zip);
                     db.close();
@@ -271,9 +403,14 @@ app.post('/addBusiness', function(req, res) {
                 dbo.collection("businessDetails").insertOne(
                   business
                 , {unique: true, upsert: true} ,function(err, result) {
-                    if (err) throw err;
-                    //res.send(result.email);
-                    // console.log(firstName, lastName, email, phone, address, city, state, zip);
+                    if (err) {
+                        console.log(err);
+                        return res
+                        .status(400)
+                        .jsonp({
+                            message: "error",
+                        });
+                    }
                     db.close();
               });
             
