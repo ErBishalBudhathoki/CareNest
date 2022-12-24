@@ -200,12 +200,84 @@ app.get("/initData/:email", (req, res) => {
             }
           //console.log(result.email);
           //res.send(result.email);
-         
-          db.close();
         });
+        
+        //db.close();
     });
     //res.send("Active");
 });
+
+app.get("/getMultipleClients/:emails", (req, res) => {
+    // Split the email string by the comma separator
+    var emails = req.params.emails.split(',');
+    MongoClient.connect(uri, function(err, db)  {
+      if (err) throw err;
+      var dbo = db.db("Invoice");
+      // Use the $in operator to query the database for documents where the clientEmail field is in the list of emails
+      var apt = dbo.collection("clientDetails").find({clientEmail: {$in: emails}}).toArray(function(err, clientDetails) {
+        var list = []; 
+        if (err) throw err;
+        //if email not found
+          if(clientDetails == null){
+            console.log("Client not found");
+              return res
+              .status(400)
+              .jsonp({
+                  'clientFirstName': '',
+                  'clientLastName': '',
+                  'clientEmail': '',
+              });
+          } else {
+              console.log("Client found" +clientDetails[0].toString()); 
+              for(var i = 0; i < clientDetails.length; i++){
+                  list.push(clientDetails[i]);
+                   console.log(list);
+              }
+              return res.send(JSON.stringify(list)); 
+          }
+  
+        db.close();
+      });
+      console.log(apt);
+    });
+  });
+  
+app.get("/loadAppointments/:email", (req, res) => {
+    // Get the email parameter from the route
+    var email = req.params.email;
+  
+    // Connect to the MongoDB database
+    MongoClient.connect(uri, function(err, db) {
+      if (err) throw err;
+  
+      // Get the 'assignedClient' collection
+      var dbo = db.db("Invoice");
+      var collection = dbo.collection("assignedClient");
+  
+      // Find all documents that match the email address
+      collection.find({'userEmail': email }).toArray(function(err, result) {
+        if (err) {
+          // If an error occurs, send a 500 (Internal Server Error) status code and the error message in the response
+          return res.status(500).json({ error: err.message });
+        }
+  
+        if (result.length == 0) {
+          // If no matching documents are found, send a 404 (Not Found) status code and an error message in the response
+          return res.status(404).json({ error: 'No matching documents found' });
+        } else {
+          // If matching documents are found, send a 200 (OK) status code and the data in the response
+          console.log(result);
+          return res.status(200).json({ data: result });
+        }
+        // Print the status code in the console
+        console.log(`Status code: ${res.statusCode}`);
+        // Close the database connection
+        db.close();
+      });
+    });
+  });
+  
+
 app.get("/hello/:email", (req, res) => {
     var email = req.params.email;
     MongoClient.connect(uri, function(err, db)  {
@@ -288,27 +360,52 @@ app.get("/getClientDetails/:email", (req, res) => {
     //res.send("Active");
 });
 
-function setAssignedClient(email) {
+app.post('/assignClientToUser/', function(req, res)  {
+    var userEmail = req.body.userEmail;
+    var clientEmail = req.body.clientEmail;
+    var dateList = req.body.dateList;
+    var startTimeList = req.body.startTimeList;
+    var endTimeList = req.body.endTimeList;
+    var breakList = req.body.breakList;
     console.log('Set assigned called');
    try {
     MongoClient.connect(uri, function(err, db, res)  {
         if (err) throw err;
         var dbo = db.db("Invoice");
-        var myquery = { employeeEmail: email };
+        var myquery = { 
+            'userEmail': userEmail, 
+            'clientEmail': clientEmail,
+            'dateList': dateList,
+            'startTimeList': startTimeList,
+            'endTimeList': endTimeList,
+            'breakList': breakList
+         };
         //var newvalues = { $set: {assignedClient: assignedClient} };
-        dbo.collection("assignedClient").insertOne(myquery, function(err, result) {
-            if (err) throw err;
-            console.log("1 document inserted",result.body);
-            db.close();
+        dbo.collection("assignedClient").insertOne(myquery ,  {unique:true} ,function(err, result) {
+            if (err) {
+                console.log(err);
+                return res
+                .status(400)
+                .jsonp({
+                    'message': "Error",
             });
-           
+            }
+            console.log("1 document inserted");
+            db.close();
+            
+            }); 
+            
     });
-   
+    return res
+            .status(200)
+            .jsonp({
+                'message': "Success",
+            });
    } catch(error){
     console.log("error");
    }
-    
-}
+});
+
 app.post('/signup/:email', function(req, res)  {
 
     var firstName = req.body.firstName,
@@ -331,7 +428,7 @@ app.post('/signup/:email', function(req, res)  {
             
            
         });
-        setAssignedClient(email);
+        //setAssignedClient(email);
         return res
                 .status(200)
                 .jsonp({
