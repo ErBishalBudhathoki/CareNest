@@ -208,11 +208,12 @@ app.get("/initData/:email", (req, res) => {
 });
 
 app.get("/getMultipleClients/:emails", (req, res) => {
+    console.log(req.params.emails);
     // Split the email string by the comma separator
     var emails = req.params.emails.split(',');
     MongoClient.connect(uri, function(err, db)  {
       if (err) throw err;
-      var dbo = db.db("Invoice");
+      var dbo = db.db("Invoice"); 
       // Use the $in operator to query the database for documents where the clientEmail field is in the list of emails
       var apt = dbo.collection("clientDetails").find({clientEmail: {$in: emails}}).toArray(function(err, clientDetails) {
         var list = []; 
