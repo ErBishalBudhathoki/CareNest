@@ -4,6 +4,7 @@ const iconv = require('iconv-lite');
 const fs = require('fs');
 const csv = require('csv-parser');
 const https = require('https');
+const xlsx = require('xlsx');
 
 var app = express();
 
@@ -89,55 +90,81 @@ app.get("/", (req, res) => {
 //           });
 //       });
 //   });
-app.post('/upload', (req, res) => {
+
+app.post('/uploadCSV', (req, res) => {
     // Send an HTTP GET request to the remote CSV file
-    https.get('https://github.com/BishalBudhathoki/backend_rest_api/blob/main/holiday.csv', (response) => {
+    https.get('https://raw.githubusercontent.com/BishalBudhathoki/backend_rest_api/d2f6173ebe94737806a4e430ef50c07092a6cf13/holiday.csv', (response) => {
         const holidays = [];  
     // Pipe the response data to csv.parse
-      response.pipe(csv())
-        .on('data', (data) => {
-          // Replace null bytes in the keys
-          const updatedData = {};
-          Object.keys(data).forEach((key) => {
+    response.pipe(csv())
+    .on('data', (data) => {
+        // Replace null bytes in the keys
+        const updatedData = {};
+        Object.keys(data).forEach((key) => {
             const updatedKey = key.replace(/\0/g, '_'); // Replace null bytes with underscores
             updatedData[updatedKey] = data[key];
-          });
-  
-          holidays.push(updatedData);
-          console.log(holidays);
-        })
-        .on('end', () => {
-            if (holidays.length === 0) {
-                console.error('Error: No rows in CSV file');
-                res.status(500).send('Internal Server Error');
-                return;
-              }
-          // Connect to MongoDB
-          MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+        });
+
+        holidays.push(updatedData);
+    })
+    .on('end', () => {
+        if (holidays.length === 0) {
+            console.error('Error: No rows in CSV file');
+            res.status(500).json({ message: 'Internal Server Error'});
+            return;
+        }
+        // Connect to MongoDB
+        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
             .then(client => {
-              const db = client.db('Invoice');
-              const collection = db.collection('holidaysList');
-              
-              // Insert the data into the MongoDB collection
-              collection.insertMany(holidays)
-                .then(result => {
-                  console.log(`${result.insertedCount} documents inserted`);
-                  client.close();
-                  res.send('Upload successful');
-                })
-                .catch(err => {
-                  console.error('Error inserting documents: ', err);
-                  client.close();
-                  res.status(500).send('Internal Server Error');
-                });
+                const db = client.db('Invoice');
+                const collection = db.collection('holidaysList');
+
+                // Insert the data into the MongoDB collection
+                collection.insertMany(holidays)
+                    .then(result => {
+                        console.log(`${result.insertedCount} documents inserted`);
+                        client.close();
+                        res.status(200).json({ message: 'Upload successful' });
+                    })
+                    .catch(err => {
+                        console.error('Error inserting documents: ', err);
+                        client.close();
+                        res.status(500).json({ message: 'Internal Server Error'});
+                    });
             })
             .catch(err => {
-              console.error('Error connecting to database: ', err);
-              res.status(500).send('Internal Server Error');
+                console.error('Error connecting to database: ', err);
+                res.status(500).json({ message: 'Internal Server Error'});
             });
-        });
     });
+});
+});
+
+app.get('/getHolidays', (req, res) => {
+    // Connect to MongoDB
+    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+      .then(client => {
+        const db = client.db('Invoice');
+        const collection = db.collection('holidaysList');
+  
+        // Find all documents in the collection
+        collection.find().toArray()
+          .then(holidays => {
+            client.close();
+            res.status(200).json(holidays);
+          })
+          .catch(err => {
+            console.error('Error retrieving documents: ', err);
+            client.close();
+            res.status(500).json({ message: 'Internal Server Error'});
+          });
+      })
+      .catch(err => {
+        console.error('Error connecting to database: ', err);
+        res.status(500).json({ message: 'Internal Server Error'});
+      });
   });
+  
 
 app.post('/assignClientToUser/', function(req, res)  {
     var userEmail = req.body.userEmail;
