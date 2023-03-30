@@ -93,7 +93,7 @@ app.get("/", (req, res) => {
 
 app.post('/uploadCSV', (req, res) => {
     // Send an HTTP GET request to the remote CSV file
-    https.get('https://raw.githubusercontent.com/BishalBudhathoki/backend_rest_api/d2f6173ebe94737806a4e430ef50c07092a6cf13/holiday.csv', (response) => {
+    https.get('https://raw.githubusercontent.com/BishalBudhathoki/backend_rest_api/main/holiday.csv', (response) => {
         const holidays = [];  
     // Pipe the response data to csv.parse
     response.pipe(csv())
