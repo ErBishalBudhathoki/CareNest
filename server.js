@@ -26,7 +26,7 @@ const serverOptions = {
     socketTimeoutMS: 6000000,
   },
 };
-
+const uri = process.env.MONGODB_URI;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const client = new MongoClient(process.env.MONGODB_URI, {
