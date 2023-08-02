@@ -5,10 +5,21 @@ const fs = require("fs");
 const csv = require("csv-parser");
 const https = require("https");
 const xlsx = require("xlsx");
+const multer = require("multer");
 
+// Configure multer to handle file uploads
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: "./uploads",
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  }),
+  allowedFiles: ["image/jpeg", "image/png", "image/heif"],
+});
 var app = express();
 
-var PORT = process.env.PORT || 9002;
+var PORT = process.env.PORT || 9001;
 const serverOptions = {
   poolsize: 100,
   socketOptions: {
@@ -52,49 +63,6 @@ app.use(function (req, res, next) {
 app.get("/", (req, res) => {
   res.send("Active");
 });
-
-// app.post('/upload', (req, res) => {
-//     // Read the contents of the CSV file
-//     const fileStream = fs.createReadStream('https://github.com/BishalBudhathoki/backend_rest_api/blob/main/holiday.csv');
-//     const holidays = [];
-
-//     fileStream.pipe(csv())
-//       .on('data', (data) => {
-//         // Replace null bytes in the keys
-//         const updatedData = {};
-//         Object.keys(data).forEach((key) => {
-//           const updatedKey = key.replace(/\0/g, '_'); // Replace null bytes with underscores
-//           updatedData[updatedKey] = data[key];
-//         });
-
-//         holidays.push(updatedData);
-//       })
-//       .on('end', () => {
-//         // Connect to MongoDB
-//         MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-//           .then(client => {
-//             const db = client.db('Invoice');
-//             const collection = db.collection('holidaysList');
-
-//             // Insert the data into the MongoDB collection
-//             collection.insertMany(holidays)
-//               .then(result => {
-//                 console.log(`${result.insertedCount} documents inserted`);
-//                 client.close();
-//                 res.send('Upload successful');
-//               })
-//               .catch(err => {
-//                 console.error('Error inserting documents: ', err);
-//                 client.close();
-//                 res.status(500).send('Internal Server Error');
-//               });
-//           })
-//           .catch(err => {
-//             console.error('Error connecting to database: ', err);
-//             res.status(500).send('Internal Server Error');
-//           });
-//       });
-//   });
 
 app.post("/uploadCSV", (req, res) => {
   // Send an HTTP GET request to the remote CSV file
@@ -228,6 +196,125 @@ app.post("/addHolidayItem", (req, res) => {
     });
 });
 
+app.post("/check-holidays", (req, res) => {
+  try {
+    const dateList = req.body.dateList.split(",");
+    console.log(dateList);
+    MongoClient.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+      .then(async (client) => {
+        const db = client.db("Invoice");
+        const collection = db.collection("holidaysList");
+        const query = { Date: { $in: dateList } };
+        collection.find(query).toArray((err, result) => {
+          if (err) {
+            console.error("Error finding documents: ", err);
+            client.close();
+            res.status(500).json({ message: "Internal Server Error" });
+          } else {
+            console.log(result);
+            const holidayStatusList = dateList.map((date) =>
+              result.find((holiday) => holiday.Date === date)
+                ? "Holiday"
+                : "No Holiday"
+            );
+            client.close();
+            res.status(200).json(holidayStatusList);
+          }
+        });
+      })
+      .catch((err) => {
+        console.error("Error connecting to database: ", err);
+        res.status(500).json({ message: "Internal Server Error" });
+      });
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.get("/user-docs", (req, res) => {
+  console.log("user-docs");
+  try {
+    MongoClient.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }).then(async (client) => {
+      const db = client.db("Invoice");
+      const loginCollection = db.collection("login");
+      const assignedClientCollection = db.collection("assignedClient");
+
+      const usersObj = await loginCollection
+        .find(
+          {},
+          {
+            projection: { _id: 0, firstName: 1, lastName: 1, email: 1, abn: 1 },
+          }
+        )
+        .toArray();
+      const users = Object.values(usersObj);
+      //console.log(usersObj);
+      const userDocs = [];
+
+      for (const user of users) {
+        const userEmail = user.email;
+        const docs = await assignedClientCollection
+          .find({ userEmail }, { projection: { _id: 0, userEmail: 0 } })
+          .toArray();
+        if (docs.length > 0) {
+          // only push users with assigned docs
+          userDocs.push({ email: userEmail, docs });
+        }
+      }
+
+      const nonEmptyUserDocs = userDocs
+        .map((userDoc) => {
+          const nonEmptyDocs = userDoc.docs.filter(
+            (doc) => doc.Time && doc.Time.length > 0
+          );
+          return { email: userDoc.email, docs: nonEmptyDocs };
+        })
+        .filter((userDoc) => userDoc.docs.length > 0);
+
+      // read the clientEmails from the nonEmptyUserDocs
+      const clientEmails = nonEmptyUserDocs
+        .map((userDoc) => userDoc.docs.map((doc) => doc.clientEmail))
+        .flat();
+      console.log(clientEmails);
+
+      // using clientEmails, get all the details of clients except for _id from
+      // the clientDetails collection
+      const clientDetailsCollection = db.collection("clientDetails");
+      const clientDetails = await clientDetailsCollection
+        .find(
+          { clientEmail: { $in: clientEmails } },
+          { projection: { _id: 0 } }
+        )
+        .toArray();
+      console.log(clientDetails);
+
+      // Filter usersObj based on emails present in nonEmptyUserDocs
+      const filteredUsersObj = usersObj.filter((userObj) => {
+        return nonEmptyUserDocs.some(
+          (userDoc) => userDoc.email === userObj.email
+        );
+      });
+
+      console.log(nonEmptyUserDocs, filteredUsersObj);
+      res.send({
+        user: filteredUsersObj,
+        clientDetail: clientDetails,
+        userDocs: nonEmptyUserDocs,
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
 app.get("/getHolidays", (req, res) => {
   // Connect to MongoDB
   MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -254,49 +341,49 @@ app.get("/getHolidays", (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
     });
 });
-app.post("/setWorkedTime", (req, res) => {
-    var userEmail = req.body["User-Email"];
-    var clientEmail = req.body["Client-Email"];
-    var time = req.body.TimeList;
-    console.log(userEmail, clientEmail, time);
-    var today = new Date();
-    var formattedDate = today.toLocaleDateString("en-US", { weekday: 'short' }); // format the current day as short name (e.g. Thu)
 
-    MongoClient.connect(uri, function (err, db) {
-      if (err) throw err;
-      var dbo = db.db("Invoice");
-      var query = { userEmail: userEmail, clientEmail: clientEmail };
-      var update = { $push: { Time: `${time} ${formattedDate}` } }; // use $push to add time to the array
-      dbo
-        .collection("assignedClient")
-        .updateOne(query, update, (error, result) => {
-          if (error) {
-            console.error(error);
-            res.status(500).send("Unexpected error occurred");
-          } else {
-            res.status(200).send("Updated successfully");
-          }
-          db.close();
-        });
-    });
-    // MongoClient.connect(uri, function (err, db) {
-    //     if (err) throw err;
-    //     var dbo = db.db("Invoice");
-    //     var update = { $set: { Time: [] } }; // set Time field to an empty array
-    //     dbo
-    //       .collection("assignedClient")
-    //       .updateMany({}, update, (error, result) => {
-    //         if (error) {
-    //           console.error(error);
-    //           res.status(500).send("Unexpected error occurred");
-    //         } else {
-    //           res.send("Reset successful");
-    //         }
-    //         db.close();
-    //       });
-    //   });
+app.post("/setWorkedTime", (req, res) => {
+  var userEmail = req.body["User-Email"];
+  var clientEmail = req.body["Client-Email"];
+  var time = req.body.TimeList;
+  console.log(userEmail, clientEmail, time);
+  var today = new Date();
+  var formattedDate = today.toLocaleDateString("en-US", { weekday: "short" }); // format the current day as short name (e.g. Thu)
+
+  MongoClient.connect(uri, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("Invoice");
+    var query = { userEmail: userEmail, clientEmail: clientEmail };
+    var update = { $push: { Time: `${time} ${formattedDate}` } }; // use $push to add time to the array
+    dbo
+      .collection("assignedClient")
+      .updateOne(query, update, (error, result) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send("Unexpected error occurred");
+        } else {
+          res.status(200).send("Updated successfully");
+        }
+        db.close();
+      });
   });
-  
+  // MongoClient.connect(uri, function (err, db) {
+  //     if (err) throw err;
+  //     var dbo = db.db("Invoice");
+  //     var update = { $set: { Time: [] } }; // set Time field to an empty array
+  //     dbo
+  //       .collection("assignedClient")
+  //       .updateMany({}, update, (error, result) => {
+  //         if (error) {
+  //           console.error(error);
+  //           res.status(500).send("Unexpected error occurred");
+  //         } else {
+  //           res.send("Reset successful");
+  //         }
+  //         db.close();
+  //       });
+  //   });
+});
 
 app.post("/assignClientToUser/", function (req, res) {
   var userEmail = req.body.userEmail;
@@ -340,39 +427,6 @@ app.post("/assignClientToUser/", function (req, res) {
   }
 });
 
-app.post("/signup/:email", function (req, res) {
-  var firstName = req.body.firstName,
-    lastName = req.body.lastName,
-    email = req.body.email,
-    password = req.body.password;
-  var emails = req.params.email;
-
-  MongoClient.connect(uri, function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("Invoice");
-    dbo
-      .collection("login")
-      .insertOne(
-        { firstName, lastName, email, password },
-        { unique: true },
-        function (err, result) {
-          if (err) throw err;
-          console.log(result.email);
-          //res.send(result.email);
-
-          db.close();
-        }
-      );
-  });
-  //setAssignedClient(email);
-  return res.status(200).jsonp({
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    password: password,
-  });
-});
-
 app.post("/addClient", function (req, res) {
   var client = {
     clientFirstName: req.body.clientFirstName,
@@ -383,6 +437,7 @@ app.post("/addClient", function (req, res) {
     clientCity: req.body.clientCity,
     clientState: req.body.clientState,
     clientZip: req.body.clientZip,
+    clientBusinessName: req.body.businessName,
   };
 
   MongoClient.connect(uri, function (err, db) {
@@ -448,6 +503,90 @@ app.post("/addBusiness", function (req, res) {
   });
 });
 
+app.get("/business-names", async (req, res) => {
+  try {
+    const client = await MongoClient.connect(uri);
+    const db = client.db("Invoice");
+    const businessDetails = db.collection("businessDetails");
+    const result = await businessDetails
+      .find({}, { projection: { _id: 0, businessName: 1 } })
+      .toArray();
+    res.send(result);
+    client.close();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error retrieving business names from database.");
+  }
+});
+
+const path = require('path');
+
+app.post("/uploadPhoto", upload.single("photo"), async (req, res) => {
+  try {
+    console.log("Upload photo called");
+    const { email } = req.body; // Assuming you're receiving the user's email address in the request body
+    console.log(req.body);
+    // Check if the request has a photo
+    if (!req.file) {
+      // The request does not have a photo
+      console.log("No photo provided");
+      res.status(400).json({
+        message: "No photo was uploaded"
+      });
+      return;
+    }
+
+    // Read the photo data from disk
+    const photoPath = req.file.path;
+    const photoData = await fs.promises.readFile(photoPath);
+    const client = await MongoClient.connect(uri);
+    const db = client.db('Invoice');
+
+    // Check if a photo exists for the given email
+    const existingPhoto = await db.collection('userPhoto').findOne({ email });
+    if (existingPhoto) {
+      // Update the existing photo
+      await db.collection('userPhoto').updateOne({ email }, { $set: { photoData } });
+      console.log("Photo updated");
+    } else {
+      // Insert a new photo entry
+      const originalFilename = req.file.originalname;
+      const photo = { email, filename: originalFilename, photoData };
+      await db.collection('userPhoto').insertOne(photo);
+      console.log("New photo uploaded");
+    }
+
+    res.status(200).json({ message: 'Photo uploaded successfully' });
+  } catch (error) {
+    console.error("Error uploading photo:", error);
+    res.status(500).json({ message: "Error uploading photo" });
+  }
+});
+
+app.get("/getUserPhoto/:email", async (req, res) => {
+  try {
+    console.log("Get user photo called");
+    const { email } = req.params;
+    const client = await MongoClient.connect(uri);
+    const db = client.db('Invoice');
+
+    // Find the photo data for the given email
+    const photo = await db.collection('userPhoto').findOne({ email });
+    if (!photo) {
+      res.status(404).json({ message: 'Photo not found' });
+      return;
+    }
+    // Convert the photoData to base64
+    const base64PhotoData = photo.photoData.buffer.toString('base64');
+
+    res.contentType('image/jpeg');
+    res.send(base64PhotoData);
+  } catch (error) {
+    console.error("Error retrieving photo:", error);
+    res.status(500).json({ message: "Error retrieving photo" });
+  }
+});
+
 app.post("/user/login", function (req, res) {
   var username = req.body.username,
     password = req.body.password;
@@ -494,6 +633,7 @@ app.get("/login/:email/:password", (req, res) => {
           console.log("User found" + result._id, emails, passwords);
           return res.status(200).jsonp({
             message: "user found",
+            role: result.role,
           });
         }
         //console.log(result.email);
@@ -522,6 +662,7 @@ app.get("/getUsers/", (req, res) => {
             firstName: "",
             lastName: "",
             email: "",
+            abn: "",
           });
         } else {
           console.log("User found" + login[0].toString());
@@ -759,31 +900,134 @@ app.get("/hello/:email", (req, res) => {
   //res.send("Active");
 });
 
+// app.get("/checkEmail/:email", (req, res) => {
+//   var email = req.params.email;
+//   MongoClient.connect(uri, function (err, db) {
+//     if (err) throw err;
+//     var dbo = db.db("Invoice");
+//     dbo.collection("login").find({ email }, function (err, result) {
+//       if (err) throw err;
+//       //if email not found
+//       if (result == null) {
+//         return res.status(400).jsonp({
+//           email: "Email not found",
+//         });
+//       } else {
+//         return res.status(200).jsonp({
+//           email: result.email,
+//         });
+//       }
+//       //console.log(result.email);
+//       //res.send(result.email);
+
+//       db.close();
+//     });
+//   });
+//   //res.send("Active");
+// });
+
+// app.post("/signup/:email", function (req, res) {
+//   var firstName = req.body.firstName,
+//     lastName = req.body.lastName,
+//     email = req.body.email,
+//     password = req.body.password;
+//   abn = req.body.abn;
+//   var emails = req.params.email;
+
+//   MongoClient.connect(uri, function (err, db) {
+//     if (err) throw err;
+//     var dbo = db.db("Invoice");
+//     dbo
+//       .collection("login")
+//       .insertOne(
+//         { firstName, lastName, email, password, abn },
+//         { unique: true },
+//         function (err, result) {
+//           if (err) throw err;
+//           console.log(result.email);
+//           //res.send(result.email);
+
+//           db.close();
+//         }
+//       );
+//   });
+//   //setAssignedClient(email);
+//   return res.status(200).jsonp({
+//     firstName: firstName,
+//     lastName: lastName,
+//     email: email,
+//     password: password,
+//     abn: abn,
+//   });
+// });
 app.get("/checkEmail/:email", (req, res) => {
   var email = req.params.email;
+  console.log("Check email called");
   MongoClient.connect(uri, function (err, db) {
-    if (err) throw err;
+    
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Database error");
+    }
     var dbo = db.db("Invoice");
     dbo.collection("login").findOne({ email }, function (err, result) {
-      if (err) throw err;
-      //if email not found
-      if (result == null) {
-        return res.status(400).jsonp({
-          email: "Email not found",
+      
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Database error");
+      }
+      if (result === null) {
+        return res.status(400).json({
+          message: "Email not found",
         });
       } else {
-        return res.status(200).jsonp({
+        return res.status(200).json({
           email: result.email,
         });
       }
-      //console.log(result.email);
-      //res.send(result.email);
-
-      db.close();
+      
     });
+    
   });
-  //res.send("Active");
 });
+
+app.post("/signup/:email", function (req, res) {
+  var firstName = req.body.firstName,
+    lastName = req.body.lastName,
+    email = req.body.email,
+    password = req.body.password,
+    abn = req.body.abn,
+    role = req.body.role || "normal"; // Default role is "normal" if not specified
+  console.log("Signup called");
+  MongoClient.connect(uri, function (err, db) {
+    
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Database error");
+    }
+    var dbo = db.db("Invoice");
+    dbo.collection("login").insertOne(
+      { firstName, lastName, email, password, abn, role },
+      { unique: true },
+      function (err, result) {
+        db.close();
+        if (err) {
+          console.error(err);
+          return res.status(500).send("Database error");
+        }
+        console.log(result.ops); // Logs the inserted document(s)
+
+        // Send a success response
+        return res.status(200).json({
+          success: true,
+          message: "Signup successful",
+          data: result.ops,
+        });
+      }
+    );
+  });
+});
+
 
 app.get("/getClientDetails/:email", (req, res) => {
   var email = req.params.email;
