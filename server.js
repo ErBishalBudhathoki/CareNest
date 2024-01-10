@@ -44,7 +44,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
   var dbo = db.db("Invoice");
   dbo.collection("login").findOne({}, function (err, result) {
     if (err) throw err;
-    console.log(result.email);
+    console.log("Server connected");
     db.close();
   });
 });
@@ -116,7 +116,7 @@ function generateEncryptionKey() {
   // if (!serverEncryptionKey) {
     // If not generated, generate a new key
     serverEncryptionKey = crypto.randomBytes(8).toString('hex');
-    console.log('Server generated Encryption Key: ' + serverEncryptionKey);
+    // console.log('Server generated Encryption Key: ' + serverEncryptionKey);
   //}
 
   // Return the existing or newly generated key
@@ -162,29 +162,29 @@ function xorHex(a, b) {
 }
 
 function encryptOTP(otp, flutterEncryptKey) {
-  console.log('encryptOTP called ' + otp + ' ## ' + flutterEncryptKey);
+  // console.log('encryptOTP called ' + otp + ' ## ' + flutterEncryptKey);
   const IV_LENGTH = 16; // For AES, this is always 16
   let iv = crypto.randomBytes(IV_LENGTH);
-  console.log('iv: ' + iv.toString('hex'));
+  // console.log('iv: ' + iv.toString('hex'));
   let timestamp = padLeft(Date.now().toString(), 13, '0'); // Pad with zeros to ensure length is 13
   let encryptionKey = generateEncryptionKey();
-  console.log('encryptionKey: ' + encryptionKey + 'timestamp: ' + timestamp );
+  // console.log('encryptionKey: ' + encryptionKey + 'timestamp: ' + timestamp );
 
   // Ensure the encryption key is 32 characters by using only the first 32 characters
   let combinedKey = (flutterEncryptKey + encryptionKey).slice(0, 32);
 
-  console.log('combinedKey: ' + combinedKey);
+  // console.log('combinedKey: ' + combinedKey);
 
   // Encrypt the data
   let dataToEncrypt = Buffer.from(timestamp + otp); // Prepend timestamp to OTP
-  console.log('dataToEncrypt: ' + dataToEncrypt.toString('hex') + ' ## ' + Buffer.from(combinedKey, 'utf-8'));
+  // console.log('dataToEncrypt: ' + dataToEncrypt.toString('hex') + ' ## ' + Buffer.from(combinedKey, 'utf-8'));
   // Create a cipher with the combined key and IV
   let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(combinedKey, 'utf-8'), iv);
 
   // // Encrypt the data
   // let dataToEncrypt = Buffer.from(timestamp + otp); // Prepend timestamp to OTP
   let encrypted = Buffer.concat([iv, cipher.update(dataToEncrypt), cipher.final()]);
-  console.log('encrypted: ' + encrypted.toString('hex'));
+  // console.log('encrypted: ' + encrypted.toString('hex'));
 
   return encrypted.toString('hex'); // Return the complete encrypted data
 }
@@ -303,7 +303,7 @@ function decryptOTP(encryptedData, flutterEncryptKey, encryptionKey) {
     let timestamp = decrypted.slice(0, 13).toString();
     let otp = decrypted.slice(13).toString();
 
-    console.log('Decryption successful - timestamp:', timestamp, 'otp:', otp);
+    // console.log('Decryption successful - timestamp:', timestamp, 'otp:', otp);
 
     return { timestamp, otp };
   } catch (error) {
@@ -581,7 +581,7 @@ app.post("/uploadCSV", (req, res) => {
                   collection
                     .insertMany(holidays)
                     .then((result) => {
-                      console.log(`${result.insertedCount} documents inserted`);
+                      // console.log(`${result.insertedCount} documents inserted`);
                       client.close();
                       res.status(200).json({ message: "Upload successful" });
                     })
@@ -610,7 +610,7 @@ app.post("/uploadCSV", (req, res) => {
 
 app.delete("/deleteHoliday/:id", (req, res) => {
   var id = req.params.id;
-  console.log(id);
+  // console.log(id);
   // Connect to MongoDB
   MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((client) => {
@@ -647,7 +647,7 @@ app.post("/addHolidayItem", (req, res) => {
     Date: req.body.Date,
     Day: req.body.Day,
   };
-  console.log("newHoliday:", newHoliday);
+  // console.log("newHoliday:", newHoliday);
   MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((client) => {
       const db = client.db("Invoice");
@@ -1023,7 +1023,7 @@ app.post("/uploadPhoto", upload.single("photo"), async (req, res) => {
   try {
     console.log("Upload photo called");
     const { email } = req.body; // Assuming you're receiving the user's email address in the request body
-    console.log(req.body);
+    // console.log(req.body);
     // Check if the request has a photo
     if (!req.file) {
       // The request does not have a photo
@@ -1110,7 +1110,7 @@ app.post("/login", async (req, res) => {
             message: "user not found",
           });
         } else {
-          console.log("User found" + result._id, emails, hashedPassword);
+          // console.log("User found" + result._id, emails, hashedPassword);
           return res.status(200).jsonp({
             message: "user found",
             role: result.role,
@@ -1133,7 +1133,7 @@ app.post("/login", async (req, res) => {
 
 app.delete("/deleteUser/", async (req, res) => {
   var email = req.body.email;
-  console.log(email);
+  // console.log(email);
   try {
   // Connect to MongoDB
   MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -1174,7 +1174,7 @@ app.delete("/deleteUser/", async (req, res) => {
 
 app.post('/getSalt', async (req, res) => {
   const email = req.body.email;
-  console.log('Email:', req.body);
+  // console.log('Email:', req.body);
   try {
     //run().catch(console.dir);
     const client = await MongoClient.connect(uri, function (err, db) {
@@ -1195,7 +1195,7 @@ app.post('/getSalt', async (req, res) => {
           });
         } else {
           const salt = result.password.substring(64);
-          console.log('Salt found:', salt);
+          // console.log('Salt found:', salt);
           return res.status(200).json({
             message: 'Salt found',
             salt: salt,
@@ -1236,7 +1236,7 @@ app.get("/getUsers/", async (req, res) => {
             abn: "",
           });
         } else {
-          console.log("User found" + login[0].toString());
+          // console.log("User found" + login[0].toString());
           for (var i = 0; i < login.length; i++) {
             list.push(login[i]);
             console.log(list);
@@ -1246,7 +1246,7 @@ app.get("/getUsers/", async (req, res) => {
 
         db.close();
       });
-    console.log(apt);
+    // console.log(apt);
   });
 } catch (error) {
   console.log("error");
@@ -1277,15 +1277,15 @@ app.get("/getClients/", async (req, res) => {
             clientEmail: "",
           });
         } else {
-          console.log("Client found" + clientDetails[0].toString());
+          // console.log("Client found" + clientDetails[0].toString());
           for (var i = 0; i < clientDetails.length; i++) {
             list.push(clientDetails[i]);
-            console.log(list);
+            // console.log(list);
           }
           return res.send(JSON.stringify(list));
         }
       });
-    console.log(apt);
+    // console.log(apt);
   }).close();
   //res.send("Active");
 });
@@ -1307,19 +1307,19 @@ app.get("/getLineItems/", async (req, res) => {
               itemDescription: "",
             });
           } else {
-            console.log("Line items found" + lineItems[0].toString());
+            // console.log("Line items found" + lineItems[0].toString());
             var list = lineItems.map(function (lineItem) {
               return {
                 itemNumber: lineItem.itemNumber,
                 itemDescription: lineItem.itemDescription,
               };
             });
-            console.log(list);
+            // console.log(list);
             return res.send(JSON.stringify(list));
           }
           db.close();
         });
-      console.log(apt);
+      // console.log(apt);
     });
   } catch (error) {
     console.log("error");
@@ -1365,7 +1365,7 @@ app.get("/initData/:email", async (req, res) => {
 });
 
 app.get("/getMultipleClients/:emails", async (req, res) => {
-  console.log(req.params.emails);
+  // console.log(req.params.emails);
   // Split the email string by the comma separator
   var emails = req.params.emails.split(",");
   try {
@@ -1388,17 +1388,17 @@ app.get("/getMultipleClients/:emails", async (req, res) => {
               clientEmail: "",
             });
           } else {
-            console.log("Client found" + clientDetails[0].toString());
+            // console.log("Client found" + clientDetails[0].toString());
             for (var i = 0; i < clientDetails.length; i++) {
               list.push(clientDetails[i]);
-              console.log(list);
+              // console.log(list);
             }
             return res.send(JSON.stringify(list));
           }
   
           db.close();
         });
-      console.log(apt);
+      // console.log(apt);
     });
   } catch (error) {
     console.log("error");
@@ -1432,7 +1432,7 @@ app.get("/loadAppointments/:email", async (req, res) => {
         return res.status(404).json({ error: "No matching documents found" });
       } else {
         // If matching documents are found, send a 200 (OK) status code and the data in the response
-        console.log(result);
+        // console.log(result);
         return res.status(200).json({ data: result });
       }
     
@@ -1473,7 +1473,7 @@ app.get("/loadAppointmentDetails/:userEmail/:clientEmail", async (req, res) => {
           .toArray(function (err, result) {
             if (err) throw err;
             resultObj.assignedClient.push(...result);
-            console.log(resultObj);
+            // console.log(resultObj);
             res.status(200).json({ data: resultObj });
             db.close();
           });
