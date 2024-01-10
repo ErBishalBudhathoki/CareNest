@@ -9,6 +9,7 @@ const multer = require("multer");
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 require("dotenv").config();
+const cors = require("cors");
 
 // Configure multer to handle file uploads
 const upload = multer({
@@ -21,6 +22,7 @@ const upload = multer({
   allowedFiles: ["image/jpeg", "image/png", "image/heif"],
 });
 var app = express();
+app.use(cors());
 
 var PORT = process.env.PORT || 9001;
 const serverOptions = {
