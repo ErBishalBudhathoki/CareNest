@@ -37,6 +37,11 @@ expense_check*.json
 check_test*.js
 create_test*.js
 
+# Check and utility scripts
+check_*.js
+create_*.js
+!migration_scripts/create_*.js
+
 # Debug and fix files
 debug_*.js
 check_*_debug.js
