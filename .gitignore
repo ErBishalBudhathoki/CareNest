@@ -1,0 +1,45 @@
+# Dependencies
+node_modules
+.dart
+
+# Environment variables and secrets
+.env
+*.env
+
+# Firebase configuration
+firebase-admin-config.js
+firebase-service-account.json
+firebase-*.json
+*.json.google.com
+*google*.json
+
+# Uploads directory
+uploads/*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Test files
+test_*.js
+test_*.json
+test*.js
+test*.json
+
+# Fastlane
+fastlane/
+
+# Credentials and keys
+*credential*
+*password*
+*secret*
+*key*
+!*.example.*
+!*example*.*

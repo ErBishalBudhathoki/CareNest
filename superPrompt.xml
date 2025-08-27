@@ -1,0 +1,63 @@
+<SuperPrompt>
+  <Context>
+    <ProjectType>Flutter</ProjectType>
+    <ArchitecturePattern>MVVM or BLoC or Provider-based state management</ArchitecturePattern>
+    <FeatureDescription>Invoice generation system that supports generating invoices for individual employees as well as bulk generation for all assigned employees.</FeatureDescription>
+    <AttachedFiles>
+      <JsonFile>supportItems_all.json</JsonFile>
+      <DartFile>generateInvoice.dart</DartFile>
+      <DartFile>generateInvoiceForAll.dart</DartFile>
+      <DartFile>generateInvoiceForAllUSer.dart</DartFile>
+      <PDFFile>Invoice Number - 20250105.pdf</PDFFile>
+    </AttachedFiles>
+    <IssueSummary>The current implementation may not be optimized for scalability, reusability, or extensibility. There's a need to support additional invoice fields like transportation cost, taxes, discounts, etc., while ensuring clean separation between UI and business logic.</IssueSummary>
+  </Context>
+
+  <Goals>
+    <Goal>Optimize the invoice generation logic to handle both single and bulk invoice creation efficiently.</Goal>
+    <Goal>Support dynamic addition of invoice line items such as transportation, materials, overtime, etc.</Goal>
+    <Goal>Ensure clean code structure with reusable components and clear separation of concerns (e.g., ViewModel handles calculation, View handles display).</Goal>
+    <Goal>Incorporate proper error handling and validation for missing or invalid data.</Goal>
+    <Goal>Make the system scalable so that new invoice types or features can be added easily in the future.</Goal>
+  </Goals>
+
+  <Requirements>
+    <Input>
+      <SampleData>supportItems_sample_invoice.json - Contains sample structure of support item data used to generate invoice.</SampleData>
+      <MainLogic>invoice_generator.dart - Contains current invoice generation logic needing optimization.</MainLogic>
+    </Input>
+    <Output>
+      <RefactoredCode>true</RefactoredCode>
+      <CodeSnippets>true</CodeSnippets>
+      <PerformanceImprovements>true</PerformanceImprovements>
+      <ScalabilityRecommendations>true</ScalabilityRecommendations>
+      <ErrorHandling>true</ErrorHandling>
+      <UnitTests>false</UnitTests>
+    </Output>
+  </Requirements>
+
+  <InstructionsForAI>
+    <Analyze>
+      <JsonStructure>Understand the schema and relationships in the sample JSON data (employee, client, hours, rates, etc.).</JsonStructure>
+      <CurrentLogic>Review existing Dart file to identify inefficiencies, tight coupling, or lack of modularity.</CurrentLogic>
+      <InvoiceFields>Determine which invoice fields are already present and what needs to be extended (e.g., transportation cost, taxes).</InvoiceFields>
+      <BulkGeneration>Identify how bulk generation is currently handled and whether it's optimized for performance.</BulkGeneration>
+    </Analyze>
+    <SuggestFixes>
+      <ModularizeLogic>Break down invoice generation into modular functions or classes (e.g., InvoiceCalculator, InvoiceRenderer).</ModularizeLogic>
+      <AddDynamicFields>Allow for optional invoice fields like transportation cost, overtime, etc., via a list of `LineItem` objects.</AddDynamicFields>
+      <ImproveSeparation>Move business logic out of UI layer; consider using a ViewModel or service class.</ImproveSeparation>
+      <OptimizeBulkProcessing>Use Future.wait() or isolates if needed for performance during bulk invoice generation.</OptimizeBulkProcessing>
+      <EnhanceValidation>Add null safety checks, required field validations, and error messages for invalid input.</EnhanceValidation>
+    </SuggestFixes>
+  </InstructionsForAI>
+
+  <AdditionalNotes>
+    <Assumptions>
+      <StateManagement>Assume standard state management unless specified otherwise.</StateManagement>
+      <UIFramework>No UI changes requested unless explicitly mentioned.</UIFramework>
+      <Extensibility>All logic should be written with extensibility in mind for future enhancements.</Extensibility>
+      <NullSafety>Ensure null-aware operators and safe access to nested data structures.</NullSafety>
+    </Assumptions>
+  </AdditionalNotes>
+</SuperPrompt>
