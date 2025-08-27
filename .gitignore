@@ -32,6 +32,8 @@ test_*.js
 test_*.json
 test*.js
 test*.json
+fix_test*.js
+expense_check*.json
 
 # Fastlane
 fastlane/
