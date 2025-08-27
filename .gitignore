@@ -34,6 +34,8 @@ test*.js
 test*.json
 fix_test*.js
 expense_check*.json
+check_test*.js
+create_test*.js
 
 # Debug and fix files
 debug_*.js
