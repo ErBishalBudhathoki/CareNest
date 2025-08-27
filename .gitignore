@@ -35,6 +35,12 @@ test*.json
 fix_test*.js
 expense_check*.json
 
+# Debug and fix files
+debug_*.js
+check_*_debug.js
+fix_*.js
+simple_db_check.js
+
 # Fastlane
 fastlane/
 
