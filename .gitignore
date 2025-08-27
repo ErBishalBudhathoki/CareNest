@@ -90,3 +90,6 @@ fastlane/
 *key*
 !*.example.*
 !*example*.*
+
+.DS_Store
+
