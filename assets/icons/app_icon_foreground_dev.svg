@@ -1,0 +1,8 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M128 128H384V384H128V128Z" fill="#FF5722"/>
+  <path d="M176 224H336V240H176V224Z" fill="white"/>
+  <path d="M176 272H336V288H176V272Z" fill="white"/>
+  <path d="M176 320H336V336H176V320Z" fill="white"/>
+  <path d="M176 176H256V192H176V176Z" fill="white"/>
+  <text x="256" y="416" font-family="Arial" font-size="32" text-anchor="middle" fill="#000000">DEV</text>
+</svg>
