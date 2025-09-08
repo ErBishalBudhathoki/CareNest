@@ -4,8 +4,8 @@
  */
 
 const cron = require('node-cron');
-const { processRecurringExpenses } = require('./recurring_expense_service');
-const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./audit_trail_service');
+const { processRecurringExpenses } = require('./services/recurringExpenseService');
+const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./services/auditService');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });

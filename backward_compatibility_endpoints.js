@@ -4,7 +4,7 @@
  * Task 2.7: Implement backward compatibility for existing invoice data
  */
 
-const BackwardCompatibilityService = require('./backward_compatibility_service');
+const BackwardCompatibilityService = require('./services/backwardCompatibilityService');
 const { ObjectId } = require('mongodb');
 
 /**

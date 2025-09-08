@@ -1,0 +1,253 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% Time Tracking Sequence Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows the employee time tracking and monitoring flow
+
+sequenceDiagram
+    participant Employee as 👤 Employee
+    participant Mobile as 📱 Mobile App
+    participant API as 🌐 Express API
+    participant AuthMW as 🔐 Auth Middleware
+    participant AppointmentController as 🎮 Appointment Controller
+    participant AppointmentService as ⚙️ Appointment Service
+    participant EmployeeTrackingController as 🎮 Employee Tracking Controller
+    participant EmployeeTrackingService as ⚙️ Employee Tracking Service
+    participant MongoDB as 🗄️ MongoDB
+    participant AuditService as 📋 Audit Service
+    participant NotificationService as 🔔 Notification Service
+    participant Admin as 👨‍💼 Admin
+
+    Note over Employee, Admin: Time Tracking Flow - Start Work
+    
+    %% Employee starts work
+    Employee->>Mobile: Open app and login
+    Mobile->>Mobile: Show dashboard
+    
+    Employee->>Mobile: Tap "Start Work"
+    Mobile->>Mobile: Show client selection
+    Employee->>Mobile: Select client and task
+    
+    Mobile->>API: POST /api/appointments/start-timer<br/>{clientId, taskType, location}
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>AppointmentController: Route to startTimer()
+    
+    AppointmentController->>AppointmentController: Validate request data
+    
+    alt Valid request
+        %% Check for existing active timer
+        AppointmentController->>AppointmentService: checkActiveTimer(employeeId)
+        AppointmentService->>MongoDB: Query activeTimers collection
+        MongoDB-->>AppointmentService: Active timer status
+        
+        alt No active timer
+            %% Create new timer
+            AppointmentService->>AppointmentService: Create timer object<br/>{employeeId, clientId, startTime, status: 'active'}
+            
+            AppointmentService->>MongoDB: Insert activeTimers document
+            MongoDB-->>AppointmentService: Timer ID
+            
+            %% Log audit trail
+            AppointmentService->>AuditService: logEvent('TIMER_STARTED', timerInfo)
+            AuditService->>MongoDB: Insert audit record
+            
+            AppointmentService-->>AppointmentController: {success: true, timerId}
+            AppointmentController-->>API: 201 Created {timer}
+            API-->>Mobile: Timer started successfully
+            
+            Mobile->>Mobile: Start local timer display
+            Mobile->>Mobile: Show "Working" status
+            Mobile-->>Employee: Display active timer
+            
+        else Active timer exists
+            AppointmentService-->>AppointmentController: {error: 'Timer already active'}
+            AppointmentController-->>API: 409 Conflict
+            API-->>Mobile: Error message
+            Mobile-->>Employee: "Please stop current timer first"
+        end
+        
+    else Invalid request
+        AppointmentController-->>API: 400 Bad Request
+        API-->>Mobile: Validation errors
+        Mobile-->>Employee: Show error messages
+    end
+    
+    Note over Employee, Admin: Time Tracking Flow - Stop Work
+    
+    %% Employee stops work
+    Employee->>Mobile: Tap "Stop Work"
+    Mobile->>Mobile: Show time summary
+    Employee->>Mobile: Confirm stop and add notes
+    
+    Mobile->>API: POST /api/appointments/stop-timer<br/>{timerId, notes, endLocation}
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>AppointmentController: Route to stopTimer()
+    
+    AppointmentController->>AppointmentService: stopTimer(timerId, stopData)
+    
+    %% Get active timer
+    AppointmentService->>MongoDB: Query activeTimers by ID
+    MongoDB-->>AppointmentService: Timer document
+    
+    alt Timer found and active
+        %% Calculate worked time
+        AppointmentService->>AppointmentService: Calculate duration<br/>(endTime - startTime)
+        
+        %% Create worked time record
+        AppointmentService->>AppointmentService: Create workedTime object<br/>{employeeId, clientId, startTime, endTime, duration, notes}
+        
+        AppointmentService->>MongoDB: Insert workedTime document
+        MongoDB-->>AppointmentService: Worked time ID
+        
+        %% Remove active timer
+        AppointmentService->>MongoDB: Delete activeTimers document
+        MongoDB-->>AppointmentService: Delete confirmation
+        
+        %% Log audit trail
+        AppointmentService->>AuditService: logEvent('TIMER_STOPPED', workInfo)
+        AuditService->>MongoDB: Insert audit record
+        
+        AppointmentService-->>AppointmentController: {success: true, workedTimeId, duration}
+        AppointmentController-->>API: 200 OK {workedTime}
+        API-->>Mobile: Timer stopped successfully
+        
+        Mobile->>Mobile: Stop local timer
+        Mobile->>Mobile: Show work summary
+        Mobile-->>Employee: "Work logged: X hours Y minutes"
+        
+    else Timer not found or inactive
+        AppointmentService-->>AppointmentController: {error: 'No active timer found'}
+        AppointmentController-->>API: 404 Not Found
+        API-->>Mobile: Error message
+        Mobile-->>Employee: "No active timer to stop"
+    end
+    
+    Note over Employee, Admin: Time Tracking Flow - Set Worked Time (Manual Entry)
+    
+    %% Manual time entry
+    Employee->>Mobile: Tap "Add Manual Entry"
+    Mobile->>Mobile: Show time entry form
+    Employee->>Mobile: Enter time details<br/>(client, start/end time, notes)
+    
+    Mobile->>API: POST /api/appointments/setWorkedTime<br/>{clientId, startTime, endTime, notes}
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>AppointmentController: Route to setWorkedTime()
+    
+    AppointmentController->>AppointmentController: Validate time entry data
+    
+    alt Valid time entry
+        AppointmentController->>AppointmentService: setWorkedTime(timeData)
+        
+        %% Check for overlapping entries
+        AppointmentService->>MongoDB: Query workedTime for overlaps
+        MongoDB-->>AppointmentService: Existing entries
+        
+        alt No overlaps
+            AppointmentService->>AppointmentService: Calculate duration
+            
+            AppointmentService->>MongoDB: Insert workedTime document
+            MongoDB-->>AppointmentService: Worked time ID
+            
+            %% Log audit trail
+            AppointmentService->>AuditService: logEvent('MANUAL_TIME_ENTRY', entryInfo)
+            AuditService->>MongoDB: Insert audit record
+            
+            AppointmentService-->>AppointmentController: {success: true, entryId}
+            AppointmentController-->>API: 201 Created {workedTime}
+            API-->>Mobile: Time entry saved
+            Mobile-->>Employee: "Time entry added successfully"
+            
+        else Overlapping entries found
+            AppointmentService-->>AppointmentController: {error: 'Time overlap detected'}
+            AppointmentController-->>API: 409 Conflict
+            API-->>Mobile: Overlap warning
+            Mobile-->>Employee: "Time overlaps with existing entry"
+        end
+        
+    else Invalid time entry
+        AppointmentController-->>API: 400 Bad Request
+        API-->>Mobile: Validation errors
+        Mobile-->>Employee: Show error messages
+    end
+    
+    Note over Employee, Admin: Employee Tracking Flow - Admin Monitoring
+    
+    %% Admin views employee tracking
+    Admin->>Mobile: Open "Employee Tracking"
+    Mobile->>API: GET /api/employee-tracking/{organizationId}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>EmployeeTrackingController: Route to getEmployeeTrackingData()
+    
+    EmployeeTrackingController->>EmployeeTrackingService: getEmployeeTrackingData(orgId)
+    
+    %% Get client assignments
+    EmployeeTrackingService->>MongoDB: Query clientAssignments collection
+    MongoDB-->>EmployeeTrackingService: Employee-client mappings
+    
+    %% Get worked time data
+    EmployeeTrackingService->>MongoDB: Aggregate workedTime collection<br/>(group by employee, calculate totals)
+    MongoDB-->>EmployeeTrackingService: Worked time summaries
+    
+    %% Get active timers
+    EmployeeTrackingService->>MongoDB: Query activeTimers collection
+    MongoDB-->>EmployeeTrackingService: Currently working employees
+    
+    %% Get employee details
+    EmployeeTrackingService->>MongoDB: Lookup employee details from login collection
+    MongoDB-->>EmployeeTrackingService: Employee information
+    
+    %% Get client details
+    EmployeeTrackingService->>MongoDB: Lookup client details from clients collection
+    MongoDB-->>EmployeeTrackingService: Client information
+    
+    %% Process and structure data
+    EmployeeTrackingService->>EmployeeTrackingService: Group employees by status<br/>(currently working vs not working)
+    
+    EmployeeTrackingService->>EmployeeTrackingService: Calculate current working time<br/>for active timers
+    
+    EmployeeTrackingService->>EmployeeTrackingService: Add recent shift information
+    
+    EmployeeTrackingService-->>EmployeeTrackingController: {currentlyWorking[], notCurrentlyWorking[], summary}
+    EmployeeTrackingController-->>API: 200 OK {trackingData}
+    API-->>Mobile: Employee tracking data
+    
+    Mobile->>Mobile: Display employee dashboard<br/>(active workers, recent activity)
+    Mobile-->>Admin: Show real-time employee status
+    
+    Note over Employee, Admin: Automated Notifications
+    
+    %% Background process for long shifts
+    loop Every 15 minutes
+        NotificationService->>MongoDB: Query activeTimers > 8 hours
+        MongoDB-->>NotificationService: Long shift timers
+        
+        alt Long shifts detected
+            NotificationService->>NotificationService: Create notification<br/>"Employee working long shift"
+            
+            NotificationService->>Mobile: Push notification to admin
+            Mobile-->>Admin: "Employee X working 8+ hours"
+            
+            %% Log notification
+            NotificationService->>AuditService: logEvent('LONG_SHIFT_ALERT', details)
+            AuditService->>MongoDB: Insert audit record
+        end
+    end
+    
+    %% Forgotten timer detection
+    loop Daily at midnight
+        NotificationService->>MongoDB: Query activeTimers > 24 hours
+        MongoDB-->>NotificationService: Stale timers
+        
+        alt Stale timers found
+            NotificationService->>NotificationService: Create alert<br/>"Possible forgotten timer"
+            
+            NotificationService->>Mobile: Push notification to admin
+            Mobile-->>Admin: "Employee may have forgotten to stop timer"
+            
+            NotificationService->>Mobile: Push notification to employee
+            Mobile-->>Employee: "Did you forget to stop your timer?"
+        end
+    end

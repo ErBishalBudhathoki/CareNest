@@ -5,6 +5,7 @@
  */
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const logger = require('./config/logger');
 const uri = process.env.MONGODB_URI;
 
 class BackwardCompatibilityService {
@@ -72,7 +73,10 @@ class BackwardCompatibilityService {
 
       return transformedInvoice;
     } catch (error) {
-      console.error('Error transforming legacy invoice:', error);
+      logger.error('Error in backward compatibility service', {
+        error: error.message,
+        stack: error.stack
+      });
       throw new Error(`Failed to transform legacy invoice: ${error.message}`);
     }
   }
@@ -156,7 +160,12 @@ class BackwardCompatibilityService {
         description: `Legacy Item: ${legacyItem.description || 'Unknown service'}`
       };
     } catch (error) {
-      console.error('Error mapping legacy item to NDIS:', error);
+      logger.error('Legacy item to NDIS mapping failed', {
+        error: error.message,
+        stack: error.stack,
+        legacyItem: legacyItem.description,
+        itemNumber: legacyItem.ndisItemNumber || legacyItem.itemNumber
+      });
       return null;
     }
   }
@@ -269,7 +278,12 @@ class BackwardCompatibilityService {
         }
       };
     } catch (error) {
-      console.error('Error processing legacy invoice:', error);
+      logger.error('Legacy invoice processing failed', {
+        error: error.message,
+        stack: error.stack,
+        invoiceId: legacyInvoiceData._id,
+        userEmail: legacyInvoiceData.userEmail || legacyInvoiceData.employeeEmail
+      });
       return {
         success: false,
         error: error.message,
@@ -306,7 +320,12 @@ class BackwardCompatibilityService {
         {};
 
       const invoiceCount = await this.db.collection('invoices').countDocuments(query);
-      console.log(`Found ${invoiceCount} invoices to migrate`);
+      logger.info('Legacy invoice migration started', {
+        invoiceCount,
+        batchSize,
+        dryRun,
+        skipAlreadyMigrated
+      });
 
       const cursor = this.db.collection('invoices').find(query).batchSize(batchSize);
       
@@ -343,13 +362,23 @@ class BackwardCompatibilityService {
 
         // Progress logging
         if (migrationStats.totalProcessed % 50 === 0) {
-          console.log(`Processed ${migrationStats.totalProcessed}/${invoiceCount} invoices`);
+          logger.info('Migration progress update', {
+            processed: migrationStats.totalProcessed,
+            total: invoiceCount,
+            successful: migrationStats.successful,
+            failed: migrationStats.failed
+          });
         }
       }
 
       return migrationStats;
     } catch (error) {
-      console.error('Error during legacy invoice migration:', error);
+      logger.error('Legacy invoice migration failed', {
+        error: error.message,
+        stack: error.stack,
+        batchSize,
+        dryRun
+      });
       throw error;
     }
   }
@@ -391,7 +420,10 @@ class BackwardCompatibilityService {
 
       return stats;
     } catch (error) {
-      console.error('Error getting legacy data stats:', error);
+      logger.error('Legacy data stats retrieval failed', {
+        error: error.message,
+        stack: error.stack
+      });
       throw error;
     }
   }

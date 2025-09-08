@@ -4,9 +4,10 @@
  * Task 2.1: Enhanced Invoice Generation Backend
  */
 
-const InvoiceGenerationService = require('./invoice_generation_service');
+const InvoiceGenerationService = require('./services/invoiceGenerationService');
 const { createAuditLogEndpoint } = require('./audit_trail_endpoints');
 const { validateInvoiceLineItems: validateLineItemsWithPricing } = require('./price_validation_endpoints');
+const logger = require('./config/logger');
 
 /**
  * Generate invoice line items based on clientAssignment data
@@ -35,11 +36,13 @@ async function generateInvoiceLineItems(req, res) {
     let expenses = [];
     let expenseLineItems = [];
     if (includeExpenses) {
-      console.log('🔍 DEBUG: Querying expenses with parameters:');
-      console.log('  organizationId:', result.metadata.organizationId);
-      console.log('  clientId:', result.metadata.clientId);
-      console.log('  startDate:', startDate);
-      console.log('  endDate:', endDate);
+      logger.debug('Querying expenses for invoice generation', {
+        organizationId: result.metadata.organizationId,
+        clientId: result.metadata.clientId,
+        startDate,
+        endDate,
+        assignmentId: result.metadata.assignmentId
+      });
       
       expenses = await service.getApprovedExpensesForInvoice(
         result.metadata.organizationId,
@@ -48,10 +51,12 @@ async function generateInvoiceLineItems(req, res) {
         endDate
       );
       
-      console.log('💰 DEBUG: Retrieved expenses count:', expenses.length);
-      if (expenses.length > 0) {
-        console.log('💰 DEBUG: First expense sample:', JSON.stringify(expenses[0], null, 2));
-      }
+      logger.debug('Expenses retrieved for invoice', {
+        expenseCount: expenses.length,
+        organizationId: result.metadata.organizationId,
+        clientId: result.metadata.clientId,
+        hasExpenses: expenses.length > 0
+      });
       
       // Convert expenses to line items and add to main line items array
       const expenseLineItemPromises = expenses.map(expense => service.convertExpenseToLineItem(expense));
@@ -110,7 +115,12 @@ async function generateInvoiceLineItems(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in generateInvoiceLineItems endpoint:', error);
+    logger.error('Invoice line items generation failed', {
+      error: error.message,
+      stack: error.stack,
+      assignmentId: req.body.assignmentId,
+      userEmail: req.body.userEmail
+    });
     
     // Handle specific error types
     if (error.message.includes('No active assignment found')) {
@@ -209,7 +219,12 @@ async function getInvoicePreview(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in getInvoicePreview endpoint:', error);
+    logger.error('Invoice preview generation failed', {
+      error: error.message,
+      stack: error.stack,
+      assignmentId: req.body.assignmentId,
+      userEmail: req.body.userEmail
+    });
     
     res.status(500).json({
       success: false,
@@ -278,7 +293,12 @@ async function getAvailableAssignments(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in getAvailableAssignments endpoint:', error);
+    logger.error('Failed to get available assignments', {
+      error: error.message,
+      stack: error.stack,
+      organizationId: req.params.organizationId,
+      userEmail: req.query.userEmail
+    });
     
     res.status(500).json({
       success: false,
@@ -340,7 +360,11 @@ async function validateInvoiceGenerationData(req, res) {
           defaultProviderType: req.body.defaultProviderType || 'standard'
         });
       } catch (pricingError) {
-        console.warn('Pricing validation failed:', pricingError.message);
+        logger.warn('Pricing validation failed during invoice validation', {
+        error: pricingError.message,
+        assignmentId: req.body.assignmentId,
+        lineItemCount: req.body.lineItems ? req.body.lineItems.length : 0
+      });
         pricingValidation = {
           isValid: false,
           errors: [pricingError.message],
@@ -442,7 +466,12 @@ async function validateInvoiceGenerationData(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in validateInvoiceGenerationData endpoint:', error);
+    logger.error('Invoice generation data validation failed', {
+      error: error.message,
+      stack: error.stack,
+      userEmail: req.body.userEmail,
+      clientEmail: req.body.clientEmail
+    });
     
     res.status(500).json({
       success: false,
@@ -478,7 +507,11 @@ async function createAuditLog(auditData) {
     
     await createAuditLogEndpoint(mockReq, mockRes);
   } catch (error) {
-    console.error('Error creating audit log:', error);
+    logger.error('Failed to create audit log', {
+      error: error.message,
+      stack: error.stack,
+      auditData
+    });
     // Don't throw error as audit logging shouldn't break the main flow
   }
 }
@@ -583,7 +616,12 @@ async function generateBulkInvoices(req, res) {
     }
     
   } catch (error) {
-    console.error('Error in bulk invoice generation endpoint:', error);
+    logger.error('Bulk invoice generation failed', {
+      error: error.message,
+      stack: error.stack,
+      organizationId: req.body.organizationId,
+      userEmail: req.body.userEmail
+    });
     
     // Create audit log entry for error
     try {
@@ -599,7 +637,10 @@ async function generateBulkInvoices(req, res) {
         }
       });
     } catch (auditError) {
-      console.error('Failed to create error audit log:', auditError);
+      logger.error('Failed to create error audit log', {
+        error: auditError.message,
+        stack: auditError.stack
+      });
     }
     
     res.status(500).json({
@@ -674,7 +715,11 @@ async function validateExistingInvoiceLineItems(req, res) {
     });
 
   } catch (error) {
-    console.error('Error validating existing invoice line items:', error);
+    logger.error('Existing invoice line items validation failed', {
+      error: error.message,
+      stack: error.stack,
+      lineItemCount: req.body.lineItems ? req.body.lineItems.length : 0
+    });
     
     res.status(500).json({
       success: false,
@@ -739,7 +784,11 @@ async function validatePricingRealtime(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in real-time price validation:', error);
+    logger.error('Real-time price validation failed', {
+      error: error.message,
+      stack: error.stack,
+      lineItemCount: req.body.lineItems ? req.body.lineItems.length : 0
+    });
     
     res.status(500).json({
       success: false,
@@ -887,7 +936,12 @@ async function getInvoiceValidationReport(req, res) {
     });
 
   } catch (error) {
-    console.error('Error generating invoice validation report:', error);
+    logger.error('Invoice validation report generation failed', {
+      error: error.message,
+      stack: error.stack,
+      userEmail: req.body.userEmail,
+      clientEmail: req.body.clientEmail
+    });
     
     res.status(500).json({
       success: false,

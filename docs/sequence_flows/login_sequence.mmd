@@ -1,0 +1,148 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% Login Sequence Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows the complete user authentication flow
+
+sequenceDiagram
+    participant User as 👤 User
+    participant Mobile as 📱 Mobile App
+    participant API as 🌐 Express API
+    participant AuthMW as 🔐 Auth Middleware
+    participant AuthController as 🎮 Auth Controller
+    participant AuthService as ⚙️ Auth Service
+    participant Firebase as 🔥 Firebase Auth
+    participant MongoDB as 🗄️ MongoDB
+    participant AuditService as 📋 Audit Service
+
+    Note over User, AuditService: User Login Flow
+    
+    %% Initial login attempt
+    User->>Mobile: Enter credentials
+    Mobile->>Mobile: Validate input format
+    
+    alt Valid input format
+        Mobile->>API: POST /api/auth/login<br/>{email, password}
+        
+        API->>AuthMW: Process request
+        AuthMW->>AuthController: Route to login handler
+        
+        AuthController->>AuthController: Validate request body
+        
+        alt Valid request
+            AuthController->>AuthService: authenticateUser(email, password)
+            
+            %% Firebase authentication
+            AuthService->>Firebase: signInWithEmailAndPassword()
+            
+            alt Firebase auth success
+                Firebase-->>AuthService: Firebase user token
+                
+                %% Get user details from database
+                AuthService->>MongoDB: findUser({email})
+                MongoDB-->>AuthService: User document
+                
+                alt User exists in database
+                    %% Generate JWT token
+                    AuthService->>AuthService: generateJWT(userInfo)
+                    
+                    %% Update last login
+                    AuthService->>MongoDB: updateUser({lastLogin: now})
+                    MongoDB-->>AuthService: Update confirmation
+                    
+                    %% Log successful login
+                    AuthService->>AuditService: logEvent('USER_LOGIN', userInfo)
+                    AuditService->>MongoDB: Insert audit record
+                    
+                    AuthService-->>AuthController: {success: true, token, user}
+                    AuthController-->>API: 200 OK {token, user, organization}
+                    API-->>Mobile: Success response
+                    
+                    Mobile->>Mobile: Store JWT token
+                    Mobile->>Mobile: Navigate to dashboard
+                    Mobile-->>User: Show dashboard
+                    
+                else User not found in database
+                    AuthService-->>AuthController: {error: 'User not found'}
+                    AuthController-->>API: 404 Not Found
+                    API-->>Mobile: Error response
+                    Mobile-->>User: Show "Account not found" error
+                end
+                
+            else Firebase auth failed
+                Firebase-->>AuthService: Authentication error
+                
+                %% Log failed login attempt
+                AuthService->>AuditService: logEvent('LOGIN_FAILED', {email, reason})
+                AuditService->>MongoDB: Insert audit record
+                
+                AuthService-->>AuthController: {error: 'Invalid credentials'}
+                AuthController-->>API: 401 Unauthorized
+                API-->>Mobile: Error response
+                Mobile-->>User: Show "Invalid credentials" error
+            end
+            
+        else Invalid request format
+            AuthController-->>API: 400 Bad Request
+            API-->>Mobile: Validation error
+            Mobile-->>User: Show validation errors
+        end
+        
+    else Invalid input format
+        Mobile-->>User: Show input validation errors
+    end
+    
+    Note over User, AuditService: Subsequent API Calls with JWT
+    
+    %% Authenticated API call example
+    User->>Mobile: Access protected feature
+    Mobile->>API: GET /api/protected-endpoint<br/>Authorization: Bearer {JWT}
+    
+    API->>AuthMW: Verify JWT token
+    
+    alt Valid JWT token
+        AuthMW->>AuthMW: Decode and verify token
+        AuthMW->>Firebase: Verify Firebase token (if needed)
+        
+        alt Token valid and not expired
+            AuthMW->>API: Continue to route handler
+            API->>API: Process protected request
+            API-->>Mobile: Protected data response
+            Mobile-->>User: Show protected content
+            
+        else Token expired or invalid
+            AuthMW-->>API: 401 Unauthorized
+            API-->>Mobile: Token expired error
+            Mobile->>Mobile: Clear stored token
+            Mobile-->>User: Redirect to login
+        end
+        
+    else No token provided
+        AuthMW-->>API: 401 Unauthorized
+        API-->>Mobile: Authentication required
+        Mobile-->>User: Redirect to login
+    end
+    
+    Note over User, AuditService: Logout Flow
+    
+    User->>Mobile: Logout action
+    Mobile->>API: POST /api/auth/logout
+    
+    API->>AuthMW: Verify current session
+    AuthMW->>AuthController: Route to logout handler
+    
+    AuthController->>AuthService: logoutUser(userId)
+    
+    %% Log logout event
+    AuthService->>AuditService: logEvent('USER_LOGOUT', userInfo)
+    AuditService->>MongoDB: Insert audit record
+    
+    %% Optional: Invalidate token on server side
+    AuthService->>MongoDB: addToTokenBlacklist(token)
+    
+    AuthService-->>AuthController: Logout success
+    AuthController-->>API: 200 OK
+    API-->>Mobile: Logout confirmation
+    
+    Mobile->>Mobile: Clear stored token
+    Mobile->>Mobile: Clear user data
+    Mobile-->>User: Redirect to login screen

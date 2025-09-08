@@ -1,0 +1,138 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: invoice-app-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: invoice-app
+          __path__: /app/logs/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            service: service
+            organizationId: organizationId
+            userId: userId
+            action: action
+            resource: resource
+            duration: duration
+            error: error
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - labels:
+          level:
+          service:
+          organizationId:
+          userId:
+          action:
+          resource:
+      - output:
+          source: message
+
+  - job_name: invoice-business
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: invoice-business
+          __path__: /app/logs/business/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            metric_type: metric_type
+            metric_name: metric_name
+            metric_value: metric_value
+            organizationId: organizationId
+            tags: tags
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - labels:
+          level:
+          metric_type:
+          metric_name:
+          organizationId:
+      - output:
+          source: message
+
+  - job_name: invoice-audit
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: invoice-audit
+          __path__: /app/logs/audit/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            userId: userId
+            action: action
+            resource: resource
+            resourceId: resourceId
+            organizationId: organizationId
+            ipAddress: ipAddress
+            userAgent: userAgent
+            changes: changes
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - labels:
+          level:
+          userId:
+          action:
+          resource:
+          organizationId:
+      - output:
+          source: message
+
+  - job_name: invoice-error-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: invoice-errors
+          __path__: /app/logs/errors/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            error_type: error_type
+            error_code: error_code
+            stack_trace: stack_trace
+            userId: userId
+            organizationId: organizationId
+            endpoint: endpoint
+            method: method
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - labels:
+          level:
+          error_type:
+          error_code:
+          organizationId:
+          endpoint:
+          method:
+      - output:
+          source: message

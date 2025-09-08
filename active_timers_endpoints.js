@@ -261,7 +261,10 @@
 //       });
 //     }
     
-//     console.log('Stopping timer with tracking for:', { userEmail, organizationId });
+//     logger.info('Stopping timer with tracking', {
+//       userEmail,
+//       organizationId
+//     });
     
 //     // Connect to MongoDB
 //     client = await MongoClient.connect(uri, {
@@ -510,7 +513,9 @@
 //   try {
 //     const { organizationId } = req.params;
     
-//     console.log('Getting active timers for organization:', organizationId);
+//     logger.debug('Getting active timers for organization', {
+//       organizationId
+//     });
     
 //     // Connect to MongoDB
 //     client = await MongoClient.connect(uri, {
@@ -568,6 +573,7 @@
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { messaging } = require('./firebase-admin-config'); // Correctly imports your initialized Firebase Admin
+const logger = require('./config/logger');
 require('dotenv').config();
 
 const uri = process.env.MONGODB_URI;
@@ -581,9 +587,11 @@ const uri = process.env.MONGODB_URI;
  * message, and sending the notification.
  */
 async function sendAdminNotification(db, organizationId, title, body, data) {
-  console.log(`\n=== ADMIN NOTIFICATION FLOW - START: ${data.type} ===`);
-  console.log(`Timestamp: ${new Date().toISOString()}`);
-  console.log(`Finding admin users for organization: ${organizationId}`);
+  logger.info('Admin notification flow started', {
+    type: data.type,
+    organizationId,
+    timestamp: new Date().toISOString()
+  });
 
   try {
     // 1. Find all users in the organization with the role 'admin'.
@@ -594,13 +602,19 @@ async function sendAdminNotification(db, organizationId, title, body, data) {
     }).project({ email: 1 }).toArray();
 
     if (adminUsers.length === 0) {
-      console.log('No active admin users found for this organization. No notifications sent.');
-      console.log(`=== END ADMIN NOTIFICATION FLOW: ${data.type} ===\n`);
+      logger.warn('No active admin users found for organization', {
+        organizationId,
+        type: data.type
+      });
       return;
     }
 
     const adminEmails = adminUsers.map(user => user.email);
-    console.log(`Found ${adminEmails.length} admin emails to notify:`, adminEmails);
+    logger.info('Found admin users to notify', {
+      organizationId,
+      adminCount: adminEmails.length,
+      adminEmails
+    });
 
     // 2. Get the FCM tokens for these specific admin users.
     const tokenDocs = await db.collection('fcmTokens').find({
@@ -610,11 +624,17 @@ async function sendAdminNotification(db, organizationId, title, body, data) {
     const validTokens = tokenDocs.map(doc => doc.fcmToken).filter(Boolean);
 
     if (validTokens.length === 0) {
-      console.log('No valid FCM tokens found for any admin users. No notifications sent.');
-      console.log(`=== END ADMIN NOTIFICATION FLOW: ${data.type} ===\n`);
+      logger.warn('No valid FCM tokens found for admin users', {
+        organizationId,
+        type: data.type,
+        adminCount: adminEmails.length
+      });
       return;
     }
-    console.log(`Found ${validTokens.length} valid FCM tokens for admins.`);
+    logger.info('Found valid FCM tokens for admins', {
+      organizationId,
+      tokenCount: validTokens.length
+    });
 
     // 3. Construct the robust "Notification + Data" message payload.
     const message = {
@@ -640,11 +660,18 @@ async function sendAdminNotification(db, organizationId, title, body, data) {
     };
 
     // 4. Send the notification and handle the response.
-    console.log('\n--- Sending Notification to Admins ---');
+    logger.info('Sending notification to admins', {
+      organizationId,
+      type: data.type,
+      tokenCount: validTokens.length
+    });
     const fcmResponse = await messaging.sendEachForMulticast(message);
-    console.log('--- FCM Response ---');
-    console.log('Success Count:', fcmResponse.successCount);
-    console.log('Failure Count:', fcmResponse.failureCount);
+    logger.info('FCM notification response', {
+      organizationId,
+      type: data.type,
+      successCount: fcmResponse.successCount,
+      failureCount: fcmResponse.failureCount
+    });
 
     // 5. Clean up any invalid tokens from the database.
     if (fcmResponse.failureCount > 0) {
@@ -659,13 +686,24 @@ async function sendAdminNotification(db, organizationId, title, body, data) {
       });
       if (tokensToRemove.length > 0) {
         await db.collection('fcmTokens').deleteMany({ fcmToken: { $in: tokensToRemove } });
-        console.log(`Removed ${tokensToRemove.length} invalid admin tokens.`);
+        logger.info('Removed invalid FCM tokens', {
+          organizationId,
+          removedTokenCount: tokensToRemove.length
+        });
       }
     }
   } catch (error) {
-    console.error('FATAL ERROR in sendAdminNotification:', error);
+    logger.error('Failed to send admin notification', {
+      error: error.message,
+      stack: error.stack,
+      organizationId,
+      type: data.type
+    });
   } finally {
-    console.log(`=== END ADMIN NOTIFICATION FLOW: ${data.type} ===\n`);
+    logger.info('Admin notification flow completed', {
+      organizationId,
+      type: data.type
+    });
   }
 }
 
@@ -698,7 +736,12 @@ async function startTimerWithTracking(req, res) {
 
     const timerData = { userEmail, clientEmail, organizationId, startTime: new Date() };
     const result = await db.collection('activeTimers').insertOne(timerData);
-    console.log('Timer started in DB for:', { userEmail, clientEmail });
+    logger.info('Timer started successfully', {
+      userEmail,
+      clientEmail,
+      organizationId,
+      timerId: result.insertedId
+    });
 
     // --- NOTIFICATION LOGIC ---
     // 1. Notify the employee who started the timer.
@@ -727,7 +770,11 @@ async function startTimerWithTracking(req, res) {
     res.status(200).json({ success: true, message: 'Timer started successfully', timerId: result.insertedId });
 
   } catch (error) {
-    console.error('Error starting timer:', error);
+    logger.error('Error starting timer', {
+      error: error.message,
+      stack: error.stack,
+      timerData: req.body
+    });
     res.status(500).json({ success: false, message: 'Internal server error while starting timer' });
   } finally {
     if (client) await client.close();
@@ -749,17 +796,24 @@ async function stopTimerWithTracking(req, res) {
     client = await MongoClient.connect(uri, { serverApi: ServerApiVersion.v1 });
     const db = client.db('Invoice');
 
-    console.log(`Looking for active timer for user: ${userEmail}`);
+    logger.info('Looking for active timer', { userEmail });
     const activeTimer = await db.collection('activeTimers').findOneAndDelete({ userEmail });
-    console.log('findOneAndDelete result:', activeTimer);
+    logger.info('Active timer query result', {
+      userEmail,
+      timerFound: !!activeTimer
+    });
     
     if (!activeTimer) {
-      console.log('No active timer found for user:', userEmail);
+      logger.warn('No active timer found for user', { userEmail });
       return res.status(404).json({ success: false, message: 'No active timer found for this user.' });
     }
 
     const timerDoc = activeTimer;
-    console.log('Timer document found:', timerDoc);
+    logger.info('Timer document retrieved', {
+      userEmail,
+      clientEmail: timerDoc.clientEmail,
+      startTime: timerDoc.startTime
+    });
     const stopTime = new Date();
     const startTime = timerDoc.startTime;
     const totalSeconds = Math.floor((stopTime.getTime() - startTime.getTime()) / 1000);
@@ -778,7 +832,13 @@ async function stopTimerWithTracking(req, res) {
       totalSeconds,
       createdAt: new Date(),
     });
-    console.log('Timer stopped and worked time recorded for:', { userEmail, timeWorked: formattedTime });
+    logger.info('Timer stopped and worked time recorded', {
+      userEmail,
+      clientEmail: timerDoc.clientEmail,
+      organizationId,
+      timeWorked: formattedTime,
+      totalSeconds
+    });
 
     // --- NOTIFICATION LOGIC ---
     // 1. Notify the employee who stopped the timer.
@@ -808,7 +868,11 @@ async function stopTimerWithTracking(req, res) {
     res.status(200).json({ success: true, message: 'Timer stopped successfully', timeWorked: formattedTime });
 
   } catch (error) {
-    console.error('Error stopping timer:', error);
+    logger.error('Error stopping timer', {
+      error: error.message,
+      stack: error.stack,
+      timerId: req.params.timerId
+    });
     res.status(500).json({ success: false, message: 'Internal server error while stopping timer' });
   } finally {
     if (client) await client.close();
@@ -828,7 +892,11 @@ async function getActiveTimers(req, res) {
     const activeTimers = await db.collection('activeTimers').find({ organizationId }).toArray();
     res.status(200).json({ success: true, activeTimers, count: activeTimers.length });
   } catch (error) {
-    console.error('Error getting active timers:', error);
+    logger.error('Error getting active timers', {
+      error: error.message,
+      stack: error.stack,
+      organizationId: req.params.organizationId
+    });
     res.status(500).json({ success: false, message: 'Internal server error while getting active timers' });
   } finally {
     if (client) await client.close();

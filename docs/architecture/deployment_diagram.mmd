@@ -1,0 +1,108 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% Deployment Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows deployment architecture and CI/CD pipeline
+
+flowchart TB
+    %% Development Environment
+    subgraph DevEnv ["Development Environment"]
+        DevMachine["💻 Developer Machine<br/>- Flutter SDK<br/>- Android Studio<br/>- Xcode (iOS)"]
+        LocalEmulator["📱 Local Emulator<br/>- Android Emulator<br/>- iOS Simulator"]
+    end
+    
+    %% Source Control
+    subgraph SourceControl ["Source Control"]
+        GitRepo["📚 Git Repository<br/>- Source code<br/>- Build configurations<br/>- CI/CD workflows"]
+    end
+    
+    %% CI/CD Pipeline
+    subgraph CICD ["CI/CD Pipeline"]
+        GitHubActions["⚙️ GitHub Actions<br/>- Automated builds<br/>- Testing<br/>- Code quality checks"]
+        
+        subgraph BuildStage ["Build Stage"]
+            FlutterBuild["🔨 Flutter Build<br/>- flutter build apk<br/>- flutter build ios"]
+            AndroidBuild["🤖 Android Build<br/>- Gradle build<br/>- APK/AAB generation"]
+            iOSBuild["🍎 iOS Build<br/>- Xcode build<br/>- IPA generation"]
+        end
+        
+        subgraph SigningStage ["Signing Stage"]
+            AndroidSigning["🔐 Android Signing<br/>- Keystore signing<br/>- Play Store ready"]
+            iOSSigning["🔐 iOS Signing<br/>- Certificate signing<br/>- App Store ready"]
+        end
+    end
+    
+    %% Fastlane
+    subgraph FastlaneDeployment ["Fastlane Deployment"]
+        AndroidFastlane["🚀 Android Fastlane<br/>- Play Store upload<br/>- Internal testing<br/>- Production release"]
+        iOSFastlane["🚀 iOS Fastlane<br/>- TestFlight upload<br/>- App Store submission"]
+    end
+    
+    %% App Stores
+    subgraph AppStores ["Distribution"]
+        PlayStore["🏪 Google Play Store<br/>- Production track<br/>- Internal testing<br/>- Beta testing"]
+        AppStore["🏪 Apple App Store<br/>- TestFlight<br/>- Production release"]
+    end
+    
+    %% Backend Infrastructure
+    subgraph BackendInfra ["Backend Infrastructure"]
+        NodeServer["🖥️ Node.js Server<br/>- Express.js API<br/>- MongoDB connection<br/>- Firebase integration"]
+        MongoDB["🗄️ MongoDB Database<br/>- Document storage<br/>- Replica sets<br/>- Backup strategy"]
+        FileStorage["📁 File Storage<br/>- Expense photos<br/>- Generated PDFs<br/>- Static assets"]
+        Firebase["🔐 Firebase Services<br/>- Authentication<br/>- Push notifications<br/>- Analytics"]
+    end
+    
+    %% Environment Configurations
+    subgraph Environments ["Environment Configurations"]
+        DevConfig["🔧 Development<br/>- Local MongoDB<br/>- Test Firebase project<br/>- Debug builds"]
+        StagingConfig["🔧 Staging<br/>- Staging database<br/>- Test environment<br/>- Beta builds"]
+        ProdConfig["🔧 Production<br/>- Production database<br/>- Live Firebase<br/>- Release builds"]
+    end
+    
+    %% Flow connections
+    DevMachine --> GitRepo
+    DevMachine --> LocalEmulator
+    
+    GitRepo --> GitHubActions
+    GitHubActions --> BuildStage
+    
+    FlutterBuild --> AndroidBuild
+    FlutterBuild --> iOSBuild
+    
+    AndroidBuild --> AndroidSigning
+    iOSBuild --> iOSSigning
+    
+    AndroidSigning --> AndroidFastlane
+    iOSSigning --> iOSFastlane
+    
+    AndroidFastlane --> PlayStore
+    iOSFastlane --> AppStore
+    
+    %% Backend connections
+    NodeServer --> MongoDB
+    NodeServer --> FileStorage
+    NodeServer --> Firebase
+    
+    %% Environment connections
+    DevConfig -.-> DevEnv
+    StagingConfig -.-> CICD
+    ProdConfig -.-> AppStores
+    
+    %% Mobile app connections to backend
+    LocalEmulator -.->|"API Calls"| NodeServer
+    PlayStore -.->|"API Calls"| NodeServer
+    AppStore -.->|"API Calls"| NodeServer
+    
+    %% Styling
+    classDef development fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef cicd fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef deployment fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef store fill:#e3f2fd,stroke:#0277bd,stroke-width:2px
+    classDef backend fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef config fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class DevMachine,LocalEmulator,GitRepo development
+    class GitHubActions,FlutterBuild,AndroidBuild,iOSBuild,AndroidSigning,iOSSigning cicd
+    class AndroidFastlane,iOSFastlane deployment
+    class PlayStore,AppStore store
+    class NodeServer,MongoDB,FileStorage,Firebase backend
+    class DevConfig,StagingConfig,ProdConfig config

@@ -1,0 +1,187 @@
+groups:
+  - name: invoice-app-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          service: invoice-app
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }} errors per second for the last 5 minutes"
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: invoice-app
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }} seconds"
+
+      - alert: HighMemoryUsage
+        expr: (process_resident_memory_bytes / 1024 / 1024) > 512
+        for: 5m
+        labels:
+          severity: warning
+          service: invoice-app
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value }}MB"
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: invoice-app
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}%"
+
+  - name: business-metrics-alerts
+    rules:
+      - alert: LowInvoiceGenerationRate
+        expr: rate(invoice_generation_total[1h]) < 0.1
+        for: 30m
+        labels:
+          severity: warning
+          service: invoice-app
+          category: business
+        annotations:
+          summary: "Low invoice generation rate"
+          description: "Invoice generation rate is {{ $value }} per hour, which is below normal"
+
+      - alert: HighInvoiceFailureRate
+        expr: rate(invoice_generation_failures_total[5m]) / rate(invoice_generation_total[5m]) > 0.05
+        for: 10m
+        labels:
+          severity: critical
+          service: invoice-app
+          category: business
+        annotations:
+          summary: "High invoice generation failure rate"
+          description: "Invoice failure rate is {{ $value | humanizePercentage }}"
+
+      - alert: NDISComplianceIssue
+        expr: ndis_compliance_violations_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          service: invoice-app
+          category: compliance
+        annotations:
+          summary: "NDIS compliance violation detected"
+          description: "{{ $value }} NDIS compliance violations detected"
+
+      - alert: RevenueDropAlert
+        expr: (revenue_total - revenue_total offset 24h) / revenue_total offset 24h < -0.2
+        for: 1h
+        labels:
+          severity: warning
+          service: invoice-app
+          category: business
+        annotations:
+          summary: "Significant revenue drop detected"
+          description: "Revenue has dropped by {{ $value | humanizePercentage }} compared to yesterday"
+
+  - name: database-alerts
+    rules:
+      - alert: DatabaseConnectionFailure
+        expr: mongodb_connections_failed_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "Database connection failures detected"
+          description: "{{ $value }} database connection failures in the last minute"
+
+      - alert: SlowDatabaseQueries
+        expr: mongodb_query_duration_seconds{quantile="0.95"} > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "95th percentile query time is {{ $value }} seconds"
+
+      - alert: HighDatabaseConnections
+        expr: mongodb_connections_active > 100
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "High number of database connections"
+          description: "{{ $value }} active database connections"
+
+  - name: system-health-alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute"
+
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High disk usage detected"
+          description: "Disk usage is {{ $value }}% on {{ $labels.instance }}"
+
+      - alert: HighSystemLoad
+        expr: node_load1 > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High system load detected"
+          description: "System load is {{ $value }} on {{ $labels.instance }}"
+
+  - name: client-activity-alerts
+    rules:
+      - alert: ClientInactivityAlert
+        expr: client_last_activity_hours > 168  # 7 days
+        for: 1h
+        labels:
+          severity: warning
+          service: invoice-app
+          category: client
+        annotations:
+          summary: "Client inactivity detected"
+          description: "Client {{ $labels.client_id }} has been inactive for {{ $value }} hours"
+
+      - alert: LowClientEngagement
+        expr: client_engagement_score < 0.3
+        for: 6h
+        labels:
+          severity: warning
+          service: invoice-app
+          category: client
+        annotations:
+          summary: "Low client engagement detected"
+          description: "Client {{ $labels.client_id }} has engagement score of {{ $value }}"
+
+      - alert: ClientChurnRisk
+        expr: client_churn_risk_score > 0.8
+        for: 1h
+        labels:
+          severity: critical
+          service: invoice-app
+          category: client
+        annotations:
+          summary: "High client churn risk detected"
+          description: "Client {{ $labels.client_id }} has churn risk score of {{ $value }}"

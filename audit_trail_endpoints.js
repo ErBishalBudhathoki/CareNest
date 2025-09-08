@@ -7,6 +7,7 @@
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const path = require('path');
+const logger = require('./config/logger');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const {
@@ -17,7 +18,7 @@ const {
   cleanupOldAuditLogs,
   AUDIT_ACTIONS,
   AUDIT_ENTITIES
-} = require('./audit_trail_service');
+} = require('./services/auditService');
 
 const uri = process.env.MONGODB_URI;
 
@@ -78,7 +79,12 @@ async function getEntityAuditHistoryEndpoint(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in getEntityAuditHistoryEndpoint:', error);
+    logger.error('Error in getEntityAuditHistoryEndpoint', {
+      error: error.message,
+      stack: error.stack,
+      entityType: req.params.entityType,
+      entityId: req.params.entityId
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
@@ -146,7 +152,11 @@ async function getOrganizationAuditLogsEndpoint(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in getOrganizationAuditLogsEndpoint:', error);
+    logger.error('Error in getOrganizationAuditLogsEndpoint', {
+      error: error.message,
+      stack: error.stack,
+      organizationId: req.params.organizationId
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
@@ -207,7 +217,11 @@ async function getAuditStatisticsEndpoint(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in getAuditStatisticsEndpoint:', error);
+    logger.error('Error in getAuditStatisticsEndpoint', {
+      error: error.message,
+      stack: error.stack,
+      organizationId: req.params.organizationId
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
@@ -287,7 +301,11 @@ async function createAuditLogEndpoint(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in createAuditLogEndpoint:', error);
+    logger.error('Error in createAuditLogEndpoint', {
+      error: error.message,
+      stack: error.stack,
+      auditData: req.body
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
@@ -312,7 +330,10 @@ async function getAuditMetadataEndpoint(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in getAuditMetadataEndpoint:', error);
+    logger.error('Error in getAuditMetadataEndpoint', {
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
@@ -416,7 +437,11 @@ async function exportAuditLogsEndpoint(req, res) {
     }
 
   } catch (error) {
-    console.error('Error in exportAuditLogsEndpoint:', error);
+    logger.error('Error in exportAuditLogsEndpoint', {
+      error: error.message,
+      stack: error.stack,
+      organizationId: req.params.organizationId
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Internal server error',

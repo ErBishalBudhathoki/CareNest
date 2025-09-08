@@ -4,9 +4,10 @@
  * Task 2.3: Create price prompt system for missing prices
  */
 
-const PricePromptService = require('./price_prompt_service');
+const PricePromptService = require('./services/pricePromptService');
 const { createAuditLogEndpoint } = require('./audit_trail_endpoints');
 const { v4: uuidv4 } = require('uuid');
+const logger = require('./config/logger');
 
 /**
  * Create a price prompt for missing pricing
@@ -62,7 +63,11 @@ async function createPricePrompt(req, res) {
     });
     
   } catch (error) {
-    console.error('Error creating price prompt:', error);
+    logger.error('Error creating price prompt', {
+      error: error.message,
+      stack: error.stack,
+      promptData: req.body
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to create price prompt',
@@ -128,7 +133,12 @@ async function resolvePricePrompt(req, res) {
     });
     
   } catch (error) {
-    console.error('Error resolving price prompt:', error);
+    logger.error('Error resolving price prompt', {
+      error: error.message,
+      stack: error.stack,
+      promptId: req.body.promptId,
+      resolutionData: req.body
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to resolve price prompt',
@@ -170,7 +180,11 @@ async function getPendingPrompts(req, res) {
     });
     
   } catch (error) {
-    console.error('Error getting pending prompts:', error);
+    logger.error('Error getting pending prompts', {
+      error: error.message,
+      stack: error.stack,
+      sessionId: req.params.sessionId
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to get pending prompts',
@@ -222,7 +236,11 @@ async function cancelPricePrompt(req, res) {
     });
     
   } catch (error) {
-    console.error('Error cancelling price prompt:', error);
+    logger.error('Error cancelling price prompt', {
+      error: error.message,
+      stack: error.stack,
+      promptId: req.body.promptId
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to cancel price prompt',
@@ -238,7 +256,7 @@ async function cancelPricePrompt(req, res) {
  * POST /api/invoice/generate-with-prompts
  */
 async function generateInvoiceWithPrompts(req, res) {
-  const InvoiceGenerationService = require('./invoice_generation_service');
+  const InvoiceGenerationService = require('./services/invoiceGenerationService');
   const invoiceService = new InvoiceGenerationService();
   const promptService = new PricePromptService();
   
@@ -334,7 +352,12 @@ async function generateInvoiceWithPrompts(req, res) {
     });
     
   } catch (error) {
-    console.error('Error generating invoice with prompts:', error);
+    logger.error('Error generating invoice with prompts', {
+      error: error.message,
+      stack: error.stack,
+      userEmail: req.body.userEmail,
+      clientEmail: req.body.clientEmail
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to generate invoice with prompts',
@@ -399,7 +422,11 @@ async function completeInvoiceGeneration(req, res) {
     });
     
   } catch (error) {
-    console.error('Error completing invoice generation:', error);
+    logger.error('Error completing invoice generation', {
+      error: error.message,
+      stack: error.stack,
+      sessionId: req.body.sessionId
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to complete invoice generation',
@@ -422,7 +449,11 @@ async function createAuditLog(auditData) {
       status: () => ({ json: () => {} })
     });
   } catch (error) {
-    console.error('Error creating audit log:', error);
+    logger.error('Error creating audit log', {
+      error: error.message,
+      stack: error.stack,
+      auditData
+    });
     // Don't throw error for audit log failures
   }
 }

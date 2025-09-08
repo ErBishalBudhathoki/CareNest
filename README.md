@@ -1,4 +1,4 @@
-# Multi-Tenant Invoice Backend REST API
+# Multi-Tenant Invoice Backend Server
 
 This is a Node.js Express server implementing a multi-tenant solution for an invoice management system. The server supports organization-based user management with role-based access control.
 

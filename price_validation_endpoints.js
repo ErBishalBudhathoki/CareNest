@@ -3,7 +3,8 @@
  * Provides REST API endpoints for NDIS price validation service
  */
 
-const { priceValidationService } = require('./price_validation_service');
+const { priceValidationService } = require('./services/priceValidationService');
+const logger = require('./config/logger');
 
 /**
  * Validate a single price against NDIS caps
@@ -48,7 +49,13 @@ async function validatePrice(req, res) {
     });
 
   } catch (error) {
-    console.error('Error validating price:', error);
+    logger.error('Price validation failed', {
+      error: error.message,
+      stack: error.stack,
+      supportItemNumber: req.body.supportItemNumber,
+      proposedPrice: req.body.proposedPrice,
+      state: req.body.state
+    });
     res.status(500).json({
       success: false,
       error: 'Internal server error during price validation'
@@ -101,7 +108,11 @@ async function validatePricesBatch(req, res) {
     });
 
   } catch (error) {
-    console.error('Error validating prices batch:', error);
+    logger.error('Batch price validation failed', {
+      error: error.message,
+      stack: error.stack,
+      batchSize: req.body.validations?.length
+    });
     res.status(500).json({
       success: false,
       error: 'Internal server error during batch price validation'
@@ -139,7 +150,11 @@ async function getPriceCaps(req, res) {
     });
 
   } catch (error) {
-    console.error('Error getting price caps:', error);
+    logger.error('Price caps retrieval failed', {
+      error: error.message,
+      stack: error.stack,
+      supportItemNumber: req.params.supportItemNumber
+    });
     res.status(500).json({
       success: false,
       error: 'Internal server error while retrieving price caps'
@@ -173,7 +188,11 @@ async function checkQuoteRequired(req, res) {
     });
 
   } catch (error) {
-    console.error('Error checking quote requirement:', error);
+    logger.error('Quote requirement check failed', {
+      error: error.message,
+      stack: error.stack,
+      supportItemNumber: req.params.supportItemNumber
+    });
     res.status(500).json({
       success: false,
       error: 'Internal server error while checking quote requirement'
@@ -260,7 +279,11 @@ async function validateInvoiceLineItems(req, res) {
     });
 
   } catch (error) {
-    console.error('Error validating invoice line items:', error);
+    logger.error('Invoice validation failed', {
+      error: error.message,
+      stack: error.stack,
+      lineItemsCount: req.body.lineItems?.length
+    });
     res.status(500).json({
       success: false,
       error: 'Internal server error during invoice validation'
@@ -296,7 +319,10 @@ async function getValidationStats(req, res) {
     });
 
   } catch (error) {
-    console.error('Error getting validation stats:', error);
+    logger.error('Validation stats retrieval failed', {
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({
       success: false,
       error: 'Internal server error while retrieving validation statistics'

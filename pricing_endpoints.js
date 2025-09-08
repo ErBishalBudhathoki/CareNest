@@ -7,7 +7,7 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
-const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./audit_trail_service');
+const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./services/auditService');
 
 const uri = process.env.MONGODB_URI;
 

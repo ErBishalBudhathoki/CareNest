@@ -1,4 +1,5 @@
 const { MongoClient } = require('mongodb');
+const logger = require('../utils/logger');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -23,7 +24,7 @@ async function migrateExistingPricing() {
       return;
     }
     
-    console.log('Starting migration of existing pricing data...');
+    logger.info('Starting migration of existing pricing data...');
     
     // Get collections
     const customPricingCollection = db.collection('customPricing');
@@ -278,11 +279,14 @@ async function migrateExistingPricing() {
 if (require.main === module) {
   migrateExistingPricing()
     .then(() => {
-      console.log('\n✅ Existing pricing migration completed successfully');
+      logger.info('\n✅ Existing pricing migration completed successfully');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('\n❌ Migration failed:', error);
+      logger.error('\n❌ Migration failed', {
+        error: error.message,
+        stack: error.stack
+      });
       process.exit(1);
     });
 }

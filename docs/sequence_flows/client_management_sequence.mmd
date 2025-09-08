@@ -1,0 +1,374 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% Client Management Sequence Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows the client onboarding and management flow
+
+sequenceDiagram
+    participant Admin as 👨‍💼 Admin
+    participant Mobile as 📱 Mobile App
+    participant API as 🌐 Express API
+    participant AuthMW as 🔐 Auth Middleware
+    participant ClientController as 🎮 Client Controller
+    participant ClientService as ⚙️ Client Service
+    participant BusinessController as 🎮 Business Controller
+    participant BusinessService as ⚙️ Business Service
+    participant PricingController as 🎮 Pricing Controller
+    participant PricingService as ⚙️ Pricing Service
+    participant MongoDB as 🗄️ MongoDB
+    participant FileStorage as 📁 File Storage
+    participant AuditService as 📋 Audit Service
+    participant NotificationService as 🔔 Notification Service
+    participant NDIS as 📋 NDIS Database
+    participant Employee as 👤 Employee
+
+    Note over Admin, Employee: Client Onboarding Flow
+    
+    %% Admin adds new client
+    Admin->>Mobile: Tap "Add New Client"
+    Mobile->>Mobile: Show client registration form
+    Admin->>Mobile: Fill client details<br/>(name, contact, NDIS number, support needs)
+    Admin->>Mobile: Upload client documents
+    
+    Mobile->>API: POST /api/clients<br/>{personalInfo, ndisInfo, supportNeeds, documents[]}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ClientController: Route to createClient()
+    
+    ClientController->>ClientController: Validate client data
+    
+    alt Valid client data
+        ClientController->>ClientService: createClient(clientData)
+        
+        %% Verify NDIS information
+        ClientService->>NDIS: Validate NDIS participant number
+        NDIS-->>ClientService: NDIS validation result
+        
+        alt NDIS validation successful
+            %% Upload client documents
+            loop For each document
+                ClientService->>FileStorage: Upload client document
+                FileStorage-->>ClientService: Document file path
+            end
+            
+            %% Create client record
+            ClientService->>ClientService: Build client object<br/>{personalInfo, ndisInfo, documentPaths, status: 'active'}
+            
+            ClientService->>MongoDB: Insert clients document
+            MongoDB-->>ClientService: Client ID
+            
+            %% Create default pricing profile
+            ClientService->>PricingService: createDefaultPricingProfile(clientId)
+            PricingService->>MongoDB: Insert customPricing document
+            MongoDB-->>PricingService: Pricing profile ID
+            
+            %% Log audit trail
+            ClientService->>AuditService: logEvent('CLIENT_CREATED', clientInfo)
+            AuditService->>MongoDB: Insert audit record
+            
+            ClientService-->>ClientController: {success: true, clientId}
+            ClientController-->>API: 201 Created {client}
+            API-->>Mobile: Client created successfully
+            
+            Mobile->>Mobile: Show success message
+            Mobile-->>Admin: "Client onboarded successfully"
+            
+            %% Send welcome notification
+            ClientService->>NotificationService: sendWelcomeNotification(clientId)
+            NotificationService->>NotificationService: Prepare welcome message
+            
+        else NDIS validation failed
+            ClientService-->>ClientController: {error: 'Invalid NDIS number'}
+            ClientController-->>API: 400 Bad Request
+            API-->>Mobile: NDIS validation error
+            Mobile-->>Admin: "Please verify NDIS participant number"
+        end
+        
+    else Invalid client data
+        ClientController-->>API: 400 Bad Request
+        API-->>Mobile: Validation errors
+        Mobile-->>Admin: Show error messages
+    end
+    
+    Note over Admin, Employee: Client Assignment Flow
+    
+    %% Admin assigns employee to client
+    Admin->>Mobile: Open "Client Assignments"
+    Mobile->>API: GET /api/clients/{id}/assignments
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ClientController: Route to getClientAssignments()
+    
+    ClientController->>ClientService: getClientAssignments(clientId)
+    ClientService->>MongoDB: Query clientAssignments collection
+    MongoDB-->>ClientService: Current assignments
+    
+    ClientService-->>ClientController: Assignment list with employee details
+    ClientController-->>API: 200 OK {assignments[]}
+    API-->>Mobile: Current assignments
+    Mobile-->>Admin: Display assignment management
+    
+    %% Add new assignment
+    Admin->>Mobile: Tap "Add Assignment"
+    Mobile->>Mobile: Show employee selection
+    Admin->>Mobile: Select employee and role
+    
+    Mobile->>API: POST /api/clients/{id}/assignments<br/>{employeeId, role, startDate, supportTypes[]}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ClientController: Route to createClientAssignment()
+    
+    ClientController->>ClientService: createClientAssignment(assignmentData)
+    
+    %% Check employee availability
+    ClientService->>MongoDB: Query existing assignments for employee
+    MongoDB-->>ClientService: Employee workload
+    
+    alt Employee available
+        ClientService->>MongoDB: Insert clientAssignments document
+        MongoDB-->>ClientService: Assignment ID
+        
+        %% Notify employee
+        ClientService->>NotificationService: notifyEmployeeAssignment(employeeId, clientId)
+        NotificationService->>Mobile: Push notification to employee
+        Mobile-->>Employee: "New client assignment: [Client Name]"
+        
+        %% Log assignment
+        ClientService->>AuditService: logEvent('CLIENT_ASSIGNED', assignmentInfo)
+        AuditService->>MongoDB: Insert audit record
+        
+        ClientService-->>ClientController: {success: true, assignmentId}
+        ClientController-->>API: 201 Created {assignment}
+        API-->>Mobile: Assignment created
+        Mobile-->>Admin: "Employee assigned successfully"
+        
+    else Employee overloaded
+        ClientService-->>ClientController: {warning: 'Employee workload high'}
+        ClientController-->>API: 200 OK {assignment, warning}
+        API-->>Mobile: Assignment created with warning
+        Mobile-->>Admin: "Assignment created - employee workload high"
+    end
+    
+    Note over Admin, Employee: Business Profile Management
+    
+    %% Admin manages business profiles
+    Admin->>Mobile: Open "Business Profiles"
+    Mobile->>API: GET /api/business-profiles
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>BusinessController: Route to getBusinessProfiles()
+    
+    BusinessController->>BusinessService: getBusinessProfiles()
+    BusinessService->>MongoDB: Query businessProfiles collection
+    MongoDB-->>BusinessService: Business profile list
+    
+    BusinessService-->>BusinessController: Profiles with client counts
+    BusinessController-->>API: 200 OK {profiles[]}
+    API-->>Mobile: Business profiles
+    Mobile-->>Admin: Display business management
+    
+    %% Create new business profile
+    Admin->>Mobile: Tap "Add Business Profile"
+    Mobile->>Mobile: Show business profile form
+    Admin->>Mobile: Enter business details<br/>(name, ABN, address, contact)
+    
+    Mobile->>API: POST /api/business-profiles<br/>{businessInfo, contactDetails, settings}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>BusinessController: Route to createBusinessProfile()
+    
+    BusinessController->>BusinessService: createBusinessProfile(businessData)
+    
+    BusinessService->>MongoDB: Insert businessProfiles document
+    MongoDB-->>BusinessService: Business profile ID
+    
+    %% Log business creation
+    BusinessService->>AuditService: logEvent('BUSINESS_PROFILE_CREATED', businessInfo)
+    AuditService->>MongoDB: Insert audit record
+    
+    BusinessService-->>BusinessController: {success: true, profileId}
+    BusinessController-->>API: 201 Created {businessProfile}
+    API-->>Mobile: Business profile created
+    Mobile-->>Admin: "Business profile added successfully"
+    
+    Note over Admin, Employee: Custom Pricing Management
+    
+    %% Admin sets custom pricing for client
+    Admin->>Mobile: Open client details
+    Mobile->>Mobile: Show client profile
+    Admin->>Mobile: Tap "Manage Pricing"
+    
+    Mobile->>API: GET /api/pricing/custom/{clientId}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>PricingController: Route to getCustomPricing()
+    
+    PricingController->>PricingService: getCustomPricing(clientId)
+    PricingService->>MongoDB: Query customPricing collection
+    MongoDB-->>PricingService: Custom pricing rules
+    
+    %% Get standard NDIS rates for comparison
+    PricingService->>NDIS: Query standard support item rates
+    NDIS-->>PricingService: Standard rates
+    
+    PricingService-->>PricingController: {customRates, standardRates}
+    PricingController-->>API: 200 OK {pricing}
+    API-->>Mobile: Pricing information
+    Mobile-->>Admin: Display pricing management
+    
+    %% Update custom pricing
+    Admin->>Mobile: Modify pricing rates
+    Mobile->>Mobile: Show pricing editor
+    Admin->>Mobile: Update rates and save
+    
+    Mobile->>API: PUT /api/pricing/custom/{clientId}<br/>{supportItems[], customRates[], effectiveDate}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>PricingController: Route to updateCustomPricing()
+    
+    PricingController->>PricingService: updateCustomPricing(clientId, pricingData)
+    
+    %% Validate pricing rules
+    PricingService->>PricingService: Validate rates against NDIS limits
+    
+    alt Valid pricing
+        PricingService->>MongoDB: Update customPricing document
+        MongoDB-->>PricingService: Update confirmation
+        
+        %% Log pricing change
+        PricingService->>AuditService: logEvent('CUSTOM_PRICING_UPDATED', pricingInfo)
+        AuditService->>MongoDB: Insert audit record
+        
+        PricingService-->>PricingController: Update success
+        PricingController-->>API: 200 OK
+        API-->>Mobile: Pricing updated
+        Mobile-->>Admin: "Custom pricing saved successfully"
+        
+    else Invalid pricing
+        PricingService-->>PricingController: {error: 'Rates exceed NDIS limits'}
+        PricingController-->>API: 400 Bad Request
+        API-->>Mobile: Validation error
+        Mobile-->>Admin: "Pricing rates invalid - check NDIS limits"
+    end
+    
+    Note over Admin, Employee: Client Status Management
+    
+    %% Admin updates client status
+    Admin->>Mobile: Select client from list
+    Mobile->>Mobile: Show client details
+    Admin->>Mobile: Tap "Change Status"
+    
+    Mobile->>API: PATCH /api/clients/{id}/status<br/>{status: 'inactive', reason}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ClientController: Route to updateClientStatus()
+    
+    ClientController->>ClientService: updateClientStatus(clientId, status, reason)
+    
+    %% Check for active assignments
+    ClientService->>MongoDB: Query active clientAssignments
+    MongoDB-->>ClientService: Active assignments
+    
+    alt Has active assignments and status = inactive
+        %% Deactivate assignments
+        ClientService->>MongoDB: Update clientAssignments status
+        MongoDB-->>ClientService: Assignment updates
+        
+        %% Notify affected employees
+        loop For each assigned employee
+            ClientService->>NotificationService: notifyClientStatusChange(employeeId, clientId, status)
+            NotificationService->>Mobile: Push notification to employee
+            Mobile-->>Employee: "Client [Name] status changed to inactive"
+        end
+    end
+    
+    %% Update client status
+    ClientService->>MongoDB: Update clients document
+    MongoDB-->>ClientService: Update confirmation
+    
+    %% Log status change
+    ClientService->>AuditService: logEvent('CLIENT_STATUS_CHANGED', statusInfo)
+    AuditService->>MongoDB: Insert audit record
+    
+    ClientService-->>ClientController: Status update success
+    ClientController-->>API: 200 OK
+    API-->>Mobile: Status updated
+    Mobile-->>Admin: "Client status updated successfully"
+    
+    Note over Admin, Employee: Client Document Management
+    
+    %% Admin manages client documents
+    Admin->>Mobile: Open client documents
+    Mobile->>API: GET /api/clients/{id}/documents
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ClientController: Route to getClientDocuments()
+    
+    ClientController->>ClientService: getClientDocuments(clientId)
+    ClientService->>MongoDB: Query client document references
+    MongoDB-->>ClientService: Document metadata
+    
+    ClientService-->>ClientController: Document list with access URLs
+    ClientController-->>API: 200 OK {documents[]}
+    API-->>Mobile: Document list
+    Mobile-->>Admin: Display document management
+    
+    %% Upload new document
+    Admin->>Mobile: Tap "Upload Document"
+    Mobile->>Mobile: Show file picker
+    Admin->>Mobile: Select document and add metadata
+    
+    Mobile->>API: POST /api/clients/{id}/documents<br/>{file, documentType, description}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ClientController: Route to uploadClientDocument()
+    
+    ClientController->>ClientService: uploadClientDocument(clientId, documentData)
+    
+    %% Upload file
+    ClientService->>FileStorage: Upload document file
+    FileStorage-->>ClientService: Document file path
+    
+    %% Update client record
+    ClientService->>MongoDB: Add document reference to client
+    MongoDB-->>ClientService: Update confirmation
+    
+    %% Log document upload
+    ClientService->>AuditService: logEvent('CLIENT_DOCUMENT_UPLOADED', documentInfo)
+    AuditService->>MongoDB: Insert audit record
+    
+    ClientService-->>ClientController: Upload success
+    ClientController-->>API: 201 Created {document}
+    API-->>Mobile: Document uploaded
+    Mobile-->>Admin: "Document uploaded successfully"
+    
+    Note over Admin, Employee: Client Reporting
+    
+    %% Generate client activity report
+    Admin->>Mobile: Tap "Generate Client Report"
+    Mobile->>Mobile: Show report parameters
+    Admin->>Mobile: Select clients and date range
+    
+    Mobile->>API: GET /api/clients/report<br/>?clientIds=X,Y&startDate=A&endDate=B
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ClientController: Route to generateClientReport()
+    
+    ClientController->>ClientService: generateClientReport(filters)
+    
+    %% Aggregate client data
+    ClientService->>MongoDB: Aggregate workedTime by client
+    MongoDB-->>ClientService: Time tracking summaries
+    
+    ClientService->>MongoDB: Aggregate expenses by client
+    MongoDB-->>ClientService: Expense summaries
+    
+    ClientService->>MongoDB: Query invoices by client
+    MongoDB-->>ClientService: Invoice summaries
+    
+    %% Calculate client metrics
+    ClientService->>ClientService: Calculate total hours, costs,<br/>and service utilization
+    
+    ClientService-->>ClientController: {clientMetrics[], summary}
+    ClientController-->>API: 200 OK {report}
+    API-->>Mobile: Client report data
+    Mobile-->>Admin: Display client analytics

@@ -1,4 +1,5 @@
 const { MongoClient } = require('mongodb');
+const logger = require('../utils/logger');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -16,7 +17,7 @@ async function migrateInvoiceData() {
     
     const db = client.db('Invoice');
     
-    console.log('🔄 Starting invoice data migration...');
+    logger.info('Starting invoice data migration...');
     
     // Step 1: Migrate Line Items Collection
     console.log('\n📋 Migrating line items...');
@@ -486,11 +487,14 @@ async function migrateInvoiceData() {
 if (require.main === module) {
   migrateInvoiceData()
     .then(() => {
-      console.log('\n✅ Invoice data migration completed successfully');
+      logger.info('Invoice data migration completed successfully');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('\n❌ Invoice migration failed:', error);
+      logger.error('Migration failed', {
+        error: error.message,
+        stack: error.stack
+      });
       process.exit(1);
     });
 }

@@ -1,0 +1,308 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% Expense Management Sequence Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows the expense tracking and management flow
+
+sequenceDiagram
+    participant Employee as 👤 Employee
+    participant Mobile as 📱 Mobile App
+    participant API as 🌐 Express API
+    participant AuthMW as 🔐 Auth Middleware
+    participant ExpenseController as 🎮 Expense Controller
+    participant ExpenseService as ⚙️ Expense Service
+    participant RecurringExpenseController as 🎮 Recurring Expense Controller
+    participant RecurringExpenseService as ⚙️ Recurring Expense Service
+    participant MongoDB as 🗄️ MongoDB
+    participant FileStorage as 📁 File Storage
+    participant AuditService as 📋 Audit Service
+    participant NotificationService as 🔔 Notification Service
+    participant Admin as 👨‍💼 Admin
+
+    Note over Employee, Admin: Expense Entry Flow
+    
+    %% Employee adds expense
+    Employee->>Mobile: Tap "Add Expense"
+    Mobile->>Mobile: Show expense entry form
+    Employee->>Mobile: Fill expense details<br/>(amount, category, description)
+    Employee->>Mobile: Take photo of receipt
+    
+    Mobile->>API: POST /api/expenses<br/>{amount, category, description, clientId, receiptImage}
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>ExpenseController: Route to createExpense()
+    
+    ExpenseController->>ExpenseController: Validate expense data
+    
+    alt Valid expense data
+        ExpenseController->>ExpenseService: createExpense(expenseData)
+        
+        %% Handle receipt image upload
+        alt Receipt image provided
+            ExpenseService->>FileStorage: Upload receipt image
+            FileStorage-->>ExpenseService: Image file path
+        end
+        
+        %% Create expense record
+        ExpenseService->>ExpenseService: Build expense object<br/>{employeeId, amount, category, date, receiptPath}
+        
+        ExpenseService->>MongoDB: Insert expenses document
+        MongoDB-->>ExpenseService: Expense ID
+        
+        %% Log audit trail
+        ExpenseService->>AuditService: logEvent('EXPENSE_CREATED', expenseInfo)
+        AuditService->>MongoDB: Insert audit record
+        
+        ExpenseService-->>ExpenseController: {success: true, expenseId}
+        ExpenseController-->>API: 201 Created {expense}
+        API-->>Mobile: Expense created successfully
+        
+        Mobile->>Mobile: Show success message
+        Mobile-->>Employee: "Expense added successfully"
+        
+        %% Notify admin for approval if amount > threshold
+        alt Amount > approval threshold
+            ExpenseService->>NotificationService: sendApprovalRequest(expenseId)
+            NotificationService->>Mobile: Push notification to admin
+            Mobile-->>Admin: "New expense requires approval"
+        end
+        
+    else Invalid expense data
+        ExpenseController-->>API: 400 Bad Request
+        API-->>Mobile: Validation errors
+        Mobile-->>Employee: Show error messages
+    end
+    
+    Note over Employee, Admin: Expense Approval Flow
+    
+    %% Admin reviews expenses
+    Admin->>Mobile: Open "Expense Approvals"
+    Mobile->>API: GET /api/expenses?status=pending
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ExpenseController: Route to getExpenses()
+    
+    ExpenseController->>ExpenseService: getExpensesByStatus('pending')
+    ExpenseService->>MongoDB: Query expenses collection
+    MongoDB-->>ExpenseService: Pending expenses
+    
+    ExpenseService-->>ExpenseController: Expense list with details
+    ExpenseController-->>API: 200 OK {expenses[]}
+    API-->>Mobile: Pending expenses list
+    Mobile-->>Admin: Display expenses for review
+    
+    %% Admin approves/rejects expense
+    Admin->>Mobile: Select expense and choose action
+    Mobile->>Mobile: Show approval form
+    Admin->>Mobile: Add approval notes and decision
+    
+    Mobile->>API: PATCH /api/expenses/{id}/approve<br/>{status: 'approved', notes}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ExpenseController: Route to approveExpense()
+    
+    ExpenseController->>ExpenseService: updateExpenseStatus(id, status, notes)
+    
+    ExpenseService->>MongoDB: Update expenses document
+    MongoDB-->>ExpenseService: Update confirmation
+    
+    %% Log approval action
+    ExpenseService->>AuditService: logEvent('EXPENSE_APPROVED', approvalInfo)
+    AuditService->>MongoDB: Insert audit record
+    
+    %% Notify employee
+    ExpenseService->>NotificationService: notifyEmployee(expenseId, status)
+    NotificationService->>Mobile: Push notification to employee
+    Mobile-->>Employee: "Expense approved/rejected"
+    
+    ExpenseService-->>ExpenseController: Update success
+    ExpenseController-->>API: 200 OK
+    API-->>Mobile: Status updated
+    Mobile-->>Admin: "Expense status updated"
+    
+    Note over Employee, Admin: Recurring Expense Management
+    
+    %% Admin sets up recurring expense
+    Admin->>Mobile: Tap "Add Recurring Expense"
+    Mobile->>Mobile: Show recurring expense form
+    Admin->>Mobile: Enter recurring details<br/>(amount, frequency, category, start date)
+    
+    Mobile->>API: POST /api/recurring-expenses<br/>{amount, frequency, category, startDate, endDate}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>RecurringExpenseController: Route to createRecurringExpense()
+    
+    RecurringExpenseController->>RecurringExpenseController: Validate recurring expense data
+    
+    alt Valid recurring expense
+        RecurringExpenseController->>RecurringExpenseService: createRecurringExpense(recurringData)
+        
+        RecurringExpenseService->>RecurringExpenseService: Calculate next occurrence dates
+        
+        RecurringExpenseService->>MongoDB: Insert recurringExpenses document
+        MongoDB-->>RecurringExpenseService: Recurring expense ID
+        
+        %% Log audit trail
+        RecurringExpenseService->>AuditService: logEvent('RECURRING_EXPENSE_CREATED', recurringInfo)
+        AuditService->>MongoDB: Insert audit record
+        
+        RecurringExpenseService-->>RecurringExpenseController: {success: true, recurringId}
+        RecurringExpenseController-->>API: 201 Created {recurringExpense}
+        API-->>Mobile: Recurring expense created
+        Mobile-->>Admin: "Recurring expense set up successfully"
+        
+    else Invalid recurring expense
+        RecurringExpenseController-->>API: 400 Bad Request
+        API-->>Mobile: Validation errors
+        Mobile-->>Admin: Show error messages
+    end
+    
+    Note over Employee, Admin: Automated Recurring Expense Processing
+    
+    %% Daily background job
+    loop Daily at 6 AM
+        RecurringExpenseService->>MongoDB: Query recurringExpenses due today
+        MongoDB-->>RecurringExpenseService: Due recurring expenses
+        
+        loop For each due expense
+            RecurringExpenseService->>RecurringExpenseService: Create expense from template
+            
+            RecurringExpenseService->>MongoDB: Insert expenses document
+            MongoDB-->>RecurringExpenseService: Expense ID
+            
+            %% Update next occurrence date
+            RecurringExpenseService->>RecurringExpenseService: Calculate next occurrence
+            RecurringExpenseService->>MongoDB: Update recurringExpenses nextDate
+            
+            %% Log automated creation
+            RecurringExpenseService->>AuditService: logEvent('RECURRING_EXPENSE_PROCESSED', details)
+            AuditService->>MongoDB: Insert audit record
+            
+            %% Notify admin
+            RecurringExpenseService->>NotificationService: notifyRecurringExpenseCreated(expenseId)
+            NotificationService->>Mobile: Push notification to admin
+            Mobile-->>Admin: "Recurring expense auto-created"
+        end
+    end
+    
+    Note over Employee, Admin: Expense Reporting Flow
+    
+    %% Generate expense report
+    Admin->>Mobile: Tap "Generate Expense Report"
+    Mobile->>Mobile: Show report parameters form
+    Admin->>Mobile: Select date range and filters
+    
+    Mobile->>API: GET /api/expenses/report<br/>?startDate=X&endDate=Y&category=Z
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ExpenseController: Route to generateExpenseReport()
+    
+    ExpenseController->>ExpenseService: generateExpenseReport(filters)
+    
+    %% Aggregate expense data
+    ExpenseService->>MongoDB: Aggregate expenses collection<br/>(group by category, employee, date)
+    MongoDB-->>ExpenseService: Aggregated expense data
+    
+    %% Get recurring expense data
+    ExpenseService->>MongoDB: Query recurringExpenses for period
+    MongoDB-->>ExpenseService: Recurring expense data
+    
+    %% Calculate totals and summaries
+    ExpenseService->>ExpenseService: Calculate totals by category<br/>and employee
+    
+    ExpenseService->>ExpenseService: Generate report structure<br/>{summary, details, charts}
+    
+    ExpenseService-->>ExpenseController: Report data
+    ExpenseController-->>API: 200 OK {report}
+    API-->>Mobile: Expense report data
+    
+    Mobile->>Mobile: Display report with charts
+    Mobile-->>Admin: Show expense analytics
+    
+    %% Export report
+    Admin->>Mobile: Tap "Export Report"
+    Mobile->>API: GET /api/expenses/export<br/>?format=pdf&filters=...
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ExpenseController: Route to exportExpenseReport()
+    
+    ExpenseController->>ExpenseService: exportExpenseReport(format, filters)
+    
+    ExpenseService->>ExpenseService: Generate PDF/Excel report
+    ExpenseService->>FileStorage: Save report file
+    FileStorage-->>ExpenseService: File path
+    
+    ExpenseService-->>ExpenseController: Report file path
+    ExpenseController-->>API: 200 OK (file download)
+    API-->>Mobile: Report file
+    Mobile-->>Admin: Save/share report
+    
+    Note over Employee, Admin: Expense Category Management
+    
+    %% Admin manages expense categories
+    Admin->>Mobile: Open "Expense Categories"
+    Mobile->>API: GET /api/expenses/categories
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ExpenseController: Route to getExpenseCategories()
+    
+    ExpenseController->>ExpenseService: getExpenseCategories()
+    ExpenseService->>MongoDB: Query expenseCategories collection
+    MongoDB-->>ExpenseService: Category list
+    
+    ExpenseService-->>ExpenseController: Categories with usage stats
+    ExpenseController-->>API: 200 OK {categories[]}
+    API-->>Mobile: Category list
+    Mobile-->>Admin: Display category management
+    
+    %% Add new category
+    Admin->>Mobile: Tap "Add Category"
+    Mobile->>Mobile: Show category form
+    Admin->>Mobile: Enter category details
+    
+    Mobile->>API: POST /api/expenses/categories<br/>{name, description, budgetLimit}
+    
+    API->>AuthMW: Verify admin authentication
+    AuthMW->>ExpenseController: Route to createExpenseCategory()
+    
+    ExpenseController->>ExpenseService: createExpenseCategory(categoryData)
+    
+    ExpenseService->>MongoDB: Insert expenseCategories document
+    MongoDB-->>ExpenseService: Category ID
+    
+    %% Log category creation
+    ExpenseService->>AuditService: logEvent('EXPENSE_CATEGORY_CREATED', categoryInfo)
+    AuditService->>MongoDB: Insert audit record
+    
+    ExpenseService-->>ExpenseController: {success: true, categoryId}
+    ExpenseController-->>API: 201 Created {category}
+    API-->>Mobile: Category created
+    Mobile-->>Admin: "Category added successfully"
+    
+    Note over Employee, Admin: Budget Monitoring
+    
+    %% Check budget limits
+    loop Weekly budget check
+        ExpenseService->>MongoDB: Aggregate expenses by category for current period
+        MongoDB-->>ExpenseService: Category spending totals
+        
+        ExpenseService->>MongoDB: Query expenseCategories with budget limits
+        MongoDB-->>ExpenseService: Category budget limits
+        
+        ExpenseService->>ExpenseService: Compare spending vs budget
+        
+        alt Budget exceeded
+            ExpenseService->>NotificationService: sendBudgetAlert(categoryId, overage)
+            NotificationService->>Mobile: Push notification to admin
+            Mobile-->>Admin: "Budget exceeded for category X"
+            
+            %% Log budget alert
+            ExpenseService->>AuditService: logEvent('BUDGET_EXCEEDED', budgetInfo)
+            AuditService->>MongoDB: Insert audit record
+        end
+        
+        alt Budget 80% reached
+            ExpenseService->>NotificationService: sendBudgetWarning(categoryId, percentage)
+            NotificationService->>Mobile: Push notification to admin
+            Mobile-->>Admin: "Budget 80% reached for category X"
+        end
+    end

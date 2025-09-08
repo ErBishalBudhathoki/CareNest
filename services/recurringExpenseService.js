@@ -7,7 +7,8 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
-const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./audit_trail_service');
+const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./auditService');
+const logger = require('../config/logger');
 
 const uri = process.env.MONGODB_URI;
 
@@ -146,7 +147,9 @@ async function processRecurringExpenses(organizationId = null) {
     
     const recurringExpenses = await expensesCollection.find(query).toArray();
     
-    console.log(`Found ${recurringExpenses.length} due recurring expenses`);
+    logger.debug('Found due recurring expenses', {
+      count: recurringExpenses.length
+    });
     
     for (const recurringExpense of recurringExpenses) {
       try {
@@ -234,7 +237,11 @@ async function processRecurringExpenses(organizationId = null) {
         });
         
       } catch (error) {
-        console.error(`Error processing recurring expense ${recurringExpense._id}:`, error);
+        logger.error('Recurring expense processing failed', {
+          error: error.message,
+          stack: error.stack,
+          recurringExpenseId: recurringExpense._id
+        });
         results.errors.push({
           expenseId: recurringExpense._id,
           error: error.message
@@ -245,7 +252,10 @@ async function processRecurringExpenses(organizationId = null) {
     return results;
     
   } catch (error) {
-    console.error('Error in processRecurringExpenses:', error);
+    logger.error('Recurring expenses processing service error', {
+      error: error.message,
+      stack: error.stack
+    });
     throw error;
   } finally {
     if (client) {
@@ -345,7 +355,11 @@ async function createRecurringExpense(expenseData) {
     return recurringExpense;
     
   } catch (error) {
-    console.error('Error creating recurring expense:', error);
+    logger.error('Recurring expense creation service error', {
+      error: error.message,
+      stack: error.stack,
+      organizationId: expenseData.organizationId
+    });
     throw error;
   } finally {
     if (client) {
@@ -439,7 +453,11 @@ async function updateRecurringExpense(expenseId, updateData) {
     return result;
     
   } catch (error) {
-    console.error('Error updating recurring expense:', error);
+    logger.error('Recurring expense update service error', {
+      error: error.message,
+      stack: error.stack,
+      expenseId
+    });
     throw error;
   } finally {
     if (client) {
@@ -507,7 +525,11 @@ async function deactivateRecurringExpense(expenseId, userEmail) {
     return result;
     
   } catch (error) {
-    console.error('Error deactivating recurring expense:', error);
+    logger.error('Recurring expense deactivation service error', {
+      error: error.message,
+      stack: error.stack,
+      expenseId
+    });
     throw error;
   } finally {
     if (client) {
@@ -558,7 +580,11 @@ async function getRecurringExpenses(organizationId, options = {}) {
     return expenses;
     
   } catch (error) {
-    console.error('Error getting recurring expenses:', error);
+    logger.error('Recurring expenses fetch service error', {
+      error: error.message,
+      stack: error.stack,
+      organizationId
+    });
     throw error;
   } finally {
     if (client) {
@@ -657,7 +683,11 @@ async function getRecurringExpenseStats(organizationId) {
     };
     
   } catch (error) {
-    console.error('Error getting recurring expense stats:', error);
+    logger.error('Recurring expense stats service error', {
+      error: error.message,
+      stack: error.stack,
+      organizationId
+    });
     throw error;
   } finally {
     if (client) {

@@ -1,0 +1,46 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% C4 Context Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows the system boundary and external actors
+
+flowchart TB
+    %% External Actors
+    Employee["👤 Employee<br/>(Service Provider)"]
+    Admin["👤 Admin<br/>(Organization Manager)"]
+    Client["👤 Client<br/>(Service Recipient)"]
+    
+    %% External Systems
+    Firebase["🔐 Firebase<br/>(Authentication)"]
+    NDIS["📋 NDIS<br/>(Support Items Database)"]
+    Mobile["📱 Flutter Mobile App<br/>(Frontend)"]
+    
+    %% Main System
+    InvoiceSystem["💼 Invoice Management System<br/>(Backend API)<br/><br/>Manages invoices, time tracking,<br/>expenses, and client relationships"]
+    
+    %% Database
+    MongoDB["🗄️ MongoDB<br/>(Database)"]
+    FileStorage["📁 File Storage<br/>(Uploads & PDFs)"]
+    
+    %% Relationships
+    Employee -.->|"Uses mobile app to<br/>track time & expenses"| Mobile
+    Admin -.->|"Manages organization<br/>& generates invoices"| Mobile
+    Client -.->|"Views services<br/>& invoices"| Mobile
+    
+    Mobile -->|"API Requests<br/>(REST/JSON)"| InvoiceSystem
+    
+    InvoiceSystem -->|"User Authentication<br/>& Authorization"| Firebase
+    InvoiceSystem -->|"Fetches Support Items<br/>& Pricing Data"| NDIS
+    
+    InvoiceSystem -->|"Stores & Retrieves<br/>Application Data"| MongoDB
+    InvoiceSystem -->|"Manages Files<br/>& Generated PDFs"| FileStorage
+    
+    %% Styling
+    classDef person fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef system fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef database fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class Employee,Admin,Client person
+    class InvoiceSystem system
+    class Firebase,NDIS,Mobile external
+    class MongoDB,FileStorage database

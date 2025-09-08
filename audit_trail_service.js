@@ -15,6 +15,7 @@
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const path = require('path');
+const logger = require('./config/logger');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const uri = process.env.MONGODB_URI;
@@ -121,7 +122,12 @@ async function createAuditLog(auditData) {
     // Insert audit log
     const result = await db.collection('auditLogs').insertOne(auditEntry);
     
-    console.log(`Audit log created: ${action} on ${entityType} ${entityId} by ${userEmail}`);
+    logger.debug('Creating audit log entry', {
+      action: auditData.action,
+      userEmail: auditData.userEmail,
+      entityType: auditData.entityType,
+      entityId: auditData.entityId
+    });
     
     return {
       success: true,
@@ -130,7 +136,11 @@ async function createAuditLog(auditData) {
     };
 
   } catch (error) {
-    console.error('Error creating audit log:', error);
+    logger.error('Failed to create audit log', {
+      error: error.message,
+      stack: error.stack,
+      auditData
+    });
     throw error;
   } finally {
     if (client) {
@@ -208,7 +218,12 @@ async function getEntityAuditHistory(entityType, entityId, organizationId, optio
     };
 
   } catch (error) {
-    console.error('Error getting audit history:', error);
+    logger.error('Failed to get audit history', {
+      error: error.message,
+      entityType,
+      entityId,
+      organizationId
+    });
     throw error;
   } finally {
     if (client) {
@@ -289,7 +304,10 @@ async function getOrganizationAuditLogs(organizationId, options = {}) {
     };
 
   } catch (error) {
-    console.error('Error getting organization audit logs:', error);
+    logger.error('Failed to get organization audit logs', {
+      error: error.message,
+      organizationId
+    });
     throw error;
   } finally {
     if (client) {
@@ -403,7 +421,10 @@ async function getAuditStatistics(organizationId, options = {}) {
     };
 
   } catch (error) {
-    console.error('Error getting audit statistics:', error);
+    logger.error('Failed to get audit statistics', {
+      error: error.message,
+      organizationId
+    });
     throw error;
   } finally {
     if (client) {
@@ -435,7 +456,11 @@ async function cleanupOldAuditLogs(retentionDays = 365) {
       timestamp: { $lt: cutoffDate }
     });
 
-    console.log(`Cleaned up ${result.deletedCount} audit logs older than ${retentionDays} days`);
+    logger.info('Audit logs cleanup completed', {
+      deletedCount: result.deletedCount,
+      retentionDays,
+      cutoffDate
+    });
 
     return {
       success: true,
@@ -444,7 +469,10 @@ async function cleanupOldAuditLogs(retentionDays = 365) {
     };
 
   } catch (error) {
-    console.error('Error cleaning up audit logs:', error);
+    logger.error('Failed to cleanup audit logs', {
+      error: error.message,
+      retentionDays
+    });
     throw error;
   } finally {
     if (client) {

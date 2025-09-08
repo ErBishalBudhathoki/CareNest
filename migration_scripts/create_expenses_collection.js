@@ -1,4 +1,5 @@
 const { MongoClient } = require('mongodb');
+const logger = require('../utils/logger');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -12,20 +13,20 @@ async function createExpensesCollection() {
   
   try {
     await client.connect();
-    console.log('Connected to MongoDB');
+    logger.info('Connected to MongoDB');
     
     const db = client.db('Invoice');
     
     // Check if collection already exists
     const collections = await db.listCollections({ name: 'expenses' }).toArray();
     if (collections.length > 0) {
-      console.log('expenses collection already exists');
+      logger.info('expenses collection already exists');
       return;
     }
     
     // Create the expenses collection
     await db.createCollection('expenses');
-    console.log('Created expenses collection');
+    logger.info('Created expenses collection');
     
     // Create indexes for efficient querying
     const expensesCollection = db.collection('expenses');
@@ -66,7 +67,7 @@ async function createExpensesCollection() {
       { name: 'invoice_inclusion_idx' }
     );
     
-    console.log('Created indexes for expenses collection');
+    logger.info('Created indexes for expenses collection');
     
     // Insert sample document to demonstrate schema
     const sampleExpense = {
@@ -199,11 +200,14 @@ async function createExpensesCollection() {
     console.log('- invoice_inclusion_idx: organizationId + includedInInvoice + invoiceId');
     
   } catch (error) {
-    console.error('Error creating expenses collection:', error);
+    logger.error('Error creating expenses collection', {
+      error: error.message,
+      stack: error.stack
+    });
     throw error;
   } finally {
     await client.close();
-    console.log('\nMongoDB connection closed');
+    logger.info('MongoDB connection closed');
   }
 }
 
@@ -211,11 +215,14 @@ async function createExpensesCollection() {
 if (require.main === module) {
   createExpensesCollection()
     .then(() => {
-      console.log('\n✅ expenses collection migration completed successfully');
+      logger.info('expenses collection migration completed successfully');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('\n❌ Migration failed:', error);
+      logger.error('Migration failed', {
+        error: error.message,
+        stack: error.stack
+      });
       process.exit(1);
     });
 }
