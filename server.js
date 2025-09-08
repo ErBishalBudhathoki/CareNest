@@ -1721,15 +1721,30 @@ const serverOptions = {
 };
 
 // Test MongoDB connection
-MongoClient.connect(process.env.MONGODB_URI, { serverApi: ServerApiVersion.v1 }, function (err, db) {
-  if (err) throw err;
-  var dbo = db.db("Invoice");
-  dbo.collection("login").findOne({}, function (err, result) {
-    if (err) throw err;
-    // console.log("Server connected");
-    db.close();
+try {
+  MongoClient.connect(process.env.MONGODB_URI, { serverApi: ServerApiVersion.v1 }, function (err, db) {
+    if (err) {
+      console.error('MongoDB connection test failed:', err);
+      // Optionally, exit the process if the connection is critical for startup
+      // process.exit(1);
+      return;
+    }
+    var dbo = db.db("Invoice");
+    dbo.collection("login").findOne({}, function (err, result) {
+      if (err) {
+        console.error('MongoDB collection test failed:', err);
+        db.close();
+        // process.exit(1);
+        return;
+      }
+      // console.log("Server connected");
+      db.close();
+    });
   });
-});
+} catch (error) {
+  console.error('Synchronous error during MongoDB connection attempt:', error);
+  // process.exit(1);
+}
 
 app.use(
   bodyParser.urlencoded({
