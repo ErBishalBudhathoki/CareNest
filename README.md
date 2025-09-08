@@ -15,7 +15,7 @@ The app is available on the [Google Play Store](https://play.google.com/store/ap
 
 ## Backend
 
-The backend for CareNest is a Node.js Express server. It is managed in a separate repository, which you can find here: [CareNest Backend](https://github.com/ErBishalBudhathoki/CareNest_backend.git)
+The backend for CareNest is a Node.js Express server. It is managed in a separate repository, which you can find here: [CareNest Backend](https://github.com/BishalBudhathoki/carenest_backend.git)
 
 ## Installation and Setup
 
