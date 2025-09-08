@@ -193,3 +193,6 @@ tests/
 .cursorrules
 *.js
 superPrompt.xml
+
+# Gemini CLI config folder
+.gemini/
