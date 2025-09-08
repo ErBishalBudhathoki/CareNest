@@ -1,0 +1,2 @@
+json_key_file("/Users/pratikshatiwari/StudioProjects/invoice/android/fastlane/google-play-service-key.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+# The package name is specified in each lane of the Fastfile to account for different flavors
