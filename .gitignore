@@ -178,3 +178,6 @@ check_*.js
 next\ step.md
 tast.md
 backend/
+
+# Java heap dump files
+*.hprof
