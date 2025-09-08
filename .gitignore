@@ -1,0 +1,180 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.dart_tool/flutter_build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# iOS related
+/ios/Pods/
+/ios/*.xcworkspace/
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/app.flx
+/ios/Flutter/app.zip
+/ios/Flutter/flutter_assets/
+
+# Node.js related
+node_modules/
+
+# Backend folder - exclude entire backend
+/backend/
+backend/
+
+# Scripts and deployment files
+*.sh
+/android/*.sh
+/ios/*.sh
+/scripts/
+scripts/
+
+# Uploads directory
+uploads/
+/uploads/
+/backend/uploads/
+
+# Generated PDFs
+*.pdf
+
+# Log files
+*.log
+nohup.out
+*.out
+
+# API response files and test data
+api_response*.json
+expense_*.json
+users_response.json
+assignment_response.json
+
+# CSV data files
+*.csv
+NDIS.csv
+holiday.csv
+
+# Large data files
+support-items-all.json
+
+# Large image files
+assets/icons/fav-folder-dynamic-color.png
+assets/icons/fav-folder-dynamic-premium.png
+assets/images/he_sitting_with_notebook.png
+assets/images/she_with_phone.png
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Gradle files
+/android/gradle/wrapper/dists/
+/android/gradle/caches/
+/android/.gradle/
+/android/build/
+/android/.kotlin/
+
+# Fastlane reports and metadata
+/android/fastlane/report.xml
+/android/fastlane/metadata/
+/ios/fastlane/report.xml
+/ios/fastlane/metadata/
+
+# Release notes
+release_notes_*.txt
+
+# Test files
+test_*.js
+test_*.dart
+test_*.sh
+*_test.dart
+*_test.js
+
+# Debug and fix files
+debug_*.dart
+fix_*.dart
+fix_*.js
+
+# Sensitive files and keys
+*google-play-service-key.json
+*firebase*.json
+firebase-admin-config.js
+*service-account*.json
+*private-key*.json
+
+# Google Play service key (sensitive)
+android/fastlane/google-play-service-key.json
+
+# Firebase admin configuration (sensitive)
+backend/firebase-admin-config.js
+
+# Firebase configuration files
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Documentation that might contain sensitive info
+SENSITIVE_FILES_GUIDE.md
+SECURITY.md
+FIREBASE_ADMIN_SDK_GUIDE.md
+
+# AI and development notes
+AI_*.md
+*.mdc
+technical_reference.md
+
+# Package files
+package-lock.json
+Procfile
+
+# Migration and seed scripts
+migration_scripts/
+seed_*.js
+init_*.js
+check_*.js
+
+# Temporary and build files
+.tmp/
+.vercel/
+next\ step.md
+tast.md
+backend/
