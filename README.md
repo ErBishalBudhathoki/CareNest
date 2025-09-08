@@ -38,4 +38,4 @@ The backend for CareNest is a Node.js Express server. It is managed in a separat
 
 ### Backend Server
 
-For instructions on how to set up the backend server, please refer to the `README.md` file in the [backend repository](https://github.com/ErBishalBudhathoki/CareNest_backend.git).
+For instructions on how to set up the backend server, please refer to the `README.md` file in the [backend repository](https://github.com/BishalBudhathoki/carenest_backend.git).
