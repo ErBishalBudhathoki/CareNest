@@ -1,0 +1,71 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% C4 Container Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows the containers within the system boundary
+
+flowchart TB
+    %% External Actors
+    Users["👥 Users<br/>(Employees, Admins, Clients)"]
+    
+    %% External Systems
+    Firebase["🔐 Firebase Auth"]
+    NDIS["📋 NDIS Database"]
+    
+    %% System Boundary
+    subgraph SystemBoundary ["Invoice Management System"]
+        %% Frontend Container
+        MobileApp["📱 Flutter Mobile App<br/>(Dart)<br/><br/>Provides UI for time tracking,<br/>expense management, and<br/>invoice generation"]
+        
+        %% Backend Containers
+        subgraph BackendBoundary ["Backend Services"]
+            APIGateway["🌐 Express.js API Server<br/>(Node.js)<br/><br/>Handles HTTP requests,<br/>authentication, and routing"]
+            
+            Controllers["🎮 Controllers Layer<br/>(Node.js)<br/><br/>Request validation,<br/>response formatting"]
+            
+            Services["⚙️ Business Services<br/>(Node.js)<br/><br/>Core business logic,<br/>data processing"]
+            
+            Middleware["🔧 Middleware Layer<br/>(Node.js)<br/><br/>Auth, CORS, logging,<br/>error handling"]
+        end
+        
+        %% Storage Containers
+        FileSystem["📁 File Storage<br/>(Local/Cloud)<br/><br/>Expense photos,<br/>generated PDFs"]
+    end
+    
+    %% External Database
+    MongoDB["🗄️ MongoDB<br/>(Document Database)<br/><br/>Users, organizations, clients,<br/>time tracking, expenses, invoices"]
+    
+    %% Relationships
+    Users -.->|"HTTPS/JSON"| MobileApp
+    
+    MobileApp -->|"REST API Calls<br/>(HTTPS/JSON)"| APIGateway
+    
+    APIGateway --> Middleware
+    Middleware --> Controllers
+    Controllers --> Services
+    
+    APIGateway -->|"JWT Validation"| Firebase
+    Services -->|"Support Items<br/>& Pricing"| NDIS
+    
+    Services -->|"CRUD Operations<br/>(MongoDB Driver)"| MongoDB
+    Services -->|"File Upload/Download<br/>(Multer)"| FileSystem
+    
+    %% Background Services
+    Scheduler["⏰ Background Scheduler<br/>(Node-cron)<br/><br/>Recurring expenses,<br/>timer cleanup"]
+    
+    Scheduler --> Services
+    Scheduler --> MongoDB
+    
+    %% Styling
+    classDef person fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef frontend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef backend fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef database fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef external fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef storage fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    
+    class Users person
+    class MobileApp frontend
+    class APIGateway,Controllers,Services,Middleware,Scheduler backend
+    class MongoDB database
+    class Firebase,NDIS external
+    class FileSystem storage

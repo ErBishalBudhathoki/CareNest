@@ -7,7 +7,10 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
-const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./audit_trail_service');
+const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./services/auditService');
+const logger = require('./config/logger');
+const { v4: uuidv4 } = require('uuid');
+const { createAuditLogEndpoint } = require('./audit_trail_endpoints');
 
 const uri = process.env.MONGODB_URI;
 
@@ -41,12 +44,15 @@ async function createExpense(req, res) {
       notes
     } = req.body;
 
-    console.log('=== BACKEND EXPENSE DEBUG: Received request body ===');
-    console.log('receiptUrl:', receiptUrl);
-    console.log('receiptFiles:', receiptFiles);
-    console.log('receiptPhotos:', receiptPhotos);
-    console.log('fileDescription:', fileDescription);
-    console.log('photoDescription:', photoDescription);
+    logger.debug('Expense creation request received', {
+      receiptUrl,
+      receiptFiles: receiptFiles ? receiptFiles.length : 0,
+      receiptPhotos: receiptPhotos ? receiptPhotos.length : 0,
+      hasFileDescription: !!fileDescription,
+      hasPhotoDescription: !!photoDescription,
+      organizationId,
+      userEmail
+    });
 
     // Validation
     if (!organizationId || !expenseDate || !amount || !description || !category || !userEmail) {
@@ -121,11 +127,14 @@ async function createExpense(req, res) {
       }]
     };
 
-    console.log('=== BACKEND EXPENSE DEBUG: Created expense document ===');
-    console.log('expenseDoc.receiptFiles:', expenseDoc.receiptFiles);
-    console.log('expenseDoc.receiptPhotos:', expenseDoc.receiptPhotos);
-    console.log('expenseDoc.fileDescription:', expenseDoc.fileDescription);
-    console.log('expenseDoc.photoDescription:', expenseDoc.photoDescription);
+    logger.debug('Expense document created', {
+      expenseId: expenseDoc._id,
+      receiptFilesCount: expenseDoc.receiptFiles ? expenseDoc.receiptFiles.length : 0,
+      receiptPhotosCount: expenseDoc.receiptPhotos ? expenseDoc.receiptPhotos.length : 0,
+      hasFileDescription: !!expenseDoc.fileDescription,
+      hasPhotoDescription: !!expenseDoc.photoDescription,
+      organizationId
+    });
 
     const result = await db.collection('expenses').insertOne(expenseDoc);
 
@@ -148,7 +157,12 @@ async function createExpense(req, res) {
         }
       });
     } catch (auditError) {
-      console.error('Error creating audit log for expense creation:', auditError);
+      logger.error('Failed to create audit log for expense creation', {
+          error: auditError.message,
+          expenseId: result.insertedId,
+          organizationId,
+          userEmail
+        });
       // Don't fail the main operation if audit logging fails
     }
 
@@ -160,7 +174,12 @@ async function createExpense(req, res) {
     });
 
   } catch (error) {
-    console.error('Error creating expense:', error);
+    logger.error('Expense creation failed', {
+      error: error.message,
+      stack: error.stack,
+      organizationId,
+      userEmail
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error creating expense'
@@ -181,8 +200,13 @@ async function getOrganizationExpenses(req, res) {
   
   try {
     const { organizationId } = req.params;
-    console.log('=== BACKEND EXPENSE DEBUG: Received organizationId:', organizationId);
-    console.log('=== BACKEND EXPENSE DEBUG: organizationId type:', typeof organizationId);
+    logger.debug('Getting organization expenses', {
+      organizationId,
+      organizationIdType: typeof organizationId,
+      page,
+      limit,
+      search: search || 'none'
+    });
     
     const { 
       clientId,
@@ -210,7 +234,10 @@ async function getOrganizationExpenses(req, res) {
 
     // Build query
     const query = { organizationId: organizationId, isActive: true };
-    console.log('=== BACKEND EXPENSE DEBUG: Query object:', JSON.stringify(query, null, 2));
+    logger.debug('Expense query constructed', {
+      query: JSON.stringify(query),
+      organizationId
+    });
     
     if (clientId) {
       query.clientId = clientId;
@@ -280,14 +307,20 @@ async function getOrganizationExpenses(req, res) {
     
     // Get total count
     const totalCount = await db.collection('expenses').countDocuments(query);
-    console.log('=== BACKEND EXPENSE DEBUG: Total count found:', totalCount);
+    logger.debug('Expense count retrieved', {
+      totalCount,
+      organizationId
+    });
     
     // Debug: Let's also check what expenses exist for this organizationId without isActive filter
     const allExpensesForOrg = await db.collection('expenses')
       .find({ organizationId: organizationId })
       .toArray();
-    console.log('=== BACKEND EXPENSE DEBUG: All expenses for organizationId (without isActive filter):', allExpensesForOrg.length);
-    console.log('=== BACKEND EXPENSE DEBUG: Sample expense records:', JSON.stringify(allExpensesForOrg.slice(0, 2), null, 2));
+    logger.debug('All expenses retrieved (before filtering)', {
+      totalExpenses: allExpensesForOrg.length,
+      organizationId,
+      sampleCount: Math.min(2, allExpensesForOrg.length)
+    });
     
     // Get expense records
     const expenses = await db.collection('expenses')
@@ -297,8 +330,12 @@ async function getOrganizationExpenses(req, res) {
       .limit(parseInt(limit))
       .toArray();
     
-    console.log('=== BACKEND EXPENSE DEBUG: Filtered expenses found:', expenses.length);
-    console.log('=== BACKEND EXPENSE DEBUG: Expense records:', JSON.stringify(expenses, null, 2));
+    logger.debug('Filtered expenses retrieved', {
+      filteredCount: expenses.length,
+      organizationId,
+      page,
+      limit
+    });
 
     // Convert relative file paths to full URLs
     const processedExpenses = expenses.map(expense => {
@@ -307,7 +344,10 @@ async function getOrganizationExpenses(req, res) {
         const host = req.get('host') || `localhost:${process.env.PORT || 8080}`;
         const baseUrl = `${protocol}://${host}`;
         expense.receiptUrl = `${baseUrl}${expense.receiptUrl.startsWith('/') ? expense.receiptUrl : '/' + expense.receiptUrl}`;
-        console.log('=== BACKEND EXPENSE DEBUG: Converted receiptUrl to:', expense.receiptUrl);
+        logger.debug('Receipt URL converted', {
+        expenseId: expense._id,
+        hasReceiptUrl: !!expense.receiptUrl
+      });
       }
       return expense;
     });
@@ -356,7 +396,11 @@ async function getOrganizationExpenses(req, res) {
     });
 
   } catch (error) {
-    console.error('Error getting organization expenses:', error);
+    logger.error('Failed to get organization expenses', {
+      error: error.message,
+      stack: error.stack,
+      organizationId
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error retrieving expense records'
@@ -407,7 +451,10 @@ async function getExpenseById(req, res) {
       const host = req.get('host') || `localhost:${process.env.PORT || 8080}`;
       const baseUrl = `${protocol}://${host}`;
       expense.receiptUrl = `${baseUrl}${expense.receiptUrl.startsWith('/') ? expense.receiptUrl : '/' + expense.receiptUrl}`;
-      console.log('=== BACKEND EXPENSE DEBUG: Converted single expense receiptUrl to:', expense.receiptUrl);
+      logger.debug('Single expense receipt URL converted', {
+        expenseId: expense._id,
+        hasReceiptUrl: !!expense.receiptUrl
+      });
     }
 
     res.status(200).json({
@@ -416,7 +463,11 @@ async function getExpenseById(req, res) {
     });
 
   } catch (error) {
-    console.error('Error getting expense by ID:', error);
+    logger.error('Failed to get expense by ID', {
+      error: error.message,
+      stack: error.stack,
+      expenseId: expenseId
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error retrieving expense record'
@@ -458,12 +509,15 @@ async function updateExpense(req, res) {
       updateReason
     } = req.body;
 
-    console.log('=== BACKEND UPDATE EXPENSE DEBUG: Received request body ===');
-    console.log('receiptUrl:', receiptUrl);
-    console.log('receiptFiles:', receiptFiles);
-    console.log('receiptPhotos:', receiptPhotos);
-    console.log('fileDescription:', fileDescription);
-    console.log('photoDescription:', photoDescription);
+    logger.debug('Expense update request received', {
+      expenseId: expenseId,
+      receiptUrl,
+      receiptFiles: receiptFiles ? receiptFiles.length : 0,
+      receiptPhotos: receiptPhotos ? receiptPhotos.length : 0,
+      hasFileDescription: !!fileDescription,
+      hasPhotoDescription: !!photoDescription,
+      userEmail
+    });
 
     if (!ObjectId.isValid(expenseId)) {
       return res.status(400).json({
@@ -641,24 +695,28 @@ async function updateExpense(req, res) {
     // Create audit log for expense approval status change
     try {
       await createAuditLog({
-        action: AUDIT_ACTIONS.APPROVE,
+        action: AUDIT_ACTIONS.UPDATE,
         entityType: AUDIT_ENTITIES.EXPENSE,
         entityId: expenseId,
         userEmail,
         organizationId: existingRecord.organizationId,
-        oldValues: { approvalStatus: existingRecord.approvalStatus },
-        newValues: { approvalStatus: approvalStatus },
-        reason: approvalNotes || `Expense ${approvalStatus}`,
+        oldValues: existingRecord,
+        newValues: updateDoc,
+        reason: updateReason || 'Expense record updated',
         metadata: {
-          previousStatus: existingRecord.approvalStatus,
-          newStatus: approvalStatus,
+          changesCount: changes.length,
+          changes: changes,
           amount: existingRecord.amount,
           category: existingRecord.category,
           submittedBy: existingRecord.submittedBy
         }
       });
     } catch (auditError) {
-      console.error('Error creating audit log for expense approval:', auditError);
+      logger.error('Failed to create audit log for expense update', {
+          error: auditError.message,
+          expenseId: expenseId,
+          userEmail
+        });
       // Don't fail the main operation if audit logging fails
     }
 
@@ -670,7 +728,12 @@ async function updateExpense(req, res) {
     });
 
   } catch (error) {
-    console.error('Error updating expense:', error);
+    logger.error('Expense update failed', {
+      error: error.message,
+      stack: error.stack,
+      expenseId: expenseId,
+      userEmail
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error updating expense record'
@@ -785,7 +848,12 @@ async function deleteExpense(req, res) {
     });
 
   } catch (error) {
-    console.error('Error deleting expense:', error);
+    logger.error('Expense deletion failed', {
+      error: error.message,
+      stack: error.stack,
+      expenseId: expenseId,
+      userEmail
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error deleting expense record'
@@ -905,7 +973,12 @@ async function updateExpenseApproval(req, res) {
     });
 
   } catch (error) {
-    console.error('Error updating expense approval:', error);
+    logger.error('Expense approval update failed', {
+      error: error.message,
+      stack: error.stack,
+      expenseId: expenseId,
+      userEmail
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error updating approval status'
@@ -957,7 +1030,10 @@ async function getExpenseCategories(req, res) {
     });
 
   } catch (error) {
-    console.error('Error getting expense categories:', error);
+    logger.error('Error getting expense categories', {
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error retrieving expense categories'
@@ -1095,7 +1171,13 @@ async function bulkImportExpenses(req, res) {
     });
 
   } catch (error) {
-    console.error('Error bulk importing expenses:', error);
+    logger.error('Error bulk importing expenses', {
+      error: error.message,
+      stack: error.stack,
+      organizationId,
+      userEmail,
+      expenseCount: expenses ? expenses.length : 0
+    });
     res.status(500).json({
       statusCode: 500,
       message: 'Error performing bulk import'

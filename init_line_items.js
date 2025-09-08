@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const dotenv = require('dotenv');
+const logger = require('./utils/structuredLogger');
 
 // Load environment variables
 dotenv.config();
@@ -35,12 +36,12 @@ async function initLineItems() {
   let client;
   
   try {
-    console.log('Connecting to MongoDB...');
+    logger.info('Connecting to MongoDB for line items initialization');
     // Connect to MongoDB
     client = await MongoClient.connect(uri, {
       serverApi: ServerApiVersion.v1
     });
-    console.log('Connected to MongoDB');
+    logger.info('Connected to MongoDB successfully');
     
     const db = client.db("Invoice");
     
@@ -49,31 +50,38 @@ async function initLineItems() {
     const collectionNames = collections.map(c => c.name);
     
     if (collectionNames.includes('lineItems')) {
-      console.log('lineItems collection already exists. Dropping it...');
+      logger.info('lineItems collection already exists, dropping it');
       await db.collection('lineItems').drop();
     }
     
     // Create lineItems collection
-    console.log('Creating lineItems collection...');
+    logger.info('Creating lineItems collection');
     await db.createCollection('lineItems');
     
     // Insert sample data
-    console.log('Inserting sample line items...');
+    logger.info('Inserting sample line items');
     const result = await db.collection('lineItems').insertMany(sampleLineItems);
     
-    console.log(`${result.insertedCount} line items inserted successfully`);
+    logger.info('Line items inserted successfully', {
+      insertedCount: result.insertedCount
+    });
     
     // Verify insertion
     const lineItems = await db.collection('lineItems').find({}).toArray();
-    console.log('Line items in collection:', lineItems.length);
-    console.log('Sample line item:', JSON.stringify(lineItems[0], null, 2));
+    logger.info('Line items verification completed', {
+      totalLineItems: lineItems.length,
+      sampleLineItem: lineItems[0] ? JSON.stringify(lineItems[0], null, 2) : 'No items found'
+    });
     
   } catch (error) {
-    console.error('Error initializing line items:', error);
+    logger.error('Error initializing line items', {
+      error: error.message,
+      stack: error.stack
+    });
   } finally {
     if (client) {
       await client.close();
-      console.log('MongoDB connection closed');
+      logger.info('MongoDB connection closed');
     }
   }
 }

@@ -14,9 +14,11 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const cors = require("cors");
+const helmet = require("helmet");
 const serverless = require("serverless-http");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { admin, messaging } = require('./firebase-admin-config'); // Initialize Firebase Admin SDK
+const logger = require('./config/logger'); // Import structured logger
 const { startTimerWithTracking, stopTimerWithTracking, getActiveTimers } = require('./active_timers_endpoints');
 const {
   createCustomPricing,
@@ -38,7 +40,7 @@ const {
   updateExpenseApproval,
   getExpenseCategories,
   bulkImportExpenses
-} = require('./expenses_endpoints');
+} = require('./services/expenseService');
 const {
   validatePrice,
   validatePricesBatch,
@@ -75,6 +77,13 @@ const {
   getInvoiceValidationReport
 } = require('./invoice_generation_endpoints');
 const {
+  getInvoicesList,
+  getInvoiceDetails,
+  shareInvoice,
+  deleteInvoice,
+  getInvoiceStats
+} = require('./endpoints/invoice_management_endpoints');
+const {
   createPricePrompt,
   resolvePricePrompt,
   getPendingPrompts,
@@ -91,12 +100,79 @@ const {
   mapLegacyItemToNdis,
   checkInvoiceCompatibility
 } = require('./backward_compatibility_endpoints');
+const { loggingMiddleware } = require('./middleware/logging');
+const { errorTrackingMiddleware } = require('./middleware/errorTracking');
+const { systemHealthMiddleware } = require('./middleware/systemHealth');
+const {
+  getPricingAnalytics,
+  getPricingComplianceReport
+} = require('./endpoints/pricing_analytics_endpoints');
+const {
+  getClientActivityAnalytics,
+  getTopPerformingClients,
+  getClientServicePatterns
+} = require('./endpoints/client_activity_endpoints');
+const {
+  getBusinessIntelligenceDashboard,
+  getRevenueForecastAnalysis,
+  getOperationalEfficiencyReport
+} = require('./endpoints/business_intelligence_endpoints');
+const metricsRoutes = require('./routes/metrics');
+const invoiceManagementRoutes = require('./routes/invoiceManagement');
+const authRoutes = require('./routes/auth');
+const { apiUsageMonitor } = require('./utils/apiUsageMonitor');
+const securityDashboardRoutes = require('./routes/securityDashboard');
+const apiUsageRoutes = require('./routes/apiUsageRoutes');
 const uri = process.env.MONGODB_URI;
 
 var app = express();
+
+// Security middleware - must be first
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"]
+    }
+  },
+  crossOriginEmbedderPolicy: false
+}));
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(systemHealthMiddleware);
+app.use(loggingMiddleware);
+app.use(errorTrackingMiddleware);
+
+// API usage monitoring middleware (records per-request metrics)
+app.use(apiUsageMonitor.middleware);
+
+// Add metrics routes
+app.use('/', metricsRoutes);
+
+// Add invoice management routes
+app.use('/', invoiceManagementRoutes);
+
+// Add authentication routes
+app.use('/auth', authRoutes);
+
+// Mount security dashboard routes
+app.use('/api/security', securityDashboardRoutes);
+
+// Mount API usage analytics routes
+app.use('/api/analytics', apiUsageRoutes);
+
+// Authentication test endpoint
+const authTestEndpoint = require('./auth_test_endpoint');
+app.use('/auth-test', authTestEndpoint);
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -1568,12 +1644,23 @@ if (process.env.SERVERLESS) {
         data: { type: 'server_startup_check' }
       }, true).catch(() => {
         // Expected to fail with invalid token, but validates Firebase initialization
-        console.log('Firebase Messaging service verified');
+        logger.info('Firebase Messaging service verified');
       });
-      console.log(`Server is running on port ${PORT} with Firebase Messaging initialized`);
+      logger.info('Server startup successful', {
+        port: PORT,
+        firebase: 'initialized',
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
-      console.error('Failed to verify Firebase Messaging:', error);
-      console.error('Server started but Firebase Messaging may not be working correctly');
+      logger.error('Firebase Messaging verification failed', {
+        error: error.message,
+        stack: error.stack,
+        port: PORT
+      });
+      logger.warn('Server started with Firebase Messaging issues', {
+        port: PORT,
+        firebase: 'degraded'
+      });
     }
   });
 }
@@ -1663,9 +1750,9 @@ app.use((req, res, next) => {
   const requestId = uuidv4().slice(0, 8);
   
   // Log request
-  // console.log(`[${new Date().toISOString()}] [${requestId}] REQUEST: ${req.method} ${req.originalUrl}`);
+  console.log(`[${new Date().toISOString()}] [${requestId}] REQUEST: ${req.method} ${req.originalUrl}`);
   if (Object.keys(req.body).length > 0) {
-    // console.log(`[${new Date().toISOString()}] [${requestId}] REQUEST BODY:`, JSON.stringify(req.body, null, 2));
+    console.log(`[${new Date().toISOString()}] [${requestId}] REQUEST BODY:`, JSON.stringify(req.body, null, 2));
   }
   
   // Capture the original methods
@@ -1676,16 +1763,16 @@ app.use((req, res, next) => {
   // Override send
   res.send = function(body) {
     const duration = Date.now() - start;
-    // console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE: ${res.statusCode} (${duration}ms)`);
+    console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE: ${res.statusCode} (${duration}ms)`);
     if (body) {
       let responseBody = body;
       try {
         if (typeof body === 'string') {
           responseBody = JSON.parse(body);
         }
-        // console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE BODY:`, JSON.stringify(responseBody, null, 2));
+        console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE BODY:`, JSON.stringify(responseBody, null, 2));
       } catch (e) {
-        // console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE BODY: ${body}`);
+        console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE BODY: ${body}`);
       }
     }
     return originalSend.apply(res, arguments);
@@ -1694,9 +1781,9 @@ app.use((req, res, next) => {
   // Override json
   res.json = function(body) {
     const duration = Date.now() - start;
-    // console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE: ${res.statusCode} (${duration}ms)`);
+    console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE: ${res.statusCode} (${duration}ms)`);
     if (body) {
-      // console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE BODY:`, JSON.stringify(body, null, 2));
+      console.log(`[${new Date().toISOString()}] [${requestId}] RESPONSE BODY:`, JSON.stringify(body, null, 2));
     }
     return originalJson.apply(res, arguments);
   };
@@ -2594,11 +2681,31 @@ app.post("/login", async function (req, res) {
       });
     }
     
+    // Generate JWT token
+    const jwt = require('jsonwebtoken');
+    const tokenPayload = {
+      userId: user._id.toString(),
+      email: user.email,
+      roles: [user.role || 'user'],
+      organizationId: user.organizationId
+    };
+    
+    const token = jwt.sign(
+      tokenPayload,
+      process.env.PRIVATE_KEY || 'REDACTED', // Fallback to default if env var not set
+      { 
+        expiresIn: '24h',
+        issuer: 'invoice-app',
+        audience: 'invoice-app-users'
+      }
+    );
+    
     await client.close();
     
     res.status(200).json({
       statusCode: 200,
       message: "Login successful",
+      token: token, // Include token in response
       user: {
         id: user._id.toString(),
         firstName: user.firstName,
@@ -5512,49 +5619,156 @@ app.post('/save-custom-price-client', async (req, res) => {
  * Create a new expense record
  * POST /api/expenses/create
  */
-app.post('/api/expenses/create', createExpense);
+app.post('/api/expenses/create', async (req, res) => {
+  try {
+    const result = await createExpense(req.body);
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error creating expense:', error);
+    res.status(400).json({
+      statusCode: 400,
+      message: error.message || 'Error creating expense record'
+    });
+  }
+});
 
 /**
  * Get expense categories and subcategories
  * GET /api/expenses/categories
  */
-app.get('/api/expenses/categories', getExpenseCategories);
+app.get('/api/expenses/categories', async (req, res) => {
+  try {
+    const result = await getExpenseCategories();
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error getting expense categories:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: error.message || 'Error retrieving expense categories'
+    });
+  }
+});
 
 /**
  * Get expenses for an organization
  * GET /api/expenses/organization/:organizationId
  */
-app.get('/api/expenses/organization/:organizationId', getOrganizationExpenses);
+app.get('/api/expenses/organization/:organizationId', async (req, res) => {
+  try {
+    const { organizationId } = req.params;
+    const result = await getOrganizationExpenses(organizationId, req.query);
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error getting organization expenses:', error);
+    res.status(400).json({
+      statusCode: 400,
+      message: error.message || 'Error retrieving organization expenses'
+    });
+  }
+});
 
 /**
  * Get specific expense record by ID
  * GET /api/expenses/:expenseId
  */
-app.get('/api/expenses/:expenseId', getExpenseById);
+app.get('/api/expenses/:expenseId', async (req, res) => {
+  try {
+    const { expenseId } = req.params;
+    const result = await getExpenseById(expenseId);
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error getting expense by ID:', error);
+    const statusCode = error.message.includes('not found') ? 404 : 
+                      error.message.includes('Invalid') ? 400 : 500;
+    res.status(statusCode).json({
+      statusCode,
+      message: error.message || 'Error retrieving expense record'
+    });
+  }
+});
 
 /**
  * Update existing expense record
  * PUT /api/expenses/:expenseId
  */
-app.put('/api/expenses/:expenseId', updateExpense);
+app.put('/api/expenses/:expenseId', async (req, res) => {
+  try {
+    const { expenseId } = req.params;
+    const result = await updateExpense(expenseId, req.body);
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error updating expense:', error);
+    const statusCode = error.message.includes('not found') ? 404 : 
+                      error.message.includes('not authorized') ? 403 :
+                      error.message.includes('Invalid') ? 400 : 500;
+    res.status(statusCode).json({
+      statusCode,
+      message: error.message || 'Error updating expense record'
+    });
+  }
+});
 
 /**
  * Delete (deactivate) expense record
  * DELETE /api/expenses/:expenseId
  */
-app.delete('/api/expenses/:expenseId', deleteExpense);
+app.delete('/api/expenses/:expenseId', async (req, res) => {
+  try {
+    const { expenseId } = req.params;
+    const { userEmail, deleteReason } = req.body;
+    const result = await deleteExpense(expenseId, userEmail, deleteReason);
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error deleting expense:', error);
+    const statusCode = error.message.includes('not found') ? 404 : 
+                      error.message.includes('not authorized') ? 403 :
+                      error.message.includes('Invalid') ? 400 : 500;
+    res.status(statusCode).json({
+      statusCode,
+      message: error.message || 'Error deleting expense record'
+    });
+  }
+});
 
 /**
  * Update approval status for expense record
  * PUT /api/expenses/:expenseId/approval
  */
-app.put('/api/expenses/:expenseId/approval', updateExpenseApproval);
+app.put('/api/expenses/:expenseId/approval', async (req, res) => {
+  try {
+    const { expenseId } = req.params;
+    const result = await updateExpenseApproval(expenseId, req.body);
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error updating expense approval:', error);
+    const statusCode = error.message.includes('not found') ? 404 : 
+                      error.message.includes('not authorized') ? 403 :
+                      error.message.includes('Invalid') ? 400 : 500;
+    res.status(statusCode).json({
+      statusCode,
+      message: error.message || 'Error updating approval status'
+    });
+  }
+});
 
 /**
  * Bulk import expense records
  * POST /api/expenses/bulk-import
  */
-app.post('/api/expenses/bulk-import', bulkImportExpenses);
+app.post('/api/expenses/bulk-import', async (req, res) => {
+  try {
+    const result = await bulkImportExpenses(req.body);
+    res.status(result.statusCode || 200).json(result);
+  } catch (error) {
+    console.error('Error bulk importing expenses:', error);
+    const statusCode = error.message.includes('not authorized') ? 403 :
+                      error.message.includes('required') ? 400 : 500;
+    res.status(statusCode).json({
+      statusCode,
+      message: error.message || 'Error performing bulk import'
+    });
+  }
+});
 
 // ===== PRICE VALIDATION API ENDPOINTS =====
 
@@ -5799,6 +6013,45 @@ app.get('/api/invoice/available-assignments/:userEmail', getAvailableAssignments
 app.post('/api/invoice/validate-generation-data', validateInvoiceGenerationData);
 
 // ============================================================================
+// INVOICE MANAGEMENT API ENDPOINTS (Generated Invoice List, View, Share, Delete)
+// ============================================================================
+
+/**
+ * Get list of generated invoices for an organization
+ * GET /api/invoices/list/:organizationId
+ * Query params: page, limit, status, clientEmail, userEmail, startDate, endDate, sortBy, sortOrder
+ */
+app.get('/api/invoices/list/:organizationId', getInvoicesList);
+
+/**
+ * Get detailed view of a specific invoice
+ * GET /api/invoices/view/:invoiceId
+ * Query params: organizationId (required for access control)
+ */
+app.get('/api/invoices/view/:invoiceId', getInvoiceDetails);
+
+/**
+ * Share invoice (generate shareable link or send via email)
+ * POST /api/invoices/share/:invoiceId
+ * Body: { organizationId, shareMethod, recipientEmail?, userEmail?, message? }
+ */
+app.post('/api/invoices/share/:invoiceId', shareInvoice);
+
+/**
+ * Delete invoice (soft delete with audit trail)
+ * DELETE /api/invoices/delete/:invoiceId
+ * Body: { organizationId, userEmail?, reason? }
+ */
+app.delete('/api/invoices/delete/:invoiceId', deleteInvoice);
+
+/**
+ * Get invoice statistics for an organization
+ * GET /api/invoices/stats/:organizationId
+ * Query params: period (7d, 30d, 90d)
+ */
+app.get('/api/invoices/stats/:organizationId', getInvoiceStats);
+
+// ============================================================================
 // PRICE PROMPT API ENDPOINTS (Task 2.3: Price prompt system for missing prices)
 // ============================================================================
 
@@ -5893,3 +6146,63 @@ app.post('/api/invoice/map-legacy-item', mapLegacyItemToNdis);
  * GET /api/invoice/:invoiceId/compatibility
  */
 app.get('/api/invoice/:invoiceId/compatibility', checkInvoiceCompatibility);
+
+// ============================================================================
+// PRICING ANALYTICS API ENDPOINTS
+// ============================================================================
+
+/**
+ * Get comprehensive pricing analytics
+ * GET /api/analytics/pricing/:organizationId
+ */
+app.get('/api/analytics/pricing/:organizationId', getPricingAnalytics);
+
+/**
+ * Get pricing compliance report
+ * GET /api/analytics/pricing/compliance/:organizationId
+ */
+app.get('/api/analytics/pricing/compliance/:organizationId', getPricingComplianceReport);
+
+// ============================================================================
+// CLIENT ACTIVITY ANALYTICS API ENDPOINTS
+// ============================================================================
+
+/**
+ * Get client activity analytics
+ * GET /api/analytics/clients/:organizationId
+ */
+app.get('/api/analytics/clients/:organizationId', getClientActivityAnalytics);
+
+/**
+ * Get top performing clients
+ * GET /api/analytics/clients/top/:organizationId/:metric
+ */
+app.get('/api/analytics/clients/top/:organizationId/:metric', getTopPerformingClients);
+
+/**
+ * Get client service patterns
+ * GET /api/analytics/clients/patterns/:organizationId
+ */
+app.get('/api/analytics/clients/patterns/:organizationId', getClientServicePatterns);
+
+// ============================================================================
+// BUSINESS INTELLIGENCE API ENDPOINTS
+// ============================================================================
+
+/**
+ * Get business intelligence dashboard
+ * GET /api/analytics/business/:organizationId
+ */
+app.get('/api/analytics/business/:organizationId', getBusinessIntelligenceDashboard);
+
+/**
+ * Get revenue forecast
+ * GET /api/analytics/business/revenue/:organizationId
+ */
+app.get('/api/analytics/business/revenue/:organizationId', getRevenueForecastAnalysis);
+
+/**
+ * Get operational efficiency report
+ * GET /api/analytics/business/efficiency/:organizationId
+ */
+app.get('/api/analytics/business/efficiency/:organizationId', getOperationalEfficiencyReport);

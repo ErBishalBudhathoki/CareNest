@@ -1,0 +1,138 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% C4 Component Diagram - Backend Services Detail
+%% Created: 2025-01-19
+%% Shows the components within the backend container
+
+flowchart TB
+    %% External
+    MobileApp["📱 Flutter Mobile App"]
+    Firebase["🔐 Firebase Auth"]
+    MongoDB["🗄️ MongoDB"]
+    FileStorage["📁 File Storage"]
+    
+    %% Backend Container Boundary
+    subgraph BackendContainer ["Express.js Backend Container"]
+        %% Entry Point
+        Server["🚀 Server.js<br/>Application Entry Point"]
+        
+        %% Middleware Components
+        subgraph MiddlewareLayer ["Middleware Layer"]
+            AuthMW["🔐 Auth Middleware<br/>JWT validation"]
+            CORSMW["🌐 CORS Middleware<br/>Cross-origin requests"]
+            LogMW["📝 Logging Middleware<br/>Request/response logging"]
+            ErrorMW["❌ Error Handler<br/>Global error handling"]
+        end
+        
+        %% Route Components
+        subgraph RouteLayer ["Route Layer"]
+            AuthRoutes["🔑 Auth Routes<br/>/api/auth/*"]
+            UserRoutes["👤 User Routes<br/>/api/users/*"]
+            ClientRoutes["👥 Client Routes<br/>/api/clients/*"]
+            AppointmentRoutes["📅 Appointment Routes<br/>/api/appointments/*"]
+            ExpenseRoutes["💰 Expense Routes<br/>/api/expenses/*"]
+            InvoiceRoutes["📄 Invoice Routes<br/>/api/invoices/*"]
+            TrackingRoutes["⏱️ Tracking Routes<br/>/api/tracking/*"]
+            PricingRoutes["💲 Pricing Routes<br/>/api/pricing/*"]
+        end
+        
+        %% Controller Components
+        subgraph ControllerLayer ["Controller Layer"]
+            AuthController["🔑 Auth Controller<br/>Login, registration"]
+            UserController["👤 User Controller<br/>User management"]
+            ClientController["👥 Client Controller<br/>Client operations"]
+            AppointmentController["📅 Appointment Controller<br/>Appointment management"]
+            ExpenseController["💰 Expense Controller<br/>Expense processing"]
+            InvoiceController["📄 Invoice Controller<br/>Invoice generation"]
+            TrackingController["⏱️ Tracking Controller<br/>Time tracking"]
+            PricingController["💲 Pricing Controller<br/>Price management"]
+        end
+        
+        %% Service Components
+        subgraph ServiceLayer ["Service Layer"]
+            AuthService["🔑 Auth Service<br/>Authentication logic"]
+            UserService["👤 User Service<br/>User business logic"]
+            ClientService["👥 Client Service<br/>Client business logic"]
+            AppointmentService["📅 Appointment Service<br/>Appointment logic"]
+            ExpenseService["💰 Expense Service<br/>Expense logic"]
+            InvoiceService["📄 Invoice Service<br/>Invoice generation"]
+            TrackingService["⏱️ Tracking Service<br/>Time tracking logic"]
+            PricingService["💲 Pricing Service<br/>Pricing calculations"]
+            AuditService["📋 Audit Service<br/>Audit trail logging"]
+        end
+        
+        %% Utility Components
+        subgraph UtilityLayer ["Utility Layer"]
+            CryptoUtils["🔒 Crypto Helpers<br/>Encryption/hashing"]
+            DateUtils["📅 Date Helpers<br/>Date calculations"]
+            FileUtils["📁 File Helpers<br/>File operations"]
+            ValidationUtils["✅ Validation Helpers<br/>Input validation"]
+            PricingUtils["💲 Pricing Helpers<br/>Price calculations"]
+        end
+        
+        %% Configuration
+        subgraph ConfigLayer ["Configuration Layer"]
+            DBConfig["🗄️ Database Config<br/>MongoDB connection"]
+            FirebaseConfig["🔐 Firebase Config<br/>Auth configuration"]
+            MulterConfig["📤 Multer Config<br/>File upload settings"]
+        end
+    end
+    
+    %% Relationships
+    MobileApp -->|"HTTP Requests"| Server
+    
+    Server --> MiddlewareLayer
+    MiddlewareLayer --> RouteLayer
+    RouteLayer --> ControllerLayer
+    ControllerLayer --> ServiceLayer
+    ServiceLayer --> UtilityLayer
+    
+    %% External connections
+    AuthMW -->|"Token Validation"| Firebase
+    ServiceLayer -->|"Data Operations"| MongoDB
+    FileUtils -->|"File Operations"| FileStorage
+    
+    %% Configuration usage
+    ServiceLayer --> ConfigLayer
+    MiddlewareLayer --> ConfigLayer
+    
+    %% Specific route to controller mappings
+    AuthRoutes --> AuthController
+    UserRoutes --> UserController
+    ClientRoutes --> ClientController
+    AppointmentRoutes --> AppointmentController
+    ExpenseRoutes --> ExpenseController
+    InvoiceRoutes --> InvoiceController
+    TrackingRoutes --> TrackingController
+    PricingRoutes --> PricingController
+    
+    %% Controller to service mappings
+    AuthController --> AuthService
+    UserController --> UserService
+    ClientController --> ClientService
+    AppointmentController --> AppointmentService
+    ExpenseController --> ExpenseService
+    InvoiceController --> InvoiceService
+    TrackingController --> TrackingService
+    PricingController --> PricingService
+    
+    %% Cross-cutting concerns
+    ServiceLayer --> AuditService
+    
+    %% Styling
+    classDef external fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef entry fill:#e3f2fd,stroke:#0277bd,stroke-width:2px
+    classDef middleware fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef route fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef controller fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef service fill:#fff8e1,stroke:#f9a825,stroke-width:2px
+    classDef utility fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef config fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+    
+    class MobileApp,Firebase,MongoDB,FileStorage external
+    class Server entry
+    class AuthMW,CORSMW,LogMW,ErrorMW middleware
+    class AuthRoutes,UserRoutes,ClientRoutes,AppointmentRoutes,ExpenseRoutes,InvoiceRoutes,TrackingRoutes,PricingRoutes route
+    class AuthController,UserController,ClientController,AppointmentController,ExpenseController,InvoiceController,TrackingController,PricingController controller
+    class AuthService,UserService,ClientService,AppointmentService,ExpenseService,InvoiceService,TrackingService,PricingService,AuditService service
+    class CryptoUtils,DateUtils,FileUtils,ValidationUtils,PricingUtils utility
+    class DBConfig,FirebaseConfig,MulterConfig config
