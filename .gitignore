@@ -181,3 +181,15 @@ backend/
 
 # Java heap dump files
 *.hprof
+
+# User-specified ignores
+.claude/
+.trae/
+docs/
+logs/
+tasks/
+test/
+tests/
+.cursorrules
+*.js
+superPrompt.xml
