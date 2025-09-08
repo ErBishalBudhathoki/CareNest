@@ -1,0 +1,184 @@
+{
+  "id": null,
+  "title": "Invoice System - Health & Performance Dashboard",
+  "tags": ["invoice", "system", "health", "performance"],
+  "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Assignment Status",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "invoice_assignments_active",
+            "legendFormat": "Active Assignments"
+          },
+          {
+            "expr": "invoice_assignments_total",
+            "legendFormat": "Total Assignments"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 70},
+                {"color": "red", "value": 90}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Assignment Activity Rate",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "(invoice_assignments_active / invoice_assignments_total) * 100",
+            "legendFormat": "Assignment Activity %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 70},
+                {"color": "red", "value": 90}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "System Entity Metrics",
+        "type": "histogram",
+        "targets": [
+          {
+            "expr": "invoice_invoices_recent",
+            "legendFormat": "Recent Invoices"
+          },
+          {
+            "expr": "invoice_clients_total",
+            "legendFormat": "Total Clients"
+          },
+          {
+            "expr": "invoice_users_total",
+            "legendFormat": "Total Users"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Organization & Activity Overview",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "invoice_organizations_total",
+            "legendFormat": "Total Organizations"
+          },
+          {
+            "expr": "invoice_assignments_active",
+            "legendFormat": "Active Assignments"
+          },
+          {
+            "expr": "invoice_invoices_recent",
+            "legendFormat": "Recent Invoices"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Assignment Performance",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "invoice_assignments_total",
+            "legendFormat": "Total Assignments"
+          },
+          {
+            "expr": "invoice_assignments_active",
+            "legendFormat": "Active Assignments"
+          },
+          {
+            "expr": "invoice_invoices_recent",
+            "legendFormat": "Recent Invoices"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 6,
+        "title": "System Entity Counts",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "invoice_clients_total",
+            "legendFormat": "Total Clients"
+          },
+          {
+            "expr": "invoice_users_total",
+            "legendFormat": "Total Users"
+          },
+          {
+            "expr": "invoice_organizations_total",
+            "legendFormat": "Total Organizations"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 1},
+                {"color": "red", "value": 5}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      },
+      {
+        "id": 7,
+        "title": "Assignment Activity Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "(invoice_assignments_active / invoice_assignments_total) * 100",
+            "legendFormat": "Assignment Activity Rate %"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24}
+      },
+      {
+        "id": 8,
+        "title": "Recent Invoice Count",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "invoice_invoices_recent",
+            "legendFormat": "Recent Invoices"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24}
+      }
+    ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "10s"
+}

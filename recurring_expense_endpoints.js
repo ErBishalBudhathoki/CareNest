@@ -13,8 +13,8 @@ const {
   deactivateRecurringExpense,
   getRecurringExpenses,
   getRecurringExpenseStats
-} = require('./recurring_expense_service');
-const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./audit_trail_service');
+} = require('./services/recurringExpenseService');
+const { createAuditLog, AUDIT_ACTIONS, AUDIT_ENTITIES } = require('./services/auditService');
 
 const uri = process.env.MONGODB_URI;
 

@@ -1,4 +1,5 @@
 const { MongoClient } = require('mongodb');
+const logger = require('../utils/logger');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -338,11 +339,14 @@ if (require.main === module) {
   validateMigration()
     .then((results) => {
       const isReady = results.readiness.status === 'READY';
-      console.log(`\n${isReady ? '🎉' : '⚠️'} Migration validation ${isReady ? 'completed successfully' : 'completed with issues'}`);
+      logger.info(`Migration validation ${isReady ? 'completed successfully' : 'completed with issues'}`);
       process.exit(isReady ? 0 : 1);
     })
     .catch((error) => {
-      console.error('\n❌ Migration validation failed:', error);
+      logger.error('Migration validation failed', {
+        error: error.message,
+        stack: error.stack
+      });
       process.exit(1);
     });
 }

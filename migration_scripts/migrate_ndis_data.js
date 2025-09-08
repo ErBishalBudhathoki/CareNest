@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 const path = require('path');
 const fs = require('fs');
+const logger = require('../utils/structuredLogger');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 /**
@@ -13,7 +14,7 @@ async function migrateNdisData() {
   
   try {
     await client.connect();
-    console.log('Connected to MongoDB');
+    logger.info('Connected to MongoDB for NDIS data migration');
     
     const db = client.db('Invoice');
     const supportItemsCollection = db.collection('supportItems');

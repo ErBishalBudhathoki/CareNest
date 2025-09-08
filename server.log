@@ -1,0 +1,37 @@
+Firebase config - Current directory: /Users/pratikshatiwari/StudioProjects/invoice/backend
+Firebase config - Env file path: /Users/pratikshatiwari/StudioProjects/invoice/backend/.env
+Environment Variables Check: {
+  FIREBASE_PROJECT_ID: 'invoice-660f3',
+  FIREBASE_CLIENT_EMAIL: 'firebase-adminsdk-n5lc5@invoice-660f3.iam.gserviceaccount.com',
+  HAS_PRIVATE_KEY: true,
+  PRIVATE_KEY_LENGTH: 1704
+}
+Service Account Config: {
+  type: 'service_account',
+  project_id: 'invoice-660f3',
+  private_key_id: '10d2d8c1f0a009de2805c5d6328b2d840fe0bba5',
+  private_key: '[REDACTED]',
+  client_email: 'firebase-adminsdk-n5lc5@invoice-660f3.iam.gserviceaccount.com',
+  client_id: '103517965643459540163',
+  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+  token_uri: 'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+  client_x509_cert_url: 'https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-n5lc5%40invoice-660f3.iam.gserviceaccount.com',
+  universe_domain: 'googleapis.com'
+}
+Initializing Firebase Admin SDK...
+Firebase Admin SDK initialized successfully
+Setting up FCM messaging service...
+FCM messaging service initialized successfully
+Firebase Messaging service verified
+Server is running on port 8080 with Firebase Messaging initialized
+FCM token verified successfully: dFoM22JHSg...
+FCM token registered for: {
+  userEmail: 'test@tester.com',
+  organizationId: '6846b040808f01d85897bbd8'
+}
+FCM token verified successfully: dFoM22JHSg...
+FCM token registered for: {
+  userEmail: 'test@tester.com',
+  organizationId: '6846b040808f01d85897bbd8'
+}

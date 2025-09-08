@@ -1,0 +1,147 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% Data Flow Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows how data flows through the system
+
+flowchart TD
+    %% External Data Sources
+    UserInput["👤 User Input<br/>Mobile App"]
+    NDISData["📋 NDIS Database<br/>Support Items & Pricing"]
+    FileUploads["📤 File Uploads<br/>Expense Photos"]
+    
+    %% Input Processing
+    subgraph InputLayer ["Input Processing Layer"]
+        AuthValidation["🔐 Authentication<br/>Validation"]
+        InputValidation["✅ Input Validation<br/>& Sanitization"]
+        FileProcessing["📁 File Processing<br/>& Storage"]
+    end
+    
+    %% Core Processing
+    subgraph CoreProcessing ["Core Business Processing"]
+        UserMgmt["👤 User Management<br/>Registration, Profile"]
+        ClientMgmt["👥 Client Management<br/>Assignments, Profiles"]
+        TimeMgmt["⏱️ Time Management<br/>Tracking, Timers"]
+        ExpenseMgmt["💰 Expense Management<br/>Recording, Validation"]
+        PricingEngine["💲 Pricing Engine<br/>Calculations, Validation"]
+        InvoiceEngine["📄 Invoice Engine<br/>Generation, Processing"]
+        AuditEngine["📋 Audit Engine<br/>Trail Logging"]
+    end
+    
+    %% Data Storage
+    subgraph DataStorage ["Data Storage Layer"]
+        UserData["👤 User Data<br/>MongoDB Collection"]
+        ClientData["👥 Client Data<br/>MongoDB Collection"]
+        TimeData["⏱️ Time Tracking<br/>MongoDB Collection"]
+        ExpenseData["💰 Expense Data<br/>MongoDB Collection"]
+        InvoiceData["📄 Invoice Data<br/>MongoDB Collection"]
+        PricingData["💲 Pricing Data<br/>MongoDB Collection"]
+        AuditData["📋 Audit Trail<br/>MongoDB Collection"]
+        FileData["📁 File Storage<br/>Local/Cloud Storage"]
+    end
+    
+    %% Output Processing
+    subgraph OutputLayer ["Output Processing Layer"]
+        ResponseFormatting["📋 Response Formatting<br/>JSON Serialization"]
+        PDFGeneration["📄 PDF Generation<br/>Invoice Documents"]
+        NotificationSvc["🔔 Notification Service<br/>Push Notifications"]
+        ReportGeneration["📊 Report Generation<br/>Analytics & Summaries"]
+    end
+    
+    %% External Outputs
+    APIResponse["📱 API Response<br/>Mobile App"]
+    GeneratedPDFs["📄 Generated PDFs<br/>Invoice Documents"]
+    Notifications["🔔 Push Notifications<br/>Mobile Devices"]
+    Reports["📊 Reports & Analytics<br/>Dashboard Data"]
+    
+    %% Data Flow Connections
+    
+    %% Input flows
+    UserInput --> AuthValidation
+    UserInput --> InputValidation
+    FileUploads --> FileProcessing
+    NDISData --> PricingEngine
+    
+    %% Processing flows
+    AuthValidation --> UserMgmt
+    InputValidation --> ClientMgmt
+    InputValidation --> TimeMgmt
+    InputValidation --> ExpenseMgmt
+    FileProcessing --> ExpenseMgmt
+    
+    %% Cross-processing flows
+    UserMgmt --> ClientMgmt
+    ClientMgmt --> TimeMgmt
+    TimeMgmt --> PricingEngine
+    ExpenseMgmt --> PricingEngine
+    PricingEngine --> InvoiceEngine
+    
+    %% Audit flows
+    UserMgmt --> AuditEngine
+    ClientMgmt --> AuditEngine
+    TimeMgmt --> AuditEngine
+    ExpenseMgmt --> AuditEngine
+    InvoiceEngine --> AuditEngine
+    
+    %% Storage flows
+    UserMgmt --> UserData
+    ClientMgmt --> ClientData
+    TimeMgmt --> TimeData
+    ExpenseMgmt --> ExpenseData
+    InvoiceEngine --> InvoiceData
+    PricingEngine --> PricingData
+    AuditEngine --> AuditData
+    FileProcessing --> FileData
+    
+    %% Output flows
+    UserData --> ResponseFormatting
+    ClientData --> ResponseFormatting
+    TimeData --> ResponseFormatting
+    ExpenseData --> ResponseFormatting
+    InvoiceData --> ResponseFormatting
+    PricingData --> ResponseFormatting
+    
+    InvoiceData --> PDFGeneration
+    TimeData --> NotificationSvc
+    ExpenseData --> NotificationSvc
+    
+    UserData --> ReportGeneration
+    TimeData --> ReportGeneration
+    ExpenseData --> ReportGeneration
+    InvoiceData --> ReportGeneration
+    
+    %% Final outputs
+    ResponseFormatting --> APIResponse
+    PDFGeneration --> GeneratedPDFs
+    NotificationSvc --> Notifications
+    ReportGeneration --> Reports
+    
+    %% Feedback loops
+    APIResponse -.->|"User Actions"| UserInput
+    Reports -.->|"Business Insights"| PricingEngine
+    
+    %% Background processes
+    subgraph BackgroundProcesses ["Background Processes"]
+        RecurringExpenses["🔄 Recurring Expenses<br/>Automated Creation"]
+        TimerCleanup["🧹 Timer Cleanup<br/>Orphaned Timers"]
+        DataBackup["💾 Data Backup<br/>Scheduled Backups"]
+    end
+    
+    RecurringExpenses --> ExpenseData
+    TimerCleanup --> TimeData
+    DataBackup --> DataStorage
+    
+    %% Styling
+    classDef input fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef processing fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef storage fill:#e3f2fd,stroke:#0277bd,stroke-width:2px
+    classDef output fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef external fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef background fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    
+    class UserInput,NDISData,FileUploads external
+    class AuthValidation,InputValidation,FileProcessing input
+    class UserMgmt,ClientMgmt,TimeMgmt,ExpenseMgmt,PricingEngine,InvoiceEngine,AuditEngine processing
+    class UserData,ClientData,TimeData,ExpenseData,InvoiceData,PricingData,AuditData,FileData storage
+    class ResponseFormatting,PDFGeneration,NotificationSvc,ReportGeneration output
+    class APIResponse,GeneratedPDFs,Notifications,Reports external
+    class RecurringExpenses,TimerCleanup,DataBackup background

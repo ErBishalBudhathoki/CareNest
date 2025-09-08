@@ -5,6 +5,7 @@
  */
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const logger = require('./config/logger');
 const uri = process.env.MONGODB_URI;
 
 class PricePromptService {
@@ -69,7 +70,11 @@ class PricePromptService {
         prompt: prompt
       };
     } catch (error) {
-      console.error('Error creating price prompt:', error);
+      logger.error('Error creating price prompt', {
+        error: error.message,
+        stack: error.stack,
+        promptData
+      });
       throw error;
     }
   }
@@ -113,7 +118,12 @@ class PricePromptService {
         message: 'Price prompt resolved successfully'
       };
     } catch (error) {
-      console.error('Error resolving price prompt:', error);
+      logger.error('Error resolving price prompt', {
+        error: error.message,
+        stack: error.stack,
+        promptId,
+        resolution
+      });
       throw error;
     }
   }
@@ -151,7 +161,9 @@ class PricePromptService {
         duplicateCheckQuery.clientId = null;
       }
       
-      console.log(`Checking for duplicate custom pricing with query:`, JSON.stringify(duplicateCheckQuery, null, 2));
+      logger.debug('Checking for duplicate custom pricing', {
+          query: duplicateCheckQuery
+        });
       
       const existingCustomPricing = await this.db.collection('customPricing').findOne(duplicateCheckQuery);
 
@@ -187,9 +199,16 @@ class PricePromptService {
               }
             }
           );
-          console.log(`Updated existing custom pricing for NDIS item ${prompt.ndisItemNumber} from ${existingPrice} to ${newPrice}`);
+          logger.info('Updated existing custom pricing', {
+            ndisItemNumber: prompt.ndisItemNumber,
+            oldPrice: existingPrice,
+            newPrice: newPrice
+          });
         } else {
-          console.log(`Custom pricing for NDIS item ${prompt.ndisItemNumber} already exists with same price ${newPrice}, skipping duplicate creation`);
+          logger.info('Custom pricing already exists with same price, skipping duplicate', {
+            ndisItemNumber: prompt.ndisItemNumber,
+            price: newPrice
+          });
         }
       } else {
         // Create new custom pricing record
@@ -230,7 +249,11 @@ class PricePromptService {
 
         // Create the custom pricing entry
         await this.db.collection('customPricing').insertOne(customPricingData);
-        console.log(`Created new custom pricing for NDIS item ${prompt.ndisItemNumber} (clientSpecific: ${isClientSpecific}, clientId: ${targetClientId})`);
+        logger.info('Created new custom pricing', {
+          ndisItemNumber: prompt.ndisItemNumber,
+          clientSpecific: isClientSpecific,
+          clientId: targetClientId
+        });
       }
 
       return {
@@ -238,7 +261,11 @@ class PricePromptService {
         message: 'Custom pricing saved successfully'
       };
     } catch (error) {
-      console.error('Error saving custom pricing:', error);
+        logger.error('Error saving custom pricing', {
+          error: error.message,
+          stack: error.stack,
+          promptData: prompt
+        });
       throw error;
     }
   }
@@ -260,7 +287,11 @@ class PricePromptService {
         prompts: prompts
       };
     } catch (error) {
-      console.error('Error getting pending prompts:', error);
+      logger.error('Error getting pending prompts', {
+        error: error.message,
+        stack: error.stack,
+        sessionId
+      });
       throw error;
     }
   }
@@ -292,7 +323,11 @@ class PricePromptService {
         message: 'Price prompt cancelled successfully'
       };
     } catch (error) {
-      console.error('Error cancelling price prompt:', error);
+      logger.error('Error cancelling price prompt', {
+        error: error.message,
+        stack: error.stack,
+        promptId
+      });
       throw error;
     }
   }

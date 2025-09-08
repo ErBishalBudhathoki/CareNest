@@ -1,0 +1,189 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+%% Invoice Generation Sequence Diagram - Invoice Management System
+%% Created: 2025-01-19
+%% Shows the complete invoice generation and billing flow
+
+sequenceDiagram
+    participant User as 👤 User (Admin)
+    participant Mobile as 📱 Mobile App
+    participant API as 🌐 Express API
+    participant AuthMW as 🔐 Auth Middleware
+    participant InvoiceController as 🎮 Invoice Controller
+    participant InvoiceService as ⚙️ Invoice Service
+    participant PricingService as 💲 Pricing Service
+    participant AppointmentService as 📅 Appointment Service
+    participant ExpenseService as 💰 Expense Service
+    participant MongoDB as 🗄️ MongoDB
+    participant PDFService as 📄 PDF Service
+    participant FileStorage as 📁 File Storage
+    participant AuditService as 📋 Audit Service
+    participant NDIS as 📋 NDIS Database
+
+    Note over User, NDIS: Invoice Generation Flow
+    
+    %% User initiates invoice generation
+    User->>Mobile: Select "Generate Invoice"
+    Mobile->>Mobile: Show invoice parameters form
+    User->>Mobile: Enter invoice details<br/>(client, date range, services)
+    
+    Mobile->>API: POST /api/invoices/generate<br/>{clientId, startDate, endDate, services[]}
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>InvoiceController: Route to generateInvoice()
+    
+    InvoiceController->>InvoiceController: Validate request parameters
+    
+    alt Valid parameters
+        InvoiceController->>InvoiceService: generateInvoice(invoiceData)
+        
+        %% Step 1: Gather time tracking data
+        InvoiceService->>AppointmentService: getWorkedTimeForPeriod(clientId, dateRange)
+        AppointmentService->>MongoDB: Query workedTime collection
+        MongoDB-->>AppointmentService: Time tracking records
+        AppointmentService-->>InvoiceService: Worked time data
+        
+        %% Step 2: Gather expense data
+        InvoiceService->>ExpenseService: getExpensesForPeriod(clientId, dateRange)
+        ExpenseService->>MongoDB: Query expenses collection
+        MongoDB-->>ExpenseService: Expense records
+        ExpenseService-->>InvoiceService: Expense data
+        
+        %% Step 3: Get pricing information
+        InvoiceService->>PricingService: calculatePricing(services, timeData)
+        
+        %% Get NDIS support item pricing
+        PricingService->>NDIS: Query support item rates
+        NDIS-->>PricingService: Standard rates
+        
+        %% Check for custom pricing
+        PricingService->>MongoDB: Query customPricing collection
+        MongoDB-->>PricingService: Custom rates (if any)
+        
+        PricingService->>PricingService: Calculate line items<br/>(time × rate + expenses)
+        PricingService-->>InvoiceService: Pricing breakdown
+        
+        %% Step 4: Create invoice record
+        InvoiceService->>InvoiceService: Build invoice object<br/>(header, line items, totals)
+        
+        InvoiceService->>MongoDB: Insert invoice document
+        MongoDB-->>InvoiceService: Invoice ID
+        
+        %% Step 5: Generate PDF
+        InvoiceService->>PDFService: generateInvoicePDF(invoiceData)
+        
+        PDFService->>PDFService: Create PDF document<br/>(header, items, totals, branding)
+        PDFService->>FileStorage: Save PDF file
+        FileStorage-->>PDFService: File path
+        
+        PDFService-->>InvoiceService: PDF file path
+        
+        %% Step 6: Update invoice with PDF path
+        InvoiceService->>MongoDB: Update invoice {pdfPath}
+        MongoDB-->>InvoiceService: Update confirmation
+        
+        %% Step 7: Log audit trail
+        InvoiceService->>AuditService: logEvent('INVOICE_GENERATED', invoiceInfo)
+        AuditService->>MongoDB: Insert audit record
+        
+        InvoiceService-->>InvoiceController: {success: true, invoiceId, pdfPath}
+        InvoiceController-->>API: 201 Created {invoice, downloadUrl}
+        API-->>Mobile: Success response
+        
+        Mobile->>Mobile: Show success message
+        Mobile-->>User: "Invoice generated successfully"
+        
+        %% Optional: Download PDF
+        User->>Mobile: "Download PDF"
+        Mobile->>API: GET /api/invoices/{id}/download
+        
+        API->>AuthMW: Verify authentication
+        AuthMW->>InvoiceController: Route to downloadPDF()
+        
+        InvoiceController->>InvoiceService: getInvoicePDF(invoiceId)
+        InvoiceService->>MongoDB: Query invoice document
+        MongoDB-->>InvoiceService: Invoice with PDF path
+        
+        InvoiceService->>FileStorage: Read PDF file
+        FileStorage-->>InvoiceService: PDF binary data
+        
+        InvoiceService-->>InvoiceController: PDF file stream
+        InvoiceController-->>API: 200 OK (PDF download)
+        API-->>Mobile: PDF file
+        Mobile-->>User: Save/view PDF
+        
+    else Invalid parameters
+        InvoiceController-->>API: 400 Bad Request
+        API-->>Mobile: Validation errors
+        Mobile-->>User: Show error messages
+    end
+    
+    Note over User, NDIS: Bulk Invoice Generation Flow
+    
+    User->>Mobile: Select "Bulk Generate Invoices"
+    Mobile->>Mobile: Show bulk generation form
+    User->>Mobile: Select multiple clients<br/>and date range
+    
+    Mobile->>API: POST /api/invoices/bulk-generate<br/>{clientIds[], startDate, endDate}
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>InvoiceController: Route to bulkGenerateInvoices()
+    
+    InvoiceController->>InvoiceService: bulkGenerateInvoices(bulkData)
+    
+    loop For each client
+        InvoiceService->>InvoiceService: generateInvoice(clientData)
+        
+        alt Invoice generation successful
+            InvoiceService->>InvoiceService: Add to success list
+        else Invoice generation failed
+            InvoiceService->>InvoiceService: Add to error list
+        end
+    end
+    
+    %% Log bulk operation
+    InvoiceService->>AuditService: logEvent('BULK_INVOICE_GENERATED', summary)
+    AuditService->>MongoDB: Insert audit record
+    
+    InvoiceService-->>InvoiceController: {successCount, errorCount, details}
+    InvoiceController-->>API: 200 OK {summary, results}
+    API-->>Mobile: Bulk generation results
+    
+    Mobile->>Mobile: Show summary report
+    Mobile-->>User: "Generated X invoices, Y errors"
+    
+    Note over User, NDIS: Invoice Status Management
+    
+    User->>Mobile: View invoice list
+    Mobile->>API: GET /api/invoices?status=pending
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>InvoiceController: Route to getInvoices()
+    
+    InvoiceController->>InvoiceService: getInvoicesByStatus(filters)
+    InvoiceService->>MongoDB: Query invoices collection
+    MongoDB-->>InvoiceService: Invoice list
+    
+    InvoiceService-->>InvoiceController: Formatted invoice list
+    InvoiceController-->>API: 200 OK {invoices[]}
+    API-->>Mobile: Invoice list
+    Mobile-->>User: Display invoice table
+    
+    %% Update invoice status
+    User->>Mobile: Mark invoice as "Paid"
+    Mobile->>API: PATCH /api/invoices/{id}/status<br/>{status: 'paid'}
+    
+    API->>AuthMW: Verify authentication
+    AuthMW->>InvoiceController: Route to updateInvoiceStatus()
+    
+    InvoiceController->>InvoiceService: updateInvoiceStatus(id, status)
+    InvoiceService->>MongoDB: Update invoice document
+    MongoDB-->>InvoiceService: Update confirmation
+    
+    %% Log status change
+    InvoiceService->>AuditService: logEvent('INVOICE_STATUS_CHANGED', details)
+    AuditService->>MongoDB: Insert audit record
+    
+    InvoiceService-->>InvoiceController: Update success
+    InvoiceController-->>API: 200 OK
+    API-->>Mobile: Status updated
+    Mobile-->>User: "Invoice marked as paid"

@@ -1,0 +1,96 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@invoice-system.com'
+  smtp_auth_username: 'alerts@invoice-system.com'
+  smtp_auth_password: 'your-email-password'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'web.hook'
+  routes:
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+    - match:
+        severity: warning
+      receiver: 'warning-alerts'
+    - match:
+        service: invoice-app
+      receiver: 'app-alerts'
+    - match:
+        service: database
+      receiver: 'database-alerts'
+
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+      - url: 'http://host.docker.internal:3000/api/alerts/webhook'
+        send_resolved: true
+        http_config:
+          basic_auth:
+            username: 'alert-webhook'
+            password: 'webhook-secret'
+
+  - name: 'critical-alerts'
+    email_configs:
+      - to: 'admin@invoice-system.com'
+        headers:
+          Subject: 'CRITICAL: Invoice System Alert - {{ .GroupLabels.alertname }}'
+        html: |
+          <h2>Alert: {{ .GroupLabels.alertname }}</h2>
+          <p><strong>Severity:</strong> {{ .CommonLabels.severity }}</p>
+          <p><strong>Instance:</strong> {{ .CommonLabels.instance }}</p>
+          <p><strong>Summary:</strong> {{ .CommonAnnotations.summary }}</p>
+          <p><strong>Description:</strong> {{ .CommonAnnotations.description }}</p>
+          <p><strong>Time:</strong> {{ .CommonLabels.timestamp }}</p>
+          <p><em>Please investigate immediately.</em></p>
+    webhook_configs:
+      - url: 'http://host.docker.internal:3000/api/alerts/critical'
+        send_resolved: true
+
+  - name: 'warning-alerts'
+    email_configs:
+      - to: 'support@invoice-system.com'
+        headers:
+          Subject: 'WARNING: Invoice System Alert - {{ .GroupLabels.alertname }}'
+        html: |
+          <h2>Alert: {{ .GroupLabels.alertname }}</h2>
+          <p><strong>Severity:</strong> {{ .CommonLabels.severity }}</p>
+          <p><strong>Instance:</strong> {{ .CommonLabels.instance }}</p>
+          <p><strong>Summary:</strong> {{ .CommonAnnotations.summary }}</p>
+          <p><strong>Description:</strong> {{ .CommonAnnotations.description }}</p>
+          <p><strong>Time:</strong> {{ .CommonLabels.timestamp }}</p>
+    webhook_configs:
+      - url: 'http://host.docker.internal:3000/api/alerts/warning'
+        send_resolved: true
+
+  - name: 'app-alerts'
+    webhook_configs:
+      - url: 'http://host.docker.internal:3000/api/alerts/application'
+        send_resolved: true
+        http_config:
+          basic_auth:
+            username: 'app-alerts'
+            password: 'app-secret'
+
+  - name: 'database-alerts'
+    webhook_configs:
+      - url: 'http://host.docker.internal:3000/api/alerts/database'
+        send_resolved: true
+        http_config:
+          basic_auth:
+            username: 'db-alerts'
+            password: 'db-secret'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
