@@ -19,11 +19,9 @@ const serverless = require("serverless-http");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // Firebase Admin SDK Configuration Generation
-const fs = require('fs');
-// path is already imported at the top of server.js
+// fs and path are already imported at the top of server.js
+// const fs = require('fs');
 // const path = require('path');
-// logger is already imported below
-// const logger = require('./config/logger');
 
 const firebaseTemplatePath = path.join(__dirname, 'firebase-admin-config.js.template');
 const firebaseOutputPath = path.join(__dirname, 'firebase-admin-config.js');
