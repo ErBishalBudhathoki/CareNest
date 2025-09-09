@@ -7,6 +7,12 @@ require('dotenv').config();
 console.log('Firebase config - Current directory:', process.cwd());
 console.log('Firebase config - Env file path:', `${process.cwd()}/.env`);
 
+// Debug information for troubleshooting
+console.log('DEBUG: process.env.FIREBASE_PRIVATE_KEY (length):', process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.length : 0);
+console.log('DEBUG: process.env.FIREBASE_PRIVATE_KEY (first 50 chars):', process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.substring(0, 50) : 'undefined');
+console.log('DEBUG: process.env.FIREBASE_PRIVATE_KEY (last 50 chars):', process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.slice(-50) : 'undefined');
+// console.log('DEBUG: process.env.FIREBASE_PRIVATE_KEY (full):', process.env.FIREBASE_PRIVATE_KEY); // Use with caution, sensitive data
+
 // Check if environment variables are set
 const envCheck = {
   FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
@@ -32,10 +38,16 @@ const serviceAccount = {
   "universe_domain": process.env.FIREBASE_UNIVERSE_DOMAIN || "googleapis.com"
 };
 
+console.log('DEBUG: serviceAccount.private_key (length after replace):', serviceAccount.private_key ? serviceAccount.private_key.length : 0);
+console.log('DEBUG: serviceAccount.private_key (first 50 chars after replace):', serviceAccount.private_key ? serviceAccount.private_key.substring(0, 50) : 'undefined');
+console.log('DEBUG: serviceAccount.private_key (last 50 chars after replace):', serviceAccount.private_key ? serviceAccount.private_key.slice(-50) : 'undefined');
+// console.log('DEBUG: serviceAccount.private_key (full after replace):', serviceAccount.private_key); // Use with caution, sensitive data
+
 console.log('Service Account Config:', {
   ...serviceAccount,
   private_key: '[REDACTED]'
 });
+
 
 console.log('Initializing Firebase Admin SDK...');
 
