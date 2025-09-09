@@ -217,9 +217,12 @@ const createLogMethods = (logger) => {
   };
 };
 
-// Export logger with helper methods
-module.exports = {
+// Create logger with helper methods
+const loggerWithHelpers = {
   ...createLogMethods(logger),
   winston: logger,
   logDir
 };
+
+// Export logger with helper methods
+module.exports = loggerWithHelpers;
