@@ -1,16 +1,6 @@
 const path = require('path');
 require("dotenv").config({ path: path.join(__dirname, '.env') });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
-});
-
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  process.exit(1);
-});
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const iconv = require("iconv-lite");
