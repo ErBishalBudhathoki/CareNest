@@ -17,6 +17,26 @@ const cors = require("cors");
 const helmet = require("helmet");
 const serverless = require("serverless-http");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+
+// Firebase Admin SDK Configuration Generation
+const fs = require('fs');
+// path is already imported at the top of server.js
+// const path = require('path');
+// logger is already imported below
+// const logger = require('./config/logger');
+
+const firebaseTemplatePath = path.join(__dirname, 'firebase-admin-config.js.template');
+const firebaseOutputPath = path.join(__dirname, 'firebase-admin-config.js');
+
+// Check if the template file exists and generate the config
+if (fs.existsSync(firebaseTemplatePath)) {
+  const templateContent = fs.readFileSync(firebaseTemplatePath, 'utf8');
+  fs.writeFileSync(firebaseOutputPath, templateContent, 'utf8');
+  console.log('Firebase Admin SDK configuration file generated successfully.');
+} else {
+  console.warn('Firebase Admin SDK template file not found. Skipping configuration generation.');
+}
+
 const { admin, messaging } = require('./firebase-admin-config'); // Initialize Firebase Admin SDK
 const logger = require('./config/logger'); // Import structured logger
 const { startTimerWithTracking, stopTimerWithTracking, getActiveTimers } = require('./active_timers_endpoints');
