@@ -12,7 +12,7 @@
 
 const { MongoClient } = require('mongodb');
 const logger = require('../config/logger');
-const { createAuditLog } = require('../../audit_trail_endpoints');
+const { createAuditLog } = require('../audit_trail_endpoints');
 
 /**
  * Get comprehensive business intelligence dashboard
