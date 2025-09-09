@@ -36,8 +36,11 @@ if (fs.existsSync(firebaseTemplatePath)) {
 }
 
 const { admin, messaging } = require('./firebase-admin-config'); // Initialize Firebase Admin SDK
+console.log('Firebase Admin SDK loaded successfully');
 const logger = require('./config/logger'); // Import structured logger
+console.log('Logger loaded successfully');
 const { startTimerWithTracking, stopTimerWithTracking, getActiveTimers } = require('./active_timers_endpoints');
+console.log('Active timers endpoints loaded successfully');
 const {
   createCustomPricing,
   getOrganizationPricing,
@@ -49,6 +52,7 @@ const {
   getBulkPricingLookup,
   bulkImportPricing
 } = require('./pricing_endpoints');
+console.log('Pricing endpoints loaded successfully');
 const {
   createExpense,
   getOrganizationExpenses,
@@ -59,6 +63,7 @@ const {
   getExpenseCategories,
   bulkImportExpenses
 } = require('./services/expenseService');
+console.log('Expense service loaded successfully');
 const {
   validatePrice,
   validatePricesBatch,
@@ -67,6 +72,7 @@ const {
   validateInvoiceLineItems,
   getValidationStats
 } = require('./price_validation_endpoints');
+console.log('Price validation endpoints loaded successfully');
 const {
   getEntityAuditHistoryEndpoint,
   getOrganizationAuditLogsEndpoint,
@@ -75,6 +81,7 @@ const {
   getAuditMetadataEndpoint,
   exportAuditLogsEndpoint
 } = require('./audit_trail_endpoints');
+console.log('Audit trail endpoints loaded successfully');
 const {
   processRecurringExpensesEndpoint,
   createRecurringExpenseEndpoint,
@@ -84,6 +91,7 @@ const {
   getRecurringExpenseStatisticsEndpoint,
   getRecurringExpenseByIdEndpoint
 } = require('./recurring_expense_endpoints');
+console.log('Recurring expense endpoints loaded successfully');
 const { 
   generateInvoiceLineItems, 
   getInvoicePreview, 
@@ -94,6 +102,7 @@ const {
   validatePricingRealtime,
   getInvoiceValidationReport
 } = require('./invoice_generation_endpoints');
+console.log('Invoice generation endpoints loaded successfully');
 const {
   getInvoicesList,
   getInvoiceDetails,
@@ -101,6 +110,7 @@ const {
   deleteInvoice,
   getInvoiceStats
 } = require('./endpoints/invoice_management_endpoints');
+console.log('Invoice management endpoints loaded successfully');
 const {
   createPricePrompt,
   resolvePricePrompt,
@@ -109,6 +119,7 @@ const {
   generateInvoiceWithPrompts,
   completeInvoiceGeneration
 } = require('./price_prompt_endpoints');
+console.log('Price prompt endpoints loaded successfully');
 const {
   processLegacyInvoice,
   validateLegacyCompatibility,
@@ -118,29 +129,42 @@ const {
   mapLegacyItemToNdis,
   checkInvoiceCompatibility
 } = require('./backward_compatibility_endpoints');
+console.log('Backward compatibility endpoints loaded successfully');
 const { loggingMiddleware } = require('./middleware/logging');
+console.log('Logging middleware loaded successfully');
 const { errorTrackingMiddleware } = require('./middleware/errorTracking');
+console.log('Error tracking middleware loaded successfully');
 const { systemHealthMiddleware } = require('./middleware/systemHealth');
+console.log('System health middleware loaded successfully');
 const {
   getPricingAnalytics,
   getPricingComplianceReport
 } = require('./endpoints/pricing_analytics_endpoints');
+console.log('Pricing analytics endpoints loaded successfully');
 const {
   getClientActivityAnalytics,
   getTopPerformingClients,
   getClientServicePatterns
 } = require('./endpoints/client_activity_endpoints');
+console.log('Client activity endpoints loaded successfully');
 const {
   getBusinessIntelligenceDashboard,
   getRevenueForecastAnalysis,
   getOperationalEfficiencyReport
 } = require('./endpoints/business_intelligence_endpoints');
+console.log('Business intelligence endpoints loaded successfully');
 const metricsRoutes = require('./routes/metrics');
+console.log('Metrics routes loaded successfully');
 const invoiceManagementRoutes = require('./routes/invoiceManagement');
+console.log('Invoice management routes loaded successfully');
 const authRoutes = require('./routes/auth');
+console.log('Auth routes loaded successfully');
 const { apiUsageMonitor } = require('./utils/apiUsageMonitor');
+console.log('API usage monitor loaded successfully');
 const securityDashboardRoutes = require('./routes/securityDashboard');
+console.log('Security dashboard routes loaded successfully');
 const apiUsageRoutes = require('./routes/apiUsageRoutes');
+console.log('API usage routes loaded successfully');
 const uri = process.env.MONGODB_URI;
 
 var app = express();

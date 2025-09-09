@@ -4,3 +4,4 @@ node_modules
 uploads/*
 firebase-admin-config.js
 firebase-service-account.json
+issues.md
