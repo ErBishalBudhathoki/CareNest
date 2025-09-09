@@ -1,6 +1,16 @@
 const path = require('path');
 require("dotenv").config({ path: path.join(__dirname, '.env') });
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const iconv = require("iconv-lite");
@@ -1672,40 +1682,6 @@ app.post('/sendNotification', async (req, res) => {
 
 
 var PORT = process.env.PORT || 8080;
-
-// Handle both serverless and local environments
-if (process.env.SERVERLESS) {
-  module.exports.handler = serverless(app);
-} else {
-  // Start server with Firebase verification
-  app.listen(PORT, async () => {
-    try {
-      // Verify Firebase messaging is working
-      await messaging.send({
-        token: 'dummy-token',
-        data: { type: 'server_startup_check' }
-      }, true).catch(() => {
-        // Expected to fail with invalid token, but validates Firebase initialization
-        logger.info('Firebase Messaging service verified');
-      });
-      logger.info('Server startup successful', {
-        port: PORT,
-        firebase: 'initialized',
-        timestamp: new Date().toISOString()
-      });
-    } catch (error) {
-      logger.error('Firebase Messaging verification failed', {
-        error: error.message,
-        stack: error.stack,
-        port: PORT
-      });
-      logger.warn('Server started with Firebase Messaging issues', {
-        port: PORT,
-        firebase: 'degraded'
-      });
-    }
-  });
-}
 
 // Secure GET endpoint for line items
 app.get("/getLineItems/", async (req, res) => {
@@ -6263,3 +6239,37 @@ app.get('/api/analytics/business/revenue/:organizationId', getRevenueForecastAna
  * GET /api/analytics/business/efficiency/:organizationId
  */
 app.get('/api/analytics/business/efficiency/:organizationId', getOperationalEfficiencyReport);
+
+// Handle both serverless and local environments
+if (process.env.SERVERLESS) {
+  module.exports.handler = serverless(app);
+} else {
+  // Start server with Firebase verification
+  app.listen(PORT, async () => {
+    try {
+      // Verify Firebase messaging is working
+      await messaging.send({
+        token: 'dummy-token',
+        data: { type: 'server_startup_check' }
+      }, true).catch(() => {
+        // Expected to fail with invalid token, but validates Firebase initialization
+        logger.info('Firebase Messaging service verified');
+      });
+      logger.info('Server startup successful', {
+        port: PORT,
+        firebase: 'initialized',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      logger.error('Firebase Messaging verification failed', {
+        error: error.message,
+        stack: error.stack,
+        port: PORT
+      });
+      logger.warn('Server started with Firebase Messaging issues', {
+        port: PORT,
+        firebase: 'degraded'
+      });
+    }
+  });
+}
