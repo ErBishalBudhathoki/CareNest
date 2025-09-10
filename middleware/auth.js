@@ -1,5 +1,15 @@
 const jwt = require('jsonwebtoken');
-const rateLimit = require('express-rate-limit');
+let rateLimit;
+try {
+  // Use express-rate-limit if available
+  // eslint-disable-next-line global-require
+  rateLimit = require('express-rate-limit');
+} catch (e) {
+  // Fallback no-op limiter to avoid runtime crashes if dependency isn't installed
+  rateLimit = function () {
+    return (req, res, next) => next();
+  };
+}
 const { createLogger } = require('../utils/logger');
 const SecureErrorHandler = require('../utils/errorHandler');
 const InputValidator = require('../utils/inputValidator');
@@ -70,7 +80,17 @@ class AuthMiddleware {
       }
 
       // Verify JWT token using the same private key as login endpoint
-      const privateKey = process.env.PRIVATE_KEY || 'REDACTED'; // Fallback to default if env var not set
+      const privateKey = process.env.JWT_SECRET || process.env.PRIVATE_KEY;
+      if (!privateKey) {
+        logger.error('JWT secret not configured');
+        return res.status(500).json(
+          SecureErrorHandler.createErrorResponse(
+            'Server configuration error. Please contact administrator.',
+            500,
+            'MISSING_JWT_SECRET'
+          )
+        );
+      }
       const decoded = jwt.verify(token, privateKey, {
         issuer: 'invoice-app',
         audience: 'invoice-app-users'
