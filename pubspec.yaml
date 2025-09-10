@@ -1,0 +1,163 @@
+name: carenest
+description: Conversion of invoice desktop app to mobile
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 2025.08.30+23
+
+environment:
+  sdk: ">=2.17.6 <4.9.9"
+
+dependencies:
+  get: 4.6.6
+  get_cli: ^1.8.1
+  get_storage: ^2.1.1
+  cupertino_icons: ^1.0.8
+  connectivity_plus: ^6.1.1
+  json_annotation: ^4.8.1
+  provider: ^6.1.2
+  email_validator: ^3.0.0
+  iconsax: ^0.0.8
+  http: ^1.2.2
+  shared_preferences: ^2.2.3
+  curved_navigation_bar: ^1.0.6
+  another_flushbar: ^1.12.30
+  # flutter_calendar_widget: ^0.0.2
+  table_calendar: ^3.0.8
+  intl: ^0.19.0
+  flutter_local_notifications: ^18.0.1
+  share_plus: ^10.0.0
+  animation_list: ^3.1.0
+  mongo_dart: ^0.10.3
+  excel: ^4.0.6
+  uuid: ^4.5.1
+  pdf: ^3.11.1
+  permission_handler: ^11.3.1
+  mailer: ^6.3.0
+  flutter_dotenv: ^5.2.1
+  page_view_dot_indicator: ^2.3.0
+  flutter_email_sender: ^6.0.3
+
+  cloud_firestore: ^5.4.0
+  download: ^1.0.0
+  path_provider: ^2.1.5
+  flutter_secure_storage: ^9.2.2
+  # document_file_save_plus: ^2.0.0
+  file_picker: ^10.2.0
+  file_manager: ^1.0.2
+  image_picker: ^1.0.4
+  rxdart: ^0.28.0
+  url_launcher: ^6.1.11
+  open_file: ^3.3.2
+  map_launcher: ^3.5.0
+  fl_chart: ^0.68.0
+  # uni_links: 0.5.1
+  app_links: ^6.3.3
+  pinput: ^5.0.0
+  persistent_bottom_nav_bar_v2: ^5.3.1
+  crypto: ^3.0.1
+  flutter:
+    sdk: flutter
+  argon2: ^1.0.1
+  lottie: ^3.1.3
+  media_store_plus: ^0.1.3
+
+  firebase_messaging: ^15.2.0
+  firebase_storage: ^12.2.0
+  firebase_app_check: ^0.3.1
+  firebase_core: ^3.4.0
+  firebase_auth: ^5.2.0
+
+  image_cropper: ^8.0.1
+  auto_size_text: ^3.0.0
+  speech_to_text: ^7.1.0
+  cached_network_image: ^3.3.1
+  pdfx: ^2.9.2
+  get_it: ^8.0.2
+  smooth_page_indicator: ^1.2.0+3
+
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  geolocator: ^13.0.2
+  freezed_annotation: ^2.4.1
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  google_maps_flutter: ^2.1.1
+  apple_maps_flutter: ^1.3.0
+  quiver: ^3.2.1
+  qr_flutter: ^4.1.0
+
+  flutter_animate: ^4.5.0
+  dotted_border: ^2.1.0
+  blur: ^3.1.0
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  shimmer: ^3.0.0
+
+  logging: ^1.2.0
+  device_info_plus: ^10.1.2 
+  package_info_plus: ^8.0.0
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  lints: ^5.1.1
+  flutter_launcher_icons: ^0.14.2
+  build_runner: ^2.4.8
+  json_serializable: ^6.7.1
+  flutter_test:
+    sdk: flutter
+  freezed: ^2.4.6
+  riverpod_generator: ^2.3.9
+  mockito: ^5.4.4
+  test: ^1.24.0
+
+flutter:
+  assets:
+    - .env
+    - assets/images/client-profile.png
+    - assets/images/placeholder_product.png
+    - assets/images/she_with_phone.png
+    - assets/images/he_sitting_with_notebook.png
+    - assets/images/invoice_banner.png
+    - assets/images/Invo.gif
+    - assets/images/splash_gif.gif
+    - assets/images/ud.gif
+    - assets/images/splash_screen.png
+    - assets/images/splash_screen.gif
+    - assets/icons/fav-folder-dynamic-color.png
+    - assets/icons/profile_placeholder.png
+    - assets/icons/3D Icons/
+    - assets/icons/PNG with shadow/
+    - lib/main.dart
+    - assets/lottieAnimationJSON/loading_horizontal_line.json
+    - assets/lottieAnimationJSON/warning.json
+    - assets/ndis_support_items.json
+    - assets/icons/
+  uses-material-design: true
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/lato/Lato-Regular.ttf
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/app_icon.svg"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.svg"
+  
+  # Development flavor configuration
+  development:
+    android: true
+    ios: true
+    image_path: "assets/icons/app_icon_dev.svg"
+    adaptive_icon_background: "#E1F5FE"
+    adaptive_icon_foreground: "assets/icons/app_icon_foreground_dev.svg"
+    
+  # Production flavor configuration
+  production:
+    android: true
+    ios: true
+    image_path: "assets/icons/app_icon.svg"
+    adaptive_icon_background: "#FFFFFF"
+    adaptive_icon_foreground: "assets/icons/app_icon_foreground.svg"
