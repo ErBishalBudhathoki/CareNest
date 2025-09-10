@@ -1,0 +1,177 @@
+# This file contains the fastlane configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Increment version code"
+  lane :increment_version_code do
+    # Read current version from local.properties
+    properties_file = "../local.properties"
+    properties = {}
+    
+    if File.exist?(properties_file)
+      File.readlines(properties_file).each do |line|
+        key, value = line.strip.split('=', 2)
+        properties[key] = value if key && value
+      end
+    end
+    
+    current_version_code = (properties['flutter.versionCode'] || '1').to_i
+    new_version_code = current_version_code + 1
+    
+    # Update version code in local.properties
+    updated_content = []
+    version_code_updated = false
+    
+    if File.exist?(properties_file)
+      File.readlines(properties_file).each do |line|
+        if line.start_with?('flutter.versionCode=')
+          updated_content << "flutter.versionCode=#{new_version_code}\n"
+          version_code_updated = true
+        else
+          updated_content << line
+        end
+      end
+    end
+    
+    # Add version code if it wasn't found
+    unless version_code_updated
+      updated_content << "flutter.versionCode=#{new_version_code}\n"
+    end
+    
+    File.write(properties_file, updated_content.join)
+    
+    UI.message "Version code incremented from #{current_version_code} to #{new_version_code}"
+  end
+
+  desc "Deploy development build to internal testing"
+  lane :deploy_development do
+    # Build the production AAB (development track uses production flavor)
+    sh "cd .. && flutter build appbundle --flavor production --release"
+    
+    # Read version info from local.properties
+    properties_file = "../local.properties"
+    properties = {}
+    
+    if File.exist?(properties_file)
+      File.readlines(properties_file).each do |line|
+        key, value = line.strip.split('=', 2)
+        properties[key] = value if key && value
+      end
+    end
+    
+    version_name = properties['flutter.versionName'] || '1.0'
+    version_code = properties['flutter.versionCode'] || '1'
+    
+    # Generate release notes
+    release_notes = "Development build #{version_name} (#{version_code})\n\nAutomated build for internal testing."
+    
+    # Create metadata directory if it doesn't exist
+    metadata_dir = "metadata/android/en-US"
+    FileUtils.mkdir_p(metadata_dir)
+    FileUtils.mkdir_p("#{metadata_dir}/changelogs")
+    
+    # Write changelog
+    File.write("#{metadata_dir}/changelogs/#{version_code}.txt", release_notes)
+    
+    upload_to_play_store(
+      track: 'internal',
+      aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Deploy production build to production track"
+  lane :deploy_production do
+    # Build the production AAB
+    sh "cd .. && flutter build appbundle --flavor production --release"
+    
+    # Read version info from local.properties
+    properties_file = "../local.properties"
+    properties = {}
+    
+    if File.exist?(properties_file)
+      File.readlines(properties_file).each do |line|
+        key, value = line.strip.split('=', 2)
+        properties[key] = value if key && value
+      end
+    end
+    
+    version_name = properties['flutter.versionName'] || '1.0'
+    version_code = properties['flutter.versionCode'] || '1'
+    
+    # Generate release notes
+    release_notes = "Production release #{version_name} (#{version_code})\n\nStable release for production."
+    
+    # Create metadata directory if it doesn't exist
+    metadata_dir = "metadata/android/en-US"
+    changelog_dir = "#{metadata_dir}/changelogs"
+    FileUtils.mkdir_p(changelog_dir)
+    
+    # Write changelog
+    File.write("#{changelog_dir}/#{version_code}.txt", release_notes)
+    
+    upload_to_play_store(
+      track: 'production',
+      package_name: 'com.bishal.invoice',
+      aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Deploy internal build to internal testing"
+  lane :deploy_internal do
+    # Build the production AAB (internal uses production flavor)
+    sh "cd .. && flutter build appbundle --flavor production --release"
+    
+    # Read version info from local.properties
+    properties_file = "../local.properties"
+    properties = {}
+    
+    if File.exist?(properties_file)
+      File.readlines(properties_file).each do |line|
+        key, value = line.strip.split('=', 2)
+        properties[key] = value if key && value
+      end
+    end
+    
+    version_name = properties['flutter.versionName'] || '1.0'
+    version_code = properties['flutter.versionCode'] || '1'
+    
+    # Generate release notes
+    release_notes = "Internal build #{version_name} (#{version_code})\n\nInternal testing build."
+    
+    # Create metadata directory if it doesn't exist
+    metadata_dir = "metadata/android/en-US"
+    changelog_dir = "#{metadata_dir}/changelogs"
+    FileUtils.mkdir_p(changelog_dir)
+    
+    # Write changelog
+    File.write("#{changelog_dir}/#{version_code}.txt", release_notes)
+    
+    upload_to_play_store(
+      track: 'internal',
+      aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
