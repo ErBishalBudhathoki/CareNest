@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/busineess/views/add_business_details_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/holiday/views/holiday_list_view.dart';
@@ -57,6 +58,7 @@ class _AdminDashboardViewControllerState
   Map<String, dynamic> getInitialData = {};
   Map<String, dynamic> businessStats = {};
   final ApiMethod _apiMethod = ApiMethod();
+  final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
   String? key;
   bool _isLoading = true;
   bool _isStatsLoading = true;
@@ -1172,6 +1174,14 @@ class _AdminDashboardViewControllerState
                           color: const Color(0xFF4CAF50),
                           onTap: () => _navigateToExpenseManagement(),
                         ),
+                        _buildImageActionTile(
+                          asset:
+                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png',
+                          title: 'Bank Details',
+                          subtitle: 'Manage bank account details',
+                          color: const Color(0xFF795548),
+                          onTap: () => _navigateToBankDetails(),
+                        ),
                         _buildActionCard(
                           icon: Icons.security_rounded,
                           title: 'API Usage Dashboard',
@@ -1190,6 +1200,30 @@ class _AdminDashboardViewControllerState
         },
       ),
     );
+  }
+
+  Future<void> _navigateToBankDetails() async {
+    // Ensure SharedPreferences is initialized before reading the role.
+    await _sharedPrefs.init();
+    final userRole = _sharedPrefs.getRole();
+    if (userRole == UserRole.admin) {
+      Navigator.of(context, rootNavigator: true)
+          .pushNamed(Routes.bankDetails);
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Admin Access Required"),
+          content: const Text("Only admins can access this feature."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildActionCategorySection(String title, List<Widget> actions) {
@@ -1401,6 +1435,7 @@ class _AdminDashboardViewControllerState
 
   void _navigateToEmployeeSelection() {
     if (key != null && key != 'add' && key != 'error') {
+      debugPrint("in employee selection");
       Navigator.of(context).pushNamed(
         Routes.employeeSelection,
         arguments: {
@@ -1419,6 +1454,7 @@ class _AdminDashboardViewControllerState
 
   void _navigateToAutomaticInvoiceGeneration() {
     if (key != null && key != 'add' && key != 'error') {
+      debugPrint("in automatic invoice generation");
       Navigator.of(context).pushNamed(
         Routes.automaticInvoiceGeneration,
         arguments: {
@@ -1437,6 +1473,7 @@ class _AdminDashboardViewControllerState
 
   void _navigateToEnhancedInvoice() {
     if (key != null && key != 'add' && key != 'error') {
+      debugPrint("in enhanced invoice");
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -1456,6 +1493,7 @@ class _AdminDashboardViewControllerState
   }
 
   void _navigateToInvoiceList() {
+    debugPrint("in invoice list");
     Navigator.of(context).pushNamed(
       Routes.invoiceList,
       arguments: {
@@ -1466,6 +1504,7 @@ class _AdminDashboardViewControllerState
   }
 
   Future<void> _navigateToHolidayList() async {
+    debugPrint("in holiday list");
     try {
       List<dynamic>? holidays = await _apiMethod.getHolidays();
       if (holidays != null && holidays.isNotEmpty) {

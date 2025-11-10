@@ -9,6 +9,7 @@ import 'package:carenest/app/features/pricing/views/ndis_pricing_management_view
 import 'package:carenest/app/features/pricing/views/service_rate_management_view.dart';
 import 'package:carenest/app/features/pricing/views/bulk_operations_view.dart';
 import 'package:carenest/app/features/pricing/views/price_history_view.dart';
+import 'package:carenest/app/features/pricing/views/pricing_configuration_view.dart';
 import 'package:carenest/app/features/pricing/widgets/improved_design_system.dart';
 import 'package:carenest/app/features/pricing/widgets/enhanced_navigation.dart';
 import 'dart:ui';
@@ -217,6 +218,23 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             ],
                           ),
                         ),
+                      const SizedBox(width: 12),
+                      // Settings shortcut button (visible on all screen sizes)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          onPressed: _openPricingSettings,
+                          icon: const Icon(
+                            Icons.settings,
+                            size: 20,
+                          ),
+                          tooltip: 'Pricing Settings',
+                          color: const Color(0xFF475569),
+                        ),
+                      ),
                     ],
                   ),
                   if (isSmallScreen) ...[
@@ -273,6 +291,28 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  /// Opens PricingConfigurationView to manage organization-wide pricing settings.
+  void _openPricingSettings() {
+    final orgId = widget.organizationId;
+    final admin = widget.adminEmail;
+    final orgName = widget.organizationName;
+
+    if (orgId == null || orgId.isEmpty || orgName == null || orgName.isEmpty) {
+      _showSnackBar('Organization context missing. Cannot open Pricing Settings.', isError: true);
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PricingConfigurationView(
+          adminEmail: admin,
+          organizationId: orgId,
+          organizationName: orgName,
         ),
       ),
     );

@@ -7,7 +7,13 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/config/environment.dart';
+import 'package:carenest/utils/hours_formatting.dart';
+import '../../../shared/utils/shared_preferences_utils.dart';
 import '../../../core/services/file_conversion_service.dart';
+import '../../../features/admin/viewmodels/bank_details_viewmodel.dart';
 import 'invoice_number_generator_service.dart';
 
 class InvoicePdfGenerator {
@@ -16,17 +22,18 @@ class InvoicePdfGenerator {
   Future<List<String>> generatePdfs(
     Map<String, dynamic> invoices, {
     bool showTax = true,
-    double taxRate = 0.10,
+    required double taxRate,
     List<File>? attachedPhotos,
     String? photoDescription,
     List<File>? additionalAttachments,
     List<String>? uploadedPhotoUrls,
     List<String>? uploadedAdditionalFileUrls,
+    bool useAdminBankDetails = false,
   }) async {
     List<String> generatedPdfPaths = [];
 
     try {
-      debugPrint('PDF Generator: Starting PDF generation');
+      debugPrint('PDF Generator: Starting PDF generation $taxRate');
       final clients = invoices['clients'] as List<dynamic>? ?? [];
       debugPrint('PDF Generator: Found ${clients.length} clients to process');
 
@@ -34,6 +41,14 @@ class InvoicePdfGenerator {
         if (clientData is! Map<String, dynamic>) {
           debugPrint('Warning: Invalid client data format');
           continue;
+        }
+
+        // Ensure admin bank details flag is present for downstream usage
+        // If the generator was invoked with useAdminBankDetails=true, propagate it to each client
+        if (useAdminBankDetails == true) {
+          clientData['useAdminBankDetails'] = true;
+        } else if (!clientData.containsKey('useAdminBankDetails')) {
+          clientData['useAdminBankDetails'] = false;
         }
 
         debugPrint(
@@ -71,6 +86,8 @@ class InvoicePdfGenerator {
           photoAttachmentsSection = await _buildPhotoAttachmentsSectionAsync(
               clientData, attachedPhotos, photoDescription);
         }
+
+        final invoiceTotalWidget = await _buildInvoiceTotal(clientData, showTax, taxRate);
 
         pdf.addPage(
           pw.MultiPage(
@@ -111,7 +128,7 @@ class InvoicePdfGenerator {
                     _buildExpensesTable(clientData),
                     pw.SizedBox(height: 24),
                   ],
-                  _buildInvoiceTotal(clientData, showTax, taxRate: taxRate),
+                  invoiceTotalWidget,
                   pw.SizedBox(height: 24),
                   // Add photo attachments section if photos are provided or if expenses have photos
                   if (photoAttachmentsSection != null) ...[
@@ -312,8 +329,14 @@ class InvoicePdfGenerator {
                   pw.SizedBox(height: 3),
                   _buildAlignedKeyValue(
                       'Hours Completed:',
-                      _getSafeString(clientData['totalHours'] ??
-                          _calculateTotalHours(clientData))),
+                      HoursFormatting.formatDecimalHours(
+                        _getSafeDouble(
+                          clientData['totalHours'] ??
+                              _calculateTotalHours(clientData),
+                        ),
+                        minDecimals: 2,
+                        maxDecimals: 4,
+                      )),
                 ],
               ),
             ),
@@ -339,13 +362,16 @@ class InvoicePdfGenerator {
         totalHours += _getSafeDouble(item['hours']);
       }
     }
-    return double.parse(totalHours.toStringAsFixed(2));
+    // Return precise total; format for display at usage sites.
+    return totalHours;
   }
 
   // Ensure tax-related totals are correct and stored back on the invoice data
   void _applyTaxFixesAndPersistableTotals(
       Map<String, dynamic> clientData, bool showTax, double taxRate) {
     try {
+      debugPrint(
+          'Invoice PDF Generator _applyTaxFixesAndPersistableTotals: showTax=$showTax, taxRate=$taxRate');
       // Calculate items subtotal with robust fallbacks
       final items = clientData['items'] as List<dynamic>? ?? [];
       double itemsSubtotal = 0.0;
@@ -374,7 +400,8 @@ class InvoicePdfGenerator {
 
       final double subtotal = itemsSubtotal + expensesTotal;
       final bool shouldApplyTax = showTax == true; // respect caller intent
-      final double effectiveTaxRate = _getSafeDouble(taxRate);
+      final double effectiveTaxRate =
+          _getSafeDouble(taxRate); // Convert percentage to decimal
       final double taxAmount =
           shouldApplyTax ? subtotal * effectiveTaxRate : 0.0;
       final double total = subtotal + taxAmount;
@@ -484,10 +511,13 @@ class InvoicePdfGenerator {
                     _getSafeString(clientData['clientState'] ?? 'NSW');
                 String hours = _getSafeString(item['hours']);
 
-                // Format hours to show as "07 hours" with leading zero if needed
+                // Display exact hours with up to 4 decimals (includes seconds)
                 double hoursDouble = _getSafeDouble(item['hours']);
-                String formattedHours =
-                    hoursDouble.toStringAsFixed(0).padLeft(2, '0');
+                String formattedHours = HoursFormatting.formatDecimalHours(
+                  hoursDouble,
+                  minDecimals: 2,
+                  maxDecimals: 4,
+                );
 
                 timeWorked =
                     '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
@@ -501,10 +531,13 @@ class InvoicePdfGenerator {
                 String clientState =
                     _getSafeString(clientData['clientState'] ?? 'NSW');
 
-                // Format hours to show as "07 hours" with leading zero if needed
+                // Display exact hours with up to 4 decimals (includes seconds)
                 double hoursDouble = _getSafeDouble(item['hours']);
-                String formattedHours =
-                    hoursDouble.toStringAsFixed(0).padLeft(2, '0');
+                String formattedHours = HoursFormatting.formatDecimalHours(
+                  hoursDouble,
+                  minDecimals: 2,
+                  maxDecimals: 4,
+                );
 
                 timeWorked =
                     '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
@@ -560,7 +593,12 @@ class InvoicePdfGenerator {
                   _buildTableCell(description),
                   _buildTableCell(timeWorked),
                   _buildNumericTableCell(
-                      _getSafeDouble(item['hours']).toStringAsFixed(2)),
+                    HoursFormatting.formatDecimalHours(
+                      _getSafeDouble(item['hours']),
+                      minDecimals: 2,
+                      maxDecimals: 4,
+                    ),
+                  ),
                   _buildNumericTableCell(
                       '\$${_getSafeDouble(item['rate']).toStringAsFixed(2)}'),
                   _buildNumericTableCell(
@@ -570,12 +608,24 @@ class InvoicePdfGenerator {
             }).toList(),
           ],
         ),
+        pw.SizedBox(height: 6),
+        pw.Text(
+          'Note: Hours include seconds and are shown up to 4 decimals. Totals are Hours × Rate, rounded to 2 decimals.',
+          style: pw.TextStyle(fontSize: 8),
+        ),
       ],
     );
   }
 
-  pw.Widget _buildInvoiceTotal(Map<String, dynamic> clientData, bool showTax,
-      {double taxRate = 0.10}) {
+  /// Builds the totals section and resolves bank details for display.
+  ///
+  /// Bank details resolution strategy:
+  /// - If `clientData['useAdminBankDetails']` is true, prefer admin bank details.
+  /// - If employee bank details are missing, fall back to admin bank details.
+  /// - If both employee and admin bank details are unavailable, throws
+  ///   `Exception('BANK_DETAILS_REQUIRED')` for upstream UI to prompt user.
+  Future<pw.Widget> _buildInvoiceTotal(
+      Map<String, dynamic> clientData, bool showTax, double taxRate) async {
     // Debug: Log tax-related values
     debugPrint(
         'PDF Generator _buildInvoiceTotal: showTax=$showTax, taxRate=$taxRate');
@@ -592,6 +642,12 @@ class InvoicePdfGenerator {
     final expensesTotal = _getSafeDouble(clientData['expensesTotal']);
     final hasExpenses = expensesTotal > 0;
 
+    final resolved = await _resolveBankDetailsForClient(clientData);
+    final String bankName = resolved['bankName']!;
+    final String accountName = resolved['accountName']!;
+    final String bsb = resolved['bsb']!;
+    final String accountNumber = resolved['accountNumber']!;
+
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -607,8 +663,10 @@ class InvoicePdfGenerator {
               _buildTotalRow(
                   'Subtotal', _getSafeDouble(clientData['subtotal'])),
               if (showTax)
-                _buildTotalRow('Tax (${_formatPercentage(taxRate)}%)',
-                    _getSafeDouble(clientData['tax'])),
+                taxRate != null
+                    ? _buildTotalRow('Tax (${_formatPercentage(taxRate)}%)',
+                        _getSafeDouble(clientData['taxAmount']))
+                    : pw.Container(),
               pw.Divider(color: PdfColors.black),
               _buildTotalRow('Total', _getSafeDouble(clientData['total']),
                   isBold: true),
@@ -618,15 +676,156 @@ class InvoicePdfGenerator {
         pw.SizedBox(height: 30),
         pw.Text('Bank Details:',
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-        pw.Text(
-            'Bank Name: ${_getSafeString(clientData['bankName'] ?? "Commonwealth Bank")}'),
-        pw.Text(
-            'Account Name: ${_getSafeString(clientData['accountName'] ?? "Pratiksha Tiwari")}'),
-        pw.Text('BSB: ${_getSafeString(clientData['bsb'] ?? "062692")}'),
-        pw.Text(
-            'Account Number: ${_getSafeString(clientData['accountNumber'] ?? "43025413")}'),
+        pw.Text('Bank Name: $bankName'),
+        pw.Text('Account Name: $accountName'),
+        pw.Text('BSB: $bsb'),
+        pw.Text('Account Number: $accountNumber'),
       ],
     );
+  }
+
+  /// Resolve bank details to print on the invoice.
+  ///
+  /// Parameters:
+  /// - clientData: Map containing client invoice data and `useAdminBankDetails` flag.
+  ///
+  /// Returns:
+  /// - Map<String, String> with keys: `bankName`, `accountName`, `bsb`, `accountNumber`.
+  ///
+  /// Throws:
+  /// - Exception('BANK_DETAILS_REQUIRED') when neither employee nor admin bank
+  ///   details are available.
+  Future<Map<String, String>> _resolveBankDetailsForClient(
+      Map<String, dynamic> clientData) async {
+    final prefs = await SharedPreferences.getInstance();
+    final sharedUtils = SharedPreferencesUtils();
+    await sharedUtils.init();
+
+    // Determine whether admin bank details should be used
+    final bool useAdmin = clientData['useAdminBankDetails'] == true;
+    // Branch strictly on selection to avoid cross-overriding
+    if (useAdmin) {
+      // Admin selected: fetch admin bank details from backend using configured owner email
+      try {
+        final api = ApiMethod();
+        final String adminEmail = AppConfig.ownerEmail.trim();
+        final String? organizationId = sharedUtils.getString('organizationId');
+        if (adminEmail.isEmpty || organizationId == null || organizationId.isEmpty) {
+          throw Exception('Missing adminEmail or organizationId');
+        }
+        final resp = await api.getBankDetailsForUserEmail(adminEmail, organizationId);
+        if (resp['success'] == true && resp['data'] is Map) {
+          final data = Map<String, dynamic>.from(resp['data']);
+          final adminBankName = (data['bankName'] ?? '').toString();
+          final adminAccountName = (data['accountName'] ?? '').toString();
+          final adminBsb = (data['bsb'] ?? '').toString();
+          final adminAccountNumber = (data['accountNumber'] ?? '').toString();
+          if (adminBankName.isEmpty ||
+              adminAccountName.isEmpty ||
+              adminBsb.isEmpty ||
+              adminAccountNumber.isEmpty) {
+            throw Exception('BANK_DETAILS_REQUIRED');
+          }
+          return {
+            'bankName': adminBankName,
+            'accountName': adminAccountName,
+            'bsb': adminBsb,
+            'accountNumber': adminAccountNumber,
+          };
+        }
+        throw Exception('BANK_DETAILS_REQUIRED');
+      } catch (e) {
+        debugPrint('Failed to fetch admin bank details: $e');
+        throw Exception('BANK_DETAILS_REQUIRED');
+      }
+    } else {
+      // Employee selected: prefer employee bank details; fall back to admin only if employee is missing
+      String bankName = (clientData['bankName'] ?? '').toString();
+      String accountName = (clientData['accountName'] ?? '').toString();
+      String bsb = (clientData['bsb'] ?? '').toString();
+      String accountNumber = (clientData['accountNumber'] ?? '').toString();
+
+      final bool employeeIncomplete = bankName.isEmpty ||
+          accountName.isEmpty ||
+          bsb.isEmpty ||
+          accountNumber.isEmpty;
+
+      if (employeeIncomplete) {
+        try {
+          final api = ApiMethod();
+          String employeeEmail = '';
+          final dynamic emailCandidate = clientData['employeeEmail'];
+          if (emailCandidate is String && emailCandidate.isNotEmpty) {
+            employeeEmail = emailCandidate;
+          } else {
+            final String? spEmail = sharedUtils.getString('userEmail');
+            if (spEmail != null && spEmail.isNotEmpty) {
+              employeeEmail = spEmail;
+            }
+          }
+          final String? organizationId = sharedUtils.getString('organizationId');
+          if (employeeEmail.isNotEmpty && organizationId != null && organizationId.isNotEmpty) {
+            final resp = await api.getBankDetailsForUserEmail(employeeEmail, organizationId);
+            if (resp['success'] == true && resp['data'] is Map) {
+              final data = Map<String, dynamic>.from(resp['data']);
+              bankName = bankName.isNotEmpty ? bankName : (data['bankName'] ?? '').toString();
+              accountName = accountName.isNotEmpty ? accountName : (data['accountName'] ?? '').toString();
+              bsb = bsb.isNotEmpty ? bsb : (data['bsb'] ?? '').toString();
+              accountNumber = accountNumber.isNotEmpty ? accountNumber : (data['accountNumber'] ?? '').toString();
+            }
+          }
+        } catch (e) {
+          debugPrint('Failed to fetch employee bank details: $e');
+        }
+      }
+
+      final bool employeeComplete = bankName.isNotEmpty &&
+          accountName.isNotEmpty &&
+          bsb.isNotEmpty &&
+          accountNumber.isNotEmpty;
+      if (employeeComplete) {
+        return {
+          'bankName': bankName,
+          'accountName': accountName,
+          'bsb': bsb,
+          'accountNumber': accountNumber,
+        };
+      }
+
+      // Employee missing: fall back to admin (network only)
+      try {
+        final api = ApiMethod();
+        final String adminEmail = AppConfig.ownerEmail.trim();
+        final String? organizationId = sharedUtils.getString('organizationId');
+        if (adminEmail.isEmpty || organizationId == null || organizationId.isEmpty) {
+          throw Exception('BANK_DETAILS_REQUIRED');
+        }
+        final resp = await api.getBankDetailsForUserEmail(adminEmail, organizationId);
+        if (resp['success'] == true && resp['data'] is Map) {
+          final data = Map<String, dynamic>.from(resp['data']);
+          final adminBankName = (data['bankName'] ?? '').toString();
+          final adminAccountName = (data['accountName'] ?? '').toString();
+          final adminBsb = (data['bsb'] ?? '').toString();
+          final adminAccountNumber = (data['accountNumber'] ?? '').toString();
+          if (adminBankName.isEmpty ||
+              adminAccountName.isEmpty ||
+              adminBsb.isEmpty ||
+              adminAccountNumber.isEmpty) {
+            throw Exception('BANK_DETAILS_REQUIRED');
+          }
+          return {
+            'bankName': adminBankName,
+            'accountName': adminAccountName,
+            'bsb': adminBsb,
+            'accountNumber': adminAccountNumber,
+          };
+        }
+        throw Exception('BANK_DETAILS_REQUIRED');
+      } catch (e) {
+        debugPrint('Failed to fetch admin bank details for fallback: $e');
+        throw Exception('BANK_DETAILS_REQUIRED');
+      }
+    }
   }
 
   pw.Widget _buildTableHeader(String text) {

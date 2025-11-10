@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/viewmodels/automatic_invoice_viewmodel.dart';
+import 'package:carenest/app/features/invoice/viewmodels/employee_selection_viewmodel.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
@@ -37,16 +38,23 @@ class _AutomaticInvoiceGenerationViewState
   String? _organizationId;
   bool _includeExpenses = true;
   bool _applyTax = true;
-  double _taxRate = 0.10;
+  double _taxRate = 0.00;
   bool _validatePrices = true;
   bool _allowPriceCapOverride = false;
   bool _includeDetailedPricingInfo = true;
+  bool _useAdminBankDetails = false;
+  bool _useSelectedEmployees = false; // false => All employees, true => Selected employees only
+  final Set<String> _selectedEmployeeEmails = {};
+  // Local state for date range selection
+  DateTime? _selectedStartDate;
+  DateTime? _selectedEndDate;
 
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
     _loadOrganizationId();
+    _loadUseAdminPreference();
   }
 
   void _initializeAnimations() {
@@ -86,6 +94,32 @@ class _AutomaticInvoiceGenerationViewState
 
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  /// Loads the persisted preference for using admin bank details.
+  /// Defaults to false if no value is stored.
+  Future<void> _loadUseAdminPreference() async {
+    try {
+      final prefs = SharedPreferencesUtils();
+      await prefs.init();
+      final stored = prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+      if (stored != null && mounted) {
+        setState(() => _useAdminBankDetails = stored);
+      }
+    } catch (e) {
+      debugPrint('Failed to load useAdminBankDetails preference: $e');
+    }
+  }
+
+  /// Persists the current admin/employee bank detail preference.
+  Future<void> _persistUseAdminPreference(bool value) async {
+    try {
+      final prefs = SharedPreferencesUtils();
+      await prefs.init();
+      await prefs.setBool(SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
+    } catch (e) {
+      debugPrint('Failed to persist useAdminBankDetails preference: $e');
     }
   }
 
@@ -301,6 +335,264 @@ class _AutomaticInvoiceGenerationViewState
             _includeDetailedPricingInfo,
             (value) => setState(() => _includeDetailedPricingInfo = value),
             Icons.info,
+          ),
+          const SizedBox(height: ModernInvoiceDesign.space4),
+          _buildEmployeesSelection(),
+          const SizedBox(height: ModernInvoiceDesign.space4),
+          _buildBankDetailsSelection(),
+          const SizedBox(height: ModernInvoiceDesign.space4),
+          _buildInvoicePeriodSelection(),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the invoice period selection UI, allowing the user to choose a
+  /// start and end date for filtering line items and expenses.
+  Widget _buildInvoicePeriodSelection() {
+    return Container(
+      padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+      decoration: BoxDecoration(
+        color: ModernInvoiceDesign.background,
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
+        border: Border.all(color: ModernInvoiceDesign.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                decoration: BoxDecoration(
+                  color: ModernInvoiceDesign.surfaceVariant,
+                  borderRadius:
+                      BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                ),
+                child: Icon(
+                  Icons.calendar_today_rounded,
+                  color: ModernInvoiceDesign.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: ModernInvoiceDesign.space4),
+              Expanded(
+                child: Text(
+                  'Invoice Period',
+                  style: ModernInvoiceDesign.titleMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () async {
+                  final picked = await showDateRangePicker(
+                    context: context,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    initialDateRange: (_selectedStartDate != null &&
+                            _selectedEndDate != null)
+                        ? DateTimeRange(
+                            start: _selectedStartDate!,
+                            end: _selectedEndDate!,
+                          )
+                        : null,
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      _selectedStartDate = picked.start;
+                      _selectedEndDate = picked.end;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.date_range_rounded),
+                label: const Text('Select Period'),
+                style: TextButton.styleFrom(
+                  foregroundColor: ModernInvoiceDesign.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: ModernInvoiceDesign.space3),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  (_selectedStartDate != null && _selectedEndDate != null)
+                      ? '${_formatDate(_selectedStartDate!)}  —  ${_formatDate(_selectedEndDate!)}'
+                      : 'No period selected (using default)',
+                  style: ModernInvoiceDesign.bodySmall.copyWith(
+                    color: ModernInvoiceDesign.textSecondary,
+                  ),
+                ),
+              ),
+              if (_selectedStartDate != null && _selectedEndDate != null)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedStartDate = null;
+                      _selectedEndDate = null;
+                    });
+                  },
+                  child: const Text('Clear'),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  
+  /// Employees inclusion/selection UI for intuitive control
+  Widget _buildEmployeesSelection() {
+    return Container(
+      padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+      decoration: BoxDecoration(
+        color: ModernInvoiceDesign.background,
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
+        border: Border.all(color: ModernInvoiceDesign.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                decoration: BoxDecoration(
+                  color: ModernInvoiceDesign.surfaceVariant,
+                  borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                ),
+                child: Icon(
+                  Icons.people_alt,
+                  color: ModernInvoiceDesign.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: ModernInvoiceDesign.space4),
+              Text(
+                'Employees',
+                style: ModernInvoiceDesign.titleMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: ModernInvoiceDesign.space3),
+          RadioListTile<bool>(
+            title: Text('All Employees', style: ModernInvoiceDesign.bodyMedium),
+            value: false,
+            groupValue: _useSelectedEmployees,
+            onChanged: (value) {
+              setState(() {
+                _useSelectedEmployees = value!;
+              });
+            },
+            activeColor: ModernInvoiceDesign.primary,
+            contentPadding: EdgeInsets.zero,
+          ),
+          RadioListTile<bool>(
+            title: Text('Select Employees', style: ModernInvoiceDesign.bodyMedium),
+            value: true,
+            groupValue: _useSelectedEmployees,
+            onChanged: (value) async {
+              setState(() {
+                _useSelectedEmployees = value!;
+              });
+              // Prompt employee picker immediately for a smooth flow
+              await _openEmployeeSelectionSheet();
+            },
+            activeColor: ModernInvoiceDesign.primary,
+            contentPadding: EdgeInsets.zero,
+          ),
+          if (_useSelectedEmployees) ...[
+            const SizedBox(height: ModernInvoiceDesign.space2),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedEmployeeEmails.isEmpty
+                        ? 'No employees selected'
+                        : '${_selectedEmployeeEmails.length} selected',
+                    style: ModernInvoiceDesign.bodySmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: _openEmployeeSelectionSheet,
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Choose Employees'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: ModernInvoiceDesign.primary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildBankDetailsSelection() {
+    return Container(
+      padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+      decoration: BoxDecoration(
+        color: ModernInvoiceDesign.background,
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
+        border: Border.all(color: ModernInvoiceDesign.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                decoration: BoxDecoration(
+                  color: ModernInvoiceDesign.surfaceVariant,
+                  borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                ),
+                child: Icon(
+                  Icons.account_balance,
+                  color: ModernInvoiceDesign.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: ModernInvoiceDesign.space4),
+              Text(
+                'Bank Details',
+                style: ModernInvoiceDesign.titleMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: ModernInvoiceDesign.space3),
+          RadioListTile<bool>(
+            title: Text('Employee Bank Details', 
+              style: ModernInvoiceDesign.bodyMedium),
+            value: false,
+            groupValue: _useAdminBankDetails,
+            onChanged: (value) {
+              setState(() => _useAdminBankDetails = value!);
+              _persistUseAdminPreference(_useAdminBankDetails);
+            },
+            activeColor: ModernInvoiceDesign.primary,
+            contentPadding: EdgeInsets.zero,
+          ),
+          RadioListTile<bool>(
+            title: Text('Admin Bank Details', 
+              style: ModernInvoiceDesign.bodyMedium),
+            value: true,
+            groupValue: _useAdminBankDetails,
+            onChanged: (value) {
+              setState(() => _useAdminBankDetails = value!);
+              _persistUseAdminPreference(_useAdminBankDetails);
+            },
+            activeColor: ModernInvoiceDesign.primary,
+            contentPadding: EdgeInsets.zero,
           ),
         ],
       ),
@@ -785,6 +1077,41 @@ class _AutomaticInvoiceGenerationViewState
       return;
     }
 
+    // If using selected employees, ensure at least one is chosen
+    if (_useSelectedEmployees && _selectedEmployeeEmails.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select at least one employee'),
+          backgroundColor: ModernInvoiceDesign.error,
+        ),
+      );
+      return;
+    }
+
+    // Validate tax settings: allow 0% tax, only block negatives
+    if (_applyTax && (_taxRate < 0.0)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tax rate cannot be negative when tax is applied'),
+          backgroundColor: ModernInvoiceDesign.error,
+        ),
+      );
+      return;
+    }
+
+    // Validate date range when both dates are provided
+    if (_selectedStartDate != null && _selectedEndDate != null) {
+      if (_selectedEndDate!.isBefore(_selectedStartDate!)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('End date must be on or after start date'),
+            backgroundColor: ModernInvoiceDesign.error,
+          ),
+        );
+        return;
+      }
+    }
+
     final viewModel = ref.read(automaticInvoiceViewModelProvider.notifier);
 
     await viewModel.generateAutomaticInvoices(
@@ -796,6 +1123,136 @@ class _AutomaticInvoiceGenerationViewState
       applyTax: _applyTax,
       taxRate: _taxRate,
       includeExpenses: _includeExpenses,
+      useAdminBankDetails: _useAdminBankDetails,
+      selectedEmployeeEmails:
+          _useSelectedEmployees ? _selectedEmployeeEmails.toList() : null,
+      startDate: _selectedStartDate,
+      endDate: _selectedEndDate,
+    );
+  }
+
+  /// Opens a bottom sheet to quickly pick employees to include
+  Future<void> _openEmployeeSelectionSheet() async {
+    if (_organizationId == null) return;
+
+    // Pre-fetch employees for smooth UX
+    final provider = employeeSelectionViewModelProvider(_organizationId!);
+    final vm = ref.read(provider.notifier);
+    final state = ref.read(provider);
+    if (state.employees.isEmpty && !state.isLoading) {
+      await vm.fetchEmployees();
+    }
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
+      ),
+      builder: (ctx) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final s = ref.watch(provider);
+            return Padding(
+              padding: EdgeInsets.only(
+                left: ModernInvoiceDesign.space4,
+                right: ModernInvoiceDesign.space4,
+                top: ModernInvoiceDesign.space4,
+                bottom: ModernInvoiceDesign.space4 +
+                    MediaQuery.of(context).padding.bottom,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.people_alt, color: ModernInvoiceDesign.primary),
+                      const SizedBox(width: ModernInvoiceDesign.space3),
+                      Text(
+                        'Select Employees',
+                        style: ModernInvoiceDesign.titleMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: ModernInvoiceDesign.space3),
+                  if (s.isLoading && s.employees.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (s.employees.isEmpty)
+                    Text(
+                      'No employees found',
+                      style: ModernInvoiceDesign.bodyMedium,
+                    )
+                  else
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: s.employees.length,
+                        itemBuilder: (context, index) {
+                          final emp = s.employees[index];
+                          final isChecked = emp.isSelected ||
+                              _selectedEmployeeEmails.contains(emp.email);
+                          return CheckboxListTile(
+                            title: Text(emp.name),
+                            subtitle: Text(emp.email),
+                            value: isChecked,
+                            activeColor: ModernInvoiceDesign.primary,
+                            onChanged: (val) {
+                              ref.read(provider.notifier).toggleEmployeeSelection(emp.id);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  const SizedBox(height: ModernInvoiceDesign.space3),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        final picked = ref
+                            .read(provider)
+                            .employees
+                            .where((e) => e.isSelected)
+                            .map((e) => e.email)
+                            .where((e) => e.isNotEmpty)
+                            .toSet();
+                        setState(() {
+                          _selectedEmployeeEmails
+                            ..clear()
+                            ..addAll(picked);
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.check_circle),
+                      label: const Text('Confirm Selection'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ModernInvoiceDesign.primary,
+                        foregroundColor: ModernInvoiceDesign.textOnPrimary,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: ModernInvoiceDesign.space4,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              ModernInvoiceDesign.radiusLg),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1142,5 +1599,13 @@ class _AutomaticInvoiceGenerationViewState
         padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
       ),
     );
+  }
+
+  /// Formats a `DateTime` to a simple `YYYY-MM-DD` string for display.
+  String _formatDate(DateTime dt) {
+    final y = dt.year.toString().padLeft(4, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    final d = dt.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
   }
 }

@@ -20,14 +20,16 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
   Future<List<String>> generateAutomaticInvoices(
     BuildContext context, {
     required String organizationId,
-    String? startDate,
-    String? endDate,
+    DateTime? startDate,
+    DateTime? endDate,
     bool validatePrices = true,
     bool allowPriceCapOverride = false,
     bool includeDetailedPricingInfo = true,
     bool applyTax = true,
-    double taxRate = 0.10,
+    double taxRate = 0.00,
     bool includeExpenses = true,
+    bool useAdminBankDetails = false,
+    List<String>? selectedEmployeeEmails,
   }) async {
     try {
       // Update state to loading
@@ -56,6 +58,14 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         throw Exception('No employees found for this organization');
       }
 
+      // Optionally filter employees to selected ones
+      final List<dynamic> filteredEmployeesData = (selectedEmployeeEmails == null || selectedEmployeeEmails.isEmpty)
+          ? employeesData
+          : employeesData.where((e) => selectedEmployeeEmails.contains((e['email'] ?? '') as String)).toList();
+      if (filteredEmployeesData.isEmpty) {
+        throw Exception('No selected employees found to generate invoices');
+      }
+
       // Step 2: Fetch all clients for the organization
       state = state.copyWith(
         currentStep: 'Fetching clients...',
@@ -77,14 +87,14 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
       final List<Map<String, dynamic>> selectedEmployeesAndClients = [];
       int processedEmployees = 0;
 
-      for (final employeeData in employeesData) {
+      for (final employeeData in filteredEmployeesData) {
         final String employeeEmail = employeeData['email'] ?? '';
         if (employeeEmail.isEmpty) continue;
 
         // Update progress
         processedEmployees++;
         final progressStep =
-            0.3 + (0.4 * processedEmployees / employeesData.length);
+            0.3 + (0.4 * processedEmployees / filteredEmployeesData.length);
         state = state.copyWith(
           currentStep:
               'Processing employee: ${employeeData['firstName']} ${employeeData['lastName']}',
@@ -155,7 +165,7 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
       // Update state with found relationships
       state = state.copyWith(
         employeeClientPairs: selectedEmployeesAndClients,
-        totalEmployees: employeesData.length,
+        totalEmployees: filteredEmployeesData.length,
         totalClients: clientsData.length,
         validPairs: selectedEmployeesAndClients.length,
       );
@@ -176,6 +186,9 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         applyTax: applyTax,
         taxRate: taxRate,
         includeExpenses: includeExpenses,
+        useAdminBankDetails: useAdminBankDetails,
+        startDate: startDate,
+        endDate: endDate,
       );
 
       // Step 5: Complete

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:carenest/utils/hours_formatting.dart';
 
 /// Price Prompt Dialog Widget
 /// Handles missing price prompts during single invoice generation
@@ -125,8 +126,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                 'NDIS Item:', widget.promptData['ndisItemNumber'] ?? 'N/A'),
             _buildInfoRow(
                 'Description:', widget.promptData['itemDescription'] ?? 'N/A'),
-            _buildInfoRow('Quantity:',
-                '${widget.promptData['quantity'] ?? 1} ${widget.promptData['unit'] ?? 'unit'}'),
+            _buildQuantityRow(),
             if (widget.promptData['priceCap'] != null)
               _buildInfoRow(
                 'NDIS Price Cap:',
@@ -163,6 +163,58 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                 fontWeight: isHighlight ? FontWeight.bold : FontWeight.normal,
                 color: isHighlight ? Colors.orange[700] : null,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the quantity row with precise hour formatting and tooltip.
+  Widget _buildQuantityRow() {
+    final rawQty = widget.promptData['quantity'];
+    final qty = rawQty is num
+        ? rawQty.toDouble()
+        : double.tryParse(rawQty?.toString() ?? '') ?? 1.0;
+    final unit = widget.promptData['unit']?.toString() ?? 'unit';
+    final formattedQty = HoursFormatting.formatDecimalHours(
+      qty,
+      minDecimals: 2,
+      maxDecimals: 4,
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            width: 100,
+            child: Text(
+              'Quantity:',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                Text(
+                  '$formattedQty $unit',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                const SizedBox(width: 6),
+                const Tooltip(
+                  message:
+                      'Exact hours shown up to 4 decimals (seconds included). Total = Hours × Rate.',
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -226,6 +278,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
   }
 
   Widget _buildCustomPricingOptions() {
+    final hasClientContext = widget.promptData['clientId'] != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -258,20 +311,21 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
             padding: const EdgeInsets.only(left: 16),
             child: Column(
               children: [
-                CheckboxListTile(
-                  title: const Text('Apply to this client only'),
-                  value: _applyToClient,
-                  onChanged: (value) {
-                    setState(() {
-                      _applyToClient = value ?? false;
-                      if (_applyToClient) {
-                        _applyToOrganization = false;
-                      }
-                    });
-                  },
-                  controlAffinity: ListTileControlAffinity.leading,
-                  dense: true,
-                ),
+                if (hasClientContext)
+                  CheckboxListTile(
+                    title: const Text('Apply to this client only'),
+                    value: _applyToClient,
+                    onChanged: (value) {
+                      setState(() {
+                        _applyToClient = value ?? false;
+                        if (_applyToClient) {
+                          _applyToOrganization = false;
+                        }
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    dense: true,
+                  ),
                 CheckboxListTile(
                   title: const Text('Apply to entire organization'),
                   value: _applyToOrganization,
@@ -286,6 +340,14 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                   controlAffinity: ListTileControlAffinity.leading,
                   dense: true,
                 ),
+                if (!hasClientContext)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      'No client selected; save as organization rate.',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -376,10 +438,8 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
         'notes': _notesController.text.trim(),
       };
 
+      // Let the parent decide how to close the dialog; do not pop here.
       widget.onPriceProvided(resolution);
-
-      // Close dialog
-      Navigator.of(context).pop();
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

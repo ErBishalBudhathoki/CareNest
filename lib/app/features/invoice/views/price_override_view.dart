@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/widgets/button_widget.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
+import 'package:carenest/app/features/invoice/widgets/modern_invoice_components.dart';
+import 'package:carenest/app/shared/utils/debug_log.dart';
 
 /// Price Override View
 /// Allows users to override prices for NDIS line items before invoice generation
@@ -33,6 +36,7 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
   bool _isLoading = false;
   List<Map<String, dynamic>> _lineItems = [];
   final ApiMethod _apiMethod = ApiMethod();
+  double? _fallbackBaseRate; // Cached organization fallback base rate
 
   @override
   void initState() {
@@ -78,12 +82,43 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
     super.dispose();
   }
 
+  /// Load line items for the selected client assignments.
+  ///
+  /// - Fetches and caches the organization fallback base rate to use
+  ///   as the default unit price when individual pricing is missing.
+  /// - Resolves pricing via `getPricingLookup`: prefers `customPrice`,
+  ///   otherwise falls back to `price` (NDIS default from bulk lookup).
+  /// - Applies 2-decimal rounding to `unitPrice` and `total` for display.
+  /// - Side effects: updates `_lineItems` list, controller maps, and
+  ///   sets `_isLoading` state; logs UI state via `DebugLog`.
   Future<void> _loadLineItems() async {
+    DebugLog.uiState('load_line_items_start', {
+      'assignmentsCount': widget.clientAssignments.length,
+      'organizationId': widget.organizationId,
+      'clientId': widget.clientId,
+    });
     setState(() {
       _isLoading = true;
     });
 
     try {
+      // Fetch organization fallback base rate to use as default when pricing is missing
+      try {
+        final fb = await _apiMethod.getFallbackBaseRate(widget.organizationId);
+        if (fb != null && fb > 0) {
+          _fallbackBaseRate = fb;
+          DebugLog.uiState('fallback_base_rate_cached', {
+            'fallbackBaseRate': _fallbackBaseRate,
+            'organizationId': widget.organizationId,
+          });
+        }
+      } catch (e) {
+        DebugLog.error('fallback_base_rate_fetch_error', details: {
+          'organizationId': widget.organizationId,
+          'error': e.toString(),
+        });
+      }
+
       final List<Map<String, dynamic>> items = [];
 
       // Process each client assignment to extract employee, client, and NDIS item data
@@ -115,12 +150,19 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
               final supportItemDetails =
                   await _apiMethod.getSupportItemDetails(itemNumber);
 
-              double currentPrice = 30.00; // Default fallback
+              double currentPrice = _fallbackBaseRate ?? 30.00; // Default fallback to org base rate
               double maxPrice = 65.17; // Default fallback
 
               if (pricingData != null) {
-                currentPrice =
-                    (pricingData['price'] as num?)?.toDouble() ?? currentPrice;
+                // Prefer `customPrice` when custom pricing exists; otherwise fallback to `price` (NDIS default)
+                final num? custom = pricingData['customPrice'] as num?;
+                final num? price = pricingData['price'] as num?;
+                final double? resolved = (custom ?? price)?.toDouble();
+                if (resolved != null && resolved > 0) {
+                  currentPrice = double.parse(resolved.toStringAsFixed(2));
+                } else {
+                  currentPrice = double.parse(currentPrice.toStringAsFixed(2));
+                }
               }
 
               if (supportItemDetails != null &&
@@ -136,18 +178,30 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
                 }
               }
 
+              // Attempt to use API-provided cap if available
+              final apiCap = (pricingData?['priceCap'] as num?)?.toDouble();
+              if (apiCap != null && apiCap > 0) {
+                maxPrice = apiCap;
+              }
+
+              // Capture pricing source where available
+              final src = (pricingData?['source'] as String?) ?? 'fallback';
+
               // Create unique ID for each assignment-schedule combination
               final uniqueId =
                   '${assignment['assignmentId'] ?? userEmail}_${itemNumber}_${date}_${startTime}';
 
+              final unitPrice = double.parse(currentPrice.toStringAsFixed(2));
+              final total = double.parse((unitPrice * 1.0).toStringAsFixed(2));
               items.add({
                 'id': uniqueId,
                 'ndisItemNumber': itemNumber,
                 'description': itemName,
-                'unitPrice': currentPrice,
+                'unitPrice': unitPrice,
                 'maxPrice': maxPrice,
+                'source': src,
                 'quantity': 1.0,
-                'total': currentPrice,
+                'total': total,
                 'employeeEmail': userEmail,
                 'employeeName': userName,
                 'clientEmail': clientEmail,
@@ -166,6 +220,9 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
 
       // Initialize controllers and state
       _initializeControllers();
+      DebugLog.uiState('load_line_items_success', {
+        'itemsCount': _lineItems.length,
+      });
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -175,9 +232,15 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
           ),
         );
       }
+      DebugLog.error('load_line_items_error', details: {
+        'error': e.toString(),
+      });
     } finally {
       setState(() {
         _isLoading = false;
+      });
+      DebugLog.uiState('load_line_items_end', {
+        'isLoading': _isLoading,
       });
     }
   }
@@ -207,25 +270,320 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
     });
   }
 
-  void _applyOverrides() {
+  /// Apply overrides, persist to backend, and confirm before success.
+  ///
+  /// - Builds overrides map for changed items.
+  /// - For each changed item, performs create-or-update on custom pricing:
+  ///   - If a custom pricing record exists, sends PUT update.
+  ///   - Otherwise, creates new client-specific or organization pricing.
+  /// - Re-fetches pricing lookup to confirm new price before reporting success.
+  /// - Shows success only when all items are confirmed; otherwise shows errors.
+  Future<void> _applyOverrides() async {
+    if (_isLoading) {
+      DebugLog.uiState('apply_overrides_ignored', {
+        'reason': 'already_loading',
+      });
+      return;
+    }
+    final flowId = DebugLog.startFlow('apply_overrides', details: {
+      'itemsCount': _lineItems.length,
+    });
+    DebugLog.uiState('apply_overrides_button_pressed', {
+      'pendingOverrides': _isOverridden.values.where((v) => v == true).length,
+    }, flowId: flowId);
+    setState(() {
+      _isLoading = true;
+    });
+    DebugLog.uiState('set_loading', {'value': true}, flowId: flowId);
+
     final overrides = <String, Map<String, dynamic>>{};
+    final failures = <String, String>{};
+
+    // Resolve context values
+    final shared = SharedPreferencesUtils();
+    await shared.init();
+    final String? userEmail = shared.getString('userEmail');
+    final String orgId = widget.organizationId;
+    final String? clientId = widget.clientId.isNotEmpty ? widget.clientId : null;
+
+    if (userEmail == null || userEmail.isEmpty) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Missing user context: userEmail'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
 
     for (final item in _lineItems) {
       final id = item['id'] as String;
       if (_isOverridden[id] == true) {
-        final newPrice =
-            double.tryParse(_priceControllers[id]?.text ?? '') ?? 0.0;
+        final newPrice = double.tryParse(_priceControllers[id]?.text ?? '') ?? 0.0;
         final newDescription = _descriptionControllers[id]?.text ?? '';
+        final itemNumber = item['ndisItemNumber'] as String? ?? '';
+        final itemName = item['description'] as String? ?? 'Item $itemNumber';
 
-        overrides[id] = {
-          'unitPrice': newPrice,
-          'description': newDescription,
-          'originalPrice': _originalPrices[id],
-        };
+        // Basic validation
+        if (newPrice <= 0) {
+          failures[id] = 'Invalid price entered';
+          DebugLog.error('invalid_price_entered', details: {
+            'id': id,
+            'enteredPrice': newPrice,
+          }, flowId: flowId);
+          continue;
+        }
+
+        try {
+          // Check existing pricing
+          DebugLog.uiState('lookup_existing_pricing', {
+            'organizationId': orgId,
+            'itemNumber': itemNumber,
+            'clientId': clientId,
+          }, flowId: flowId);
+          final lookup = await _apiMethod.getPricingLookup(
+            orgId,
+            itemNumber,
+            clientId: clientId,
+          );
+
+          Map<String, dynamic> result;
+          String? pricingId;
+
+          if (lookup != null && lookup['_id'] != null) {
+            pricingId = lookup['_id']?.toString();
+          }
+
+          // Decide update vs create based on scope match
+          final lookupIsClientSpecific = (lookup?['clientSpecific'] == true);
+          final intendClientSpecific = clientId != null;
+          final scopeMatches = pricingId != null && lookupIsClientSpecific == intendClientSpecific;
+
+          if (scopeMatches && pricingId!.isNotEmpty) {
+            // Update existing pricing only when scope matches
+            DebugLog.uiState('update_custom_pricing', {
+              'pricingId': pricingId,
+              'newPrice': newPrice,
+              'pricingType': 'fixed',
+              'clientSpecific': intendClientSpecific,
+            }, flowId: flowId);
+            result = await _apiMethod.updateCustomPricing(
+              pricingId: pricingId,
+              price: newPrice,
+              pricingType: 'fixed',
+              userEmail: userEmail,
+              supportItemName: itemName,
+              clientId: intendClientSpecific ? clientId : null,
+              clientSpecific: intendClientSpecific ? true : null,
+            );
+          } else {
+            // Create new pricing for the intended scope; do not convert existing org/client record
+            if (intendClientSpecific) {
+              DebugLog.uiState('create_client_specific_pricing', {
+                'organizationId': orgId,
+                'clientId': clientId,
+                'itemNumber': itemNumber,
+                'newPrice': newPrice,
+                'pricingType': 'fixed',
+              }, flowId: flowId);
+              result = await _apiMethod.saveClientCustomPricing(
+                orgId,
+                clientId!,
+                itemNumber,
+                newPrice,
+                'fixed',
+                userEmail,
+                supportItemName: itemName,
+              );
+              // Fallback: if record already exists for intended scope, perform update instead
+              if (result['success'] != true &&
+                  (result['message']?.toString().toLowerCase().contains('already exists') ?? false)) {
+                DebugLog.uiState('create_conflict_fallback_update', {
+                  'organizationId': orgId,
+                  'clientId': clientId,
+                  'itemNumber': itemNumber,
+                  'newPrice': newPrice,
+                }, flowId: flowId);
+                final existing = await _apiMethod.getPricingLookup(
+                  orgId,
+                  itemNumber,
+                  clientId: clientId,
+                );
+                final existingId = existing?['_id']?.toString();
+                if (existingId != null && existingId.isNotEmpty) {
+                  result = await _apiMethod.updateCustomPricing(
+                    pricingId: existingId,
+                    price: newPrice,
+                    pricingType: 'fixed',
+                    userEmail: userEmail,
+                    supportItemName: itemName,
+                    clientId: clientId,
+                    clientSpecific: true,
+                  );
+                }
+              }
+            } else {
+              DebugLog.uiState('create_org_pricing', {
+                'organizationId': orgId,
+                'itemNumber': itemNumber,
+                'newPrice': newPrice,
+                'pricingType': 'fixed',
+              }, flowId: flowId);
+              result = await _apiMethod.saveAsCustomPricing(
+                orgId,
+                itemNumber,
+                newPrice,
+                'fixed',
+                userEmail,
+                supportItemName: itemName,
+              );
+              // Fallback: if record already exists for intended scope, perform update instead
+              if (result['success'] != true &&
+                  (result['message']?.toString().toLowerCase().contains('already exists') ?? false)) {
+                DebugLog.uiState('create_conflict_fallback_update', {
+                  'organizationId': orgId,
+                  'itemNumber': itemNumber,
+                  'newPrice': newPrice,
+                }, flowId: flowId);
+                final existing = await _apiMethod.getPricingLookup(
+                  orgId,
+                  itemNumber,
+                );
+                final existingId = existing?['_id']?.toString();
+                if (existingId != null && existingId.isNotEmpty) {
+                  result = await _apiMethod.updateCustomPricing(
+                    pricingId: existingId,
+                    price: newPrice,
+                    pricingType: 'fixed',
+                    userEmail: userEmail,
+                    supportItemName: itemName,
+                    clientSpecific: false,
+                  );
+                }
+              }
+            }
+          }
+
+          if (result['success'] != true) {
+            failures[id] = (result['message']?.toString() ?? 'Save failed');
+            DebugLog.error('persist_override_failed', details: {
+              'id': id,
+              'itemNumber': itemNumber,
+              'result': result,
+            }, flowId: flowId);
+            continue;
+          }
+
+          // Confirm persistence by re-fetching lookup
+          DebugLog.uiState('confirm_persistence_lookup', {
+            'organizationId': orgId,
+            'itemNumber': itemNumber,
+            'clientId': clientId,
+          }, flowId: flowId);
+          final confirm = await _apiMethod.getPricingLookup(
+            orgId,
+            itemNumber,
+            clientId: clientId,
+          );
+          // Some endpoints return `customPrice` (for custom pricing) and others return `price`.
+          // Prefer `price`, but fall back to `customPrice` when `price` is absent.
+          final dynamic confirmPriceField =
+              (confirm != null && confirm.containsKey('price'))
+                  ? confirm['price']
+                  : confirm?['customPrice'];
+          final confirmedPrice = (confirmPriceField is num)
+              ? confirmPriceField.toDouble()
+              : double.tryParse('${confirmPriceField ?? ''}');
+          if (confirmedPrice == null || (confirmedPrice - newPrice).abs() > 0.001) {
+            failures[id] = 'Persistence confirmation failed';
+            DebugLog.error('persistence_confirmation_failed', details: {
+              'id': id,
+              'itemNumber': itemNumber,
+              'expectedPrice': newPrice,
+              'confirmedPrice': confirmedPrice,
+            }, flowId: flowId);
+            continue;
+          }
+
+          // Update local UI state to reflect new price and source
+          final itemIndex = _lineItems.indexWhere((li) => li['id'] == id);
+          if (itemIndex != -1) {
+            final quantity = _lineItems[itemIndex]['quantity'] as double;
+            _lineItems[itemIndex]['unitPrice'] = newPrice;
+            _lineItems[itemIndex]['total'] = quantity * newPrice;
+            _lineItems[itemIndex]['source'] = confirm?['source'] ?? _lineItems[itemIndex]['source'];
+          }
+          _originalPrices[id] = newPrice;
+          _isOverridden[id] = false;
+          DebugLog.uiState('override_applied_locally', {
+            'id': id,
+            'itemNumber': itemNumber,
+            'newPrice': newPrice,
+          }, flowId: flowId);
+
+          overrides[id] = {
+            'unitPrice': newPrice,
+            'description': newDescription,
+            'originalPrice': _originalPrices[id],
+          };
+        } catch (e) {
+          debugPrint('Error persisting override for $id: $e');
+          failures[id] = e.toString();
+          DebugLog.error('exception_persisting_override', details: {
+            'id': id,
+            'error': e.toString(),
+          }, flowId: flowId);
+        }
       }
     }
 
-    // Return the overrides to the previous screen
+    setState(() {
+      _isLoading = false;
+    });
+    DebugLog.uiState('set_loading', {'value': false}, flowId: flowId);
+
+    if (failures.isNotEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to apply ${failures.length} override(s).'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+      DebugLog.endFlow(flowId,
+          success: false,
+          message: 'apply_overrides_failed',
+          summary: {
+            'failedCount': failures.length,
+            'successCount': overrides.length,
+          });
+      return; // Do not pop on partial failure
+    }
+
+    // All persisted and confirmed
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Price overrides applied for ${overrides.length} item(s)'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+    DebugLog.endFlow(flowId,
+        success: true,
+        message: 'apply_overrides_success',
+        summary: {
+          'appliedCount': overrides.length,
+        });
+
     Navigator.pop(context, overrides);
   }
 
@@ -246,24 +604,9 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
         iconTheme: IconThemeData(color: ModernInvoiceDesign.textOnPrimary),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      body: _isLoading
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text(
-                    'Loading NDIS items and pricing...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : _lineItems.isEmpty
+      body: Stack(
+        children: [
+          _lineItems.isEmpty
               ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -303,6 +646,20 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
                     _buildActionButtons(),
                   ],
                 ),
+          if (_isLoading)
+            Positioned.fill(
+              child: IgnorePointer(
+                ignoring: true,
+                child: Container(
+                  color: Colors.black.withOpacity(0.05),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -490,6 +847,13 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 6),
+                        SourceBadge(
+                          source: (item['source'] as String?) ?? 'fallback',
+                          isSmall: true,
+                          tooltip:
+                              'Pricing source: client-specific, organization, base rate or NDIS default',
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           item['description'] ?? 'No description available',
@@ -579,6 +943,12 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
                             fontWeight: FontWeight.w600,
                             color: ModernInvoiceDesign.warning,
                           ),
+                        ),
+                        const SizedBox(height: 6),
+                        NdisCapChip(
+                          priceCap: (item['maxPrice'] as double?),
+                          currentPrice: currentPrice,
+                          isSmall: true,
                         ),
                       ],
                     ),

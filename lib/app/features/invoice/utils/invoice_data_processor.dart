@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/invoice/viewmodels/line_items_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_helpers.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:carenest/backend/api_method.dart';
 
 class InvoiceDataProcessor {
   final Ref ref; // Accept ref to access providers
@@ -33,8 +35,15 @@ class InvoiceDataProcessor {
 
     if (enhancedInvoiceService == null) {
       debugPrint(
-          'InvoiceDataProcessor: No enhanced service available, using fallback rate');
-      return 30.0; // Fallback to default rate
+          'InvoiceDataProcessor: No enhanced service available, using standard price fallback');
+      try {
+        final api = ApiMethod();
+        final std = await api.getStandardPrice(ndisItemNumber);
+        return std > 0 ? std : 0.0;
+      } catch (e) {
+        debugPrint('InvoiceDataProcessor: Error fetching standard price: $e');
+        return 0.0;
+      }
     }
 
     try {
@@ -43,29 +52,50 @@ class InvoiceDataProcessor {
           _cachedOrganizationId == organizationId) {
         final itemData = _cachedBulkPricingData![ndisItemNumber];
         if (itemData != null) {
-          final customPrice = itemData['customPrice'];
-          final standardPrice = itemData['standardPrice'];
+          final dynamic customPriceRaw = itemData['customPrice'];
+          final dynamic fallbackPriceRaw = itemData['price'];
+          final double? customPrice = customPriceRaw is num
+              ? customPriceRaw.toDouble()
+              : double.tryParse(customPriceRaw?.toString() ?? '');
+          final double? fallbackPrice = fallbackPriceRaw is num
+              ? fallbackPriceRaw.toDouble()
+              : double.tryParse(fallbackPriceRaw?.toString() ?? '');
           debugPrint(
-              'InvoiceDataProcessor: Found cached pricing for $ndisItemNumber - custom: $customPrice, standard: $standardPrice');
+              'InvoiceDataProcessor: Cached pricing for $ndisItemNumber - custom: $customPrice, fallback price: $fallbackPrice');
 
           if (customPrice != null && customPrice > 0) {
+            debugPrint('InvoiceDataProcessor: Using custom price: $customPrice');
+            return customPrice;
+          }
+
+          // Use organization fallback base rate from bulk data when available
+          if (fallbackPrice != null && fallbackPrice > 0) {
             debugPrint(
-                'InvoiceDataProcessor: Using custom price: $customPrice');
-            return customPrice.toDouble();
-          } else if (standardPrice != null && standardPrice > 0) {
-            debugPrint(
-                'InvoiceDataProcessor: Using standard price: $standardPrice');
-            return standardPrice.toDouble();
+                'InvoiceDataProcessor: Using fallback base rate from bulk data: $fallbackPrice');
+            return fallbackPrice;
+          }
+
+          // Avoid trusting any other cached price; fetch standard price via API
+          debugPrint('InvoiceDataProcessor: Fetching base standard price via API');
+          final stdFromApi = await enhancedInvoiceService!.getStandardPriceForItem(ndisItemNumber);
+          if (stdFromApi != null && stdFromApi > 0) {
+            return stdFromApi;
           }
         }
       }
 
       debugPrint(
-          'InvoiceDataProcessor: No cached pricing found, using fallback rate for $ndisItemNumber');
-      return 30.0; // Fallback rate
+          'InvoiceDataProcessor: No cached pricing found, using standard price fallback for $ndisItemNumber');
+      final std = await enhancedInvoiceService!.getStandardPriceForItem(ndisItemNumber);
+      return std != null && std > 0 ? std : 0.0;
     } catch (e) {
       debugPrint('InvoiceDataProcessor: Error getting enhanced pricing: $e');
-      return 30.0; // Fallback rate
+      try {
+        final std = await enhancedInvoiceService!.getStandardPriceForItem(ndisItemNumber);
+        return std != null && std > 0 ? std : 0.0;
+      } catch (_) {
+        return 0.0;
+      }
     }
   }
 
@@ -114,14 +144,76 @@ class InvoiceDataProcessor {
     }
   }
 
+  /// Parse a date string in flexible formats into a `DateTime`.
+  ///
+  /// Attempts ISO-8601 (`DateTime.tryParse`), `dd/MM/yyyy`, `MM/dd/yyyy`,
+  /// and `yyyy-MM-dd`. Returns `null` if parsing fails.
+  DateTime? _tryParseDateFlexible(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return null;
+    try {
+      final iso = DateTime.tryParse(dateStr);
+      if (iso != null) return iso;
+    } catch (_) {}
+
+    try {
+      return DateFormat('dd/MM/yyyy').parse(dateStr);
+    } catch (_) {}
+
+    try {
+      return DateFormat('MM/dd/yyyy').parse(dateStr);
+    } catch (_) {}
+
+    try {
+      return DateFormat('yyyy-MM-dd').parse(dateStr);
+    } catch (_) {}
+
+    debugPrint('InvoiceDataProcessor: Could not parse date "$dateStr"');
+    return null;
+  }
+
+  /// Check if a given date string falls within the inclusive [startDate, endDate]
+  /// range. If either boundary is `null` or the date cannot be parsed, returns
+  /// `true` (do not filter out).
+  bool _isDateInSelectedRange(String? dateStr, DateTime? startDate, DateTime? endDate) {
+    if (startDate == null || endDate == null) return true;
+    final parsed = _tryParseDateFlexible(dateStr);
+    if (parsed == null) return true;
+
+    // Normalize to date-only for safe inclusive comparison
+    final d = DateTime(parsed.year, parsed.month, parsed.day);
+    final s = DateTime(startDate.year, startDate.month, startDate.day);
+    final e = DateTime(endDate.year, endDate.month, endDate.day);
+
+    final inRange = !d.isBefore(s) && !d.isAfter(e);
+    if (!inRange) {
+      debugPrint('InvoiceDataProcessor: Filtering out item on $dateStr (outside $s - $e)');
+    }
+    return inRange;
+  }
+
+  /// Process invoice data (assignments, line items, expenses) into
+  /// a structure suitable for PDF generation and sharing.
+  ///
+  /// Parameters:
+  /// - `assignedClients`: Map with clients, assignments, and optional worked time.
+  /// - `lineItems`: List of support items used for item number mapping.
+  /// - `expenses`: Optional list of approved expenses to include.
+  /// - `applyTax`: Whether to apply tax calculations to totals.
+  /// - `taxRate`: Tax rate as a decimal (e.g., 0.10 for 10%).
+  /// - `priceOverrides`: Optional per-item pricing overrides.
+  /// - `organizationId`: Optional org context for pricing lookups.
+  /// - `startDate`/`endDate`: Optional date range for the invoice period; when
+  ///   provided, these are used for `clientData['startDate']`/`endDate` display.
   Future<Map<String, dynamic>> processInvoiceData({
     required Map<String, dynamic> assignedClients,
     required List<Map<String, dynamic>> lineItems,
     List<Map<String, dynamic>>? expenses,
     bool applyTax = true,
-    double taxRate = 0.10,
+    double taxRate = 0.00,
     Map<String, Map<String, dynamic>>? priceOverrides,
     String? organizationId,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     if (assignedClients == null) {
       throw Exception('No assigned clients data');
@@ -194,6 +286,8 @@ class InvoiceDataProcessor {
               expenses: expenses,
               priceOverrides: priceOverrides,
               organizationId: organizationId,
+              startDate: startDate,
+              endDate: endDate,
             );
             processedClients.add(clientData);
           }
@@ -224,6 +318,8 @@ class InvoiceDataProcessor {
                 expenses: expenses,
                 priceOverrides: priceOverrides,
                 organizationId: organizationId,
+                startDate: startDate,
+                endDate: endDate,
               );
 
               clientData['clientId'] = client['clientId'];
@@ -244,12 +340,32 @@ class InvoiceDataProcessor {
     debugPrint('Processed ${processedClients.length} clients');
     _setInvoiceDetails(assignedClients);
 
+    // Compute global period ending date from all processed clients
+    DateTime? globalLatest;
+    for (final client in processedClients) {
+      final items = (client['items'] as List<dynamic>? ?? [])
+          .whereType<Map<String, dynamic>>()
+          .toList();
+      for (final item in items) {
+        final parsed = _tryParseDateFlexible(item['date'] as String?);
+        if (parsed != null) {
+          final d = DateTime(parsed.year, parsed.month, parsed.day);
+          if (globalLatest == null || d.isAfter(globalLatest!)) {
+            globalLatest = d;
+          }
+        }
+      }
+    }
+    if (globalLatest != null) {
+      this.endDate = DateFormat('dd/MM/yyyy').format(globalLatest!);
+    }
+
     debugPrint('Finished processing invoice data');
 
     return <String, dynamic>{
       'clients': processedClients,
       'invoiceName': invoiceName,
-      'endDate': endDate,
+      'endDate': this.endDate,
       // invoiceNumber removed - will be generated in enhanced_invoice_service
     };
   }
@@ -262,6 +378,11 @@ class InvoiceDataProcessor {
     return itemMap;
   }
 
+  /// Build a single client's invoice data from assignment and optional worked
+  /// time details.
+  ///
+  /// `startDate`/`endDate` allow the caller to control the displayed period on
+  /// the invoice; if null, the current week is used as a fallback.
   Future<Map<String, dynamic>> _processClientData(
     Map<String, dynamic> doc,
     List<dynamic> clientDetails,
@@ -273,6 +394,8 @@ class InvoiceDataProcessor {
     List<Map<String, dynamic>>? expenses,
     Map<String, Map<String, dynamic>>? priceOverrides,
     String? organizationId,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     Map<String, dynamic> clientData = {};
 
@@ -326,14 +449,9 @@ class InvoiceDataProcessor {
     clientData['employeeEmail'] = userEmail;
     clientData['providerABN'] = providerABN;
 
-    // Calculate period start and end dates
-    final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final endOfWeek = startOfWeek.add(const Duration(days: 6));
-    clientData['startDate'] =
-        '${startOfWeek.day}/${startOfWeek.month}/${startOfWeek.year}';
-    clientData['endDate'] =
-        '${endOfWeek.day}/${endOfWeek.month}/${endOfWeek.year}';
+    // Defer period start/end calculation until items are built.
+    // When no date range is selected, the period will be determined from
+    // the earliest and latest record dates after sorting.
 
     List<Map<String, dynamic>> items = [];
 
@@ -352,6 +470,10 @@ class InvoiceDataProcessor {
               record['correspondingSchedule'] as Map<String, dynamic>?;
           if (schedule != null) {
             String date = schedule['date'] ?? '';
+            // Strict date-range filtering for worked time entries
+            if (!_isDateInSelectedRange(date, startDate, endDate)) {
+              continue; // Skip out-of-range entries
+            }
             String startTime = schedule['startTime'] ?? '';
             String endTime = schedule['endTime'] ?? '';
             double hoursWorked = record['actualWorkedTime'] as double? ?? 0.0;
@@ -386,10 +508,28 @@ class InvoiceDataProcessor {
               debugPrint(
                   'InvoiceDataProcessor: Enhanced rate for $itemNumber: $rate');
             } else {
-              // Fallback to legacy rate calculation if no NDIS item number
-              rate = helpers.getRate([dayOfWeek], [])[0];
-              debugPrint(
-                  'InvoiceDataProcessor: Using fallback rate for $dayOfWeek: $rate');
+              // Use organization fallback base rate when item number is missing
+              try {
+                if (organizationId != null) {
+                  final api = ApiMethod();
+                  final fb = await api.getFallbackBaseRate(organizationId);
+                  rate = fb != null && fb > 0
+                      ? double.parse(fb.toStringAsFixed(2))
+                      : 0.0;
+                  debugPrint(
+                      'InvoiceDataProcessor: Using organization fallback base rate for $dayOfWeek: $rate');
+                } else {
+                  // As a last resort, use legacy helper mapping
+                  rate = helpers.getRate([dayOfWeek], [])[0];
+                  rate = double.parse(rate.toStringAsFixed(2));
+                  debugPrint(
+                      'InvoiceDataProcessor: Using legacy fallback rate for $dayOfWeek: $rate');
+                }
+              } catch (e) {
+                debugPrint(
+                    'InvoiceDataProcessor: Error fetching fallback base rate: $e');
+                rate = 0.0;
+              }
             }
 
             items.add({
@@ -433,6 +573,10 @@ class InvoiceDataProcessor {
           helpers.calculateTotalHours(startTimeList, endTimeList, timeList);
 
       for (int i = 0; i < dateList.length; i++) {
+        // Strict date-range filtering for calculated schedule entries
+        if (!_isDateInSelectedRange(dateList[i], startDate, endDate)) {
+          continue; // Skip out-of-range entries
+        }
         String itemNumber = '';
         String itemName = '';
 
@@ -466,10 +610,28 @@ class InvoiceDataProcessor {
           debugPrint(
               'InvoiceDataProcessor: Enhanced rate for $itemNumber: $rate');
         } else {
-          // Fallback to legacy rate calculation if no NDIS item number
-          rate = helpers.getRate([dayOfWeek[i]], [])[0];
-          debugPrint(
-              'InvoiceDataProcessor: Using fallback rate for ${dayOfWeek[i]}: $rate');
+          // Use organization fallback base rate when item number is missing
+          try {
+            if (organizationId != null) {
+              final api = ApiMethod();
+              final fb = await api.getFallbackBaseRate(organizationId);
+              rate = fb != null && fb > 0
+                  ? double.parse(fb.toStringAsFixed(2))
+                  : 0.0;
+              debugPrint(
+                  'InvoiceDataProcessor: Using organization fallback base rate for ${dayOfWeek[i]}: $rate');
+            } else {
+              // As a last resort, use legacy helper mapping
+              rate = helpers.getRate([dayOfWeek[i]], [])[0];
+              rate = double.parse(rate.toStringAsFixed(2));
+              debugPrint(
+                  'InvoiceDataProcessor: Using legacy fallback rate for ${dayOfWeek[i]}: $rate');
+            }
+          } catch (e) {
+            debugPrint(
+                'InvoiceDataProcessor: Error fetching fallback base rate: $e');
+            rate = 0.0;
+          }
         }
 
         items.add({
@@ -494,6 +656,41 @@ class InvoiceDataProcessor {
         });
       }
     }
+
+    // Sort items chronologically (ascending) by date; unparseable dates last
+    items.sort((a, b) {
+      final da = _tryParseDateFlexible(a['date'] as String?);
+      final db = _tryParseDateFlexible(b['date'] as String?);
+      if (da == null && db == null) return 0;
+      if (da == null) return 1; // place a after b
+      if (db == null) return -1; // place a before b
+      return DateTime(da.year, da.month, da.day)
+          .compareTo(DateTime(db.year, db.month, db.day));
+    });
+
+    // Determine period start/end based on sorted items if dates not provided
+    final DateFormat displayFormat = DateFormat('dd/MM/yyyy');
+    DateTime? earliest;
+    DateTime? latest;
+    for (final item in items) {
+      final parsed = _tryParseDateFlexible(item['date'] as String?);
+      if (parsed != null) {
+        final d = DateTime(parsed.year, parsed.month, parsed.day);
+        earliest ??= d;
+        if (latest == null || d.isAfter(latest!)) {
+          latest = d;
+        }
+      }
+    }
+
+    final DateTime? displayStart = startDate ?? earliest;
+    final DateTime? displayEnd = endDate ?? latest;
+    clientData['startDate'] = displayStart != null
+        ? displayFormat.format(displayStart)
+        : '';
+    clientData['endDate'] = displayEnd != null
+        ? displayFormat.format(displayEnd)
+        : '';
 
     clientData['items'] = items;
 
@@ -540,13 +737,23 @@ class InvoiceDataProcessor {
       debugPrint('Data Processor: First raw expense: ${expenses.first}');
       // Filter expenses for this specific client if needed
       final clientEmail = clientData['clientEmail'] as String;
-      final clientExpenses = expenses.where((expense) {
+      final clientExpensesRaw = expenses.where((expense) {
         // If expense has clientEmail field, filter by it
         if (expense.containsKey('clientEmail')) {
           return expense['clientEmail'] == clientEmail;
         }
         // Otherwise include all expenses (for backward compatibility)
         return true;
+      }).toList();
+
+      // Further filter expenses by selected date range if provided
+      final clientExpenses = clientExpensesRaw.where((expense) {
+        final inRange = _isExpenseDateInRange(expense['expenseDate'], startDate, endDate);
+        if (!inRange) {
+          debugPrint(
+              'Data Processor: Filtering out expense on ${_formatExpenseDate(expense['expenseDate'])} (outside selected range)');
+        }
+        return inRange;
       }).toList();
 
       // Transform expense data to match PDF generator expectations
@@ -665,6 +872,56 @@ class InvoiceDataProcessor {
     }
 
     return expenseDate.toString();
+  }
+
+  /// Parse an expense date that may be in various formats.
+  /// Supports MongoDB format: {"$date": {"$numberLong": "<millis>"}},
+  /// ISO-8601 string, or DateTime object. Returns null if parsing fails.
+  DateTime? _parseExpenseDate(dynamic expenseDate) {
+    if (expenseDate == null) return null;
+    try {
+      if (expenseDate is Map<String, dynamic> && expenseDate.containsKey('\$date')) {
+        final dateMap = expenseDate['\$date'];
+        if (dateMap is Map<String, dynamic> && dateMap.containsKey('\$numberLong')) {
+          final timestamp = int.tryParse(dateMap['\$numberLong'].toString());
+          if (timestamp != null) {
+            return DateTime.fromMillisecondsSinceEpoch(timestamp);
+          }
+        }
+      } else if (expenseDate is String) {
+        final parsed = DateTime.tryParse(expenseDate);
+        if (parsed != null) return parsed;
+        // Try common alternate formats
+        try {
+          return DateFormat('dd/MM/yyyy').parse(expenseDate);
+        } catch (_) {}
+        try {
+          return DateFormat('MM/dd/yyyy').parse(expenseDate);
+        } catch (_) {}
+        try {
+          return DateFormat('yyyy-MM-dd').parse(expenseDate);
+        } catch (_) {}
+      } else if (expenseDate is DateTime) {
+        return expenseDate;
+      }
+    } catch (e) {
+      debugPrint('Error parsing expense date: $e');
+    }
+    return null;
+  }
+
+  /// Check if an expense date falls within [startDate, endDate] inclusively.
+  /// If either boundary is null or the date cannot be parsed, returns true
+  /// to avoid unintentionally dropping expenses.
+  bool _isExpenseDateInRange(dynamic expenseDate, DateTime? startDate, DateTime? endDate) {
+    if (startDate == null || endDate == null) return true;
+    final parsed = _parseExpenseDate(expenseDate);
+    if (parsed == null) return true;
+
+    final d = DateTime(parsed.year, parsed.month, parsed.day);
+    final s = DateTime(startDate.year, startDate.month, startDate.day);
+    final e = DateTime(endDate.year, endDate.month, endDate.day);
+    return !d.isBefore(s) && !d.isAfter(e);
   }
 
   /// Helper method to safely convert values to double

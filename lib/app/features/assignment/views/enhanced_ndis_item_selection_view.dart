@@ -56,6 +56,7 @@ class _EnhancedNdisItemSelectionViewState
   bool _isLoadingCustomPrices = false; // Track loading of custom prices
   String _searchQuery = '';
   String _userState = 'NSW'; // Default state
+  double? _fallbackBaseRate; // Cached organization fallback base rate
 
   // Price override controls
   final Map<String, TextEditingController> _priceControllers = {};
@@ -149,6 +150,12 @@ class _EnhancedNdisItemSelectionViewState
     }
   }
 
+  /// Load pricing data for all currently filtered NDIS items.
+  ///
+  /// - Fetches custom pricing and support item details in batches.
+  /// - Caches organization fallback base rate and uses it in `_getCappedPrice`
+  ///   when no cap/state price exists.
+  /// - Applies high-intensity filtering after pricing data loads.
   Future<void> _loadPricingData() async {
     debugPrint('DEBUG: _loadPricingData called');
     debugPrint('  organizationId: ${widget.organizationId}');
@@ -171,6 +178,19 @@ class _EnhancedNdisItemSelectionViewState
       debugPrint(
           '  organizationId is null from both widget and SharedPreferences, returning early');
       return;
+    }
+
+    // Load organization fallback base rate once and cache
+    try {
+      final fb = await _apiMethod.getFallbackBaseRate(organizationId);
+      if (fb != null && fb > 0) {
+        setState(() {
+          _fallbackBaseRate = double.parse(fb.toStringAsFixed(2));
+        });
+        debugPrint('  Cached fallback base rate: $_fallbackBaseRate');
+      }
+    } catch (e) {
+      debugPrint('  Error fetching fallback base rate: $e');
     }
 
     try {
@@ -370,6 +390,14 @@ class _EnhancedNdisItemSelectionViewState
     _loadPricingData();
   }
 
+  /// Resolve the capped price for an NDIS item.
+  ///
+  /// Priority:
+  /// 1) State-specific cap (client or user state)
+  /// 2) Standard caps when high-intensity is unavailable
+  /// 3) Organization fallback base rate when no caps are available
+  ///
+  /// Always returns a rounded 2-decimal price.
   double _getCappedPrice(NDISItem item) {
     final pricingData = _pricingData[item.itemNumber];
     debugPrint('DEBUG: _getCappedPrice for ${item.itemNumber}:');
@@ -430,8 +458,9 @@ class _EnhancedNdisItemSelectionViewState
         }
       }
     }
-    debugPrint('  Using fallback price: 30.00');
-    return 30.00; // Fallback price
+    final fb = double.parse((_fallbackBaseRate ?? 30.00).toStringAsFixed(2));
+    debugPrint('  Using fallback price: $fb');
+    return fb; // Fallback price
   }
 
   double _getCurrentPrice(NDISItem item) {
@@ -904,11 +933,39 @@ class _EnhancedNdisItemSelectionViewState
                                       item.itemNumber,
                                       price,
                                       'fixed', // Using fixed pricing type
-                                      userEmail);
+                                      userEmail,
+                                      supportItemName: item.itemName);
                                 }
 
                                 if (result['success'] == true) {
-                                  // Refresh pricing data
+                                  // Optimistically update local pricing state so UI reflects immediately
+                                  if (mounted) {
+                                    setState(() {
+                                      final isClientSpecific = widget.clientId != null;
+                                      final customPricingData = {
+                                        'price': price,
+                                        'customPrice': price,
+                                        'fixedPrice': price,
+                                        'clientSpecific': isClientSpecific,
+                                        'clientId': widget.clientId,
+                                        'source': isClientSpecific
+                                            ? 'Client Custom Price'
+                                            : 'Organization Custom Price',
+                                        'updatedAt': DateTime.now().toIso8601String(),
+                                      };
+
+                                      _pricingData[item.itemNumber] = {
+                                        ..._pricingData[item.itemNumber] ?? {},
+                                        'customPricing': customPricingData,
+                                      };
+
+                                      // Collapse override and mark as enabled
+                                      _showPriceOverride[item.itemNumber] = false;
+                                      _isCustomPriceEnabled[item.itemNumber] = true;
+                                    });
+                                  }
+
+                                  // Optionally also refresh from backend to ensure consistency
                                   await _loadPricingData();
 
                                   if (mounted) {

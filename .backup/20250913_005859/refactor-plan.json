@@ -1,0 +1,320 @@
+{
+  "refactorPlan": {
+    "overview": "Refactor the monolithic server.js (5895 lines) into a modular, maintainable structure",
+    "currentStructure": {
+      "totalLines": 5895,
+      "mainComponents": [
+        "Express app setup and middleware",
+        "MongoDB connection",
+        "Firebase configuration",
+        "File upload handling with multer",
+        "Custom pricing processing",
+        "Helper functions (getBaseUrl, getFullFileUrl)",
+        "200+ API endpoints",
+        "Server startup logic"
+      ]
+    },
+    "targetStructure": {
+      "entryPoint": "server.js (minimal, ~50-100 lines)",
+      "directories": {
+        "routes/": "Route definitions organized by feature",
+        "controllers/": "Business logic handlers",
+        "services/": "Database operations and business services",
+        "middleware/": "Custom middleware functions",
+        "utils/": "Helper functions and utilities",
+        "config/": "Configuration files"
+      }
+    },
+    "extractionPlan": {
+      "config": {
+        "files": [
+          "config/database.js",
+          "config/firebase.js",
+          "config/multer.js"
+        ],
+        "content": [
+          "MongoDB connection setup",
+          "Firebase admin configuration",
+          "File upload configuration"
+        ]
+      },
+      "middleware": {
+        "files": [
+          "middleware/cors.js",
+          "middleware/bodyParser.js",
+          "middleware/fileUpload.js",
+          "middleware/auth.js"
+        ],
+        "content": [
+          "CORS configuration",
+          "Body parser setup",
+          "File upload middleware",
+          "Authentication middleware"
+        ]
+      },
+      "utils": {
+        "files": [
+          "utils/urlHelpers.js",
+          "utils/customPricing.js",
+          "utils/fileHelpers.js"
+        ],
+        "content": [
+          "getBaseUrl, getFullFileUrl functions",
+          "processCustomPricing function",
+          "File processing utilities"
+        ]
+      },
+      "routes": {
+        "files": [
+          "routes/pricing.js",
+          "routes/expenses.js",
+          "routes/auditTrail.js",
+          "routes/recurringExpenses.js",
+          "routes/invoiceGeneration.js",
+          "routes/pricePrompts.js",
+          "routes/backwardCompatibility.js",
+          "routes/upload.js",
+          "routes/invoicing.js",
+          "routes/tracking.js",
+          "routes/timer.js",
+          "routes/notifications.js",
+          "routes/organization.js",
+          "routes/notes.js",
+          "routes/auth.js"
+        ],
+        "endpointGroups": {
+          "pricing": {
+            "description": "NDIS pricing and custom pricing endpoints",
+            "endpoints": [
+              "GET /api/pricing/ndis/:itemNumber",
+              "POST /api/pricing/custom/create",
+              "GET /api/pricing/custom/:organizationId",
+              "PUT /api/pricing/custom/:id",
+              "DELETE /api/pricing/custom/:id",
+              "POST /api/pricing/custom/bulk-create",
+              "GET /api/pricing/custom/client/:clientId",
+              "POST /api/pricing/validate",
+              "GET /api/pricing/validate/:itemNumber",
+              "POST /api/pricing/validate/bulk",
+              "GET /api/pricing/search",
+              "GET /api/pricing/categories",
+              "GET /api/pricing/supports/:category"
+            ]
+          },
+          "expenses": {
+            "description": "Expense management endpoints",
+            "endpoints": [
+              "POST /api/expenses/create",
+              "GET /api/expenses/:organizationId",
+              "PUT /api/expenses/:id",
+              "DELETE /api/expenses/:id",
+              "GET /api/expenses/user/:userEmail",
+              "POST /api/expenses/bulk-create",
+              "GET /api/expenses/category/:category",
+              "GET /api/expenses/date-range",
+              "POST /api/expenses/approve/:id",
+              "POST /api/expenses/reject/:id",
+              "GET /api/expenses/pending-approval/:organizationId",
+              "POST /api/expenses/export",
+              "GET /api/expenses/analytics/:organizationId"
+            ]
+          },
+          "auditTrail": {
+            "description": "Audit trail and logging endpoints",
+            "endpoints": [
+              "POST /api/audit/log",
+              "GET /api/audit/logs/:organizationId",
+              "GET /api/audit/logs/user/:userEmail",
+              "GET /api/audit/logs/entity/:entityType/:entityId",
+              "GET /api/audit/logs/action/:action",
+              "GET /api/audit/logs/date-range",
+              "DELETE /api/audit/logs/cleanup",
+              "GET /api/audit/summary/:organizationId",
+              "POST /api/audit/export"
+            ]
+          },
+          "recurringExpenses": {
+            "description": "Recurring expense management endpoints",
+            "endpoints": [
+              "POST /api/recurring-expenses/create",
+              "GET /api/recurring-expenses/:organizationId",
+              "PUT /api/recurring-expenses/:id",
+              "DELETE /api/recurring-expenses/:id",
+              "POST /api/recurring-expenses/:id/pause",
+              "POST /api/recurring-expenses/:id/resume",
+              "GET /api/recurring-expenses/:id/next-occurrences",
+              "POST /api/recurring-expenses/process-due",
+              "GET /api/recurring-expenses/due/:organizationId",
+              "POST /api/recurring-expenses/:id/skip-next",
+              "GET /api/recurring-expenses/analytics/:organizationId"
+            ]
+          },
+          "invoiceGeneration": {
+            "description": "Invoice generation and management endpoints",
+            "endpoints": [
+              "POST /api/invoice/generate",
+              "GET /api/invoice/:invoiceId",
+              "GET /api/invoice/user/:userEmail",
+              "GET /api/invoice/client/:clientEmail",
+              "GET /api/invoice/organization/:organizationId",
+              "PUT /api/invoice/:invoiceId",
+              "DELETE /api/invoice/:invoiceId",
+              "POST /api/invoice/:invoiceId/send",
+              "GET /api/invoice/:invoiceId/pdf",
+              "POST /api/invoice/bulk-generate",
+              "GET /api/invoice/analytics/:organizationId",
+              "POST /api/invoice/:invoiceId/mark-paid",
+              "GET /api/invoice/overdue/:organizationId"
+            ]
+          },
+          "pricePrompts": {
+            "description": "Price prompt system for missing prices",
+            "endpoints": [
+              "POST /api/invoice/price-prompt/create",
+              "POST /api/invoice/price-prompt/resolve",
+              "GET /api/invoice/price-prompt/pending/:sessionId",
+              "POST /api/invoice/price-prompt/cancel",
+              "POST /api/invoice/generate-with-prompts",
+              "POST /api/invoice/complete-generation"
+            ]
+          },
+          "backwardCompatibility": {
+            "description": "Legacy invoice data support",
+            "endpoints": [
+              "POST /api/invoice/process-legacy",
+              "POST /api/invoice/validate-legacy",
+              "POST /api/invoice/transform-legacy",
+              "POST /api/invoice/migrate-legacy-batch",
+              "GET /api/invoice/legacy-stats",
+              "POST /api/invoice/map-legacy-item",
+              "GET /api/invoice/:invoiceId/compatibility"
+            ]
+          },
+          "upload": {
+            "description": "File upload endpoints",
+            "endpoints": [
+              "POST /api/upload/receipt"
+            ]
+          },
+          "invoicing": {
+            "description": "Invoicing email configuration",
+            "endpoints": [
+              "POST /addUpdateInvoicingEmailDetail",
+              "POST /invoicingEmailDetailKey",
+              "GET /getInvoicingEmailDetails",
+              "GET /checkInvoicingEmailKey",
+              "POST /getEmailDetailToSendEmail"
+            ]
+          },
+          "tracking": {
+            "description": "Employee tracking and time management",
+            "endpoints": [
+              "GET /getWorkedTime/:userEmail/:clientEmail",
+              "GET /getEmployeeTrackingData/:organizationId"
+            ]
+          },
+          "timer": {
+            "description": "Timer functionality",
+            "endpoints": [
+              "POST /startTimerWithTracking",
+              "GET /getTimerStatus/:userEmail"
+            ]
+          },
+          "notifications": {
+            "description": "FCM notification management",
+            "endpoints": [
+              "POST /registerFcmToken"
+            ]
+          },
+          "organization": {
+            "description": "Organization management",
+            "endpoints": [
+              "POST /createOrganization",
+              "POST /organization/verify-code",
+              "GET /organization/verify/:organizationCode",
+              "GET /verifyOrganizationCode/:code"
+            ]
+          },
+          "notes": {
+            "description": "Client notes management",
+            "endpoints": [
+              "POST /addNotes"
+            ]
+          }
+        }
+      },
+      "services": {
+        "files": [
+          "services/pricingService.js",
+          "services/expenseService.js",
+          "services/auditService.js",
+          "services/recurringExpenseService.js",
+          "services/invoiceService.js",
+          "services/pricePromptService.js",
+          "services/backwardCompatibilityService.js",
+          "services/uploadService.js",
+          "services/trackingService.js",
+          "services/timerService.js",
+          "services/notificationService.js",
+          "services/organizationService.js",
+          "services/notesService.js"
+        ],
+        "description": "Database operations and business logic services"
+      },
+      "controllers": {
+        "files": [
+          "controllers/pricingController.js",
+          "controllers/expenseController.js",
+          "controllers/auditController.js",
+          "controllers/recurringExpenseController.js",
+          "controllers/invoiceController.js",
+          "controllers/pricePromptController.js",
+          "controllers/backwardCompatibilityController.js",
+          "controllers/uploadController.js",
+          "controllers/trackingController.js",
+          "controllers/timerController.js",
+          "controllers/notificationController.js",
+          "controllers/organizationController.js",
+          "controllers/notesController.js"
+        ],
+        "description": "Request handlers that coordinate between routes and services"
+      }
+    },
+    "refactoredServerStructure": {
+      "imports": [
+        "express",
+        "./config/database",
+        "./config/firebase",
+        "./middleware/cors",
+        "./middleware/bodyParser",
+        "./middleware/fileUpload",
+        "./routes/index"
+      ],
+      "setup": [
+        "Initialize Express app",
+        "Connect to MongoDB",
+        "Setup Firebase",
+        "Apply middleware",
+        "Mount routes",
+        "Start server"
+      ],
+      "estimatedLines": "50-100 lines (vs current 5895)"
+    },
+    "benefits": [
+      "Improved maintainability",
+      "Better code organization",
+      "Easier testing",
+      "Reduced coupling",
+      "Clearer separation of concerns",
+      "Easier onboarding for new developers",
+      "Better scalability"
+    ],
+    "migrationStrategy": {
+      "phase1": "Extract configuration and utilities",
+      "phase2": "Create route files and basic controllers",
+      "phase3": "Extract services and business logic",
+      "phase4": "Refactor main server.js",
+      "phase5": "Testing and validation"
+    }
+  }
+}

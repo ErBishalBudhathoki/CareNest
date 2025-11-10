@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/utils/hours_formatting.dart';
 
 class DynamicLineItemEntry extends StatefulWidget {
   final List<InvoiceLineItem> lineItems;
@@ -137,11 +138,26 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
                     Expanded(
                       flex: 1,
                       child: TextFormField(
-                        initialValue: item.quantity.toString(),
-                        decoration: const InputDecoration(
-                            labelText: 'Qty',
-                            isDense: true,
-                            border: InputBorder.none),
+                        initialValue: HoursFormatting.formatDecimalHours(
+                          item.quantity,
+                          minDecimals: 2,
+                          maxDecimals: 4,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Qty',
+                          isDense: true,
+                          border: InputBorder.none,
+                          suffixIcon: item.type == 'service'
+                              ? Tooltip(
+                                  message:
+                                      'Exact hours shown up to 4 decimals. Seconds included. Total = Hours × Rate.',
+                                  child: const Icon(
+                                    Icons.info_outline,
+                                    size: 16,
+                                  ),
+                                )
+                              : null,
+                        ),
                         textAlign: TextAlign.center,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),

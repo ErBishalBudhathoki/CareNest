@@ -16,6 +16,7 @@ import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/security/views/api_usage_dashboard_view.dart';
 import 'package:carenest/app/features/pricing/views/pricing_analytics_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:carenest/app/features/settings/views/date_format_settings_view.dart';
 
 /// Modernized Settings View
 /// A visually refreshed settings page with fluid animations and a clean, grouped layout.
@@ -222,6 +223,20 @@ class _SettingsViewState extends State<SettingsView> {
                         subtitle: 'Manage notification preferences',
                         onTap: () {
                           // TODO: Implement notification settings
+                        },
+                      ),
+                      _buildSettingsItem(
+                        icon: Icons.event_outlined,
+                        color: AppColors.colorBlue,
+                        title: 'Date Format',
+                        subtitle: 'Control parsing of ambiguous dates',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DateFormatSettingsView(),
+                            ),
+                          );
                         },
                       ),
                       _buildSettingsItem(

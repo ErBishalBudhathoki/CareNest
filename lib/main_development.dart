@@ -31,6 +31,7 @@ import 'package:carenest/app/features/auth/views/forgot_password_view.dart';
 import 'package:carenest/app/shared/widgets/bottom_navBar_widget.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
+import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 
 final mediaStorePlugin = MediaStore();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -118,6 +119,7 @@ class MyApp extends ConsumerWidget {
                             ''
                         : '',
               ),
+          Routes.bankDetails: (context) => const BankDetailsView(),
           // Add other routes as needed
         },
       ),

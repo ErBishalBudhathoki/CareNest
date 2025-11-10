@@ -15,6 +15,21 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
       : super(EnhancedInvoiceState());
 
   /// Generate invoices with enhanced pricing integration
+  ///
+  /// Parameters:
+  /// - `selectedEmployeesAndClients`: Selection of employees and their clients to include.
+  /// - `organizationId`: Optional organization context for pricing validation.
+  /// - `validatePrices`: When true, performs pricing compliance checks.
+  /// - `allowPriceCapOverride`: Allows overriding price caps via prompts.
+  /// - `includeDetailedPricingInfo`: Adds pricing metadata to invoices.
+  /// - `applyTax`: Whether to apply tax to totals.
+  /// - `taxRate`: Tax percentage as a double (0–100 range typical).
+  /// - `includeExpenses`: Include approved expenses in invoice generation.
+  /// - `attachedPhotos`, `photoDescription`, `additionalAttachments`: Optional attachments.
+  /// - `priceOverrides`: Optional map of item-specific price overrides.
+  /// - `useAdminBankDetails`: Use admin bank details for invoices when true.
+  /// - `startDate`, `endDate`: Optional date range to filter line items and expenses. If omitted,
+  ///   the service defaults are used.
   Future<List<String>> generateInvoices(
     BuildContext context, {
     List<Map<String, dynamic>>? selectedEmployeesAndClients,
@@ -23,20 +38,58 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
     bool allowPriceCapOverride = false,
     bool includeDetailedPricingInfo = true,
     bool applyTax = true,
-    double taxRate = 0.10,
+    required double taxRate,
     bool includeExpenses = true,
     List<File>? attachedPhotos,
     String? photoDescription,
     List<File>? additionalAttachments,
     Map<String, Map<String, dynamic>>? priceOverrides,
+    bool useAdminBankDetails = false,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     try {
       // Update local state
       state = state.copyWith(isLoading: true, errorMessage: '');
+      if (taxRate == null) {
+        taxRate = 0.0;
+      }
+      // Validate date range if provided
+      if (startDate != null && endDate != null) {
+        if (endDate.isBefore(startDate)) {
+          final msg = 'End date must be on or after start date';
+          state = state.copyWith(isLoading: false, errorMessage: msg);
+          ref.read(invoiceGenerationStateProvider.notifier).state =
+              InvoiceGenerationState.error;
+          ref.read(invoiceGenerationErrorProvider.notifier).state = msg;
+          return [];
+        }
 
+        // Prevent excessively long periods (align with backend: max ~3 months)
+        final diffDays = endDate.difference(startDate).inDays;
+        if (diffDays > 93) { // ~3 months
+          final msg = 'Selected period cannot exceed 3 months';
+          state = state.copyWith(isLoading: false, errorMessage: msg);
+          ref.read(invoiceGenerationStateProvider.notifier).state =
+              InvoiceGenerationState.error;
+          ref.read(invoiceGenerationErrorProvider.notifier).state = msg;
+          return [];
+        }
+
+        // Optional: warn on future end dates (business-friendly safeguard)
+        final now = DateTime.now();
+        if (endDate.isAfter(now)) {
+          final msg = 'End date cannot be in the future';
+          state = state.copyWith(isLoading: false, errorMessage: msg);
+          ref.read(invoiceGenerationStateProvider.notifier).state =
+              InvoiceGenerationState.error;
+          ref.read(invoiceGenerationErrorProvider.notifier).state = msg;
+          return [];
+        }
+      }
       // The invoice service will handle updating the global state
       // through the providers, so we don't need to set it here
-
+      debugPrint('in viewmodel taxRate: $taxRate');
       // Generate invoices with pricing integration
       final pdfPaths = await _invoiceService.generateInvoicesWithPricing(
         context,
@@ -52,6 +105,9 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
         photoDescription: photoDescription,
         additionalAttachments: additionalAttachments,
         priceOverrides: priceOverrides,
+        useAdminBankDetails: useAdminBankDetails,
+        startDate: startDate,
+        endDate: endDate,
       );
 
       // Extract validation summary and items exceeding price cap from the invoices

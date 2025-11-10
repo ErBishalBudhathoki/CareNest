@@ -7,6 +7,8 @@ import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:carenest/app/features/invoice/presentation/widgets/price_prompt_dialog.dart';
+import 'package:carenest/app/features/pricing/views/pricing_configuration_view.dart';
 
 /// NDIS Pricing Management View for the Pricing Management Dashboard
 /// Allows users to view, search, and manage custom pricing for NDIS items
@@ -14,12 +16,16 @@ class NdisPricingManagementView extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? adminEmail;
   final String? organizationName;
+  /// Optional client ID. When provided, saving custom pricing will be
+  /// applied specifically to this client rather than organization-wide.
+  final String? clientId;
 
   const NdisPricingManagementView({
     Key? key,
     this.organizationId,
     this.adminEmail,
     this.organizationName,
+    this.clientId,
   }) : super(key: key);
 
   @override
@@ -304,7 +310,7 @@ class _NdisPricingManagementViewState
     }
   }
 
-  /// Get standard NDIS price for an item
+  /// Get standard NDIS cap for an item (metadata only; not used as rate)
   double _getStandardPrice(NDISItem item) {
     final pricingData = _pricingData[item.itemNumber];
     if (pricingData?['supportItem'] != null) {
@@ -320,10 +326,12 @@ class _NdisPricingManagementViewState
         }
       }
     }
-    return 30.00; // Fallback price
+    // No standard price for selected state or missing support item details
+    // Return 0.0 to avoid silent use of a dummy $30 rate
+    return 0.0;
   }
 
-  /// Get current price (custom or standard) for an item
+  /// Get current billable price (custom only) for an item
   double _getCurrentPrice(NDISItem item) {
     final pricingData = _pricingData[item.itemNumber];
     if (pricingData?['customPricing'] != null) {
@@ -332,14 +340,14 @@ class _NdisPricingManagementViewState
 
       // Only use custom pricing if it's not base rate
       if (source != null && source != 'base-rate') {
-        return (customPricing['price'] as num?)?.toDouble() ??
-            _getStandardPrice(item);
+        return (customPricing['price'] as num?)?.toDouble() ?? 0.0;
       }
     }
-    return _getStandardPrice(item);
+    // No custom pricing set; do not use NDIS cap as rate
+    return 0.0;
   }
 
-  /// Get pricing source description
+  /// Get pricing source description for display
   String _getPricingSource(NDISItem item) {
     final pricingData = _pricingData[item.itemNumber];
     if (pricingData?['customPricing'] != null) {
@@ -353,7 +361,8 @@ class _NdisPricingManagementViewState
         return isClientSpecific ? 'Client-Specific Rate' : 'Organization Rate';
       }
     }
-    return 'Standard NDIS Rate';
+    // No custom pricing; indicate missing base rate (NDIS cap is metadata only)
+    return 'Missing Base Rate';
   }
 
   /// Check if an NDIS item is high intensity
@@ -381,8 +390,9 @@ class _NdisPricingManagementViewState
         // Initialize controller with current price
         final item = _filteredNdisItems
             .firstWhere((item) => item.itemNumber == itemNumber);
+        final current = _getCurrentPrice(item);
         _priceControllers[itemNumber] = TextEditingController(
-          text: _getCurrentPrice(item).toStringAsFixed(2),
+          text: current > 0 ? current.toStringAsFixed(2) : '',
         );
         _isCustomPriceEnabled[itemNumber] =
             _pricingData[itemNumber]?['customPricing'] != null;
@@ -415,22 +425,53 @@ class _NdisPricingManagementViewState
     });
 
     try {
-      final result = await _apiMethod.saveAsCustomPricing(
-        widget.organizationId!,
-        item.itemNumber,
-        price,
-        'organization', // Save as organization-level pricing
-        widget.adminEmail ?? '',
-      );
+      // Resolve user email: prefer adminEmail, fallback to stored user email
+      final userEmail = (widget.adminEmail != null && widget.adminEmail!.trim().isNotEmpty)
+          ? widget.adminEmail!
+          : (_sharedPrefs.getUserEmail() ?? '');
+
+      if (userEmail.isEmpty) {
+        _showSnackBar('Missing user email. Please sign in again.', isError: true);
+        setState(() {
+          _isSavingPrice[item.itemNumber] = false;
+        });
+        return;
+      }
+
+      Map<String, dynamic> result;
+      if (widget.clientId != null && widget.clientId!.trim().isNotEmpty) {
+        // Save as client-specific pricing when clientId is present
+        result = await _apiMethod.saveClientCustomPricing(
+          widget.organizationId!,
+          widget.clientId!,
+          item.itemNumber,
+          price,
+          'fixed',
+          userEmail,
+          supportItemName: item.itemName,
+        );
+      } else {
+        // Fallback to organization-wide custom pricing
+        result = await _apiMethod.saveAsCustomPricing(
+          widget.organizationId!,
+          item.itemNumber,
+          price,
+          'fixed', // Valid pricing type expected by backend
+          userEmail,
+          supportItemName: item.itemName,
+        );
+      }
 
       if (result['success'] == true) {
         // Update local pricing data
         setState(() {
+          final isClientSpecific = widget.clientId != null && widget.clientId!.trim().isNotEmpty;
           _pricingData[item.itemNumber] = {
             ..._pricingData[item.itemNumber] ?? {},
             'customPricing': {
               'price': price,
-              'source': 'Organization Rate',
+              'source': isClientSpecific ? 'Client-Specific Rate' : 'Organization Rate',
+              if (isClientSpecific) 'clientId': widget.clientId,
               'createdAt': DateTime.now().toIso8601String(),
             },
           };
@@ -514,7 +555,7 @@ class _NdisPricingManagementViewState
                   const SizedBox(height: 20),
                   _buildInfoBanner(),
                   const SizedBox(height: 20),
-                  Expanded(child: _buildItemsList()),
+                  _buildItemsList(),
                 ],
               ),
             ),
@@ -613,6 +654,23 @@ class _NdisPricingManagementViewState
                             ],
                           ),
                         ),
+                      const SizedBox(width: 12),
+                      // Settings shortcut button (visible on all screen sizes)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          onPressed: _openPricingSettings,
+                          icon: const Icon(
+                            Icons.settings,
+                            size: 20,
+                          ),
+                          tooltip: 'Pricing Settings',
+                          color: const Color(0xFF475569),
+                        ),
+                      ),
                     ],
                   ),
                   if (isSmallScreen) ...[
@@ -754,8 +812,53 @@ class _NdisPricingManagementViewState
                   ],
                 ),
               ),
+              const SizedBox(width: 12),
+              // Settings shortcut button to open PricingConfigurationView
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: _openPricingSettings,
+                  icon: const Icon(
+                    Icons.settings,
+                    size: 20,
+                  ),
+                  tooltip: 'Pricing Settings',
+                  color: const Color(0xFF475569),
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Opens the PricingConfigurationView for managing organization pricing settings.
+  ///
+  /// Validates that `organizationId`, `adminEmail`, and `organizationName` are
+  /// available before navigating. Shows an error snackbar if any are missing.
+  void _openPricingSettings() {
+    final orgId = widget.organizationId;
+    final admin = widget.adminEmail;
+    final orgName = widget.organizationName;
+
+    if (orgId == null || admin == null || orgName == null || orgName.isEmpty) {
+      _showSnackBar(
+        'Organization context missing. Cannot open Pricing Settings.',
+        isError: true,
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PricingConfigurationView(
+          adminEmail: admin,
+          organizationId: orgId,
+          organizationName: orgName,
         ),
       ),
     );
@@ -958,6 +1061,7 @@ class _NdisPricingManagementViewState
     final showOverride = _showPriceOverride[item.itemNumber] ?? false;
     final hasCustomPricing =
         _pricingData[item.itemNumber]?['customPricing'] != null;
+    final isMissingStandard = !hasCustomPricing && (standardPrice <= 0);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -965,8 +1069,10 @@ class _NdisPricingManagementViewState
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: hasCustomPricing ? Colors.orange[300]! : Colors.grey[200]!,
-          width: hasCustomPricing ? 2 : 1,
+          color: hasCustomPricing
+              ? Colors.orange[300]!
+              : (isMissingStandard ? Colors.red[300]! : Colors.grey[200]!),
+          width: hasCustomPricing ? 2 : (isMissingStandard ? 2 : 1),
         ),
         boxShadow: [
           BoxShadow(
@@ -1007,7 +1113,9 @@ class _NdisPricingManagementViewState
                       decoration: BoxDecoration(
                         color: hasCustomPricing
                             ? Colors.orange.withValues(alpha: 0.2)
-                            : Colors.green.withValues(alpha: 0.2),
+                            : (isMissingStandard
+                                ? Colors.red.withValues(alpha: 0.2)
+                                : Colors.green.withValues(alpha: 0.2)),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -1015,7 +1123,9 @@ class _NdisPricingManagementViewState
                         style: TextStyle(
                           color: hasCustomPricing
                               ? Colors.orange[700]
-                              : Colors.green[700],
+                              : (isMissingStandard
+                                  ? Colors.red[700]
+                                  : Colors.green[700]),
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -1025,10 +1135,21 @@ class _NdisPricingManagementViewState
                     Text(
                       pricingSource,
                       style: TextStyle(
-                        color: Colors.grey[600],
+                        color: isMissingStandard ? Colors.red[600] : Colors.grey[600],
                         fontSize: 11,
                       ),
                     ),
+                    if (isMissingStandard) ...[
+                      const SizedBox(width: 6),
+                      Text(
+                        'Tap \$ to set price',
+                        style: TextStyle(
+                          color: Colors.red[600],
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ]
                   ],
                 ),
               ],
@@ -1046,7 +1167,9 @@ class _NdisPricingManagementViewState
                 IconButton(
                   icon: Icon(
                     showOverride ? Icons.expand_less : Icons.attach_money,
-                    color: showOverride ? Colors.blue : Colors.grey[600],
+                    color: showOverride
+                        ? Colors.blue
+                        : (isMissingStandard ? Colors.red[600] : Colors.grey[600]),
                     size: 18,
                   ),
                   onPressed: () => _togglePriceOverride(item.itemNumber),
@@ -1110,50 +1233,122 @@ class _NdisPricingManagementViewState
                 width: 1,
               ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[100],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.info_outline,
-                    size: 16,
-                    color: Colors.blue[700],
-                  ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: standardPrice > 0 ? Colors.blue[100] : Colors.red[100],
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Standard NDIS Rate',
-                        style: TextStyle(
-                          color: Colors.blue[700],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '\$${standardPrice.toStringAsFixed(2)} per hour',
-                        style: TextStyle(
-                          color: Colors.blue[800],
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: Icon(
+                  standardPrice > 0 ? Icons.info_outline : Icons.error_outline,
+                  size: 16,
+                  color: standardPrice > 0 ? Colors.blue[700] : Colors.red[700],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                      if (standardPrice > 0) ...[
+                        Text(
+                          'Standard NDIS Rate',
+                          style: TextStyle(
+                            color: Colors.blue[700],
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '\$${standardPrice.toStringAsFixed(2)} per hour',
+                          style: TextStyle(
+                            color: Colors.blue[800],
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ] else ...[
+                        Text(
+                          'Standard rate unavailable for selected state',
+                          style: TextStyle(
+                            color: Colors.red[700],
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Please enter a custom price to proceed',
+                          style: TextStyle(
+                            color: Colors.red[800],
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ]
+                  ],
+                ),
+              ),
+            ],
           ),
+        ),
 
-          const SizedBox(height: 20),
+        if (standardPrice <= 0) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final resolution = await showPricePromptDialog(
+                    context: context,
+                    promptData: {
+                      'ndisItemNumber': item.itemNumber,
+                      'itemDescription': item.itemName,
+                      'quantity': 1.0,
+                      'unit': 'hour',
+                      'priceCap': null,
+                      'suggestedPrice': null,
+                    },
+                  );
+                  if (resolution != null) {
+                    final providedPrice =
+                        (resolution['providedPrice'] as num?)?.toDouble();
+                    if (providedPrice != null && providedPrice > 0) {
+                      setState(() {
+                        _isCustomPriceEnabled[item.itemNumber] = true;
+                        controller?.text = providedPrice.toStringAsFixed(2);
+                      });
+                      if (resolution['applyToOrganization'] == true) {
+                        await _saveCustomPricing(item);
+                      }
+                    }
+                  }
+                },
+                icon: const Icon(Icons.attach_money, size: 18),
+                label: const Text('Enter Price'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[600],
+                  foregroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'No standard rate available; provide a price.',
+                  style: TextStyle(color: Colors.red[700], fontSize: 12),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                ),
+              ),
+            ],
+          ),
+        ],
+
+        const SizedBox(height: 20),
 
           // Custom pricing toggle
           Container(
@@ -1200,8 +1395,9 @@ class _NdisPricingManagementViewState
                         _isCustomPriceEnabled[item.itemNumber] =
                             !isCustomEnabled;
                         if (!isCustomEnabled) {
-                          // Reset to standard price when enabling
-                          controller?.text = standardPrice.toStringAsFixed(2);
+                          // Reset to standard price when enabling (only if available)
+                          controller?.text =
+                              standardPrice > 0 ? standardPrice.toStringAsFixed(2) : '';
                         }
                       });
                     },
@@ -1290,7 +1486,7 @@ class _NdisPricingManagementViewState
                   if (price == null || price <= 0) {
                     return 'Please enter a valid price';
                   }
-                  if (price > standardPrice * 2) {
+                  if (standardPrice > 0 && price > standardPrice * 2) {
                     return 'Price seems unusually high';
                   }
                   return null;
@@ -1381,7 +1577,7 @@ class _NdisPricingManagementViewState
                           onPressed: () {
                             setState(() {
                               controller?.text =
-                                  standardPrice.toStringAsFixed(2);
+                                  standardPrice > 0 ? standardPrice.toStringAsFixed(2) : '';
                             });
                           },
                           style: TextButton.styleFrom(

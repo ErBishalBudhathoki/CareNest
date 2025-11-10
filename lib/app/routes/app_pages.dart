@@ -9,6 +9,7 @@ import 'package:carenest/app/features/auth/views/forgot_password_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/busineess/views/add_business_details_view.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
+import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
 import 'package:carenest/app/features/photo/views/photo_upload_view.dart';
@@ -34,6 +35,7 @@ class AppPages {
   static final routes = [
     const SplashScreen(),
     const AdminDashboardView(email: ''),
+    const BankDetailsView(),
     const LoginView(),
     const HomeView(email: ''),
     const SignUpView(),
