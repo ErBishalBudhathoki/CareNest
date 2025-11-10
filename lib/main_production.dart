@@ -24,6 +24,7 @@ import 'package:carenest/app/shared/constants/values/strings/app_strings.dart';
 import 'package:carenest/app/shared/widgets/splashScreen_widget.dart';
 import 'package:carenest/app/shared/widgets/notification_handler_widget.dart';
 import 'package:carenest/config/environment.dart';
+import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 
 // Views
 import 'package:carenest/app/features/auth/views/login_view.dart';
@@ -154,6 +155,7 @@ class MyApp extends ConsumerWidget {
                             ''
                         : '',
               ),
+          Routes.bankDetails: (context) => const BankDetailsView(),
           // Add other routes as needed
         },
       ),

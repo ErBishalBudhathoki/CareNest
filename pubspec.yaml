@@ -17,7 +17,7 @@ dependencies:
   email_validator: ^3.0.0
   iconsax: ^0.0.8
   http: ^1.2.2
-  shared_preferences: ^2.2.3
+  shared_preferences: ^2.2.2
   curved_navigation_bar: ^1.0.6
   another_flushbar: ^1.12.30
   # flutter_calendar_widget: ^0.0.2
@@ -96,7 +96,6 @@ dependencies:
   logging: ^1.2.0
   device_info_plus: ^10.1.2 
   package_info_plus: ^8.0.0
-
 dev_dependencies:
   flutter_lints: ^5.0.0
   lints: ^5.1.1
