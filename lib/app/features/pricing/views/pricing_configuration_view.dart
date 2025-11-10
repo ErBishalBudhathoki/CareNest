@@ -1,7 +1,12 @@
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/providers/pricing_settings_providers.dart';
+import 'package:carenest/providers/fallback_pricing_providers.dart';
+import 'package:carenest/widgets/fallback_price_dialog.dart';
 
 class PricingConfigurationView extends StatefulWidget {
   final String adminEmail;
@@ -42,6 +47,14 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
   double _maxPriceVariation = 20.0;
   int _priceHistoryRetention = 365;
   int _bulkOperationLimit = 1000;
+
+  // Fallback base rate state
+  final ApiMethod _api = ApiMethod();
+  final TextEditingController _fallbackRateController = TextEditingController();
+  double? _fallbackBaseRate;
+  bool _isFallbackLoading = false;
+  bool _isSavingFallbackRate = false;
+  String? _fallbackError;
 
   final List<Map<String, dynamic>> _pricingRules = [
     {
@@ -99,11 +112,13 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _loadFallbackBaseRate();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _fallbackRateController.dispose();
     super.dispose();
   }
 
@@ -276,14 +291,30 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
       expandedHeight: 200,
       floating: false,
       pinned: true,
+      centerTitle: false,
       backgroundColor: AppColors.colorPrimary,
       flexibleSpace: FlexibleSpaceBar(
-        title: const Text(
-          'Pricing Configuration',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        titlePadding:
+            const EdgeInsetsDirectional.only(start: 20, bottom: 56, end: 20),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(
+              Icons.settings,
+              size: 20,
+              color: Colors.white,
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Pricing Configuration',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
         background: Container(
           decoration: BoxDecoration(
@@ -310,23 +341,65 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                   ),
                 ),
               ),
-              const Positioned(
-                bottom: 60,
-                left: 20,
-                child: Icon(
-                  Icons.settings,
-                  size: 40,
-                  color: Colors.white70,
-                ),
-              ),
             ],
           ),
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.save, color: Colors.white),
-          onPressed: _saveConfiguration,
+        Consumer(
+          builder: (context, ref, _) {
+            final vm = ref.watch(pricingSettingsViewModelProvider);
+            return IconButton(
+              icon: const Icon(Icons.save, color: Colors.white),
+              onPressed: (_isLoading || vm.isLoading)
+                  ? null
+                  : () async {
+                      try {
+                        // Map current UI values into the ViewModel before saving
+                        final vmRead = ref.read(pricingSettingsViewModelProvider);
+                        vmRead.updateSettings(
+                          defaultCurrency: _defaultCurrency,
+                          pricingModel: _pricingModel,
+                          roundingMethod: _roundingMethod,
+                          taxCalculation: _taxCalculation,
+                          defaultMarkup: _defaultMarkup,
+                          maxPriceVariation: _maxPriceVariation,
+                          priceHistoryRetention: _priceHistoryRetention,
+                          bulkOperationLimit: _bulkOperationLimit,
+                          autoUpdatePricing: _autoUpdatePricing,
+                          enablePriceValidation: _enablePriceValidation,
+                          requireApprovalForChanges: _requireApprovalForChanges,
+                          enableBulkOperations: _enableBulkOperations,
+                          enablePriceHistory: _enablePriceHistory,
+                          enableNotifications: _enableNotifications,
+                        );
+
+                        // Save general pricing settings via ViewModel
+                        await vmRead.save(widget.organizationId);
+
+                        if (vmRead.saveSucceeded) {
+                          _showSnackBar('Settings saved');
+                        } else if (vmRead.errorMessage != null) {
+                          _showSnackBar(vmRead.errorMessage!);
+                        }
+
+                        // Preserve fallback base rate save if changed
+                        final input = _fallbackRateController.text.trim();
+                        final parsed = double.tryParse(input);
+                        final shouldSaveFallback = input.isNotEmpty &&
+                            parsed != null &&
+                            parsed > 0 &&
+                            parsed != _fallbackBaseRate;
+
+                        if (shouldSaveFallback) {
+                          await _saveFallbackBaseRate();
+                        }
+                      } catch (e) {
+                        _showSnackBar('Failed to save configuration: $e');
+                      }
+                    },
+            );
+          },
         ),
         IconButton(
           icon: const Icon(Icons.refresh, color: Colors.white),
@@ -398,12 +471,14 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                 _defaultCurrency,
                 ['AUD', 'USD', 'EUR', 'GBP'],
                 (value) => setState(() => _defaultCurrency = value!),
+                bottomSpacing: 8,
               ),
               _buildDropdownSetting(
                 'Pricing Model',
                 _pricingModel,
                 ['NDIS Standard', 'Custom', 'Hybrid'],
                 (value) => setState(() => _pricingModel = value!),
+                bottomSpacing: 8,
               ),
               _buildDropdownSetting(
                 'Rounding Method',
@@ -415,14 +490,18 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                   'No rounding'
                 ],
                 (value) => setState(() => _roundingMethod = value!),
+                bottomSpacing: 8,
+                labelFieldGap: 12,
               ),
               _buildDropdownSetting(
                 'Tax Calculation',
                 _taxCalculation,
-                ['GST Inclusive', 'GST Exclusive', 'No Tax'],
+                ['GST Inclusive', 'GST Exclusive'],
                 (value) => setState(() => _taxCalculation = value!),
+                bottomSpacing: 8,
               ),
             ],
+            innerPadding: 12,
           ),
           const SizedBox(height: 24),
           _buildSettingsSection(
@@ -442,6 +521,154 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                 100.0,
                 (value) => setState(() => _maxPriceVariation = value),
               ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildSettingsSection(
+            'Fallback Base Rate',
+            [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Organization Fallback Base Rate (AUD/hour)',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Used when no client or organization-specific price exists.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Stack(
+                        alignment: Alignment.centerRight,
+                        children: [
+                          TextFormField(
+                            controller: _fallbackRateController,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              suffixText: 'AUD',
+                              hintText: _fallbackBaseRate != null
+                                  ? _fallbackBaseRate!.toStringAsFixed(2)
+                                  : 'e.g., 35.00',
+                            ),
+                          ),
+                          if (_isFallbackLoading)
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _isSavingFallbackRate ? null : _saveFallbackBaseRate,
+                      icon: _isSavingFallbackRate
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.save),
+                      label: Text(_isSavingFallbackRate ? 'Saving...' : 'Save Base Rate'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.colorPrimary,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final fallbackVm = ref.watch(fallbackPricingViewModelProvider);
+                        return OutlinedButton.icon(
+                          onPressed: fallbackVm.isLoading
+                              ? null
+                              : () async {
+                                  if (mounted) {
+                                    // Preload current rate before showing dialog
+                                    await ref.read(fallbackPricingViewModelProvider).load(widget.organizationId);
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => FallbackPriceDialog(
+                                        initialPrice: ref.read(fallbackPricingViewModelProvider).fallbackRate,
+                                        isSaving: ref.read(fallbackPricingViewModelProvider).isLoading,
+                                        errorText: ref.read(fallbackPricingViewModelProvider).errorMessage,
+                                        currencySuffix: 'AUD',
+                                        onSave: (value) async {
+                                          final vm = ref.read(fallbackPricingViewModelProvider);
+                                          await vm.save(
+                                            organizationId: widget.organizationId,
+                                            fallbackRate: value,
+                                            userEmail: widget.adminEmail,
+                                          );
+                                          if (vm.saveSucceeded) {
+                                            setState(() {
+                                              _fallbackBaseRate = value;
+                                              _fallbackRateController.text = value.toStringAsFixed(2);
+                                            });
+                                            Navigator.pop(context);
+                                            _showSnackBar('Fallback base rate updated');
+                                          } else if (vm.errorMessage != null) {
+                                            // Keep dialog open and surface error via Scaffold
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text(vm.errorMessage!)),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  }
+                                },
+                          icon: const Icon(Icons.edit),
+                          label: const Text('Prompt to Update'),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              if (_fallbackError != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    _fallbackError!,
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 24),
@@ -852,7 +1079,8 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
     );
   }
 
-  Widget _buildSettingsSection(String title, List<Widget> children) {
+  Widget _buildSettingsSection(String title, List<Widget> children,
+      {double innerPadding = 16}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -866,7 +1094,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
         ),
         const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(innerPadding),
           decoration: BoxDecoration(
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(12),
@@ -885,9 +1113,9 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
     String value,
     List<String> options,
     ValueChanged<String?> onChanged,
-  ) {
+    {double bottomSpacing = 16, double labelFieldGap = 12}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: bottomSpacing),
       child: Row(
         children: [
           Expanded(
@@ -897,12 +1125,18 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
             ),
           ),
+          SizedBox(width: labelFieldGap),
           Expanded(
             flex: 3,
             child: DropdownButtonFormField<String>(
               value: value,
+              isDense: true,
+              isExpanded: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -915,7 +1149,12 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
               items: options
                   .map((option) => DropdownMenuItem(
                         value: option,
-                        child: Text(option),
+                        child: Text(
+                          option,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                        ),
                       ))
                   .toList(),
               onChanged: onChanged,
@@ -1093,18 +1332,72 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
     );
   }
 
-  void _saveConfiguration() {
+  /// Persist configuration changes triggered via the AppBar Save icon.
+  ///
+  /// Saves General Pricing Settings to the backend and, if applicable,
+  /// updates the Fallback Base Rate. The Save icon is disabled while saving,
+  /// and user feedback is provided via a SnackBar.
+  Future<void> _saveConfiguration() async {
+    if (_isLoading) return;
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate save operation
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
-      _showSnackBar('Configuration saved successfully');
-    });
+    bool didSave = false;
+    try {
+      // 1) Save General Pricing Settings
+      final generalSettingsPayload = {
+        'autoUpdatePricing': _autoUpdatePricing,
+        'enablePriceValidation': _enablePriceValidation,
+        'requireApprovalForChanges': _requireApprovalForChanges,
+        'enableBulkOperations': _enableBulkOperations,
+        'enablePriceHistory': _enablePriceHistory,
+        'enableNotifications': _enableNotifications,
+        'defaultCurrency': _defaultCurrency,
+        'pricingModel': _pricingModel,
+        'roundingMethod': _roundingMethod,
+        'taxCalculation': _taxCalculation,
+        'defaultMarkup': _defaultMarkup,
+        'maxPriceVariation': _maxPriceVariation,
+        'priceHistoryRetention': _priceHistoryRetention,
+        'bulkOperationLimit': _bulkOperationLimit,
+      };
+      final settingsResp = await _api.updateGeneralPricingSettings(
+        widget.organizationId,
+        generalSettingsPayload,
+      );
+      if (settingsResp['success'] == true) {
+        didSave = true;
+        _showSnackBar(settingsResp['message'] ?? 'Settings saved');
+      } else {
+        // If validation errors come back, surface the first user-friendly message
+        final msg = settingsResp['message'] ?? 'Failed to save settings';
+        _showSnackBar(msg);
+      }
+
+      // Save Fallback Base Rate if present and changed
+      final input = _fallbackRateController.text.trim();
+      final parsed = double.tryParse(input);
+      final shouldSaveFallback =
+          input.isNotEmpty && parsed != null && parsed > 0 && parsed != _fallbackBaseRate;
+
+      if (shouldSaveFallback) {
+        await _saveFallbackBaseRate();
+        didSave = true;
+      }
+
+      if (!didSave) {
+        _showSnackBar('No changes to save');
+      }
+    } catch (e) {
+      _showSnackBar('Failed to save configuration: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void _resetConfiguration() {
@@ -1211,6 +1504,72 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
         ],
       ),
     );
+  }
+
+  /// Load the organization's fallback base rate from the backend and update UI.
+  Future<void> _loadFallbackBaseRate() async {
+    setState(() {
+      _isFallbackLoading = true;
+      _fallbackError = null;
+    });
+    try {
+      final rate = await _api.getFallbackBaseRate(widget.organizationId);
+      setState(() {
+        _fallbackBaseRate = rate;
+        if (rate != null) {
+          _fallbackRateController.text = rate.toStringAsFixed(2);
+        } else {
+          // No configured rate (e.g., 404). Keep UI clean and editable.
+          _fallbackRateController.text = '';
+        }
+        _isFallbackLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isFallbackLoading = false;
+        _fallbackError = 'Failed to load fallback base rate: $e';
+      });
+    }
+  }
+
+  /// Validate and save the fallback base rate via backend API.
+  Future<void> _saveFallbackBaseRate() async {
+    final input = _fallbackRateController.text.trim();
+    final parsed = double.tryParse(input);
+    if (parsed == null || parsed <= 0) {
+      setState(() {
+        _fallbackError = 'Please enter a valid positive amount.';
+      });
+      return;
+    }
+    setState(() {
+      _isSavingFallbackRate = true;
+      _fallbackError = null;
+    });
+    try {
+      final result = await _api.setFallbackBaseRate(
+        widget.organizationId,
+        parsed,
+        widget.adminEmail,
+      );
+      if (result['success'] == true) {
+        setState(() {
+          _fallbackBaseRate = parsed;
+          _isSavingFallbackRate = false;
+        });
+        _showSnackBar(result['message'] ?? 'Fallback base rate updated');
+      } else {
+        setState(() {
+          _isSavingFallbackRate = false;
+          _fallbackError = result['message'] ?? 'Failed to update fallback base rate';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isSavingFallbackRate = false;
+        _fallbackError = 'Error updating fallback base rate: $e';
+      });
+    }
   }
 
   void _showSnackBar(String message) {

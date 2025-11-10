@@ -16,6 +16,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:carenest/app/features/admin/views/bank_details_view.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 // ... existing code ...
 
@@ -54,6 +56,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
   var appointmentData = {};
   late List<dynamic> clientEmailList = [];
   bool isDataFetched = false;
+  // Controls bank details selection UI in HomeView (visual only for normal users)
+  bool _useAdminBankDetails = false;
+  // Shared preferences helper
+  final SharedPreferencesUtils _prefs = SharedPreferencesUtils();
+  // Employee bank details status
+  bool _bankDetailsLoading = false;
+  bool _hasBankDetails = false;
+  String? _bankDetailsError;
+  Map<String, dynamic>? _bankDetails;
 
   @override
   void dispose() {
@@ -84,12 +95,72 @@ class _HomeViewState extends ConsumerState<HomeView> {
         await getInitData();
         isDataFetched = true;
       }
+      // Load employee bank details status for Home UI
+      await _loadEmployeeBankDetails();
+      // Load persisted preference for admin vs employee bank details
+      await _loadUseAdminPreference();
 
       setState(() {
         _appointmentDataFuture = getAppointmentData();
       });
     } catch (e) {
       debugPrint('Error initializing data: $e');
+    }
+  }
+
+  /// Loads the current user's bank details from backend to show status on Home.
+  /// Uses ApiMethod.getBankDetails which reads `userEmail` and `organizationId` from SharedPreferences.
+  Future<void> _loadEmployeeBankDetails() async {
+    setState(() {
+      _bankDetailsLoading = true;
+      _bankDetailsError = null;
+    });
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.getBankDetails();
+      if (response is Map && response['success'] == true && response['data'] is Map) {
+        setState(() {
+          _bankDetails = Map<String, dynamic>.from(response['data'] as Map);
+          _hasBankDetails = true;
+        });
+      } else {
+        setState(() {
+          _hasBankDetails = false;
+          _bankDetailsError = (response is Map ? response['message']?.toString() : null);
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _hasBankDetails = false;
+        _bankDetailsError = 'Error loading bank details: $e';
+      });
+    } finally {
+      setState(() {
+        _bankDetailsLoading = false;
+      });
+    }
+  }
+
+  /// Loads the persisted preference for using admin bank details.
+  /// Defaults to false if not previously set.
+  Future<void> _loadUseAdminPreference() async {
+    try {
+      await _prefs.init();
+      final stored = _prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+      if (stored != null) {
+        setState(() => _useAdminBankDetails = stored);
+      }
+    } catch (e) {
+      debugPrint('Failed to load useAdminBankDetails preference: $e');
+    }
+  }
+
+  /// Persists the current admin/employee bank details preference.
+  Future<void> _persistUseAdminPreference(bool value) async {
+    try {
+      await _prefs.setBool(SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
+    } catch (e) {
+      debugPrint('Failed to persist useAdminBankDetails preference: $e');
     }
   }
 
@@ -345,6 +416,218 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
+  /// Builds the bank details configuration UI with radio toggles.
+  /// Allows a normal user to choose between using employee or admin bank details.
+  /// This UI does not trigger invoice creation and serves as a visual configuration.
+  Widget _buildBankDetailsConfiguration() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: ModernSaasDesign.surface,
+        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+        border: Border.all(
+          color: ModernSaasDesign.border,
+          width: 1.0,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!_hasBankDetails)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: ModernSaasDesign.neutral100,
+                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+                border: Border.all(color: ModernSaasDesign.border),
+              ),
+              child: const Text(
+                'Employee bank details are not set yet. Please add your bank details first.',
+                style: TextStyle(
+                  color: ModernSaasDesign.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          const Text(
+            'Select which bank details to display',
+            style: TextStyle(
+              color: ModernSaasDesign.textSecondary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: ModernSaasDesign.space3),
+          if (_hasBankDetails)
+            RadioListTile<bool>(
+              title: const Text(
+                'Employee Bank Details',
+                style: TextStyle(
+                  color: ModernSaasDesign.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: const Text(
+                'Use the employee\’s saved bank details',
+                style: TextStyle(color: ModernSaasDesign.textSecondary),
+              ),
+              value: false,
+              groupValue: _useAdminBankDetails,
+              activeColor: ModernSaasDesign.primary,
+              onChanged: (val) async {
+                final newVal = val ?? false;
+                setState(() {
+                  _useAdminBankDetails = newVal;
+                });
+                await _persistUseAdminPreference(newVal);
+              },
+              contentPadding: EdgeInsets.zero,
+            ),
+          RadioListTile<bool>(
+            title: const Text(
+              'Admin Bank Details',
+              style: TextStyle(
+                color: ModernSaasDesign.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            subtitle: const Text(
+              'Use admin bank details (invoices created by admin only)',
+              style: TextStyle(color: ModernSaasDesign.textSecondary),
+            ),
+            value: true,
+            groupValue: _useAdminBankDetails,
+            activeColor: ModernSaasDesign.primary,
+            onChanged: (val) async {
+              final newVal = val ?? false;
+              setState(() {
+                _useAdminBankDetails = newVal;
+              });
+              await _persistUseAdminPreference(newVal);
+            },
+            contentPadding: EdgeInsets.zero,
+          ),
+          const SizedBox(height: ModernSaasDesign.space2),
+          const Text(
+            'Note: Invoice creation is restricted to admin users.',
+            style: TextStyle(
+              color: ModernSaasDesign.textSecondary,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the employee bank details status section with CTA to add/update.
+  /// Navigates to BankDetailsView for editing and refreshes status on return.
+  Widget _buildEmployeeBankDetailsSection() {
+    String maskedAccount = '';
+    if (_bankDetails != null && (_bankDetails!['accountNumber'] is String)) {
+      final acc = (_bankDetails!['accountNumber'] as String).trim();
+      if (acc.isNotEmpty) {
+        final last4 = acc.length >= 4 ? acc.substring(acc.length - 4) : acc;
+        maskedAccount = '••••••$last4';
+      }
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: ModernSaasDesign.surface,
+        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+        border: Border.all(color: ModernSaasDesign.border, width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Your Bank Details',
+            style: TextStyle(
+              color: ModernSaasDesign.textSecondary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: ModernSaasDesign.space3),
+          if (_bankDetailsLoading)
+            const Center(child: CircularProgressIndicator())
+          else if (_hasBankDetails)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  (_bankDetails?['bankName'] ?? 'Bank').toString(),
+                  style: const TextStyle(
+                    color: ModernSaasDesign.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: ModernSaasDesign.space1),
+                Text(
+                  'Account: ${maskedAccount.isNotEmpty ? maskedAccount : 'Hidden'}',
+                  style: const TextStyle(
+                    color: ModernSaasDesign.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: ModernSaasDesign.space3),
+                ButtonWidget(
+                  buttonText: 'Update Your Bank Details',
+                  buttonColor: ModernSaasDesign.primary,
+                  textColor: ModernSaasDesign.textOnPrimary,
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BankDetailsView(),
+                      ),
+                    );
+                    await _loadEmployeeBankDetails();
+                  },
+                ),
+              ],
+            )
+          else ...[
+            if (_bankDetailsError != null)
+              Text(
+                _bankDetailsError!,
+                style: const TextStyle(
+                  color: ModernSaasDesign.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            const SizedBox(height: ModernSaasDesign.space2),
+            const Text(
+              'No bank details saved yet.',
+              style: TextStyle(
+                color: ModernSaasDesign.textSecondary,
+              ),
+            ),
+            const SizedBox(height: ModernSaasDesign.space3),
+            ButtonWidget(
+              buttonText: 'Add Your Bank Details',
+              buttonColor: ModernSaasDesign.primary,
+              textColor: ModernSaasDesign.textOnPrimary,
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BankDetailsView(),
+                  ),
+                );
+                await _loadEmployeeBankDetails();
+              },
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -438,6 +721,20 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       ),
                       const SizedBox(height: ModernSaasDesign.space5),
 
+                      // Employee Bank Details section (add/update)
+                      const Text(
+                        'Bank Details',
+                        style: TextStyle(
+                          color: ModernSaasDesign.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          fontFamily: 'Lato',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildEmployeeBankDetailsSection(),
+                      const SizedBox(height: ModernSaasDesign.space5),
+
                       // Expense Management Section
                       const Text(
                         'Expense Management',
@@ -503,6 +800,23 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         ),
                       ),
                       const SizedBox(height: ModernSaasDesign.space5),
+
+                      // Bank Details Configuration Section
+                      // Show only for admin users as per requirement
+                      if (ref.watch(userRoleProvider) == UserRole.admin) ...[
+                        const Text(
+                          'Bank Details Configuration',
+                          style: TextStyle(
+                            color: ModernSaasDesign.textPrimary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            fontFamily: 'Lato',
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildBankDetailsConfiguration(),
+                        const SizedBox(height: ModernSaasDesign.space5),
+                      ],
 
                       ButtonWidget(
                         buttonText: "ClockIn",

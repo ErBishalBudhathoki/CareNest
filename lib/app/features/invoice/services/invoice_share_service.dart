@@ -10,6 +10,7 @@ import 'package:carenest/app/features/invoice/services/invoice_number_generator_
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InvoiceShareService {
   final InvoiceManagementService _invoiceService;
@@ -936,9 +937,9 @@ Your Invoice Team
       if (originalTaxRate < 0) originalTaxRate = 0.0;
       if (originalTaxRate > 1.0) originalTaxRate = 1.0;
 
-      // If taxRate is still 0 but we determined tax should be shown, fall back to app default (10%)
-      if (originalTaxRate == 0.0 && shouldShowTax) {
-        originalTaxRate = 0.10;
+      // Only apply default tax rate if no explicit rate was provided in pdfGenerationParams
+      if (originalTaxRate == 0.0 && shouldShowTax && !pdfGenerationParams.containsKey('taxRate')) {
+      originalTaxRate = 0.10;
       }
 
       // If taxRate is known and no explicit decision yet, default to showing tax unless the invoice is tax-exempt
@@ -960,6 +961,15 @@ Your Invoice Team
         shouldShowTax = false;
       }
 
+      // Respect current preference for admin vs employee bank details during regeneration
+      bool useAdminBankDetails = false;
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final stored =
+            prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+        if (stored != null) useAdminBankDetails = stored;
+      } catch (_) {}
+
       final pdfPaths = await _pdfGenerator.generatePdfs(
         pdfGenerationData,
         showTax: shouldShowTax,
@@ -969,6 +979,7 @@ Your Invoice Team
         uploadedPhotoUrls: pdfGenerationParams['uploadedPhotoUrls'] ?? [],
         uploadedAdditionalFileUrls:
             pdfGenerationParams['uploadedAdditionalFileUrls'] ?? [],
+        useAdminBankDetails: useAdminBankDetails,
       );
 
       debugPrint(

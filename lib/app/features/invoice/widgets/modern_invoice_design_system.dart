@@ -243,6 +243,13 @@ class ModernInvoiceDesign {
     height: 1.2,
     color: textTertiary,
   );
+  
+  static const TextStyle titleMedium = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    height: 1.4,
+    color: textPrimary,
+  );
 
   // Spacing System - 8pt Grid
   static const double space1 = 4.0;

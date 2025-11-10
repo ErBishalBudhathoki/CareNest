@@ -15,6 +15,13 @@ class SharedPreferencesUtils {
   static const String _kRoleKey = 'userRole';
   // New: Auth token key
   static const String _kAuthTokenKey = 'authToken';
+  /// Public key for storing date format preference (for ambiguous numeric dates)
+  /// Allowed values: 'mdy' (US month-first), 'dmy' (day-first)
+  static const String kDateFormatPreferenceKey = 'date_format_preference';
+
+  /// Public key for storing user preference of using admin bank details
+  /// When true, invoices will use admin bank details; otherwise employee details
+  static const String kUseAdminBankDetailsKey = 'useAdminBankDetails';
 
   Future<void> init() async {
     _sharedPreferences = await SharedPreferences.getInstance();
@@ -243,5 +250,34 @@ class SharedPreferencesUtils {
     if (_sharedPreferences == null) await init();
     await _sharedPreferences!.remove(_kAuthTokenKey);
     debugPrint("🔓 Auth token cleared from SharedPreferences");
+  }
+
+  /// Saves the user's date format preference used for parsing ambiguous numeric dates.
+  ///
+  /// Expected values:
+  /// - 'mdy': month/day/year (US)
+  /// - 'dmy': day/month/year (default)
+  Future<void> saveDateFormatPreference(String preference) async {
+    if (_sharedPreferences == null) await init();
+    final normalized = preference.trim().toLowerCase();
+    if (normalized != 'mdy' && normalized != 'dmy') {
+      throw ArgumentError('Invalid date format preference: $preference');
+    }
+    await _sharedPreferences!.setString(kDateFormatPreferenceKey, normalized);
+    debugPrint('📅 Date format preference saved: $normalized');
+  }
+
+  /// Retrieves the stored date format preference.
+  /// Returns 'mdy', 'dmy', or null when not set.
+  String? getDateFormatPreference() {
+    final v = _sharedPreferences?.getString(kDateFormatPreferenceKey);
+    switch (v?.toLowerCase()) {
+      case 'mdy':
+        return 'mdy';
+      case 'dmy':
+        return 'dmy';
+      default:
+        return null;
+    }
   }
 }
