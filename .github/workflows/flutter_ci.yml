@@ -1,0 +1,74 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deploy target (development or production)'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - production
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter analyze
+      
+      # Build Android APK based on deploy_target or pull_request
+      - name: Build Android APK (Development)
+        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'development')
+        run: flutter build apk --flavor development
+      
+      - name: Build Android APK (Production)
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'production')
+        run: flutter build apk --flavor production
+      
+      # Setup Ruby and Fastlane
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+      - name: Install Fastlane
+        run: gem install fastlane
+      
+      # Deploy to Google Play
+      - name: Deploy to Google Play
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
+        run: |
+          echo "$GOOGLE_PLAY_API_KEY" > android/fastlane/google-play-service-key.json
+          cd android
+          fastlane deploy_${{ github.event.inputs.deploy_target || 'production' }}
+      
+      # iOS Certificate Setup (commented out for future use)
+      # - name: Setup iOS certificates
+      #   if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      #   uses: apple-actions/import-codesign-certs@v1
+      #   with:
+      #     p12-file-base64: ${{ secrets.IOS_P12_CERTIFICATE }}
+      #     p12-password: ${{ secrets.IOS_P12_PASSWORD }}
+      
+      # Deploy to TestFlight (commented out for future use)
+      # - name: Deploy to TestFlight
+      #   if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      #   env:
+      #     APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+      #     APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+      #   run: |
+      #     cd ios
+      #     fastlane deploy_${{ github.event.inputs.deploy_target || 'production' }}
