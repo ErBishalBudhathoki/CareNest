@@ -1,6 +1,7 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -119,7 +120,7 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
       debugPrint('Loading assignments for organization: $orgId');
       final response = await _apiMethod.getOrganizationAssignments(orgId);
 
-      if (response['success'] == true) {
+      if (response != null && response['success'] == true) {
         final List<dynamic> assignmentData = response['assignments'] ?? [];
         final newAssignments = assignmentData
             .map((item) => Map<String, dynamic>.from(item)
@@ -134,7 +135,7 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
         state = state.copyWith(assignments: newAssignments, isLoading: false);
       } else {
         state = state.copyWith(
-          errorMessage: response['message'] ?? 'Failed to load assignments',
+          errorMessage: response?['message'] ?? 'Failed to load assignments',
           assignments: [],
           isLoading: false,
         );

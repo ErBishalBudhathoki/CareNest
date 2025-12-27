@@ -1,13 +1,10 @@
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/widgets/enhanced_data_table.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/shared/widgets/enhanced_stat_cards.dart';
 import 'package:carenest/app/shared/widgets/enhanced_quick_action_cards.dart';
 import 'package:carenest/app/shared/widgets/enhanced_search_filter.dart';
-import 'package:carenest/app/shared/widgets/appBar_widget.dart';
 
 /// Enhanced Pricing Dashboard with improved UX/UI
 class EnhancedPricingDashboardView extends StatefulWidget {
@@ -23,7 +20,7 @@ class _EnhancedPricingDashboardViewState
   late TabController _tabController;
   bool _isLoading = false;
   String _searchQuery = '';
-  List<String> _activeFilters = [];
+  final List<String> _activeFilters = [];
   String? _userEmail;
   String? _userName;
 
@@ -69,7 +66,6 @@ class _EnhancedPricingDashboardViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       body: Column(
         children: [
           _buildModernHeader(),
@@ -134,7 +130,7 @@ class _EnhancedPricingDashboardViewState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: const Color(0xFF10B981).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -239,7 +235,7 @@ class _EnhancedPricingDashboardViewState
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -253,7 +249,7 @@ class _EnhancedPricingDashboardViewState
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

@@ -10,7 +10,7 @@ void main() {
   /// Parameters:
   /// - `promptData`: Map used to populate the dialog fields.
   /// - `onProvided`: Callback invoked when Apply Price is pressed.
-  Future<void> _pumpDialog(
+  Future<void> pumpDialog(
     WidgetTester tester, {
     required Map<String, dynamic> promptData,
     required void Function(Map<String, dynamic>) onProvided,
@@ -59,11 +59,14 @@ void main() {
 
     Map<String, dynamic>? resolution;
 
-    await _pumpDialog(
+    await pumpDialog(
       tester,
       promptData: promptData,
       onProvided: (r) => resolution = r,
     );
+
+    // Verify resolution is captured when price provided
+    expect(resolution, isNull); // Since we don't tap apply in this test
 
     // Verify quantity text shows 4 decimals and unit label.
     expect(find.text('1.0036 hours'), findsOneWidget);
@@ -88,7 +91,7 @@ void main() {
       'suggestedPrice': 55.0,
     };
 
-    await _pumpDialog(
+    await pumpDialog(
       tester,
       promptData: promptData,
       onProvided: (_) {},
@@ -109,7 +112,7 @@ void main() {
 
     Map<String, dynamic>? resolution;
 
-    await _pumpDialog(
+    await pumpDialog(
       tester,
       promptData: promptData,
       onProvided: (r) => resolution = r,

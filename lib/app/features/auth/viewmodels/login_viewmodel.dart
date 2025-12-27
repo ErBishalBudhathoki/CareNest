@@ -3,13 +3,14 @@ import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:carenest/app/features/auth/models/login_model.dart';
 import 'package:carenest/app/features/auth/services/auth_error_handler.dart';
-import 'package:carenest/app/features/auth/widgets/auth_loading_indicator.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:device_info_plus/device_info_plus.dart';
-import 'dart:io';
+
 import 'dart:math' as math;
 
 class LoginViewModel extends ChangeNotifier {
@@ -37,6 +38,11 @@ class LoginViewModel extends ChangeNotifier {
       // Only set debug credentials in debug mode and with user consent
       // setDebugCredentials();
     }
+  }
+
+  void togglePasswordVisibility() {
+    model.isVisible = !model.isVisible;
+    notifyListeners();
   }
 
   /// Initialize security context with device information
@@ -158,7 +164,7 @@ class LoginViewModel extends ChangeNotifier {
           await _handleFailedLogin(contextRef, response);
         }
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       if (contextRef.mounted) {
         await AuthErrorHandler.handleAuthError(
           context: contextRef,
@@ -180,7 +186,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> debugClearTokenAndLogin(BuildContext context) async {
     debugPrint("🔧 DEBUG: Clearing auth token and forcing fresh login");
     await _sharedPrefs.clearAuthToken();
-    final currentToken = await _sharedPrefs.getAuthToken();
+    final currentToken = _sharedPrefs.getAuthToken();
     debugPrint("🔧 DEBUG: Token after clear: $currentToken");
 
     // Trigger fresh login

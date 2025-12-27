@@ -1,21 +1,16 @@
+
 import 'dart:typed_data';
-import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
 import 'package:carenest/app/features/expenses/views/expense_management_view.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/routes/app_pages.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:carenest/app/shared/widgets/appBar_widget.dart';
+import 'package:carenest/app/shared/widgets/app_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/button_widget.dart';
 import 'package:carenest/app/shared/widgets/dynamic_appointment_card_widget.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
@@ -118,7 +113,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       final response = await apiMethod.getBankDetails();
-      if (response is Map && response['success'] == true && response['data'] is Map) {
+      if (response['success'] == true && response['data'] is Map) {
         setState(() {
           _bankDetails = Map<String, dynamic>.from(response['data'] as Map);
           _hasBankDetails = true;
@@ -126,7 +121,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       } else {
         setState(() {
           _hasBankDetails = false;
-          _bankDetailsError = (response is Map ? response['message']?.toString() : null);
+          _bankDetailsError = (response['message']?.toString());
         });
       }
     } catch (e) {
@@ -362,10 +357,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
         Container(
           height: 180, // Approximate height of the card
           width: double.infinity,
-          padding: const EdgeInsets.all(ModernSaasDesign.space4),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: ModernSaasDesign.neutral100,
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(12.0),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,28 +368,28 @@ class _HomeViewState extends ConsumerState<HomeView> {
               Container(
                 height: 20,
                 width: 150,
-                color: ModernSaasDesign.neutral200,
+                color: const Color(0xFFE5E5E5),
               ),
-              const SizedBox(height: ModernSaasDesign.space4),
+              const SizedBox(height: 16.0),
               Container(
                 height: 14,
                 width: 200,
-                color: ModernSaasDesign.neutral200,
+                color: const Color(0xFFE5E5E5),
               ),
-              const SizedBox(height: ModernSaasDesign.space2),
+              const SizedBox(height: 8.0),
               Container(
                 height: 14,
                 width: 250,
-                color: ModernSaasDesign.neutral200,
+                color: const Color(0xFFE5E5E5),
               ),
               const Spacer(),
               Container(
                 height: 40,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.neutral200,
+                  color: const Color(0xFFE5E5E5),
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusMd),
+                      BorderRadius.circular(8.0),
                 ),
               ),
             ],
@@ -402,14 +397,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ),
         const SizedBox(
             height:
-                ModernSaasDesign.space4), // Space between card and indicator
+                16.0), // Space between card and indicator
         // Skeleton for the page indicator
         Container(
           height: 10,
           width: 60,
           decoration: BoxDecoration(
-            color: ModernSaasDesign.neutral100,
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(8.0),
           ),
         ),
       ],
@@ -424,10 +419,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
-          color: ModernSaasDesign.border,
+          color: const Color(0xFFE0E0E0),
           width: 1.0,
         ),
       ),
@@ -439,14 +434,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.neutral100,
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
-                border: Border.all(color: ModernSaasDesign.border),
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: const Color(0xFFE0E0E0)),
               ),
               child: const Text(
                 'Employee bank details are not set yet. Please add your bank details first.',
                 style: TextStyle(
-                  color: ModernSaasDesign.textSecondary,
+                  color: Color(0xFF6B7280),
                   fontSize: 12,
                 ),
               ),
@@ -454,28 +449,28 @@ class _HomeViewState extends ConsumerState<HomeView> {
           const Text(
             'Select which bank details to display',
             style: TextStyle(
-              color: ModernSaasDesign.textSecondary,
+              color: Color(0xFF6B7280),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: ModernSaasDesign.space3),
+          const SizedBox(height: 12.0),
           if (_hasBankDetails)
             RadioListTile<bool>(
               title: const Text(
                 'Employee Bank Details',
                 style: TextStyle(
-                  color: ModernSaasDesign.textPrimary,
+                  color: Color(0xFF1F2937),
                   fontWeight: FontWeight.w600,
                 ),
               ),
               subtitle: const Text(
-                'Use the employee\’s saved bank details',
-                style: TextStyle(color: ModernSaasDesign.textSecondary),
+                'Use the employee’s saved bank details',
+                style: TextStyle(color: Color(0xFF6B7280)),
               ),
               value: false,
               groupValue: _useAdminBankDetails,
-              activeColor: ModernSaasDesign.primary,
+              activeColor: const Color(0xFF667EEA),
               onChanged: (val) async {
                 final newVal = val ?? false;
                 setState(() {
@@ -489,17 +484,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
             title: const Text(
               'Admin Bank Details',
               style: TextStyle(
-                color: ModernSaasDesign.textPrimary,
+                color: Color(0xFF1F2937),
                 fontWeight: FontWeight.w600,
               ),
             ),
             subtitle: const Text(
               'Use admin bank details (invoices created by admin only)',
-              style: TextStyle(color: ModernSaasDesign.textSecondary),
+              style: TextStyle(color: Color(0xFF6B7280)),
             ),
             value: true,
             groupValue: _useAdminBankDetails,
-            activeColor: ModernSaasDesign.primary,
+            activeColor: const Color(0xFF667EEA),
             onChanged: (val) async {
               final newVal = val ?? false;
               setState(() {
@@ -509,11 +504,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
             },
             contentPadding: EdgeInsets.zero,
           ),
-          const SizedBox(height: ModernSaasDesign.space2),
+          const SizedBox(height: 8.0),
           const Text(
             'Note: Invoice creation is restricted to admin users.',
             style: TextStyle(
-              color: ModernSaasDesign.textSecondary,
+              color: Color(0xFF6B7280),
               fontSize: 12,
             ),
           ),
@@ -538,9 +533,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
-        border: Border.all(color: ModernSaasDesign.border, width: 1.0),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -548,12 +543,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
           const Text(
             'Your Bank Details',
             style: TextStyle(
-              color: ModernSaasDesign.textSecondary,
+              color: Color(0xFF6B7280),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: ModernSaasDesign.space3),
+          const SizedBox(height: 12.0),
           if (_bankDetailsLoading)
             const Center(child: CircularProgressIndicator())
           else if (_hasBankDetails)
@@ -563,22 +558,22 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 Text(
                   (_bankDetails?['bankName'] ?? 'Bank').toString(),
                   style: const TextStyle(
-                    color: ModernSaasDesign.textPrimary,
+                    color: Color(0xFF1F2937),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: ModernSaasDesign.space1),
+                const SizedBox(height: 4.0),
                 Text(
                   'Account: ${maskedAccount.isNotEmpty ? maskedAccount : 'Hidden'}',
                   style: const TextStyle(
-                    color: ModernSaasDesign.textSecondary,
+                    color: Color(0xFF6B7280),
                   ),
                 ),
-                const SizedBox(height: ModernSaasDesign.space3),
+                const SizedBox(height: 12.0),
                 ButtonWidget(
                   buttonText: 'Update Your Bank Details',
-                  buttonColor: ModernSaasDesign.primary,
-                  textColor: ModernSaasDesign.textOnPrimary,
+                  buttonColor: const Color(0xFF667EEA),
+                  textColor: Colors.white,
                   onPressed: () async {
                     await Navigator.push(
                       context,
@@ -596,22 +591,22 @@ class _HomeViewState extends ConsumerState<HomeView> {
               Text(
                 _bankDetailsError!,
                 style: const TextStyle(
-                  color: ModernSaasDesign.textSecondary,
+                  color: Color(0xFF6B7280),
                   fontSize: 12,
                 ),
               ),
-            const SizedBox(height: ModernSaasDesign.space2),
+            const SizedBox(height: 8.0),
             const Text(
               'No bank details saved yet.',
               style: TextStyle(
-                color: ModernSaasDesign.textSecondary,
+                color: Color(0xFF6B7280),
               ),
             ),
-            const SizedBox(height: ModernSaasDesign.space3),
+            const SizedBox(height: 12.0),
             ButtonWidget(
               buttonText: 'Add Your Bank Details',
-              buttonColor: ModernSaasDesign.primary,
-              textColor: ModernSaasDesign.textOnPrimary,
+              buttonColor: const Color(0xFF667EEA),
+              textColor: Colors.white,
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -631,9 +626,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: ModernSaasDesign.surface,
+      color: Colors.white,
       child: Scaffold(
-        backgroundColor: ModernSaasDesign.surface,
         extendBodyBehindAppBar: false,
         resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
@@ -653,15 +647,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         ),
         body: Container(
-          color: ModernSaasDesign.background,
+          color: Colors.white,
           width: double.infinity,
           height: double.infinity,
           child: SafeArea(
             child: Container(
-              color: ModernSaasDesign.surface,
+              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
-                    ModernSaasDesign.space4, 0.0, ModernSaasDesign.space4, 0.0),
+                    16.0, 0.0, 16.0, 0.0),
                 child: SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
                   child: Column(
@@ -671,13 +665,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       const Text(
                         'Your Appointments',
                         style: TextStyle(
-                          color: ModernSaasDesign.textPrimary,
+                          color: Color(0xFF1F2937),
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           fontFamily: 'Lato',
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space2),
+                      const SizedBox(height: 8.0),
                       FutureBuilder(
                         future: _appointmentDataFuture,
                         builder: (context, snapshot) {
@@ -692,7 +686,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: ModernSaasDesign.textPrimary,
+                                  color: Color(0xFF1F2937),
                                 ),
                               ),
                             );
@@ -705,7 +699,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: ModernSaasDesign.textPrimary,
+                                        color: const Color(0xFF1F2937),
                                       ),
                                     ),
                                   )
@@ -719,13 +713,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           }
                         },
                       ),
-                      const SizedBox(height: ModernSaasDesign.space5),
+                      const SizedBox(height: 20.0),
 
                       // Employee Bank Details section (add/update)
                       const Text(
                         'Bank Details',
                         style: TextStyle(
-                          color: ModernSaasDesign.textPrimary,
+                          color: Color(0xFF1F2937),
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           fontFamily: 'Lato',
@@ -733,13 +727,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       ),
                       const SizedBox(height: 8),
                       _buildEmployeeBankDetailsSection(),
-                      const SizedBox(height: ModernSaasDesign.space5),
+                      const SizedBox(height: 20.0),
 
                       // Expense Management Section
                       const Text(
                         'Expense Management',
                         style: TextStyle(
-                          color: ModernSaasDesign.textPrimary,
+                          color: Color(0xFF1F2937),
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           fontFamily: 'Lato',
@@ -750,17 +744,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
-                          color: ModernSaasDesign.surface,
+                          color: Colors.white,
                           borderRadius:
-                              BorderRadius.circular(ModernSaasDesign.radiusLg),
+                              BorderRadius.circular(12.0),
                           border: Border.all(
-                            color: ModernSaasDesign.border,
+                            color: const Color(0xFFE0E0E0),
                             width: 1.0,
                           ),
                           // boxShadow: [
                           //   BoxShadow(
                           //     color:
-                          //         ModernSaasDesign.neutral300.withValues(alpha:0.3),
+                          //         const Color(0xFFD4D4D4).withOpacity(0.1),
                           //     spreadRadius: 1,
                           //     blurRadius: 4,
                           //     offset: const Offset(0, 2),
@@ -773,16 +767,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
                             const Text(
                               'Manage your expenses and track spending',
                               style: TextStyle(
-                                color: ModernSaasDesign.textSecondary,
+                                color: Color(0xFF6B7280),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            const SizedBox(height: ModernSaasDesign.space3),
+                            const SizedBox(height: 12.0),
                             ButtonWidget(
                               buttonText: "Open Expense Dashboard",
-                              buttonColor: ModernSaasDesign.primary,
-                              textColor: ModernSaasDesign.textOnPrimary,
+                              buttonColor: const Color(0xFF667EEA),
+                              textColor: Colors.white,
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -799,7 +793,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space5),
+                      const SizedBox(height: 20.0),
 
                       // Bank Details Configuration Section
                       // Show only for admin users as per requirement
@@ -807,7 +801,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         const Text(
                           'Bank Details Configuration',
                           style: TextStyle(
-                            color: ModernSaasDesign.textPrimary,
+                            color: Color(0xFF1F2937),
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
                             fontFamily: 'Lato',
@@ -815,13 +809,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         ),
                         const SizedBox(height: 8),
                         _buildBankDetailsConfiguration(),
-                        const SizedBox(height: ModernSaasDesign.space5),
+                        const SizedBox(height: 20.0),
                       ],
 
                       ButtonWidget(
                         buttonText: "ClockIn",
                         buttonColor: Colors.white,
-                        textColor: ModernSaasDesign.primary,
+                        textColor: const Color(0xFF667EEA),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -840,7 +834,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           );
                         },
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                     ],
                   ),
                 ),

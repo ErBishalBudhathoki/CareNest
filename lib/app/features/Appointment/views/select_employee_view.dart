@@ -1,5 +1,5 @@
 import 'package:carenest/app/features/Appointment/views/select_client_for_assignmnet.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
+import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
@@ -77,10 +77,10 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: ModernInvoiceDesign.surface,
+                color: Colors.white,
                 borderRadius:
-                    BorderRadius.circular(ModernInvoiceDesign.radiusXl),
-                boxShadow: ModernInvoiceDesign.shadowMd,
+                    BorderRadius.circular(16.0),
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
               ),
               child: Material(
                 color: Colors.transparent,
@@ -119,9 +119,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            gradient: ModernInvoiceDesign.primaryGradient,
+                            color: const Color(0xFF007AFF),
                             borderRadius: BorderRadius.circular(
-                                ModernInvoiceDesign.radiusXl),
+                                16.0),
                           ),
                           child: Center(
                             child: Text(
@@ -129,8 +129,8 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                                   ? user.name[0].toUpperCase()
                                   : 'U',
                               style:
-                                  ModernInvoiceDesign.headlineMedium.copyWith(
-                                color: ModernInvoiceDesign.textOnPrimary,
+                                  Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -149,7 +149,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                                     .titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: ModernInvoiceDesign.textPrimary,
+                                      color: const Color(0xFF212121),
                                     ),
                               ),
                               const SizedBox(height: 4),
@@ -159,7 +159,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: ModernInvoiceDesign.textSecondary,
+                                      color: const Color(0xFF757575),
                                     ),
                               ),
                             ],
@@ -169,14 +169,14 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: ModernInvoiceDesign.neutral100,
+                            color: const Color(0xFFF5F5F5),
                             borderRadius: BorderRadius.circular(
-                                ModernInvoiceDesign.radiusMd),
+                                8.0),
                           ),
                           child: const Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
-                            color: ModernInvoiceDesign.textSecondary,
+                            color: Color(0xFF757575),
                           ),
                         ),
                       ],
@@ -196,9 +196,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.surface,
-        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
-        boxShadow: ModernInvoiceDesign.shadowSm,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: TextField(
         controller: _searchController,
@@ -206,17 +206,17 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
         decoration: InputDecoration(
           hintText: 'Search employees...',
           hintStyle: TextStyle(
-            color: ModernInvoiceDesign.textSecondary.withValues(alpha: 0.7),
+            color: const Color(0xFF757575).withOpacity(0.1),
           ),
           prefixIcon: const Icon(
             Icons.search,
-            color: ModernInvoiceDesign.textSecondary,
+            color: Color(0xFF757575),
           ),
           suffixIcon: _isSearching
               ? IconButton(
                   icon: const Icon(
                     Icons.clear,
-                    color: ModernInvoiceDesign.textSecondary,
+                    color: Color(0xFF757575),
                   ),
                   onPressed: () {
                     _searchController.clear();
@@ -243,13 +243,13 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           Icon(
             _isSearching ? Icons.search_off : Icons.people_outline,
             size: 64,
-            color: ModernInvoiceDesign.neutral400,
+            color: const Color(0xFFBDBDBD),
           ),
           const SizedBox(height: 16),
           Text(
             _isSearching ? 'No employees found' : 'No employees available',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: ModernInvoiceDesign.textSecondary,
+                  color: const Color(0xFF757575),
                   fontWeight: FontWeight.w500,
                 ),
           ),
@@ -259,7 +259,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                 ? 'Try adjusting your search terms'
                 : 'Add employees to get started',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: ModernInvoiceDesign.textTertiary,
+                  color: const Color(0xFFBDBDBD),
                 ),
           ),
         ],
@@ -276,13 +276,13 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           const Icon(
             Icons.error_outline,
             size: 64,
-            color: ModernInvoiceDesign.error,
+            color: Color(0xFFFF3B30),
           ),
           const SizedBox(height: 16),
           Text(
             'Something went wrong',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: ModernInvoiceDesign.textPrimary,
+                  color: const Color(0xFF212121),
                   fontWeight: FontWeight.w500,
                 ),
           ),
@@ -290,7 +290,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           Text(
             error,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: ModernInvoiceDesign.textSecondary,
+                  color: const Color(0xFF757575),
                 ),
             textAlign: TextAlign.center,
           ),
@@ -304,15 +304,15 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
             icon: const Icon(Icons.refresh),
             label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: ModernInvoiceDesign.primary,
-              foregroundColor: ModernInvoiceDesign.textOnPrimary,
+              backgroundColor: AppColors.colorPrimary,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(
                 horizontal: 24,
                 vertical: 12,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius:
-                    BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                    BorderRadius.circular(8.0),
               ),
             ),
           ),
@@ -324,16 +324,14 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ModernInvoiceDesign.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: ModernInvoiceDesign.surface,
-        foregroundColor: ModernInvoiceDesign.textPrimary,
+        foregroundColor: const Color(0xFF212121),
         title: Text(
           'Employee List',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: ModernInvoiceDesign.textPrimary,
+                color: const Color(0xFF212121),
               ),
         ),
         centerTitle: false,
@@ -349,7 +347,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                   return const Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        ModernInvoiceDesign.primary,
+                        Color(0xFF007AFF),
                       ),
                     ),
                   );

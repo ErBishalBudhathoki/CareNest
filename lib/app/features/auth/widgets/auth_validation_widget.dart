@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:iconsax/iconsax.dart';
 
 /// Real-time validation widget for authentication forms
 /// Provides immediate feedback on input errors before submission
@@ -17,7 +16,7 @@ class AuthValidationWidget extends StatefulWidget {
   final bool showObscureToggle;
 
   const AuthValidationWidget({
-    Key? key,
+    super.key,
     required this.controller,
     required this.fieldType,
     this.onValidationChanged,
@@ -28,7 +27,7 @@ class AuthValidationWidget extends StatefulWidget {
     this.obscureText = false,
     this.onToggleObscure,
     this.showObscureToggle = false,
-  }) : super(key: key);
+  });
 
   @override
   State<AuthValidationWidget> createState() => _AuthValidationWidgetState();
@@ -241,7 +240,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                     ),
                     hintStyle: TextStyle(
                       color:
-                          AppColors.colorFontSecondary.withValues(alpha: 0.6),
+                          AppColors.colorFontSecondary.withOpacity(0.1),
                       fontSize: 16,
                     ),
                   ),
@@ -263,7 +262,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                               child: Row(
                                 children: [
                                   Icon(
-                                    Iconsax.warning_2,
+                                    Icons.warning_amber_outlined,
                                     size: 16,
                                     color: AppColors.error,
                                   ),
@@ -300,7 +299,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
       return IconButton(
         onPressed: widget.onToggleObscure,
         icon: Icon(
-          widget.obscureText ? Iconsax.eye_slash : Iconsax.eye,
+          widget.obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
           color: AppColors.colorFontSecondary,
         ),
       );
@@ -311,7 +310,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
         animation: _validationAnimation,
         builder: (context, child) {
           return Icon(
-            _isValid ? Iconsax.tick_circle : Iconsax.close_circle,
+            _isValid ? Icons.check_circle_outline : Icons.cancel_outlined,
             color: _isValid ? AppColors.colorSuccess : AppColors.error,
           );
         },
@@ -369,7 +368,6 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
           const SizedBox(height: 4),
           LinearProgressIndicator(
             value: strength / 4,
-            backgroundColor: AppColors.colorBorder,
             valueColor: AlwaysStoppedAnimation<Color>(strengthColor),
             minHeight: 3,
           ),

@@ -1,6 +1,5 @@
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
+
 import 'package:flutter_animate/flutter_animate.dart';
 
 class PricingAnalyticsView extends StatefulWidget {
@@ -9,11 +8,11 @@ class PricingAnalyticsView extends StatefulWidget {
   final String organizationName;
 
   const PricingAnalyticsView({
-    Key? key,
+    super.key,
     required this.adminEmail,
     required this.organizationId,
     required this.organizationName,
-  }) : super(key: key);
+  });
 
   @override
   _PricingAnalyticsViewState createState() => _PricingAnalyticsViewState();
@@ -22,9 +21,9 @@ class PricingAnalyticsView extends StatefulWidget {
 class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  String _selectedPeriod = 'Last 30 Days';
+  final String _selectedPeriod = 'Last 30 Days';
   String _selectedMetric = 'Revenue';
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   // Mock analytics data
   final Map<String, dynamic> _analyticsData = {
@@ -135,7 +134,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       body: Column(
         children: [
           _buildModernHeader(),
@@ -198,7 +196,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: const Color(0xFF10B981).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -244,7 +242,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               width: 160,
               child: _buildStatCard(
                 title: 'Total Revenue',
-                value: '\$125K',
+                value: '0.125K',
                 subtitle: '+12.5% this month',
                 icon: Icons.attach_money,
                 color: const Color(0xFF6366F1),
@@ -303,7 +301,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -317,7 +315,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -447,7 +445,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -464,8 +462,8 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (isPositive ? Colors.green : Colors.red)
-                      .withValues(alpha: 0.1),
+                  color:
+                      (isPositive ? Colors.green : Colors.red).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -521,7 +519,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -703,7 +701,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -740,8 +738,8 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (isPositive ? Colors.green : Colors.red)
-                      .withValues(alpha: 0.1),
+                  color:
+                      (isPositive ? Colors.green : Colors.red).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -845,7 +843,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -870,7 +868,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: trendColor.withValues(alpha: 0.1),
+                  color: trendColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(

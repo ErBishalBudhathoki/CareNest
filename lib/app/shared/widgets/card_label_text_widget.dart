@@ -1,4 +1,3 @@
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:flutter/material.dart';
 
 class CardLabelTextWidget extends StatelessWidget {
@@ -6,8 +5,7 @@ class CardLabelTextWidget extends StatelessWidget {
   final String label;
   final String text;
 
-  const CardLabelTextWidget(this.iconData, this.label, this.text, {Key? key})
-      : super(key: key);
+  const CardLabelTextWidget(this.iconData, this.label, this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,30 +14,30 @@ class CardLabelTextWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: ModernSaasDesign.space2,
-        horizontal: ModernSaasDesign.space2,
+        vertical: 8.0,
+        horizontal: 8.0,
       ),
-      margin: const EdgeInsets.only(bottom: ModernSaasDesign.space2),
+      margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.background.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.space2),
+            padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(4.0),
             ),
             child: Icon(
               iconData,
-              color: ModernSaasDesign.primary,
+              color: const Color(0xFF667EEA),
               size: isSmallScreen ? 18 : 22,
             ),
           ),
-          const SizedBox(width: ModernSaasDesign.space2),
+          const SizedBox(width: 8.0),
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,10 +45,10 @@ class CardLabelTextWidget extends StatelessWidget {
                 Text(
                   label,
                   style: (isSmallScreen
-                          ? ModernSaasDesign.labelMedium
-                          : ModernSaasDesign.labelLarge)
+                          ? const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
+                          : const TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
                       .copyWith(
-                    color: ModernSaasDesign.primary,
+                    color: const Color(0xFF667EEA),
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.3,
                   ),
@@ -59,10 +57,10 @@ class CardLabelTextWidget extends StatelessWidget {
                 Text(
                   text,
                   style: (isSmallScreen
-                          ? ModernSaasDesign.bodyMedium
-                          : ModernSaasDesign.bodyLarge)
+                          ? const TextStyle(fontSize: 14)
+                          : const TextStyle(fontSize: 16))
                       .copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                    color: const Color(0xFF1F2937),
                     fontWeight: FontWeight.w500,
                     height: 1.3,
                   ),

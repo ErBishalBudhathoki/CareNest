@@ -1,7 +1,9 @@
 import 'dart:async';
-import 'dart:typed_data';
+
+import 'package:carenest/app/features/invoice/viewmodels/invoice_email_viewmodel.dart';
+import 'package:carenest/app/features/business/viewmodels/add_business_viewmodel.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
-import 'package:carenest/app/features/assignment_list/viewmodels/assignment_list_viewmodel.dart';
+import 'dart:typed_data';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/viewmodels/change_password_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/login_viewmodel.dart';
@@ -11,13 +13,11 @@ import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart'
 import 'package:carenest/app/features/invoice/viewmodels/line_items_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:http/http.dart' as http;
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/features/busineess/viewmodels/add_business_viewmodel.dart';
-import 'package:carenest/app/features/invoice/viewmodels/invoice_email_viewmodel.dart';
 
 // Global providers
 final sharedPreferencesProvider = Provider<SharedPreferencesUtils>((ref) {
@@ -349,7 +349,7 @@ class UserRoleNotifier extends StateNotifier<UserRole> {
   }
 
   Future<void> _loadRole() async {
-    final role = await _sharedPrefs.getRole();
+    final role = _sharedPrefs.getRole();
     state = role ?? UserRole.normal;
   }
 

@@ -44,7 +44,7 @@ class EnhancedLoadingStates {
         borderRadius: BorderRadius.circular(4),
       ),
     ).animate(onPlay: (controller) => controller.repeat()).shimmer(
-        duration: 1500.ms, color: AppColors.colorWhite.withValues(alpha: 0.8));
+        duration: 1500.ms, color: AppColors.colorWhite.withOpacity(0.1));
   }
 
   /// Error state with retry option
@@ -87,8 +87,7 @@ class EnhancedLoadingStates {
               onPressed: onRetry,
               icon: Icon(Icons.refresh),
               label: Text('Try Again'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.colorPrimary,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                 foregroundColor: AppColors.colorWhite,
                 padding: EdgeInsets.symmetric(
                   horizontal: AppDimens.paddingLarge,
@@ -145,8 +144,7 @@ class EnhancedLoadingStates {
               onPressed: onAction,
               icon: Icon(Icons.add),
               label: Text(actionLabel),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.colorPrimary,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                 foregroundColor: AppColors.colorWhite,
                 padding: EdgeInsets.symmetric(
                   horizontal: AppDimens.paddingLarge,

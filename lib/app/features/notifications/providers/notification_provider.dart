@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
@@ -33,7 +34,7 @@ class NotificationState {
 
 class NotificationNotifier extends StateNotifier<NotificationState> {
   static const String _storageKey = 'app_notifications';
-  static const String _backgroundStorageKey = 'background_notifications';
+  static const String _surfaceStorageKey = 'surface_notifications';
 
   NotificationNotifier() : super(NotificationState()) {
     // The constructor now calls the single, unified loading method.
@@ -43,7 +44,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 
   /// This is now the single, authoritative method for loading notifications.
   /// It loads both persisted app notifications and any new notifications
-  /// received while the app was in the background.
+  /// received while the app was in the surface.
   // Future<void> loadNotifications() async {
   //   // Guard clause to prevent multiple concurrent loads.
   //   if (state.isLoading) return;
@@ -67,19 +68,19 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   //         .whereType<NotificationModel>()
   //         .toList();
 
-  //     // Load any new background notifications from the temporary store.
-  //     final backgroundNotificationsJson =
-  //         prefs.getStringList(_backgroundStorageKey) ?? [];
+  //     // Load any new surface notifications from the temporary store.
+  //     final surfaceNotificationsJson =
+  //         prefs.getStringList(_surfaceStorageKey) ?? [];
   //     debugPrint(
-  //         'DEBUG_PROVIDER: Found ${backgroundNotificationsJson.length} background notifications in storage.');
+  //         'DEBUG_PROVIDER: Found ${surfaceNotificationsJson.length} surface notifications in storage.');
 
-  //     final backgroundNotifications = backgroundNotificationsJson
+  //     final surfaceNotifications = surfaceNotificationsJson
   //         .map((jsonStr) {
   //           try {
-  //             // The data from the background handler is already a NotificationModel
+  //             // The data from the surface handler is already a NotificationModel
   //             return NotificationModel.fromJson(jsonDecode(jsonStr));
   //           } catch (e) {
-  //             debugPrint('Error parsing background notification: $e');
+  //             debugPrint('Error parsing surface notification: $e');
   //             return null;
   //           }
   //         })
@@ -89,7 +90,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   //     // Merge, de-duplicate, sort, and limit the lists.
   //     final allNotifications = [
   //       ...appNotifications,
-  //       ...backgroundNotifications
+  //       ...surfaceNotifications
   //     ];
   //     final uniqueNotifications = <String, NotificationModel>{};
   //     for (final notification in allNotifications) {
@@ -114,7 +115,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 
   //     // Save the newly merged state back to the primary storage.
   //     await _saveNotifications();
-  //     // IMPORTANT: Clear the temporary background store now that they've been merged.
+  //     // IMPORTANT: Clear the temporary surface store now that they've been merged.
   //     await _clearBackgroundNotifications();
 
   //     debugPrint(
@@ -146,7 +147,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       // THE CRITICAL FIX:
       // Force SharedPreferences to reload its data from the device's disk.
       // This clears any stale in-memory cache and ensures we read the fresh
-      // data that was written by the background isolate.
+      // data that was written by the surface isolate.
       await prefs.reload();
       //====================================================================
 
@@ -165,18 +166,18 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
           .whereType<NotificationModel>()
           .toList();
 
-      // 2. Load any new notifications from the temporary background store.
-      final backgroundNotificationsJson =
-          prefs.getStringList('background_notifications') ?? [];
+      // 2. Load any new notifications from the temporary surface store.
+      final surfaceNotificationsJson =
+          prefs.getStringList('surface_notifications') ?? [];
       debugPrint(
-          'DEBUG_PROVIDER (After Reload): Found ${backgroundNotificationsJson.length} new background notifications.');
+          'DEBUG_PROVIDER (After Reload): Found ${surfaceNotificationsJson.length} new surface notifications.');
 
-      final backgroundNotifications = backgroundNotificationsJson
+      final surfaceNotifications = surfaceNotificationsJson
           .map((jsonStr) {
             try {
               return NotificationModel.fromJson(jsonDecode(jsonStr));
             } catch (e) {
-              debugPrint('Error parsing a stored background notification: $e');
+              debugPrint('Error parsing a stored surface notification: $e');
               return null;
             }
           })
@@ -186,7 +187,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       // 3. Merge the two lists into a single comprehensive list.
       final allNotifications = [
         ...appNotifications,
-        ...backgroundNotifications
+        ...surfaceNotifications
       ];
 
       // 4. De-duplicate the list to prevent showing the same notification twice.
@@ -218,7 +219,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       // 9. Persist the newly merged and cleaned list back to primary storage.
       await _saveNotifications();
 
-      // 10. Clean up the temporary background notification store now that its contents have been processed.
+      // 10. Clean up the temporary surface notification store now that its contents have been processed.
       await _clearBackgroundNotifications();
 
       debugPrint(
@@ -264,14 +265,14 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
     loadNotifications();
   }
 
-  /// Clears the temporary background notification store.
+  /// Clears the temporary surface notification store.
   Future<void> _clearBackgroundNotifications() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_backgroundStorageKey);
+      await prefs.remove(_surfaceStorageKey);
       debugPrint('Background notifications cleared after loading.');
     } catch (e) {
-      debugPrint('Error clearing background notifications: $e');
+      debugPrint('Error clearing surface notifications: $e');
     }
   }
 

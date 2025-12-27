@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'package:carenest/app/core/base/base_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
@@ -10,7 +9,7 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
   final TextEditingController passwordController = TextEditingController();
   bool _isVisible = false;
   bool _isValid = false;
-  bool _isPasswordValid = false;
+  final bool _isPasswordValid = false;
   IconData? suffixIconData;
 
   // Security enhancements
@@ -103,7 +102,7 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
 
     // For login, we only need basic validation
     // Complex password requirements should only be enforced during signup
-    final hasMinLength = input.length >= 1; // Just check it's not empty
+    final hasMinLength = input.isNotEmpty; // Just check it's not empty
     final hasMaxLength = input.length <= 128; // Reasonable max length
 
     // Check for suspicious patterns (security measure)

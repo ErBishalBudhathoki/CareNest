@@ -27,4 +27,3 @@ class CircularImage extends StatelessWidget {
     }
   }
 }
-

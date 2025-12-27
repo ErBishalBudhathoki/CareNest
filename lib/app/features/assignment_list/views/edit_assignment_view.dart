@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/features/assignment/views/enhanced_ndis_item_selection_view.dart';
@@ -14,10 +11,10 @@ class EditAssignmentView extends ConsumerStatefulWidget {
   final String organizationId;
 
   const EditAssignmentView({
-    Key? key,
+    super.key,
     required this.assignment,
     required this.organizationId,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<EditAssignmentView> createState() => _EditAssignmentViewState();
@@ -198,7 +195,6 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Assignment updated successfully'),
-              backgroundColor: Colors.green,
             ),
           );
         }
@@ -210,7 +206,6 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error updating assignment: $e'),
-            backgroundColor: Colors.red,
           ),
         );
       }
@@ -226,15 +221,13 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ModernSaasDesign.background,
       appBar: AppBar(
-        backgroundColor: ModernSaasDesign.surface,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: Icon(
-            Iconsax.arrow_left,
-            color: ModernSaasDesign.textPrimary,
+            Icons.arrow_back,
+            color: const Color(0xFF1F2937),
           ),
         ),
         title: Text(
@@ -242,7 +235,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: ModernSaasDesign.textPrimary,
+            color: const Color(0xFF1F2937),
           ),
         ),
         actions: [
@@ -272,10 +265,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+                      color: const Color(0xFF667EEA).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: ModernSaasDesign.primary.withValues(alpha: 0.2),
+                        color: const Color(0xFF667EEA).withOpacity(0.1),
                       ),
                     ),
                     child: Column(
@@ -284,8 +277,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                         Row(
                           children: [
                             Icon(
-                              Iconsax.user,
-                              color: ModernSaasDesign.primary,
+                              Icons.person,
+                              color: const Color(0xFF667EEA),
                               size: 20,
                             ),
                             const SizedBox(width: 8),
@@ -294,7 +287,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: ModernSaasDesign.textSecondary,
+                                color: const Color(0xFF6B7280),
                               ),
                             ),
                           ],
@@ -305,15 +298,15 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: ModernSaasDesign.textPrimary,
+                            color: const Color(0xFF1F2937),
                           ),
                         ),
                         const SizedBox(height: 12),
                         Row(
                           children: [
                             Icon(
-                              Iconsax.profile_2user,
-                              color: ModernSaasDesign.primary,
+                              Icons.groups_outlined,
+                              color: const Color(0xFF667EEA),
                               size: 20,
                             ),
                             const SizedBox(width: 8),
@@ -322,7 +315,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: ModernSaasDesign.textSecondary,
+                                color: const Color(0xFF6B7280),
                               ),
                             ),
                           ],
@@ -333,7 +326,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: ModernSaasDesign.textPrimary,
+                            color: const Color(0xFF1F2937),
                           ),
                         ),
                       ],
@@ -347,7 +340,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: ModernSaasDesign.textPrimary,
+                      color: const Color(0xFF1F2937),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -357,17 +350,17 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: ModernSaasDesign.surface,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: ModernSaasDesign.neutral300,
+                          color: const Color(0xFFD4D4D4),
                         ),
                       ),
                       child: Row(
                         children: [
                           Icon(
-                            Iconsax.document_text,
-                            color: ModernSaasDesign.textSecondary,
+                            Icons.description_outlined,
+                            color: const Color(0xFF6B7280),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -381,8 +374,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                     color: _selectedNdisItem != null
-                                        ? ModernSaasDesign.textPrimary
-                                        : ModernSaasDesign.textSecondary,
+                                        ? const Color(0xFF1F2937)
+                                        : const Color(0xFF6B7280),
                                   ),
                                 ),
                                 if (_selectedNdisItem != null) ...[
@@ -391,7 +384,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                                     _selectedNdisItem!.itemNumber,
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: ModernSaasDesign.textSecondary,
+                                      color: const Color(0xFF6B7280),
                                     ),
                                   ),
                                 ],
@@ -407,14 +400,14 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                                 });
                               },
                               icon: Icon(
-                                Iconsax.close_circle,
-                                color: ModernSaasDesign.error,
+                                Icons.cancel,
+                                color: Colors.red,
                               ),
                             )
                           else
                             Icon(
-                              Iconsax.arrow_right_3,
-                              color: ModernSaasDesign.textSecondary,
+                              Icons.chevron_right,
+                              color: const Color(0xFF6B7280),
                             ),
                         ],
                       ),
@@ -431,7 +424,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: ModernSaasDesign.textPrimary,
+                          color: const Color(0xFF1F2937),
                         ),
                       ),
                       OutlinedButton.icon(
@@ -447,19 +440,19 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                           });
                         },
                         icon: Icon(
-                          Iconsax.add,
+                          Icons.add,
                           size: 16,
-                          color: ModernSaasDesign.primary,
+                          color: const Color(0xFF667EEA),
                         ),
                         label: Text(
                           'Add Shift',
                           style: TextStyle(
-                            color: ModernSaasDesign.primary,
+                            color: const Color(0xFF667EEA),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: ModernSaasDesign.primary),
+                          side: BorderSide(color: const Color(0xFF667EEA)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -494,10 +487,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.surface,
+              color: Colors.white,
               border: Border(
                 top: BorderSide(
-                  color: ModernSaasDesign.neutral200,
+                  color: const Color(0xFFE5E5E5),
                   width: 1,
                 ),
               ),
@@ -508,8 +501,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: ModernSaasDesign.neutral300),
-                      foregroundColor: ModernSaasDesign.textSecondary,
+                      side: BorderSide(color: const Color(0xFFD4D4D4)),
+                      foregroundColor: const Color(0xFF6B7280),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 16,
@@ -532,8 +525,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   flex: 2,
                   child: ElevatedButton(
                     onPressed: isLoading ? null : _saveChanges,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ModernSaasDesign.primary,
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
@@ -584,10 +576,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: ModernSaasDesign.neutral200,
+          color: const Color(0xFFE5E5E5),
         ),
       ),
       child: Column(
@@ -601,33 +593,35 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: ModernSaasDesign.textPrimary,
+                  color: const Color(0xFF1F2937),
                 ),
               ),
               IconButton(
                 onPressed: () {
                   setState(() {
                     if (dateList.length > index) dateList.removeAt(index);
-                    if (startTimeList.length > index)
+                    if (startTimeList.length > index) {
                       startTimeList.removeAt(index);
+                    }
                     if (endTimeList.length > index) endTimeList.removeAt(index);
                     if (breakList.length > index) breakList.removeAt(index);
-                    if (highIntensityList.length > index)
+                    if (highIntensityList.length > index) {
                       highIntensityList.removeAt(index);
-                    if (scheduleNdisItems.length > index)
+                    }
+                    if (scheduleNdisItems.length > index) {
                       scheduleNdisItems.removeAt(index);
-                    if (scheduleCustomPricing.length > index)
+                    }
+                    if (scheduleCustomPricing.length > index) {
                       scheduleCustomPricing.removeAt(index);
+                    }
                   });
                 },
                 icon: Icon(
-                  Iconsax.trash,
-                  color: ModernSaasDesign.error,
+                  Icons.delete,
+                  color: Colors.red,
                   size: 20,
                 ),
                 style: IconButton.styleFrom(
-                  backgroundColor:
-                      ModernSaasDesign.error.withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -646,8 +640,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                 borderRadius: BorderRadius.circular(8),
               ),
               prefixIcon: Icon(
-                Iconsax.calendar,
-                color: ModernSaasDesign.textSecondary,
+                Icons.calendar_today,
+                color: const Color(0xFF6B7280),
               ),
             ),
             onChanged: (value) {
@@ -671,8 +665,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     prefixIcon: Icon(
-                      Iconsax.clock,
-                      color: ModernSaasDesign.textSecondary,
+                      Icons.access_time,
+                      color: const Color(0xFF6B7280),
                     ),
                   ),
                   onChanged: (value) {
@@ -693,8 +687,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     prefixIcon: Icon(
-                      Iconsax.clock,
-                      color: ModernSaasDesign.textSecondary,
+                      Icons.access_time,
+                      color: const Color(0xFF6B7280),
                     ),
                   ),
                   onChanged: (value) {
@@ -717,8 +711,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                 borderRadius: BorderRadius.circular(8),
               ),
               prefixIcon: Icon(
-                Iconsax.pause,
-                color: ModernSaasDesign.textSecondary,
+                Icons.pause,
+                color: const Color(0xFF6B7280),
               ),
             ),
             onChanged: (value) {
@@ -733,8 +727,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           Row(
             children: [
               Icon(
-                Iconsax.flash_1,
-                color: ModernSaasDesign.textSecondary,
+                Icons.flash_on,
+                color: const Color(0xFF6B7280),
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -743,7 +737,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: ModernSaasDesign.textPrimary,
+                  color: const Color(0xFF1F2937),
                 ),
               ),
               const Spacer(),
@@ -758,7 +752,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     }
                   });
                 },
-                activeColor: ModernSaasDesign.primary,
+                activeThumbColor: const Color(0xFF667EEA),
               ),
             ],
           ),
@@ -771,17 +765,17 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.neutral50,
+                color: const Color(0xFFFAFAFA),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: ModernSaasDesign.neutral200,
+                  color: const Color(0xFFE5E5E5),
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
-                    Iconsax.document_text,
-                    color: ModernSaasDesign.textSecondary,
+                    Icons.description_outlined,
+                    color: const Color(0xFF6B7280),
                     size: 16,
                   ),
                   const SizedBox(width: 8),
@@ -795,8 +789,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                         fontSize: 14,
                         color: scheduleNdisItems.length > index &&
                                 scheduleNdisItems[index] != null
-                            ? ModernSaasDesign.textPrimary
-                            : ModernSaasDesign.textSecondary,
+                            ? const Color(0xFF1F2937)
+                            : const Color(0xFF6B7280),
                       ),
                     ),
                   ),
@@ -809,15 +803,15 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                         });
                       },
                       icon: Icon(
-                        Iconsax.close_circle,
-                        color: ModernSaasDesign.error,
+                        Icons.cancel,
+                        color: Colors.red,
                         size: 16,
                       ),
                     )
                   else
                     Icon(
-                      Iconsax.arrow_right_3,
-                      color: ModernSaasDesign.textSecondary,
+                      Icons.chevron_right,
+                      color: const Color(0xFF6B7280),
                       size: 16,
                     ),
                 ],

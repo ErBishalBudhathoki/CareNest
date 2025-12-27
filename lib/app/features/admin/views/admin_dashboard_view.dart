@@ -1,30 +1,29 @@
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
+
+
+
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
+import 'dart:math';
+
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'dart:typed_data';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/features/busineess/views/add_business_details_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/holiday/views/holiday_list_view.dart';
 import 'package:carenest/app/shared/constants/values/strings/asset_strings.dart';
-import 'package:carenest/app/features/invoice/models/invoicing_email_model.dart';
 import 'package:carenest/app/features/invoice/views/add_update_invoice_email_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_email_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
-import 'package:carenest/app/shared/widgets/home-detail-card-widget.dart';
+import 'package:carenest/app/shared/widgets/home_detail_card_widget.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/employee_tracking/views/employee_tracking_view.dart';
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
 import 'package:carenest/app/features/notifications/views/notification_list_view.dart';
 import 'package:carenest/app/features/pricing/views/pricing_management_view.dart';
+import 'package:carenest/app/features/pricing/views/client_pricing_review_view.dart';
 import 'package:carenest/app/features/expenses/views/expense_management_view.dart';
-import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -224,8 +223,7 @@ class _AdminDashboardViewControllerState
             fontSize: 15,
           ),
         ),
-        backgroundColor:
-            isError ? const Color(0xFFDC2626) : const Color(0xFF059669),
+        backgroundColor: isError ? Colors.red : const Color(0xFF059669),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(20),
@@ -239,7 +237,6 @@ class _AdminDashboardViewControllerState
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: AppColors.colorWhite,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -257,7 +254,7 @@ class _AdminDashboardViewControllerState
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF667EEA).withValues(alpha: 0.3),
+                      color: const Color(0xFF667EEA).withOpacity(0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -286,7 +283,6 @@ class _AdminDashboardViewControllerState
       );
     }
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Stack(
         children: [
           CustomScrollView(
@@ -313,7 +309,6 @@ class _AdminDashboardViewControllerState
       expandedHeight: 240.0, // Reduced from 320 to 240
       pinned: false,
       floating: false,
-      backgroundColor: AppColors.colorTransparent,
       elevation: 0,
       automaticallyImplyLeading: false,
       flexibleSpace: FlexibleSpaceBar(
@@ -322,7 +317,7 @@ class _AdminDashboardViewControllerState
           builder: (context, child) {
             return Stack(
               children: [
-                // Modern gradient background with better colors
+                // Modern gradient surface with better colors
                 Transform.translate(
                   offset: Offset(
                     0,
@@ -347,10 +342,10 @@ class _AdminDashboardViewControllerState
                           gradient: LinearGradient(
                             colors: [
                               const Color(0xFF3B82F6)
-                                  .withValues(alpha: 0.1), // Blue accent
+                                  .withOpacity(0.1), // Blue accent
                               Colors.transparent,
                               const Color(0xFF06B6D4)
-                                  .withValues(alpha: 0.05), // Cyan accent
+                                  .withOpacity(0.1), // Cyan accent
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -395,16 +390,16 @@ class _AdminDashboardViewControllerState
                                       decoration: BoxDecoration(
                                         color: hasUnread
                                             ? const Color(0xFFEF4444)
-                                                .withValues(alpha: 0.2)
+                                                .withOpacity(0.1)
                                             : AppColors.colorWhite
-                                                .withValues(alpha: 0.1),
+                                                .withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color: hasUnread
                                               ? const Color(0xFFEF4444)
-                                                  .withValues(alpha: 0.3)
+                                                  .withOpacity(0.1)
                                               : AppColors.colorWhite
-                                                  .withValues(alpha: 0.2),
+                                                  .withOpacity(0.1),
                                           width: hasUnread ? 1.5 : 1,
                                         ),
                                       ),
@@ -477,11 +472,11 @@ class _AdminDashboardViewControllerState
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: AppColors.colorWhite
-                                      .withValues(alpha: 0.1),
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: AppColors.colorWhite
-                                        .withValues(alpha: 0.2),
+                                        .withOpacity(0.1),
                                   ),
                                 ),
                                 child: const Icon(
@@ -528,7 +523,7 @@ class _AdminDashboardViewControllerState
                                           boxShadow: [
                                             BoxShadow(
                                               color: const Color(0xFF3B82F6)
-                                                  .withValues(alpha: 0.3),
+                                                  .withOpacity(0.1),
                                               blurRadius: 20,
                                               spreadRadius: 2,
                                             ),
@@ -541,9 +536,9 @@ class _AdminDashboardViewControllerState
                                             gradient: LinearGradient(
                                               colors: [
                                                 const Color(0xFF3B82F6)
-                                                    .withValues(alpha: 0.3),
+                                                    .withOpacity(0.1),
                                                 const Color(0xFF06B6D4)
-                                                    .withValues(alpha: 0.2),
+                                                    .withOpacity(0.1),
                                               ],
                                             ),
                                           ),
@@ -678,11 +673,11 @@ class _AdminDashboardViewControllerState
                                       ),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFF10B981)
-                                            .withValues(alpha: 0.2),
+                                            .withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
                                           color: const Color(0xFF10B981)
-                                              .withValues(alpha: 0.3),
+                                              .withOpacity(0.1),
                                         ),
                                       ),
                                       child: Row(
@@ -717,7 +712,7 @@ class _AdminDashboardViewControllerState
                                         boxShadow: [
                                           BoxShadow(
                                             color: const Color(0xFF3B82F6)
-                                                .withValues(alpha: 0.3),
+                                                .withOpacity(0.1),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
                                           ),
@@ -767,8 +762,8 @@ class _AdminDashboardViewControllerState
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFF667EEA).withValues(alpha: 0.05),
-                          const Color(0xFF764BA2).withValues(alpha: 0.02),
+                          const Color(0xFF667EEA).withOpacity(0.1),
+                          const Color(0xFF764BA2).withOpacity(0.1),
                           Colors.white,
                         ],
                         begin: Alignment.topCenter,
@@ -870,15 +865,15 @@ class _AdminDashboardViewControllerState
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
+        border: Border.all(color: color.withOpacity(0.1), width: 1),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -893,7 +888,7 @@ class _AdminDashboardViewControllerState
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: color, size: 18),
@@ -1122,7 +1117,7 @@ class _AdminDashboardViewControllerState
                               'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',
                           title: 'Holiday List',
                           subtitle: 'Manage company holidays',
-                          color: ModernSaasDesign.adminPink,
+                          color: const Color(0xFFEC4899),
                           onTap: () => _navigateToHolidayList(),
                         ),
                         _buildImageActionTile(
@@ -1182,12 +1177,20 @@ class _AdminDashboardViewControllerState
                           color: const Color(0xFF795548),
                           onTap: () => _navigateToBankDetails(),
                         ),
+                        _buildImageActionTile(
+                          asset:
+                              'assets/icons/profile_placeholder.png',
+                          title: 'Client Pricing Review',
+                          subtitle: 'Review and manage client pricing before invoicing',
+                          color: const Color(0xFF14B8A6),
+                          onTap: () => _navigateToClientPricingReview(),
+                        ),
                         _buildActionCard(
                           icon: Icons.security_rounded,
                           title: 'API Usage Dashboard',
                           subtitle:
                               'Monitor API traffic and errors in real-time',
-                          color: ModernSaasDesign.primary,
+                          color: const Color(0xFF667EEA),
                           onTap: _navigateToApiUsageDashboard,
                         ),
                       ],
@@ -1264,13 +1267,13 @@ class _AdminDashboardViewControllerState
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
               ],
               border: Border.all(
-                color: color.withValues(alpha: 0.2),
+                color: color.withOpacity(0.1),
                 width: 1,
               ),
             ),
@@ -1280,7 +1283,7 @@ class _AdminDashboardViewControllerState
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -1299,7 +1302,7 @@ class _AdminDashboardViewControllerState
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: ModernSaasDesign.darkText,
+                          color: Color(0xFF1F2937),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -1355,13 +1358,13 @@ class _AdminDashboardViewControllerState
               borderRadius: BorderRadius.circular(tileRadius),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
               ],
               border: Border.all(
-                color: color.withValues(alpha: 0.18),
+                color: color.withOpacity(0.1),
                 width: 1,
               ),
             ),
@@ -1374,7 +1377,7 @@ class _AdminDashboardViewControllerState
                   width: iconContainerSize,
                   height: iconContainerSize,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.08),
+                    color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(tileRadius),
                   ),
                   alignment: Alignment.center,
@@ -1383,6 +1386,13 @@ class _AdminDashboardViewControllerState
                     width: iconSize,
                     height: iconSize,
                     fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.image_not_supported_outlined,
+                        size: iconSize,
+                        color: color,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -1416,7 +1426,7 @@ class _AdminDashboardViewControllerState
                   width: chevronContainerSize,
                   height: chevronContainerSize,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: color.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -1638,6 +1648,18 @@ class _AdminDashboardViewControllerState
     );
   }
 
+  void _navigateToClientPricingReview() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ClientPricingReviewView(
+          organizationId: widget.organizationId ?? '',
+          userEmail: widget.email,
+        ),
+      ),
+    );
+  }
+
   Widget _build3DActionCard({
     required IconData icon,
     required String title,
@@ -1674,18 +1696,18 @@ class _AdminDashboardViewControllerState
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: primaryColor.withValues(alpha: 0.08),
+                    color: primaryColor.withOpacity(0.1),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: primaryColor.withValues(alpha: 0.08),
+                      color: primaryColor.withOpacity(0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                       spreadRadius: 0,
                     ),
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
+                      color: Colors.black.withOpacity(0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                       spreadRadius: 0,
@@ -1710,15 +1732,15 @@ class _AdminDashboardViewControllerState
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  primaryColor.withValues(alpha: 0.15),
-                                  primaryColor.withValues(alpha: 0.08),
+                                  primaryColor.withOpacity(0.1),
+                                  primaryColor.withOpacity(0.1),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: primaryColor.withValues(alpha: 0.1),
+                                color: primaryColor.withOpacity(0.1),
                                 width: 1,
                               ),
                             ),
@@ -1735,7 +1757,7 @@ class _AdminDashboardViewControllerState
                             width: 7,
                             height: 7,
                             decoration: BoxDecoration(
-                              color: primaryColor.withValues(alpha: 0.6),
+                              color: primaryColor.withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -1822,15 +1844,15 @@ class _AdminDashboardViewControllerState
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6C5CE7).withValues(alpha: 0.9),
+                    color: const Color(0xFF6C5CE7).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.1),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -1842,7 +1864,7 @@ class _AdminDashboardViewControllerState
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: Colors.white.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(
@@ -2066,10 +2088,10 @@ Widget _buildQuickStat(String label, String value, IconData icon) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.1),
+      color: Colors.white.withOpacity(0.1),
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.2),
+        color: Colors.white.withOpacity(0.1),
       ),
     ),
     child: Row(
@@ -2093,7 +2115,7 @@ Widget _buildQuickStat(String label, String value, IconData icon) {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
+            color: Colors.white.withOpacity(0.1),
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),

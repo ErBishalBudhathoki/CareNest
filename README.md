@@ -36,6 +36,11 @@ The backend for CareNest is a Node.js Express server. It is managed in a separat
     flutter run
     ```
 
+5.  **Build Web (release)**:
+    ```bash
+    flutter build web --release --no-wasm-dry-run
+    ```
+
 ### Backend Server
 
 For instructions on how to set up the backend server, please refer to the `README.md` file in the [backend repository](https://github.com/BishalBudhathoki/carenest_backend.git).

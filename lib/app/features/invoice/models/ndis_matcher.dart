@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -132,7 +131,7 @@ class NDISMatcher {
       // unless the unit implies it (e.g. some quotable items might be for a 'Day' or 'Each')
       // For now, we assume Price Limited Supports are primary targets for auto-matching.
       if (item.type != "Price Limited Supports" &&
-          item.type != "Unit Price = \$1") {
+          item.type != "Unit Price = 0.1") {
         // For "Quotable Supports", specific logic would be needed if they can be auto-selected.
         // Generally, they require manual quoting.
         return false;
@@ -180,15 +179,17 @@ class NDISMatcher {
           // Night hours
           if (itemNameLower.contains("weekday night")) score += 50;
           if (itemNameLower.contains("night-time sleepover") &&
-              item.unit.toUpperCase() == 'E')
+              item.unit.toUpperCase() == 'E') {
             score += 55; // Slightly higher for specific type
+          }
         } else if (hour >= 18 && hour < 22) {
           // Evening hours (adjust upper limit if needed)
           // NDIS specific definitions for evening may vary, common is 8PM onwards.
           // Some item names specify evening starting earlier. Let's check "weekday evening" explicitly.
           if (itemNameLower.contains("weekday evening") &&
-              (hour >= 18 && hour < 22))
+              (hour >= 18 && hour < 22)) {
             score += 40; // Example: 01_015_0107_1_1 (Weekday Evening)
+          }
         } else if (hour >= 6 && hour < 18) {
           // Daytime hours
           if (itemNameLower.contains("weekday daytime")) score += 30;
@@ -205,15 +206,16 @@ class NDISMatcher {
       bool itemIsHI = itemNameLower.contains("high intensity") ||
           item.registrationGroupNumber == "0104";
       if (isHighIntensityShift) {
-        if (itemIsHI)
+        if (itemIsHI) {
           score += 20;
-        else
+        } else {
           score -= 5; // Penalize if HI shift but item is not HI
+        }
       } else {
         // Standard intensity shift
-        if (!itemIsHI)
+        if (!itemIsHI) {
           score += 20; // Prefer standard items
-        else if (itemNameLower.contains("standard"))
+        } else if (itemNameLower.contains("standard"))
           score += 15; // Explicitly "standard"
         else
           score -= 10; // Penalize HI item for standard shift

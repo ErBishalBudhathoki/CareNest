@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'dart:ui';
+
 import 'package:flutter_animate/flutter_animate.dart';
 
 class PriceHistoryView extends ConsumerStatefulWidget {
@@ -10,11 +10,11 @@ class PriceHistoryView extends ConsumerStatefulWidget {
   final String organizationName;
 
   const PriceHistoryView({
-    Key? key,
+    super.key,
     required this.adminEmail,
     required this.organizationId,
     required this.organizationName,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<PriceHistoryView> createState() => _PriceHistoryViewState();
@@ -126,7 +126,6 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
       body: CustomScrollView(
         slivers: [
           _buildModernHeader(),
@@ -210,8 +209,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF10B981)
-                                  .withValues(alpha: 0.1),
+                              color: const Color(0xFF10B981).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -259,8 +257,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF10B981)
-                                  .withValues(alpha: 0.1),
+                              color: const Color(0xFF10B981).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Row(
@@ -304,7 +301,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   //     expandedHeight: 120,
   //     floating: false,
   //     pinned: true,
-  //     backgroundColor: AppColors.colorPrimary,
+  //,
   //     flexibleSpace: FlexibleSpaceBar(
   //       title: const Text(
   //         'Price History',
@@ -313,14 +310,14 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   //           fontWeight: FontWeight.bold,
   //         ),
   //       ),
-  //       background: Container(
+  //       surface: Container(
   //         decoration: BoxDecoration(
   //           gradient: LinearGradient(
   //             begin: Alignment.topLeft,
   //             end: Alignment.bottomRight,
   //             colors: [
   //               AppColors.colorPrimary,
-  //               AppColors.colorPrimary.withValues(alpha:0.8),
+  //               AppColors.colorPrimary.withOpacity(0.1),
   //             ],
   //           ),
   //         ),
@@ -367,7 +364,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
               'Total Changes',
               '$totalChanges',
               Icons.timeline,
-              AppColors.colorPrimary,
+              AppColors.colorBlue,
+              AppColors.colorBlue50,
             ),
           ),
           const SizedBox(width: 16),
@@ -377,7 +375,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
               'Price Increases',
               '$increases',
               Icons.trending_up,
-              Colors.green,
+              AppColors.colorGreen,
+              AppColors.colorGreen50,
             ),
           ),
           const SizedBox(width: 16),
@@ -387,7 +386,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
               'Price Decreases',
               '$decreases',
               Icons.trending_down,
-              Colors.red,
+              AppColors.colorRed,
+              AppColors.colorRed50,
             ),
           ),
           const SizedBox(width: 16),
@@ -397,7 +397,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
               'Avg Change',
               '${avgChange.toStringAsFixed(1)}%',
               Icons.percent,
-              Colors.blue,
+              AppColors.colorPurple,
+              Colors.purple[50]!,
             ),
           ),
         ],
@@ -406,20 +407,14 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   }
 
   Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
+      String title, String value, IconData icon, Color color, Color bgInfo) {
     return Container(
       constraints: const BoxConstraints(minHeight: 100),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: AppColors.colorGrey200),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -429,36 +424,38 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6),
+                  color: bgInfo,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: color, size: 16),
+                child: Icon(icon, color: color, size: 18),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: AppColors.colorGrey900,
+                  height: 1.2,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.colorGrey600,
+                  fontWeight: FontWeight.w500,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -467,76 +464,71 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildTabSection() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Column(
+      children: [
+        Container(
+          height: 48,
+          decoration: BoxDecoration(
+            color: AppColors.colorGrey100,
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              labelColor: AppColors.colorPrimary,
-              unselectedLabelColor: Colors.grey[600],
-              indicatorColor: AppColors.colorPrimary,
-              indicatorWeight: 3,
-              tabs: const [
-                Tab(text: 'Price Changes'),
-                Tab(text: 'Trends'),
-                Tab(text: 'Analytics'),
+          padding: const EdgeInsets.all(4),
+          child: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.colorWhite,
+            unselectedLabelColor: AppColors.colorGrey600,
+            indicator: BoxDecoration(
+              color: AppColors.colorPrimary,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
               ],
             ),
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerColor: Colors.transparent,
+            tabs: const [
+              Tab(text: 'Price Changes'),
+              Tab(text: 'Trends'),
+              Tab(text: 'Analytics'),
+            ],
           ),
-          Container(
-            constraints: BoxConstraints(
-              minHeight: 400,
-              maxHeight: MediaQuery.of(context).size.height * 0.6,
-            ),
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildPriceChangesTab(),
-                _buildTrendsTab(),
-                _buildAnalyticsTab(),
-              ],
-            ),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          constraints: BoxConstraints(
+            minHeight: 400,
+            maxHeight: MediaQuery.of(context).size.height * 0.7,
           ),
-        ],
-      ),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildPriceChangesTab(),
+              _buildTrendsTab(),
+              _buildAnalyticsTab(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildPriceChangesTab() {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          _buildSearchAndFilters(),
-          const SizedBox(height: 20),
-          Expanded(
-            child: _buildHistoryList(),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        _buildSearchAndFilters(),
+        const SizedBox(height: 8),
+        Expanded(
+          child: _buildHistoryList(),
+        ),
+      ],
     );
   }
 
@@ -546,31 +538,55 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         controller: _searchController,
         decoration: InputDecoration(
           hintText: 'Search price history...',
-          prefixIcon: const Icon(Icons.search),
+          hintStyle:
+              const TextStyle(color: AppColors.colorGrey400, fontSize: 14),
+          prefixIcon: const Icon(Icons.search, color: AppColors.colorGrey400),
+          filled: true,
+          fillColor: AppColors.colorWhite,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey[300]!),
+            borderSide: const BorderSide(color: AppColors.colorGrey200),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey[300]!),
+            borderSide: const BorderSide(color: AppColors.colorGrey200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide:
+                const BorderSide(color: AppColors.colorPrimary, width: 1.5),
           ),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         ),
         onChanged: (value) => setState(() {}),
       );
 
       final timeRangeDropdown = DropdownButtonFormField<String>(
-        value: _selectedTimeRange,
+        initialValue: _selectedTimeRange,
         isExpanded: true,
+        isDense: true,
         decoration: InputDecoration(
           labelText: 'Time Range',
+          labelStyle:
+              const TextStyle(color: AppColors.colorGrey600, fontSize: 14),
+          filled: true,
+          fillColor: AppColors.colorWhite,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.colorGrey200),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.colorGrey200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide:
+                const BorderSide(color: AppColors.colorPrimary, width: 1.5),
           ),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         ),
         items: _timeRanges.map((range) {
           return DropdownMenuItem(
@@ -578,7 +594,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             child: Text(
               range,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 14),
+              style:
+                  const TextStyle(fontSize: 14, color: AppColors.colorGrey800),
             ),
           );
         }).toList(),
@@ -586,15 +603,30 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       );
 
       final categoryDropdown = DropdownButtonFormField<String>(
-        value: _selectedCategory,
+        initialValue: _selectedCategory,
         isExpanded: true,
+        isDense: true,
         decoration: InputDecoration(
           labelText: 'Category',
+          labelStyle:
+              const TextStyle(color: AppColors.colorGrey600, fontSize: 14),
+          filled: true,
+          fillColor: AppColors.colorWhite,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.colorGrey200),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.colorGrey200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide:
+                const BorderSide(color: AppColors.colorPrimary, width: 1.5),
           ),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         ),
         items: _categories.map((category) {
           return DropdownMenuItem(
@@ -602,14 +634,15 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             child: Text(
               category,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 14),
+              style:
+                  const TextStyle(fontSize: 14, color: AppColors.colorGrey800),
             ),
           );
         }).toList(),
         onChanged: (value) => setState(() => _selectedCategory = value!),
       );
 
-      if (constraints.maxWidth > 650) {
+      if (constraints.maxWidth > 700) {
         return Row(
           children: [
             Expanded(flex: 2, child: searchField),
@@ -623,10 +656,14 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         return Column(
           children: [
             searchField,
-            const SizedBox(height: 16),
-            timeRangeDropdown,
-            const SizedBox(height: 16),
-            categoryDropdown,
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: timeRangeDropdown),
+                const SizedBox(width: 12),
+                Expanded(child: categoryDropdown),
+              ],
+            ),
           ],
         );
       }
@@ -648,6 +685,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     }).toList();
 
     return ListView.builder(
+      padding: EdgeInsets.zero,
       itemCount: filteredHistory.length,
       itemBuilder: (context, index) {
         final history = filteredHistory[index];
@@ -670,7 +708,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -950,7 +988,6 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.colorPrimary,
         behavior: SnackBarBehavior.floating,
       ),
     );

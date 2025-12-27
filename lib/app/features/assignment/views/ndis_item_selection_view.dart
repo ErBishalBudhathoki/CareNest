@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
-import 'package:go_router/go_router.dart';
 
 class NdisItemSelectionView extends ConsumerStatefulWidget {
-  const NdisItemSelectionView({Key? key}) : super(key: key);
+  const NdisItemSelectionView({super.key});
 
   @override
   ConsumerState<NdisItemSelectionView> createState() =>
@@ -42,7 +41,6 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Failed to load NDIS items. Please try again.'),
-            backgroundColor: Colors.red,
           ),
         );
       });

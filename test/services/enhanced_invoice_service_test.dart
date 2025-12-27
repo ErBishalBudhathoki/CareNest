@@ -361,9 +361,9 @@ void main() {
 
       expect(result, isEmpty);
       final stateCtrl = fakeRef
-          .read(invoiceGenerationStateProvider.notifier) as StateController<InvoiceGenerationState>;
+          .read(invoiceGenerationStateProvider.notifier);
       final errorCtrl = fakeRef
-          .read(invoiceGenerationErrorProvider.notifier) as StateController<String>;
+          .read(invoiceGenerationErrorProvider.notifier);
       expect(stateCtrl.state, InvoiceGenerationState.error);
       expect(errorCtrl.state, contains('Tax rate cannot be negative'));
     });

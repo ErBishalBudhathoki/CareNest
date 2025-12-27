@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:carenest/config/environment.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
@@ -83,7 +81,9 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       // Try to fetch admin rate limit status (optional: requires admin privileges)
       // If unauthorized, we just ignore the result and rely on analytics payload.
       futures.add(
-        _api.get('api/security/rate-limit/status').catchError((_) => null),
+        _api
+            .get('api/security/rate-limit/status')
+            .catchError((_) => <String, dynamic>{'success': false}),
       );
 
       final results = await Future.wait(futures);
@@ -92,7 +92,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       String? firstError;
       for (int i = 0; i < 3; i++) {
         final r = results[i];
-        if (r is Map && r['success'] == false) {
+        if (r['success'] == false) {
           firstError =
               (r['message'] ?? r['error'] ?? 'Request failed').toString();
           break;
@@ -111,9 +111,9 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       }
 
       setState(() {
-        final analyticsResult = results[0] as Map<String, dynamic>;
-        final rateLimitResult = results[1] as Map<String, dynamic>;
-        final realTimeResult = results[2] as Map<String, dynamic>;
+        final analyticsResult = results[0];
+        final rateLimitResult = results[1];
+        final realTimeResult = results[2];
         final statusResult = results.length > 3 ? results[3] : null;
 
         _analyticsData = analyticsResult['data'] ?? {};
@@ -174,12 +174,12 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       final token = sharedUtils.getAuthToken();
       final hasToken = token != null && token.isNotEmpty;
       final tokenHasBearer =
-          hasToken && token!.toLowerCase().startsWith('bearer ');
+          hasToken && token.toLowerCase().startsWith('bearer ');
       debugPrint('[SSE] Auth token present: $hasToken');
 
       final req = http.Request('GET', uri);
       final String? authValue = hasToken
-          ? (token!.toLowerCase().startsWith('bearer ')
+          ? (token.toLowerCase().startsWith('bearer ')
               ? token
               : 'Bearer $token')
           : null;
@@ -298,7 +298,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
 
       if (!mounted) return;
 
-      if (res is Map && res['success'] == true) {
+      if (res['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Rate limit reset for $ip')),
         );
@@ -307,7 +307,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  'Failed to reset rate limit: ${res is Map ? (res['message'] ?? 'Unknown error') : 'Unknown error'}')),
+                  'Failed to reset rate limit: ${(res['message'] ?? 'Unknown error')}')),
         );
       }
     } catch (e) {
@@ -406,25 +406,25 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
         _StatCard(
           title: 'Total API Calls',
           value: '$totalCalls',
-          color: ModernSaasDesign.primary,
+          color: const Color(0xFF667EEA),
           icon: Icons.api,
         ),
         _StatCard(
           title: 'Success Rate',
           value: '$successRate%',
-          color: ModernSaasDesign.success,
+          color: Colors.green,
           icon: Icons.check_circle,
         ),
         _StatCard(
           title: 'Avg Response Time',
           value: '${avgResponseTime}ms',
-          color: ModernSaasDesign.warning,
+          color: Colors.orange,
           icon: Icons.speed,
         ),
         _StatCard(
           title: 'Active Users',
           value: '$activeUsers',
-          color: ModernSaasDesign.info,
+          color: Colors.blue,
           icon: Icons.people,
         ),
       ],
@@ -442,7 +442,6 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
             subtitle: Text('${_blockedIPs.length} IPs currently blocked'),
             trailing: Chip(
               label: Text('${_blockedIPs.length}'),
-              backgroundColor: Colors.red.withOpacity(0.1),
             ),
           ),
           ListTile(
@@ -451,7 +450,6 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
             subtitle: Text('${_failedAttempts.length} recent failed attempts'),
             trailing: Chip(
               label: Text('${_failedAttempts.length}'),
-              backgroundColor: Colors.orange.withOpacity(0.1),
             ),
           ),
           if (_blockedIPs.isNotEmpty)
@@ -544,7 +542,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
               title: Text('No rate limit configuration data'),
               leading: Icon(Icons.info, size: 16),
             ));
-          } else if (data is Map) {
+          } else {
             final mapData = data as Map;
             mapData.entries
                 .where((entry) => entry.key != 'default')
@@ -572,42 +570,6 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
                 ),
               ));
             });
-          } else if (data is List) {
-            final listData = data as List;
-            for (final item in listData.take(6)) {
-              final cfg = item;
-              String endpoint = 'Endpoint';
-              if (cfg is Map) {
-                endpoint = (cfg['endpoint'] ??
-                        cfg['route'] ??
-                        cfg['path'] ??
-                        cfg['key'] ??
-                        'Endpoint')
-                    .toString();
-              } else if (cfg != null) {
-                endpoint = cfg.toString();
-              }
-
-              final maxVal = _asInt(cfg is Map ? cfg['max'] : null);
-              final windowMsVal =
-                  _asInt(cfg is Map ? cfg['windowMs'] : null, fallback: 60000);
-
-              items.add(ListTile(
-                dense: true,
-                leading: const Icon(Icons.lock_clock, size: 16),
-                title: Text(endpoint),
-                subtitle: Text(
-                    '$maxVal requests per ${windowMsVal ~/ 60000} minutes'),
-                trailing: Chip(
-                  label: Text('$maxVal'),
-                  backgroundColor: maxVal <= 5
-                      ? Colors.red.withOpacity(0.1)
-                      : maxVal <= 10
-                          ? Colors.orange.withOpacity(0.1)
-                          : Colors.green.withOpacity(0.1),
-                ),
-              ));
-            }
           }
 
           // Divider between config and current rate-limited users
@@ -664,7 +626,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
                           body: {'resetAll': true},
                         );
                         if (!mounted) return;
-                        if (res is Map && res['success'] == true) {
+                        if (res['success'] == true) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('All rate limits reset')),
@@ -674,7 +636,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                                 content: Text(
-                                    'Failed to reset all: ${res is Map ? (res['message'] ?? 'Unknown error') : 'Unknown error'}')),
+                                    'Failed to reset all: ${(res['message'] ?? 'Unknown error')}')),
                           );
                         }
                       } catch (e) {
@@ -814,9 +776,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.1),
@@ -867,12 +829,12 @@ class _CardSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withOpacity(0.05),
+            color: Colors.black12.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.black12.withOpacity(0.08)),
+        border: Border.all(color: Colors.black12.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

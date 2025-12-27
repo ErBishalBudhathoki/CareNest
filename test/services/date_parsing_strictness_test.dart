@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/foundation.dart';
+
 import 'package:carenest/services/date_period_service.dart';
 import 'package:carenest/services/date_parser_service.dart';
 import 'package:carenest/repositories/period_config_repository.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/models/date_period.dart';
 
 /// Fake SharedPreferencesUtils backed by in-memory map for deterministic tests.
 class _FakePrefs extends SharedPreferencesUtils {

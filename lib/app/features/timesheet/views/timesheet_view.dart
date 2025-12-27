@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 class TimesheetView extends StatefulWidget {
   final String email;
 
-  const TimesheetView({Key? key, required this.email}) : super(key: key);
+  const TimesheetView({super.key, required this.email});
 
   @override
   State<TimesheetView> createState() => _TimesheetViewState();
@@ -39,7 +39,6 @@ class _TimesheetViewState extends State<TimesheetView> {
             },
           ),
         ],
-        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Column(

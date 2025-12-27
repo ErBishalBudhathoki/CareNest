@@ -2,14 +2,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:flutter/foundation.dart';
 
 /// A button widget that allows users to manually refresh their FCM token
 /// and force registration with the backend.
 class NotificationRefreshButton extends ConsumerWidget {
-  const NotificationRefreshButton({Key? key}) : super(key: key);
+  const NotificationRefreshButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,7 +68,6 @@ class NotificationRefreshButton extends ConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Notification settings refreshed successfully'),
-              backgroundColor: Colors.green,
             ),
           );
         } catch (e) {
@@ -81,7 +78,6 @@ class NotificationRefreshButton extends ConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Failed to refresh notification settings: $e'),
-              backgroundColor: Colors.red,
             ),
           );
         }
@@ -92,7 +88,7 @@ class NotificationRefreshButton extends ConsumerWidget {
 
 /// A more comprehensive notification settings panel that can be added to a settings screen
 class NotificationSettingsPanel extends ConsumerWidget {
-  const NotificationSettingsPanel({Key? key}) : super(key: key);
+  const NotificationSettingsPanel({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -205,7 +201,6 @@ class NotificationSettingsPanel extends ConsumerWidget {
                         const SnackBar(
                           content: Text(
                               'Notification settings refreshed successfully'),
-                          backgroundColor: Colors.green,
                         ),
                       );
                     } catch (e) {
@@ -217,7 +212,6 @@ class NotificationSettingsPanel extends ConsumerWidget {
                         SnackBar(
                           content: Text(
                               'Failed to refresh notification settings: $e'),
-                          backgroundColor: Colors.red,
                         ),
                       );
                     }

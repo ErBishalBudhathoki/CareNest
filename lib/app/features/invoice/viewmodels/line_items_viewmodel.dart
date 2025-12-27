@@ -1,7 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:flutter/foundation.dart';
 
 class LineItemViewModel extends StateNotifier<List<Map<String, dynamic>>> {
   final ApiMethod _apiMethod;

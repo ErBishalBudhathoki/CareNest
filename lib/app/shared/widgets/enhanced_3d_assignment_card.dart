@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
 
 class Enhanced3DAssignmentCard extends StatefulWidget {
   final Map<String, dynamic> assignment;
@@ -12,12 +10,12 @@ class Enhanced3DAssignmentCard extends StatefulWidget {
   final String? clientName;
 
   const Enhanced3DAssignmentCard({
-    Key? key,
+    super.key,
     required this.assignment,
     required this.onEdit,
     this.employeeName,
     this.clientName,
-  }) : super(key: key);
+  });
 
   @override
   State<Enhanced3DAssignmentCard> createState() =>
@@ -94,19 +92,19 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withValues(alpha: 0.1),
+                    color: Colors.blue.withOpacity(0.1),
                     blurRadius: _elevationAnimation.value,
                     offset: Offset(0, _elevationAnimation.value / 2),
                     spreadRadius: 2,
                   ),
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: _elevationAnimation.value * 2,
                     offset: Offset(0, _elevationAnimation.value),
                   ),
                 ],
                 border: Border.all(
-                  color: Colors.blue.withValues(alpha: 0.1),
+                  color: Colors.blue.withOpacity(0.1),
                   width: 1,
                 ),
               ),
@@ -125,7 +123,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.blue.withValues(alpha: 0.05),
+                              Colors.blue.withOpacity(0.1),
                               Colors.transparent,
                             ],
                           ),
@@ -179,14 +177,14 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.withValues(alpha: 0.3),
+                color: Colors.blue.withOpacity(0.1),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
             ],
           ),
           child: const Icon(
-            Iconsax.user,
+            Icons.person_outline,
             color: Colors.white,
             size: 28,
           ),
@@ -209,7 +207,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               Row(
                 children: [
                   Icon(
-                    Iconsax.user_tag,
+                    Icons.badge_outlined,
                     size: 14,
                     color: Colors.grey.shade600,
                   ),
@@ -246,14 +244,14 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.orange.withValues(alpha: 0.3),
+                  color: Colors.orange.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: const Icon(
-              Iconsax.edit,
+              Icons.edit_outlined,
               color: Colors.white,
               size: 20,
             ),
@@ -268,7 +266,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
       children: [
         Expanded(
           child: _build3DStatCard(
-            icon: Iconsax.clock,
+            icon: Icons.access_time_outlined,
             label: 'Total Hours',
             value: '${totalHours.toStringAsFixed(1)}h',
             color: Colors.green,
@@ -277,7 +275,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         const SizedBox(width: 16),
         Expanded(
           child: _build3DStatCard(
-            icon: Iconsax.calendar,
+            icon: Icons.calendar_month_outlined,
             label: 'Shifts',
             value: shiftsCount.toString(),
             color: Colors.purple,
@@ -286,7 +284,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         const SizedBox(width: 16),
         Expanded(
           child: _build3DStatCard(
-            icon: Iconsax.chart_success,
+            icon: Icons.check_circle_outline,
             label: 'Avg/Day',
             value:
                 '${(totalHours / math.max(shiftsCount, 1)).toStringAsFixed(1)}h',
@@ -311,12 +309,12 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withValues(alpha: 0.1),
-            color.withValues(alpha: 0.05),
+            color.withOpacity(0.1),
+            color.withOpacity(0.1),
           ],
         ),
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: color.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -331,13 +329,13 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  color.withValues(alpha: 0.8),
+                  color.withOpacity(0.1),
                   color,
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: color.withValues(alpha: 0.3),
+                  color: color.withOpacity(0.1),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -385,7 +383,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
           ],
         ),
         border: Border.all(
-          color: Colors.blue.withValues(alpha: 0.1),
+          color: Colors.blue.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -395,7 +393,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
           Row(
             children: [
               Icon(
-                Iconsax.chart_21,
+                Icons.bar_chart_outlined,
                 size: 16,
                 color: Colors.blue.shade600,
               ),
@@ -448,8 +446,8 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.blue.withValues(alpha: 0.3),
-                            Colors.blue.withValues(alpha: 0.1),
+                            Colors.blue.withOpacity(0.1),
+                            Colors.blue.withOpacity(0.1),
                           ],
                         ),
                       ),
@@ -478,7 +476,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         Row(
           children: [
             Icon(
-              Iconsax.calendar_2,
+              Icons.event_outlined,
               size: 16,
               color: Colors.grey.shade700,
             ),
@@ -532,7 +530,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -601,7 +599,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         Row(
           children: [
             Icon(
-              Iconsax.calendar_add,
+              Icons.event_available_outlined,
               size: 12,
               color: Colors.grey.shade500,
             ),

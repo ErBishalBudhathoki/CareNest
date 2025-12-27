@@ -114,7 +114,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
             boxShadow: [
               BoxShadow(
                 color: AppColors.colorGrey300
-                    .withValues(alpha: _isHovered ? 0.3 : 0.1),
+                    .withOpacity(0.1),
                 blurRadius: _isHovered ? 12.0 : 8.0,
                 offset: Offset(0, _isHovered ? 6.0 : 4.0),
                 spreadRadius: _isHovered ? 2.0 : 0.0,
@@ -152,7 +152,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
           decoration: BoxDecoration(
-            color: AppColors.colorPrimary.withValues(alpha: 0.1),
+            color: AppColors.colorPrimary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20.0),
           ),
           child: Text(
@@ -231,7 +231,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
         Container(
           padding: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Icon(
@@ -273,10 +273,10 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: AppColors.colorSuccess.withValues(alpha: 0.05),
+        color: AppColors.colorSuccess.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: AppColors.colorSuccess.withValues(alpha: 0.2),
+          color: AppColors.colorSuccess.withOpacity(0.1),
           width: 1.0,
         ),
       ),

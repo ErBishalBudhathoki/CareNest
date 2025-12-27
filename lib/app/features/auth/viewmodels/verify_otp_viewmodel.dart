@@ -29,6 +29,7 @@ class VerifyOTPViewModel extends ChangeNotifier {
     }
   }
 
+  @override
   void dispose() {
     pinController.dispose();
     super.dispose();

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 class AddShiftRequestView extends StatefulWidget {
   final String email;
 
-  const AddShiftRequestView({Key? key, required this.email}) : super(key: key);
+  const AddShiftRequestView({super.key, required this.email});
 
   @override
   State<AddShiftRequestView> createState() => _AddShiftRequestViewState();
@@ -65,8 +65,7 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.colorBlue,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -102,7 +101,6 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          backgroundColor: AppColors.colorTransparent,
           elevation: 0,
         ),
         Container(
@@ -392,8 +390,7 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _showSuccessDialog,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.colorBlue,
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

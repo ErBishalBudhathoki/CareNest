@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/viewmodels/automatic_invoice_viewmodel.dart';
 import 'package:carenest/app/features/invoice/viewmodels/employee_selection_viewmodel.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
 import 'package:carenest/app/features/invoice/services/send_invoice_service.dart';
-import 'dart:io';
+import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 
 /// Automatic Invoice Generation View
 /// Modern UI for one-click invoice generation for all employees and clients
@@ -17,11 +16,11 @@ class AutomaticInvoiceGenerationView extends ConsumerStatefulWidget {
   final String? email;
 
   const AutomaticInvoiceGenerationView({
-    Key? key,
+    super.key,
     this.organizationId,
     this.organizationName,
     this.email,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<AutomaticInvoiceGenerationView> createState() =>
@@ -43,7 +42,8 @@ class _AutomaticInvoiceGenerationViewState
   bool _allowPriceCapOverride = false;
   bool _includeDetailedPricingInfo = true;
   bool _useAdminBankDetails = false;
-  bool _useSelectedEmployees = false; // false => All employees, true => Selected employees only
+  bool _useSelectedEmployees =
+      false; // false => All employees, true => Selected employees only
   final Set<String> _selectedEmployeeEmails = {};
   // Local state for date range selection
   DateTime? _selectedStartDate;
@@ -103,7 +103,8 @@ class _AutomaticInvoiceGenerationViewState
     try {
       final prefs = SharedPreferencesUtils();
       await prefs.init();
-      final stored = prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+      final stored =
+          prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
       if (stored != null && mounted) {
         setState(() => _useAdminBankDetails = stored);
       }
@@ -117,7 +118,8 @@ class _AutomaticInvoiceGenerationViewState
     try {
       final prefs = SharedPreferencesUtils();
       await prefs.init();
-      await prefs.setBool(SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
+      await prefs.setBool(
+          SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
     } catch (e) {
       debugPrint('Failed to persist useAdminBankDetails preference: $e');
     }
@@ -132,7 +134,6 @@ class _AutomaticInvoiceGenerationViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ModernInvoiceDesign.background,
       appBar: _buildAppBar(),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -146,17 +147,18 @@ class _AutomaticInvoiceGenerationViewState
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: ModernInvoiceDesign.primary,
-      foregroundColor: ModernInvoiceDesign.textOnPrimary,
+      foregroundColor: Colors.white,
       elevation: 0,
       title: Text(
         'Automatic Invoice Generation',
-        style: ModernInvoiceDesign.headlineMedium.copyWith(
-          color: ModernInvoiceDesign.textOnPrimary,
+        style: ModernInvoiceDesign.displaySmall.copyWith(
+          color: Colors.white,
           fontWeight: FontWeight.w600,
+          fontSize: 20, // Slightly smaller for AppBar
         ),
       ),
       centerTitle: true,
+      backgroundColor: ModernInvoiceDesign.primary,
     );
   }
 
@@ -225,7 +227,7 @@ class _AutomaticInvoiceGenerationViewState
                   children: [
                     Text(
                       'One-Click Invoice Generation',
-                      style: ModernInvoiceDesign.headlineSmall.copyWith(
+                      style: ModernInvoiceDesign.headlineMedium.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -279,7 +281,7 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space6),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
         boxShadow: ModernInvoiceDesign.shadowMd,
       ),
@@ -292,7 +294,7 @@ class _AutomaticInvoiceGenerationViewState
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: ModernInvoiceDesign.space5),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildConfigOption(
             'Include Expenses',
             'Add expense items to invoices',
@@ -353,7 +355,7 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.background,
+        color: ModernInvoiceDesign.surfaceVariant,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
         border: Border.all(color: ModernInvoiceDesign.border),
       ),
@@ -363,9 +365,9 @@ class _AutomaticInvoiceGenerationViewState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space3),
                 decoration: BoxDecoration(
-                  color: ModernInvoiceDesign.surfaceVariant,
+                  color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
                   borderRadius:
                       BorderRadius.circular(ModernInvoiceDesign.radiusMd),
                 ),
@@ -375,13 +377,11 @@ class _AutomaticInvoiceGenerationViewState
                   size: 20,
                 ),
               ),
-              const SizedBox(width: ModernInvoiceDesign.space4),
+              const SizedBox(width: ModernInvoiceDesign.space3),
               Expanded(
                 child: Text(
                   'Invoice Period',
-                  style: ModernInvoiceDesign.titleMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: ModernInvoiceDesign.headlineSmall,
                 ),
               ),
               TextButton.icon(
@@ -390,13 +390,13 @@ class _AutomaticInvoiceGenerationViewState
                     context: context,
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2100),
-                    initialDateRange: (_selectedStartDate != null &&
-                            _selectedEndDate != null)
-                        ? DateTimeRange(
-                            start: _selectedStartDate!,
-                            end: _selectedEndDate!,
-                          )
-                        : null,
+                    initialDateRange:
+                        (_selectedStartDate != null && _selectedEndDate != null)
+                            ? DateTimeRange(
+                                start: _selectedStartDate!,
+                                end: _selectedEndDate!,
+                              )
+                            : null,
                   );
                   if (picked != null) {
                     setState(() {
@@ -442,13 +442,13 @@ class _AutomaticInvoiceGenerationViewState
       ),
     );
   }
-  
+
   /// Employees inclusion/selection UI for intuitive control
   Widget _buildEmployeesSelection() {
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.background,
+        color: ModernInvoiceDesign.surfaceVariant,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
         border: Border.all(color: ModernInvoiceDesign.border),
       ),
@@ -458,10 +458,11 @@ class _AutomaticInvoiceGenerationViewState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space3),
                 decoration: BoxDecoration(
-                  color: ModernInvoiceDesign.surfaceVariant,
-                  borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                  color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+                  borderRadius:
+                      BorderRadius.circular(ModernInvoiceDesign.radiusMd),
                 ),
                 child: Icon(
                   Icons.people_alt,
@@ -469,12 +470,10 @@ class _AutomaticInvoiceGenerationViewState
                   size: 20,
                 ),
               ),
-              const SizedBox(width: ModernInvoiceDesign.space4),
+              const SizedBox(width: ModernInvoiceDesign.space3),
               Text(
                 'Employees',
-                style: ModernInvoiceDesign.titleMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ModernInvoiceDesign.headlineSmall,
               ),
             ],
           ),
@@ -492,7 +491,8 @@ class _AutomaticInvoiceGenerationViewState
             contentPadding: EdgeInsets.zero,
           ),
           RadioListTile<bool>(
-            title: Text('Select Employees', style: ModernInvoiceDesign.bodyMedium),
+            title:
+                Text('Select Employees', style: ModernInvoiceDesign.bodyMedium),
             value: true,
             groupValue: _useSelectedEmployees,
             onChanged: (value) async {
@@ -506,7 +506,7 @@ class _AutomaticInvoiceGenerationViewState
             contentPadding: EdgeInsets.zero,
           ),
           if (_useSelectedEmployees) ...[
-            const SizedBox(height: ModernInvoiceDesign.space2),
+            const SizedBox(height: ModernInvoiceDesign.space3),
             Row(
               children: [
                 Expanded(
@@ -534,12 +534,12 @@ class _AutomaticInvoiceGenerationViewState
       ),
     );
   }
-  
+
   Widget _buildBankDetailsSelection() {
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.background,
+        color: ModernInvoiceDesign.surfaceVariant,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
         border: Border.all(color: ModernInvoiceDesign.border),
       ),
@@ -549,10 +549,11 @@ class _AutomaticInvoiceGenerationViewState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space3),
                 decoration: BoxDecoration(
-                  color: ModernInvoiceDesign.surfaceVariant,
-                  borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                  color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+                  borderRadius:
+                      BorderRadius.circular(ModernInvoiceDesign.radiusMd),
                 ),
                 child: Icon(
                   Icons.account_balance,
@@ -560,19 +561,17 @@ class _AutomaticInvoiceGenerationViewState
                   size: 20,
                 ),
               ),
-              const SizedBox(width: ModernInvoiceDesign.space4),
+              const SizedBox(width: ModernInvoiceDesign.space3),
               Text(
                 'Bank Details',
-                style: ModernInvoiceDesign.titleMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ModernInvoiceDesign.headlineSmall,
               ),
             ],
           ),
           const SizedBox(height: ModernInvoiceDesign.space3),
           RadioListTile<bool>(
-            title: Text('Employee Bank Details', 
-              style: ModernInvoiceDesign.bodyMedium),
+            title: Text('Employee Bank Details',
+                style: ModernInvoiceDesign.bodyMedium),
             value: false,
             groupValue: _useAdminBankDetails,
             onChanged: (value) {
@@ -583,8 +582,8 @@ class _AutomaticInvoiceGenerationViewState
             contentPadding: EdgeInsets.zero,
           ),
           RadioListTile<bool>(
-            title: Text('Admin Bank Details', 
-              style: ModernInvoiceDesign.bodyMedium),
+            title: Text('Admin Bank Details',
+                style: ModernInvoiceDesign.bodyMedium),
             value: true,
             groupValue: _useAdminBankDetails,
             onChanged: (value) {
@@ -610,24 +609,24 @@ class _AutomaticInvoiceGenerationViewState
       padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
       decoration: BoxDecoration(
         color: value
-            ? ModernInvoiceDesign.primary.withValues(alpha: 0.05)
-            : ModernInvoiceDesign.background,
+            ? ModernInvoiceDesign.primary.withValues(alpha: 0.1)
+            : ModernInvoiceDesign.surfaceVariant,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
         border: Border.all(
           color: value
-              ? ModernInvoiceDesign.primary.withValues(alpha: 0.3)
+              ? ModernInvoiceDesign.primary.withValues(alpha: 0.1)
               : ModernInvoiceDesign.border,
         ),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+            padding: const EdgeInsets.all(ModernInvoiceDesign.space3),
             decoration: BoxDecoration(
               color: value
                   ? ModernInvoiceDesign.primary.withValues(alpha: 0.1)
-                  : ModernInvoiceDesign.surfaceVariant,
-              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                  : ModernInvoiceDesign.primary.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
             ),
             child: Icon(
               icon,
@@ -648,7 +647,7 @@ class _AutomaticInvoiceGenerationViewState
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: ModernInvoiceDesign.space1),
+                const SizedBox(height: ModernInvoiceDesign.space2),
                 Text(
                   subtitle,
                   style: ModernInvoiceDesign.bodySmall.copyWith(
@@ -661,7 +660,7 @@ class _AutomaticInvoiceGenerationViewState
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: ModernInvoiceDesign.primary,
+            activeThumbColor: ModernInvoiceDesign.primary,
           ),
         ],
       ),
@@ -672,8 +671,8 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.background,
-        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
+        color: ModernInvoiceDesign.surfaceVariant,
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
         border: Border.all(color: ModernInvoiceDesign.border),
       ),
       child: Column(
@@ -702,9 +701,9 @@ class _AutomaticInvoiceGenerationViewState
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: ModernInvoiceDesign.primary,
               inactiveTrackColor:
-                  ModernInvoiceDesign.primary.withValues(alpha: 0.3),
+                  ModernInvoiceDesign.primary.withValues(alpha: 0.1),
               thumbColor: ModernInvoiceDesign.primary,
-              overlayColor: ModernInvoiceDesign.primary.withValues(alpha: 0.2),
+              overlayColor: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
             ),
             child: Slider(
               value: _taxRate,
@@ -724,7 +723,7 @@ class _AutomaticInvoiceGenerationViewState
       Container(
         padding: const EdgeInsets.all(ModernInvoiceDesign.space6),
         decoration: BoxDecoration(
-          color: ModernInvoiceDesign.surface,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
           boxShadow: ModernInvoiceDesign.shadowMd,
         ),
@@ -754,23 +753,23 @@ class _AutomaticInvoiceGenerationViewState
                 ),
               ],
             ),
-            const SizedBox(height: ModernInvoiceDesign.space5),
+            const SizedBox(height: ModernInvoiceDesign.space6),
             LinearProgressIndicator(
               value: state.progress,
-              backgroundColor:
-                  ModernInvoiceDesign.primary.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(
                 ModernInvoiceDesign.primary,
               ),
+              backgroundColor:
+                  ModernInvoiceDesign.primary.withValues(alpha: 0.1),
             ),
-            const SizedBox(height: ModernInvoiceDesign.space3),
+            const SizedBox(height: ModernInvoiceDesign.space4),
             Text(
               state.currentStep,
               style: ModernInvoiceDesign.bodyMedium.copyWith(
                 color: ModernInvoiceDesign.textSecondary,
               ),
             ),
-            const SizedBox(height: ModernInvoiceDesign.space2),
+            const SizedBox(height: ModernInvoiceDesign.space4),
             Text(
               '${(state.progress * 100).toStringAsFixed(0)}% Complete',
               style: ModernInvoiceDesign.bodySmall.copyWith(
@@ -790,26 +789,15 @@ class _AutomaticInvoiceGenerationViewState
       width: double.infinity,
       height: 56,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            ModernInvoiceDesign.primary,
-            ModernInvoiceDesign.primary.withValues(alpha: 0.8),
-          ],
-        ),
+        gradient: ModernInvoiceDesign.primaryGradient,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
-        boxShadow: [
-          BoxShadow(
-            color: ModernInvoiceDesign.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        boxShadow: ModernInvoiceDesign.shadowPrimaryGlow,
       ),
       child: ElevatedButton.icon(
         onPressed: _generateInvoices,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
-          foregroundColor: ModernInvoiceDesign.textOnPrimary,
+          foregroundColor: Colors.white,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
@@ -819,7 +807,7 @@ class _AutomaticInvoiceGenerationViewState
         label: Text(
           'Generate All Invoices',
           style: ModernInvoiceDesign.headlineSmall.copyWith(
-            color: ModernInvoiceDesign.textOnPrimary,
+            color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -831,7 +819,7 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space6),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
         boxShadow: ModernInvoiceDesign.shadowMd,
       ),
@@ -841,7 +829,7 @@ class _AutomaticInvoiceGenerationViewState
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(ModernInvoiceDesign.space3),
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
                 decoration: BoxDecoration(
                   color: ModernInvoiceDesign.success.withValues(alpha: 0.1),
                   borderRadius:
@@ -865,7 +853,7 @@ class _AutomaticInvoiceGenerationViewState
                         color: ModernInvoiceDesign.success,
                       ),
                     ),
-                    const SizedBox(height: ModernInvoiceDesign.space1),
+                    const SizedBox(height: ModernInvoiceDesign.space2),
                     Text(
                       'All invoices have been generated successfully',
                       style: ModernInvoiceDesign.bodyMedium.copyWith(
@@ -877,49 +865,29 @@ class _AutomaticInvoiceGenerationViewState
               ),
             ],
           ),
-          const SizedBox(height: ModernInvoiceDesign.space5),
+          const SizedBox(height: ModernInvoiceDesign.space6),
           _buildStatCard(
               'Total Employees', state.totalEmployees.toString(), Icons.people),
-          const SizedBox(height: ModernInvoiceDesign.space3),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildStatCard(
               'Total Clients', state.totalClients.toString(), Icons.business),
-          const SizedBox(height: ModernInvoiceDesign.space3),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildStatCard(
               'Valid Pairs', state.validPairs.toString(), Icons.link),
-          const SizedBox(height: ModernInvoiceDesign.space3),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildStatCard('Generated Invoices',
               state.generatedPdfPaths.length.toString(), Icons.description),
-          const SizedBox(height: ModernInvoiceDesign.space5),
+          const SizedBox(height: ModernInvoiceDesign.space6),
           if (state.generatedPdfPaths.isNotEmpty) ...[
             _buildGeneratedPdfsSection(state.generatedPdfPaths),
-            const SizedBox(height: ModernInvoiceDesign.space5),
+            const SizedBox(height: ModernInvoiceDesign.space6),
           ],
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  ModernInvoiceDesign.primary,
-                  ModernInvoiceDesign.primary.withValues(alpha: 0.8),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: ModernInvoiceDesign.primaryGradient,
               borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
-              boxShadow: [
-                BoxShadow(
-                  color: ModernInvoiceDesign.primary.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: ModernInvoiceDesign.neutral900.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                  spreadRadius: 0,
-                ),
-              ],
+              boxShadow: ModernInvoiceDesign.shadowPrimaryGlow,
             ),
             child: Material(
               color: Colors.transparent,
@@ -929,30 +897,27 @@ class _AutomaticInvoiceGenerationViewState
                 onTap: _resetGeneration,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 18, horizontal: ModernInvoiceDesign.space6),
+                      vertical: 18, horizontal: 24.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding:
-                            const EdgeInsets.all(ModernInvoiceDesign.space2),
+                        padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
-                          color: ModernInvoiceDesign.neutral50
-                              .withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(
-                              ModernInvoiceDesign.radiusMd),
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Icon(
                           Icons.refresh_rounded,
-                          color: ModernInvoiceDesign.neutral50,
+                          color: Colors.white,
                           size: 20,
                         ),
                       ),
-                      const SizedBox(width: ModernInvoiceDesign.space3),
+                      const SizedBox(width: 8.0),
                       Text(
                         'Generate Again',
                         style: ModernInvoiceDesign.bodyLarge.copyWith(
-                          color: ModernInvoiceDesign.neutral50,
+                          color: Colors.white,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -972,7 +937,7 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.background,
+        color: ModernInvoiceDesign.surfaceVariant,
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
         border: Border.all(color: ModernInvoiceDesign.border),
       ),
@@ -1008,10 +973,10 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(ModernInvoiceDesign.space6),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.error.withValues(alpha: 0.05),
+        color: ModernInvoiceDesign.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
         border:
-            Border.all(color: ModernInvoiceDesign.error.withValues(alpha: 0.3)),
+            Border.all(color: ModernInvoiceDesign.error.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1042,16 +1007,15 @@ class _AutomaticInvoiceGenerationViewState
               color: ModernInvoiceDesign.error,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _resetGeneration,
               style: ElevatedButton.styleFrom(
-                backgroundColor: ModernInvoiceDesign.error,
-                foregroundColor: ModernInvoiceDesign.neutral50,
-                padding: const EdgeInsets.symmetric(
-                    vertical: ModernInvoiceDesign.space4),
+                backgroundColor: ModernInvoiceDesign.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(ModernInvoiceDesign.radiusLg),
@@ -1071,7 +1035,6 @@ class _AutomaticInvoiceGenerationViewState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Organization ID not found'),
-          backgroundColor: ModernInvoiceDesign.error,
         ),
       );
       return;
@@ -1082,7 +1045,6 @@ class _AutomaticInvoiceGenerationViewState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select at least one employee'),
-          backgroundColor: ModernInvoiceDesign.error,
         ),
       );
       return;
@@ -1093,7 +1055,6 @@ class _AutomaticInvoiceGenerationViewState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Tax rate cannot be negative when tax is applied'),
-          backgroundColor: ModernInvoiceDesign.error,
         ),
       );
       return;
@@ -1105,7 +1066,6 @@ class _AutomaticInvoiceGenerationViewState
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('End date must be on or after start date'),
-            backgroundColor: ModernInvoiceDesign.error,
           ),
         );
         return;
@@ -1166,13 +1126,12 @@ class _AutomaticInvoiceGenerationViewState
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.people_alt, color: ModernInvoiceDesign.primary),
-                      const SizedBox(width: ModernInvoiceDesign.space3),
+                      Icon(Icons.people_alt,
+                          color: ModernInvoiceDesign.primary),
+                      const SizedBox(width: ModernInvoiceDesign.space2),
                       Text(
                         'Select Employees',
-                        style: ModernInvoiceDesign.titleMedium.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: ModernInvoiceDesign.headlineSmall,
                       ),
                       const Spacer(),
                       IconButton(
@@ -1181,7 +1140,7 @@ class _AutomaticInvoiceGenerationViewState
                       ),
                     ],
                   ),
-                  const SizedBox(height: ModernInvoiceDesign.space3),
+                  const SizedBox(height: ModernInvoiceDesign.space4),
                   if (s.isLoading && s.employees.isEmpty)
                     const Padding(
                       padding: EdgeInsets.all(16.0),
@@ -1193,27 +1152,30 @@ class _AutomaticInvoiceGenerationViewState
                       style: ModernInvoiceDesign.bodyMedium,
                     )
                   else
-                    Flexible(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: s.employees.length,
-                        itemBuilder: (context, index) {
-                          final emp = s.employees[index];
-                          final isChecked = emp.isSelected ||
-                              _selectedEmployeeEmails.contains(emp.email);
-                          return CheckboxListTile(
-                            title: Text(emp.name),
-                            subtitle: Text(emp.email),
-                            value: isChecked,
-                            activeColor: ModernInvoiceDesign.primary,
-                            onChanged: (val) {
-                              ref.read(provider.notifier).toggleEmployeeSelection(emp.id);
-                            },
-                          );
-                        },
-                      ),
+                    const SizedBox(height: ModernInvoiceDesign.space4),
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: s.employees.length,
+                      itemBuilder: (context, index) {
+                        final emp = s.employees[index];
+                        final isChecked = emp.isSelected ||
+                            _selectedEmployeeEmails.contains(emp.email);
+                        return CheckboxListTile(
+                          title: Text(emp.name),
+                          subtitle: Text(emp.email),
+                          value: isChecked,
+                          activeColor: ModernInvoiceDesign.primary,
+                          onChanged: (val) {
+                            ref
+                                .read(provider.notifier)
+                                .toggleEmployeeSelection(emp.id);
+                          },
+                        );
+                      },
                     ),
-                  const SizedBox(height: ModernInvoiceDesign.space3),
+                  ),
+                  const SizedBox(height: ModernInvoiceDesign.space4),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -1236,10 +1198,9 @@ class _AutomaticInvoiceGenerationViewState
                       label: const Text('Confirm Selection'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ModernInvoiceDesign.primary,
-                        foregroundColor: ModernInvoiceDesign.textOnPrimary,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
-                          vertical: ModernInvoiceDesign.space4,
-                        ),
+                            vertical: ModernInvoiceDesign.space4),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               ModernInvoiceDesign.radiusLg),
@@ -1280,13 +1241,13 @@ class _AutomaticInvoiceGenerationViewState
         ),
         boxShadow: [
           BoxShadow(
-            color: ModernInvoiceDesign.primary.withValues(alpha: 0.08),
+            color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: ModernInvoiceDesign.neutral900.withValues(alpha: 0.04),
+            color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -1299,12 +1260,12 @@ class _AutomaticInvoiceGenerationViewState
           Container(
             padding: const EdgeInsets.symmetric(
                 horizontal: ModernInvoiceDesign.space4,
-                vertical: ModernInvoiceDesign.space3),
+                vertical: ModernInvoiceDesign.space2),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-                  ModernInvoiceDesign.primary.withValues(alpha: 0.05),
+                  ModernInvoiceDesign.primary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
@@ -1312,7 +1273,7 @@ class _AutomaticInvoiceGenerationViewState
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                  padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: ModernInvoiceDesign.primary,
                     borderRadius:
@@ -1320,7 +1281,7 @@ class _AutomaticInvoiceGenerationViewState
                     boxShadow: [
                       BoxShadow(
                         color:
-                            ModernInvoiceDesign.primary.withValues(alpha: 0.3),
+                            ModernInvoiceDesign.primary.withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -1328,11 +1289,11 @@ class _AutomaticInvoiceGenerationViewState
                   ),
                   child: Icon(
                     Icons.file_present_rounded,
-                    color: ModernInvoiceDesign.neutral50,
+                    color: Colors.white,
                     size: 24,
                   ),
                 ),
-                const SizedBox(width: ModernInvoiceDesign.space4),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1368,45 +1329,34 @@ class _AutomaticInvoiceGenerationViewState
                   ? const EdgeInsets.only(bottom: ModernInvoiceDesign.space4)
                   : EdgeInsets.zero,
               decoration: BoxDecoration(
-                color: ModernInvoiceDesign.neutral50,
-                borderRadius:
-                    BorderRadius.circular(ModernInvoiceDesign.radiusXl),
+                color: ModernInvoiceDesign.surfaceVariant,
+                borderRadius: BorderRadius.circular(16.0),
                 border: Border.all(
-                  color: ModernInvoiceDesign.border.withValues(alpha: 0.5),
+                  color: ModernInvoiceDesign.border.withValues(alpha: 0.1),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color:
-                        ModernInvoiceDesign.neutral900.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                boxShadow: ModernInvoiceDesign.shadowSm,
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius:
-                      BorderRadius.circular(ModernInvoiceDesign.radiusXl),
+                  borderRadius: BorderRadius.circular(16.0),
                   onTap: () => _viewPdf(pdfPath),
                   child: Padding(
-                    padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+                    padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
                         Container(
-                          padding:
-                              const EdgeInsets.all(ModernInvoiceDesign.space3),
+                          padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
                                 ModernInvoiceDesign.success
-                                    .withValues(alpha: 0.15),
+                                    .withValues(alpha: 0.1),
                                 ModernInvoiceDesign.success
-                                    .withValues(alpha: 0.08),
+                                    .withValues(alpha: 0.1),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(
-                                ModernInvoiceDesign.radiusLg),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
                           child: Icon(
                             Icons.picture_as_pdf_rounded,
@@ -1414,7 +1364,7 @@ class _AutomaticInvoiceGenerationViewState
                             size: 24,
                           ),
                         ),
-                        const SizedBox(width: ModernInvoiceDesign.space4),
+                        const SizedBox(width: 16.0),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1423,13 +1373,11 @@ class _AutomaticInvoiceGenerationViewState
                                 fileName,
                                 style: ModernInvoiceDesign.bodyLarge.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: ModernInvoiceDesign.textPrimary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(
-                                  height: ModernInvoiceDesign.space1),
+                              const SizedBox(height: 4.0),
                               Row(
                                 children: [
                                   Icon(
@@ -1437,8 +1385,7 @@ class _AutomaticInvoiceGenerationViewState
                                     size: 14,
                                     color: ModernInvoiceDesign.textSecondary,
                                   ),
-                                  const SizedBox(
-                                      width: ModernInvoiceDesign.space1),
+                                  const SizedBox(width: 4.0),
                                   Flexible(
                                     child: Text(
                                       'Tap to view PDF',
@@ -1472,8 +1419,7 @@ class _AutomaticInvoiceGenerationViewState
                                     onPressed: () => _viewPdf(pdfPath),
                                     tooltip: 'View PDF',
                                   ),
-                                  const SizedBox(
-                                      width: ModernInvoiceDesign.space2),
+                                  const SizedBox(width: 8.0),
                                   _buildActionButton(
                                     icon: Icons.send_rounded,
                                     onPressed: () => _sendInvoices(pdfPath),
@@ -1498,8 +1444,7 @@ class _AutomaticInvoiceGenerationViewState
                                       children: [
                                         Icon(Icons.visibility_rounded,
                                             size: 18),
-                                        SizedBox(
-                                            width: ModernInvoiceDesign.space2),
+                                        SizedBox(width: 8.0),
                                         Text('View PDF'),
                                       ],
                                     ),
@@ -1509,8 +1454,7 @@ class _AutomaticInvoiceGenerationViewState
                                     child: Row(
                                       children: [
                                         Icon(Icons.send_rounded, size: 18),
-                                        SizedBox(
-                                            width: ModernInvoiceDesign.space2),
+                                        SizedBox(width: 8.0),
                                         Text('Send Invoice'),
                                       ],
                                     ),
@@ -1520,8 +1464,7 @@ class _AutomaticInvoiceGenerationViewState
                                   decoration: BoxDecoration(
                                     color: ModernInvoiceDesign.primary
                                         .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(
-                                        ModernInvoiceDesign.radiusMd),
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   child: IconButton(
                                     onPressed: null,
@@ -1531,8 +1474,7 @@ class _AutomaticInvoiceGenerationViewState
                                       size: 20,
                                     ),
                                     tooltip: 'Actions',
-                                    padding: const EdgeInsets.all(
-                                        ModernInvoiceDesign.space2),
+                                    padding: const EdgeInsets.all(8.0),
                                   ),
                                 ),
                               );
@@ -1545,7 +1487,7 @@ class _AutomaticInvoiceGenerationViewState
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1563,7 +1505,6 @@ class _AutomaticInvoiceGenerationViewState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('PDF file not found'),
-          backgroundColor: ModernInvoiceDesign.error,
         ),
       );
     }
@@ -1586,7 +1527,7 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       decoration: BoxDecoration(
         color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: IconButton(
         onPressed: onPressed,
@@ -1596,7 +1537,7 @@ class _AutomaticInvoiceGenerationViewState
           size: 20,
         ),
         tooltip: tooltip,
-        padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+        padding: const EdgeInsets.all(8.0),
       ),
     );
   }

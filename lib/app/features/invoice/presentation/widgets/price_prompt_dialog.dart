@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:carenest/utils/hours_formatting.dart';
+import 'package:flutter/services.dart';
 
 /// Price Prompt Dialog Widget
 /// Handles missing price prompts during single invoice generation
@@ -11,11 +12,11 @@ class PricePromptDialog extends StatefulWidget {
   final VoidCallback? onCancel;
 
   const PricePromptDialog({
-    Key? key,
+    super.key,
     required this.promptData,
     required this.onPriceProvided,
     this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   State<PricePromptDialog> createState() => _PricePromptDialogState();
@@ -444,7 +445,6 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: ${error.toString()}'),
-          backgroundColor: Colors.red,
         ),
       );
     } finally {

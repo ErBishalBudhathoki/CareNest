@@ -1,14 +1,10 @@
 import 'dart:convert';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
 import 'package:carenest/app/shared/widgets/button_widget.dart';
 
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:get/get.dart';
-import 'package:flutter/services.dart';
+
 import 'add_update_invoice_email_view.dart';
 
 class InvoicingEmailView extends StatefulWidget {
@@ -27,7 +23,7 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   final _scaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'invoice_email_scaffold_key');
   var initialData = {};
-  bool _isLoading = true;
+  final bool _isLoading = true;
   final _passwordController = TextEditingController();
   ApiMethod apiMethod = ApiMethod();
   final passwordVisibleNotifier = ValueNotifier<bool>(true);
@@ -59,28 +55,26 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget build(BuildContext context) {
     debugPrint('InvoicingEmailView key: ${widget.genKey}');
     return Scaffold(
-      backgroundColor: ModernSaasDesign.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: ModernSaasDesign.surface,
-        foregroundColor: ModernSaasDesign.textPrimary,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: ModernSaasDesign.primary,
+            color: const Color(0xFF007AFF),
             size: 20,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Invoicing Email Details',
-          style: ModernSaasDesign.headlineMedium,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
         centerTitle: true,
       ),
       body: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(ModernSaasDesign.spacing6),
+        padding: EdgeInsets.all(24.0),
         child: FutureBuilder(
           future: getInvoicingEmailDetails(widget.email),
           builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
@@ -139,13 +133,13 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget _buildLoadingState() {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(ModernSaasDesign.spacing8),
+        padding: EdgeInsets.all(32.0),
         decoration: BoxDecoration(
-          color: ModernSaasDesign.surface,
-          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(8.0), // iOS standard
           boxShadow: [
             BoxShadow(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+              color: const Color(0xFF007AFF).withOpacity(0.1),
               blurRadius: 8.0,
               offset: const Offset(0, 2),
             ),
@@ -156,13 +150,13 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
           children: [
             CircularProgressIndicator(
               valueColor:
-                  AlwaysStoppedAnimation<Color>(ModernSaasDesign.primary),
+                  AlwaysStoppedAnimation<Color>(const Color(0xFF007AFF)),
               strokeWidth: 3,
             ),
-            const SizedBox(height: ModernSaasDesign.spacing4),
+            SizedBox(height: 16.0),
             Text(
               'Loading email details...',
-              style: ModernSaasDesign.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
@@ -173,13 +167,13 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget _buildErrorState(String errorMessage, String organisationName) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(ModernSaasDesign.spacing6),
+        padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
-          color: ModernSaasDesign.surface,
-          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
               blurRadius: 8.0,
               offset: const Offset(0, 2),
             ),
@@ -189,11 +183,11 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(ModernSaasDesign.spacing4),
+              padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.errorLight,
+                color: Colors.red,
                 borderRadius:
-                    BorderRadius.circular(ModernSaasDesign.radiusFull),
+                    BorderRadius.circular(999.0),
               ),
               child: Image.asset(
                 'assets/icons/3D Icons/3dicons-flash-dynamic-color.png',
@@ -201,20 +195,20 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                 height: 48,
               ),
             ),
-            const SizedBox(height: ModernSaasDesign.spacing4),
+            const SizedBox(height: 16.0),
             Text(
               'Error',
-              style: ModernSaasDesign.headlineSmall.copyWith(
-                color: ModernSaasDesign.error,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+                color: Colors.red,
               ),
             ),
-            const SizedBox(height: ModernSaasDesign.spacing2),
+            const SizedBox(height: 8.0),
             Text(
               errorMessage,
-              style: ModernSaasDesign.bodyMedium,
+              style: const TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: ModernSaasDesign.spacing6),
+            const SizedBox(height: 24.0),
             _buildModernAddButton(organisationName),
           ],
         ),
@@ -225,13 +219,13 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget _buildNoDataState(String message, String organisationName) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(ModernSaasDesign.spacing6),
+        padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
-          color: ModernSaasDesign.surface,
-          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
               blurRadius: 8.0,
               offset: const Offset(0, 2),
             ),
@@ -241,11 +235,11 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(ModernSaasDesign.spacing4),
+              padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.neutral100,
+                color: const Color(0xFFF5F5F5),
                 borderRadius:
-                    BorderRadius.circular(ModernSaasDesign.radiusFull),
+                    BorderRadius.circular(999.0),
               ),
               child: Image.asset(
                 'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
@@ -253,18 +247,18 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                 height: 48,
               ),
             ),
-            const SizedBox(height: ModernSaasDesign.spacing4),
+            const SizedBox(height: 16.0),
             Text(
               'No Email Configuration',
-              style: ModernSaasDesign.headlineSmall,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: ModernSaasDesign.spacing2),
+            const SizedBox(height: 8.0),
             Text(
               message,
-              style: ModernSaasDesign.bodyMedium,
+              style: const TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: ModernSaasDesign.spacing6),
+            const SizedBox(height: 24.0),
             _buildModernAddButton(organisationName),
           ],
         ),
@@ -304,12 +298,11 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
             ),
           );
         },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: ModernSaasDesign.primary,
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+            borderRadius: BorderRadius.circular(8.0),
           ),
         ),
         child: Row(
@@ -320,10 +313,10 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
             //   width: 20,
             //   height: 20,
             // ),
-            const SizedBox(width: ModernSaasDesign.spacing2),
+            const SizedBox(width: 8.0),
             Text(
               'Add Invoicing Email Detail',
-              style: ModernSaasDesign.labelLarge.copyWith(
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),
@@ -341,13 +334,13 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
         children: [
           // Header Section
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.spacing6),
+            padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.surface,
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
-                  color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+                  color: const Color(0xFF667EEA).withOpacity(0.1),
                   blurRadius: 8.0,
                   offset: const Offset(0, 2),
                 ),
@@ -356,13 +349,13 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(ModernSaasDesign.spacing3),
+                  padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
-                    color: ModernSaasDesign.softErrorBackground.withValues(
+                    color: const Color(0xFFFEE2E2).withValues(
                         alpha:
-                            0.18), // Soft pink background color like admin dashboard
+                            0.18), // Soft pink surface color like admin dashboard
                     borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusLg),
+                        BorderRadius.circular(12.0),
                   ),
                   child: Image.asset(
                     'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
@@ -370,20 +363,20 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                     height: 36,
                   ),
                 ),
-                const SizedBox(width: ModernSaasDesign.spacing4),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Invoicing Email Configuration',
-                        style: ModernSaasDesign.headlineSmall,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
-                      const SizedBox(height: ModernSaasDesign.spacing1),
+                      const SizedBox(height: 4.0),
                       Text(
                         'Your email settings are configured and ready',
-                        style: ModernSaasDesign.bodySmall.copyWith(
-                          color: ModernSaasDesign.textSecondary,
+                        style: const TextStyle(fontSize: 12).copyWith(
+                          color: const Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -391,13 +384,13 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: ModernSaasDesign.spacing3,
-                    vertical: ModernSaasDesign.spacing1,
+                    horizontal: 12.0,
+                    vertical: 4.0,
                   ),
                   decoration: BoxDecoration(
-                    color: ModernSaasDesign.secondaryLight,
+                    color: const Color(0xFF764BA2),
                     borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusFull),
+                        BorderRadius.circular(999.0),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -407,10 +400,10 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                       //   width: 16,
                       //   height: 16,
                       // ),
-                      const SizedBox(width: ModernSaasDesign.spacing1),
+                      const SizedBox(width: 4.0),
                       Text(
                         'Active',
-                        style: ModernSaasDesign.labelSmall.copyWith(
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
@@ -421,17 +414,17 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
               ],
             ),
           ),
-          const SizedBox(height: ModernSaasDesign.spacing6),
+          const SizedBox(height: 24.0),
 
           // Email Details Section
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.spacing6),
+            padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.surface,
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
-                  color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+                  color: const Color(0xFF667EEA).withOpacity(0.1),
                   blurRadius: 8.0,
                   offset: const Offset(0, 2),
                 ),
@@ -442,9 +435,9 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
               children: [
                 Text(
                   'Email Details',
-                  style: ModernSaasDesign.headlineSmall,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: ModernSaasDesign.spacing4),
+                const SizedBox(height: 16.0),
 
                 // Business Name
                 _buildDetailRow(
@@ -457,7 +450,7 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                   value:
                       data['data']?['invoicingBusinessName'] ?? 'No name found',
                 ),
-                const SizedBox(height: ModernSaasDesign.spacing4),
+                const SizedBox(height: 16.0),
 
                 // Email Address
                 _buildDetailRow(
@@ -469,7 +462,7 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                   label: 'Email Address',
                   value: data['email'] ?? 'No email found',
                 ),
-                const SizedBox(height: ModernSaasDesign.spacing4),
+                const SizedBox(height: 16.0),
 
                 // Password (masked)
                 _buildDetailRow(
@@ -486,7 +479,7 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
               ],
             ),
           ),
-          const SizedBox(height: ModernSaasDesign.spacing6),
+          const SizedBox(height: 24.0),
 
           // Action Button
           _buildModernAddButton(
@@ -504,45 +497,45 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
     bool isPassword = false,
   }) {
     return Container(
-      padding: const EdgeInsets.all(ModernSaasDesign.spacing4),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.neutral50,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+        color: const Color(0xFFFAFAFA),
+        borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: ModernSaasDesign.border,
+          color: const Color(0xFFE0E0E0),
           width: 1,
         ),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.spacing2),
+            padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.surface,
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.0),
             ),
             child: iconWidget ??
                 Icon(
                   icon ?? Icons.help,
-                  color: ModernSaasDesign.primary,
+                  color: const Color(0xFF667EEA),
                   size: 20,
                 ),
           ),
-          const SizedBox(width: ModernSaasDesign.spacing3),
+          const SizedBox(width: 12.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: ModernSaasDesign.labelMedium.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                 ),
-                const SizedBox(height: ModernSaasDesign.spacing1),
+                const SizedBox(height: 4.0),
                 Text(
                   value,
-                  style: ModernSaasDesign.bodyMedium.copyWith(
+                  style: const TextStyle(fontSize: 14).copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),

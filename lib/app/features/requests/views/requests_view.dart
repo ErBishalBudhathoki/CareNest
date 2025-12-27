@@ -7,7 +7,7 @@ import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 class RequestsView extends StatefulWidget {
   final String email;
 
-  const RequestsView({Key? key, required this.email}) : super(key: key);
+  const RequestsView({super.key, required this.email});
 
   @override
   State<RequestsView> createState() => _RequestsViewState();
@@ -43,7 +43,6 @@ class _RequestsViewState extends State<RequestsView> {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
-                  backgroundColor: AppColors.colorWhite,
                   shape: const RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(20)),
@@ -83,7 +82,6 @@ class _RequestsViewState extends State<RequestsView> {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
-                  backgroundColor: AppColors.colorWhite,
                   shape: const RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(20)),
@@ -142,7 +140,6 @@ class _RequestsViewState extends State<RequestsView> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: AppColors.colorTransparent,
         elevation: 0,
       ),
       body: Column(
@@ -224,8 +221,7 @@ class _RequestsViewState extends State<RequestsView> {
         padding: const EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: _showRequestOptions,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.colorBlue,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),

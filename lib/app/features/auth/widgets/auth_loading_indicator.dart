@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:iconsax/iconsax.dart';
 
 /// Enhanced loading indicator widget for authentication processes
 /// with smooth animations and user feedback
@@ -11,12 +10,12 @@ class AuthLoadingIndicator extends StatefulWidget {
   final Duration animationDuration;
 
   const AuthLoadingIndicator({
-    Key? key,
+    super.key,
     this.message = 'Signing you in...',
     this.isVisible = false,
     this.onCancel,
     this.animationDuration = const Duration(milliseconds: 300),
-  }) : super(key: key);
+  });
 
   @override
   State<AuthLoadingIndicator> createState() => _AuthLoadingIndicatorState();
@@ -123,7 +122,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
         return Opacity(
           opacity: _fadeAnimation.value,
           child: Container(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: Colors.black.withOpacity(0.1),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.all(32),
@@ -133,7 +132,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withOpacity(0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -165,10 +164,10 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                     ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Iconsax.security_safe,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                    Icons.security_outlined,
                                     color: Colors.white,
                                     size: 30,
                                   ),
@@ -243,12 +242,12 @@ class AuthLoadingOverlay extends StatelessWidget {
   final VoidCallback? onCancel;
 
   const AuthLoadingOverlay({
-    Key? key,
+    super.key,
     required this.child,
     this.isLoading = false,
     this.loadingMessage = 'Processing...',
     this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +276,7 @@ class AuthLoadingButton extends StatelessWidget {
   final double height;
 
   const AuthLoadingButton({
-    Key? key,
+    super.key,
     required this.text,
     this.loadingText = 'Please wait...',
     this.isLoading = false,
@@ -285,30 +284,28 @@ class AuthLoadingButton extends StatelessWidget {
     this.isPrimary = true,
     this.width,
     this.height = 56,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isPrimary ? AppColors.colorPrimary : AppColors.colorBackground,
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
           foregroundColor: isPrimary ? Colors.white : AppColors.colorPrimary,
           elevation: isPrimary ? 2 : 0,
           side: isPrimary
               ? null
               : BorderSide(
-                  color: AppColors.colorPrimary.withValues(alpha: 0.3)),
+                  color: AppColors.colorPrimary.withOpacity(0.1)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           disabledBackgroundColor: isPrimary
-              ? AppColors.colorPrimary.withValues(alpha: 0.6)
-              : AppColors.colorBackground.withValues(alpha: 0.6),
+              ? AppColors.colorPrimary.withOpacity(0.1)
+              : AppColors.colorBackground.withOpacity(0.1),
         ),
         child: isLoading
             ? Row(
@@ -331,8 +328,8 @@ class AuthLoadingButton extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: isPrimary
-                          ? Colors.white.withValues(alpha: 0.8)
-                          : AppColors.colorPrimary.withValues(alpha: 0.8),
+                          ? Colors.white.withOpacity(0.1)
+                          : AppColors.colorPrimary.withOpacity(0.1),
                     ),
                   ),
                 ],

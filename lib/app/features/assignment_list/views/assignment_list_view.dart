@@ -4,25 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // <--- THIS LINE FIXES THE ERROR
 import 'package:carenest/app/features/assignment_list/viewmodels/assignment_list_viewmodel.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/features/assignment/views/ndis_item_selection_view.dart';
-import 'package:flutter/foundation.dart';
 
 class AssignmentListView extends ConsumerStatefulWidget {
   final String userEmail;
   final String organizationId;
 
   const AssignmentListView({
-    Key? key,
+    super.key,
     required this.userEmail,
     required this.organizationId,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<AssignmentListView> createState() => _AssignmentListViewState();
@@ -49,18 +46,16 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
     final viewModel = ref.read(assignmentListViewModelProvider.notifier);
 
     return Scaffold(
-      backgroundColor: ModernSaasDesign.background,
       appBar: AppBar(
         title: Text(
           'Organization Assignments',
-          style: ModernSaasDesign.headlineMedium.copyWith(
-            color: ModernSaasDesign.textPrimary,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
+            color: const Color(0xFF1F2937),
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: ModernSaasDesign.surface,
         elevation: 0,
-        iconTheme: const IconThemeData(color: ModernSaasDesign.primary),
+        iconTheme: const IconThemeData(color: Color(0xFF667EEA)),
       ),
       body: _buildBody(state, viewModel),
     );
@@ -80,20 +75,20 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             const Icon(
               Icons.error_outline,
               size: 64,
-              color: ModernSaasDesign.error,
+              color: Colors.red,
             ),
             const SizedBox(height: 16),
             Text(
               'Error Loading Assignments',
-              style: ModernSaasDesign.headlineMedium.copyWith(
-                color: ModernSaasDesign.error,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
+                color: Colors.red,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               state.errorMessage,
-              style: ModernSaasDesign.bodyMedium.copyWith(
-                color: ModernSaasDesign.neutral600,
+              style: const TextStyle(fontSize: 14).copyWith(
+                color: const Color(0xFF525252),
               ),
               textAlign: TextAlign.center,
             ),
@@ -101,8 +96,7 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             ElevatedButton(
               onPressed: () =>
                   viewModel.loadOrganizationAssignments(widget.organizationId),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ModernSaasDesign.primary,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
               child: const Text('Retry'),
@@ -120,20 +114,20 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             Icon(
               Icons.assignment_outlined,
               size: 64,
-              color: ModernSaasDesign.neutral600,
+              color: const Color(0xFF525252),
             ),
             const SizedBox(height: 16),
             Text(
               'No Assignments Found',
-              style: ModernSaasDesign.headlineMedium.copyWith(
-                color: ModernSaasDesign.textPrimary,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
+                color: const Color(0xFF1F2937),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'There are no assignments for this organization yet.',
-              style: ModernSaasDesign.bodyMedium.copyWith(
-                color: ModernSaasDesign.neutral600,
+              style: const TextStyle(fontSize: 14).copyWith(
+                color: const Color(0xFF525252),
               ),
               textAlign: TextAlign.center,
             ),
@@ -184,10 +178,10 @@ class EnhancedAssignmentCard extends StatefulWidget {
   final VoidCallback onEdit;
 
   const EnhancedAssignmentCard({
-    Key? key,
+    super.key,
     required this.assignment,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedAssignmentCard> createState() => _EnhancedAssignmentCardState();
@@ -265,10 +259,10 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 0,
-      color: ModernSaasDesign.surface,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: ModernSaasDesign.border, width: 1),
+        side: BorderSide(color: const Color(0xFFE0E0E0), width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -288,15 +282,15 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                             ? _getDisplayName(userEmail)
                             : '${(employeeDetails?["firstName"] ?? "") + " " + (employeeDetails?["lastName"] ?? "")}'
                                 .trim(),
-                        style: ModernSaasDesign.headlineSmall.copyWith(
-                          color: ModernSaasDesign.textPrimary,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+                          color: const Color(0xFF1F2937),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Client: ${clientDetails?.clientFirstName ?? ''} ${clientDetails?.clientLastName ?? _getDisplayName(clientEmail)}',
-                        style: ModernSaasDesign.bodyMedium.copyWith(
-                          color: ModernSaasDesign.textSecondary,
+                        style: const TextStyle(fontSize: 14).copyWith(
+                          color: const Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -308,13 +302,13 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+                        color: const Color(0xFF667EEA).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '${scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length} Shift${(scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length) != 1 ? 's' : ''}',
-                        style: ModernSaasDesign.bodySmall.copyWith(
-                          color: ModernSaasDesign.primary,
+                        style: const TextStyle(fontSize: 12).copyWith(
+                          color: const Color(0xFF667EEA),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -322,9 +316,9 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                     const SizedBox(width: 8),
                     IconButton(
                       onPressed: widget.onEdit,
-                      icon: const Icon(Iconsax.edit),
+                      icon: const Icon(Icons.edit),
                       iconSize: 20,
-                      color: ModernSaasDesign.primary,
+                      color: const Color(0xFF667EEA),
                     ),
                   ],
                 ),
@@ -339,14 +333,14 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                 });
               },
               icon: Icon(
-                showFullDetails ? Iconsax.arrow_up_2 : Iconsax.arrow_down_1,
+                showFullDetails ? Icons.expand_less : Icons.expand_more,
                 size: 16,
               ),
               label: Text(
                 showFullDetails ? 'Show Less Details' : 'Show More Details',
                 style: TextStyle(
                   fontSize: 14,
-                  color: ModernSaasDesign.primary,
+                  color: const Color(0xFF667EEA),
                 ),
               ),
             ),
@@ -357,7 +351,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: ModernSaasDesign.textPrimary,
+                  color: Color(0xFF1F2937),
                 ),
               ),
               const SizedBox(height: 8),
@@ -399,7 +393,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                     style: TextStyle(
                       fontSize: 12,
                       fontStyle: FontStyle.italic,
-                      color: ModernSaasDesign.neutral600,
+                      color: const Color(0xFF525252),
                     ),
                   ),
                 ),
@@ -412,7 +406,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                   'Created: ${_formatDate(createdAt)}',
                   style: TextStyle(
                     fontSize: 12,
-                    color: ModernSaasDesign.neutral600,
+                    color: const Color(0xFF525252),
                   ),
                 ),
                 Text(
@@ -420,7 +414,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: ModernSaasDesign.primary,
+                    color: const Color(0xFF667EEA),
                   ),
                 ),
               ],
@@ -554,7 +548,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
               _formatShiftDate(date),
               style: TextStyle(
                 fontSize: 12,
-                color: ModernSaasDesign.textPrimary,
+                color: const Color(0xFF1F2937),
               ),
             ),
           ),
@@ -564,7 +558,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
               '$startTime - $endTime',
               style: TextStyle(
                 fontSize: 12,
-                color: ModernSaasDesign.textPrimary,
+                color: const Color(0xFF1F2937),
               ),
             ),
           ),
@@ -574,13 +568,13 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
               'Break: $breakTime',
               style: TextStyle(
                 fontSize: 12,
-                color: ModernSaasDesign.neutral600,
+                color: const Color(0xFF525252),
               ),
             ),
           ),
           if (isHighIntensity)
             Icon(Icons.fitness_center,
-                size: 16, color: ModernSaasDesign.primary),
+                size: 16, color: const Color(0xFF667EEA)),
         ],
       ),
     );
@@ -589,7 +583,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
   String _getDisplayName(String email) {
     if (email.isEmpty) return 'Unknown';
     final parts = email.split('@');
-    if (parts.length > 0) {
+    if (parts.isNotEmpty) {
       return parts[0].replaceAll('.', ' ').replaceAll('_', ' ');
     }
     return email;
@@ -693,8 +687,7 @@ class EditAssignmentDialog extends ConsumerStatefulWidget {
   final String organizationId;
 
   const EditAssignmentDialog(
-      {Key? key, required this.assignment, required this.organizationId})
-      : super(key: key);
+      {super.key, required this.assignment, required this.organizationId});
 
   @override
   ConsumerState<EditAssignmentDialog> createState() =>
@@ -788,7 +781,6 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
 
   Widget _buildEditAssignmentDialog() {
     return Dialog(
-      backgroundColor: Colors.white,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
         constraints: BoxConstraints(
@@ -803,7 +795,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: ModernSaasDesign.neutral200,
+                    color: const Color(0xFFE5E5E5),
                     width: 1,
                   ),
                 ),
@@ -816,17 +808,16 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: ModernSaasDesign.textPrimary,
+                      color: const Color(0xFF1F2937),
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(
                       Icons.close,
-                      color: ModernSaasDesign.textSecondary,
+                      color: const Color(0xFF6B7280),
                     ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: ModernSaasDesign.neutral100,
+                    style: IconButton.styleFrom(backgroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -845,7 +836,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+                        color: const Color(0xFF667EEA).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
@@ -920,7 +911,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: ModernSaasDesign.neutral200,
+                    color: const Color(0xFFE5E5E5),
                     width: 1,
                   ),
                 ),
@@ -934,8 +925,8 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: ModernSaasDesign.neutral300),
-                          foregroundColor: ModernSaasDesign.textSecondary,
+                          side: BorderSide(color: const Color(0xFFD4D4D4)),
+                          foregroundColor: const Color(0xFF6B7280),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 8,
@@ -958,8 +949,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                     Flexible(
                       child: ElevatedButton(
                         onPressed: isLoading ? null : _saveChanges,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ModernSaasDesign.primary,
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -1028,17 +1018,22 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                   onPressed: () {
                     setState(() {
                       if (dateList.length > index) dateList.removeAt(index);
-                      if (startTimeList.length > index)
+                      if (startTimeList.length > index) {
                         startTimeList.removeAt(index);
-                      if (endTimeList.length > index)
+                      }
+                      if (endTimeList.length > index) {
                         endTimeList.removeAt(index);
+                      }
                       if (breakList.length > index) breakList.removeAt(index);
-                      if (highIntensityList.length > index)
+                      if (highIntensityList.length > index) {
                         highIntensityList.removeAt(index);
-                      if (scheduleNdisItems.length > index)
+                      }
+                      if (scheduleNdisItems.length > index) {
                         scheduleNdisItems.removeAt(index);
-                      if (scheduleCustomPricing.length > index)
+                      }
+                      if (scheduleCustomPricing.length > index) {
                         scheduleCustomPricing.removeAt(index);
+                      }
                     });
                   },
                   icon: const Icon(Icons.delete, color: Colors.red),
@@ -1185,7 +1180,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                         highIntensityList[index] = value;
                       });
                     },
-                    activeColor: ModernSaasDesign.primary,
+                    activeThumbColor: const Color(0xFF667EEA),
                   ),
                 ),
               ],
@@ -1274,7 +1269,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
         }
         final dateParts = picked.toIso8601String().split('T');
         dateList[index] =
-            dateParts.length > 0 ? dateParts[0] : picked.toIso8601String();
+            dateParts.isNotEmpty ? dateParts[0] : picked.toIso8601String();
       });
     }
   }
@@ -1460,7 +1455,6 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Assignment updated successfully'),
-          backgroundColor: Colors.green,
         ),
       );
 
@@ -1474,7 +1468,6 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error updating assignment: $e'),
-          backgroundColor: Colors.red,
         ),
       );
     } finally {

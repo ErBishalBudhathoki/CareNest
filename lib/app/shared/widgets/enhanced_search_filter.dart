@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 
 /// Enhanced Search and Filter Bar
 class EnhancedSearchFilterBar extends StatefulWidget {
@@ -57,7 +55,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
         _buildSearchBar(),
         if (widget.showFilterChips &&
             widget.activeFilters?.isNotEmpty == true) ...[
-          const SizedBox(height: ModernSaasDesign.space2),
+          const SizedBox(height: 8.0),
           _buildActiveFilters(),
         ],
       ],
@@ -67,18 +65,18 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
   Widget _buildSearchBar() {
     return Container(
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _isSearchFocused
-              ? ModernSaasDesign.primary
-              : ModernSaasDesign.border,
+              ? const Color(0xFF667EEA)
+              : const Color(0xFFE0E0E0),
           width: _isSearchFocused ? 2 : 1,
         ),
         boxShadow: [
           if (_isSearchFocused)
             BoxShadow(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 2),
@@ -94,18 +92,18 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
               onChanged: widget.onSearchChanged,
               decoration: InputDecoration(
                 hintText: widget.searchHint,
-                hintStyle: ModernSaasDesign.bodyLarge.copyWith(
-                  color: ModernSaasDesign.textTertiary,
+                hintStyle: const TextStyle(fontSize: 16).copyWith(
+                  color: const Color(0xFF9CA3AF),
                 ),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: ModernSaasDesign.textTertiary,
+                  color: Color(0xFF9CA3AF),
                 ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(
                           Icons.clear,
-                          color: ModernSaasDesign.textTertiary,
+                          color: Color(0xFF9CA3AF),
                         ),
                         onPressed: () {
                           _searchController.clear();
@@ -115,8 +113,8 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                     : null,
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space3,
-                  vertical: ModernSaasDesign.space3,
+                  horizontal: 12.0,
+                  vertical: 12.0,
                 ),
               ),
             ),
@@ -125,7 +123,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
             Container(
               width: 1,
               height: 24,
-              color: ModernSaasDesign.border,
+              color: const Color(0xFFE0E0E0),
             ),
             _buildFilterButton(),
           ],
@@ -138,7 +136,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
     return PopupMenuButton<FilterOption>(
       icon: const Icon(
         Icons.filter_list,
-        color: ModernSaasDesign.textSecondary,
+        color: Color(0xFF6B7280),
       ),
       onSelected: widget.onFilterChanged,
       itemBuilder: (context) {
@@ -150,9 +148,9 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                 Icon(
                   option.icon,
                   size: 18,
-                  color: option.color ?? ModernSaasDesign.textSecondary,
+                  color: option.color ?? const Color(0xFF6B7280),
                 ),
-                const SizedBox(width: ModernSaasDesign.space2),
+                const SizedBox(width: 8.0),
                 Text(option.label),
                 if (option.count != null) ...[
                   const Spacer(),
@@ -162,12 +160,13 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: ModernSaasDesign.neutral200,
+                      color: const Color(0xFFE5E5E5),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       option.count.toString(),
-                      style: ModernSaasDesign.labelSmall,
+                      style: const TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],
@@ -184,28 +183,28 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
       children: [
         Expanded(
           child: Wrap(
-            spacing: ModernSaasDesign.space2,
-            runSpacing: ModernSaasDesign.space2,
+            spacing: 8.0,
+            runSpacing: 8.0,
             children: widget.activeFilters!.map((filter) {
               return Chip(
                 label: Text(
                   filter,
-                  style: ModernSaasDesign.labelMedium.copyWith(
-                    color: ModernSaasDesign.primary,
+                  style:
+                      const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
+                          .copyWith(
+                    color: const Color(0xFF667EEA),
                   ),
                 ),
-                backgroundColor:
-                    ModernSaasDesign.primary.withValues(alpha: 0.1),
                 deleteIcon: const Icon(
                   Icons.close,
                   size: 16,
-                  color: ModernSaasDesign.primary,
+                  color: Color(0xFF667EEA),
                 ),
                 onDeleted: () {
                   // Handle filter removal
                 },
                 side: BorderSide(
-                  color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+                  color: const Color(0xFF667EEA).withOpacity(0.1),
                 ),
               );
             }).toList(),
@@ -216,8 +215,9 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
             onPressed: widget.onClearFilters,
             child: Text(
               'Clear All',
-              style: ModernSaasDesign.labelMedium.copyWith(
-                color: ModernSaasDesign.textSecondary,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
+                  .copyWith(
+                color: const Color(0xFF6B7280),
               ),
             ),
           ),

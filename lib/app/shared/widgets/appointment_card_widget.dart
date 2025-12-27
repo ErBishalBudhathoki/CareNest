@@ -1,11 +1,6 @@
-import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
-import 'card_label_text_widget.dart';
-import 'package:iconsax/iconsax.dart';
 
 class AppointmentCard extends StatelessWidget {
   final String title;
@@ -55,83 +50,83 @@ class AppointmentCard extends StatelessWidget {
     return Container(
       height: screenSize.height * 0.42,
       decoration: BoxDecoration(
-        gradient: ModernSaasDesign.cardGradient,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radius2xl),
+        gradient: LinearGradient(colors: [Color(0xFFFFFFFF), Color(0xFFF5F5F5)]),
+        borderRadius: BorderRadius.circular(20.0),
         border: Border.all(
-          color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+          color: const Color(0xFF667EEA).withOpacity(0.1),
           width: 1,
         ),
-        boxShadow: ModernSaasDesign.shadowLg,
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 16, offset: Offset(0, 8))],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(ModernSaasDesign.space4),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Modern header with icon
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: ModernSaasDesign.space3,
-                vertical: ModernSaasDesign.space2,
+                horizontal: 12.0,
+                vertical: 8.0,
               ),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+                color: const Color(0xFF667EEA).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12.0),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(ModernSaasDesign.space2),
+                    padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: ModernSaasDesign.primary,
+                      color: const Color(0xFF667EEA),
                       borderRadius:
-                          BorderRadius.circular(ModernSaasDesign.radiusSm),
+                          BorderRadius.circular(4.0),
                     ),
                     child: Icon(
-                      Iconsax.calendar_1,
-                      color: ModernSaasDesign.textOnPrimary,
+                      Icons.calendar_today,
+                      color: Colors.white,
                       size: isSmallScreen ? 16 : 20,
                     ),
                   ),
-                  const SizedBox(width: ModernSaasDesign.space2),
+                  const SizedBox(width: 8.0),
                   Text(
                     title,
                     style: (isSmallScreen
-                            ? ModernSaasDesign.headlineSmall
-                            : ModernSaasDesign.headlineMedium)
+                            ? const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                            : const TextStyle(fontSize: 20, fontWeight: FontWeight.w600))
                         .copyWith(
-                      color: ModernSaasDesign.primary,
+                      color: const Color(0xFF667EEA),
                       letterSpacing: 0.5,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: ModernSaasDesign.space3),
+            const SizedBox(height: 12.0),
             _buildModernCardItem(iconData, label, text, isSmallScreen),
-            const SizedBox(height: ModernSaasDesign.space2),
+            const SizedBox(height: 8.0),
             _buildModernCardItem(iconData1, label1, text1, isSmallScreen),
-            const SizedBox(height: ModernSaasDesign.space2),
+            const SizedBox(height: 8.0),
             _buildModernCardItem(iconData2, label2, text2, isSmallScreen),
-            const SizedBox(height: ModernSaasDesign.space2),
+            const SizedBox(height: 8.0),
             _buildModernCardItem(iconData3, label3, text3, isSmallScreen),
-            const SizedBox(height: ModernSaasDesign.space3),
+            const SizedBox(height: 12.0),
             Consumer(builder: (context, ref, _) {
               return Container(
                 height: isSmallScreen ? 48 : 56,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: ModernSaasDesign.primaryGradient,
+                  gradient: LinearGradient(colors: [Color(0xFF667EEA), Color(0xFF5A69F1)]),
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusLg),
-                  boxShadow: ModernSaasDesign.shadowMd,
+                      BorderRadius.circular(12.0),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
                 ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusLg),
+                        BorderRadius.circular(12.0),
                     onTap: () async {
                       await Navigator.push(
                         context,
@@ -145,32 +140,32 @@ class AppointmentCard extends StatelessWidget {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: ModernSaasDesign.space3,
+                        horizontal: 12.0,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Iconsax.eye,
-                            color: ModernSaasDesign.textOnPrimary,
+                            Icons.visibility_outlined,
+                            color: Colors.white,
                             size: isSmallScreen ? 18 : 20,
                           ),
-                          const SizedBox(width: ModernSaasDesign.space2),
+                          const SizedBox(width: 8.0),
                           Text(
                             'View Details',
                             style: (isSmallScreen
-                                    ? ModernSaasDesign.labelLarge
-                                    : ModernSaasDesign.headlineSmall)
+                                    ? const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)
+                                    : const TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
                                 .copyWith(
-                              color: ModernSaasDesign.textOnPrimary,
+                              color: Colors.white,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.5,
                             ),
                           ),
-                          const SizedBox(width: ModernSaasDesign.space2),
+                          const SizedBox(width: 8.0),
                           Icon(
-                            Iconsax.arrow_right_3,
-                            color: ModernSaasDesign.textOnPrimary,
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
                             size: isSmallScreen ? 16 : 18,
                           ),
                         ],
@@ -190,12 +185,12 @@ class AppointmentCard extends StatelessWidget {
   Widget _buildModernCardItem(
       IconData icon, String label, String text, bool isSmallScreen) {
     return Container(
-      padding: const EdgeInsets.all(ModernSaasDesign.space3),
+      padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.background.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+          color: const Color(0xFF667EEA).withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -205,16 +200,16 @@ class AppointmentCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(4.0),
             ),
             child: Icon(
               icon,
-              color: ModernSaasDesign.primary,
+              color: const Color(0xFF667EEA),
               size: isSmallScreen ? 16 : 18,
             ),
           ),
-          const SizedBox(width: ModernSaasDesign.space2),
+          const SizedBox(width: 8.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,10 +217,10 @@ class AppointmentCard extends StatelessWidget {
                 Text(
                   label,
                   style: (isSmallScreen
-                          ? ModernSaasDesign.labelMedium
-                          : ModernSaasDesign.labelLarge)
+                          ? const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
+                          : const TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
                       .copyWith(
-                    color: ModernSaasDesign.primary,
+                    color: const Color(0xFF667EEA),
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.3,
                   ),
@@ -234,10 +229,10 @@ class AppointmentCard extends StatelessWidget {
                 Text(
                   text,
                   style: (isSmallScreen
-                          ? ModernSaasDesign.bodyMedium
-                          : ModernSaasDesign.bodyLarge)
+                          ? const TextStyle(fontSize: 14)
+                          : const TextStyle(fontSize: 16))
                       .copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                    color: const Color(0xFF1F2937),
                     fontWeight: FontWeight.w500,
                     height: 1.3,
                   ),

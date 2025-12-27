@@ -138,7 +138,7 @@ class AppThemeConfig {
   // ==================== BUTTON STYLES ====================
 
   static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: AppColors.colorBlue,
+    backgroundColor: Colors.blue,
     foregroundColor: AppColors.colorWhite,
     textStyle: buttonTextStyle,
     padding: const EdgeInsets.symmetric(
@@ -152,7 +152,7 @@ class AppThemeConfig {
   );
 
   static final ButtonStyle secondaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: AppColors.colorGrey100,
+    backgroundColor: Colors.blue,
     foregroundColor: AppColors.colorBlack,
     textStyle: buttonTextStyle.copyWith(color: AppColors.colorBlack),
     padding: const EdgeInsets.symmetric(
@@ -182,7 +182,7 @@ class AppThemeConfig {
   );
 
   static final ButtonStyle dangerButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: AppColors.colorRed,
+    backgroundColor: Colors.blue,
     foregroundColor: AppColors.colorWhite,
     textStyle: buttonTextStyle,
     padding: const EdgeInsets.symmetric(
@@ -196,7 +196,7 @@ class AppThemeConfig {
   );
 
   static final ButtonStyle successButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: AppColors.colorGreen,
+    backgroundColor: Colors.blue,
     foregroundColor: AppColors.colorWhite,
     textStyle: buttonTextStyle,
     padding: const EdgeInsets.symmetric(
@@ -290,12 +290,11 @@ class AppThemeConfig {
         secondary: AppColors.colorGreen,
         error: AppColors.colorRed,
         surface: AppColors.colorWhite,
-        background: AppColors.colorGrey50,
+        onSurface: AppColors.colorGrey50,
       ),
 
       // App bar theme
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.colorWhite,
         foregroundColor: AppColors.colorBlack,
         elevation: 0,
         centerTitle: true,
@@ -375,12 +374,11 @@ class AppThemeConfig {
         secondary: AppColors.colorGreen,
         error: AppColors.colorRed,
         surface: AppColors.colorGrey800,
-        background: AppColors.colorBlack,
+        onSurface: AppColors.colorBlack,
       ),
 
       // App bar theme
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.colorGrey800,
         foregroundColor: AppColors.colorWhite,
         elevation: 0,
         centerTitle: true,

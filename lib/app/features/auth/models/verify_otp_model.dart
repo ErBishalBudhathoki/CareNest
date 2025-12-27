@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/encryption/encryption_utils.dart';
-import 'package:flutter/foundation.dart';
 
 class VerifyOTPModel {
   final ApiMethod apiMethod = ApiMethod();

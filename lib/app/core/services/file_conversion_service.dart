@@ -1,11 +1,11 @@
-import 'dart:io';
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+
+
 import 'package:pdf/pdf.dart';
+import 'dart:io';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
 
 /// Service for converting various file types to PDF and merging them
 class FileConversionService {
@@ -123,10 +123,23 @@ class FileConversionService {
             child: pw.Column(
               mainAxisAlignment: pw.MainAxisAlignment.center,
               children: [
-                pw.Icon(
-                  pw.IconData(0xe24d), // file icon
-                  size: 64,
-                  color: PdfColors.grey600,
+                pw.Container(
+                  width: 96,
+                  height: 96,
+                  alignment: pw.Alignment.center,
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey200,
+                    borderRadius: pw.BorderRadius.circular(48),
+                    border: pw.Border.all(color: PdfColors.grey400),
+                  ),
+                  child: pw.Text(
+                    'FILE',
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
                 ),
                 pw.SizedBox(height: 20),
                 pw.Text(
@@ -148,7 +161,7 @@ class FileConversionService {
                 ),
                 pw.SizedBox(height: 5),
                 pw.Text(
-                  'File Size: ${fileSizeKB} KB',
+                  'File Size: $fileSizeKB KB',
                   style: const pw.TextStyle(fontSize: 14),
                 ),
                 pw.SizedBox(height: 20),

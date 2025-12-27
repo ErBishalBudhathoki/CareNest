@@ -1,14 +1,14 @@
-// Helper method to build info rows
+import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:flutter/cupertino.dart';
 
+// Helper method to build info rows
 Widget buildInfoRow(
     IconData icon, String label, String text, bool isSmallScreen) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Icon(icon, size: isSmallScreen ? 18 : 24),
-      SizedBox(width: 8),
+      const SizedBox(width: 8),
       Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

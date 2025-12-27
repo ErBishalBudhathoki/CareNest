@@ -38,7 +38,7 @@ class EnhancedActionCard extends StatelessWidget {
   final bool showArrow;
 
   const EnhancedActionCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
@@ -47,7 +47,7 @@ class EnhancedActionCard extends StatelessWidget {
     this.isEnabled = true,
     this.badge,
     this.showArrow = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,24 +59,24 @@ class EnhancedActionCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: isEnabled ? onTap : null,
-          borderRadius: BorderRadius.circular(PricingDesignSystem.radiusMedium),
+          borderRadius: BorderRadius.circular(8.0),
           child: Container(
-            padding: const EdgeInsets.all(PricingDesignSystem.spacingMedium),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: AppColors.colorWhite,
               borderRadius:
-                  BorderRadius.circular(PricingDesignSystem.radiusMedium),
+                  BorderRadius.circular(8.0),
               border: Border.all(
                 color: isEnabled
-                    ? color.withValues(alpha: 0.2)
+                    ? color.withOpacity(0.1)
                     : AppColors.colorGrey300,
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
                   color: (isEnabled ? color : AppColors.colorGrey400)
-                      .withValues(alpha: 0.1),
-                  blurRadius: PricingDesignSystem.elevationMedium,
+                      .withOpacity(0.1),
+                  blurRadius: 4.0,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -88,12 +88,12 @@ class EnhancedActionCard extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(
-                          PricingDesignSystem.spacingSmall),
+                          8.0),
                       decoration: BoxDecoration(
                         color: (isEnabled ? color : AppColors.colorGrey400)
-                            .withValues(alpha: 0.1),
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(
-                            PricingDesignSystem.radiusSmall),
+                            4.0),
                       ),
                       child: Icon(
                         icon,
@@ -105,13 +105,13 @@ class EnhancedActionCard extends StatelessWidget {
                     if (badge != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: PricingDesignSystem.spacingSmall,
-                          vertical: PricingDesignSystem.spacingMicro,
+                          horizontal: 8.0,
+                          vertical: 4.0,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.colorWarning,
                           borderRadius: BorderRadius.circular(
-                              PricingDesignSystem.radiusSmall),
+                              4.0),
                         ),
                         child: Text(
                           badge!,
@@ -132,7 +132,7 @@ class EnhancedActionCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: PricingDesignSystem.spacingMedium),
+                const SizedBox(height: 16.0),
                 Text(
                   title,
                   style: TextStyle(
@@ -143,7 +143,7 @@ class EnhancedActionCard extends StatelessWidget {
                         : AppColors.colorGrey400,
                   ),
                 ),
-                const SizedBox(height: PricingDesignSystem.spacingMicro),
+                const SizedBox(height: 4.0),
                 Text(
                   subtitle,
                   style: TextStyle(
@@ -177,7 +177,7 @@ class EnhancedStatCard extends StatelessWidget {
   final bool isLoading;
 
   const EnhancedStatCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     this.subtitle,
@@ -186,7 +186,7 @@ class EnhancedStatCard extends StatelessWidget {
     this.changePercentage,
     this.onTap,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -203,21 +203,21 @@ class EnhancedStatCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(PricingDesignSystem.radiusMedium),
+          borderRadius: BorderRadius.circular(8.0),
           child: Container(
-            padding: const EdgeInsets.all(PricingDesignSystem.spacingMedium),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: AppColors.colorWhite,
               borderRadius:
-                  BorderRadius.circular(PricingDesignSystem.radiusMedium),
+                  BorderRadius.circular(8.0),
               border: Border.all(
-                color: cardColor.withValues(alpha: 0.1),
+                color: cardColor.withOpacity(0.1),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: cardColor.withValues(alpha: 0.08),
-                  blurRadius: PricingDesignSystem.elevationMedium,
+                  color: cardColor.withOpacity(0.1),
+                  blurRadius: 4.0,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -244,19 +244,19 @@ class EnhancedStatCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.colorGrey200,
             borderRadius:
-                BorderRadius.circular(PricingDesignSystem.radiusSmall),
+                BorderRadius.circular(4.0),
           ),
         )
             .animate(onPlay: (controller) => controller.repeat())
             .shimmer(duration: const Duration(milliseconds: 1500)),
-        const SizedBox(height: PricingDesignSystem.spacingSmall),
+        const SizedBox(height: 8.0),
         Container(
           width: 60,
           height: 24,
           decoration: BoxDecoration(
             color: AppColors.colorGrey200,
             borderRadius:
-                BorderRadius.circular(PricingDesignSystem.radiusSmall),
+                BorderRadius.circular(4.0),
           ),
         )
             .animate(onPlay: (controller) => controller.repeat())
@@ -277,7 +277,7 @@ class EnhancedStatCard extends StatelessWidget {
                 color: cardColor,
                 size: AppDimens.iconSizeSmall,
               ),
-              const SizedBox(width: PricingDesignSystem.spacingSmall),
+              const SizedBox(width: 8.0),
             ],
             Expanded(
               child: Text(
@@ -292,13 +292,13 @@ class EnhancedStatCard extends StatelessWidget {
             if (changePercentage != null)
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: PricingDesignSystem.spacingSmall,
-                  vertical: PricingDesignSystem.spacingMicro,
+                  horizontal: 8.0,
+                  vertical: 4.0,
                 ),
                 decoration: BoxDecoration(
-                  color: changeColor.withValues(alpha: 0.1),
+                  color: changeColor.withOpacity(0.1),
                   borderRadius:
-                      BorderRadius.circular(PricingDesignSystem.radiusSmall),
+                      BorderRadius.circular(4.0),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -326,7 +326,7 @@ class EnhancedStatCard extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: PricingDesignSystem.spacingSmall),
+        const SizedBox(height: 8.0),
         Text(
           value,
           style: TextStyle(
@@ -336,7 +336,7 @@ class EnhancedStatCard extends StatelessWidget {
           ),
         ),
         if (subtitle != null) ...[
-          const SizedBox(height: PricingDesignSystem.spacingMicro),
+          const SizedBox(height: 4.0),
           Text(
             subtitle!,
             style: const TextStyle(
@@ -358,15 +358,15 @@ class EnhancedSectionHeader extends StatelessWidget {
   final EdgeInsets padding;
 
   const EnhancedSectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     this.action,
     this.padding = const EdgeInsets.symmetric(
-      horizontal: PricingDesignSystem.spacingMedium,
-      vertical: PricingDesignSystem.spacingSmall,
+      horizontal: 16.0,
+      vertical: 8.0,
     ),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -387,7 +387,7 @@ class EnhancedSectionHeader extends StatelessWidget {
                   ),
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: PricingDesignSystem.spacingMicro),
+                  const SizedBox(height: 4.0),
                   Text(
                     subtitle!,
                     style: const TextStyle(
@@ -416,20 +416,20 @@ class EnhancedEmptyState extends StatelessWidget {
   final bool showIllustration;
 
   const EnhancedEmptyState({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     required this.icon,
     this.actionLabel,
     this.onAction,
     this.showIllustration = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(PricingDesignSystem.spacingXLarge),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -451,7 +451,7 @@ class EnhancedEmptyState extends StatelessWidget {
                   .scale(duration: const Duration(milliseconds: 600))
                   .then(delay: const Duration(milliseconds: 200))
                   .fadeIn(),
-            const SizedBox(height: PricingDesignSystem.spacingLarge),
+            const SizedBox(height: 24.0),
             Text(
               title,
               style: const TextStyle(
@@ -461,7 +461,7 @@ class EnhancedEmptyState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: PricingDesignSystem.spacingSmall),
+            const SizedBox(height: 8.0),
             Text(
               message,
               style: const TextStyle(
@@ -471,21 +471,20 @@ class EnhancedEmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: PricingDesignSystem.spacingLarge),
+              const SizedBox(height: 24.0),
               ElevatedButton.icon(
                 onPressed: onAction,
                 icon: const Icon(Icons.add),
                 label: Text(actionLabel!),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.colorPrimary,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                   foregroundColor: AppColors.colorWhite,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: PricingDesignSystem.spacingLarge,
-                    vertical: PricingDesignSystem.spacingMedium,
+                    horizontal: 24.0,
+                    vertical: 16.0,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(PricingDesignSystem.radiusMedium),
+                        BorderRadius.circular(8.0),
                   ),
                 ),
               ),
@@ -508,18 +507,18 @@ class EnhancedErrorState extends StatelessWidget {
   final String retryLabel;
 
   const EnhancedErrorState({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     this.onRetry,
     this.retryLabel = 'Try Again',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(PricingDesignSystem.spacingXLarge),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -527,7 +526,7 @@ class EnhancedErrorState extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: AppColors.colorWarning.withValues(alpha: 0.1),
+                color: AppColors.colorWarning.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -536,7 +535,7 @@ class EnhancedErrorState extends StatelessWidget {
                 color: AppColors.colorWarning,
               ),
             ),
-            const SizedBox(height: PricingDesignSystem.spacingLarge),
+            const SizedBox(height: 24.0),
             Text(
               title,
               style: const TextStyle(
@@ -546,7 +545,7 @@ class EnhancedErrorState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: PricingDesignSystem.spacingSmall),
+            const SizedBox(height: 8.0),
             Text(
               message,
               style: const TextStyle(
@@ -556,21 +555,20 @@ class EnhancedErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: PricingDesignSystem.spacingLarge),
+              const SizedBox(height: 24.0),
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
                 label: Text(retryLabel),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.colorPrimary,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                   foregroundColor: AppColors.colorWhite,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: PricingDesignSystem.spacingLarge,
-                    vertical: PricingDesignSystem.spacingMedium,
+                    horizontal: 24.0,
+                    vertical: 16.0,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(PricingDesignSystem.radiusMedium),
+                        BorderRadius.circular(8.0),
                   ),
                 ),
               ),

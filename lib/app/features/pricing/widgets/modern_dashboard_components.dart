@@ -1,6 +1,6 @@
+import 'package:carenest/app/features/expenses/views/modern_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../shared/design_system/modern_saas_design_system.dart';
 
 /// Modern Metric Card with Trend Indicators
 class ModernMetricCard extends StatelessWidget {
@@ -15,7 +15,7 @@ class ModernMetricCard extends StatelessWidget {
   final bool isLoading;
 
   const ModernMetricCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     this.subtitle,
@@ -25,12 +25,12 @@ class ModernMetricCard extends StatelessWidget {
     this.trendLabel,
     this.onTap,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return ModernCard(
-      padding: const EdgeInsets.all(ModernSaasDesign.space3), // Reduced padding
+      padding: const EdgeInsets.all(12.0), // Reduced padding
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,11 +42,11 @@ class ModernMetricCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(
-                    ModernSaasDesign.space1), // Reduced padding
+                    4.0), // Reduced padding
                 decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
+                  color: iconColor.withOpacity(0.1),
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusMd),
+                      BorderRadius.circular(8.0),
                 ),
                 child: Icon(
                   icon,
@@ -58,19 +58,19 @@ class ModernMetricCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: ModernSaasDesign.space2), // Reduced spacing
+          const SizedBox(height: 8.0), // Reduced spacing
 
           // Title
           Text(
             title,
-            style: ModernSaasDesign.bodyMedium.copyWith(
+            style: const TextStyle(fontSize: 14).copyWith(
               fontSize: 13, // Slightly smaller
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
 
-          const SizedBox(height: ModernSaasDesign.space1),
+          const SizedBox(height: 4.0),
 
           // Value
           if (isLoading)
@@ -78,8 +78,8 @@ class ModernMetricCard extends StatelessWidget {
               height: 28, // Reduced height
               width: double.infinity,
               decoration: BoxDecoration(
-                color: ModernSaasDesign.neutral200,
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+                color: const Color(0xFFE5E5E5),
+                borderRadius: BorderRadius.circular(4.0),
               ),
             )
                 .animate(onPlay: (controller) => controller.repeat())
@@ -87,7 +87,7 @@ class ModernMetricCard extends StatelessWidget {
           else
             Text(
               value,
-              style: ModernSaasDesign.displaySmall.copyWith(
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700).copyWith(
                 fontWeight: FontWeight.w700,
                 fontSize: 20, // Slightly smaller
               ),
@@ -96,10 +96,10 @@ class ModernMetricCard extends StatelessWidget {
             ),
 
           if (subtitle != null) ...[
-            const SizedBox(height: ModernSaasDesign.space1),
+            const SizedBox(height: 4.0),
             Text(
               subtitle!,
-              style: ModernSaasDesign.bodySmall.copyWith(
+              style: const TextStyle(fontSize: 12).copyWith(
                 fontSize: 11, // Slightly smaller
               ),
               maxLines: 1,
@@ -114,17 +114,17 @@ class ModernMetricCard extends StatelessWidget {
   Widget _buildTrendIndicator() {
     final isPositive = trend! >= 0;
     final color =
-        isPositive ? ModernSaasDesign.success : ModernSaasDesign.error;
+        isPositive ? Colors.green : Colors.red;
     final icon = isPositive ? Icons.trending_up : Icons.trending_down;
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: ModernSaasDesign.space2,
-        vertical: ModernSaasDesign.space1,
+        horizontal: 8.0,
+        vertical: 4.0,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusFull),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(999.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -134,10 +134,10 @@ class ModernMetricCard extends StatelessWidget {
             size: 12,
             color: color,
           ),
-          const SizedBox(width: ModernSaasDesign.space1),
+          const SizedBox(width: 4.0),
           Text(
             '${isPositive ? '+' : ''}${trend!.toStringAsFixed(1)}%',
-            style: ModernSaasDesign.labelSmall.copyWith(
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -158,25 +158,25 @@ class ModernActionCard extends StatelessWidget {
   final bool isEnabled;
 
   const ModernActionCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.color,
     required this.onTap,
     this.isEnabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return ModernCard(
-      padding: const EdgeInsets.all(ModernSaasDesign.space3), // Reduced padding
+      padding: const EdgeInsets.all(12.0), // Reduced padding
       onTap: isEnabled ? onTap : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min, // Use minimum space
         children: [
-          // Icon with gradient background
+          // Icon with gradient surface
           Container(
             width: 40, // Reduced size
             height: 40, // Reduced size
@@ -184,15 +184,15 @@ class ModernActionCard extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   color,
-                  color.withValues(alpha: 0.8),
+                  color.withOpacity(0.1),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+              borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
-                  color: color.withValues(alpha: 0.2),
+                  color: color.withOpacity(0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -205,25 +205,25 @@ class ModernActionCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: ModernSaasDesign.space2), // Reduced spacing
+          const SizedBox(height: 8.0), // Reduced spacing
 
           // Title
           Text(
             title,
-            style: ModernSaasDesign.headlineSmall.copyWith(
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
               fontSize: 14, // Slightly smaller
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
 
-          const SizedBox(height: ModernSaasDesign.space1),
+          const SizedBox(height: 4.0),
 
           // Subtitle
           Expanded(
             child: Text(
               subtitle,
-              style: ModernSaasDesign.bodySmall.copyWith(
+              style: const TextStyle(fontSize: 12).copyWith(
                 fontSize: 11, // Slightly smaller
               ),
               maxLines: 2,
@@ -237,7 +237,7 @@ class ModernActionCard extends StatelessWidget {
             child: Icon(
               Icons.arrow_forward_ios,
               size: 10, // Reduced size
-              color: ModernSaasDesign.textTertiary,
+              color: const Color(0xFF9CA3AF),
             ),
           ),
         ],
@@ -258,13 +258,13 @@ class ModernChartWidget extends StatelessWidget {
   final double height;
 
   const ModernChartWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.data,
     this.type = ChartType.line,
-    this.primaryColor = ModernSaasDesign.primary,
+    this.primaryColor = const Color(0xFF667EEA),
     this.height = 200,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -278,27 +278,27 @@ class ModernChartWidget extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: ModernSaasDesign.headlineSmall,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space2,
-                  vertical: ModernSaasDesign.space1,
+                  horizontal: 8.0,
+                  vertical: 4.0,
                 ),
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.neutral100,
+                  color: const Color(0xFFF5F5F5),
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusSm),
+                      BorderRadius.circular(4.0),
                 ),
                 child: Text(
                   _getChartTypeLabel(),
-                  style: ModernSaasDesign.labelSmall,
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: 16.0),
 
           // Chart placeholder
           Container(
@@ -307,15 +307,15 @@ class ModernChartWidget extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  primaryColor.withValues(alpha: 0.1),
-                  primaryColor.withValues(alpha: 0.05),
+                  primaryColor.withOpacity(0.1),
+                  primaryColor.withOpacity(0.1),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+              borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
-                color: primaryColor.withValues(alpha: 0.2),
+                color: primaryColor.withOpacity(0.1),
                 width: 1,
               ),
             ),
@@ -326,14 +326,14 @@ class ModernChartWidget extends StatelessWidget {
                   Icon(
                     _getChartIcon(),
                     size: 48,
-                    color: primaryColor.withValues(alpha: 0.5),
+                    color: primaryColor.withOpacity(0.1),
                   ),
-                  const SizedBox(height: ModernSaasDesign.space2),
+                  const SizedBox(height: 8.0),
                   Text(
                     'Chart visualization\nwould appear here',
                     textAlign: TextAlign.center,
-                    style: ModernSaasDesign.bodySmall.copyWith(
-                      color: primaryColor.withValues(alpha: 0.7),
+                    style: const TextStyle(fontSize: 12).copyWith(
+                      color: primaryColor.withOpacity(0.1),
                     ),
                   ),
                 ],
@@ -382,14 +382,14 @@ class ModernActivityItem extends StatelessWidget {
   final bool isLast;
 
   const ModernActivityItem({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.timestamp,
     required this.icon,
     required this.color,
     this.isLast = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -403,9 +403,9 @@ class ModernActivityItem extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withOpacity(0.1),
                 borderRadius:
-                    BorderRadius.circular(ModernSaasDesign.radiusFull),
+                    BorderRadius.circular(999.0),
                 border: Border.all(
                   color: color,
                   width: 2,
@@ -421,15 +421,15 @@ class ModernActivityItem extends StatelessWidget {
               Container(
                 width: 2,
                 height: 40,
-                color: ModernSaasDesign.border,
+                color: const Color(0xFFE0E0E0),
                 margin: const EdgeInsets.symmetric(
-                  vertical: ModernSaasDesign.space1,
+                  vertical: 4.0,
                 ),
               ),
           ],
         ),
 
-        const SizedBox(width: ModernSaasDesign.space3),
+        const SizedBox(width: 12.0),
 
         // Content
         Expanded(
@@ -438,21 +438,21 @@ class ModernActivityItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: ModernSaasDesign.bodyLarge.copyWith(
+                style: const TextStyle(fontSize: 16).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space1),
+              const SizedBox(height: 4.0),
               Text(
                 description,
-                style: ModernSaasDesign.bodyMedium,
+                style: const TextStyle(fontSize: 14),
               ),
-              const SizedBox(height: ModernSaasDesign.space1),
+              const SizedBox(height: 4.0),
               Text(
                 timestamp,
-                style: ModernSaasDesign.bodySmall,
+                style: const TextStyle(fontSize: 12),
               ),
-              if (!isLast) const SizedBox(height: ModernSaasDesign.space4),
+              if (!isLast) const SizedBox(height: 16.0),
             ],
           ),
         ),
@@ -469,24 +469,24 @@ class ModernSearchBar extends StatelessWidget {
   final bool showFilter;
 
   const ModernSearchBar({
-    Key? key,
+    super.key,
     this.hintText = 'Search...',
     this.onChanged,
     this.onFilterTap,
     this.showFilter = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
-          color: ModernSaasDesign.border,
+          color: const Color(0xFFE0E0E0),
           width: 1,
         ),
-        boxShadow: ModernSaasDesign.shadowSm,
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -495,33 +495,32 @@ class ModernSearchBar extends StatelessWidget {
               onChanged: onChanged,
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: ModernSaasDesign.bodyMedium,
+                hintStyle: const TextStyle(fontSize: 14),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: ModernSaasDesign.textTertiary,
+                  color: const Color(0xFF9CA3AF),
                 ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space4,
-                  vertical: ModernSaasDesign.space3,
+                  horizontal: 16.0,
+                  vertical: 12.0,
                 ),
               ),
             ),
           ),
           if (showFilter)
             Container(
-              margin: const EdgeInsets.only(right: ModernSaasDesign.space2),
+              margin: const EdgeInsets.only(right: 8.0),
               child: IconButton(
                 onPressed: onFilterTap,
                 icon: Icon(
                   Icons.tune,
-                  color: ModernSaasDesign.textSecondary,
+                  color: const Color(0xFF6B7280),
                 ),
-                style: IconButton.styleFrom(
-                  backgroundColor: ModernSaasDesign.neutral100,
+                style: IconButton.styleFrom(backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusMd),
+                        BorderRadius.circular(8.0),
                   ),
                 ),
               ),
@@ -539,11 +538,11 @@ class ModernLoadingSkeleton extends StatelessWidget {
   final double borderRadius;
 
   const ModernLoadingSkeleton({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     this.borderRadius = 8,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -551,7 +550,7 @@ class ModernLoadingSkeleton extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: ModernSaasDesign.neutral200,
+        color: const Color(0xFFE5E5E5),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
     )

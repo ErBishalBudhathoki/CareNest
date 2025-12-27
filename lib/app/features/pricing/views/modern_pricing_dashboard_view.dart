@@ -1,10 +1,10 @@
+import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../shared/design_system/modern_saas_design_system.dart';
 import '../widgets/modern_dashboard_components.dart';
 
 class ModernPricingDashboardView extends StatefulWidget {
-  const ModernPricingDashboardView({Key? key}) : super(key: key);
+  const ModernPricingDashboardView({super.key});
 
   @override
   State<ModernPricingDashboardView> createState() =>
@@ -22,10 +22,10 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
   final List<MetricData> _metrics = [
     MetricData(
       title: 'Total Revenue',
-      value: '\$125,000',
+      value: '0.125,000',
       subtitle: 'This Month',
       icon: Icons.attach_money,
-      iconColor: ModernSaasDesign.success,
+      iconColor: Colors.green,
       trend: 12.5,
       trendLabel: 'vs last month',
     ),
@@ -34,7 +34,7 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       value: '245',
       subtitle: 'NDIS Items',
       icon: Icons.inventory_2_outlined,
-      iconColor: ModernSaasDesign.primary,
+      iconColor: const Color(0xFF667EEA),
       trend: 8.2,
       trendLabel: 'vs last month',
     ),
@@ -43,7 +43,7 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       value: '\$85.50',
       subtitle: 'Per Hour',
       icon: Icons.trending_up,
-      iconColor: ModernSaasDesign.accent,
+      iconColor: const Color(0xFF14B8A6),
       trend: -2.1,
       trendLabel: 'vs last month',
     ),
@@ -52,7 +52,7 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       value: '7',
       subtitle: 'Requires Attention',
       icon: Icons.warning_outlined,
-      iconColor: ModernSaasDesign.warning,
+      iconColor: Colors.orange,
       trend: -15.3,
       trendLabel: 'vs last month',
     ),
@@ -63,25 +63,25 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       title: 'Add New Item',
       subtitle: 'Create pricing item',
       icon: Icons.add_circle_outline,
-      color: ModernSaasDesign.primary,
+      color: const Color(0xFF667EEA),
     ),
     QuickActionData(
       title: 'Bulk Import',
       subtitle: 'Import from CSV',
       icon: Icons.upload_file,
-      color: ModernSaasDesign.secondary,
+      color: const Color(0xFF764BA2),
     ),
     QuickActionData(
       title: 'Generate Report',
       subtitle: 'Export analytics',
       icon: Icons.analytics_outlined,
-      color: ModernSaasDesign.accent,
+      color: const Color(0xFF14B8A6),
     ),
     QuickActionData(
       title: 'Settings',
       subtitle: 'Configure pricing',
       icon: Icons.settings_outlined,
-      color: ModernSaasDesign.neutral600,
+      color: const Color(0xFF525252),
     ),
   ];
 
@@ -91,28 +91,28 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       description: 'Support Coordination - Level 2 has been created',
       timestamp: '2 minutes ago',
       icon: Icons.add_circle,
-      color: ModernSaasDesign.success,
+      color: Colors.green,
     ),
     ActivityData(
       title: 'Rate updated',
       description: 'Personal Care rate changed from \$65.50 to \$68.00',
       timestamp: '15 minutes ago',
       icon: Icons.edit,
-      color: ModernSaasDesign.primary,
+      color: const Color(0xFF667EEA),
     ),
     ActivityData(
       title: 'Validation completed',
       description: '3 items passed NDIS compliance check',
       timestamp: '1 hour ago',
       icon: Icons.check_circle,
-      color: ModernSaasDesign.success,
+      color: Colors.green,
     ),
     ActivityData(
       title: 'Report generated',
       description: 'Monthly pricing report exported successfully',
       timestamp: '2 hours ago',
       icon: Icons.file_download,
-      color: ModernSaasDesign.accent,
+      color: const Color(0xFF14B8A6),
     ),
   ];
 
@@ -155,12 +155,11 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ModernSaasDesign.background,
         body: RefreshIndicator(
           onRefresh: _onRefresh,
-          color: ModernSaasDesign.primary,
+          color: const Color(0xFF667EEA),
           child: ColoredBox(
-            color: ModernSaasDesign.background,
+            color: Colors.white,
             child: CustomScrollView(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
@@ -168,24 +167,24 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
                 _buildModernHeader(),
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(
-                    ModernSaasDesign.space3,
-                    ModernSaasDesign.space3,
-                    ModernSaasDesign.space3,
-                    ModernSaasDesign.space3,
+                    12.0,
+                    12.0,
+                    12.0,
+                    12.0,
                   ),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       _buildWelcomeSection(),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       _buildMetricsGrid(),
-                      //const SizedBox(height: ModernSaasDesign.space4),
+                      //const SizedBox(height: 16.0),
                       _buildQuickActionsSection(),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       _buildAnalyticsSection(),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       _buildRecentActivitySection(),
-                      const SizedBox(height: ModernSaasDesign.space20),
-                      SizedBox(height: ModernSaasDesign.space20 + 56.0),
+                      const SizedBox(height: 8.00),
+                      SizedBox(height: 8.00 + 56.0),
                     ]),
                   ),
                 ),
@@ -259,7 +258,7 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: const Color(0xFF10B981)
-                                  .withValues(alpha: 0.1),
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -308,7 +307,7 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: const Color(0xFF10B981)
-                                  .withValues(alpha: 0.1),
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Row(
@@ -398,10 +397,10 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
   //                 padding:
   //                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
   //                 decoration: BoxDecoration(
-  //                   color: const Color(0xFF10B981).withValues(alpha:0.1),
+  //                   color: const Color(0xFF10B981).withOpacity(0.1),
   //                   borderRadius: BorderRadius.circular(20),
   //                   border: Border.all(
-  //                     color: const Color(0xFF10B981).withValues(alpha:0.3),
+  //                     color: const Color(0xFF10B981).withOpacity(0.1),
   //                   ),
   //                 ),
   //                 child: Row(
@@ -437,29 +436,29 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
 
   Widget _buildWelcomeSection() {
     return Container(
-      color: ModernSaasDesign.surface,
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Welcome back! 👋',
-            style: ModernSaasDesign.headlineLarge.copyWith(
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600).copyWith(
               fontWeight: FontWeight.w800,
             ),
           ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.3, end: 0),
-          const SizedBox(height: ModernSaasDesign.space1),
+          const SizedBox(height: 4.0),
           Text(
             'Here\'s what\'s happening with your pricing today.',
-            style: ModernSaasDesign.bodyLarge.copyWith(
-              color: ModernSaasDesign.textSecondary,
+            style: const TextStyle(fontSize: 16).copyWith(
+              color: const Color(0xFF6B7280),
             ),
           )
               .animate()
               .fadeIn(duration: 600.ms, delay: 200.ms)
               .slideY(begin: 0.3, end: 0),
-          const SizedBox(height: ModernSaasDesign.space1),
+          const SizedBox(height: 4.0),
           _buildPeriodSelector(),
-          const SizedBox(height: ModernSaasDesign.space2),
+          const SizedBox(height: 8.0),
         ],
       ),
     );
@@ -498,11 +497,11 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       children: [
         Text(
           'Key Metrics',
-          style: ModernSaasDesign.headlineSmall.copyWith(
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: ModernSaasDesign.space3),
+        const SizedBox(height: 12.0),
         LayoutBuilder(
           builder: (context, constraints) {
             return GridView.builder(
@@ -510,10 +509,10 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: _getCrossAxisCount(constraints.maxWidth),
-                crossAxisSpacing: ModernSaasDesign.space3,
-                mainAxisSpacing: ModernSaasDesign.space3,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
                 childAspectRatio:
-                    constraints.maxWidth < ModernSaasDesign.breakpointMd
+                    constraints.maxWidth < 768.0
                         ? 1.4
                         : 1.6,
               ),
@@ -547,23 +546,23 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       children: [
         Text(
           'Quick Actions',
-          style: ModernSaasDesign.headlineSmall.copyWith(
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
-        //const SizedBox(height: ModernSaasDesign.space2),
+        //const SizedBox(height: 8.0),
         LayoutBuilder(
           builder: (context, constraints) {
             return GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(top: ModernSaasDesign.space4),
+              padding: const EdgeInsets.only(top: 16.0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: _getCrossAxisCount(constraints.maxWidth),
-                crossAxisSpacing: ModernSaasDesign.space3,
-                mainAxisSpacing: ModernSaasDesign.space3,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
                 childAspectRatio:
-                    constraints.maxWidth < ModernSaasDesign.breakpointMd
+                    constraints.maxWidth < 768.0
                         ? 1.3
                         : 1.5,
               ),
@@ -594,16 +593,16 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
       children: [
         Text(
           'Analytics Overview',
-          style: ModernSaasDesign.headlineSmall.copyWith(
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: ModernSaasDesign.space4),
+        const SizedBox(height: 16.0),
         ModernChartWidget(
           title: 'Revenue Trend',
           data: _generateChartData(),
           type: ChartType.line,
-          primaryColor: ModernSaasDesign.primary,
+          primaryColor: const Color(0xFF667EEA),
           height: 250,
         ),
       ],
@@ -619,7 +618,7 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
           children: [
             Text(
               'Recent Activity',
-              style: ModernSaasDesign.headlineSmall.copyWith(
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -629,15 +628,15 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
               },
               child: Text(
                 'View All',
-                style: ModernSaasDesign.bodyMedium.copyWith(
-                  color: ModernSaasDesign.primary,
+                style: const TextStyle(fontSize: 14).copyWith(
+                  color: const Color(0xFF667EEA),
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: ModernSaasDesign.space4),
+        const SizedBox(height: 16.0),
         ModernCard(
           child: Column(
             children: _recentActivities.asMap().entries.map((entry) {
@@ -661,9 +660,9 @@ class _ModernPricingDashboardViewState extends State<ModernPricingDashboardView>
   }
 
   int _getCrossAxisCount(double width) {
-    if (width >= ModernSaasDesign.breakpointXl) return 4;
-    if (width >= ModernSaasDesign.breakpointLg) return 3;
-    if (width >= ModernSaasDesign.breakpointMd) return 2;
+    if (width >= 1280.0) return 4;
+    if (width >= 1024.0) return 3;
+    if (width >= 768.0) return 2;
     return 1;
   }
 

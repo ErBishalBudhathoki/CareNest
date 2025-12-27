@@ -1,10 +1,8 @@
 import 'package:carenest/app/features/Appointment/views/schedule_assignment.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
-import 'package:carenest/app/shared/widgets/confirmation_alertDialog_widget.dart';
+import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:flutter/foundation.dart';
 
 class SelectClientForAssignment extends StatefulWidget {
   final String userName;
@@ -79,7 +77,6 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: ModernInvoiceDesign.surface,
       appBar: _buildAppBar(context),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -124,28 +121,27 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
-      backgroundColor: ModernInvoiceDesign.primary,
-      foregroundColor: ModernInvoiceDesign.textOnPrimary,
+      foregroundColor: Colors.white,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Select Client',
-            style: ModernInvoiceDesign.headlineSmall.copyWith(
-              color: ModernInvoiceDesign.textOnPrimary,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: Colors.white,
             ),
           ),
           Text(
             'for ${widget.userName}',
-            style: ModernInvoiceDesign.bodyMedium.copyWith(
-              color: ModernInvoiceDesign.textOnPrimary.withValues(alpha: 0.8),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: Colors.white.withOpacity(0.1),
             ),
           ),
         ],
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios,
-            color: ModernInvoiceDesign.textOnPrimary),
+            color: Colors.white),
         onPressed: () => Navigator.of(context).pop(),
       ),
     );
@@ -156,12 +152,12 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.neutral100,
+        color: const Color(0xFFF5F5F5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _isSearching
-              ? ModernInvoiceDesign.primary
-              : ModernInvoiceDesign.border,
+              ? const Color(0xFF007AFF)
+              : const Color(0xFFEEEEEE),
           width: 1.5,
         ),
       ),
@@ -170,19 +166,19 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
         onChanged: _filterClients,
         decoration: InputDecoration(
           hintText: 'Search clients...',
-          hintStyle: ModernInvoiceDesign.bodyLarge.copyWith(
-            color: ModernInvoiceDesign.textTertiary,
+          hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            color: const Color(0xFFBDBDBD),
           ),
           prefixIcon: Icon(
             Icons.search,
             color: _isSearching
-                ? ModernInvoiceDesign.primary
-                : ModernInvoiceDesign.textTertiary,
+                ? const Color(0xFF007AFF)
+                : const Color(0xFFBDBDBD),
           ),
           suffixIcon: _isSearching
               ? IconButton(
                   icon: Icon(Icons.clear,
-                      color: ModernInvoiceDesign.textTertiary),
+                      color: const Color(0xFFBDBDBD)),
                   onPressed: () {
                     _searchController.clear();
                     _filterClients('');
@@ -224,11 +220,11 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
             child: Container(
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: ModernInvoiceDesign.surface,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: ModernInvoiceDesign.shadowSm,
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
                 border: Border.all(
-                  color: ModernInvoiceDesign.border,
+                  color: const Color(0xFFEEEEEE),
                   width: 1,
                 ),
               ),
@@ -246,15 +242,15 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: ModernInvoiceDesign.primary
-                                .withValues(alpha: 0.1),
+                            color: const Color(0xFF007AFF)
+                                .withOpacity(0.1),
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: Center(
                             child: Text(
                               client.displayName.substring(0, 1).toUpperCase(),
-                              style: ModernInvoiceDesign.headlineSmall.copyWith(
-                                color: ModernInvoiceDesign.primary,
+                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: const Color(0xFF007AFF),
                               ),
                             ),
                           ),
@@ -267,16 +263,16 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
                             children: [
                               Text(
                                 client.displayName,
-                                style: ModernInvoiceDesign.bodyLarge.copyWith(
+                                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: ModernInvoiceDesign.textPrimary,
+                                  color: const Color(0xFF212121),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 client.clientEmail,
-                                style: ModernInvoiceDesign.bodyMedium.copyWith(
-                                  color: ModernInvoiceDesign.textSecondary,
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: const Color(0xFF757575),
                                 ),
                               ),
                             ],
@@ -285,7 +281,7 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
                         // Arrow icon
                         Icon(
                           Icons.arrow_forward_ios,
-                          color: ModernInvoiceDesign.neutral400,
+                          color: const Color(0xFFBDBDBD),
                           size: 16,
                         ),
                       ],
@@ -339,13 +335,13 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
         children: [
           const CircularProgressIndicator(
             valueColor:
-                AlwaysStoppedAnimation<Color>(ModernInvoiceDesign.primary),
+                AlwaysStoppedAnimation<Color>(Color(0xFF007AFF)),
           ),
           const SizedBox(height: 16),
           Text(
             'Loading clients...',
-            style: ModernInvoiceDesign.bodyLarge.copyWith(
-              color: ModernInvoiceDesign.textSecondary,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color: const Color(0xFF757575),
             ),
           ),
         ],
@@ -362,20 +358,20 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
           const Icon(
             Icons.error_outline,
             size: 64,
-            color: ModernInvoiceDesign.error,
+            color: Color(0xFFFF3B30),
           ),
           const SizedBox(height: 16),
           Text(
             'Error loading clients',
-            style: ModernInvoiceDesign.headlineSmall.copyWith(
-              color: ModernInvoiceDesign.textPrimary,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: const Color(0xFF212121),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             error,
-            style: ModernInvoiceDesign.bodyMedium.copyWith(
-              color: ModernInvoiceDesign.textSecondary,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: const Color(0xFF757575),
             ),
             textAlign: TextAlign.center,
           ),
@@ -393,20 +389,20 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
           Icon(
             Icons.people_outline,
             size: 64,
-            color: ModernInvoiceDesign.neutral400,
+            color: const Color(0xFFBDBDBD),
           ),
           const SizedBox(height: 16),
           Text(
             'No clients found',
-            style: ModernInvoiceDesign.headlineSmall.copyWith(
-              color: ModernInvoiceDesign.textPrimary,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: const Color(0xFF212121),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'There are no clients available to assign.',
-            style: ModernInvoiceDesign.bodyMedium.copyWith(
-              color: ModernInvoiceDesign.textSecondary,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: const Color(0xFF757575),
             ),
           ),
         ],
@@ -423,20 +419,20 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
           Icon(
             Icons.search_off,
             size: 64,
-            color: ModernInvoiceDesign.neutral400,
+            color: const Color(0xFFBDBDBD),
           ),
           const SizedBox(height: 16),
           Text(
             'No results found',
-            style: ModernInvoiceDesign.headlineSmall.copyWith(
-              color: ModernInvoiceDesign.textPrimary,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: const Color(0xFF212121),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Try adjusting your search terms.',
-            style: ModernInvoiceDesign.bodyMedium.copyWith(
-              color: ModernInvoiceDesign.textSecondary,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: const Color(0xFF757575),
             ),
           ),
         ],

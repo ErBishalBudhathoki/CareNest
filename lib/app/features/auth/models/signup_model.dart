@@ -2,7 +2,6 @@ import 'dart:core';
 import 'package:carenest/app/core/base/base_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter/foundation.dart';
 
 class SignupModel extends ChangeNotifier implements VisibilityToggleModel {
   final TextEditingController emailController = TextEditingController();

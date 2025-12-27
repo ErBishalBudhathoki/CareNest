@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import '../models/shift_assignment_model.dart';
+import 'package:flutter/services.dart';
 import '../viewmodels/shift_assignment_success_viewmodel.dart';
 import '../widgets/animated_success_header.dart';
 import '../widgets/animated_shift_card.dart';
@@ -32,9 +32,9 @@ class ShiftAssignmentSuccessView extends StatefulWidget {
 class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     with TickerProviderStateMixin {
   late ShiftAssignmentSuccessViewModel _viewModel;
-  late AnimationController _backgroundController;
+  late AnimationController _surfaceController;
   late AnimationController _actionButtonController;
-  late Animation<double> _backgroundAnimation;
+  late Animation<double> _surfaceAnimation;
   late Animation<double> _actionButtonAnimation;
   bool _showShifts = false;
 
@@ -51,7 +51,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   }
 
   void _setupAnimations() {
-    _backgroundController = AnimationController(
+    _surfaceController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
@@ -61,11 +61,11 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
       vsync: this,
     );
 
-    _backgroundAnimation = Tween<double>(
+    _surfaceAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _backgroundController,
+      parent: _surfaceController,
       curve: Curves.easeOut,
     ));
 
@@ -77,7 +77,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
       curve: Curves.elasticOut,
     ));
 
-    _backgroundController.forward();
+    _surfaceController.forward();
   }
 
   void _initializeData() {
@@ -98,7 +98,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
 
   @override
   void dispose() {
-    _backgroundController.dispose();
+    _surfaceController.dispose();
     _actionButtonController.dispose();
     _viewModel.dispose();
     super.dispose();
@@ -107,9 +107,8 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
       body: AnimatedBuilder(
-        animation: _backgroundController,
+        animation: _surfaceController,
         builder: (context, child) {
           return Container(
             decoration: BoxDecoration(
@@ -117,11 +116,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.colorPrimary
-                      .withValues(alpha: 0.05 * _backgroundAnimation.value),
+                  AppColors.colorPrimary.withOpacity(0.1),
                   AppColors.colorBackground,
-                  AppColors.colorSecondary
-                      .withValues(alpha: 0.03 * _backgroundAnimation.value),
+                  AppColors.colorSecondary.withOpacity(0.1),
                 ],
               ),
             ),
@@ -138,7 +135,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                       color: AppColors.colorBackground,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.colorGrey300.withValues(alpha: 0.1),
+                          color: AppColors.colorGrey300.withOpacity(0.1),
                           blurRadius: 10.0,
                           offset: const Offset(0, -2.0),
                         ),
@@ -165,8 +162,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
               Icons.arrow_back_ios_rounded,
               color: AppColors.colorPrimary,
             ),
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.colorWhite,
+            style: IconButton.styleFrom(backgroundColor: Colors.blue,
               padding: const EdgeInsets.all(12.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -190,8 +186,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
               Icons.share_rounded,
               color: AppColors.colorPrimary,
             ),
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.colorWhite,
+            style: IconButton.styleFrom(backgroundColor: Colors.blue,
               padding: const EdgeInsets.all(12.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -281,8 +276,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                 _viewModel.clearError();
                 _initializeData();
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.colorPrimary,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                 foregroundColor: AppColors.colorWhite,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24.0,
@@ -360,7 +354,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           borderRadius: BorderRadius.circular(16.0),
           boxShadow: [
             BoxShadow(
-              color: AppColors.colorGrey300.withValues(alpha: 0.1),
+              color: AppColors.colorGrey300.withOpacity(0.1),
               blurRadius: 10.0,
               offset: const Offset(0, 4.0),
             ),
@@ -486,13 +480,13 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                 borderRadius: BorderRadius.circular(24.0),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.colorPrimary.withValues(alpha: 0.08),
+                    color: AppColors.colorPrimary.withOpacity(0.1),
                     blurRadius: 24.0,
                     offset: const Offset(0, -8.0),
                     spreadRadius: 0,
                   ),
                   BoxShadow(
-                    color: AppColors.colorBlack.withValues(alpha: 0.04),
+                    color: AppColors.colorBlack.withOpacity(0.1),
                     blurRadius: 16.0,
                     offset: const Offset(0, 4.0),
                     spreadRadius: 0,
@@ -517,7 +511,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                       borderRadius: BorderRadius.circular(16.0),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.colorPrimary.withValues(alpha: 0.3),
+                          color: AppColors.colorPrimary.withOpacity(0.1),
                           blurRadius: 12.0,
                           offset: const Offset(0, 4.0),
                         ),
@@ -529,9 +523,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                         onTap: _goToDashboard,
                         borderRadius: BorderRadius.circular(16.0),
                         splashColor:
-                            AppColors.colorWhite.withValues(alpha: 0.2),
+                            AppColors.colorWhite.withOpacity(0.1),
                         highlightColor:
-                            AppColors.colorWhite.withValues(alpha: 0.1),
+                            AppColors.colorWhite.withOpacity(0.1),
                         child: const Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -563,10 +557,10 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                     height: 56.0,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: AppColors.colorPrimary.withValues(alpha: 0.06),
+                      color: AppColors.colorPrimary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16.0),
                       border: Border.all(
-                        color: AppColors.colorPrimary.withValues(alpha: 0.2),
+                        color: AppColors.colorPrimary.withOpacity(0.1),
                         width: 1.5,
                       ),
                     ),
@@ -576,9 +570,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                         onTap: _viewAssignments,
                         borderRadius: BorderRadius.circular(16.0),
                         splashColor:
-                            AppColors.colorPrimary.withValues(alpha: 0.1),
+                            AppColors.colorPrimary.withOpacity(0.1),
                         highlightColor:
-                            AppColors.colorPrimary.withValues(alpha: 0.05),
+                            AppColors.colorPrimary.withOpacity(0.1),
                         child: const Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -634,7 +628,6 @@ Assignment ID: ${assignment.assignmentId}
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Assignment details copied to clipboard'),
-          backgroundColor: AppColors.colorSuccess,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -650,7 +643,6 @@ Assignment ID: ${assignment.assignmentId}
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(24.0),
         decoration: const BoxDecoration(

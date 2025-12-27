@@ -181,7 +181,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Pulse background
+        // Pulse surface
         Transform.scale(
           scale: _pulseAnimation.value,
           child: Container(
@@ -189,7 +189,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
             height: 120.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.colorSuccess.withValues(alpha: 0.1),
+              color: AppColors.colorSuccess.withOpacity(0.1),
             ),
           ),
         ),
@@ -329,10 +329,10 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.05),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: color.withOpacity(0.1),
           width: 1.0,
         ),
       ),
@@ -341,7 +341,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
           Container(
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8.0),
             ),
             child: Icon(
@@ -388,7 +388,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           decoration: BoxDecoration(
-            color: AppColors.colorSuccess.withValues(alpha: 0.1),
+            color: AppColors.colorSuccess.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20.0),
           ),
           child: Text(

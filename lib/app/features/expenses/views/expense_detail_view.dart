@@ -1,4 +1,4 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
@@ -31,12 +31,11 @@ class ExpenseDetailView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Expense Details',
-          style: ModernSaasDesign.headlineSmall.copyWith(
-            color: ModernSaasDesign.textOnPrimary,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+            color: Colors.white,
           ),
         ),
-        backgroundColor: ModernSaasDesign.primary,
-        iconTheme: IconThemeData(color: ModernSaasDesign.textOnPrimary),
+        iconTheme: IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -104,7 +103,7 @@ class ExpenseDetailView extends ConsumerWidget {
                   value: 'reject',
                   child: Row(
                     children: [
-                      Icon(Icons.cancel, color: ModernSaasDesign.error),
+                      Icon(Icons.cancel, color: Colors.red),
                       SizedBox(width: 8),
                       Text('Reject'),
                     ],
@@ -114,7 +113,7 @@ class ExpenseDetailView extends ConsumerWidget {
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete, color: ModernSaasDesign.error),
+                    Icon(Icons.delete, color: Colors.red),
                     SizedBox(width: 8),
                     Text('Delete'),
                   ],
@@ -130,26 +129,26 @@ class ExpenseDetailView extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              ModernSaasDesign.primary,
-              ModernSaasDesign.background,
-              ModernSaasDesign.background,
+              const Color(0xFF667EEA),
+              Colors.white,
+              Colors.white,
             ],
             stops: [0.0, 0.1, 1.0],
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(ModernSaasDesign.space5),
+            padding: EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Status Badge
                 _buildStatusBadge(expense.status),
-                SizedBox(height: ModernSaasDesign.space4),
+                SizedBox(height: 16.0),
 
                 // Main Card
                 ModernCard(
-                  padding: EdgeInsets.all(ModernSaasDesign.space5),
+                  padding: EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -159,17 +158,17 @@ class ExpenseDetailView extends ConsumerWidget {
                         children: [
                           Text(
                             expense.title,
-                            style: ModernSaasDesign.headlineLarge,
+                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: ModernSaasDesign.space3),
+                          SizedBox(height: 12.0),
                           Align(
                             alignment: Alignment.centerRight,
                             child: Text(
                               currencyFormat.format(expense.amount ?? 0.0),
-                              style: ModernSaasDesign.headlineLarge.copyWith(
-                                color: ModernSaasDesign.primary,
+                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600).copyWith(
+                                color: const Color(0xFF667EEA),
                               ),
                             ),
                           ),
@@ -187,7 +186,6 @@ class ExpenseDetailView extends ConsumerWidget {
                               expense.category,
                               style: const TextStyle(fontSize: 12),
                             ),
-                            backgroundColor: ModernSaasDesign.neutral100,
                             avatar: const Icon(
                               Icons.category,
                               size: 16,
@@ -199,7 +197,6 @@ class ExpenseDetailView extends ConsumerWidget {
                               dateFormat.format(expense.date),
                               style: const TextStyle(fontSize: 12),
                             ),
-                            backgroundColor: ModernSaasDesign.neutral100,
                             avatar: const Icon(
                               Icons.calendar_today,
                               size: 16,
@@ -216,7 +213,6 @@ class ExpenseDetailView extends ConsumerWidget {
                                     : 'Recurring',
                                 style: const TextStyle(fontSize: 12),
                               ),
-                              backgroundColor: ModernSaasDesign.neutral100,
                               avatar: const Icon(
                                 Icons.repeat,
                                 size: 16,
@@ -235,7 +231,7 @@ class ExpenseDetailView extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: ModernSaasDesign.textSecondary,
+                            color: Color(0xFF6B7280),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -253,7 +249,7 @@ class ExpenseDetailView extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: ModernSaasDesign.textSecondary,
+                            color: Color(0xFF6B7280),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -327,18 +323,18 @@ class ExpenseDetailView extends ConsumerWidget {
 
     switch (status) {
       case 'approved':
-        color = ModernSaasDesign.success;
+        color = Colors.green;
         icon = Icons.check_circle;
         text = 'Approved';
         break;
       case 'rejected':
-        color = ModernSaasDesign.error;
+        color = Colors.red;
         icon = Icons.cancel;
         text = 'Rejected';
         break;
       case 'pending':
       default:
-        color = ModernSaasDesign.warning;
+        color = Colors.orange;
         icon = Icons.pending;
         text = 'Pending Approval';
         break;
@@ -347,7 +343,7 @@ class ExpenseDetailView extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color, width: 1),
       ),
@@ -373,7 +369,7 @@ class ExpenseDetailView extends ConsumerWidget {
           '$label: ',
           style: const TextStyle(
             fontSize: 14,
-            color: ModernSaasDesign.textSecondary,
+            color: Color(0xFF6B7280),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -416,7 +412,7 @@ class ExpenseDetailView extends ConsumerWidget {
                 }
               },
               style:
-                  TextButton.styleFrom(foregroundColor: ModernSaasDesign.error),
+                  TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Delete'),
             ),
           ],

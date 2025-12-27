@@ -1,11 +1,7 @@
-import 'package:carenest/app/core/utils/Services/signupResult.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/core/utils/Services/signup_result.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carenest/app/features/auth/models/signup_model.dart';
-import 'package:flutter/foundation.dart';
 
 class SignupViewModel extends ChangeNotifier {
   final SignupModel model = SignupModel();
@@ -53,6 +49,12 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void prefillOrganizationCode(String organizationCode) {
+    model.organizationCodeController.text = organizationCode;
+    model.isJoiningOrganization = true;
+    notifyListeners();
+  }
+
   Future<SignupResult> signup(
       BuildContext context, GlobalKey<FormState> formKey) async {
     debugPrint('SignupViewModel.signup');
@@ -92,7 +94,7 @@ class SignupViewModel extends ChangeNotifier {
               model.organizationNameController.text,
               model.emailController.text,
             );
-            debugPrint("DEBUG: Organization creation result: ${orgResult}");
+            debugPrint("DEBUG: Organization creation result: $orgResult");
             debugPrint(
                 "DEBUG: Organization result type: ${orgResult.runtimeType}");
             debugPrint("DEBUG: Organization result keys: ${orgResult.keys}");
@@ -107,7 +109,7 @@ class SignupViewModel extends ChangeNotifier {
                 success: false,
                 title: "Error",
                 message: orgResult['error'] ?? "Failed to create organization",
-                backgroundColor: AppColors.colorWarning,
+                surfaceColor: Colors.red,
               );
             } else if (orgResult.containsKey('organizationId') &&
                 orgResult.containsKey('organizationCode')) {
@@ -129,7 +131,7 @@ class SignupViewModel extends ChangeNotifier {
                 success: false,
                 title: "Error",
                 message: "Failed to create organization - invalid response",
-                backgroundColor: AppColors.colorWarning,
+                surfaceColor: Colors.red,
               );
             }
           }
@@ -150,7 +152,7 @@ class SignupViewModel extends ChangeNotifier {
                 success: false,
                 title: "Error",
                 message: verifyResult['message'] ?? "Invalid organization code",
-                backgroundColor: AppColors.colorWarning,
+                surfaceColor: Colors.red,
               );
             }
           }
@@ -181,7 +183,7 @@ class SignupViewModel extends ChangeNotifier {
               success: false,
               title: "Error",
               message: errorMessage,
-              backgroundColor: AppColors.colorWarning,
+              surfaceColor: Colors.red,
             );
           } else if (success.containsKey('userId') ||
               success.containsKey('message')) {
@@ -191,7 +193,7 @@ class SignupViewModel extends ChangeNotifier {
               success: true,
               title: "Success",
               message: message,
-              backgroundColor: AppColors.colorPrimary,
+              surfaceColor: Colors.green,
             );
           } else {
             debugPrint(
@@ -202,7 +204,7 @@ class SignupViewModel extends ChangeNotifier {
               success: false,
               title: "Error",
               message: "Failed to signup user - invalid response",
-              backgroundColor: AppColors.colorWarning,
+              surfaceColor: Colors.red,
             );
           }
         } else {
@@ -210,7 +212,7 @@ class SignupViewModel extends ChangeNotifier {
             success: false,
             title: "Error",
             message: "Passwords do not match",
-            backgroundColor: AppColors.colorWarning,
+            surfaceColor: Colors.red,
           );
         }
       } else {
@@ -218,7 +220,7 @@ class SignupViewModel extends ChangeNotifier {
           success: false,
           title: "Error",
           message: "Form is not valid",
-          backgroundColor: AppColors.colorWarning,
+          surfaceColor: Colors.red,
         );
       }
     } finally {

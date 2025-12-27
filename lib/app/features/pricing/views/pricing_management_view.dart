@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/shared/widgets/stat_cards.dart';
 import 'package:carenest/app/features/pricing/views/pricing_dashboard_view.dart';
-import 'package:carenest/app/features/pricing/views/ndis_item_management_view.dart';
 import 'package:carenest/app/features/pricing/views/ndis_pricing_management_view.dart';
 import 'package:carenest/app/features/pricing/views/service_rate_management_view.dart';
 import 'package:carenest/app/features/pricing/views/bulk_operations_view.dart';
 import 'package:carenest/app/features/pricing/views/price_history_view.dart';
 import 'package:carenest/app/features/pricing/views/pricing_configuration_view.dart';
-import 'package:carenest/app/features/pricing/widgets/improved_design_system.dart';
-import 'package:carenest/app/features/pricing/widgets/enhanced_navigation.dart';
-import 'dart:ui';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class PricingManagementView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -35,9 +27,9 @@ class PricingManagementView extends ConsumerStatefulWidget {
 class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
-  bool _isLoadingNdisItems = false;
-  bool _ndisItemsEmpty = false;
-  bool _showOnboarding = true; // For onboarding tooltip
+  final bool _isLoadingNdisItems = false;
+  final bool _ndisItemsEmpty = false;
+  final bool _showOnboarding = true; // For onboarding tooltip
 
   final List<Map<String, dynamic>> _pricingModules = [
     {
@@ -115,7 +107,6 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -191,8 +182,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            color: const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -257,8 +247,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            color: const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -303,7 +292,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     final orgName = widget.organizationName;
 
     if (orgId == null || orgId.isEmpty || orgName == null || orgName.isEmpty) {
-      _showSnackBar('Organization context missing. Cannot open Pricing Settings.', isError: true);
+      _showSnackBar(
+          'Organization context missing. Cannot open Pricing Settings.',
+          isError: true);
       return;
     }
 
@@ -461,7 +452,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -476,7 +467,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -552,7 +543,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                        color: const Color(0xFF6366F1).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
@@ -630,7 +621,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           ),
           boxShadow: [
             BoxShadow(
-              color: module['color'].withValues(alpha: 0.3),
+              color: module['color'].withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -644,8 +635,8 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.1),
-                Colors.white.withValues(alpha: 0.05),
+                Colors.white.withOpacity(0.1),
+                Colors.white.withOpacity(0.1),
               ],
             ),
           ),
@@ -660,7 +651,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -676,7 +667,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -711,7 +702,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 child: Text(
                   module['subtitle'],
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: Colors.white.withOpacity(0.8),
                     fontSize: 11,
                   ),
                   maxLines: 2,
@@ -725,7 +716,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               //     Container(
               //       padding: const EdgeInsets.all(6),
               //       decoration: BoxDecoration(
-              //         color: Colors.white.withValues(alpha:0.2),
+              //         color: Colors.white.withOpacity(0.1),
               //         borderRadius: BorderRadius.circular(8),
               //       ),
               //       child: const Icon(
@@ -817,7 +808,6 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.6,
         decoration: const BoxDecoration(
@@ -904,7 +894,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -944,7 +934,6 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : Colors.green,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

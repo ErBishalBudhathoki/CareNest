@@ -1,15 +1,11 @@
 import 'package:carenest/app/features/invoice/viewmodels/update_invoice_email_viewmodel.dart';
 import 'package:carenest/app/features/invoice/models/invoicing_email_model.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/widgets/alertDialog_widget.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
-import 'package:carenest/app/shared/widgets/textField_widget.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
+import 'package:carenest/app/shared/widgets/alert_dialog_widget.dart';
+import 'package:carenest/app/shared/widgets/popup_client_details.dart';
+import 'package:carenest/app/shared/widgets/text_field_widget.dart';
+import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/features/busineess/models/addBusiness_detail_model.dart';
-import 'package:carenest/app/shared/widgets/popupClientDetails.dart';
 import 'package:carenest/backend/api_method.dart';
 
 class AddUpdateInvoicingEmailView extends StatefulWidget {
@@ -21,7 +17,7 @@ class AddUpdateInvoicingEmailView extends StatefulWidget {
       {super.key});
 
   @override
-  _AddUpdateInvoicingEmailViewState createState() =>
+  State<AddUpdateInvoicingEmailView> createState() =>
       _AddUpdateInvoicingEmailViewState();
 }
 
@@ -54,24 +50,24 @@ class _AddUpdateInvoicingEmailViewState
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final theme = Theme.of(context);
+    //final size = MediaQuery.of(context).size;
+    //final theme = Theme.of(context);
     final model = InvoicingEmailModel();
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: ModernSaasDesign.neutral50,
+      backgroundColor: ModernInvoiceDesign.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: ModernSaasDesign.surface,
-        foregroundColor: ModernSaasDesign.primary,
+        backgroundColor: ModernInvoiceDesign.background,
+        foregroundColor: ModernInvoiceDesign.primary,
         iconTheme: IconThemeData(
-          color: ModernSaasDesign.primary,
+          color: ModernInvoiceDesign.primary,
         ),
         title: Text(
           'Add Invoicing Email Details',
-          style: ModernSaasDesign.headlineSmall.copyWith(
-            color: ModernSaasDesign.primary,
+          style: ModernInvoiceDesign.headlineMedium.copyWith(
+            color: ModernInvoiceDesign.primary,
           ),
         ),
         centerTitle: true,
@@ -79,21 +75,25 @@ class _AddUpdateInvoicingEmailViewState
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(ModernSaasDesign.space6),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Organization Header Card
-              ModernCard(
-                padding: const EdgeInsets.all(ModernSaasDesign.space5),
+              ModernInvoiceCard(
+                padding: const EdgeInsets.all(20.0),
+                backgroundColor: ModernInvoiceDesign.surface,
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusLg),
+                boxShadow: ModernInvoiceDesign.shadowSm,
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(ModernSaasDesign.space3),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
-                        color: ModernSaasDesign.primaryLight,
-                        borderRadius:
-                            BorderRadius.circular(ModernSaasDesign.radiusLg),
+                        color: ModernInvoiceDesign.primary,
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: ModernInvoiceDesign.shadowPrimaryGlow,
                       ),
                       child: Image.asset(
                         'assets/icons/3D Icons/business.png',
@@ -101,22 +101,22 @@ class _AddUpdateInvoicingEmailViewState
                         height: 40,
                       ),
                     ),
-                    const SizedBox(width: ModernSaasDesign.space4),
+                    const SizedBox(width: ModernInvoiceDesign.space16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Organization',
-                            style: ModernSaasDesign.bodySmall.copyWith(
-                              color: ModernSaasDesign.textSecondary,
+                            style: ModernInvoiceDesign.labelMedium.copyWith(
+                              color: ModernInvoiceDesign.textSecondary,
                             ),
                           ),
-                          const SizedBox(height: ModernSaasDesign.space1),
+                          const SizedBox(height: ModernInvoiceDesign.space4),
                           Text(
                             widget.organizationName,
-                            style: ModernSaasDesign.headlineSmall.copyWith(
-                              color: ModernSaasDesign.primary,
+                            style: ModernInvoiceDesign.headlineMedium.copyWith(
+                              color: ModernInvoiceDesign.primary,
                             ),
                           ),
                         ],
@@ -125,26 +125,28 @@ class _AddUpdateInvoicingEmailViewState
                   ],
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space8),
+              const SizedBox(height: ModernInvoiceDesign.space8),
 
               // Form Section Header
               Text(
                 'Email Configuration',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  color: ModernSaasDesign.primary,
+                style: ModernInvoiceDesign.headlineMedium.copyWith(
+                  color: ModernInvoiceDesign.primary,
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space2),
+              const SizedBox(height: ModernInvoiceDesign.space8),
               Text(
                 'Configure your email settings for invoice delivery',
-                style: ModernSaasDesign.bodyMedium.copyWith(
-                  color: ModernSaasDesign.textSecondary,
-                ),
+                style: ModernInvoiceDesign.bodyMedium,
               ),
-              const SizedBox(height: ModernSaasDesign.space6),
+              const SizedBox(height: ModernInvoiceDesign.space6),
               // Email Field
-              ModernCard(
+              ModernInvoiceCard(
                 padding: EdgeInsets.zero,
+                backgroundColor: ModernInvoiceDesign.surface,
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusLg),
+                boxShadow: ModernInvoiceDesign.shadowSm,
                 child: TextFieldWidget(
                   suffixIconClickable: false,
                   obscureTextNotifier: _emailVisibilityNotifier,
@@ -157,8 +159,8 @@ class _AddUpdateInvoicingEmailViewState
                   suffixIcon: model.isValid
                       ? Image.asset(
                           'assets/icons/3D Icons/3dicons-shield-dynamic-color.png',
-                          width: 24,
-                          height: 24,
+                          width: ModernInvoiceDesign.iconSize,
+                          height: ModernInvoiceDesign.iconSize,
                         )
                       : null,
                   controller: _invoicingBusinessEmailController,
@@ -180,10 +182,14 @@ class _AddUpdateInvoicingEmailViewState
                   },
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space5),
+              const SizedBox(height: ModernInvoiceDesign.space20),
               // Password Field
-              ModernCard(
+              ModernInvoiceCard(
                 padding: EdgeInsets.zero,
+                backgroundColor: ModernInvoiceDesign.surface,
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusLg),
+                boxShadow: ModernInvoiceDesign.shadowSm,
                 child: ValueListenableBuilder<bool>(
                   valueListenable: _passwordVisibilityNotifier,
                   builder: (context, isPasswordVisible, child) {
@@ -199,8 +205,8 @@ class _AddUpdateInvoicingEmailViewState
                       },
                       prefixIcon: Image.asset(
                         'assets/icons/3D Icons/3dicons-lock-dynamic-color.png',
-                        width: 24,
-                        height: 24,
+                        width: ModernInvoiceDesign.space6,
+                        height: ModernInvoiceDesign.space6,
                       ),
                       getSuffixIcon: (isObscured) {
                         return isObscured
@@ -216,17 +222,16 @@ class _AddUpdateInvoicingEmailViewState
                   },
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space4),
+              const SizedBox(height: 16.0),
 
               // Help Text
               Container(
-                padding: const EdgeInsets.all(ModernSaasDesign.space4),
+                padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.info.withValues(alpha: 0.1),
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusLg),
+                  color: ModernInvoiceDesign.info.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.0),
                   border: Border.all(
-                      color: ModernSaasDesign.info.withValues(alpha: 0.2)),
+                      color: ModernInvoiceDesign.info.withValues(alpha: 0.1)),
                 ),
                 child: Row(
                   children: [
@@ -235,43 +240,48 @@ class _AddUpdateInvoicingEmailViewState
                       width: 36,
                       height: 36,
                     ),
-                    const SizedBox(width: ModernSaasDesign.space3),
+                    const SizedBox(width: 12.0),
                     Expanded(
                       child: Text(
                         'Use an app-specific password for enhanced security. You can generate one in your email provider\'s security settings.',
-                        style: ModernSaasDesign.bodySmall.copyWith(
-                          color: ModernSaasDesign.info,
-                          height: 1.4,
+                        style: ModernInvoiceDesign.bodySmall.copyWith(
+                          color: ModernInvoiceDesign.info,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space8),
+              const SizedBox(height: 32.0),
               // Submit Button
-              SizedBox(
+              Container(
                 width: double.infinity,
                 height: 56,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.0),
+                  gradient: ModernInvoiceDesign.primaryGradient,
+                  boxShadow: ModernInvoiceDesign.shadowPrimaryGlow,
+                ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ModernSaasDesign.primary,
+                    backgroundColor: Colors.transparent,
                     foregroundColor: Colors.white,
-                    elevation: 2,
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(ModernSaasDesign.radiusLg),
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(width: ModernSaasDesign.space2),
+                      const SizedBox(width: 8.0),
                       Text(
                         'Add Email Details',
-                        style: ModernSaasDesign.bodyLarge.copyWith(
+                        style: ModernInvoiceDesign.labelLarge.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
+                          fontSize: 16,
                         ),
                       ),
                     ],
@@ -280,12 +290,16 @@ class _AddUpdateInvoicingEmailViewState
                     if (_formKey.currentState!.validate()) {
                       showAlertDialog(context);
                       Future.delayed(const Duration(seconds: 3), () async {
+                        if (!mounted) return;
                         final response =
                             await _addInvoicingEmailDetails(widget.email);
+                        if (!mounted) return;
 
                         if (response ==
                             'Invoicing email details added successfully') {
-                          print('Add button pressed');
+                          if (kDebugMode) {
+                            print('Add button pressed');
+                          }
                           Navigator.pop(_scaffoldKey.currentContext!);
                           Navigator.of(_scaffoldKey.currentContext!,
                                   rootNavigator: true)
@@ -293,7 +307,9 @@ class _AddUpdateInvoicingEmailViewState
                           popUpClientDetails(_scaffoldKey.currentContext!,
                               "Success", "Invoicing email");
                         } else {
-                          print('Error at business adding');
+                          if (kDebugMode) {
+                            print('Error at business adding');
+                          }
                           Navigator.pop(_scaffoldKey.currentContext!);
                           Navigator.of(_scaffoldKey.currentContext!,
                                   rootNavigator: true)
@@ -320,7 +336,9 @@ class _AddUpdateInvoicingEmailViewState
         widget.organizationName,
         _invoicingBusinessEmailController.text,
         _invoicingBusinessEmailPasswordController.text);
-    print("Response: $ins");
+    if (kDebugMode) {
+      print("Response: $ins");
+    }
 
     if (ins['message'] == 'Invoicing email details added successfully') {
       if (kDebugMode) {

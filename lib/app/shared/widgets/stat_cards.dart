@@ -70,11 +70,11 @@ class StatCard extends StatelessWidget {
     Widget card = Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: data.backgroundColor ?? Colors.white,
+        color: data.surfaceColor ?? Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: (data.color ?? Colors.grey).withValues(alpha: 0.1),
+            color: (data.color ?? Colors.grey).withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -82,7 +82,7 @@ class StatCard extends StatelessWidget {
         ],
         border: data.showBorder
             ? Border.all(
-                color: (data.color ?? Colors.grey).withValues(alpha: 0.2),
+                color: (data.color ?? Colors.grey).withOpacity(0.1),
                 width: 1,
               )
             : null,
@@ -116,7 +116,7 @@ class StatCard extends StatelessWidget {
           )
           .shimmer(
             duration: (animationDuration.inMilliseconds * 1.5).ms,
-            color: (data.color ?? Colors.grey).withValues(alpha: 0.1),
+            color: (data.color ?? Colors.grey).withOpacity(0.1),
           );
     }
 
@@ -187,7 +187,7 @@ class StatCard extends StatelessWidget {
       height: 48,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: (data.color ?? Colors.grey).withValues(alpha: 0.1),
+        color: (data.color ?? Colors.grey).withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
@@ -240,7 +240,7 @@ class StatCardData {
   final String? subtitle;
   final IconData? icon;
   final Color? color;
-  final Color? backgroundColor;
+  final Color? surfaceColor;
   final Color? titleColor;
   final Color? valueColor;
   final Color? subtitleColor;
@@ -253,7 +253,7 @@ class StatCardData {
     this.subtitle,
     this.icon,
     this.color,
-    this.backgroundColor,
+    this.surfaceColor,
     this.titleColor,
     this.valueColor,
     this.subtitleColor,

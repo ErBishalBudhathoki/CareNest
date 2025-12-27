@@ -1,7 +1,7 @@
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
+
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/providers/pricing_settings_providers.dart';
@@ -14,11 +14,11 @@ class PricingConfigurationView extends StatefulWidget {
   final String organizationName;
 
   const PricingConfigurationView({
-    Key? key,
+    super.key,
     required this.adminEmail,
     required this.organizationId,
     required this.organizationName,
-  }) : super(key: key);
+  });
 
   @override
   _PricingConfigurationViewState createState() =>
@@ -198,8 +198,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            color: const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -247,8 +246,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            color: const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -292,7 +290,6 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
       floating: false,
       pinned: true,
       centerTitle: false,
-      backgroundColor: AppColors.colorPrimary,
       flexibleSpace: FlexibleSpaceBar(
         titlePadding:
             const EdgeInsetsDirectional.only(start: 20, bottom: 56, end: 20),
@@ -323,7 +320,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
               end: Alignment.bottomRight,
               colors: [
                 AppColors.colorPrimary,
-                AppColors.colorPrimary.withValues(alpha: 0.8),
+                AppColors.colorPrimary.withOpacity(0.1),
               ],
             ),
           ),
@@ -337,7 +334,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                   height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withOpacity(0.1),
                   ),
                 ),
               ),
@@ -356,7 +353,8 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                   : () async {
                       try {
                         // Map current UI values into the ViewModel before saving
-                        final vmRead = ref.read(pricingSettingsViewModelProvider);
+                        final vmRead =
+                            ref.read(pricingSettingsViewModelProvider);
                         vmRead.updateSettings(
                           defaultCurrency: _defaultCurrency,
                           pricingModel: _pricingModel,
@@ -430,7 +428,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -527,139 +525,94 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
           _buildSettingsSection(
             'Fallback Base Rate',
             [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Organization Fallback Base Rate (AUD/hour)',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                            ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Organization Fallback Base Rate',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Used when no client or organization-specific price exists.',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Used when no client or organization-specific price exists.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
-                          TextFormField(
-                            controller: _fallbackRateController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 5,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 40,
+                            child: TextFormField(
+                              controller: _fallbackRateController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              style: const TextStyle(fontSize: 14),
+                              decoration: InputDecoration(
+                                isDense: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                suffixText: 'AUD',
+                                hintText: _fallbackBaseRate != null
+                                    ? _fallbackBaseRate!.toStringAsFixed(2)
+                                    : 'e.g., 35.00',
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          height: 40,
+                          child: ElevatedButton(
+                            onPressed: _isSavingFallbackRate
+                                ? null
+                                : _saveFallbackBaseRate,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              suffixText: 'AUD',
-                              hintText: _fallbackBaseRate != null
-                                  ? _fallbackBaseRate!.toStringAsFixed(2)
-                                  : 'e.g., 35.00',
                             ),
+                            child: _isSavingFallbackRate
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text('Save'),
                           ),
-                          if (_isFallbackLoading)
-                            const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: _isSavingFallbackRate ? null : _saveFallbackBaseRate,
-                      icon: _isSavingFallbackRate
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Icon(Icons.save),
-                      label: Text(_isSavingFallbackRate ? 'Saving...' : 'Save Base Rate'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.colorPrimary,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Consumer(
-                      builder: (context, ref, _) {
-                        final fallbackVm = ref.watch(fallbackPricingViewModelProvider);
-                        return OutlinedButton.icon(
-                          onPressed: fallbackVm.isLoading
-                              ? null
-                              : () async {
-                                  if (mounted) {
-                                    // Preload current rate before showing dialog
-                                    await ref.read(fallbackPricingViewModelProvider).load(widget.organizationId);
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => FallbackPriceDialog(
-                                        initialPrice: ref.read(fallbackPricingViewModelProvider).fallbackRate,
-                                        isSaving: ref.read(fallbackPricingViewModelProvider).isLoading,
-                                        errorText: ref.read(fallbackPricingViewModelProvider).errorMessage,
-                                        currencySuffix: 'AUD',
-                                        onSave: (value) async {
-                                          final vm = ref.read(fallbackPricingViewModelProvider);
-                                          await vm.save(
-                                            organizationId: widget.organizationId,
-                                            fallbackRate: value,
-                                            userEmail: widget.adminEmail,
-                                          );
-                                          if (vm.saveSucceeded) {
-                                            setState(() {
-                                              _fallbackBaseRate = value;
-                                              _fallbackRateController.text = value.toStringAsFixed(2);
-                                            });
-                                            Navigator.pop(context);
-                                            _showSnackBar('Fallback base rate updated');
-                                          } else if (vm.errorMessage != null) {
-                                            // Keep dialog open and surface error via Scaffold
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text(vm.errorMessage!)),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  }
-                                },
-                          icon: const Icon(Icons.edit),
-                          label: const Text('Prompt to Update'),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               if (_fallbackError != null)
                 Padding(
@@ -727,7 +680,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                 icon: const Icon(Icons.add),
                 label: const Text('Add Rule'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.colorPrimary,
+                  backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -766,7 +719,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -790,7 +743,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: priorityColor.withValues(alpha: 0.1),
+                  color: priorityColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -810,7 +763,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                     _pricingRules[index]['enabled'] = value;
                   });
                 },
-                activeColor: AppColors.colorPrimary,
+                activeThumbColor: AppColors.colorPrimary,
               ),
             ],
           ),
@@ -892,7 +845,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -916,7 +869,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.1),
+                  color: statusColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -947,7 +900,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                     _integrationSettings[index]['enabled'] = value;
                   });
                 },
-                activeColor: AppColors.colorPrimary,
+                activeThumbColor: AppColors.colorPrimary,
               ),
             ],
           ),
@@ -1108,12 +1061,9 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
     );
   }
 
-  Widget _buildDropdownSetting(
-    String label,
-    String value,
-    List<String> options,
-    ValueChanged<String?> onChanged,
-    {double bottomSpacing = 16, double labelFieldGap = 12}) {
+  Widget _buildDropdownSetting(String label, String value, List<String> options,
+      ValueChanged<String?> onChanged,
+      {double bottomSpacing = 16, double labelFieldGap = 12}) {
     return Padding(
       padding: EdgeInsets.only(bottom: bottomSpacing),
       child: Row(
@@ -1134,7 +1084,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
           Expanded(
             flex: 3,
             child: DropdownButtonFormField<String>(
-              value: value,
+              initialValue: value,
               isDense: true,
               isExpanded: true,
               decoration: InputDecoration(
@@ -1151,6 +1101,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
                         value: option,
                         child: Text(
                           option,
+                          style: const TextStyle(color: Colors.black),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
@@ -1242,7 +1193,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.colorPrimary,
+            activeThumbColor: AppColors.colorPrimary,
           ),
         ],
       ),
@@ -1378,8 +1329,10 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
       // Save Fallback Base Rate if present and changed
       final input = _fallbackRateController.text.trim();
       final parsed = double.tryParse(input);
-      final shouldSaveFallback =
-          input.isNotEmpty && parsed != null && parsed > 0 && parsed != _fallbackBaseRate;
+      final shouldSaveFallback = input.isNotEmpty &&
+          parsed != null &&
+          parsed > 0 &&
+          parsed != _fallbackBaseRate;
 
       if (shouldSaveFallback) {
         await _saveFallbackBaseRate();
@@ -1561,7 +1514,8 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
       } else {
         setState(() {
           _isSavingFallbackRate = false;
-          _fallbackError = result['message'] ?? 'Failed to update fallback base rate';
+          _fallbackError =
+              result['message'] ?? 'Failed to update fallback base rate';
         });
       }
     } catch (e) {
@@ -1576,7 +1530,6 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.colorPrimary,
       ),
     );
   }

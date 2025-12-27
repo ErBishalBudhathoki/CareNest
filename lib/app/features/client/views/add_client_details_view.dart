@@ -1,15 +1,9 @@
 import 'dart:async';
-
-import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/app/shared/widgets/alertDialog_widget.dart';
-import 'package:carenest/app/shared/widgets/businessNameDropDown_widget.dart';
+import 'package:carenest/app/shared/widgets/business_name_dropdown_widget.dart';
 import 'package:carenest/app/shared/widgets/button_widget.dart';
-import 'package:carenest/app/shared/widgets/textField_widget.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/shared/widgets/text_field_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/features/client/models/addClient_detail_model.dart';
-import 'package:carenest/app/shared/widgets/popupClientDetails.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';

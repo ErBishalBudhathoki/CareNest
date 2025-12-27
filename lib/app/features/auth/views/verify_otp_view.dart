@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
-import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart';
-import 'package:carenest/app/features/auth/viewmodels/change_password_viewmodel.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:pinput/pinput.dart';
-import 'package:carenest/app/features/auth/views/change_password_view.dart'
-    hide SizedBox;
-import 'package:flutter/foundation.dart';
-import 'package:iconsax/iconsax.dart';
-import 'login_view.dart';
+import 'package:carenest/app/features/auth/views/change_password_view.dart';
 
 class VerifyOTPView extends ConsumerWidget {
   final String otpGenerated;
@@ -40,9 +32,7 @@ class VerifyOTPView extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -53,14 +43,14 @@ class VerifyOTPView extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Icon(
-              Iconsax.arrow_left_2,
+              Icons.arrow_back,
               color: AppColors.colorBlack87,
               size: 20,
             ),
@@ -111,21 +101,21 @@ class VerifyOTPView extends ConsumerWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.colorPrimary.withValues(alpha: 0.8),
+                AppColors.colorPrimary.withOpacity(0.1),
                 AppColors.colorPrimary,
               ],
             ),
             borderRadius: BorderRadius.circular(60),
             boxShadow: [
               BoxShadow(
-                color: AppColors.colorPrimary.withValues(alpha: 0.3),
+                color: AppColors.colorPrimary.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
             ],
           ),
           child: const Icon(
-            Iconsax.shield_tick,
+            Icons.verified_user_outlined,
             size: 60,
             color: Colors.white,
           ),
@@ -160,7 +150,7 @@ class VerifyOTPView extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -205,7 +195,7 @@ class VerifyOTPView extends ConsumerWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.colorPrimary.withValues(alpha: 0.2),
+                    color: AppColors.colorPrimary.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -245,13 +235,13 @@ class VerifyOTPView extends ConsumerWidget {
           end: Alignment.centerRight,
           colors: [
             AppColors.colorPrimary,
-            AppColors.colorPrimary.withValues(alpha: 0.8),
+            AppColors.colorPrimary.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorPrimary.withValues(alpha: 0.3),
+            color: AppColors.colorPrimary.withOpacity(0.1),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),

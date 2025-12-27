@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:carenest/app/shared/widgets/stat_cards.dart';
+import 'package:carenest/app/features/expenses/views/modern_widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
 import 'package:carenest/app/features/expenses/providers/expense_provider.dart';
@@ -12,8 +11,6 @@ import 'package:carenest/app/features/expenses/views/expense_detail_view.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:intl/intl.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_components.dart';
 
 class ExpenseManagementView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -194,7 +191,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ModernSaasDesign.background,
       body: Stack(
         children: [
           CustomScrollView(
@@ -213,20 +209,18 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           if (_showOnboarding)
             Positioned(
               top: 120,
-              left: ModernSaasDesign.space6,
-              right: ModernSaasDesign.space6,
+              left: 24.0,
+              right: 24.0,
               child: Material(
                 color: Colors.transparent,
                 child: Container(
-                  padding: EdgeInsets.all(ModernSaasDesign.space4),
+                  padding: EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: ModernSaasDesign.surface,
-                    borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusMd),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            ModernSaasDesign.neutral900.withValues(alpha: 0.08),
+                        color: const Color(0xFF171717).withValues(alpha: 0.1),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -234,12 +228,12 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: ModernSaasDesign.primary),
-                      SizedBox(width: ModernSaasDesign.space3),
+                      Icon(Icons.info_outline, color: const Color(0xFF667EEA)),
+                      SizedBox(width: 12.0),
                       Expanded(
                         child: Text(
                           'Welcome! Use the tabs to manage expenses, approvals, and reports. Tap any stat card for details.',
-                          style: ModernSaasDesign.bodyMedium,
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                       IconButton(
@@ -263,12 +257,12 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       expandedHeight: 160,
       floating: false,
       pinned: true,
-      backgroundColor: ModernSaasDesign.primary,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           'Expense Management',
-          style: ModernSaasDesign.headlineSmall.copyWith(
-            color: ModernSaasDesign.textOnPrimary,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+              .copyWith(
+            color: Colors.white,
           ),
         ),
         background: Container(
@@ -277,8 +271,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                ModernSaasDesign.primary,
-                ModernSaasDesign.primaryDark,
+                const Color(0xFF667EEA),
+                const Color(0xFF667EEA),
               ],
             ),
           ),
@@ -304,7 +298,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   height: 120,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: Colors.white.withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -313,18 +307,18 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         ).animate().fadeIn(duration: 600.ms),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: ModernSaasDesign.surface),
+        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.refresh, color: ModernSaasDesign.surface),
+          icon: const Icon(Icons.refresh, color: Colors.white),
           onPressed: () {
             _refreshExpenseData();
           },
         ),
         IconButton(
-          icon: const Icon(Icons.settings, color: ModernSaasDesign.surface),
+          icon: const Icon(Icons.settings, color: Colors.white),
           onPressed: () {
             _showSnackBar('Expense settings coming soon...');
           },
@@ -352,7 +346,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         value: currencyFormat.format(totalAmount),
         icon: Icons.account_balance_wallet_rounded,
         color: const Color(0xFF4CAF50),
-        backgroundColor: Colors.white,
         showBorder: true,
         valueColor: const Color(0xFF1E293B),
         titleColor: Colors.grey[600],
@@ -362,7 +355,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         value: pendingCount.toString(),
         icon: Icons.pending_actions_rounded,
         color: const Color(0xFFF59E0B),
-        backgroundColor: Colors.white,
         showBorder: true,
         valueColor: const Color(0xFF1E293B),
         titleColor: Colors.grey[600],
@@ -372,7 +364,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         value: currencyFormat.format(thisMonthAmount),
         icon: Icons.date_range_rounded,
         color: const Color(0xFF3B82F6),
-        backgroundColor: Colors.white,
         showBorder: true,
         valueColor: const Color(0xFF1E293B),
         titleColor: Colors.grey[600],
@@ -444,7 +435,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -547,11 +538,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   _tabController.animateTo(2); // Switch to add expense tab
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: ModernSaasDesign.primary,
-                  foregroundColor: ModernSaasDesign.textOnPrimary,
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusMd),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
                 child: const Text('Add Expense'),
@@ -632,8 +622,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 children: [
                   Text(
                     'Recent Expenses',
-                    style: ModernSaasDesign.headlineSmall.copyWith(
-                      color: ModernSaasDesign.textPrimary,
+                    style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600)
+                        .copyWith(
+                      color: const Color(0xFF1F2937),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -652,8 +644,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               ),
               const SizedBox(height: 8),
               ...latestExpenses
-                  .map((expense) => _buildRecentExpenseItem(expense))
-                  .toList(),
+                  .map((expense) => _buildRecentExpenseItem(expense)),
 
               const SizedBox(height: 24),
               // Quick actions
@@ -664,8 +655,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   children: [
                     Text(
                       'Quick Actions',
-                      style: ModernSaasDesign.headlineSmall.copyWith(
-                        color: ModernSaasDesign.textPrimary,
+                      style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600)
+                          .copyWith(
+                        color: const Color(0xFF1F2937),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -674,7 +667,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       'Add Expense',
                       'Create a new expense entry',
                       Icons.add_circle_outline,
-                      ModernSaasDesign.success,
+                      Colors.green,
                       () {
                         _tabController.animateTo(2);
                       },
@@ -684,7 +677,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       'Approvals',
                       'Review pending expenses',
                       Icons.approval_outlined,
-                      ModernSaasDesign.warning,
+                      Colors.orange,
                       () {
                         _tabController.animateTo(3);
                       },
@@ -694,7 +687,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       'Reports',
                       'View expense analytics',
                       Icons.bar_chart_outlined,
-                      ModernSaasDesign.info,
+                      Colors.blue,
                       () {
                         _tabController.animateTo(5);
                       },
@@ -710,18 +703,17 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   Widget _buildDashboardCard(
       String title, String value, IconData icon, Color color) {
     return ModernCard(
-      padding: const EdgeInsets.all(ModernSaasDesign.space4),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(ModernSaasDesign.space2),
+                padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusMd),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Icon(
                   icon,
@@ -729,23 +721,24 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   size: 20,
                 ),
               ),
-              const SizedBox(width: ModernSaasDesign.space3),
+              const SizedBox(width: 12.0),
               Expanded(
                 child: Text(
                   title,
-                  style: ModernSaasDesign.bodyMedium.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 14).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space3),
+          const SizedBox(height: 12.0),
           Text(
             value,
-            style: ModernSaasDesign.headlineMedium.copyWith(
-              color: ModernSaasDesign.textPrimary,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                .copyWith(
+              color: const Color(0xFF1F2937),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -759,8 +752,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     final dateFormat = DateFormat('MMM dd, yyyy');
 
     return ModernCard(
-      margin: const EdgeInsets.only(bottom: ModernSaasDesign.space3),
-      padding: const EdgeInsets.all(ModernSaasDesign.space4),
+      margin: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.all(16.0),
       onTap: () {
         Navigator.push(
           context,
@@ -786,36 +779,36 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               children: [
                 Text(
                   expense.title,
-                  style: ModernSaasDesign.bodyLarge.copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                  style: const TextStyle(fontSize: 16).copyWith(
+                    color: const Color(0xFF1F2937),
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: ModernSaasDesign.space1),
+                const SizedBox(height: 4.0),
                 Text(
                   '${expense.category} • ${dateFormat.format(expense.date)}',
-                  style: ModernSaasDesign.bodySmall.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 12).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: ModernSaasDesign.space3),
+          const SizedBox(width: 12.0),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 currencyFormat.format(expense.amount ?? 0.0),
-                style: ModernSaasDesign.bodyLarge.copyWith(
+                style: const TextStyle(fontSize: 16).copyWith(
                   fontWeight: FontWeight.w700,
-                  color: ModernSaasDesign.success,
+                  color: Colors.green,
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space2),
+              const SizedBox(height: 8.0),
               _buildStatusBadge(expense.status),
             ],
           ),
@@ -841,10 +834,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: color.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -852,7 +845,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+          borderRadius: BorderRadius.circular(12.0),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -862,8 +855,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   height: 48,
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
-                    borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusMd),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Icon(
                     icon,
@@ -878,16 +870,18 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     children: [
                       Text(
                         title,
-                        style: ModernSaasDesign.labelLarge.copyWith(
-                          color: ModernSaasDesign.textPrimary,
+                        style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500)
+                            .copyWith(
+                          color: const Color(0xFF1F2937),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: ModernSaasDesign.bodySmall.copyWith(
-                          color: ModernSaasDesign.textSecondary,
+                        style: const TextStyle(fontSize: 12).copyWith(
+                          color: const Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -895,7 +889,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 ),
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: ModernSaasDesign.textSecondary,
+                  color: const Color(0xFF6B7280),
                   size: 16,
                 ),
               ],
@@ -930,13 +924,13 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      ModernSaasDesign.primary,
-                      ModernSaasDesign.secondary,
+                      const Color(0xFF667EEA),
+                      const Color(0xFF764BA2),
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+                      color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -951,15 +945,17 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               const SizedBox(height: 24),
               Text(
                 'No Expenses Found',
-                style: ModernSaasDesign.headlineMedium.copyWith(
-                  color: ModernSaasDesign.textPrimary,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                        .copyWith(
+                  color: const Color(0xFF1F2937),
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 'Add your first expense to get started',
-                style: ModernSaasDesign.bodyMedium.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 14).copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -1000,8 +996,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             children: [
               Text(
                 'All Expenses',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  color: ModernSaasDesign.textPrimary,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                        .copyWith(
+                  color: const Color(0xFF1F2937),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1051,8 +1049,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     final dateFormat = DateFormat('MMM dd, yyyy');
 
     return ModernCard(
-      margin: const EdgeInsets.only(bottom: ModernSaasDesign.space4),
-      padding: const EdgeInsets.all(ModernSaasDesign.space4),
+      margin: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.all(16.0),
       onTap: () {
         Navigator.push(
           context,
@@ -1079,8 +1077,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Expanded(
                 child: Text(
                   expense.title,
-                  style: ModernSaasDesign.bodyLarge.copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                  style: const TextStyle(fontSize: 16).copyWith(
+                    color: const Color(0xFF1F2937),
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
@@ -1089,60 +1087,61 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               ),
               Text(
                 currencyFormat.format(expense.amount ?? 0.0),
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  color: ModernSaasDesign.primary,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                        .copyWith(
+                  color: const Color(0xFF667EEA),
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space2),
+          const SizedBox(height: 8.0),
           Row(
             children: [
               Icon(
                 Icons.category,
                 size: 14,
-                color: ModernSaasDesign.textSecondary,
+                color: const Color(0xFF6B7280),
               ),
-              const SizedBox(width: ModernSaasDesign.space1),
+              const SizedBox(width: 4.0),
               Text(
                 expense.category,
-                style: ModernSaasDesign.bodySmall.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 12).copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
               ),
-              const SizedBox(width: ModernSaasDesign.space4),
+              const SizedBox(width: 16.0),
               Icon(
                 Icons.calendar_today,
                 size: 14,
-                color: ModernSaasDesign.textSecondary,
+                color: const Color(0xFF6B7280),
               ),
-              const SizedBox(width: ModernSaasDesign.space1),
+              const SizedBox(width: 4.0),
               Text(
                 dateFormat.format(expense.date),
-                style: ModernSaasDesign.bodySmall.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 12).copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space3),
+          const SizedBox(height: 12.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space2,
-                  vertical: ModernSaasDesign.space1,
+                  horizontal: 8.0,
+                  vertical: 4.0,
                 ),
                 decoration: BoxDecoration(
                   color: _getStatusColor(expense.status),
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusSm),
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
                 child: Text(
                   expense.status,
-                  style: ModernSaasDesign.bodySmall.copyWith(
+                  style: const TextStyle(fontSize: 12).copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1154,13 +1153,13 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     Icon(
                       Icons.repeat,
                       size: 14,
-                      color: ModernSaasDesign.textSecondary,
+                      color: const Color(0xFF6B7280),
                     ),
-                    const SizedBox(width: ModernSaasDesign.space1),
+                    const SizedBox(width: 4.0),
                     Text(
                       'Recurring',
-                      style: ModernSaasDesign.bodySmall.copyWith(
-                        color: ModernSaasDesign.textSecondary,
+                      style: const TextStyle(fontSize: 12).copyWith(
+                        color: const Color(0xFF6B7280),
                       ),
                     ),
                   ],
@@ -1182,7 +1181,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       'Marketing',
     ];
 
-    void _openAddExpense({String? initialCategory}) {
+    void openAddExpense({String? initialCategory}) {
       if (widget.organizationId == null) {
         _showSnackBar('Organization ID is required', isError: true);
         return;
@@ -1208,41 +1207,43 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(ModernSaasDesign.space5),
+      padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header card
           ModernCard(
-            padding: const EdgeInsets.all(ModernSaasDesign.space6),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: ModernSaasDesign.primary.withValues(alpha: 0.08),
+                    color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.add_circle_outline_rounded,
                     size: 64,
-                    color: ModernSaasDesign.primary,
+                    color: Color(0xFF667EEA),
                   ),
                 ),
-                const SizedBox(height: ModernSaasDesign.space4),
+                const SizedBox(height: 16.0),
                 Text(
                   'Add Expense',
-                  style: ModernSaasDesign.headlineMedium.copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                  style:
+                      const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                          .copyWith(
+                    color: const Color(0xFF1F2937),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: ModernSaasDesign.space2),
+                const SizedBox(height: 8.0),
                 Text(
                   'Create a new expense entry with details, receipts, and optional recurring settings.',
-                  style: ModernSaasDesign.bodyMedium.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 14).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -1250,15 +1251,16 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             ),
           ),
 
-          const SizedBox(height: ModernSaasDesign.space5),
+          const SizedBox(height: 20.0),
 
           // Quick category shortcuts
           Padding(
-            padding: EdgeInsets.only(bottom: ModernSaasDesign.space3),
+            padding: EdgeInsets.only(bottom: 12.0),
             child: Text(
               'Quick Categories',
-              style: ModernSaasDesign.headlineSmall.copyWith(
-                color: ModernSaasDesign.textPrimary,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                  .copyWith(
+                color: const Color(0xFF1F2937),
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1269,20 +1271,19 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             children: quickCategories
                 .map(
                   (cat) => ActionChip(
-                    backgroundColor: ModernSaasDesign.surface,
-                    side: const BorderSide(color: ModernSaasDesign.border),
+                    side: const BorderSide(color: Color(0xFFE0E0E0)),
                     label: Text(cat,
-                        style: ModernSaasDesign.bodyMedium
-                            .copyWith(color: ModernSaasDesign.textPrimary)),
+                        style: const TextStyle(fontSize: 14)
+                            .copyWith(color: const Color(0xFF1F2937))),
                     avatar: const Icon(Icons.local_offer,
-                        size: 18, color: ModernSaasDesign.textSecondary),
-                    onPressed: () => _openAddExpense(initialCategory: cat),
+                        size: 18, color: Color(0xFF6B7280)),
+                    onPressed: () => openAddExpense(initialCategory: cat),
                   ),
                 )
                 .toList(),
           ),
 
-          const SizedBox(height: ModernSaasDesign.space6),
+          const SizedBox(height: 24.0),
 
           // Actions
           Row(
@@ -1291,39 +1292,38 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 child: ModernButton(
                   text: 'Scan Receipt',
                   icon: Icons.photo_camera_outlined,
-                  onPressed: () => _openAddExpense(),
+                  onPressed: () => openAddExpense(),
                 ),
               ),
-              const SizedBox(width: ModernSaasDesign.space4),
+              const SizedBox(width: 16.0),
               Expanded(
                 child: ModernButton(
                   text: 'Add New Expense',
                   icon: Icons.add_circle_outline,
-                  onPressed: () => _openAddExpense(),
+                  onPressed: () => openAddExpense(),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: ModernSaasDesign.space5),
+          const SizedBox(height: 20.0),
 
           // Helpful tip
           ModernCard(
-            padding: const EdgeInsets.all(ModernSaasDesign.space4),
-            backgroundColor: ModernSaasDesign.primary.withValues(alpha: 0.04),
+            padding: const EdgeInsets.all(16.0),
             border: Border.all(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.12),
+              color: const Color(0xFF667EEA).withValues(alpha: 0.1),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline, color: ModernSaasDesign.primary),
-                const SizedBox(width: ModernSaasDesign.space3),
+                const Icon(Icons.info_outline, color: Color(0xFF667EEA)),
+                const SizedBox(width: 12.0),
                 Expanded(
                   child: Text(
                     'Pro tip: Attaching a receipt speeds up approvals and reduces back-and-forth.',
-                    style: ModernSaasDesign.bodyMedium.copyWith(
-                      color: ModernSaasDesign.textSecondary,
+                    style: const TextStyle(fontSize: 14).copyWith(
+                      color: const Color(0xFF6B7280),
                     ),
                   ),
                 ),
@@ -1384,7 +1384,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   _fetchExpenses();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF50),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -1405,7 +1404,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         children: [
           Text(
             'Pending Approvals',
-            style: ModernSaasDesign.headlineMedium,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Expanded(
@@ -1431,12 +1430,12 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     final dateFormat = DateFormat('MMM dd, yyyy');
 
     return ModernCard(
-      margin: EdgeInsets.only(bottom: ModernSaasDesign.space4),
+      margin: EdgeInsets.only(bottom: 16.0),
       padding: EdgeInsets.only(
-        top: ModernSaasDesign.space2,
-        left: ModernSaasDesign.space4,
-        right: ModernSaasDesign.space4,
-        bottom: ModernSaasDesign.space4,
+        top: 8.0,
+        left: 16.0,
+        right: 16.0,
+        bottom: 16.0,
       ),
       onTap: () {
         Navigator.push(
@@ -1465,13 +1464,12 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             children: [
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space3,
-                  vertical: ModernSaasDesign.space2,
+                  horizontal: 12.0,
+                  vertical: 8.0,
                 ),
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.warning,
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusSm),
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1481,10 +1479,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       size: 16,
                       color: Colors.white,
                     ),
-                    SizedBox(width: ModernSaasDesign.space1),
+                    SizedBox(width: 4.0),
                     Text(
                       'PENDING APPROVAL',
-                      style: ModernSaasDesign.bodySmall.copyWith(
+                      style: const TextStyle(fontSize: 12).copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1494,43 +1492,45 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               ),
               Text(
                 currencyFormat.format(expense.amount ?? 0.0),
-                style: ModernSaasDesign.headlineMedium.copyWith(
-                  color: ModernSaasDesign.success,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                        .copyWith(
+                  color: Colors.green,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
 
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: 16.0),
 
           // Title
           Text(
             expense.title,
-            style: ModernSaasDesign.headlineSmall.copyWith(
-              color: ModernSaasDesign.textPrimary,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                .copyWith(
+              color: const Color(0xFF1F2937),
               fontWeight: FontWeight.w600,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
 
-          SizedBox(height: ModernSaasDesign.space3),
+          SizedBox(height: 12.0),
 
           // Category and Date chips
           Row(
             children: [
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space3,
-                  vertical: ModernSaasDesign.space2,
+                  horizontal: 12.0,
+                  vertical: 8.0,
                 ),
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusFull),
+                  color: const Color(0xFF667EEA).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(999.0),
                   border: Border.all(
-                    color: ModernSaasDesign.primary.withValues(alpha: 0.2),
+                    color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                   ),
                 ),
                 child: Row(
@@ -1539,29 +1539,30 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     Icon(
                       Icons.category_outlined,
                       size: 14,
-                      color: ModernSaasDesign.primary,
+                      color: const Color(0xFF667EEA),
                     ),
-                    SizedBox(width: ModernSaasDesign.space1),
+                    SizedBox(width: 4.0),
                     Text(
                       expense.category,
-                      style: ModernSaasDesign.labelMedium.copyWith(
-                        color: ModernSaasDesign.primary,
+                      style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500)
+                          .copyWith(
+                        color: const Color(0xFF667EEA),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(width: ModernSaasDesign.space2),
+              SizedBox(width: 8.0),
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space3,
-                  vertical: ModernSaasDesign.space2,
+                  horizontal: 12.0,
+                  vertical: 8.0,
                 ),
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.neutral200,
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusFull),
+                  color: const Color(0xFFE5E5E5),
+                  borderRadius: BorderRadius.circular(999.0),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1569,13 +1570,15 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     Icon(
                       Icons.calendar_today_outlined,
                       size: 14,
-                      color: ModernSaasDesign.neutral600,
+                      color: const Color(0xFF525252),
                     ),
-                    SizedBox(width: ModernSaasDesign.space1),
+                    SizedBox(width: 4.0),
                     Text(
                       dateFormat.format(expense.date),
-                      style: ModernSaasDesign.labelMedium.copyWith(
-                        color: ModernSaasDesign.neutral600,
+                      style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500)
+                          .copyWith(
+                        color: const Color(0xFF525252),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1588,17 +1591,17 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           // Description (if exists)
           if (expense.description != null &&
               expense.description!.isNotEmpty) ...[
-            SizedBox(height: ModernSaasDesign.space3),
+            SizedBox(height: 12.0),
             Container(
-              padding: EdgeInsets.all(ModernSaasDesign.space3),
+              padding: EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.neutral100,
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(12.0),
               ),
               child: Text(
                 expense.description!,
-                style: ModernSaasDesign.bodyMedium.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 14).copyWith(
+                  color: const Color(0xFF6B7280),
                   height: 1.4,
                 ),
                 maxLines: 2,
@@ -1607,7 +1610,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             ),
           ],
 
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: 16.0),
 
           // Submission info and date
           Row(
@@ -1615,14 +1618,14 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Icon(
                 Icons.person_outline,
                 size: 16,
-                color: ModernSaasDesign.neutral500,
+                color: const Color(0xFF737373),
               ),
-              SizedBox(width: ModernSaasDesign.space2),
+              SizedBox(width: 8.0),
               Expanded(
                 child: Text(
                   'Submitted by ${expense.submittedBy}',
-                  style: ModernSaasDesign.bodySmall.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 12).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1630,19 +1633,19 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Icon(
                 Icons.access_time_outlined,
                 size: 16,
-                color: ModernSaasDesign.neutral500,
+                color: const Color(0xFF737373),
               ),
-              SizedBox(width: ModernSaasDesign.space1),
+              SizedBox(width: 4.0),
               Text(
                 dateFormat.format(expense.createdAt),
-                style: ModernSaasDesign.bodySmall.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 12).copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
               ),
             ],
           ),
 
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: 16.0),
 
           // Action buttons
           Row(
@@ -1666,7 +1669,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   },
                 ),
               ),
-              SizedBox(width: ModernSaasDesign.space2),
+              SizedBox(width: 8.0),
               Expanded(
                 child: ModernButton(
                   text: 'Reject',
@@ -1685,14 +1688,18 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   },
                 ),
               ),
-              SizedBox(width: ModernSaasDesign.space2),
+              SizedBox(width: 8.0),
               Container(
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.surface,
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusLg),
-                  border: Border.all(color: ModernSaasDesign.border),
-                  boxShadow: ModernSaasDesign.shadowSm,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                  border: Border.all(color: const Color(0xFFE0E0E0)),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2))
+                  ],
                 ),
                 child: IconButton(
                   onPressed: () {
@@ -1715,10 +1722,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   icon: const Icon(
                     Icons.visibility_rounded,
                     size: 18,
-                    color: ModernSaasDesign.textSecondary,
+                    color: Color(0xFF6B7280),
                   ),
                   tooltip: 'View',
-                  padding: const EdgeInsets.all(ModernSaasDesign.space2),
+                  padding: const EdgeInsets.all(8.0),
                   constraints:
                       const BoxConstraints.tightFor(width: 36, height: 36),
                   visualDensity: VisualDensity.compact,
@@ -1756,13 +1763,13 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      ModernSaasDesign.primary,
-                      ModernSaasDesign.secondary,
+                      const Color(0xFF667EEA),
+                      const Color(0xFF764BA2),
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+                      color: const Color(0xFF667EEA).withOpacity(0.1),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -1777,15 +1784,17 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               const SizedBox(height: 24),
               Text(
                 'No Recurring Expenses',
-                style: ModernSaasDesign.headlineMedium.copyWith(
-                  color: ModernSaasDesign.textPrimary,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                        .copyWith(
+                  color: const Color(0xFF1F2937),
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 'Create expenses with recurring option enabled',
-                style: ModernSaasDesign.bodyMedium.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 14).copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -1815,8 +1824,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               children: [
                 Text(
                   'Recurring Expenses',
-                  style: ModernSaasDesign.headlineMedium.copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                  style:
+                      const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                          .copyWith(
+                    color: const Color(0xFF1F2937),
                   ),
                 ),
                 ModernButton(
@@ -1833,8 +1844,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           Expanded(
             child: RefreshIndicator(
               onRefresh: _fetchExpenses,
-              color: ModernSaasDesign.primary,
-              backgroundColor: ModernSaasDesign.surface,
+              color: const Color(0xFF667EEA),
               child: ListView.builder(
                 itemCount: recurringExpenses.length,
                 itemBuilder: (context, index) {
@@ -1865,8 +1875,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Expanded(
                 child: Text(
                   expense.title,
-                  style: ModernSaasDesign.headlineSmall.copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                  style:
+                      const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                          .copyWith(
+                    color: const Color(0xFF1F2937),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1877,14 +1889,14 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      ModernSaasDesign.primary,
-                      ModernSaasDesign.secondary,
+                      const Color(0xFF667EEA),
+                      const Color(0xFF764BA2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+                      color: const Color(0xFF667EEA).withOpacity(0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -1918,13 +1930,13 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  ModernSaasDesign.primary.withValues(alpha: 0.1),
-                  ModernSaasDesign.secondary.withValues(alpha: 0.1),
+                  const Color(0xFF667EEA).withOpacity(0.1),
+                  const Color(0xFF764BA2).withOpacity(0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: ModernSaasDesign.primary.withValues(alpha: 0.2),
+                color: const Color(0xFF667EEA).withOpacity(0.1),
               ),
             ),
             child: Row(
@@ -1932,8 +1944,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               children: [
                 Text(
                   currencyFormat.format(expense.amount ?? 0.0),
-                  style: ModernSaasDesign.headlineMedium.copyWith(
-                    color: ModernSaasDesign.primary,
+                  style:
+                      const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                          .copyWith(
+                    color: const Color(0xFF667EEA),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1947,40 +1961,40 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+                  color: const Color(0xFF667EEA).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.category,
                   size: 16,
-                  color: ModernSaasDesign.primary,
+                  color: const Color(0xFF667EEA),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 expense.category,
-                style: ModernSaasDesign.bodyMedium.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 14).copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
               ),
               const SizedBox(width: 20),
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: ModernSaasDesign.secondary.withValues(alpha: 0.1),
+                  color: const Color(0xFF764BA2).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today,
                   size: 16,
-                  color: ModernSaasDesign.secondary,
+                  color: const Color(0xFF764BA2),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 'Next: ${dateFormat.format(expense.date)}',
-                style: ModernSaasDesign.bodyMedium.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: const TextStyle(fontSize: 14).copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
               ),
             ],
@@ -2042,16 +2056,16 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   Widget _buildStatusBadge(String status) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: ModernSaasDesign.space2,
-        vertical: ModernSaasDesign.space1,
+        horizontal: 8.0,
+        vertical: 4.0,
       ),
       decoration: BoxDecoration(
         color: _getStatusColor(status),
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+        borderRadius: BorderRadius.circular(4.0),
       ),
       child: Text(
         status,
-        style: ModernSaasDesign.bodySmall.copyWith(
+        style: const TextStyle(fontSize: 12).copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w600,
         ),
@@ -2081,20 +2095,22 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 Icon(
                   Icons.bar_chart_rounded,
                   size: 64,
-                  color: ModernSaasDesign.primary.withValues(alpha: 0.6),
+                  color: const Color(0xFF667EEA).withOpacity(0.1),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'No Expense Data',
-                  style: ModernSaasDesign.headlineMedium.copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                  style:
+                      const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                          .copyWith(
+                    color: const Color(0xFF1F2937),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Add expenses to generate reports',
-                  style: ModernSaasDesign.bodyMedium.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 14).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -2155,7 +2171,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Total Expenses',
                               totalExpenses.toString(),
                               Icons.receipt_long,
-                              ModernSaasDesign.info,
+                              Colors.blue,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -2164,7 +2180,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Total Amount',
                               currencyFormat.format(totalAmount),
                               Icons.attach_money,
-                              ModernSaasDesign.success,
+                              Colors.green,
                             ),
                           ),
                         ],
@@ -2177,7 +2193,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Approved',
                               '$approvedExpenses (${totalExpenses > 0 ? percentFormat.format(approvedExpenses / totalExpenses) : '0%'})',
                               Icons.check_circle,
-                              ModernSaasDesign.success,
+                              Colors.green,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -2186,7 +2202,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Pending',
                               '$pendingExpenses (${totalExpenses > 0 ? percentFormat.format(pendingExpenses / totalExpenses) : '0%'})',
                               Icons.pending,
-                              ModernSaasDesign.warning,
+                              Colors.orange,
                             ),
                           ),
                         ],
@@ -2199,7 +2215,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Rejected',
                               '$rejectedExpenses (${totalExpenses > 0 ? percentFormat.format(rejectedExpenses / totalExpenses) : '0%'})',
                               Icons.cancel,
-                              ModernSaasDesign.error,
+                              Colors.red,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -2208,7 +2224,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Approved Amount',
                               currencyFormat.format(approvedAmount),
                               Icons.monetization_on,
-                              ModernSaasDesign.success,
+                              Colors.green,
                             ),
                           ),
                         ],
@@ -2229,7 +2245,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Total Expenses',
                               totalExpenses.toString(),
                               Icons.receipt_long,
-                              ModernSaasDesign.info,
+                              Colors.blue,
                             ),
                           ),
                           SizedBox(
@@ -2238,7 +2254,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Total Amount',
                               currencyFormat.format(totalAmount),
                               Icons.attach_money,
-                              ModernSaasDesign.success,
+                              Colors.green,
                             ),
                           ),
                         ],
@@ -2254,7 +2270,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Approved',
                               '$approvedExpenses (${totalExpenses > 0 ? percentFormat.format(approvedExpenses / totalExpenses) : '0%'})',
                               Icons.check_circle,
-                              ModernSaasDesign.success,
+                              Colors.green,
                             ),
                           ),
                           SizedBox(
@@ -2263,7 +2279,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Pending',
                               '$pendingExpenses (${totalExpenses > 0 ? percentFormat.format(pendingExpenses / totalExpenses) : '0%'})',
                               Icons.pending,
-                              ModernSaasDesign.warning,
+                              Colors.orange,
                             ),
                           ),
                         ],
@@ -2282,7 +2298,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Rejected',
                               '$rejectedExpenses (${totalExpenses > 0 ? percentFormat.format(rejectedExpenses / totalExpenses) : '0%'})',
                               Icons.cancel,
-                              ModernSaasDesign.error,
+                              Colors.red,
                             ),
                           ),
                           ConstrainedBox(
@@ -2294,7 +2310,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                               'Approved Amt',
                               currencyFormat.format(approvedAmount),
                               Icons.monetization_on,
-                              ModernSaasDesign.success,
+                              Colors.green,
                             ),
                           ),
                         ],
@@ -2309,8 +2325,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             // Category breakdown
             Text(
               'Expense Categories',
-              style: ModernSaasDesign.headlineMedium.copyWith(
-                color: ModernSaasDesign.textPrimary,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+                  .copyWith(
+                color: const Color(0xFF1F2937),
               ),
             ),
             const SizedBox(height: 16),
@@ -2320,8 +2337,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     'No approved expenses to show category breakdown',
-                    style: ModernSaasDesign.bodyMedium.copyWith(
-                      color: ModernSaasDesign.textSecondary,
+                    style: const TextStyle(fontSize: 14).copyWith(
+                      color: const Color(0xFF6B7280),
                     ),
                   ),
                 ),
@@ -2340,8 +2357,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                             flex: 3,
                             child: Text(
                               entry.key,
-                              style: ModernSaasDesign.labelLarge.copyWith(
-                                color: ModernSaasDesign.textPrimary,
+                              style: const TextStyle(
+                                      fontSize: 14, fontWeight: FontWeight.w500)
+                                  .copyWith(
+                                color: const Color(0xFF1F2937),
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -2351,8 +2370,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                             flex: 4,
                             child: Text(
                               '${currencyFormat.format(entry.value)} (${percentFormat.format(percentage)})',
-                              style: ModernSaasDesign.labelLarge.copyWith(
-                                color: ModernSaasDesign.textPrimary,
+                              style: const TextStyle(
+                                      fontSize: 14, fontWeight: FontWeight.w500)
+                                  .copyWith(
+                                color: const Color(0xFF1F2937),
                               ),
                               textAlign: TextAlign.end,
                               overflow: TextOverflow.ellipsis,
@@ -2364,9 +2385,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       Container(
                         height: 8,
                         decoration: BoxDecoration(
-                          color: ModernSaasDesign.neutral200,
-                          borderRadius: BorderRadius.circular(
-                              ModernSaasDesign.radiusFull),
+                          color: const Color(0xFFE5E5E5),
+                          borderRadius: BorderRadius.circular(999.0),
                         ),
                         child: FractionallySizedBox(
                           alignment: Alignment.centerLeft,
@@ -2374,8 +2394,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                           child: Container(
                             decoration: BoxDecoration(
                               color: _getCategoryColor(entry.key),
-                              borderRadius: BorderRadius.circular(
-                                  ModernSaasDesign.radiusFull),
+                              borderRadius: BorderRadius.circular(999.0),
                             ),
                           ),
                         ),
@@ -2383,7 +2402,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     ],
                   ),
                 );
-              }).toList(),
+              }),
 
             const SizedBox(height: 24),
             ModernButton(
@@ -2402,18 +2421,17 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   Widget _buildSummaryCard(
       String title, String value, IconData icon, Color color) {
     return ModernCard(
-      padding: const EdgeInsets.all(ModernSaasDesign.space4),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(ModernSaasDesign.space2),
+                padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusLg),
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Icon(
                   icon,
@@ -2421,23 +2439,26 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   size: 18,
                 ),
               ),
-              const SizedBox(width: ModernSaasDesign.space2),
+              const SizedBox(width: 8.0),
               Expanded(
                 child: Text(
                   title,
-                  style: ModernSaasDesign.labelMedium.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style:
+                      const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
+                          .copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space3),
+          const SizedBox(height: 12.0),
           Text(
             value,
-            style: ModernSaasDesign.headlineSmall.copyWith(
-              color: ModernSaasDesign.textPrimary,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                .copyWith(
+              color: const Color(0xFF1F2937),
               fontWeight: FontWeight.w600,
             ),
             overflow: TextOverflow.ellipsis,
@@ -2451,11 +2472,11 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   /// Map of expense categories to their display colors
   /// This provides consistent coloring across the expense management UI
   static const Map<String, Color> _categoryColors = {
-    'travel': ModernSaasDesign.info,
-    'meals': ModernSaasDesign.warning,
-    'supplies': ModernSaasDesign.success,
-    'equipment': ModernSaasDesign.primary,
-    'services': ModernSaasDesign.secondary,
+    'travel': Colors.blue,
+    'meals': Colors.orange,
+    'supplies': Colors.green,
+    'equipment': Color(0xFF667EEA),
+    'services': Color(0xFF764BA2),
   };
 
   /// Returns a color for the given expense category
@@ -2464,7 +2485,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   /// falls back to a default color for unknown categories
   Color _getCategoryColor(String category) {
     final normalizedCategory = category.toLowerCase();
-    return _categoryColors[normalizedCategory] ?? ModernSaasDesign.neutral400;
+    return _categoryColors[normalizedCategory] ?? const Color(0xFFA3A3A3);
   }
 
   /// Refresh all expense data
@@ -2483,8 +2504,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor:
-            isError ? ModernSaasDesign.error : ModernSaasDesign.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -2496,14 +2515,14 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'approved':
-        return ModernSaasDesign.success;
+        return Colors.green;
       case 'pending':
       case 'pending approval':
-        return ModernSaasDesign.warning;
+        return Colors.orange;
       case 'rejected':
-        return ModernSaasDesign.error;
+        return Colors.red;
       default:
-        return ModernSaasDesign.neutral500;
+        return const Color(0xFF737373);
     }
   }
 }

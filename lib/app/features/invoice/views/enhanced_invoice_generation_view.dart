@@ -1,21 +1,20 @@
-import 'package:carenest/app/features/invoice/views/price_override_view.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
-import 'package:carenest/app/features/invoice/models/employee_selection_model.dart';
 import 'package:carenest/app/features/invoice/viewmodels/enhanced_invoice_viewmodel.dart';
-
+import 'package:carenest/app/features/invoice/views/price_override_view.dart'
+    hide SourceBadge;
 import 'package:carenest/app/features/invoice/widgets/invoice_photo_attachment_widget.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_components.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/pricing/views/ndis_pricing_management_view.dart';
+import 'package:carenest/app/features/pricing/views/pricing_configuration_view.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/features/invoice/widgets/source_badge.dart';
+import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 
 /// Enhanced Invoice Generation View
 /// Task 5.6: Update invoice service with enhanced pricing integration
@@ -26,12 +25,12 @@ class EnhancedInvoiceGenerationView extends ConsumerStatefulWidget {
   final List<Map<String, dynamic>>? selectedEmployeesAndClients;
 
   const EnhancedInvoiceGenerationView({
-    Key? key,
+    super.key,
     required this.email,
     required this.genKey,
     this.organizationName,
     this.selectedEmployeesAndClients,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<EnhancedInvoiceGenerationView> createState() =>
@@ -55,23 +54,24 @@ class _EnhancedInvoiceGenerationViewState
   String? _photoDescription;
 
   // Additional file attachments state
-  List<File> _additionalAttachments = [];
+  final List<File> _additionalAttachments = [];
 
   // Price override state
   Map<String, Map<String, dynamic>> _priceOverrides = {};
 
   // Base service rate preflight check state
   bool _isCheckingRates = false;
+  bool _isValidatingPriceCaps =
+      false; // Loading state for NDIS price cap validation
   bool _hasMissingBaseRates = false;
   List<String> _missingRateItems = [];
   String _ratesCheckMessage = '';
   bool _strictClientGating = false; // Require client-specific base rates
   Map<String, List<Map<String, String>>> _missingClientRatesByItem = {};
-  Map<String, List<Map<String, String>>> _clientsPerItem = {};
   // Track pricing source per item number for UI annotations
-  Map<String, String> _itemPricingSource = {};
+  final Map<String, String> _itemPricingSource = {};
   // Track support item names per item number for clearer UI display
-  Map<String, String> _supportItemNames = {};
+  final Map<String, String> _supportItemNames = {};
 
   @override
   void initState() {
@@ -98,7 +98,8 @@ class _EnhancedInvoiceGenerationViewState
   Future<void> _loadUseAdminPreference() async {
     try {
       await _prefs.init();
-      final stored = _prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+      final stored =
+          _prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
       if (stored != null) {
         setState(() => _useAdminBankDetails = stored);
       }
@@ -111,7 +112,8 @@ class _EnhancedInvoiceGenerationViewState
   /// Persists the current selection for admin vs employee bank details.
   Future<void> _persistUseAdminPreference(bool value) async {
     try {
-      await _prefs.setBool(SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
+      await _prefs.setBool(
+          SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
     } catch (e) {
       debugPrint('Failed to persist useAdminBankDetails preference: $e');
     }
@@ -128,7 +130,7 @@ class _EnhancedInvoiceGenerationViewState
               firstEmployee['organizationId'] as String?;
     }
     organizationId ??= widget.genKey;
-    return organizationId ?? widget.genKey;
+    return organizationId;
   }
 
   /// Preflight check for missing base service rates.
@@ -171,7 +173,7 @@ class _EnhancedInvoiceGenerationViewState
         _missingClientRatesByItem = {};
         _ratesCheckMessage = '';
       } else {
-        // Keep existing visible items while refreshing pricing in background.
+        // Keep existing visible items while refreshing pricing in surface.
         _ratesCheckMessage = _ratesCheckMessage.isNotEmpty
             ? _ratesCheckMessage
             : 'Refreshing pricing…';
@@ -191,9 +193,12 @@ class _EnhancedInvoiceGenerationViewState
 
         if (employeeEmail.isEmpty) continue;
 
-        final assignmentsResponse = await apiMethod.getUserAssignments(employeeEmail);
-        if (assignmentsResponse['success'] == true && assignmentsResponse['assignments'] is List) {
-          final assignmentsList = assignmentsResponse['assignments'] as List<dynamic>;
+        final assignmentsResponse =
+            await apiMethod.getUserAssignments(employeeEmail);
+        if (assignmentsResponse['success'] == true &&
+            assignmentsResponse['assignments'] is List) {
+          final assignmentsList =
+              assignmentsResponse['assignments'] as List<dynamic>;
 
           for (final client in selectedClients) {
             final clientEmail = client['email'] as String? ?? '';
@@ -202,25 +207,30 @@ class _EnhancedInvoiceGenerationViewState
             // Find matching assignment and extract schedule items
             for (final assignment in assignmentsList) {
               if (assignment is! Map<String, dynamic>) continue;
-              final assignmentClientEmail = assignment['clientEmail'] as String? ?? '';
+              final assignmentClientEmail =
+                  assignment['clientEmail'] as String? ?? '';
               if (assignmentClientEmail != clientEmail) continue;
 
               final schedule = assignment['schedule'] as List<dynamic>? ?? [];
               for (final scheduleItem in schedule) {
                 if (scheduleItem is! Map<String, dynamic>) continue;
-                final ndisItem = scheduleItem['ndisItem'] as Map<String, dynamic>?;
+                final ndisItem =
+                    scheduleItem['ndisItem'] as Map<String, dynamic>?;
                 final itemNumber = ndisItem?['itemNumber'] as String?;
                 if (itemNumber != null && itemNumber.isNotEmpty) {
                   supportItemNumbers.add(itemNumber);
                   final clientId = assignment['clientId']?.toString() ?? '';
-                  final clientEmail = assignment['clientEmail']?.toString() ?? '';
-                  final clientName = assignment['clientName']?.toString() ?? clientEmail;
+                  final clientEmail =
+                      assignment['clientEmail']?.toString() ?? '';
+                  final clientName =
+                      assignment['clientName']?.toString() ?? clientEmail;
                   final entry = {
                     'clientId': clientId,
                     'clientEmail': clientEmail,
                     'clientName': clientName,
                   };
-                  final list = clientsPerItem[itemNumber] ?? <Map<String, String>>[];
+                  final list =
+                      clientsPerItem[itemNumber] ?? <Map<String, String>>[];
                   // Avoid duplicate client entries
                   if (!list.any((e) => e['clientId'] == clientId)) {
                     list.add(entry);
@@ -257,12 +267,17 @@ class _EnhancedInvoiceGenerationViewState
           final data = pricingMap[itemNumber];
           try {
             // Treat fallback sources as missing regardless of price.
+            // Note: 'fallback-base-rate' is a valid configured rate from Pricing Configuration
             final String? src = (data is Map<String, dynamic>)
                 ? data['source']?.toString()
                 : null;
             // Track per-item pricing source for UI annotations
             _itemPricingSource[itemNumber] = src ?? 'missing';
-            final bool isFallbackSource = src == 'base-rate' || src == 'ndis_default' || src == 'fallback';
+            // Only 'base-rate', 'ndis_default', and 'fallback' are considered missing
+            // 'fallback-base-rate' is a valid configured rate from Pricing Configuration Dashboard
+            // Note: 'base-rate' is the old source name, now replaced with 'fallback-base-rate'
+            final bool isFallbackSource =
+                src == 'ndis_default' || src == 'fallback';
 
             if (isFallbackSource) {
               missingItems.add(itemNumber);
@@ -272,9 +287,13 @@ class _EnhancedInvoiceGenerationViewState
               if (data is Map<String, dynamic>) {
                 final cp = data['customPrice'];
                 final p = data['price'];
-                if (cp != null && cp.toString().isNotEmpty && cp.toString() != 'null') {
+                if (cp != null &&
+                    cp.toString().isNotEmpty &&
+                    cp.toString() != 'null') {
                   effectivePrice = double.tryParse(cp.toString()) ?? 0.0;
-                } else if (p != null && p.toString().isNotEmpty && p.toString() != 'null') {
+                } else if (p != null &&
+                    p.toString().isNotEmpty &&
+                    p.toString() != 'null') {
                   effectivePrice = double.tryParse(p.toString()) ?? 0.0;
                 }
               }
@@ -298,7 +317,8 @@ class _EnhancedInvoiceGenerationViewState
         final overriddenItemNumbers = <String>{};
         _priceOverrides.forEach((id, payload) {
           try {
-            final overridePrice = (payload['unitPrice'] as num?)?.toDouble() ?? 0.0;
+            final overridePrice =
+                (payload['unitPrice'] as num?)?.toDouble() ?? 0.0;
             if (overridePrice > 0) {
               final parts = id.split('_');
               if (parts.length >= 2) {
@@ -309,7 +329,8 @@ class _EnhancedInvoiceGenerationViewState
           } catch (_) {}
         });
         if (overriddenItemNumbers.isNotEmpty) {
-          missingItems.removeWhere((item) => overriddenItemNumbers.contains(item));
+          missingItems
+              .removeWhere((item) => overriddenItemNumbers.contains(item));
         }
       }
 
@@ -328,26 +349,36 @@ class _EnhancedInvoiceGenerationViewState
                 clientId: clientId,
               );
               // Flag fallback sources as missing regardless of price.
-              final String? src = data != null ? data['source']?.toString() : null;
-              final bool isFallbackSource = src == 'ndis_default' || src == 'base-rate' || src == 'fallback';
+              // Note: 'fallback-base-rate' is a valid configured rate
+              final String? src =
+                  data != null ? data['source']?.toString() : null;
+              final bool isFallbackSource =
+                  src == 'ndis_default' || src == 'fallback';
               double clientPrice = 0.0;
               if (!isFallbackSource && data != null) {
                 final cp = data['customPrice'];
                 final p = data['price'];
-                if (cp != null && cp.toString().isNotEmpty && cp.toString() != 'null') {
+                if (cp != null &&
+                    cp.toString().isNotEmpty &&
+                    cp.toString() != 'null') {
                   clientPrice = double.tryParse(cp.toString()) ?? 0.0;
-                } else if (p != null && p.toString().isNotEmpty && p.toString() != 'null') {
+                } else if (p != null &&
+                    p.toString().isNotEmpty &&
+                    p.toString() != 'null') {
                   clientPrice = double.tryParse(p.toString()) ?? 0.0;
                 }
               }
               if (isFallbackSource || clientPrice <= 0) {
-                final list = missingClientByItem[itemNumber] ?? <Map<String, String>>[];
+                final list =
+                    missingClientByItem[itemNumber] ?? <Map<String, String>>[];
                 list.add(client);
                 missingClientByItem[itemNumber] = list;
               }
             } catch (e) {
-              debugPrint('Client-specific pricing check failed for $itemNumber (${client['clientEmail']}) : $e');
-              final list = missingClientByItem[itemNumber] ?? <Map<String, String>>[];
+              debugPrint(
+                  'Client-specific pricing check failed for $itemNumber (${client['clientEmail']}) : $e');
+              final list =
+                  missingClientByItem[itemNumber] ?? <Map<String, String>>[];
               list.add(client);
               missingClientByItem[itemNumber] = list;
             }
@@ -388,14 +419,14 @@ class _EnhancedInvoiceGenerationViewState
         _hasMissingBaseRates = missingItems.isNotEmpty;
         _missingRateItems = missingItems;
         _missingClientRatesByItem = missingClientByItem;
-        _clientsPerItem = clientsPerItem;
         _supportItemNames.addAll(namesMap);
         if (_hasMissingBaseRates) {
           final previewItems = missingItems.take(3).join(', ');
           _ratesCheckMessage =
               'Base service rates are missing or using fallback for ${missingItems.length} NDIS item(s): $previewItems${missingItems.length > 3 ? '…' : ''}. Please add custom pricing or set price overrides.';
         } else {
-          _ratesCheckMessage = 'All selected NDIS items have configured base service rates.';
+          _ratesCheckMessage =
+              'All selected NDIS items have configured base service rates.';
         }
       });
     } catch (e) {
@@ -421,7 +452,6 @@ class _EnhancedInvoiceGenerationViewState
     final generatedPdfs = ref.watch(generatedInvoicePathsProvider);
 
     return Scaffold(
-      backgroundColor: ModernSaasDesign.background,
       appBar: _buildAppBar(),
       body: _buildBody(invoiceState, errorMessage, generatedPdfs),
     );
@@ -429,15 +459,12 @@ class _EnhancedInvoiceGenerationViewState
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: ModernSaasDesign.primary,
-      foregroundColor: ModernSaasDesign.textOnPrimary,
+      foregroundColor: ModernInvoiceDesign.textPrimary,
+      backgroundColor: ModernInvoiceDesign.surface,
       elevation: 0,
       title: Text(
         'Generate Invoice',
-        style: ModernSaasDesign.headlineSmall.copyWith(
-          color: ModernSaasDesign.textOnPrimary,
-          fontWeight: FontWeight.w600,
-        ),
+        style: ModernInvoiceDesign.headlineMedium,
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -449,7 +476,7 @@ class _EnhancedInvoiceGenerationViewState
             margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.success,
+              color: ModernInvoiceDesign.success,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -458,13 +485,13 @@ class _EnhancedInvoiceGenerationViewState
                 const Icon(
                   Icons.price_change,
                   size: 16,
-                  color: Colors.white,
+                  color: ModernInvoiceDesign.surface,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '${_priceOverrides.length}',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: ModernInvoiceDesign.surface,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -482,21 +509,21 @@ class _EnhancedInvoiceGenerationViewState
     List<String> generatedPdfs,
   ) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(ModernSaasDesign.space4),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeaderSection(),
-          const SizedBox(height: ModernSaasDesign.space6),
+          const SizedBox(height: 24.0),
           _buildConfigurationSection(),
-          const SizedBox(height: ModernSaasDesign.space6),
+          const SizedBox(height: 24.0),
           _buildAttachmentsSection(),
-          const SizedBox(height: ModernSaasDesign.space6),
+          const SizedBox(height: 24.0),
           _buildPriceOverrideSection(),
-          const SizedBox(height: ModernSaasDesign.space6),
+          const SizedBox(height: 24.0),
           _buildGenerateSection(invoiceState, errorMessage),
           if (generatedPdfs.isNotEmpty) ...[
-            const SizedBox(height: ModernSaasDesign.space6),
+            const SizedBox(height: 24.0),
             _buildGeneratedPdfsSection(generatedPdfs),
           ],
         ],
@@ -505,82 +532,92 @@ class _EnhancedInvoiceGenerationViewState
   }
 
   Widget _buildHeaderSection() {
-    return Card(
-      elevation: 0,
-      color: ModernSaasDesign.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
-        side: BorderSide(
-          color: ModernSaasDesign.border,
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(ModernSaasDesign.space4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(ModernSaasDesign.space2),
-                  decoration: BoxDecoration(
-                    color: ModernSaasDesign.primaryLight.withValues(alpha: 0.1),
-                    borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusMd),
-                  ),
-                  child: Icon(
-                    Icons.receipt_long_rounded,
-                    color: ModernSaasDesign.primary,
-                    size: 24,
-                  ),
+    return ModernInvoiceCard(
+      backgroundColor: ModernInvoiceDesign.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
+                decoration: BoxDecoration(
+                  color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+                  borderRadius:
+                      BorderRadius.circular(ModernInvoiceDesign.radiusSm),
                 ),
-                const SizedBox(width: ModernSaasDesign.space3),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Enhanced Invoice Generation',
-                        style: ModernSaasDesign.headlineSmall.copyWith(
-                          color: ModernSaasDesign.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: ModernSaasDesign.space1),
-                      Text(
-                        'Generate professional invoices with enhanced pricing validation',
-                        style: ModernSaasDesign.bodyMedium.copyWith(
-                          color: ModernSaasDesign.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: Icon(
+                  Icons.receipt_long_rounded,
+                  color: ModernInvoiceDesign.primary,
+                  size: 24,
                 ),
-              ],
-            ),
-            if (widget.selectedEmployeesAndClients == null ||
-                widget.selectedEmployeesAndClients!.isEmpty) ...[
-              const SizedBox(height: ModernSaasDesign.space4),
-              ModernInvoiceStatusBadge(
-                status: 'No employees selected',
-                backgroundColor: ModernSaasDesign.error.withValues(alpha: 0.1),
-                textColor: ModernSaasDesign.error,
-                icon: Icons.warning,
+              ),
+              const SizedBox(width: ModernInvoiceDesign.space4),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Enhanced Invoice Generation',
+                      style: ModernInvoiceDesign.headlineSmall.copyWith(
+                        color: ModernInvoiceDesign.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      'Generate professional invoices with enhanced pricing validation',
+                      style: ModernInvoiceDesign.bodyMedium.copyWith(
+                        color: ModernInvoiceDesign.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
-            if (widget.selectedEmployeesAndClients != null &&
-                widget.selectedEmployeesAndClients!.isNotEmpty) ...[
-              const SizedBox(height: ModernSaasDesign.space4),
-              _buildSelectedEmployeesInfo(),
-            ],
+          ),
+          if (widget.selectedEmployeesAndClients == null ||
+              widget.selectedEmployeesAndClients!.isEmpty) ...[
+            const SizedBox(height: ModernInvoiceDesign.space4),
+            Container(
+              padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+              decoration: BoxDecoration(
+                color: ModernInvoiceDesign.error.withValues(alpha: 0.1),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusSm),
+                border: Border.all(
+                  color: ModernInvoiceDesign.error.withValues(alpha: 0.1),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.warning_rounded,
+                    color: ModernInvoiceDesign.error,
+                    size: 20,
+                  ),
+                  const SizedBox(width: ModernInvoiceDesign.space2),
+                  Expanded(
+                    child: Text(
+                      'No employees selected',
+                      style: ModernInvoiceDesign.bodyMedium.copyWith(
+                        color: ModernInvoiceDesign.error,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ),
+          if (widget.selectedEmployeesAndClients != null &&
+              widget.selectedEmployeesAndClients!.isNotEmpty) ...[
+            const SizedBox(height: ModernInvoiceDesign.space4),
+            _buildSelectedEmployeesInfo(),
+          ],
+        ],
       ),
-    )
-        .animate()
-        .fadeIn(duration: 600.ms)
-        .slideY(begin: -0.2, end: 0, duration: 600.ms);
+    );
   }
 
   Widget _buildSelectedEmployeesInfo() {
@@ -591,43 +628,41 @@ class _EnhancedInvoiceGenerationViewState
       totalClients += (employee['clients'] as List<dynamic>).length;
     }
 
-    return Card(
-      elevation: 0,
-      color: ModernSaasDesign.surfaceVariant,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
-        side: BorderSide(
-          color: ModernSaasDesign.border,
+    return Container(
+      padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+      decoration: BoxDecoration(
+        color: ModernInvoiceDesign.surface,
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusSm),
+        border: Border.all(
+          color: ModernInvoiceDesign.border,
           width: 1,
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.people, size: 18, color: ModernSaasDesign.primary),
-                const SizedBox(width: ModernSaasDesign.space2),
-                Expanded(
-                  child: Text(
-                    'Selected: $totalEmployees ${totalEmployees == 1 ? 'employee' : 'employees'} with $totalClients ${totalClients == 1 ? 'client' : 'clients'}',
-                    style: ModernSaasDesign.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
+      child: Row(
+        children: [
+          Icon(
+            Icons.people_rounded,
+            size: 18,
+            color: ModernInvoiceDesign.primary,
+          ),
+          const SizedBox(width: ModernInvoiceDesign.space2),
+          Expanded(
+            child: Text(
+              'Selected: $totalEmployees ${totalEmployees == 1 ? 'employee' : 'employees'} with $totalClients ${totalClients == 1 ? 'client' : 'clients'}',
+              style: ModernInvoiceDesign.bodyMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                color: ModernInvoiceDesign.textPrimary,
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildConfigurationSection() {
-    return ModernCard(
+    return ModernInvoiceCard(
+      backgroundColor: ModernInvoiceDesign.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -635,25 +670,23 @@ class _EnhancedInvoiceGenerationViewState
             children: [
               Icon(
                 Icons.settings_rounded,
-                color: ModernSaasDesign.primary,
+                color: ModernInvoiceDesign.primary,
                 size: 24,
               ),
-              const SizedBox(width: ModernSaasDesign.space3),
+              const SizedBox(width: ModernInvoiceDesign.space4),
               Text(
                 'Invoice Configuration',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ModernInvoiceDesign.headlineSmall,
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildTaxConfiguration(),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildBankDetailsConfiguration(),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildExpenseConfiguration(),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildPriceOverrideConfiguration(),
         ],
       ),
@@ -667,24 +700,24 @@ class _EnhancedInvoiceGenerationViewState
           children: [
             Icon(
               Icons.calculate_rounded,
-              color: ModernSaasDesign.primary,
+              color: ModernInvoiceDesign.primary,
               size: 20,
             ),
-            const SizedBox(width: ModernSaasDesign.space3),
+            const SizedBox(width: ModernInvoiceDesign.space4),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Include Tax (GST)',
-                    style: ModernSaasDesign.bodyLarge.copyWith(
+                    style: ModernInvoiceDesign.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     'Add tax calculations to the invoice',
-                    style: ModernSaasDesign.bodySmall.copyWith(
-                      color: ModernSaasDesign.textSecondary,
+                    style: ModernInvoiceDesign.bodySmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
                     ),
                   ),
                 ],
@@ -697,22 +730,20 @@ class _EnhancedInvoiceGenerationViewState
                   _showTax = value;
                 });
               },
-              activeColor: ModernSaasDesign.primary,
-              activeTrackColor: ModernSaasDesign.primary.withValues(alpha: 0.3),
-              inactiveThumbColor: ModernSaasDesign.neutral400,
-              inactiveTrackColor: ModernSaasDesign.neutral200,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              activeThumbColor: ModernInvoiceDesign.primary,
+              activeTrackColor:
+                  ModernInvoiceDesign.primary.withValues(alpha: 0.1),
             ),
           ],
         ),
         if (_showTax) ...[
-          const SizedBox(height: ModernSaasDesign.space3),
+          const SizedBox(height: ModernInvoiceDesign.space2),
           Row(
             children: [
               Expanded(
                 child: Text(
                   'Tax Rate (%)',
-                  style: ModernSaasDesign.bodyMedium.copyWith(
+                  style: ModernInvoiceDesign.bodyMedium.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -726,10 +757,22 @@ class _EnhancedInvoiceGenerationViewState
                     hintText: '10.0',
                     border: OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(ModernSaasDesign.radiusMd),
+                          BorderRadius.circular(ModernInvoiceDesign.radiusSm),
+                      borderSide: BorderSide(
+                        color: ModernInvoiceDesign.border,
+                      ),
                     ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(ModernInvoiceDesign.radiusSm),
+                      borderSide: BorderSide(
+                        color: ModernInvoiceDesign.primary,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: ModernInvoiceDesign.space4,
+                      vertical: ModernInvoiceDesign.space2,
+                    ),
                   ),
                   onChanged: (value) {
                     final rate = double.tryParse(value);
@@ -747,7 +790,7 @@ class _EnhancedInvoiceGenerationViewState
       ],
     );
   }
-  
+
   Widget _buildBankDetailsConfiguration() {
     return Column(
       children: [
@@ -755,24 +798,24 @@ class _EnhancedInvoiceGenerationViewState
           children: [
             Icon(
               Icons.account_balance_rounded,
-              color: ModernSaasDesign.primary,
+              color: ModernInvoiceDesign.primary,
               size: 20,
             ),
-            const SizedBox(width: ModernSaasDesign.space3),
+            const SizedBox(width: ModernInvoiceDesign.space4),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Bank Details',
-                    style: ModernSaasDesign.bodyLarge.copyWith(
+                    style: ModernInvoiceDesign.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     'Select which bank details to use on the invoice',
-                    style: ModernSaasDesign.bodySmall.copyWith(
-                      color: ModernSaasDesign.textSecondary,
+                    style: ModernInvoiceDesign.bodySmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
                     ),
                   ),
                 ],
@@ -780,14 +823,14 @@ class _EnhancedInvoiceGenerationViewState
             ),
           ],
         ),
-        const SizedBox(height: ModernSaasDesign.space3),
+        const SizedBox(height: ModernInvoiceDesign.space2),
         Row(
           children: [
             Expanded(
               child: RadioListTile<bool>(
                 title: Text(
                   'Employee Bank Details',
-                  style: ModernSaasDesign.bodyMedium,
+                  style: ModernInvoiceDesign.bodyMedium,
                 ),
                 value: false,
                 groupValue: _useAdminBankDetails,
@@ -797,7 +840,7 @@ class _EnhancedInvoiceGenerationViewState
                   });
                   _persistUseAdminPreference(_useAdminBankDetails);
                 },
-                activeColor: ModernSaasDesign.primary,
+                activeColor: ModernInvoiceDesign.primary,
                 contentPadding: EdgeInsets.zero,
                 dense: true,
               ),
@@ -806,7 +849,7 @@ class _EnhancedInvoiceGenerationViewState
               child: RadioListTile<bool>(
                 title: Text(
                   'Admin Bank Details',
-                  style: ModernSaasDesign.bodyMedium,
+                  style: ModernInvoiceDesign.bodyMedium,
                 ),
                 value: true,
                 groupValue: _useAdminBankDetails,
@@ -816,7 +859,7 @@ class _EnhancedInvoiceGenerationViewState
                   });
                   _persistUseAdminPreference(_useAdminBankDetails);
                 },
-                activeColor: ModernSaasDesign.primary,
+                activeColor: ModernInvoiceDesign.primary,
                 contentPadding: EdgeInsets.zero,
                 dense: true,
               ),
@@ -832,24 +875,24 @@ class _EnhancedInvoiceGenerationViewState
       children: [
         Icon(
           Icons.receipt_rounded,
-          color: ModernSaasDesign.primary,
+          color: ModernInvoiceDesign.primary,
           size: 20,
         ),
-        const SizedBox(width: ModernSaasDesign.space3),
+        const SizedBox(width: ModernInvoiceDesign.space4),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Include Expenses',
-                style: ModernSaasDesign.bodyLarge.copyWith(
+                style: ModernInvoiceDesign.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 'Add expense items to the invoice',
-                style: ModernSaasDesign.bodySmall.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: ModernInvoiceDesign.bodySmall.copyWith(
+                  color: ModernInvoiceDesign.textSecondary,
                 ),
               ),
             ],
@@ -862,11 +905,8 @@ class _EnhancedInvoiceGenerationViewState
               _includeExpenses = value;
             });
           },
-          activeColor: ModernSaasDesign.primary,
-          activeTrackColor: ModernSaasDesign.primary.withValues(alpha: 0.3),
-          inactiveThumbColor: ModernSaasDesign.neutral400,
-          inactiveTrackColor: ModernSaasDesign.neutral200,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          activeThumbColor: ModernInvoiceDesign.primary,
+          activeTrackColor: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
         ),
       ],
     );
@@ -877,24 +917,24 @@ class _EnhancedInvoiceGenerationViewState
       children: [
         Icon(
           Icons.price_change_rounded,
-          color: ModernSaasDesign.primary,
+          color: ModernInvoiceDesign.primary,
           size: 20,
         ),
-        const SizedBox(width: ModernSaasDesign.space3),
+        const SizedBox(width: ModernInvoiceDesign.space4),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Allow Price Cap Override',
-                style: ModernSaasDesign.bodyLarge.copyWith(
+                style: ModernInvoiceDesign.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 'Enable price adjustments beyond standard caps',
-                style: ModernSaasDesign.bodySmall.copyWith(
-                  color: ModernSaasDesign.textSecondary,
+                style: ModernInvoiceDesign.bodySmall.copyWith(
+                  color: ModernInvoiceDesign.textSecondary,
                 ),
               ),
             ],
@@ -907,18 +947,16 @@ class _EnhancedInvoiceGenerationViewState
               _allowPriceOverride = value;
             });
           },
-          activeColor: ModernSaasDesign.primary,
-          activeTrackColor: ModernSaasDesign.primary.withValues(alpha: 0.3),
-          inactiveThumbColor: ModernSaasDesign.neutral400,
-          inactiveTrackColor: ModernSaasDesign.neutral200,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          activeThumbColor: ModernInvoiceDesign.primary,
+          activeTrackColor: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
         ),
       ],
     );
   }
 
   Widget _buildAttachmentsSection() {
-    return ModernCard(
+    return ModernInvoiceCard(
+      backgroundColor: ModernInvoiceDesign.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -926,19 +964,17 @@ class _EnhancedInvoiceGenerationViewState
             children: [
               Icon(
                 Icons.attach_file_rounded,
-                color: ModernSaasDesign.primary,
+                color: ModernInvoiceDesign.primary,
                 size: 24,
               ),
-              const SizedBox(width: ModernSaasDesign.space3),
+              const SizedBox(width: ModernInvoiceDesign.space4),
               Text(
                 'Attachments',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ModernInvoiceDesign.headlineSmall,
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           InvoicePhotoAttachmentWidget(
             onPhotosSelected: (photos) {
               setState(() {
@@ -953,7 +989,7 @@ class _EnhancedInvoiceGenerationViewState
               });
             },
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildAdditionalAttachments(),
         ],
       ),
@@ -967,33 +1003,34 @@ class _EnhancedInvoiceGenerationViewState
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(ModernSaasDesign.space2),
+              padding: const EdgeInsets.all(ModernInvoiceDesign.space2),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+                color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusSm),
               ),
               child: Icon(
                 Icons.file_present_rounded,
                 size: 20,
-                color: ModernSaasDesign.primary,
+                color: ModernInvoiceDesign.primary,
               ),
             ),
-            const SizedBox(width: ModernSaasDesign.space3),
+            const SizedBox(width: ModernInvoiceDesign.space4),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Additional Files',
-                    style: ModernSaasDesign.bodyLarge.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: ModernSaasDesign.textPrimary,
+                    style: ModernInvoiceDesign.headlineSmall.copyWith(
+                      color: ModernInvoiceDesign.textPrimary,
+                      fontSize: 14,
                     ),
                   ),
                   Text(
                     'Attach documents, receipts, or other files',
-                    style: ModernSaasDesign.bodySmall.copyWith(
-                      color: ModernSaasDesign.textSecondary,
+                    style: ModernInvoiceDesign.bodySmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
                     ),
                   ),
                 ],
@@ -1001,59 +1038,59 @@ class _EnhancedInvoiceGenerationViewState
             ),
           ],
         ),
-        const SizedBox(height: ModernSaasDesign.space4),
+        const SizedBox(height: ModernInvoiceDesign.space4),
         // Modern Add Files Button
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
             border: Border.all(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+              color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
               width: 2,
               style: BorderStyle.solid,
             ),
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
-            color: ModernSaasDesign.primary.withValues(alpha: 0.02),
+            borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+            color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: _pickAdditionalFiles,
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
               child: Padding(
-                padding: const EdgeInsets.all(ModernSaasDesign.space6),
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space6),
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(ModernSaasDesign.space4),
+                      padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
                       decoration: BoxDecoration(
-                        color: ModernSaasDesign.primary.withValues(alpha: 0.1),
+                        color:
+                            ModernInvoiceDesign.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.cloud_upload_outlined,
                         size: 32,
-                        color: ModernSaasDesign.primary,
+                        color: ModernInvoiceDesign.primary,
                       ),
                     ),
-                    const SizedBox(height: ModernSaasDesign.space3),
+                    const SizedBox(height: ModernInvoiceDesign.space4),
                     Text(
                       'Add Files',
-                      style: ModernSaasDesign.headlineSmall.copyWith(
-                        color: ModernSaasDesign.primary,
-                        fontWeight: FontWeight.w600,
+                      style: ModernInvoiceDesign.headlineSmall.copyWith(
+                        color: ModernInvoiceDesign.primary,
                       ),
                     ),
-                    const SizedBox(height: ModernSaasDesign.space1),
+                    const SizedBox(height: ModernInvoiceDesign.space1),
                     Text(
                       'Tap to select files or drag and drop',
-                      style: ModernSaasDesign.bodySmall.copyWith(
-                        color: ModernSaasDesign.textSecondary,
+                      style: ModernInvoiceDesign.bodySmall.copyWith(
+                        color: ModernInvoiceDesign.textSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: ModernSaasDesign.space2),
+                    const SizedBox(height: ModernInvoiceDesign.space2),
                     Wrap(
-                      spacing: ModernSaasDesign.space2,
+                      spacing: ModernInvoiceDesign.space2,
                       children: [
                         _buildFileTypeChip('PDF'),
                         _buildFileTypeChip('DOC'),
@@ -1068,14 +1105,14 @@ class _EnhancedInvoiceGenerationViewState
           ),
         ),
         if (_additionalAttachments.isNotEmpty) ...[
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.space4),
+            padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.surfaceVariant.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+              color: ModernInvoiceDesign.surface.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
               border: Border.all(
-                color: ModernSaasDesign.border.withValues(alpha: 0.5),
+                color: ModernInvoiceDesign.border.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -1087,19 +1124,19 @@ class _EnhancedInvoiceGenerationViewState
                     Icon(
                       Icons.attach_file_rounded,
                       size: 16,
-                      color: ModernSaasDesign.textSecondary,
+                      color: ModernInvoiceDesign.textSecondary,
                     ),
-                    const SizedBox(width: ModernSaasDesign.space2),
+                    const SizedBox(width: ModernInvoiceDesign.space2),
                     Text(
                       'Attached Files (${_additionalAttachments.length})',
-                      style: ModernSaasDesign.bodySmall.copyWith(
-                        color: ModernSaasDesign.textSecondary,
+                      style: ModernInvoiceDesign.bodySmall.copyWith(
+                        color: ModernInvoiceDesign.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: ModernSaasDesign.space3),
+                const SizedBox(height: ModernInvoiceDesign.space4),
                 ...(_additionalAttachments.asMap().entries.map((entry) {
                   final index = entry.key;
                   final file = entry.value;
@@ -1107,20 +1144,19 @@ class _EnhancedInvoiceGenerationViewState
                   final fileExtension = fileName.split('.').last.toLowerCase();
 
                   return Container(
-                    margin:
-                        const EdgeInsets.only(bottom: ModernSaasDesign.space2),
-                    padding: const EdgeInsets.all(ModernSaasDesign.space3),
+                    margin: const EdgeInsets.only(bottom: 8.0),
+                    padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(ModernSaasDesign.radiusMd),
+                      color: ModernInvoiceDesign.surface,
+                      borderRadius: BorderRadius.circular(8.0),
                       border: Border.all(
-                        color: ModernSaasDesign.border,
+                        color: ModernInvoiceDesign.border,
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
+                          color: ModernInvoiceDesign.textPrimary
+                              .withValues(alpha: 0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 1),
                         ),
@@ -1129,13 +1165,11 @@ class _EnhancedInvoiceGenerationViewState
                     child: Row(
                       children: [
                         Container(
-                          padding:
-                              const EdgeInsets.all(ModernSaasDesign.space2),
+                          padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             color: _getFileTypeColor(fileExtension)
                                 .withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(
-                                ModernSaasDesign.radiusSm),
+                            borderRadius: BorderRadius.circular(4.0),
                           ),
                           child: Icon(
                             _getFileTypeIcon(fileExtension),
@@ -1143,22 +1177,22 @@ class _EnhancedInvoiceGenerationViewState
                             size: 20,
                           ),
                         ),
-                        const SizedBox(width: ModernSaasDesign.space3),
+                        const SizedBox(width: 12.0),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 fileName,
-                                style: ModernSaasDesign.bodyMedium.copyWith(
+                                style: ModernInvoiceDesign.bodyMedium.copyWith(
                                   fontWeight: FontWeight.w500,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
                                 fileExtension.toUpperCase(),
-                                style: ModernSaasDesign.bodySmall.copyWith(
-                                  color: ModernSaasDesign.textSecondary,
+                                style: ModernInvoiceDesign.bodySmall.copyWith(
+                                  color: ModernInvoiceDesign.textSecondary,
                                 ),
                               ),
                             ],
@@ -1166,8 +1200,8 @@ class _EnhancedInvoiceGenerationViewState
                         ),
                         Container(
                           decoration: BoxDecoration(
-                            color:
-                                ModernSaasDesign.error.withValues(alpha: 0.1),
+                            color: ModernInvoiceDesign.error
+                                .withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
@@ -1178,7 +1212,7 @@ class _EnhancedInvoiceGenerationViewState
                             },
                             icon: Icon(
                               Icons.close_rounded,
-                              color: ModernSaasDesign.error,
+                              color: ModernInvoiceDesign.error,
                               size: 16,
                             ),
                             constraints: const BoxConstraints(
@@ -1200,7 +1234,8 @@ class _EnhancedInvoiceGenerationViewState
   }
 
   Widget _buildPriceOverrideSection() {
-    return ModernCard(
+    return ModernInvoiceCard(
+      backgroundColor: ModernInvoiceDesign.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1208,34 +1243,33 @@ class _EnhancedInvoiceGenerationViewState
             children: [
               Icon(
                 Icons.price_change_rounded,
-                color: ModernSaasDesign.primary,
+                color: ModernInvoiceDesign.primary,
                 size: 24,
               ),
-              const SizedBox(width: ModernSaasDesign.space3),
+              const SizedBox(width: ModernInvoiceDesign.space4),
               Text(
                 'Price Override',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ModernInvoiceDesign.headlineSmall,
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           Text(
             'Review and adjust pricing for NDIS items before generating invoices.',
-            style: ModernSaasDesign.bodyMedium.copyWith(
-              color: ModernSaasDesign.textSecondary,
+            style: ModernInvoiceDesign.bodyMedium.copyWith(
+              color: ModernInvoiceDesign.textSecondary,
             ),
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           if (_priceOverrides.isNotEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(ModernSaasDesign.space3),
+              padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.success.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+                color: ModernInvoiceDesign.success.withValues(alpha: 0.1),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusSm),
                 border: Border.all(
-                  color: ModernSaasDesign.success.withValues(alpha: 0.3),
+                  color: ModernInvoiceDesign.success.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -1243,15 +1277,15 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Icon(
                     Icons.check_circle_rounded,
-                    color: ModernSaasDesign.success,
+                    color: ModernInvoiceDesign.success,
                     size: 20,
                   ),
-                  const SizedBox(width: ModernSaasDesign.space2),
+                  const SizedBox(width: ModernInvoiceDesign.space2),
                   Expanded(
                     child: Text(
                       '${_priceOverrides.length} price override(s) applied',
-                      style: ModernSaasDesign.bodyMedium.copyWith(
-                        color: ModernSaasDesign.success,
+                      style: ModernInvoiceDesign.bodyMedium.copyWith(
+                        color: ModernInvoiceDesign.success,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1259,36 +1293,18 @@ class _EnhancedInvoiceGenerationViewState
                 ],
               ),
             ),
-            const SizedBox(height: ModernSaasDesign.space3),
+            const SizedBox(height: ModernInvoiceDesign.space4),
           ],
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: ModernInvoiceButton(
               onPressed: widget.selectedEmployeesAndClients?.isNotEmpty == true
                   ? _openPriceOverrideView
                   : null,
-              icon: const Icon(Icons.price_change_rounded, size: 20),
-              label: Text(
-                _priceOverrides.isEmpty
-                    ? 'Set Price Overrides'
-                    : 'Update Price Overrides',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: ModernSaasDesign.textOnPrimary,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ModernSaasDesign.primary,
-                foregroundColor: ModernSaasDesign.textOnPrimary,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space4,
-                  vertical: ModernSaasDesign.space3,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusMd),
-                ),
-              ),
+              icon: Icons.price_change_rounded,
+              text: _priceOverrides.isEmpty
+                  ? 'Set Price Overrides'
+                  : 'Update Price Overrides',
             ),
           ),
         ],
@@ -1300,15 +1316,19 @@ class _EnhancedInvoiceGenerationViewState
       InvoiceGenerationState invoiceState, String errorMessage) {
     final bool selectionPresent =
         widget.selectedEmployeesAndClients?.isNotEmpty == true;
-    final bool hasClientGatingIssues = _strictClientGating && _missingClientRatesByItem.isNotEmpty;
-    final bool canGenerate = selectionPresent && !_hasMissingBaseRates && !hasClientGatingIssues;
-    final bool isLoading = invoiceState == InvoiceGenerationState.loading;
+    final bool hasClientGatingIssues =
+        _strictClientGating && _missingClientRatesByItem.isNotEmpty;
+    final bool canGenerate =
+        selectionPresent && !_hasMissingBaseRates && !hasClientGatingIssues;
+    final bool isLoading = invoiceState == InvoiceGenerationState.loading ||
+        _isValidatingPriceCaps;
     // Selected invoice period state
     // Defaults: null -> service will use its fallback
     DateTime? startDateLocal = _selectedStartDate;
     DateTime? endDateLocal = _selectedEndDate;
 
-    return ModernCard(
+    return ModernInvoiceCard(
+      backgroundColor: ModernInvoiceDesign.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1316,31 +1336,29 @@ class _EnhancedInvoiceGenerationViewState
             children: [
               Icon(
                 Icons.receipt_long_rounded,
-                color: ModernSaasDesign.primary,
+                color: ModernInvoiceDesign.primary,
                 size: 24,
               ),
-              const SizedBox(width: ModernSaasDesign.space3),
+              const SizedBox(width: ModernInvoiceDesign.space4),
               Text(
                 'Generate Invoice',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ModernInvoiceDesign.headlineSmall,
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           // Base rate preflight summary and actions
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.space3),
+            padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
             decoration: BoxDecoration(
               color: _hasMissingBaseRates
-                  ? ModernSaasDesign.error.withValues(alpha: 0.08)
-                  : ModernSaasDesign.success.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+                  ? ModernInvoiceDesign.error.withValues(alpha: 0.1)
+                  : ModernInvoiceDesign.success.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusSm),
               border: Border.all(
                 color: _hasMissingBaseRates
-                    ? ModernSaasDesign.error.withValues(alpha: 0.3)
-                    : ModernSaasDesign.success.withValues(alpha: 0.3),
+                    ? ModernInvoiceDesign.error.withValues(alpha: 0.1)
+                    : ModernInvoiceDesign.success.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -1352,11 +1370,11 @@ class _EnhancedInvoiceGenerationViewState
                       ? Icons.error_outline
                       : Icons.check_circle_outline,
                   color: _hasMissingBaseRates
-                      ? ModernSaasDesign.error
-                      : ModernSaasDesign.success,
+                      ? ModernInvoiceDesign.error
+                      : ModernInvoiceDesign.success,
                   size: 20,
                 ),
-                const SizedBox(width: ModernSaasDesign.space2),
+                const SizedBox(width: ModernInvoiceDesign.space2),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1365,14 +1383,14 @@ class _EnhancedInvoiceGenerationViewState
                         _hasMissingBaseRates
                             ? 'Missing Base Rates Detected'
                             : 'Base Rates Verified',
-                        style: ModernSaasDesign.bodyMedium.copyWith(
+                        style: ModernInvoiceDesign.bodyMedium.copyWith(
                           fontWeight: FontWeight.w600,
                           color: _hasMissingBaseRates
-                              ? ModernSaasDesign.error
-                              : ModernSaasDesign.success,
+                              ? ModernInvoiceDesign.error
+                              : ModernInvoiceDesign.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space1),
+                      const SizedBox(height: 4.0),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: const [
@@ -1382,27 +1400,28 @@ class _EnhancedInvoiceGenerationViewState
                             child: Icon(
                               Icons.info_outline_rounded,
                               size: 16,
-                              color: ModernSaasDesign.textSecondary,
+                              color: Color.fromARGB(255, 35, 68, 113),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: ModernSaasDesign.space1),
+                      const SizedBox(height: 4.0),
                       Text(
                         _ratesCheckMessage,
-                        style: ModernSaasDesign.bodySmall.copyWith(
-                          color: ModernSaasDesign.textSecondary,
+                        style: ModernInvoiceDesign.bodySmall.copyWith(
+                          color: ModernInvoiceDesign.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space2),
+                      const SizedBox(height: ModernInvoiceDesign.space2),
                       Wrap(
                         alignment: WrapAlignment.start,
                         crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: ModernSaasDesign.space2,
-                        runSpacing: ModernSaasDesign.space1,
+                        spacing: ModernInvoiceDesign.space2,
+                        runSpacing: 4.0,
                         children: [
                           TextButton.icon(
-                            onPressed: _isCheckingRates ? null : _preflightRateCheck,
+                            onPressed:
+                                _isCheckingRates ? null : _preflightRateCheck,
                             icon: _isCheckingRates
                                 ? SizedBox(
                                     width: 16,
@@ -1411,25 +1430,42 @@ class _EnhancedInvoiceGenerationViewState
                                       strokeWidth: 2,
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                           _hasMissingBaseRates
-                                              ? ModernSaasDesign.error
-                                              : ModernSaasDesign.success),
+                                              ? ModernInvoiceDesign.error
+                                              : ModernInvoiceDesign.success),
                                     ),
                                   )
                                 : const Icon(Icons.refresh),
                             label: const Text('Re-check Rates'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: ModernInvoiceDesign.primary,
+                              disabledForegroundColor:
+                                  ModernInvoiceDesign.textSecondary,
+                            ),
                           ),
                           TextButton.icon(
-                            onPressed: (_hasMissingBaseRates || hasClientGatingIssues)
+                            onPressed: selectionPresent
                                 ? _showMissingRatesModal
                                 : null,
                             icon: const Icon(Icons.list_alt_rounded),
                             label: const Text('View Missing Items'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: ModernInvoiceDesign.primary,
+                              disabledForegroundColor:
+                                  ModernInvoiceDesign.textSecondary,
+                            ),
                           ),
                           if (selectionPresent)
                             TextButton.icon(
-                              onPressed: _isCheckingRates ? null : _openPriceOverrideView,
+                              onPressed: _isCheckingRates
+                                  ? null
+                                  : _openPriceOverrideView,
                               icon: const Icon(Icons.price_change_rounded),
                               label: const Text('Set Price Overrides'),
+                              style: TextButton.styleFrom(
+                                foregroundColor: ModernInvoiceDesign.primary,
+                                disabledForegroundColor:
+                                    ModernInvoiceDesign.textSecondary,
+                              ),
                             ),
                           TextButton.icon(
                             onPressed: () {
@@ -1437,15 +1473,33 @@ class _EnhancedInvoiceGenerationViewState
                             },
                             icon: const Icon(Icons.settings_suggest_rounded),
                             label: const Text('Open Pricing Management'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: ModernInvoiceDesign.primary,
+                              disabledForegroundColor:
+                                  ModernInvoiceDesign.textSecondary,
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: () {
+                              _openPricingConfiguration();
+                            },
+                            icon: const Icon(Icons.tune_rounded),
+                            label: const Text('Set Fallback Rate'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: ModernInvoiceDesign.primary,
+                              disabledForegroundColor:
+                                  ModernInvoiceDesign.textSecondary,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: ModernSaasDesign.space2),
+                      const SizedBox(height: ModernInvoiceDesign.space2),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Switch(
                             value: _strictClientGating,
+                            activeThumbColor: ModernInvoiceDesign.primary,
                             onChanged: _isCheckingRates
                                 ? null
                                 : (val) {
@@ -1455,12 +1509,12 @@ class _EnhancedInvoiceGenerationViewState
                                     _preflightRateCheck();
                                   },
                           ),
-                          const SizedBox(width: ModernSaasDesign.space1),
+                          const SizedBox(width: 4.0),
                           Expanded(
                             child: Text(
                               'Require client-specific base rates',
-                              style: ModernSaasDesign.bodySmall.copyWith(
-                                color: ModernSaasDesign.textSecondary,
+                              style: ModernInvoiceDesign.bodySmall.copyWith(
+                                color: ModernInvoiceDesign.textSecondary,
                               ),
                             ),
                           ),
@@ -1472,15 +1526,15 @@ class _EnhancedInvoiceGenerationViewState
               ],
             ),
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           // Period selection UI
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.space3),
+            padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.neutral100,
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+              color: ModernInvoiceDesign.surface,
+              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusSm),
               border: Border.all(
-                color: ModernSaasDesign.neutral300,
+                color: ModernInvoiceDesign.border,
                 width: 1,
               ),
             ),
@@ -1492,9 +1546,7 @@ class _EnhancedInvoiceGenerationViewState
                   children: [
                     Text(
                       'Invoice Period',
-                      style: ModernSaasDesign.headlineSmall.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: ModernInvoiceDesign.headlineSmall,
                     ),
                     TextButton.icon(
                       onPressed: isLoading
@@ -1507,8 +1559,8 @@ class _EnhancedInvoiceGenerationViewState
                                 initialDateRange: (startDateLocal != null &&
                                         endDateLocal != null)
                                     ? DateTimeRange(
-                                        start: startDateLocal!,
-                                        end: endDateLocal!,
+                                        start: startDateLocal,
+                                        end: endDateLocal,
                                       )
                                     : null,
                               );
@@ -1521,25 +1573,28 @@ class _EnhancedInvoiceGenerationViewState
                             },
                       icon: const Icon(Icons.date_range_rounded),
                       label: const Text('Select Period'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: ModernInvoiceDesign.primary,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: ModernSaasDesign.space2),
+                const SizedBox(height: ModernInvoiceDesign.space2),
                 Row(
                   children: [
                     Icon(
                       Icons.calendar_today_rounded,
                       size: 18,
-                      color: ModernSaasDesign.textSecondary,
+                      color: ModernInvoiceDesign.textSecondary,
                     ),
-                    const SizedBox(width: ModernSaasDesign.space2),
+                    const SizedBox(width: ModernInvoiceDesign.space2),
                     Expanded(
                       child: Text(
                         (startDateLocal != null && endDateLocal != null)
-                            ? '${_formatDate(startDateLocal!)}  —  ${_formatDate(endDateLocal!)}'
+                            ? '${_formatDate(startDateLocal)}  —  ${_formatDate(endDateLocal)}'
                             : 'No period selected (using default)',
-                        style: ModernSaasDesign.bodyMedium.copyWith(
-                          color: ModernSaasDesign.textSecondary,
+                        style: ModernInvoiceDesign.bodyMedium.copyWith(
+                          color: ModernInvoiceDesign.textSecondary,
                         ),
                       ),
                     ),
@@ -1553,6 +1608,9 @@ class _EnhancedInvoiceGenerationViewState
                                   _selectedEndDate = null;
                                 });
                               },
+                        style: TextButton.styleFrom(
+                          foregroundColor: ModernInvoiceDesign.primary,
+                        ),
                         child: const Text('Clear'),
                       ),
                   ],
@@ -1560,15 +1618,16 @@ class _EnhancedInvoiceGenerationViewState
               ],
             ),
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           if (errorMessage.isNotEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(ModernSaasDesign.space3),
+              padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.error.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+                color: ModernInvoiceDesign.error.withValues(alpha: 0.1),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusSm),
                 border: Border.all(
-                  color: ModernSaasDesign.error.withValues(alpha: 0.3),
+                  color: ModernInvoiceDesign.error.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -1576,23 +1635,24 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Icon(
                     Icons.error_rounded,
-                    color: ModernSaasDesign.error,
+                    color: ModernInvoiceDesign.error,
                     size: 20,
                   ),
-                  const SizedBox(width: ModernSaasDesign.space2),
+                  const SizedBox(width: ModernInvoiceDesign.space2),
                   Expanded(
                     child: Text(
                       errorMessage,
-                      style: ModernSaasDesign.bodyMedium.copyWith(
-                        color: ModernSaasDesign.error,
+                      style: ModernInvoiceDesign.bodySmall.copyWith(
+                        color: ModernInvoiceDesign.error,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: ModernSaasDesign.space4),
+            const SizedBox(height: ModernInvoiceDesign.space4),
           ],
+          const SizedBox(height: ModernInvoiceDesign.space4),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -1604,32 +1664,40 @@ class _EnhancedInvoiceGenerationViewState
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                            ModernSaasDesign.textOnPrimary),
+                          ModernInvoiceDesign.textOnPrimary,
+                        ),
                       ),
                     )
                   : const Icon(Icons.receipt_long_rounded, size: 20),
               label: Text(
                 isLoading ? 'Generating...' : 'Generate Invoices',
-                style: ModernSaasDesign.labelLarge.copyWith(
-                  color: ModernSaasDesign.textOnPrimary,
+                style: ModernInvoiceDesign.labelLarge.copyWith(
+                  color: ModernInvoiceDesign.textOnPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               style: ElevatedButton.styleFrom(
+                disabledBackgroundColor: isLoading
+                    ? ModernInvoiceDesign.primary
+                    : ModernInvoiceDesign.neutral300,
+                disabledForegroundColor: isLoading
+                    ? ModernInvoiceDesign.textOnPrimary
+                    : ModernInvoiceDesign.textTertiary,
                 backgroundColor: canGenerate
-                    ? ModernSaasDesign.primary
-                    : ModernSaasDesign.neutral300,
+                    ? ModernInvoiceDesign.primary
+                    : ModernInvoiceDesign.neutral300,
                 foregroundColor: canGenerate
-                    ? ModernSaasDesign.textOnPrimary
-                    : ModernSaasDesign.textTertiary,
+                    ? ModernInvoiceDesign.textOnPrimary
+                    : ModernInvoiceDesign.textTertiary,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space4,
-                  vertical: ModernSaasDesign.space4,
+                  horizontal: ModernInvoiceDesign.space4,
+                  vertical: ModernInvoiceDesign.space4,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusMd),
+                      BorderRadius.circular(ModernInvoiceDesign.radiusMd),
                 ),
+                elevation: 0,
               ),
             ),
           ),
@@ -1639,7 +1707,8 @@ class _EnhancedInvoiceGenerationViewState
   }
 
   Widget _buildGeneratedPdfsSection(List<String> generatedPdfs) {
-    return ModernCard(
+    return ModernInvoiceCard(
+      backgroundColor: ModernInvoiceDesign.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1647,19 +1716,17 @@ class _EnhancedInvoiceGenerationViewState
             children: [
               Icon(
                 Icons.file_present_rounded,
-                color: ModernSaasDesign.primary,
+                color: ModernInvoiceDesign.primary,
                 size: 24,
               ),
-              const SizedBox(width: ModernSaasDesign.space3),
+              const SizedBox(width: ModernInvoiceDesign.space4),
               Text(
                 'Generated Invoices',
-                style: ModernSaasDesign.headlineSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ModernInvoiceDesign.headlineSmall,
               ),
             ],
           ),
-          const SizedBox(height: ModernSaasDesign.space4),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           ...generatedPdfs.asMap().entries.map((entry) {
             final index = entry.key;
             final pdfPath = entry.value;
@@ -1667,32 +1734,31 @@ class _EnhancedInvoiceGenerationViewState
 
             return Container(
               margin: index < generatedPdfs.length - 1
-                  ? const EdgeInsets.only(bottom: ModernSaasDesign.space2)
+                  ? const EdgeInsets.only(bottom: 8.0)
                   : EdgeInsets.zero,
               child: ListTile(
                 leading: Container(
-                  padding: const EdgeInsets.all(ModernSaasDesign.space2),
+                  padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    color: ModernSaasDesign.success.withValues(alpha: 0.1),
-                    borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusMd),
+                    color: ModernInvoiceDesign.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Icon(
                     Icons.picture_as_pdf_rounded,
-                    color: ModernSaasDesign.success,
+                    color: ModernInvoiceDesign.success,
                     size: 20,
                   ),
                 ),
                 title: Text(
                   fileName,
-                  style: ModernSaasDesign.bodyLarge.copyWith(
+                  style: ModernInvoiceDesign.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 subtitle: Text(
                   'Tap to view PDF',
-                  style: ModernSaasDesign.bodyMedium.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: ModernInvoiceDesign.bodySmall.copyWith(
+                    color: ModernInvoiceDesign.textSecondary,
                   ),
                 ),
                 trailing: Row(
@@ -1702,7 +1768,7 @@ class _EnhancedInvoiceGenerationViewState
                       onPressed: () => _viewPdf(pdfPath),
                       icon: Icon(
                         Icons.visibility_rounded,
-                        color: ModernSaasDesign.primary,
+                        color: ModernInvoiceDesign.primary,
                         size: 20,
                       ),
                       tooltip: 'View PDF',
@@ -1711,7 +1777,7 @@ class _EnhancedInvoiceGenerationViewState
                       onPressed: () => _sendInvoices(pdfPath),
                       icon: Icon(
                         Icons.send_rounded,
-                        color: ModernSaasDesign.primary,
+                        color: ModernInvoiceDesign.primary,
                         size: 20,
                       ),
                       tooltip: 'Send Invoice',
@@ -1721,7 +1787,7 @@ class _EnhancedInvoiceGenerationViewState
                 onTap: () => _viewPdf(pdfPath),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1730,21 +1796,21 @@ class _EnhancedInvoiceGenerationViewState
   Widget _buildFileTypeChip(String type) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: ModernSaasDesign.space2,
-        vertical: ModernSaasDesign.space1,
+        horizontal: 8.0,
+        vertical: 4.0,
       ),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+        color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4.0),
         border: Border.all(
-          color: ModernSaasDesign.primary.withValues(alpha: 0.2),
+          color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
       child: Text(
         type,
-        style: ModernSaasDesign.bodySmall.copyWith(
-          color: ModernSaasDesign.primary,
+        style: ModernInvoiceDesign.bodySmall.copyWith(
+          color: ModernInvoiceDesign.primary,
           fontWeight: FontWeight.w500,
           fontSize: 10,
         ),
@@ -1773,18 +1839,18 @@ class _EnhancedInvoiceGenerationViewState
   Color _getFileTypeColor(String extension) {
     switch (extension) {
       case 'pdf':
-        return const Color(0xFFE53E3E);
+        return ModernInvoiceDesign.error;
       case 'doc':
       case 'docx':
-        return const Color(0xFF2B6CB0);
+        return ModernInvoiceDesign.primary;
       case 'txt':
-        return const Color(0xFF38A169);
+        return ModernInvoiceDesign.success;
       case 'jpg':
       case 'jpeg':
       case 'png':
-        return const Color(0xFF805AD5);
+        return ModernInvoiceDesign.secondary;
       default:
-        return ModernSaasDesign.textSecondary;
+        return ModernInvoiceDesign.textSecondary;
     }
   }
 
@@ -1808,16 +1874,538 @@ class _EnhancedInvoiceGenerationViewState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error picking files: $e'),
-            backgroundColor: Colors.red,
           ),
         );
       }
     }
   }
 
+  /// Validates all invoice line items against NDIS price caps
+  /// Returns a list of items that exceed their NDIS price cap
+  Future<List<Map<String, dynamic>>> _validateNdisPriceCaps() async {
+    final List<Map<String, dynamic>> itemsExceedingCap = [];
+    final ApiMethod apiMethod = ApiMethod();
+
+    try {
+      if (widget.selectedEmployeesAndClients?.isEmpty == true) {
+        return itemsExceedingCap;
+      }
+
+      // First, fetch actual client assignments with schedule data
+      List<Map<String, dynamic>> clientAssignments = [];
+
+      for (var employee in widget.selectedEmployeesAndClients!) {
+        final employeeEmail = employee['employee']?['email'] as String? ?? '';
+        final selectedClients = employee['clients'] as List<dynamic>? ?? [];
+
+        if (employeeEmail.isNotEmpty) {
+          // Get user assignments for this employee
+          final assignments = await apiMethod.getUserAssignments(employeeEmail);
+
+          if (assignments['success'] == true &&
+              assignments['assignments'] != null) {
+            final assignmentsList = assignments['assignments'] as List<dynamic>;
+
+            // For each selected client, find their assignment
+            for (var client in selectedClients) {
+              final clientEmail = client['email'] as String? ?? '';
+
+              // Find matching assignment
+              for (var assignment in assignmentsList) {
+                if (assignment is Map<String, dynamic>) {
+                  final assignmentClientEmail =
+                      assignment['clientEmail'] as String? ?? '';
+                  if (assignmentClientEmail == clientEmail) {
+                    clientAssignments.add(assignment);
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Now validate each assignment
+      for (final assignment in clientAssignments) {
+        final clientEmail =
+            assignment['clientEmail'] as String? ?? 'Unknown Client';
+        final clientName = assignment['clientName'] as String? ?? clientEmail;
+
+        // Get client state from assignment or fetch client details
+        String clientState = assignment['clientState'] as String? ?? '';
+        if (clientState.isEmpty &&
+            clientEmail.isNotEmpty &&
+            clientEmail != 'Unknown Client') {
+          try {
+            final clientDetails = await apiMethod.getClientDetails(clientEmail);
+            if (clientDetails != null && clientDetails['success'] == true) {
+              clientState = clientDetails['clientState'] as String? ?? '';
+            }
+          } catch (e) {
+            debugPrint('Error fetching client details for state: $e');
+          }
+        }
+        // Default to NSW if no state found
+        if (clientState.isEmpty) {
+          clientState = 'NSW';
+        }
+
+        final schedule = assignment['schedule'] as List<dynamic>? ?? [];
+
+        // Process each scheduled item
+        for (final scheduleItem in schedule) {
+          final ndisItem = scheduleItem['ndisItem'] as Map<String, dynamic>?;
+          if (ndisItem == null) continue;
+
+          final itemNumber = ndisItem['itemNumber'] as String?;
+          final itemName = ndisItem['itemName'] as String?;
+          if (itemNumber == null || itemName == null) continue;
+
+          // Get current pricing for this item
+          final organizationId = _resolveOrganizationId();
+
+          // Get client ID from assignment for proper pricing lookup
+          final clientId = assignment['clientId']?.toString() ?? '';
+
+          final pricingData = await apiMethod.getPricingLookup(
+            organizationId,
+            itemNumber,
+            clientId: clientId.isNotEmpty ? clientId : null,
+          );
+
+          // Get NDIS price cap
+          final supportItemDetails =
+              await apiMethod.getSupportItemDetails(itemNumber);
+
+          // Use same logic as price_override_view.dart:
+          // Prefer `customPrice` when custom pricing exists; otherwise fallback to `price`
+          double currentPrice = 0.0;
+          if (pricingData != null) {
+            final num? customPrice = pricingData['customPrice'] as num?;
+            final num? price = pricingData['price'] as num?;
+            final double? resolved = (customPrice ?? price)?.toDouble();
+            if (resolved != null && resolved > 0) {
+              currentPrice = double.parse(resolved.toStringAsFixed(2));
+            }
+          }
+
+          debugPrint(
+              'NDIS Cap Validation: Item $itemNumber - customPrice: ${pricingData?['customPrice']}, price: ${pricingData?['price']}, resolved currentPrice: $currentPrice');
+
+          double? ndisCapPrice;
+          if (supportItemDetails != null &&
+              supportItemDetails['priceCaps'] != null) {
+            final priceCaps =
+                supportItemDetails['priceCaps'] as Map<String, dynamic>;
+
+            // Try standard provider type first
+            if (priceCaps['standard'] != null && priceCaps['standard'] is Map) {
+              final standardCaps =
+                  priceCaps['standard'] as Map<String, dynamic>;
+              if (standardCaps[clientState] != null &&
+                  standardCaps[clientState] is num) {
+                ndisCapPrice = (standardCaps[clientState] as num).toDouble();
+                debugPrint(
+                    'NDIS Cap Validation: Found standard cap for $clientState: $ndisCapPrice');
+              }
+            }
+
+            // If no standard cap, try high-intensity
+            if (ndisCapPrice == null &&
+                priceCaps['highIntensity'] != null &&
+                priceCaps['highIntensity'] is Map) {
+              final highIntensityCaps =
+                  priceCaps['highIntensity'] as Map<String, dynamic>;
+              if (highIntensityCaps[clientState] != null &&
+                  highIntensityCaps[clientState] is num) {
+                ndisCapPrice =
+                    (highIntensityCaps[clientState] as num).toDouble();
+                debugPrint(
+                    'NDIS Cap Validation: Found highIntensity cap for $clientState: $ndisCapPrice');
+              }
+            }
+          }
+
+          debugPrint(
+              'NDIS Cap Validation: Item $itemNumber - currentPrice: $currentPrice, ndisCapPrice: $ndisCapPrice, exceeds: ${ndisCapPrice != null && ndisCapPrice > 0 && currentPrice > ndisCapPrice}');
+
+          // Check if current price exceeds NDIS cap
+          if (ndisCapPrice != null &&
+              ndisCapPrice > 0 &&
+              currentPrice > ndisCapPrice) {
+            debugPrint(
+                'Item exceeds cap: $itemName - Current: $currentPrice, Cap: $ndisCapPrice');
+            itemsExceedingCap.add({
+              'itemNumber': itemNumber,
+              'itemName': itemName,
+              'clientName': clientName,
+              'clientEmail': clientEmail,
+              'clientState': clientState,
+              'currentPrice': currentPrice,
+              'ndisCapPrice': ndisCapPrice,
+              'excessAmount': currentPrice - ndisCapPrice,
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error validating NDIS price caps: $e');
+    }
+
+    debugPrint('Total items exceeding cap: ${itemsExceedingCap.length}');
+    return itemsExceedingCap;
+  }
+
+  /// Shows a dialog warning user about items exceeding NDIS price caps
+  /// Allows user to go back to price override or proceed anyway
+  Future<bool> _showNdisPriceCapWarningDialog(
+    List<Map<String, dynamic>> itemsExceedingCap,
+  ) async {
+    bool shouldProceed = false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 500),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.5),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Glassmorphic Header
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 20,
+                        horizontal: 24,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ModernInvoiceDesign.error.withOpacity(0.1),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: ModernInvoiceDesign.error.withOpacity(0.1),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: ModernInvoiceDesign.error.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.warning_rounded,
+                              color: ModernInvoiceDesign.error,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              'NDIS Price Cap Exceeded',
+                              style: ModernInvoiceDesign.headlineSmall.copyWith(
+                                color: ModernInvoiceDesign.error,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Content Area
+                    Flexible(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'The following items exceed NDIS price caps:',
+                              style: ModernInvoiceDesign.bodyMedium.copyWith(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            // Items List
+                            ...itemsExceedingCap.asMap().entries.map((entry) {
+                              return _buildExceedingCapItem(
+                                  entry.value, entry.key);
+                            }).toList(),
+                            const SizedBox(height: 24),
+                            // Action Guide Box
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: ModernInvoiceDesign.primary
+                                    .withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: ModernInvoiceDesign.primary
+                                      .withOpacity(0.1),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'What would you like to do?',
+                                    style:
+                                        ModernInvoiceDesign.bodyMedium.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: ModernInvoiceDesign.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  _buildActionOption(
+                                    'Go back to adjust prices',
+                                    Icons.arrow_back_rounded,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  _buildActionOption(
+                                    'Proceed with invoice generation anyway',
+                                    Icons.arrow_forward_rounded,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Actions Footer
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.grey.withOpacity(0.1),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.black54,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: const Text('Go Back'),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: () {
+                              shouldProceed = true;
+                              Navigator.of(dialogContext).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ModernInvoiceDesign.primary,
+                              foregroundColor: Colors.white,
+                              elevation: 2,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Proceed'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    return shouldProceed;
+  }
+
+  Widget _buildActionOption(String text, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 16,
+          color: ModernInvoiceDesign.textSecondary,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: ModernInvoiceDesign.bodySmall.copyWith(
+              color: ModernInvoiceDesign.textSecondary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Helper widget to build each item that exceeds NDIS cap
+  Widget _buildExceedingCapItem(Map<String, dynamic> item, int index) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (index > 0)
+            Divider(color: ModernInvoiceDesign.error.withValues(alpha: 0.1)),
+          if (index > 0) const SizedBox(height: 8),
+          Text(
+            '${item['itemName']} (${item['itemNumber']})',
+            style: ModernInvoiceDesign.bodyMedium.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Client: ${item['clientName']} (${item['clientState']})',
+            style: ModernInvoiceDesign.bodySmall.copyWith(
+              color: ModernInvoiceDesign.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Current Price:',
+                    style: ModernInvoiceDesign.labelSmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    '\$${(item['currentPrice'] as num).toStringAsFixed(2)}',
+                    style: ModernInvoiceDesign.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ModernInvoiceDesign.error,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'NDIS Cap:',
+                    style: ModernInvoiceDesign.labelSmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    '\$${(item['ndisCapPrice'] as num).toStringAsFixed(2)}',
+                    style: ModernInvoiceDesign.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ModernInvoiceDesign.success,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Excess:',
+                    style: ModernInvoiceDesign.labelSmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    '\$${(item['excessAmount'] as num).toStringAsFixed(2)}',
+                    style: ModernInvoiceDesign.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ModernInvoiceDesign.warning,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _generateInvoices() async {
+    // Show loading state during validation
+    setState(() {
+      _isValidatingPriceCaps = true;
+    });
+
+    try {
+      // First, validate NDIS price caps
+      final itemsExceedingCap = await _validateNdisPriceCaps();
+
+      // Hide validation loading state
+      if (mounted) {
+        setState(() {
+          _isValidatingPriceCaps = false;
+        });
+      }
+
+      // If items exceed cap, show warning dialog
+      if (itemsExceedingCap.isNotEmpty) {
+        final shouldProceed =
+            await _showNdisPriceCapWarningDialog(itemsExceedingCap);
+        if (!shouldProceed) {
+          return; // User chose to go back to price override
+        }
+      }
+    } catch (e) {
+      // Hide validation loading state on error
+      if (mounted) {
+        setState(() {
+          _isValidatingPriceCaps = false;
+        });
+      }
+      debugPrint('Error during NDIS price cap validation: $e');
+    }
+
     // The invoice service will handle updating the global state
     // through the providers, so we don't need to set it here
+
+    if (!mounted) return;
 
     // Generate invoices with enhanced pricing integration
     final viewModel = ref.read(enhancedInvoiceViewModelProvider.notifier);
@@ -1857,7 +2445,6 @@ class _EnhancedInvoiceGenerationViewState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error generating invoices: $e'),
-            backgroundColor: Colors.red,
           ),
         );
       }
@@ -1918,6 +2505,8 @@ class _EnhancedInvoiceGenerationViewState
         }
       }
 
+      if (!mounted) return;
+
       // Navigate to PriceOverrideView with actual assignment data
       final result = await Navigator.push<Map<String, Map<String, dynamic>>>(
         context,
@@ -1945,7 +2534,6 @@ class _EnhancedInvoiceGenerationViewState
             SnackBar(
               content:
                   Text('Price overrides applied for ${result.length} item(s)'),
-              backgroundColor: Colors.green,
               duration: const Duration(seconds: 2),
             ),
           );
@@ -1957,7 +2545,6 @@ class _EnhancedInvoiceGenerationViewState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error loading client assignments: $e'),
-            backgroundColor: Colors.red,
           ),
         );
       }
@@ -1979,88 +2566,261 @@ class _EnhancedInvoiceGenerationViewState
     );
   }
 
+  /// Open Pricing Configuration Dashboard to set fallback base rate.
+  void _openPricingConfiguration() {
+    final orgId = _resolveOrganizationId();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PricingConfigurationView(
+          organizationId: orgId,
+          adminEmail: widget.email,
+          organizationName: widget.organizationName ?? 'Organization',
+        ),
+      ),
+    );
+  }
+
   /// Show modal listing missing base rates and provide quick add actions.
   void _showMissingRatesModal() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: ModernSaasDesign.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(ModernSaasDesign.radiusLg)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        final hasClientIssues = _strictClientGating && _missingClientRatesByItem.isNotEmpty;
+        final hasClientIssues =
+            _strictClientGating && _missingClientRatesByItem.isNotEmpty;
+        final hasAnyMissing = _missingRateItems.isNotEmpty || hasClientIssues;
         return DraggableScrollableSheet(
           initialChildSize: 0.7,
           minChildSize: 0.4,
           maxChildSize: 0.95,
-          expand: false,
           builder: (_, controller) {
-            return ListView(
-              controller: controller,
-              padding: const EdgeInsets.all(ModernSaasDesign.space4),
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.list_alt_rounded, color: ModernSaasDesign.error, size: 22),
-                    const SizedBox(width: ModernSaasDesign.space2),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Missing Base Rates',
-                            style: ModernSaasDesign.headlineSmall.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                          // Compact refreshing indicator shown while a preserved refresh is running
-                          if (_isCheckingRates)
-                            Padding(
-                              padding: const EdgeInsets.only(top: ModernSaasDesign.space1),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(ModernSaasDesign.primary),
+            return Container(
+              decoration: const BoxDecoration(
+                color: ModernInvoiceDesign.surface,
+                borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(ModernInvoiceDesign.radiusLg)),
+              ),
+              child: ListView(
+                controller: controller,
+                padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding:
+                            const EdgeInsets.all(ModernInvoiceDesign.space2),
+                        decoration: BoxDecoration(
+                          color: (hasAnyMissing
+                                  ? ModernInvoiceDesign.error
+                                  : ModernInvoiceDesign.success)
+                              .withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(
+                              ModernInvoiceDesign.radiusSm),
+                        ),
+                        child: Icon(
+                          hasAnyMissing
+                              ? Icons.rule_folder_outlined
+                              : Icons.check_circle_outline,
+                          color: hasAnyMissing
+                              ? ModernInvoiceDesign.error
+                              : ModernInvoiceDesign.success,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: ModernInvoiceDesign.space2),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              hasAnyMissing
+                                  ? 'Missing Base Rates'
+                                  : 'Missing Items',
+                              style: ModernInvoiceDesign.headlineSmall,
+                            ),
+                            // Compact refreshing indicator shown while a preserved refresh is running
+                            if (_isCheckingRates)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                ModernInvoiceDesign.primary),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: ModernSaasDesign.space1),
-                                  Text(
-                                    _ratesCheckMessage.isNotEmpty ? _ratesCheckMessage : 'Refreshing pricing…',
-                                    style: ModernSaasDesign.bodyMedium.copyWith(color: ModernSaasDesign.textSecondary),
-                                  ),
-                                ],
+                                    const SizedBox(width: 4.0),
+                                    Text(
+                                      _ratesCheckMessage.isNotEmpty
+                                          ? _ratesCheckMessage
+                                          : 'Refreshing pricing…',
+                                      style: ModernInvoiceDesign.bodySmall
+                                          .copyWith(
+                                        color:
+                                            ModernInvoiceDesign.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: ModernInvoiceDesign.space4),
+                  Wrap(
+                    spacing: ModernInvoiceDesign.space2,
+                    runSpacing: ModernInvoiceDesign.space2,
+                    children: [
+                      ModernInvoiceButton(
+                        onPressed: _openOrganizationPricingManagement,
+                        icon: Icons.settings_suggest_rounded,
+                        text: 'Pricing Mgmt',
+                        isSecondary: true,
+                        isOutlined: true,
+                      ),
+                      ModernInvoiceButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _openPricingConfiguration();
+                        },
+                        icon: Icons.tune_rounded,
+                        text: 'Set Fallback',
+                        isSecondary: true,
+                        isOutlined: true,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: ModernInvoiceDesign.space6),
+                  if (!hasAnyMissing) ...[
+                    ModernInvoiceCard(
+                      backgroundColor:
+                          ModernInvoiceDesign.success.withValues(alpha: 0.08),
+                      borderRadius:
+                          BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                      padding: const EdgeInsets.all(ModernInvoiceDesign.space4),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: ModernInvoiceDesign.success,
+                          ),
+                          const SizedBox(width: ModernInvoiceDesign.space2),
+                          Expanded(
+                            child: Text(
+                              'No missing items. All selected items have configured pricing for the current gating settings.',
+                              style: ModernInvoiceDesign.bodyMedium.copyWith(
+                                color: ModernInvoiceDesign.textPrimary,
                               ),
                             ),
+                          ),
                         ],
                       ),
                     ),
-                    TextButton.icon(
-                      onPressed: _openOrganizationPricingManagement,
-                      icon: const Icon(Icons.settings_suggest_rounded),
-                      label: const Text('Open Pricing Management'),
-                    ),
+                    const SizedBox(height: ModernInvoiceDesign.space4),
                   ],
-                ),
-                const SizedBox(height: ModernSaasDesign.space3),
-                if (_missingRateItems.isNotEmpty) ...[
-                  Text(
-                    'Items missing organization base rate (${_missingRateItems.length}):',
-                    style: ModernSaasDesign.bodyMedium.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: ModernSaasDesign.space2),
-                  ..._missingRateItems.map((itemNumber) => Card(
-                        elevation: 0,
-                        color: ModernSaasDesign.surfaceVariant,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
-                          side: BorderSide(color: ModernSaasDesign.border, width: 1),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(ModernSaasDesign.space3),
+                  if (_missingRateItems.isNotEmpty) ...[
+                    Text(
+                      'Items missing organization base rate (${_missingRateItems.length}):',
+                      style: ModernInvoiceDesign.bodyMedium
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: ModernInvoiceDesign.space2),
+                    ..._missingRateItems.map((itemNumber) => Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: ModernInvoiceDesign.space2),
+                          child: ModernInvoiceCard(
+                            backgroundColor: ModernInvoiceDesign.surface,
+                            borderRadius: BorderRadius.circular(
+                                ModernInvoiceDesign.radiusMd),
+                            padding: const EdgeInsets.all(
+                                ModernInvoiceDesign.space4),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Wrap(
+                                        alignment: WrapAlignment.start,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        spacing: ModernInvoiceDesign.space2,
+                                        runSpacing: 4.0,
+                                        children: [
+                                          Text(
+                                            itemNumber,
+                                            softWrap: true,
+                                            style: ModernInvoiceDesign.bodyLarge
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                          ),
+                                          SourceBadge(
+                                            source: _itemPricingSource[
+                                                    itemNumber] ??
+                                                'fallback',
+                                            isSmall: true,
+                                            tooltip:
+                                                'Pricing source for this item',
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12.0),
+                                    ModernInvoiceButton(
+                                      onPressed: () =>
+                                          _promptAddOrgBaseRate(itemNumber),
+                                      text: 'Add Org Rate',
+                                      isSmall: true,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                    height: ModernInvoiceDesign.space2),
+                                Text(
+                                  _supportItemNames[itemNumber] ??
+                                      'Support item name unavailable',
+                                  softWrap: true,
+                                  style: ModernInvoiceDesign.bodySmall.copyWith(
+                                    color: ModernInvoiceDesign.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )),
+                    const SizedBox(height: ModernInvoiceDesign.space4),
+                  ],
+                  if (hasClientIssues) ...[
+                    Text(
+                      'Items missing client-specific base rate:',
+                      style: ModernInvoiceDesign.bodyMedium
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: ModernInvoiceDesign.space2),
+                    ..._missingClientRatesByItem.entries.map((entry) {
+                      final itemNumber = entry.key;
+                      final clients = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: ModernInvoiceDesign.space2),
+                        child: ModernInvoiceCard(
+                          backgroundColor: ModernInvoiceDesign.surface,
+                          borderRadius: BorderRadius.circular(
+                              ModernInvoiceDesign.radiusMd),
+                          padding:
+                              const EdgeInsets.all(ModernInvoiceDesign.space4),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -2068,137 +2828,80 @@ class _EnhancedInvoiceGenerationViewState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
-                                    child: Wrap(
-                                      alignment: WrapAlignment.start,
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      spacing: ModernSaasDesign.space2,
-                                      runSpacing: ModernSaasDesign.space1,
-                                      children: [
-                                        Text(
-                                          itemNumber,
-                                          softWrap: true,
-                                          style: ModernSaasDesign.bodyLarge.copyWith(fontWeight: FontWeight.w600),
-                                        ),
-                                        SourceBadge(
-                                          source: _itemPricingSource[itemNumber] ?? 'fallback',
-                                          isSmall: true,
-                                          tooltip: 'Pricing source for this item',
-                                        ),
-                                      ],
+                                    child: Text(
+                                      itemNumber,
+                                      softWrap: true,
+                                      style: ModernInvoiceDesign.bodyLarge
+                                          .copyWith(
+                                              fontWeight: FontWeight.w600),
                                     ),
                                   ),
-                                  const SizedBox(width: ModernSaasDesign.space3),
-                                  Semantics(
-                                    button: true,
-                                    label: 'Add organization base rate for ${_supportItemNames[itemNumber] ?? itemNumber}',
-                                    child: TextButton(
-                                      onPressed: () => _promptAddOrgBaseRate(itemNumber),
-                                      child: const Text('Add Org Base Rate'),
-                                    ),
+                                  ModernInvoiceButton(
+                                    onPressed: () =>
+                                        _promptAddOrgBaseRate(itemNumber),
+                                    text: 'Add Org Rate',
+                                    isOutlined: true,
+                                    isSecondary: true,
+                                    isSmall: true,
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: ModernSaasDesign.space2),
+                              const SizedBox(
+                                  height: ModernInvoiceDesign.space2),
                               Text(
-                                _supportItemNames[itemNumber] ?? 'Support item name unavailable',
+                                _supportItemNames[itemNumber] ??
+                                    'Support item name unavailable',
                                 softWrap: true,
-                                style: ModernSaasDesign.bodyMedium.copyWith(
-                                  color: ModernSaasDesign.textSecondary,
+                                style: ModernInvoiceDesign.bodySmall.copyWith(
+                                  color: ModernInvoiceDesign.textSecondary,
                                 ),
                               ),
+                              const SizedBox(
+                                  height: ModernInvoiceDesign.space2),
+                              ...clients.map((client) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            client['clientName'] ??
+                                                client['clientEmail'] ??
+                                                'Unknown Client',
+                                            style:
+                                                ModernInvoiceDesign.bodySmall,
+                                          ),
+                                        ),
+                                        ModernInvoiceButton(
+                                          onPressed: () =>
+                                              _promptAddClientBaseRate(
+                                                  itemNumber, client),
+                                          text: 'Add Client Rate',
+                                          isSecondary: true,
+                                          isSmall: true,
+                                        ),
+                                      ],
+                                    ),
+                                  )),
                             ],
                           ),
                         ),
-                      )),
-                  const SizedBox(height: ModernSaasDesign.space4),
-                ],
-                if (hasClientIssues) ...[
-                  Text(
-                    'Items missing client-specific base rate:',
-                    style: ModernSaasDesign.bodyMedium.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: ModernSaasDesign.space2),
-                  ..._missingClientRatesByItem.entries.map((entry) {
-                    final itemNumber = entry.key;
-                    final clients = entry.value;
-                    return Card(
-                      elevation: 0,
-                      color: ModernSaasDesign.surfaceVariant,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
-                        side: BorderSide(color: ModernSaasDesign.border, width: 1),
+                      );
+                    }),
+                  ],
+                  const SizedBox(height: ModernInvoiceDesign.space4),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: ModernInvoiceDesign.textSecondary,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(ModernSaasDesign.space3),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    itemNumber,
-                                    softWrap: true,
-                                    style: ModernSaasDesign.bodyLarge.copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                                Semantics(
-                                  button: true,
-                                  label: 'Add organization base rate for ${_supportItemNames[itemNumber] ?? itemNumber}',
-                                  child: TextButton(
-                                    onPressed: () => _promptAddOrgBaseRate(itemNumber),
-                                    child: const Text('Add Org Base Rate'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: ModernSaasDesign.space2),
-                            Text(
-                              _supportItemNames[itemNumber] ?? 'Support item name unavailable',
-                              softWrap: true,
-                              style: ModernSaasDesign.bodyMedium.copyWith(
-                                color: ModernSaasDesign.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: ModernSaasDesign.space2),
-                            ...clients.map((client) => Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: ModernSaasDesign.space1),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          client['clientName'] ?? client['clientEmail'] ?? 'Unknown Client',
-                                          style: ModernSaasDesign.bodyMedium,
-                                        ),
-                                      ),
-                                      Semantics(
-                                        button: true,
-                                        label:
-                                            'Add client base rate for ${client['clientName'] ?? client['clientEmail'] ?? 'client'} on ${_supportItemNames[itemNumber] ?? itemNumber}',
-                                        child: TextButton(
-                                          onPressed: () => _promptAddClientBaseRate(itemNumber, client),
-                                          child: const Text('Add Client Rate'),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                ],
-                const SizedBox(height: ModernSaasDesign.space4),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
+                      child: const Text('Close'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         );
@@ -2214,9 +2917,11 @@ class _EnhancedInvoiceGenerationViewState
     await prefs.init();
     final userEmail = prefs.getUserEmail() ?? widget.email;
 
+    if (!mounted) return;
+
     await showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Add Organization Base Rate'),
           content: TextField(
@@ -2226,7 +2931,7 @@ class _EnhancedInvoiceGenerationViewState
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancel'),
             ),
             TextButton(
@@ -2236,14 +2941,13 @@ class _EnhancedInvoiceGenerationViewState
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Please enter a valid price'),
-                      backgroundColor: Colors.red,
                     ),
                   );
                   return;
                 }
                 try {
                   final api = ApiMethod();
-                  final result = await api.saveAsCustomPricing(
+                  await api.saveAsCustomPricing(
                     orgId,
                     itemNumber,
                     price,
@@ -2251,11 +2955,10 @@ class _EnhancedInvoiceGenerationViewState
                     userEmail,
                   );
                   if (mounted) {
-                    Navigator.pop(context);
+                    if (dialogContext.mounted) Navigator.pop(dialogContext);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Base rate saved successfully'),
-                        backgroundColor: Colors.green,
                       ),
                     );
                     // Optimistically update local state to keep remaining items visible
@@ -2263,19 +2966,20 @@ class _EnhancedInvoiceGenerationViewState
                       _itemPricingSource[itemNumber] = 'organization';
                       _missingRateItems.removeWhere((i) => i == itemNumber);
                       _missingClientRatesByItem.remove(itemNumber);
-                      _hasMissingBaseRates =
-                          _missingRateItems.isNotEmpty || _missingClientRatesByItem.isNotEmpty;
+                      _hasMissingBaseRates = _missingRateItems.isNotEmpty ||
+                          _missingClientRatesByItem.isNotEmpty;
                     });
                     // Refresh pricing without clearing the existing list
                     _preflightRateCheck(preserveExisting: true);
                   }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Failed to save base rate: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to save base rate: $e'),
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text('Save'),
@@ -2287,7 +2991,8 @@ class _EnhancedInvoiceGenerationViewState
   }
 
   /// Prompt for entering a client-specific base rate and save it.
-  Future<void> _promptAddClientBaseRate(String itemNumber, Map<String, String> client) async {
+  Future<void> _promptAddClientBaseRate(
+      String itemNumber, Map<String, String> client) async {
     final controller = TextEditingController();
     final orgId = _resolveOrganizationId();
     final clientId = client['clientId'] ?? '';
@@ -2296,11 +3001,12 @@ class _EnhancedInvoiceGenerationViewState
     await prefs.init();
     final userEmail = prefs.getUserEmail() ?? widget.email;
 
+    if (!mounted) return;
+
     if (clientId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Missing client ID for saving pricing'),
-          backgroundColor: Colors.red,
         ),
       );
       return;
@@ -2308,7 +3014,7 @@ class _EnhancedInvoiceGenerationViewState
 
     await showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: Text('Add Client Base Rate – $clientName'),
           content: TextField(
@@ -2318,7 +3024,7 @@ class _EnhancedInvoiceGenerationViewState
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancel'),
             ),
             TextButton(
@@ -2328,14 +3034,13 @@ class _EnhancedInvoiceGenerationViewState
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Please enter a valid price'),
-                      backgroundColor: Colors.red,
                     ),
                   );
                   return;
                 }
                 try {
                   final api = ApiMethod();
-                  final result = await api.saveClientCustomPricing(
+                  await api.saveClientCustomPricing(
                     orgId,
                     clientId,
                     itemNumber,
@@ -2344,11 +3049,10 @@ class _EnhancedInvoiceGenerationViewState
                     userEmail,
                   );
                   if (mounted) {
-                    Navigator.pop(context);
+                    if (dialogContext.mounted) Navigator.pop(dialogContext);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Client base rate saved successfully'),
-                        backgroundColor: Colors.green,
                       ),
                     );
                     // Optimistically update local state to keep remaining items visible
@@ -2356,26 +3060,28 @@ class _EnhancedInvoiceGenerationViewState
                       _itemPricingSource[itemNumber] = 'client_specific';
                       final list = _missingClientRatesByItem[itemNumber];
                       if (list != null) {
-                        list.removeWhere((e) => (e['clientId'] ?? '') == clientId);
+                        list.removeWhere(
+                            (e) => (e['clientId'] ?? '') == clientId);
                         if (list.isEmpty) {
                           _missingClientRatesByItem.remove(itemNumber);
                         } else {
                           _missingClientRatesByItem[itemNumber] = list;
                         }
                       }
-                      _hasMissingBaseRates =
-                          _missingRateItems.isNotEmpty || _missingClientRatesByItem.isNotEmpty;
+                      _hasMissingBaseRates = _missingRateItems.isNotEmpty ||
+                          _missingClientRatesByItem.isNotEmpty;
                     });
                     // Refresh pricing without clearing the existing list
                     _preflightRateCheck(preserveExisting: true);
                   }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Failed to save client base rate: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to save client base rate: $e'),
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text('Save'),
@@ -2405,7 +3111,6 @@ class _EnhancedInvoiceGenerationViewState
             content: Text(result
                 ? 'Invoices sent successfully!'
                 : 'Failed to send invoices'),
-            backgroundColor: result ? Colors.green : Colors.red,
           ),
         );
       }
@@ -2414,7 +3119,6 @@ class _EnhancedInvoiceGenerationViewState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error sending invoices: $e'),
-            backgroundColor: Colors.red,
           ),
         );
       }
@@ -2436,7 +3140,6 @@ class _EnhancedInvoiceGenerationViewState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error viewing PDF: $e'),
-            backgroundColor: Colors.red,
           ),
         );
       }

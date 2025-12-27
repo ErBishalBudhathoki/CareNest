@@ -1,9 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:iconsax/iconsax.dart';
-import 'dart:io';
-import 'dart:async';
 
 /// Comprehensive error handling service for authentication
 /// Handles all possible edge cases with user-friendly feedback
@@ -302,7 +300,7 @@ class AuthErrorHandler {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Iconsax.timer_1,
+                    Icons.timer_outlined,
                     color: AppColors.colorWarning,
                     size: 30,
                   ),
@@ -332,7 +330,7 @@ class AuthErrorHandler {
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.colorPrimary,
+                      backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -383,7 +381,7 @@ class AuthErrorHandler {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Iconsax.sms,
+                    Icons.mark_email_unread_outlined,
                     color: AppColors.colorWarning,
                     size: 30,
                   ),
@@ -437,7 +435,7 @@ class AuthErrorHandler {
                       child: ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.colorPrimary,
+                          backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -483,11 +481,11 @@ class AuthErrorHandler {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: AppColors.error.withValues(alpha: 0.1),
+                    color: Colors.orange.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Iconsax.user_remove,
+                    Icons.person_off_outlined,
                     color: AppColors.error,
                     size: 30,
                   ),
@@ -539,7 +537,7 @@ class AuthErrorHandler {
                           _launchSupport();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.colorPrimary,
+                          backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -589,7 +587,7 @@ class AuthErrorHandler {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Iconsax.shield_cross,
+                    Icons.gpp_bad_outlined,
                     color: AppColors.colorWarning,
                     size: 30,
                   ),
@@ -619,7 +617,7 @@ class AuthErrorHandler {
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.colorPrimary,
+                      backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -670,7 +668,7 @@ class AuthErrorHandler {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Iconsax.user_tick,
+                    Icons.person_outline,
                     color: AppColors.colorInfo,
                     size: 30,
                   ),
@@ -724,7 +722,7 @@ class AuthErrorHandler {
                           // Navigate to login screen
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.colorPrimary,
+                          backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -774,11 +772,11 @@ class AuthErrorHandler {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: AppColors.error.withValues(alpha: 0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Iconsax.warning_2,
+                    Icons.error_outline,
                     color: AppColors.error,
                     size: 30,
                   ),
@@ -836,7 +834,7 @@ class AuthErrorHandler {
                             _launchSupport();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.colorPrimary,
+                            backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
@@ -860,7 +858,7 @@ class AuthErrorHandler {
                         _launchSupport();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.colorPrimary,
+                        backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(

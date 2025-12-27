@@ -18,7 +18,7 @@ class ModernPricingHeader extends StatefulWidget {
   final List<HeaderStatCard>? stats;
 
   const ModernPricingHeader({
-    Key? key,
+    super.key,
     this.title = 'Pricing Dashboard',
     this.subtitle = 'Manage your subscription plans and billing',
     this.userName = 'Admin User',
@@ -30,7 +30,7 @@ class ModernPricingHeader extends StatefulWidget {
     this.onSearchTap,
     this.showStats = true,
     this.stats,
-  }) : super(key: key);
+  });
 
   @override
   State<ModernPricingHeader> createState() => _ModernPricingHeaderState();
@@ -39,7 +39,7 @@ class ModernPricingHeader extends StatefulWidget {
 class _ModernPricingHeaderState extends State<ModernPricingHeader>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
-  bool _isSearchFocused = false;
+  final bool _isSearchFocused = false;
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _ModernPricingHeaderState extends State<ModernPricingHeader>
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -235,7 +235,7 @@ class _ModernPricingHeaderState extends State<ModernPricingHeader>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -252,7 +252,7 @@ class _ModernPricingHeaderState extends State<ModernPricingHeader>
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: AppColors.colorPrimary.withValues(alpha: 0.1),
+                    color: AppColors.colorPrimary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Icon(
@@ -269,8 +269,8 @@ class _ModernPricingHeaderState extends State<ModernPricingHeader>
                   ),
                   decoration: BoxDecoration(
                     color: stat.trendPositive
-                        ? AppColors.colorSuccess.withValues(alpha: 0.1)
-                        : AppColors.error.withValues(alpha: 0.1),
+                        ? AppColors.colorSuccess.withOpacity(0.1)
+                        : AppColors.error.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
@@ -329,7 +329,7 @@ class _ModernPricingHeaderState extends State<ModernPricingHeader>
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _isSearchFocused
-              ? AppColors.colorPrimary.withValues(alpha: 0.3)
+              ? AppColors.colorPrimary.withOpacity(0.1)
               : AppColors.colorGrey200,
           width: 1,
         ),

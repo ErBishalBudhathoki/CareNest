@@ -15,7 +15,7 @@ class ModernInvoiceMetricCard extends StatelessWidget {
   final bool isLoading;
 
   const ModernInvoiceMetricCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     this.subtitle,
@@ -25,7 +25,7 @@ class ModernInvoiceMetricCard extends StatelessWidget {
     this.isPositiveTrend = true,
     this.onTap,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -142,13 +142,13 @@ class ModernInvoiceStatusBadge extends StatelessWidget {
   final bool isSmall;
 
   const ModernInvoiceStatusBadge({
-    Key? key,
+    super.key,
     required this.status,
     this.backgroundColor,
     this.textColor,
     this.icon,
     this.isSmall = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -243,14 +243,14 @@ class ModernInvoiceSectionHeader extends StatelessWidget {
   final bool showDivider;
 
   const ModernInvoiceSectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     this.icon,
     this.action,
     this.onTap,
     this.showDivider = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -321,11 +321,11 @@ class ModernInvoiceLoadingShimmer extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const ModernInvoiceLoadingShimmer({
-    Key? key,
+    super.key,
     this.itemCount = 3,
     this.height = 80,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -411,14 +411,14 @@ class ModernInvoiceEmptyState extends StatelessWidget {
   final Widget? customAction;
 
   const ModernInvoiceEmptyState({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
     this.actionText,
     this.onAction,
     this.customAction,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -484,7 +484,7 @@ class ModernInvoiceSearchBar extends StatelessWidget {
   final int? filterCount;
 
   const ModernInvoiceSearchBar({
-    Key? key,
+    super.key,
     this.hint = 'Search invoices...',
     this.controller,
     this.onChanged,
@@ -492,7 +492,7 @@ class ModernInvoiceSearchBar extends StatelessWidget {
     this.showFilter = false,
     this.onFilter,
     this.filterCount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -593,12 +593,12 @@ class ModernInvoiceProgressIndicator extends StatelessWidget {
   final bool showPercentage;
 
   const ModernInvoiceProgressIndicator({
-    Key? key,
+    super.key,
     required this.progress,
     this.label,
     this.color,
     this.showPercentage = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -652,193 +652,5 @@ class ModernInvoiceProgressIndicator extends StatelessWidget {
         .animate()
         .fadeIn(duration: 300.ms)
         .scaleX(begin: 0, end: 1, duration: 600.ms, curve: Curves.easeOutCubic);
-  }
-}
-
-/// Source Badge for displaying pricing source origin
-///
-/// Shows a compact badge indicating where a price came from:
-/// - `client_specific`: client-specific custom pricing
-/// - `organization`: organization-wide custom pricing
-/// - `base-rate`: internal base rate fallback
-/// - `ndis_default`: NDIS published cap or default
-/// - `fallback`: generic fallback source
-/// - any other value renders as informational
-class SourceBadge extends StatelessWidget {
-  /// Pricing source identifier (e.g., `client_specific`, `organization`, `ndis_default`).
-  final String source;
-
-  /// Render a smaller, denser badge variant.
-  final bool isSmall;
-
-  /// Optional tooltip text to explain the source.
-  final String? tooltip;
-
-  const SourceBadge({
-    Key? key,
-    required this.source,
-    this.isSmall = false,
-    this.tooltip,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final src = source.toLowerCase();
-
-    Color bgColor;
-    Color fgColor;
-    IconData icon;
-    String label;
-
-    switch (src) {
-      case 'client_specific':
-        bgColor = ModernInvoiceDesign.primary.withValues(alpha: 0.1);
-        fgColor = ModernInvoiceDesign.primary;
-        icon = Icons.person;
-        label = 'Client Rate';
-        break;
-      case 'organization':
-        bgColor = ModernInvoiceDesign.success.withValues(alpha: 0.1);
-        fgColor = ModernInvoiceDesign.success;
-        icon = Icons.business_rounded;
-        label = 'Organization Rate';
-        break;
-      case 'base-rate':
-        bgColor = ModernInvoiceDesign.neutral200;
-        fgColor = ModernInvoiceDesign.neutral600;
-        icon = Icons.settings_backup_restore_rounded;
-        label = 'Base Rate (Fallback)';
-        break;
-      case 'ndis_default':
-        bgColor = ModernInvoiceDesign.warning.withValues(alpha: 0.1);
-        fgColor = ModernInvoiceDesign.warning;
-        icon = Icons.policy_rounded;
-        label = 'NDIS Default';
-        break;
-      case 'fallback':
-        bgColor = ModernInvoiceDesign.error.withValues(alpha: 0.08);
-        fgColor = ModernInvoiceDesign.error;
-        icon = Icons.warning_amber_rounded;
-        label = 'Fallback';
-        break;
-      default:
-        bgColor = ModernInvoiceDesign.primary.withValues(alpha: 0.08);
-        fgColor = ModernInvoiceDesign.primary;
-        icon = Icons.info_outline_rounded;
-        label = source;
-    }
-
-    final badge = Container(
-      padding: EdgeInsets.symmetric(
-        horizontal:
-            isSmall ? ModernInvoiceDesign.space2 : ModernInvoiceDesign.space3,
-        vertical:
-            isSmall ? ModernInvoiceDesign.space1 : ModernInvoiceDesign.space2,
-      ),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusFull),
-        border: Border.all(color: fgColor.withValues(alpha: 0.3), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: isSmall ? 12 : 14, color: fgColor),
-          SizedBox(
-              width: isSmall
-                  ? ModernInvoiceDesign.space1
-                  : ModernInvoiceDesign.space2),
-          Text(
-            label,
-            style: (isSmall
-                    ? ModernInvoiceDesign.labelSmall
-                    : ModernInvoiceDesign.labelMedium)
-                .copyWith(color: fgColor, fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
-    );
-
-    if (tooltip != null && tooltip!.trim().isNotEmpty) {
-      return Tooltip(message: tooltip!, child: badge);
-    }
-    return badge;
-  }
-}
-
-/// NDIS Cap Chip to display maximum allowed price and compliance status
-class NdisCapChip extends StatelessWidget {
-  /// Maximum allowed NDIS price cap for the item.
-  final double? priceCap;
-
-  /// Current price to evaluate against the cap.
-  final double? currentPrice;
-
-  /// Optional label override; defaults to `NDIS Cap`.
-  final String label;
-
-  /// Dense variant suitable for inline layouts.
-  final bool isSmall;
-
-  const NdisCapChip({
-    Key? key,
-    this.priceCap,
-    this.currentPrice,
-    this.label = 'NDIS Cap',
-    this.isSmall = false,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final cap = priceCap;
-    final exceeds = (cap != null && currentPrice != null)
-        ? (currentPrice! > cap)
-        : false;
-
-    final bgColor = exceeds
-        ? ModernInvoiceDesign.error.withValues(alpha: 0.1)
-        : ModernInvoiceDesign.neutral200;
-    final fgColor = exceeds
-        ? ModernInvoiceDesign.error
-        : ModernInvoiceDesign.neutral700;
-    final icon = exceeds ? Icons.error_outline_rounded : Icons.shield_rounded;
-
-    return Tooltip(
-      message: cap == null
-          ? 'No NDIS cap data available'
-          : (exceeds
-              ? 'Current price exceeds the NDIS cap'
-              : 'Current price within NDIS cap'),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal:
-              isSmall ? ModernInvoiceDesign.space2 : ModernInvoiceDesign.space3,
-          vertical:
-              isSmall ? ModernInvoiceDesign.space1 : ModernInvoiceDesign.space2,
-        ),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusFull),
-          border: Border.all(color: fgColor.withValues(alpha: 0.3), width: 1),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: isSmall ? 12 : 14, color: fgColor),
-            SizedBox(
-                width: isSmall
-                    ? ModernInvoiceDesign.space1
-                    : ModernInvoiceDesign.space2),
-            Text(
-              cap == null ? label : '$label: \$${cap.toStringAsFixed(2)}',
-              style: (isSmall
-                      ? ModernInvoiceDesign.labelSmall
-                      : ModernInvoiceDesign.labelMedium)
-                  .copyWith(color: fgColor, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 
 /// Enhanced Quick Action Cards with improved UX
 class EnhancedQuickActionGrid extends StatelessWidget {
@@ -13,8 +12,8 @@ class EnhancedQuickActionGrid extends StatelessWidget {
   const EnhancedQuickActionGrid({
     super.key,
     required this.actions,
-    this.padding = const EdgeInsets.all(ModernSaasDesign.space3),
-    this.spacing = ModernSaasDesign.space3,
+    this.padding = const EdgeInsets.all(12.0),
+    this.spacing = 12.0,
     this.animate = true,
     this.crossAxisCount = 2,
   });
@@ -102,38 +101,38 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        widget.data.color.withValues(alpha: 0.1),
-                        widget.data.color.withValues(alpha: 0.05),
+                        widget.data.color.withOpacity(0.1),
+                        widget.data.color.withOpacity(0.1),
                       ],
                     ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.data.color.withValues(alpha: 0.1),
+                    color: widget.data.color.withOpacity(0.1),
                     spreadRadius: 1,
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: widget.data.color.withValues(alpha: 0.2),
+                  color: widget.data.color.withOpacity(0.1),
                   width: 1,
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(ModernSaasDesign.space4),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildIcon(),
-                    const SizedBox(height: ModernSaasDesign.space2),
+                    const SizedBox(height: 8.0),
                     _buildTitle(),
                     if (widget.data.subtitle != null) ...[
-                      const SizedBox(height: ModernSaasDesign.space1),
+                      const SizedBox(height: 4.0),
                       _buildSubtitle(),
                     ],
                     if (widget.data.badge != null) ...[
-                      const SizedBox(height: ModernSaasDesign.space1),
+                      const SizedBox(height: 4.0),
                       _buildBadge(),
                     ],
                   ],
@@ -188,7 +187,7 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: widget.data.color.withValues(alpha: 0.15),
+        color: widget.data.color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
@@ -202,9 +201,9 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
   Widget _buildTitle() {
     return Text(
       widget.data.title,
-      style: ModernSaasDesign.bodyLarge.copyWith(
+      style: const TextStyle(fontSize: 16).copyWith(
         fontWeight: FontWeight.w600,
-        color: ModernSaasDesign.textPrimary,
+        color: const Color(0xFF1F2937),
       ),
       textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
@@ -215,8 +214,8 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
   Widget _buildSubtitle() {
     return Text(
       widget.data.subtitle!,
-      style: ModernSaasDesign.bodySmall.copyWith(
-        color: ModernSaasDesign.textSecondary,
+      style: const TextStyle(fontSize: 12).copyWith(
+        color: const Color(0xFF6B7280),
       ),
       textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
@@ -227,18 +226,18 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
   Widget _buildBadge() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: ModernSaasDesign.space2,
+        horizontal: 8.0,
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: widget.data.badgeColor ?? ModernSaasDesign.error,
+        color: widget.data.badgeColor ?? Colors.red,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         widget.data.badge!,
-        style: ModernSaasDesign.labelSmall.copyWith(
+        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
           fontWeight: FontWeight.w600,
-          color: ModernSaasDesign.textOnPrimary,
+          color: Colors.white,
         ),
       ),
     );
@@ -280,7 +279,7 @@ class QuickActionData {
     return QuickActionData(
       title: title,
       icon: icon,
-      color: ModernSaasDesign.primary,
+      color: const Color(0xFF667EEA),
       onTap: onTap,
       subtitle: subtitle,
       badge: badge,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/shift_assignment_model.dart';
-import 'package:flutter/foundation.dart';
 
 /// ViewModel for managing shift assignment success screen state and logic
 class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
@@ -226,8 +225,4 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
     return 0.0;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

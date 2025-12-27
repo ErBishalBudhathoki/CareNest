@@ -1,8 +1,6 @@
+import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:carenest/app/features/auth/views/signup_view.dart';
 import '../../../../env.dart';
-import 'package:carenest/main.dart';
 
 /// Deep Link Handler
 /// Handles deep links for the application, particularly for organization signup links
@@ -35,9 +33,7 @@ class DeepLinkHandler {
   static void handleDeepLink(String link) {
     final uri = Uri.parse(link);
 
-    // Handle custom scheme links (com.bishal.invoice://)
     if (uri.scheme == 'com.bishal.invoice') {
-      _handleCustomSchemeLink(uri);
       return;
     }
 

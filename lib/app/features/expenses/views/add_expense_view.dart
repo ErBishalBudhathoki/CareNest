@@ -1,5 +1,6 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../models/expense_model.dart';
@@ -139,9 +140,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: ModernSaasDesign.primary,
-              onPrimary: ModernSaasDesign.textOnPrimary,
-              onSurface: ModernSaasDesign.textPrimary,
+              primary: const Color(0xFF667EEA),
+              onPrimary: Colors.white,
+              onSurface: const Color(0xFF1F2937),
             ),
           ),
           child: child!,
@@ -180,7 +181,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                            ModernSaasDesign.surface),
+                            Colors.white),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -242,7 +243,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
               const SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle, color: ModernSaasDesign.surface),
+                    Icon(Icons.check_circle, color: Colors.white),
                     SizedBox(width: 8),
                     Text('Expense updated successfully'),
                   ],
@@ -260,7 +261,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
               const SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle, color: ModernSaasDesign.surface),
+                    Icon(Icons.check_circle, color: Colors.white),
                     SizedBox(width: 8),
                     Text('Expense submitted successfully'),
                   ],
@@ -291,7 +292,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.error, color: ModernSaasDesign.surface),
+                  const Icon(Icons.error, color: Colors.white),
                   const SizedBox(width: 8),
                   Expanded(child: Text(errorMessage)),
                 ],
@@ -299,7 +300,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
               duration: const Duration(seconds: 5),
               action: SnackBarAction(
                 label: 'Retry',
-                textColor: ModernSaasDesign.surface,
+                textColor: Colors.white,
                 onPressed: () => _submitExpense(),
               ),
             ),
@@ -321,9 +322,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
       appBar: AppBar(
         title: Text(
           widget.expenseToEdit != null ? 'Edit Expense' : 'Add New Expense',
-          style: const TextStyle(color: ModernSaasDesign.textOnPrimary),
+          style: const TextStyle(color: Colors.white),
         ),
-        iconTheme: const IconThemeData(color: ModernSaasDesign.textOnPrimary),
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
       body: Container(
@@ -332,32 +333,32 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              ModernSaasDesign.primary,
-              ModernSaasDesign.background,
-              ModernSaasDesign.background,
+              Color(0xFF667EEA),
+              Colors.white,
+              Colors.white,
             ],
             stops: [0.0, 0.1, 1.0],
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(ModernSaasDesign.space5),
+            padding: const EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
               child: ModernCard(
                 child: Padding(
-                  padding: const EdgeInsets.all(ModernSaasDesign.space5),
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
                         'Expense Details',
-                        style: ModernSaasDesign.headlineMedium.copyWith(
-                          color: ModernSaasDesign.primary,
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
+                          color: const Color(0xFF667EEA),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space6),
+                      const SizedBox(height: 24.0),
                       TextFormField(
                         controller: _titleController,
                         decoration: InputDecoration(
@@ -365,7 +366,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           hintText: 'Enter expense title',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
-                                ModernSaasDesign.radiusLg),
+                                12.0),
                           ),
                         ),
                         validator: (value) {
@@ -375,7 +376,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         controller: _amountController,
                         keyboardType: TextInputType.number,
@@ -385,7 +386,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           prefixText: '\$',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
-                                ModernSaasDesign.radiusLg),
+                                12.0),
                           ),
                         ),
                         validator: (value) {
@@ -398,16 +399,16 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       DropdownButtonFormField<String>(
-                        value: _selectedCategory,
-                        style: TextStyle(color: ModernSaasDesign.textPrimary),
-                        dropdownColor: ModernSaasDesign.surface,
+                        initialValue: _selectedCategory,
+                        style: TextStyle(color: const Color(0xFF1F2937)),
+                        dropdownColor: Colors.white,
                         decoration: InputDecoration(
                           labelText: 'Category',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
-                                ModernSaasDesign.radiusLg),
+                                12.0),
                           ),
                           prefixIcon: const Icon(Icons.category),
                         ),
@@ -423,7 +424,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           });
                         },
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       Consumer(
                         builder: (context, ref, child) {
                           final clients = ref.watch(clientsListProvider);
@@ -433,27 +434,27 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           if (error != null) {
                             return Container(
                               padding:
-                                  const EdgeInsets.all(ModernSaasDesign.space3),
+                                  const EdgeInsets.all(12.0),
                               decoration: BoxDecoration(
-                                color: ModernSaasDesign.errorLight,
+                                color: Colors.red,
                                 borderRadius: BorderRadius.circular(
-                                    ModernSaasDesign.radiusLg),
+                                    12.0),
                                 border: Border.all(
-                                    color: ModernSaasDesign.error
-                                        .withValues(alpha: 0.3)),
+                                    color: Colors.red
+                                        .withOpacity(0.1)),
                               ),
                               child: Row(
                                 children: [
                                   const Icon(Icons.error,
-                                      color: ModernSaasDesign.error),
+                                      color: Colors.red),
                                   const SizedBox(
-                                      width: ModernSaasDesign.space2),
+                                      width: 8.0),
                                   Expanded(
                                     child: Text(
                                       'Error loading clients: $error',
                                       style:
-                                          ModernSaasDesign.bodyMedium.copyWith(
-                                        color: ModernSaasDesign.error,
+                                          const TextStyle(fontSize: 14).copyWith(
+                                        color: Colors.red,
                                       ),
                                     ),
                                   ),
@@ -463,15 +464,15 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           }
 
                           return DropdownButtonFormField<Patient>(
-                            value: _selectedClient,
+                            initialValue: _selectedClient,
                             style: const TextStyle(
-                                color: ModernSaasDesign.textPrimary),
-                            dropdownColor: ModernSaasDesign.surface,
+                                color: Color(0xFF1F2937)),
+                            dropdownColor: Colors.white,
                             decoration: InputDecoration(
                               labelText: 'Client (Optional)',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
-                                    ModernSaasDesign.radiusLg),
+                                    12.0),
                               ),
                               prefixIcon: const Icon(Icons.person),
                               suffixIcon: isLoading
@@ -487,7 +488,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                             hint: const Text(
                               'Select a client',
                               style: TextStyle(
-                                  color: ModernSaasDesign.textTertiary),
+                                  color: Color(0xFF9CA3AF)),
                             ),
                             items: clients.map((client) {
                               return DropdownMenuItem<Patient>(
@@ -508,7 +509,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           );
                         },
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       GestureDetector(
                         onTap: () => _selectDate(context),
                         child: AbsorbPointer(
@@ -517,7 +518,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                               labelText: 'Date',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
-                                    ModernSaasDesign.radiusLg),
+                                    12.0),
                               ),
                               prefixIcon: const Icon(Icons.calendar_today),
                             ),
@@ -528,7 +529,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         controller: _descriptionController,
                         maxLines: 3,
@@ -538,18 +539,18 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           prefixIcon: const Icon(Icons.description),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
-                                ModernSaasDesign.radiusLg),
+                                12.0),
                           ),
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: 16.0),
                       SwitchListTile(
                         title: Text(
                           'Recurring Expense',
-                          style: ModernSaasDesign.bodyLarge,
+                          style: const TextStyle(fontSize: 16),
                         ),
                         value: _isRecurring,
-                        activeColor: ModernSaasDesign.primary,
+                        activeThumbColor: const Color(0xFF667EEA),
                         onChanged: (value) {
                           setState(() {
                             _isRecurring = value;
@@ -557,20 +558,20 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                         },
                         subtitle: Text(
                           'Enable for regularly occurring expenses',
-                          style: ModernSaasDesign.bodySmall.copyWith(
-                            color: ModernSaasDesign.textSecondary,
+                          style: const TextStyle(fontSize: 12).copyWith(
+                            color: const Color(0xFF6B7280),
                           ),
                         ),
                       ),
                       if (_isRecurring) ...[
-                        const SizedBox(height: ModernSaasDesign.space2),
+                        const SizedBox(height: 8.0),
                         DropdownButtonFormField<String>(
-                          value: _recurringFrequency,
+                          initialValue: _recurringFrequency,
                           decoration: InputDecoration(
                             labelText: 'Frequency',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(
-                                  ModernSaasDesign.radiusLg),
+                                  12.0),
                             ),
                             prefixIcon: const Icon(Icons.repeat),
                           ),
@@ -606,7 +607,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                         },
                         maxFiles: 5,
                       ),
-                      const SizedBox(height: ModernSaasDesign.space6),
+                      const SizedBox(height: 24.0),
                       ModernButton(
                         onPressed: _isSubmitting ? null : _submitExpense,
                         text: _isSubmitting

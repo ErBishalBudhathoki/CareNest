@@ -1,23 +1,18 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/shared/widgets/platformMap_widget.dart';
+import 'package:carenest/app/shared/widgets/platform_map_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:carenest/app/features/requests/views/requests_view.dart';
 import 'package:carenest/app/features/timesheet/views/timesheet_view.dart';
-import '../../../shared/design_system/modern_saas_design_system.dart';
-import 'package:flutter/foundation.dart';
 
 class ClockInAndOutView extends ConsumerStatefulWidget {
   final String email;
 
   const ClockInAndOutView({
-    Key? key,
+    super.key,
     required this.email,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<ClockInAndOutView> createState() => _ClockInAndOutViewState();
@@ -78,19 +73,19 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                 // Top Section with Back Button and Total Hours
                 Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: ModernSaasDesign.space4),
+                      EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     children: [
                       // Back Button
                       Container(
-                        margin: EdgeInsets.only(right: ModernSaasDesign.space3),
+                        margin: EdgeInsets.only(right: 12.0),
                         decoration: BoxDecoration(
-                          color: ModernSaasDesign.textPrimary,
+                          color: const Color(0xFF1F2937),
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           icon: Icon(Icons.arrow_back,
-                              color: ModernSaasDesign.textOnPrimary),
+                              color: Colors.white),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -99,19 +94,19 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: ModernSaasDesign.space5,
-                              vertical: ModernSaasDesign.space3),
+                              horizontal: 20.0,
+                              vertical: 12.0),
                           decoration: BoxDecoration(
-                            color: ModernSaasDesign.surface,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(
-                                ModernSaasDesign.radius3xl),
+                                24.0),
                             boxShadow: [
                               BoxShadow(
-                                color: ModernSaasDesign.textPrimary
-                                    .withValues(alpha: 0.1),
-                                blurRadius: ModernSaasDesign.space2 +
-                                    ModernSaasDesign.space1,
-                                offset: Offset(0, ModernSaasDesign.space1),
+                                color: const Color(0xFF1F2937)
+                                    .withOpacity(0.1),
+                                blurRadius: 8.0 +
+                                    4.0,
+                                offset: Offset(0, 4.0),
                               ),
                             ],
                           ),
@@ -120,8 +115,8 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                             children: [
                               Text(
                                 'Total work hours today',
-                                style: ModernSaasDesign.bodyMedium.copyWith(
-                                  color: ModernSaasDesign.textPrimary,
+                                style: const TextStyle(fontSize: 14).copyWith(
+                                  color: const Color(0xFF1F2937),
                                 ),
                               ),
                               Consumer(
@@ -130,9 +125,9 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                       ref.watch(timerServiceProvider);
                                   return Text(
                                     '0:00',
-                                    style: ModernSaasDesign.bodyMedium.copyWith(
+                                    style: const TextStyle(fontSize: 14).copyWith(
                                       fontWeight: FontWeight.w500,
-                                      color: ModernSaasDesign.textPrimary,
+                                      color: const Color(0xFF1F2937),
                                     ),
                                   );
                                 },
@@ -156,30 +151,30 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                         right: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: ModernSaasDesign.surface,
+                            color: Colors.white,
                             borderRadius: BorderRadius.only(
                               topLeft:
-                                  Radius.circular(ModernSaasDesign.radius3xl),
+                                  Radius.circular(24.0),
                               topRight:
-                                  Radius.circular(ModernSaasDesign.radius3xl),
+                                  Radius.circular(24.0),
                             ),
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(height: ModernSaasDesign.space6),
+                              SizedBox(height: 24.0),
                               // Nothing scheduled text
                               Text(
                                 'Nothing scheduled today',
-                                style: ModernSaasDesign.bodyMedium.copyWith(
-                                  color: ModernSaasDesign.textSecondary,
+                                style: const TextStyle(fontSize: 14).copyWith(
+                                  color: const Color(0xFF6B7280),
                                 ),
                               ),
-                              SizedBox(height: ModernSaasDesign.space6),
+                              SizedBox(height: 24.0),
                               // Clock In Button
                               Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: ModernSaasDesign.space4),
+                                    horizontal: 16.0),
                                 child: Consumer(
                                   builder: (context, ref, child) {
                                     final timer =
@@ -189,11 +184,11 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                       height: 200,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: ModernSaasDesign.primary,
+                                        color: Color(0xFF667EEA),
                                       ),
                                       child: Material(
-                                        color: ModernSaasDesign.surface
-                                            .withValues(alpha: 0),
+                                        color: Colors.white
+                                            .withOpacity(0.1),
                                         child: InkWell(
                                           customBorder: const CircleBorder(),
                                           onTap: () {
@@ -209,21 +204,20 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                             children: [
                                               const Icon(
                                                 Icons.timer_outlined,
-                                                color: ModernSaasDesign.surface,
+                                                color: Colors.white,
                                                 size: 48,
                                               ),
                                               SizedBox(
                                                   height:
-                                                      ModernSaasDesign.space2),
+                                                      8.0),
                                               Text(
                                                 timer.isRunning
                                                     ? 'Clock out'
                                                     : 'Clock in',
-                                                style: ModernSaasDesign
-                                                    .headlineSmall
-                                                    .copyWith(
-                                                  color:
-                                                      ModernSaasDesign.surface,
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ],
@@ -238,14 +232,14 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                               // Bottom Cards
                               Padding(
                                 padding:
-                                    EdgeInsets.all(ModernSaasDesign.space4),
+                                    EdgeInsets.all(16.0),
                                 child: Row(
                                   children: [
                                     Expanded(
                                       child: _buildActionCard(
                                         'My requests',
                                         Icons.check_circle_outline,
-                                        ModernSaasDesign.warning,
+                                        Colors.orange,
                                         () => Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) => RequestsView(
@@ -255,12 +249,12 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: ModernSaasDesign.space4),
+                                    SizedBox(width: 16.0),
                                     Expanded(
                                       child: _buildActionCard(
                                         'Timesheet',
                                         Icons.calendar_today,
-                                        ModernSaasDesign.info,
+                                        Colors.blue,
                                         () => Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) => TimesheetView(
@@ -273,7 +267,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: ModernSaasDesign.space4),
+                              SizedBox(height: 16.0),
                             ],
                           ),
                         ),
@@ -287,7 +281,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                       //   builder: (context, scrollController) {
                       //     return Container(
                       //       decoration: const BoxDecoration(
-                      //         color: ModernSaasDesign.surface,
+                      //         color: Colors.white,
                       //         borderRadius: BorderRadius.only(
                       //           topLeft: Radius.circular(30),
                       //           topRight: Radius.circular(30),
@@ -407,35 +401,35 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
       String title, IconData icon, Color iconColor, VoidCallback onTap) {
     return Container(
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: ModernSaasDesign.textPrimary.withValues(alpha: 0.05),
-            blurRadius: ModernSaasDesign.space2 + ModernSaasDesign.space1,
+            color: const Color(0xFF1F2937).withOpacity(0.1),
+            blurRadius: 8.0 + 4.0,
             spreadRadius: 0,
-            offset: Offset(0, ModernSaasDesign.space1),
+            offset: Offset(0, 4.0),
           ),
         ],
       ),
       child: Material(
-        color: ModernSaasDesign.surface.withValues(alpha: 0),
+        color: Colors.white.withOpacity(0.1),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusLg),
+          borderRadius: BorderRadius.circular(12.0),
           child: Padding(
             padding: EdgeInsets.symmetric(
-                vertical: ModernSaasDesign.space5,
-                horizontal: ModernSaasDesign.space4),
+                vertical: 20.0,
+                horizontal: 16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon, color: iconColor, size: 32),
-                SizedBox(height: ModernSaasDesign.space3),
+                SizedBox(height: 12.0),
                 Text(
                   title,
-                  style: ModernSaasDesign.bodyMedium.copyWith(
-                    color: ModernSaasDesign.textPrimary,
+                  style: const TextStyle(fontSize: 14).copyWith(
+                    color: const Color(0xFF1F2937),
                   ),
                 ),
               ],

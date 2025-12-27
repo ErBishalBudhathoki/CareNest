@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 
 /// Enhanced Data Table with improved UX/UI features
 class EnhancedDataTable extends StatefulWidget {
@@ -76,11 +75,11 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
     }
 
     return Container(
-      padding: widget.padding ?? const EdgeInsets.all(ModernSaasDesign.space3),
+      padding: widget.padding ?? const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: ModernSaasDesign.shadowMd,
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
       ),
       child:
           widget.responsive ? _buildResponsiveTable() : _buildStandardTable(),
@@ -107,7 +106,7 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
         // Header
         Container(
           decoration: const BoxDecoration(
-            color: ModernSaasDesign.background,
+            color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
           ),
           child: SingleChildScrollView(
@@ -118,14 +117,14 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
               sortColumnIndex: widget.sortColumnIndex,
               showCheckboxColumn: widget.showCheckboxColumn,
               onSelectAll: widget.onSelectAll,
-              headingRowColor: MaterialStateProperty.all(
-                ModernSaasDesign.background,
+              headingRowColor: WidgetStateProperty.all(
+                Colors.white,
               ),
-              headingTextStyle: ModernSaasDesign.labelMedium.copyWith(
-                color: ModernSaasDesign.textSecondary,
+              headingTextStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500).copyWith(
+                color: const Color(0xFF6B7280),
               ),
-              dataTextStyle: ModernSaasDesign.bodyMedium.copyWith(
-                color: ModernSaasDesign.textPrimary,
+              dataTextStyle: const TextStyle(fontSize: 14).copyWith(
+                color: const Color(0xFF1F2937),
               ),
               columns: widget.columns.map((column) {
                 return DataColumn(
@@ -172,17 +171,17 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
 
   Widget _buildMobileCard(EnhancedDataRow row, int index) {
     return Container(
-      margin: const EdgeInsets.only(bottom: ModernSaasDesign.space2),
-      padding: const EdgeInsets.all(ModernSaasDesign.space3),
+      margin: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: row.selected
-            ? ModernSaasDesign.primary.withValues(alpha: 0.05)
-            : ModernSaasDesign.surface,
+            ? const Color(0xFF667EEA).withOpacity(0.1)
+            : Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: row.selected
-              ? ModernSaasDesign.primary.withValues(alpha: 0.3)
-              : ModernSaasDesign.border,
+              ? const Color(0xFF667EEA).withOpacity(0.1)
+              : const Color(0xFFE0E0E0),
         ),
       ),
       child: Column(
@@ -192,7 +191,7 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
           final cell = row.cells[columnIndex];
 
           return Padding(
-            padding: const EdgeInsets.only(bottom: ModernSaasDesign.space1),
+            padding: const EdgeInsets.only(bottom: 4.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -200,8 +199,8 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                   width: 100,
                   child: Text(
                     _getColumnTitle(column.label),
-                    style: ModernSaasDesign.labelSmall.copyWith(
-                      color: ModernSaasDesign.textSecondary,
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
+                      color: const Color(0xFF6B7280),
                     ),
                   ),
                 ),
@@ -230,11 +229,11 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
 
   Widget _buildLoadingState() {
     return Container(
-      padding: const EdgeInsets.all(ModernSaasDesign.space8),
+      padding: const EdgeInsets.all(32.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: ModernSaasDesign.shadowMd,
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
       ),
       child: const Center(
         child: Column(
@@ -242,12 +241,12 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
           children: [
             CircularProgressIndicator(
               valueColor:
-                  AlwaysStoppedAnimation<Color>(ModernSaasDesign.primary),
+                  AlwaysStoppedAnimation<Color>(Color(0xFF667EEA)),
             ),
-            SizedBox(height: ModernSaasDesign.space3),
+            SizedBox(height: 12.0),
             Text(
               'Loading data...',
-              style: ModernSaasDesign.bodyLarge,
+              style: TextStyle(fontSize: 16),
             ),
           ],
         ),
@@ -257,11 +256,11 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
 
   Widget _buildEmptyState() {
     return Container(
-      padding: const EdgeInsets.all(ModernSaasDesign.space8),
+      padding: const EdgeInsets.all(32.0),
       decoration: BoxDecoration(
-        color: ModernSaasDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: ModernSaasDesign.shadowMd,
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
       ),
       child: Center(
         child: widget.emptyWidget ??
@@ -271,13 +270,13 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                 Icon(
                   Icons.inbox_outlined,
                   size: 64,
-                  color: ModernSaasDesign.neutral400,
+                  color: const Color(0xFFA3A3A3),
                 ),
-                const SizedBox(height: ModernSaasDesign.space3),
+                const SizedBox(height: 12.0),
                 Text(
                   widget.emptyMessage ?? 'No data available',
-                  style: ModernSaasDesign.headlineSmall.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                 ),
               ],
@@ -309,7 +308,7 @@ class EnhancedDataRow {
   final List<EnhancedDataCell> cells;
   final bool selected;
   final ValueChanged<bool?>? onSelectChanged;
-  final MaterialStateProperty<Color?>? color;
+  final WidgetStateProperty<Color?>? color;
   final VoidCallback? onTap;
 
   const EnhancedDataRow({
@@ -348,38 +347,38 @@ class EnhancedDataCell {
       case 'active':
       case 'paid':
       case 'completed':
-        statusColor = ModernSaasDesign.success;
+        statusColor = Colors.green;
         break;
       case 'pending':
       case 'processing':
-        statusColor = ModernSaasDesign.warning;
+        statusColor = Colors.orange;
         break;
       case 'inactive':
       case 'unpaid':
       case 'cancelled':
-        statusColor = ModernSaasDesign.error;
+        statusColor = Colors.red;
         break;
       default:
-        statusColor = ModernSaasDesign.neutral500;
+        statusColor = const Color(0xFF737373);
     }
 
     return EnhancedDataCell(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: ModernSaasDesign.spacing8,
+          horizontal: 32.0,
           vertical: 4,
         ),
         decoration: BoxDecoration(
-          color: (color ?? statusColor).withValues(alpha: 0.1),
+          color: (color ?? statusColor).withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: (color ?? statusColor).withValues(alpha: 0.3),
+            color: (color ?? statusColor).withOpacity(0.1),
           ),
         ),
         child: Text(
           status,
-          style: ModernSaasDesign.labelSmall.copyWith(
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
             color: color ?? statusColor,
           ),
         ),
@@ -396,12 +395,12 @@ class EnhancedDataCell {
         mainAxisSize: MainAxisSize.min,
         children: actions.map((action) {
           return Padding(
-            padding: const EdgeInsets.only(right: ModernSaasDesign.spacing4),
+            padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
               icon: Icon(
                 action.icon,
                 size: 18,
-                color: action.color ?? ModernSaasDesign.textSecondary,
+                color: action.color ?? const Color(0xFF6B7280),
               ),
               onPressed: action.onPressed,
               tooltip: action.tooltip,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
@@ -16,17 +17,18 @@ class NdisPricingManagementView extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? adminEmail;
   final String? organizationName;
+
   /// Optional client ID. When provided, saving custom pricing will be
   /// applied specifically to this client rather than organization-wide.
   final String? clientId;
 
   const NdisPricingManagementView({
-    Key? key,
+    super.key,
     this.organizationId,
     this.adminEmail,
     this.organizationName,
     this.clientId,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<NdisPricingManagementView> createState() =>
@@ -42,7 +44,7 @@ class _NdisPricingManagementViewState
 
   List<NDISItem> _allNdisItems = [];
   List<NDISItem> _filteredNdisItems = [];
-  Map<String, Map<String, dynamic>> _pricingData = {};
+  final Map<String, Map<String, dynamic>> _pricingData = {};
   bool _isLoading = true;
   String _searchQuery = '';
   String _userState = 'NSW'; // Default state
@@ -426,12 +428,14 @@ class _NdisPricingManagementViewState
 
     try {
       // Resolve user email: prefer adminEmail, fallback to stored user email
-      final userEmail = (widget.adminEmail != null && widget.adminEmail!.trim().isNotEmpty)
-          ? widget.adminEmail!
-          : (_sharedPrefs.getUserEmail() ?? '');
+      final userEmail =
+          (widget.adminEmail != null && widget.adminEmail!.trim().isNotEmpty)
+              ? widget.adminEmail!
+              : (_sharedPrefs.getUserEmail() ?? '');
 
       if (userEmail.isEmpty) {
-        _showSnackBar('Missing user email. Please sign in again.', isError: true);
+        _showSnackBar('Missing user email. Please sign in again.',
+            isError: true);
         setState(() {
           _isSavingPrice[item.itemNumber] = false;
         });
@@ -465,12 +469,15 @@ class _NdisPricingManagementViewState
       if (result['success'] == true) {
         // Update local pricing data
         setState(() {
-          final isClientSpecific = widget.clientId != null && widget.clientId!.trim().isNotEmpty;
+          final isClientSpecific =
+              widget.clientId != null && widget.clientId!.trim().isNotEmpty;
           _pricingData[item.itemNumber] = {
             ..._pricingData[item.itemNumber] ?? {},
             'customPricing': {
               'price': price,
-              'source': isClientSpecific ? 'Client-Specific Rate' : 'Organization Rate',
+              'source': isClientSpecific
+                  ? 'Client-Specific Rate'
+                  : 'Organization Rate',
               if (isClientSpecific) 'clientId': widget.clientId,
               'createdAt': DateTime.now().toIso8601String(),
             },
@@ -532,7 +539,6 @@ class _NdisPricingManagementViewState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : Colors.green,
         duration: const Duration(seconds: 3),
       ),
     );
@@ -541,7 +547,6 @@ class _NdisPricingManagementViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       body: Column(
         children: [
           _buildModernHeader(),
@@ -627,8 +632,7 @@ class _NdisPricingManagementViewState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            color: const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -693,8 +697,7 @@ class _NdisPricingManagementViewState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            color: const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -783,10 +786,10 @@ class _NdisPricingManagementViewState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: const Color(0xFF10B981).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                    color: const Color(0xFF10B981).withOpacity(0.1),
                   ),
                 ),
                 child: Row(
@@ -907,7 +910,7 @@ class _NdisPricingManagementViewState
 
   Widget _buildPricingFilter() {
     return DropdownButtonFormField<String>(
-      value: _selectedFilter,
+      initialValue: _selectedFilter,
       decoration: const InputDecoration(
         labelText: 'Filter by Pricing',
         border: OutlineInputBorder(),
@@ -942,7 +945,7 @@ class _NdisPricingManagementViewState
 
   Widget _buildStateFilter() {
     return DropdownButtonFormField<String>(
-      value: _selectedStateFilter,
+      initialValue: _selectedStateFilter,
       decoration: const InputDecoration(
         labelText: 'Filter by State',
         border: OutlineInputBorder(),
@@ -974,9 +977,9 @@ class _NdisPricingManagementViewState
     final displayState =
         _selectedStateFilter != 'All' ? _selectedStateFilter : _userState;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.blue.withValues(alpha: 0.1),
+        color: Colors.blue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1041,6 +1044,7 @@ class _NdisPricingManagementViewState
 
     return Expanded(
       child: ListView.builder(
+        padding: const EdgeInsets.only(top: 0, bottom: 20),
         itemCount: _filteredNdisItems.length,
         itemBuilder: (context, index) {
           final item = _filteredNdisItems[index];
@@ -1076,7 +1080,7 @@ class _NdisPricingManagementViewState
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1090,6 +1094,7 @@ class _NdisPricingManagementViewState
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
+                color: Colors.black87,
               ),
             ),
             subtitle: Column(
@@ -1112,10 +1117,10 @@ class _NdisPricingManagementViewState
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: hasCustomPricing
-                            ? Colors.orange.withValues(alpha: 0.2)
+                            ? Colors.orange.withOpacity(0.1)
                             : (isMissingStandard
-                                ? Colors.red.withValues(alpha: 0.2)
-                                : Colors.green.withValues(alpha: 0.2)),
+                                ? Colors.red.withOpacity(0.1)
+                                : Colors.green.withOpacity(0.1)),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -1135,7 +1140,9 @@ class _NdisPricingManagementViewState
                     Text(
                       pricingSource,
                       style: TextStyle(
-                        color: isMissingStandard ? Colors.red[600] : Colors.grey[600],
+                        color: isMissingStandard
+                            ? Colors.red[600]
+                            : Colors.grey[600],
                         fontSize: 11,
                       ),
                     ),
@@ -1169,7 +1176,9 @@ class _NdisPricingManagementViewState
                     showOverride ? Icons.expand_less : Icons.attach_money,
                     color: showOverride
                         ? Colors.blue
-                        : (isMissingStandard ? Colors.red[600] : Colors.grey[600]),
+                        : (isMissingStandard
+                            ? Colors.red[600]
+                            : Colors.grey[600]),
                     size: 18,
                   ),
                   onPressed: () => _togglePriceOverride(item.itemNumber),
@@ -1213,7 +1222,7 @@ class _NdisPricingManagementViewState
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -1233,25 +1242,29 @@ class _NdisPricingManagementViewState
                 width: 1,
               ),
             ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: standardPrice > 0 ? Colors.blue[100] : Colors.red[100],
-                  borderRadius: BorderRadius.circular(8),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color:
+                        standardPrice > 0 ? Colors.blue[100] : Colors.red[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    standardPrice > 0
+                        ? Icons.info_outline
+                        : Icons.error_outline,
+                    size: 16,
+                    color:
+                        standardPrice > 0 ? Colors.blue[700] : Colors.red[700],
+                  ),
                 ),
-                child: Icon(
-                  standardPrice > 0 ? Icons.info_outline : Icons.error_outline,
-                  size: 16,
-                  color: standardPrice > 0 ? Colors.blue[700] : Colors.red[700],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       if (standardPrice > 0) ...[
                         Text(
                           'Standard NDIS Rate',
@@ -1289,66 +1302,66 @@ class _NdisPricingManagementViewState
                           ),
                         ),
                       ]
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        if (standardPrice <= 0) ...[
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              ElevatedButton.icon(
-                onPressed: () async {
-                  final resolution = await showPricePromptDialog(
-                    context: context,
-                    promptData: {
-                      'ndisItemNumber': item.itemNumber,
-                      'itemDescription': item.itemName,
-                      'quantity': 1.0,
-                      'unit': 'hour',
-                      'priceCap': null,
-                      'suggestedPrice': null,
-                    },
-                  );
-                  if (resolution != null) {
-                    final providedPrice =
-                        (resolution['providedPrice'] as num?)?.toDouble();
-                    if (providedPrice != null && providedPrice > 0) {
-                      setState(() {
-                        _isCustomPriceEnabled[item.itemNumber] = true;
-                        controller?.text = providedPrice.toStringAsFixed(2);
-                      });
-                      if (resolution['applyToOrganization'] == true) {
-                        await _saveCustomPricing(item);
+          if (standardPrice <= 0) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final resolution = await showPricePromptDialog(
+                      context: context,
+                      promptData: {
+                        'ndisItemNumber': item.itemNumber,
+                        'itemDescription': item.itemName,
+                        'quantity': 1.0,
+                        'unit': 'hour',
+                        'priceCap': null,
+                        'suggestedPrice': null,
+                      },
+                    );
+                    if (resolution != null) {
+                      final providedPrice =
+                          (resolution['providedPrice'] as num?)?.toDouble();
+                      if (providedPrice != null && providedPrice > 0) {
+                        setState(() {
+                          _isCustomPriceEnabled[item.itemNumber] = true;
+                          controller?.text = providedPrice.toStringAsFixed(2);
+                        });
+                        if (resolution['applyToOrganization'] == true) {
+                          await _saveCustomPricing(item);
+                        }
                       }
                     }
-                  }
-                },
-                icon: const Icon(Icons.attach_money, size: 18),
-                label: const Text('Enter Price'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[600],
-                  foregroundColor: Colors.white,
+                  },
+                  icon: const Icon(Icons.attach_money, size: 18),
+                  label: const Text('Enter Price'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'No standard rate available; provide a price.',
-                  style: TextStyle(color: Colors.red[700], fontSize: 12),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: true,
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'No standard rate available; provide a price.',
+                    style: TextStyle(color: Colors.red[700], fontSize: 12),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
 
-        const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           // Custom pricing toggle
           Container(
@@ -1396,8 +1409,9 @@ class _NdisPricingManagementViewState
                             !isCustomEnabled;
                         if (!isCustomEnabled) {
                           // Reset to standard price when enabling (only if available)
-                          controller?.text =
-                              standardPrice > 0 ? standardPrice.toStringAsFixed(2) : '';
+                          controller?.text = standardPrice > 0
+                              ? standardPrice.toStringAsFixed(2)
+                              : '';
                         }
                       });
                     },
@@ -1431,7 +1445,7 @@ class _NdisPricingManagementViewState
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -1458,7 +1472,7 @@ class _NdisPricingManagementViewState
                     margin: const EdgeInsets.all(12),
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                      color: const Color(0xFF6C5CE7).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -1512,7 +1526,7 @@ class _NdisPricingManagementViewState
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF6C5CE7).withValues(alpha: 0.3),
+                        color: const Color(0xFF6C5CE7).withOpacity(0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -1521,7 +1535,7 @@ class _NdisPricingManagementViewState
                   child: ElevatedButton(
                     onPressed: isSaving ? null : () => _saveCustomPricing(item),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
+                      backgroundColor: Colors.blue,
                       shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -1576,8 +1590,9 @@ class _NdisPricingManagementViewState
                         child: TextButton(
                           onPressed: () {
                             setState(() {
-                              controller?.text =
-                                  standardPrice > 0 ? standardPrice.toStringAsFixed(2) : '';
+                              controller?.text = standardPrice > 0
+                                  ? standardPrice.toStringAsFixed(2)
+                                  : '';
                             });
                           },
                           style: TextButton.styleFrom(

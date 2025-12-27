@@ -3,7 +3,6 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/forgotPassword_model.dart';
-import 'package:flutter/foundation.dart';
 
 class ForgotPasswordViewModel extends ChangeNotifier {
   final ForgotPasswordModel model = ForgotPasswordModel();

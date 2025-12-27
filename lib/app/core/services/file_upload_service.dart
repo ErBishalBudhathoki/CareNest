@@ -1,8 +1,9 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
+
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:convert';
+
 import 'package:carenest/config/environment.dart';
 
 /// Service for uploading files to the server

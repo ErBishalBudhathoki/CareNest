@@ -1,6 +1,7 @@
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:pinput/pinput.dart';
 import 'package:carenest/app/shared/constants/values/themes/app_theme_config.dart';
 
@@ -30,7 +31,6 @@ class AppTheme {
       primaryColorDark: AppColors.colorSecondary,
       brightness: Brightness.light,
       appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.colorSurface,
           iconTheme: IconThemeData(color: AppColors.colorWhite),
           systemOverlayStyle: SystemUiOverlayStyle.light),
       textTheme: const TextTheme(

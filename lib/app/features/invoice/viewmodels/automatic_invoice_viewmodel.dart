@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
-import 'package:carenest/app/features/invoice/models/employee_selection_model.dart';
-import 'package:flutter/foundation.dart';
 
 /// Automatic Invoice Generation ViewModel
 /// Handles automatic invoice generation for all employees and clients in an organization

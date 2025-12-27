@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+
 import '../utils/image_utils.dart';
-import 'package:flutter/foundation.dart';
 
 /// Unified profile image widget that handles different image sources
 ///
@@ -30,7 +30,7 @@ class ProfileImageWidget extends StatelessWidget {
   final Color borderColor;
 
   /// Background color for the container
-  final Color? backgroundColor;
+  final Color? surfaceColor;
 
   /// Shadow elevation for the container
   final double elevation;
@@ -48,7 +48,7 @@ class ProfileImageWidget extends StatelessWidget {
   final Widget Function(BuildContext context, Object error)? errorBuilder;
 
   const ProfileImageWidget({
-    Key? key,
+    super.key,
     this.photoData,
     this.imageData,
     this.imageUrl,
@@ -56,13 +56,13 @@ class ProfileImageWidget extends StatelessWidget {
     this.fallbackAsset = 'assets/icons/profile_placeholder.png',
     this.borderWidth = 2.0,
     this.borderColor = Colors.white,
-    this.backgroundColor,
+    this.surfaceColor,
     this.elevation = 4.0,
     this.shadowColor = Colors.black26,
     this.onTap,
     this.showLoading = true,
     this.errorBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class ProfileImageWidget extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: backgroundColor ?? Colors.grey[100],
+          color: surfaceColor ?? Colors.grey[100],
           border: Border.all(
             color: borderColor,
             width: borderWidth,
@@ -163,7 +163,6 @@ class ProfileImageWidget extends StatelessWidget {
               if (loadingProgress == null) return child;
               return ImageErrorHandler.buildLoadingWidget(
                 size: size,
-                backgroundColor: backgroundColor,
               );
             }
           : null,
@@ -198,7 +197,6 @@ class ProfileImageWidget extends StatelessWidget {
 
     return ImageErrorHandler.buildErrorWidget(
       size: size,
-      backgroundColor: backgroundColor,
     );
   }
 }
@@ -220,21 +218,17 @@ class EmployeeProfileImage extends ProfileImageWidget {
   final String? filename;
 
   const EmployeeProfileImage({
-    Key? key,
+    super.key,
     required String? profileImage,
-    Uint8List? photoData,
+    super.photoData,
     this.employeeName,
     this.isActive = false,
     this.statusColor,
     this.filename,
-    double size = 50.0,
-    VoidCallback? onTap,
+    super.size,
+    super.onTap,
   }) : super(
-          key: key,
           imageData: profileImage,
-          photoData: photoData,
-          size: size,
-          onTap: onTap,
           borderColor: Colors.white,
           borderWidth: 2.0,
           elevation: 4.0,
@@ -274,16 +268,12 @@ class EmployeeProfileImage extends ProfileImageWidget {
 /// Extends ProfileImageWidget with admin-specific styling
 class AdminProfileImage extends ProfileImageWidget {
   const AdminProfileImage({
-    Key? key,
+    super.key,
     required String email,
-    required Uint8List? photoData,
-    double size = 60.0,
-    VoidCallback? onTap,
+    required super.photoData,
+    super.size = 60.0,
+    super.onTap,
   }) : super(
-          key: key,
-          photoData: photoData,
-          size: size,
-          onTap: onTap,
           borderColor: Colors.white,
           borderWidth: 3.0,
           elevation: 6.0,

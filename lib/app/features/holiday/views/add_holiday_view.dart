@@ -1,13 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
-import 'dart:ui';
-import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
 
 class AddHolidayScreen extends ConsumerStatefulWidget {
   final Function(Map<String, String>) addHoliday;
@@ -108,19 +104,18 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: ModernInvoiceDesign.background,
       extendBodyBehindAppBar: true,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           // Modern Glass App Bar
           SliverAppBar(
-            expandedHeight: screenHeight * 0.12,
+            expandedHeight: kToolbarHeight + 10,
             floating: true,
             pinned: true,
             elevation: 0,
@@ -130,17 +125,12 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
                 filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.8),
-                        Colors.white.withValues(alpha: 0.6),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
+                    color:
+                        ModernInvoiceDesign.background.withValues(alpha: 0.8),
                     border: Border(
                       bottom: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color:
+                            ModernInvoiceDesign.border.withValues(alpha: 0.5),
                         width: 1,
                       ),
                     ),
@@ -151,20 +141,17 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
             leading: Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: ModernInvoiceDesign.surface,
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                border: Border.all(
+                  color: ModernInvoiceDesign.border,
+                ),
+                boxShadow: ModernInvoiceDesign.shadowSm,
               ),
               child: IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_back_ios_rounded,
-                  color: ModernInvoiceDesign.textPrimary,
+                  color: Colors.black,
                   size: 20,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
@@ -222,7 +209,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
 
           // Bottom padding
           SliverToBoxAdapter(
-            child: SizedBox(height: 40),
+            child: SizedBox(height: ModernInvoiceDesign.space10),
           ),
         ],
       ),
@@ -232,153 +219,83 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
   Widget _buildEnhancedHeader(double screenWidth, double screenHeight) {
     return Container(
       margin: EdgeInsets.fromLTRB(
-        screenWidth * 0.04,
-        screenHeight * 0.02,
-        screenWidth * 0.04,
-        screenWidth * 0.04,
+        ModernInvoiceDesign.space4,
+        0,
+        ModernInvoiceDesign.space4,
+        ModernInvoiceDesign.space6,
       ),
-      child: Stack(
-        children: [
-          // Background with mesh gradient
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: const RadialGradient(
-                  colors: [
-                    Color(0xFF10B981),
-                    Color(0xFF3B82F6),
-                    Color(0xFF6366F1),
-                  ],
-                  stops: [0.0, 0.6, 1.0],
-                  center: Alignment.topRight,
-                  radius: 1.5,
-                ),
-              ),
-            ),
-          ),
-          // Glassmorphism overlay
-          ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Container(
-                padding: EdgeInsets.all(screenWidth * 0.06),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white.withValues(alpha: 0.25),
-                      Colors.white.withValues(alpha: 0.1),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 30,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    // Animated icon with glow
-                    Container(
-                      width: screenWidth * 0.18,
-                      height: screenWidth * 0.18,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFFFFFFFF),
-                            Color(0xFFF1F5F9),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                          BoxShadow(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.3),
-                            blurRadius: 15,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Image.asset(
-                        'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',
-                        width: screenWidth * 0.12,
-                        height: screenWidth * 0.12,
-                      ),
-                    )
-                        .animate(delay: 400.ms)
-                        .scale(duration: 800.ms, curve: Curves.elasticOut)
-                        .then()
-                        .shimmer(delay: 1000.ms, duration: 2000.ms),
-
-                    SizedBox(height: screenWidth * 0.05),
-
-                    // Title with modern typography
-                    Text(
-                      'Create New Holiday',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.065,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        height: 1.1,
-                        letterSpacing: -0.5,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                    )
-                        .animate(delay: 600.ms)
-                        .fadeIn(duration: 800.ms)
-                        .slideY(begin: 0.3),
-
-                    SizedBox(height: screenWidth * 0.02),
-
-                    // Subtitle
-                    Text(
-                      'Add a special day to your calendar',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.04,
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontWeight: FontWeight.w500,
-                        height: 1.3,
-                      ),
-                    ).animate(delay: 800.ms).fadeIn(duration: 800.ms),
-                  ],
-                ),
-              ),
-            ),
+      padding: EdgeInsets.all(screenWidth * 0.06),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radius3xl),
+        color: const Color(0xFFEEF2FF), // Light Lavender/Indigo
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: ModernInvoiceDesign.primary.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-    )
-        .animate()
-        .fadeIn(duration: 1000.ms, curve: Curves.easeOutCubic)
-        .slideY(begin: 0.4);
+      child: Column(
+        children: [
+          // Animated icon
+          Container(
+            width: screenWidth * 0.18,
+            height: screenWidth * 0.18,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: ModernInvoiceDesign.shadowSm,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Image.asset(
+                'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          )
+              .animate(delay: 400.ms)
+              .scale(duration: 800.ms, curve: Curves.elasticOut)
+              .then()
+              .shimmer(delay: 1000.ms, duration: 2000.ms),
+
+          SizedBox(height: screenWidth * 0.05),
+
+          // Title with modern typography - Dark Text
+          Text(
+            'Add New Holiday',
+            style: ModernInvoiceDesign.displaySmall.copyWith(
+              color: ModernInvoiceDesign.textPrimary, // Dark Text
+              height: 1.1,
+              letterSpacing: -0.5,
+            ),
+          ).animate(delay: 600.ms).fadeIn(duration: 800.ms).slideY(begin: 0.3),
+
+          SizedBox(height: screenWidth * 0.02),
+
+          // Subtitle - Dark Grey Text
+          Text(
+            'Create a new holiday entry for your calendar',
+            textAlign: TextAlign.center,
+            style: ModernInvoiceDesign.bodyMedium.copyWith(
+              color: ModernInvoiceDesign.textSecondary, // Dark Grey Text
+              fontWeight: FontWeight.w500,
+              height: 1.3,
+            ),
+          ).animate(delay: 800.ms).fadeIn(duration: 800.ms),
+        ],
+      ),
+    );
   }
 
   Widget _buildFormSection(double screenWidth) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+      margin: EdgeInsets.symmetric(horizontal: ModernInvoiceDesign.space4),
       child: Form(
         key: _formKey,
         child: Column(
@@ -386,14 +303,12 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
           children: [
             Text(
               'Holiday Details',
-              style: TextStyle(
-                fontSize: screenWidth * 0.055,
+              style: ModernInvoiceDesign.headlineSmall.copyWith(
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF1E293B),
-                letterSpacing: -0.3,
+                color: ModernInvoiceDesign.textPrimary,
               ),
             ),
-            SizedBox(height: screenWidth * 0.06),
+            SizedBox(height: ModernInvoiceDesign.space6),
 
             // Holiday Name Field
             _buildModernTextField(
@@ -410,7 +325,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
               },
             ).animate(delay: 100.ms).slideX(begin: 0.3).fadeIn(),
 
-            SizedBox(height: screenWidth * 0.05),
+            SizedBox(height: ModernInvoiceDesign.space5),
 
             // Date Field
             _buildModernTextField(
@@ -431,7 +346,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
               },
             ).animate(delay: 200.ms).slideX(begin: 0.3).fadeIn(),
 
-            SizedBox(height: screenWidth * 0.05),
+            SizedBox(height: ModernInvoiceDesign.space5),
 
             // Day Field
             _buildModernTextField(
@@ -449,7 +364,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
               },
             ).animate(delay: 300.ms).slideX(begin: 0.3).fadeIn(),
 
-            SizedBox(height: screenWidth * 0.08),
+            SizedBox(height: ModernInvoiceDesign.space8),
           ],
         ),
       ),
@@ -469,107 +384,87 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: screenWidth * 0.04,
+          style: ModernInvoiceDesign.labelLarge.copyWith(
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF374151),
-            letterSpacing: 0.1,
+            color: ModernInvoiceDesign.textSecondary,
           ),
         ),
-        SizedBox(height: screenWidth * 0.025),
+        SizedBox(height: ModernInvoiceDesign.space2),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusXl),
+            boxShadow: ModernInvoiceDesign.shadowSm,
           ),
           child: TextFormField(
             controller: controller,
             validator: validator,
-            style: TextStyle(
-              fontSize: screenWidth * 0.04,
+            style: ModernInvoiceDesign.bodyLarge.copyWith(
               fontWeight: FontWeight.w500,
-              color: const Color(0xFF1F2937),
+              color: ModernInvoiceDesign.textPrimary,
             ),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(
-                fontSize: screenWidth * 0.04,
-                color: const Color(0xFF9CA3AF),
-                fontWeight: FontWeight.w400,
+              hintStyle: ModernInvoiceDesign.bodyLarge.copyWith(
+                color: ModernInvoiceDesign.textTertiary,
               ),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(12),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF6366F1),
-                      Color(0xFF8B5CF6),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: ModernInvoiceDesign.primaryGradient,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Image.asset(
                   iconAsset,
-                  width: screenWidth * 0.055,
-                  height: screenWidth * 0.055,
+                  width: 24,
+                  height: 24,
                 ),
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: ModernInvoiceDesign.surface,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusXl),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusXl),
                 borderSide: BorderSide(
-                  color: const Color(0xFFE5E7EB),
+                  color: ModernInvoiceDesign.border,
                   width: 1.5,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusXl),
                 borderSide: const BorderSide(
-                  color: Color(0xFF6366F1),
+                  color: ModernInvoiceDesign.primary,
                   width: 2,
                 ),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(
-                  color: Color(0xFFEF4444),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusXl),
+                borderSide: BorderSide(
+                  color: ModernInvoiceDesign.error,
                   width: 1.5,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(
-                  color: Color(0xFFEF4444),
+                borderRadius:
+                    BorderRadius.circular(ModernInvoiceDesign.radiusXl),
+                borderSide: BorderSide(
+                  color: ModernInvoiceDesign.error,
                   width: 2,
                 ),
               ),
               contentPadding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05,
-                vertical: screenWidth * 0.045,
+                horizontal: ModernInvoiceDesign.space5,
+                vertical: ModernInvoiceDesign.space4,
               ),
-              errorStyle: TextStyle(
-                fontSize: screenWidth * 0.032,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFFEF4444),
+              errorStyle: ModernInvoiceDesign.labelMedium.copyWith(
+                color: ModernInvoiceDesign.error,
               ),
             ),
           ),
@@ -580,23 +475,12 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
 
   Widget _buildSubmitButton(double screenWidth) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+      margin: EdgeInsets.symmetric(horizontal: ModernInvoiceDesign.space4),
       width: double.infinity,
-      height: screenWidth * 0.14,
+      height: 56,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF10B981).withValues(alpha: 0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(ModernInvoiceDesign.radius2xl),
+        boxShadow: ModernInvoiceDesign.shadowPrimaryGlow,
       ),
       child: ElevatedButton(
         onPressed: _isLoading ? null : _addHolidayItem,
@@ -605,27 +489,21 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
           shadowColor: Colors.transparent,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(ModernInvoiceDesign.radius2xl),
           ),
+          padding: EdgeInsets.zero,
         ),
         child: Container(
           decoration: BoxDecoration(
             gradient: _isLoading
                 ? LinearGradient(
                     colors: [
-                      Colors.grey.withValues(alpha: 0.6),
-                      Colors.grey.withValues(alpha: 0.4),
+                      ModernInvoiceDesign.neutral300,
+                      ModernInvoiceDesign.neutral300,
                     ],
                   )
-                : const LinearGradient(
-                    colors: [
-                      Color(0xFF10B981),
-                      Color(0xFF059669),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-            borderRadius: BorderRadius.circular(20),
+                : ModernInvoiceDesign.primaryGradient,
+            borderRadius: BorderRadius.circular(ModernInvoiceDesign.radius2xl),
           ),
           child: Center(
             child: _isLoading
@@ -633,8 +511,8 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: screenWidth * 0.05,
-                        height: screenWidth * 0.05,
+                        width: 20,
+                        height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation<Color>(
@@ -642,13 +520,12 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
                           ),
                         ),
                       ),
-                      SizedBox(width: screenWidth * 0.03),
+                      SizedBox(width: ModernInvoiceDesign.space3),
                       Text(
                         'Creating Holiday...',
-                        style: TextStyle(
+                        style: ModernInvoiceDesign.labelLarge.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: screenWidth * 0.042,
                           letterSpacing: 0.3,
                         ),
                       ),
@@ -660,22 +537,21 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
                       Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Image.asset(
                           'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',
-                          width: screenWidth * 0.07,
-                          height: screenWidth * 0.07,
+                          width: 28,
+                          height: 28,
                         ),
                       ),
-                      SizedBox(width: screenWidth * 0.03),
+                      SizedBox(width: ModernInvoiceDesign.space3),
                       Text(
                         'Add Holiday',
-                        style: TextStyle(
+                        style: ModernInvoiceDesign.labelLarge.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: screenWidth * 0.042,
                           letterSpacing: 0.3,
                         ),
                       ),
@@ -745,18 +621,14 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.transparent,
+          elevation: 0,
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                  blurRadius: 30,
-                  offset: const Offset(0, 15),
-                ),
-              ],
+              color: ModernInvoiceDesign.surface,
+              borderRadius:
+                  BorderRadius.circular(ModernInvoiceDesign.radius2xl),
+              boxShadow: ModernInvoiceDesign.shadowLg,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -765,16 +637,12 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF10B981),
-                        Color(0xFF059669),
-                      ],
-                    ),
+                    gradient: ModernInvoiceDesign.successGradient,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                        color:
+                            ModernInvoiceDesign.success.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -793,19 +661,17 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
                 const SizedBox(height: 20),
                 Text(
                   'Holiday Created!',
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: ModernInvoiceDesign.headlineMedium.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: const Color(0xFF1E293B),
+                    color: ModernInvoiceDesign.textPrimary,
                     letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Your holiday has been added successfully',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: const Color(0xFF64748B),
+                  style: ModernInvoiceDesign.bodyMedium.copyWith(
+                    color: ModernInvoiceDesign.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -826,7 +692,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(
@@ -839,22 +705,19 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen>
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(
+                style: ModernInvoiceDesign.labelLarge.copyWith(
+                  color: Colors.white,
                   fontWeight: FontWeight.w600,
-                  fontSize: 15,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: const Color(0xFFEF4444),
+        backgroundColor: ModernInvoiceDesign.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusLg),
         ),
-        margin: const EdgeInsets.all(16),
-        elevation: 8,
-        duration: const Duration(seconds: 4),
       ),
     );
   }

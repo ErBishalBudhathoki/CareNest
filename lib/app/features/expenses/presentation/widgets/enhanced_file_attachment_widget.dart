@@ -1,12 +1,12 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:file_picker/file_picker.dart' as picker;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'file_types.dart';
-import '../../../../shared/design_system/modern_saas_design_system.dart';
 
 /// Enhanced file attachment widget that supports multiple file types
 /// including images, PDFs, and Word documents with file size limits
@@ -117,18 +117,18 @@ class _EnhancedFileAttachmentWidgetState
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(ModernSaasDesign.radiusXl)),
+            top: Radius.circular(16.0)),
       ),
       builder: (context) => Container(
-        padding: EdgeInsets.all(ModernSaasDesign.space5),
+        padding: EdgeInsets.all(20.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Select File Source',
-              style: ModernSaasDesign.headlineMedium,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: ModernSaasDesign.space5),
+            SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -158,7 +158,7 @@ class _EnhancedFileAttachmentWidgetState
                 ),
               ],
             ),
-            SizedBox(height: ModernSaasDesign.space5),
+            SizedBox(height: 20.0),
           ],
         ),
       ),
@@ -176,22 +176,22 @@ class _EnhancedFileAttachmentWidgetState
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(ModernSaasDesign.space4),
+            padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
-              border: Border.all(color: ModernSaasDesign.primary),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: const Color(0xFF667EEA)),
             ),
             child: Icon(
               icon,
               size: 32,
-              color: ModernSaasDesign.primary,
+              color: const Color(0xFF667EEA),
             ),
           ),
-          SizedBox(height: ModernSaasDesign.space2),
+          SizedBox(height: 8.0),
           Text(
             label,
-            style: ModernSaasDesign.labelLarge,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -276,8 +276,8 @@ class _EnhancedFileAttachmentWidgetState
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Receipt',
-            toolbarColor: ModernSaasDesign.primary,
-            toolbarWidgetColor: ModernSaasDesign.textOnPrimary,
+            toolbarColor: const Color(0xFF667EEA),
+            toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
           ),
@@ -346,7 +346,6 @@ class _EnhancedFileAttachmentWidgetState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: ModernSaasDesign.error,
       ),
     );
   }
@@ -369,61 +368,61 @@ class _EnhancedFileAttachmentWidgetState
           children: [
             Icon(
               Icons.attach_file,
-              color: ModernSaasDesign.primary,
+              color: const Color(0xFF667EEA),
               size: 20,
             ),
-            SizedBox(width: ModernSaasDesign.space2),
+            SizedBox(width: 8.0),
             Text(
               'Receipt Attachments',
-              style: ModernSaasDesign.headlineSmall.copyWith(
-                color: ModernSaasDesign.primary,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+                color: const Color(0xFF667EEA),
               ),
             ),
             const Spacer(),
             Text(
               '${_selectedFiles.length}/${widget.maxFiles}',
-              style: ModernSaasDesign.bodySmall.copyWith(
-                color: ModernSaasDesign.textSecondary,
+              style: const TextStyle(fontSize: 12).copyWith(
+                color: const Color(0xFF6B7280),
               ),
             ),
           ],
         ),
-        SizedBox(height: ModernSaasDesign.space3),
+        SizedBox(height: 12.0),
 
         // File size limit info
         Container(
-          padding: EdgeInsets.all(ModernSaasDesign.space2),
+          padding: EdgeInsets.all(8.0),
           decoration: BoxDecoration(
-            color: ModernSaasDesign.info.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+            color: Colors.blue.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8.0),
             border:
-                Border.all(color: ModernSaasDesign.info.withValues(alpha: 0.3)),
+                Border.all(color: Colors.blue.withOpacity(0.1)),
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, size: 16, color: ModernSaasDesign.info),
-              SizedBox(width: ModernSaasDesign.space2),
+              Icon(Icons.info_outline, size: 16, color: Colors.blue),
+              SizedBox(width: 8.0),
               Expanded(
                 child: Text(
                   'Supported: Images, PDF, Word docs. Max ${widget.maxFileSizeMB}MB per file.',
-                  style: ModernSaasDesign.bodySmall.copyWith(
-                    color: ModernSaasDesign.info,
+                  style: const TextStyle(fontSize: 12).copyWith(
+                    color: Colors.blue,
                   ),
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: ModernSaasDesign.space3),
+        SizedBox(height: 12.0),
 
         // Selected files grid
         if (_selectedFiles.isNotEmpty) ...[
           Container(
-            padding: EdgeInsets.all(ModernSaasDesign.space3),
+            padding: EdgeInsets.all(12.0),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.neutral50,
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
-              border: Border.all(color: ModernSaasDesign.neutral300),
+              color: const Color(0xFFFAFAFA),
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: const Color(0xFFD4D4D4)),
             ),
             child: Column(
               children: [
@@ -443,10 +442,10 @@ class _EnhancedFileAttachmentWidgetState
 
                     return Container(
                       decoration: BoxDecoration(
-                        color: ModernSaasDesign.surface,
+                        color: Colors.white,
                         borderRadius:
-                            BorderRadius.circular(ModernSaasDesign.radiusMd),
-                        border: Border.all(color: ModernSaasDesign.neutral300),
+                            BorderRadius.circular(8.0),
+                        border: Border.all(color: const Color(0xFFD4D4D4)),
                       ),
                       child: Stack(
                         children: [
@@ -454,7 +453,7 @@ class _EnhancedFileAttachmentWidgetState
                           Positioned.fill(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(
-                                  ModernSaasDesign.radiusMd),
+                                  8.0),
                               child: fileType == ExpenseFileType.image
                                   ? Image.file(
                                       file,
@@ -476,14 +475,14 @@ class _EnhancedFileAttachmentWidgetState
                               onTap: () => _removeFile(index),
                               child: Container(
                                 padding:
-                                    EdgeInsets.all(ModernSaasDesign.space1),
+                                    EdgeInsets.all(4.0),
                                 decoration: BoxDecoration(
-                                  color: ModernSaasDesign.error,
+                                  color: Colors.red,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   Icons.close,
-                                  color: ModernSaasDesign.textOnPrimary,
+                                  color: Colors.white,
                                   size: 16,
                                 ),
                               ),
@@ -496,14 +495,14 @@ class _EnhancedFileAttachmentWidgetState
                             left: 0,
                             right: 0,
                             child: Container(
-                              padding: EdgeInsets.all(ModernSaasDesign.space1),
+                              padding: EdgeInsets.all(4.0),
                               decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.7),
+                                color: Colors.black.withOpacity(0.1),
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(
-                                      ModernSaasDesign.radiusMd),
+                                      8.0),
                                   bottomRight: Radius.circular(
-                                      ModernSaasDesign.radiusMd),
+                                      8.0),
                                 ),
                               ),
                               child: Column(
@@ -511,8 +510,8 @@ class _EnhancedFileAttachmentWidgetState
                                 children: [
                                   Text(
                                     path.basename(file.path),
-                                    style: ModernSaasDesign.bodySmall.copyWith(
-                                      color: ModernSaasDesign.textOnPrimary,
+                                    style: const TextStyle(fontSize: 12).copyWith(
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     maxLines: 1,
@@ -520,9 +519,9 @@ class _EnhancedFileAttachmentWidgetState
                                   ),
                                   Text(
                                     _getFileSize(file),
-                                    style: ModernSaasDesign.bodySmall.copyWith(
-                                      color: ModernSaasDesign.textOnPrimary
-                                          .withValues(alpha: 0.7),
+                                    style: const TextStyle(fontSize: 12).copyWith(
+                                      color: Colors.white
+                                          .withOpacity(0.1),
                                       fontSize: 9,
                                     ),
                                   ),
@@ -538,7 +537,7 @@ class _EnhancedFileAttachmentWidgetState
               ],
             ),
           ),
-          SizedBox(height: ModernSaasDesign.space3),
+          SizedBox(height: 12.0),
         ],
 
         // Add file button
@@ -552,13 +551,13 @@ class _EnhancedFileAttachmentWidgetState
                   ? 'Add Receipt Files'
                   : 'Add More Files'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: ModernSaasDesign.primary,
-                side: BorderSide(color: ModernSaasDesign.primary),
+                foregroundColor: const Color(0xFF667EEA),
+                side: BorderSide(color: const Color(0xFF667EEA)),
                 padding:
-                    EdgeInsets.symmetric(vertical: ModernSaasDesign.space3),
+                    EdgeInsets.symmetric(vertical: 12.0),
                 shape: RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusMd),
+                      BorderRadius.circular(8.0),
                 ),
               ),
             ),
@@ -566,14 +565,14 @@ class _EnhancedFileAttachmentWidgetState
 
         // Description field
         if (widget.onDescriptionChanged != null) ...[
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: 16.0),
           TextFormField(
             controller: _descriptionController,
             decoration: InputDecoration(
               labelText: 'File Description (Optional)',
               hintText: 'Add a description for your attachments...',
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+                borderRadius: BorderRadius.circular(8.0),
               ),
               prefixIcon: const Icon(Icons.description),
             ),
@@ -588,21 +587,21 @@ class _EnhancedFileAttachmentWidgetState
   /// Build file icon widget for non-image files
   Widget _buildFileIcon(File file) {
     return Container(
-      color: ModernSaasDesign.neutral100,
+      color: const Color(0xFFF5F5F5),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             _getFileIcon(file.path),
             size: 32,
-            color: ModernSaasDesign.primary,
+            color: const Color(0xFF667EEA),
           ),
-          SizedBox(height: ModernSaasDesign.space1),
+          SizedBox(height: 4.0),
           Text(
             path.extension(file.path).toUpperCase(),
-            style: ModernSaasDesign.bodySmall.copyWith(
+            style: const TextStyle(fontSize: 12).copyWith(
               fontWeight: FontWeight.bold,
-              color: ModernSaasDesign.primary,
+              color: const Color(0xFF667EEA),
             ),
           ),
         ],

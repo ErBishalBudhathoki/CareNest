@@ -1,7 +1,5 @@
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:ui';
 import 'package:file_picker/file_picker.dart';
 
 class BulkOperationsView extends ConsumerStatefulWidget {
@@ -10,11 +8,11 @@ class BulkOperationsView extends ConsumerStatefulWidget {
   final String organizationName;
 
   const BulkOperationsView({
-    Key? key,
+    super.key,
     required this.adminEmail,
     required this.organizationId,
     required this.organizationName,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<BulkOperationsView> createState() => _BulkOperationsViewState();
@@ -24,7 +22,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
   int _selectedIndex = 0;
   bool _isProcessing = false;
   double _uploadProgress = 0.0;
-  String _selectedOperation = 'import';
+  final String _selectedOperation = 'import';
 
   // Mock data for operation history
   final List<Map<String, dynamic>> _operationHistory = [
@@ -72,7 +70,6 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Column(
           children: [
@@ -200,8 +197,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            color: const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -292,7 +288,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                   color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   ),
                 ),
                 child: Row(
@@ -413,7 +409,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 value: '${_operationHistory.length}',
                 icon: Icons.analytics_outlined,
                 color: const Color(0xFF6366F1),
-                backgroundColor: const Color(0xFFF0F0FF),
+                surfaceColor: const Color(0xFFF0F0FF),
               ),
             ),
             const SizedBox(width: 16),
@@ -424,7 +420,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 value: '$completedOps',
                 icon: Icons.check_circle_outline,
                 color: const Color(0xFF10B981),
-                backgroundColor: const Color(0xFFF0FDF4),
+                surfaceColor: const Color(0xFFF0FDF4),
               ),
             ),
             const SizedBox(width: 16),
@@ -435,7 +431,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 value: '$failedOps',
                 icon: Icons.error_outline,
                 color: const Color(0xFFEF4444),
-                backgroundColor: const Color(0xFFFEF2F2),
+                surfaceColor: const Color(0xFFFEE2E2),
               ),
             ),
             const SizedBox(width: 16),
@@ -446,7 +442,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 value: '$successRate%',
                 icon: Icons.trending_up,
                 color: const Color(0xFFF59E0B),
-                backgroundColor: const Color(0xFFFFFBEB),
+                surfaceColor: const Color(0xFFFFFBEB),
               ),
             ),
           ],
@@ -460,7 +456,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
     required String value,
     required IconData icon,
     required Color color,
-    required Color backgroundColor,
+    required Color surfaceColor,
   }) {
     return Container(
       constraints: const BoxConstraints(minHeight: 100),
@@ -471,7 +467,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -486,7 +482,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: surfaceColor,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, color: color, size: 16),
@@ -548,7 +544,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               border: Border.all(color: const Color(0xFFE2E8F0)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -614,14 +610,12 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color:
-                        Colors.black.withValues(alpha: 0.08 * animationValue),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 8 + (4 * animationValue),
                     offset: Offset(0, 2 + (2 * animationValue)),
                   ),
                   BoxShadow(
-                    color: const Color(0xFF6366F1)
-                        .withValues(alpha: 0.1 * animationValue),
+                    color: const Color(0xFF6366F1).withOpacity(0.1),
                     blurRadius: 12 + (8 * animationValue),
                     offset: Offset(0, 4 + (4 * animationValue)),
                   ),
@@ -630,7 +624,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     ? Border.all(
                         color: Color.lerp(
                           Colors.transparent,
-                          const Color(0xFF6366F1).withValues(alpha: 0.2),
+                          const Color(0xFF6366F1).withOpacity(0.1),
                           animationValue,
                         )!,
                         width: animationValue,
@@ -655,7 +649,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                         decoration: BoxDecoration(
                           color: Color.lerp(
                             Colors.transparent,
-                            const Color(0xFF6366F1).withValues(alpha: 0.1),
+                            const Color(0xFF6366F1).withOpacity(0.1),
                             iconAnimationValue,
                           ),
                           borderRadius: BorderRadius.circular(8),
@@ -739,7 +733,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                                       color: Color.lerp(
                                         const Color(0xFF64748B),
                                         const Color(0xFF6366F1)
-                                            .withValues(alpha: 0.8),
+                                            .withOpacity(0.1),
                                         animationValue,
                                       ),
                                       height: 1.1,
@@ -877,14 +871,14 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFE2E8F0)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -901,7 +895,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                   width: 36,
                   height: 26,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -917,22 +911,25 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Expanded(
-                  child: Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: color,
-                      height: 1.0,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: color,
+                        height: 1.0,
+                      ),
+                      maxLines: 1,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -946,7 +943,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               title,
               style: const TextStyle(
@@ -989,7 +986,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                  color: const Color(0xFF6366F1).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -1044,7 +1041,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -1169,7 +1166,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1190,7 +1187,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: accentColor.withValues(alpha: 0.1),
+                        color: accentColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Icon(
@@ -1456,7 +1453,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                   border: Border.all(color: const Color(0xFFE2E8F0)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: Colors.black.withOpacity(0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -1533,7 +1530,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1842,7 +1839,6 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: const Color(0xFF6366F1),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

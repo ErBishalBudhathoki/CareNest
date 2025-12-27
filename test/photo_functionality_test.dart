@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'dart:io';
+
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -8,7 +10,7 @@ import 'package:mockito/annotations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // Removed Firebase dependency for unit-test stability; no Firebase required for HTTP mocking
-import 'package:flutter/foundation.dart';
+
 import 'photo_functionality_test.mocks.dart';
 
 // Generate mocks for testing

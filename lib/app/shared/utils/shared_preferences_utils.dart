@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 
 class SharedPreferencesUtils {
   SharedPreferences? _sharedPreferences;

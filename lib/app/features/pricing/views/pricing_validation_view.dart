@@ -1,6 +1,6 @@
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
+
 import 'package:flutter_animate/flutter_animate.dart';
 
 class PricingValidationView extends StatefulWidget {
@@ -9,11 +9,11 @@ class PricingValidationView extends StatefulWidget {
   final String organizationName;
 
   const PricingValidationView({
-    Key? key,
+    super.key,
     required this.adminEmail,
     required this.organizationId,
     required this.organizationName,
-  }) : super(key: key);
+  });
 
   @override
   _PricingValidationViewState createState() => _PricingValidationViewState();
@@ -22,7 +22,7 @@ class PricingValidationView extends StatefulWidget {
 class _PricingValidationViewState extends State<PricingValidationView>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  bool _isLoading = false;
+  final bool _isLoading = false;
   String _searchQuery = '';
   String _selectedValidationType = 'All';
   String _selectedSeverity = 'All';
@@ -34,7 +34,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
       'type': 'Price Range',
       'severity': 'Error',
       'message': 'NDIS item 01_001_0103_1_1 price exceeds maximum allowed rate',
-      'details': 'Current: \$150.00, Maximum: \$120.00',
+      'details': 'Current: 0.150.00, Maximum: 0.120.00',
       'itemCode': '01_001_0103_1_1',
       'timestamp': '2024-01-15 10:30:00',
       'status': 'Unresolved',
@@ -169,7 +169,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 end: Alignment.bottomRight,
                 colors: [
                   AppColors.colorPrimary,
-                  AppColors.colorPrimary.withValues(alpha: 0.8),
+                  AppColors.colorPrimary.withOpacity(0.1),
                 ],
               ),
             ),
@@ -183,7 +183,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                     height: 200,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Colors.white.withOpacity(0.1),
                     ),
                   ),
                 ),
@@ -281,7 +281,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -337,7 +337,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -370,7 +370,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
 
     return SafeArea(
       child: Container(
-        color: Colors.blue[50], // Distinctive background color for this tab
+        color: Colors.blue[50], // Distinctive surface color for this tab
         child: Column(
           children: [
             Container(
@@ -425,7 +425,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedValidationType,
+                  initialValue: _selectedValidationType,
                   decoration: InputDecoration(
                     labelText: 'Type',
                     border: OutlineInputBorder(
@@ -454,7 +454,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               const SizedBox(width: 16),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedSeverity,
+                  initialValue: _selectedSeverity,
                   decoration: InputDecoration(
                     labelText: 'Severity',
                     border: OutlineInputBorder(
@@ -496,7 +496,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -508,7 +508,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: severityColor.withValues(alpha: 0.1),
+            color: severityColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -537,7 +537,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: severityColor.withValues(alpha: 0.1),
+                    color: severityColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -604,10 +604,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
-                                      ? Colors.green.withValues(alpha: 0.1)
+                                      ? Colors.green.withOpacity(0.1)
                                       : result['status'] == 'Under Review'
-                                          ? Colors.orange.withValues(alpha: 0.1)
-                                          : Colors.red.withValues(alpha: 0.1),
+                                          ? Colors.orange.withOpacity(0.1)
+                                          : Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -658,10 +658,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
-                                      ? Colors.green.withValues(alpha: 0.1)
+                                      ? Colors.green.withOpacity(0.1)
                                       : result['status'] == 'Under Review'
-                                          ? Colors.orange.withValues(alpha: 0.1)
-                                          : Colors.red.withValues(alpha: 0.1),
+                                          ? Colors.orange.withOpacity(0.1)
+                                          : Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -721,7 +721,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
   Widget _buildValidationRulesTab() {
     return SafeArea(
       child: Container(
-        color: Colors.green[50], // Distinctive background color for this tab
+        color: Colors.green[50], // Distinctive surface color for this tab
         child: Column(
           children: [
             Container(
@@ -764,7 +764,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -790,8 +790,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : Colors.grey.withValues(alpha: 0.1),
+                      ? Colors.green.withOpacity(0.1)
+                      : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
@@ -871,7 +871,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
   Widget _buildReportsTab() {
     return SafeArea(
       child: Container(
-        color: Colors.purple[50], // Distinctive background color for this tab
+        color: Colors.purple[50], // Distinctive surface color for this tab
         child: Column(
           children: [
             Container(
@@ -951,7 +951,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -964,7 +964,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -1081,7 +1081,6 @@ class _PricingValidationViewState extends State<PricingValidationView>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.colorPrimary,
       ),
     );
   }

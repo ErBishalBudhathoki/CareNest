@@ -1,4 +1,3 @@
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:flutter/material.dart';
 
 class ButtonWithVariableWH extends StatelessWidget {
@@ -25,11 +24,11 @@ class ButtonWithVariableWH extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           color:
-              hasBorder ? ModernSaasDesign.surface : ModernSaasDesign.primary,
+              hasBorder ? Colors.white : const Color(0xFF667EEA),
           borderRadius: BorderRadius.circular(10),
           border: hasBorder
               ? Border.all(
-                  color: ModernSaasDesign.primary,
+                  color: const Color(0xFF667EEA),
                   width: 1.0,
                 )
               : const Border.fromBorderSide(BorderSide.none),
@@ -42,10 +41,10 @@ class ButtonWithVariableWH extends StatelessWidget {
             child: Center(
               child: Text(
                 title,
-                style: ModernSaasDesign.labelLarge.copyWith(
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
                   color: hasBorder
-                      ? ModernSaasDesign.primary
-                      : ModernSaasDesign.textOnPrimary,
+                      ? const Color(0xFF667EEA)
+                      : Colors.white,
                 ),
               ),
             ),

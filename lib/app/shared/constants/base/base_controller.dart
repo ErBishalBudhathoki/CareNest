@@ -18,7 +18,7 @@ mixin ErrorState {
 
 /// Base controller using Riverpod StateNotifier
 abstract class BaseController<T extends BaseState> extends StateNotifier<T> {
-  BaseController(T initialState) : super(initialState);
+  BaseController(super.initialState);
 
   void initData();
   void onViewReady();

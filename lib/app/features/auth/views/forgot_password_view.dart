@@ -1,18 +1,10 @@
-import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart';
 import 'package:carenest/app/features/auth/views/verify_otp_view.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
-import 'package:carenest/app/shared/widgets/textField_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:flutter/services.dart';
-import 'package:carenest/app/features/auth/models/forgotPassword_model.dart';
+
 import 'package:carenest/app/features/auth/viewmodels/forgot_password_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:flutter/foundation.dart';
 
 class ForgotPasswordView extends ConsumerStatefulWidget {
   const ForgotPasswordView({super.key});
@@ -59,9 +51,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     final isSmallScreen = size.width < 400;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -72,14 +62,14 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Icon(
-              Iconsax.arrow_left_2,
+              Icons.arrow_back,
               color: AppColors.colorBlack87,
               size: 20,
             ),
@@ -128,18 +118,18 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: AppColors.colorSecondary.withValues(alpha: 0.1),
+                  color: AppColors.colorSecondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.colorPrimary.withValues(alpha: 0.2),
+                      color: AppColors.colorPrimary.withOpacity(0.1),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
                   ],
                 ),
                 child: Icon(
-                  Iconsax.key,
+                  Icons.key,
                   color: AppColors.colorPrimary,
                   size: 48,
                 ),
@@ -214,7 +204,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -255,14 +245,14 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                 fontSize: 16,
               ),
               prefixIcon: Icon(
-                Iconsax.sms,
+                Icons.email_outlined,
                 color:
                     _isEmailFocused ? AppColors.colorPrimary : Colors.grey[400],
                 size: 20,
               ),
               suffixIcon: _isEmailValid
                   ? Icon(
-                      Iconsax.tick_circle,
+                      Icons.check_circle,
                       color: AppColors.colorGreen,
                       size: 20,
                     )
@@ -325,7 +315,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorPrimary.withValues(alpha: 0.3),
+            color: AppColors.colorPrimary.withOpacity(0.1),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -369,7 +359,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Iconsax.send_1,
+                        Icons.send,
                         color: Colors.white,
                         size: 20,
                       ),
@@ -429,7 +419,6 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
             'Please enter your email address',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: AppColors.colorRed,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -449,7 +438,6 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                 'Verification code sent successfully!',
                 style: TextStyle(color: Colors.white),
               ),
-              backgroundColor: AppColors.colorGreen,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -477,7 +465,6 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
               'Failed to send verification code. Please try again.',
               style: TextStyle(color: Colors.white),
             ),
-            backgroundColor: AppColors.colorRed,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),

@@ -1,4 +1,4 @@
-import 'package:carenest/app/features/auth/viewmodels/change_password_viewmodel.dart';
+import 'dart:typed_data';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/features/organization/views/organization_details_view.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
@@ -6,10 +6,7 @@ import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:provider/provider.dart';
-import 'dart:typed_data';
 
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
@@ -150,7 +147,7 @@ class _SettingsViewState extends State<SettingsView> {
     // We use a CustomScrollView with Slivers for a more flexible and performant layout.
     return Scaffold(
       backgroundColor:
-          const Color(0xFFF4F6FA), // A soft, modern background color
+          AppColors.colorBackground, // A soft, modern surface color
       body: CustomScrollView(
         slivers: [
           _buildUserProfileHeader(),
@@ -234,7 +231,8 @@ class _SettingsViewState extends State<SettingsView> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const DateFormatSettingsView(),
+                              builder: (context) =>
+                                  const DateFormatSettingsView(),
                             ),
                           );
                         },
@@ -381,9 +379,8 @@ class _SettingsViewState extends State<SettingsView> {
   Widget _buildUserProfileHeader() {
     return SliverAppBar(
       expandedHeight: 220.0,
-      pinned: true,
+      pinned: false,
       elevation: 0,
-      backgroundColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
         background: ClipPath(
           clipper: _HeaderClipper(),
@@ -394,7 +391,7 @@ class _SettingsViewState extends State<SettingsView> {
                 end: Alignment.bottomRight,
                 colors: [
                   AppColors.colorPrimary,
-                  AppColors.colorPrimary.withValues(alpha: 0.8),
+                  AppColors.colorPrimary.withOpacity(0.8),
                 ],
               ),
             ),
@@ -419,7 +416,7 @@ class _SettingsViewState extends State<SettingsView> {
                 Text(
                   widget.userEmail,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: Colors.white.withOpacity(0.8),
                     fontSize: 15,
                   ),
                 ),
@@ -447,9 +444,8 @@ class _SettingsViewState extends State<SettingsView> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: isDangerZone
-                  ? AppColors.colorRed700
-                  : AppColors.colorPrimary.withValues(alpha: 0.8),
+              color:
+                  isDangerZone ? AppColors.colorRed700 : AppColors.colorGrey400,
               letterSpacing: 0.5,
             ),
           ),
@@ -460,7 +456,7 @@ class _SettingsViewState extends State<SettingsView> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               )
@@ -510,10 +506,7 @@ class _SettingsViewState extends State<SettingsView> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      color.withValues(alpha: 0.15),
-                      color.withValues(alpha: 0.1)
-                    ],
+                    colors: [color.withOpacity(0.1), color.withOpacity(0.1)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),

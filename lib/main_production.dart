@@ -21,7 +21,6 @@ import 'package:carenest/app/services/notificationservice/local_notification_ser
 import 'package:carenest/app/shared/constants/themes/app_themes.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:carenest/app/shared/constants/values/strings/app_strings.dart';
-import 'package:carenest/app/shared/widgets/splashScreen_widget.dart';
 import 'package:carenest/app/shared/widgets/notification_handler_widget.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
@@ -30,9 +29,11 @@ import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/features/auth/views/login_view.dart';
 import 'package:carenest/app/features/auth/views/signup_view.dart';
 import 'package:carenest/app/features/auth/views/forgot_password_view.dart';
-import 'package:carenest/app/shared/widgets/bottom_navBar_widget.dart';
+import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
 
-final mediaStorePlugin = MediaStore();
+
+import 'app/shared/widgets/splash_screen_widget.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 bool _deepLinkHandled = false;
 
@@ -64,7 +65,7 @@ void main() async {
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  // Register the background message handler BEFORE Firebase initialization
+  // Register the surface message handler BEFORE Firebase initialization
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   await _requestPermissions();
@@ -104,7 +105,7 @@ Future<void> _requestPermissions() async {
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

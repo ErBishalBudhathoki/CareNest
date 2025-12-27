@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/providers/period_providers.dart';
-import 'package:carenest/services/date_parser_service.dart';
-import 'package:carenest/services/date_period_service.dart';
 
 /// Fake SharedPreferencesUtils backed by in-memory map to simulate persistence.
 class _FakePrefs extends SharedPreferencesUtils {
