@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:iconsax/iconsax.dart';
 
 /// Dialog type enumeration for semantic styling
 enum _DialogType { error, warning, info, success, question }
@@ -15,14 +13,12 @@ class _DialogAction {
   final VoidCallback onPressed;
   final _ActionStyle style;
   final IconData? icon;
-  final bool isLoading;
 
   const _DialogAction({
     required this.label,
     required this.onPressed,
     required this.style,
     this.icon,
-    this.isLoading = false,
   });
 }
 
@@ -94,7 +90,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
-      icon: Iconsax.info_circle,
+      icon: Icons.info_outline,
       title: 'Password Help',
       message:
           'Having trouble with your password?\n\n• Passwords are case-sensitive\n• Check if Caps Lock is enabled\n• Ensure you\'re using the correct email\n• Try resetting your password if you\'re still having issues',
@@ -135,7 +131,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.warning,
-      icon: Iconsax.lock_slash,
+      icon: Icons.lock_outline,
       title: 'Authentication Failed',
       message: enhancedMessage,
       primaryAction: _DialogAction(
@@ -150,7 +146,7 @@ class EnhancedAuthDialog {
           Navigator.pushNamed(context, '/forgotPassword');
         },
         style: _ActionStyle.secondary,
-        icon: Iconsax.key,
+        icon: Icons.key_outlined,
       ),
       helpAction: attemptCount != null && attemptCount >= 2
           ? _DialogAction(
@@ -170,13 +166,13 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.warning,
-      icon: Iconsax.user_search,
+      icon: Icons.person_search_outlined,
       title: 'Account Not Found',
       message: _buildAccountNotFoundMessage(email),
       primaryAction: _DialogAction(
         label: 'Create Account',
         style: _ActionStyle.primary,
-        icon: Iconsax.user_add,
+        icon: Icons.person_add_alt_1,
         onPressed: () {
           Navigator.of(context).pop();
           Navigator.pushNamed(context, '/signup');
@@ -185,13 +181,13 @@ class EnhancedAuthDialog {
       secondaryAction: _DialogAction(
         label: 'Try Different Email',
         style: _ActionStyle.secondary,
-        icon: Iconsax.edit,
+        icon: Icons.edit_outlined,
         onPressed: () => Navigator.of(context).pop(),
       ),
       helpAction: _DialogAction(
         label: 'Forgot Email?',
         style: _ActionStyle.text,
-        icon: Iconsax.message_question,
+        icon: Icons.help_outline,
         onPressed: () => _showEmailRecoveryDialog(context),
       ),
     );
@@ -210,7 +206,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
-      icon: Iconsax.message_question,
+      icon: Icons.help_outline,
       title: 'Need Help Finding Your Email?',
       message: 'Try checking:\n'
           '• Your most commonly used email addresses\n'
@@ -220,7 +216,7 @@ class EnhancedAuthDialog {
       primaryAction: _DialogAction(
         label: 'Contact Support',
         style: _ActionStyle.primary,
-        icon: Iconsax.support,
+        icon: Icons.support_agent_outlined,
         onPressed: () {
           Navigator.of(context).pop();
           // Open support contact
@@ -243,14 +239,14 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.error,
-      icon: Iconsax.wifi_square,
+      icon: Icons.wifi_off_outlined,
       title: 'Connection Problem',
       message: 'Unable to connect to our servers. Please check your '
           'internet connection and try again.',
       primaryAction: _DialogAction(
         label: 'Retry Connection',
         style: _ActionStyle.primary,
-        icon: Iconsax.refresh,
+        icon: Icons.refresh,
         onPressed: () {
           Navigator.of(context).pop();
           onRetry?.call();
@@ -265,7 +261,7 @@ class EnhancedAuthDialog {
           ? _DialogAction(
               label: 'Work Offline',
               style: _ActionStyle.text,
-              icon: Iconsax.cloud_minus,
+              icon: Icons.cloud_off_outlined,
               onPressed: () {
                 Navigator.of(context).pop();
                 // Enable offline mode
@@ -274,7 +270,7 @@ class EnhancedAuthDialog {
           : _DialogAction(
               label: 'Check Connection',
               style: _ActionStyle.text,
-              icon: Iconsax.setting_2,
+              icon: Icons.settings_outlined,
               onPressed: () => _showConnectionTroubleshootDialog(context),
             ),
     );
@@ -285,7 +281,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
-      icon: Iconsax.info_circle,
+      icon: Icons.info_outline,
       title: 'Connection Troubleshooting',
       message: 'Try these steps to fix connection issues:\n\n'
           '1. Check your WiFi or mobile data\n'
@@ -296,7 +292,7 @@ class EnhancedAuthDialog {
       primaryAction: _DialogAction(
         label: 'Try Again',
         style: _ActionStyle.primary,
-        icon: Iconsax.refresh,
+        icon: Icons.refresh,
         onPressed: () => Navigator.of(context).pop(),
       ),
       secondaryAction: _DialogAction(
@@ -316,13 +312,13 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.error,
-      icon: Iconsax.warning_2,
+      icon: Icons.warning_amber_outlined,
       title: 'Server Error',
       message: _buildServerErrorMessage(errorCode),
       primaryAction: _DialogAction(
         label: 'Try Again',
         style: _ActionStyle.primary,
-        icon: Iconsax.refresh,
+        icon: Icons.refresh,
         onPressed: () {
           Navigator.of(context).pop();
           onRetry?.call();
@@ -336,7 +332,7 @@ class EnhancedAuthDialog {
       helpAction: _DialogAction(
         label: 'Report Issue',
         style: _ActionStyle.text,
-        icon: Iconsax.message_question,
+        icon: Icons.help_outline,
         onPressed: () => _showErrorReportDialog(context, errorCode),
       ),
     );
@@ -358,7 +354,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
-      icon: Iconsax.message_question,
+      icon: Icons.help_outline,
       title: 'Report This Issue',
       message: 'Help us improve by reporting this error. '
           'Your feedback helps us fix issues faster.\n\n'
@@ -367,7 +363,7 @@ class EnhancedAuthDialog {
       primaryAction: _DialogAction(
         label: 'Send Report',
         style: _ActionStyle.primary,
-        icon: Iconsax.send_1,
+        icon: Icons.send_outlined,
         onPressed: () {
           Navigator.of(context).pop();
           // Send error report
@@ -390,13 +386,13 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.warning,
-      icon: Iconsax.lock,
+      icon: Icons.lock_outline,
       title: 'Account Temporarily Locked',
       message: _buildAccountLockedMessage(lockoutDuration),
       primaryAction: _DialogAction(
         label: 'Reset Password',
         style: _ActionStyle.primary,
-        icon: Iconsax.key,
+        icon: Icons.key_outlined,
         onPressed: () {
           Navigator.of(context).pop();
           onResetPassword?.call();
@@ -405,13 +401,13 @@ class EnhancedAuthDialog {
       secondaryAction: _DialogAction(
         label: 'Wait and Try Later',
         style: _ActionStyle.secondary,
-        icon: Iconsax.timer,
+        icon: Icons.timer_outlined,
         onPressed: () => Navigator.of(context).pop(),
       ),
       helpAction: _DialogAction(
         label: 'Why is this happening?',
         style: _ActionStyle.text,
-        icon: Iconsax.shield_security,
+        icon: Icons.security_outlined,
         onPressed: () => _showSecurityInfoDialog(context),
       ),
     );
@@ -439,7 +435,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
-      icon: Iconsax.shield_security,
+      icon: Icons.security_outlined,
       title: 'Account Security',
       message: 'We lock accounts temporarily after several failed login '
           'attempts to protect against unauthorized access.\n\n'
@@ -466,13 +462,13 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.warning,
-      icon: Iconsax.timer,
+      icon: Icons.timer_outlined,
       title: 'Session Expired',
       message: _buildSessionTimeoutMessage(showAutoSave),
       primaryAction: _DialogAction(
         label: 'Log In Again',
         style: _ActionStyle.primary,
-        icon: Iconsax.login,
+        icon: Icons.login,
         onPressed: () {
           Navigator.of(context).pop();
           onLogin?.call();
@@ -486,7 +482,7 @@ class EnhancedAuthDialog {
       helpAction: _DialogAction(
         label: 'Why did this happen?',
         style: _ActionStyle.text,
-        icon: Iconsax.info_circle,
+        icon: Icons.info_outline,
         onPressed: () => _showSessionInfoDialog(context),
       ),
     );
@@ -507,7 +503,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
-      icon: Iconsax.clock,
+      icon: Icons.schedule_outlined,
       title: 'About Session Timeouts',
       message: 'Sessions expire automatically for your security after a '
           'period of inactivity.\n\n'
@@ -535,21 +531,21 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.warning,
-      icon: Iconsax.warning_2,
+      icon: Icons.warning_amber_outlined,
       title: 'Input Validation Error',
       message:
           _buildValidationMessage(fieldName, customMessage, validationErrors),
       primaryAction: _DialogAction(
         label: 'Fix Input',
         style: _ActionStyle.primary,
-        icon: Iconsax.edit,
+        icon: Icons.edit_outlined,
         onPressed: () => Navigator.of(context).pop(),
       ),
       helpAction: validationErrors != null && validationErrors.isNotEmpty
           ? _DialogAction(
               label: 'Show Requirements',
               style: _ActionStyle.text,
-              icon: Iconsax.info_circle,
+              icon: Icons.info_outline,
               onPressed: () =>
                   _showValidationHelpDialog(context, validationErrors),
             )
@@ -584,7 +580,7 @@ class EnhancedAuthDialog {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
-      icon: Iconsax.tick_square,
+      icon: Icons.check_box_outlined,
       title: 'Input Requirements',
       message: 'Please ensure your input meets these requirements:\n\n'
           '${requirements.map((req) => '✓ $req').join('\n')}',
@@ -609,13 +605,13 @@ class EnhancedAuthDialog {
     final dialog = _showSemanticDialog(
       context: context,
       type: _DialogType.success,
-      icon: Iconsax.tick_circle,
+      icon: Icons.check_circle_outline,
       title: title ?? 'Success!',
       message: message ?? 'Operation completed successfully!',
       primaryAction: _DialogAction(
         label: actionLabel ?? 'Continue',
         style: _ActionStyle.primary,
-        icon: Iconsax.arrow_right_3,
+        icon: Icons.arrow_forward_ios,
         onPressed: () {
           Navigator.of(context).pop();
           onAction?.call();
@@ -738,6 +734,12 @@ class _ModernDialogState extends State<_ModernDialog>
   @override
   Widget build(BuildContext context) {
     final semanticColor = _getSemanticColor();
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final surfaceBrightness =
+        ThemeData.estimateBrightnessForColor(surfaceColor);
+    final effectiveOnSurface = surfaceBrightness == Brightness.dark
+        ? Colors.white
+        : const Color(0xFF0F172A);
 
     return AnimatedBuilder(
       animation: Listenable.merge([_scaleAnimation, _fadeAnimation]),
@@ -773,8 +775,8 @@ class _ModernDialogState extends State<_ModernDialog>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildHeader(semanticColor),
-                    _buildContent(),
+                    _buildHeader(semanticColor, effectiveOnSurface),
+                    _buildContent(effectiveOnSurface),
                     _buildActions(),
                   ],
                 ),
@@ -786,7 +788,7 @@ class _ModernDialogState extends State<_ModernDialog>
     );
   }
 
-  Widget _buildHeader(Color semanticColor) {
+  Widget _buildHeader(Color semanticColor, Color effectiveOnSurface) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       child: Column(
@@ -821,7 +823,7 @@ class _ModernDialogState extends State<_ModernDialog>
             widget.title,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: effectiveOnSurface,
                 ),
             textAlign: TextAlign.center,
           ),
@@ -830,16 +832,13 @@ class _ModernDialogState extends State<_ModernDialog>
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(Color effectiveOnSurface) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(
         widget.message,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.8),
+              color: effectiveOnSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
         textAlign: TextAlign.center,

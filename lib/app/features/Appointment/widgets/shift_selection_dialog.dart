@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 Future<int?> showShiftSelectionDialog(
   BuildContext context,
@@ -26,8 +25,8 @@ class ShiftSelectionDialogContent extends StatefulWidget {
   const ShiftSelectionDialogContent({
     required this.assignedClient,
     required this.currentClientEmail,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _ShiftSelectionDialogContentState createState() =>
@@ -93,7 +92,7 @@ class _ShiftSelectionDialogContentState
         final breakTime = schedule['break'] as String?;
 
         if (date != null && startTime != null) {
-          String shiftKey = '${date}_${startTime}';
+          String shiftKey = '${date}_$startTime';
           allShifts.add({
             'index': i,
             'date': date,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final double size;
@@ -7,14 +6,16 @@ class LoadingIndicator extends StatelessWidget {
   final String? message;
 
   const LoadingIndicator({
-    Key? key,
+    super.key,
     this.size = 24.0,
     this.color,
     this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -24,7 +25,7 @@ class LoadingIndicator extends StatelessWidget {
           child: CircularProgressIndicator(
             strokeWidth: 2.0,
             valueColor: AlwaysStoppedAnimation<Color>(
-              color ?? AppColors.colorPrimary,
+              color ?? theme.colorScheme.primary,
             ),
           ),
         ),
@@ -32,9 +33,8 @@ class LoadingIndicator extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             message!,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.colorFontSecondary,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

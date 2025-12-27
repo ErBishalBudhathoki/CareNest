@@ -1,3 +1,4 @@
+import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
@@ -12,10 +13,10 @@ class InvoiceListView extends ConsumerStatefulWidget {
   final String userEmail;
 
   const InvoiceListView({
-    Key? key,
+    super.key,
     required this.organizationId,
     required this.userEmail,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<InvoiceListView> createState() => _InvoiceListViewState();
@@ -50,15 +51,15 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
     return Scaffold(
       backgroundColor: AppColors.colorBackground,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Invoices',
-          style: TextStyle(
+          style: ModernInvoiceDesign.headlineMedium.copyWith(
             color: Colors.white,
-            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: AppColors.colorPrimary,
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         actions: [
           IconButton(
@@ -128,8 +129,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
           // Status filter
           Row(
             children: [
-              const Text('Status: ',
-                  style: TextStyle(fontWeight: FontWeight.w500)),
+              const Text(
+                'Status: ',
+                style:
+                    TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
+              ),
               Expanded(
                 child: DropdownButton<String>(
                   value: _statusFilter,
@@ -141,6 +145,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
                     DropdownMenuItem(value: 'paid', child: Text('Paid')),
                     DropdownMenuItem(value: 'overdue', child: Text('Overdue')),
                   ],
+                  style: ModernInvoiceDesign.bodyMedium.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
                   onChanged: (value) {
                     setState(() {
                       _statusFilter = value ?? 'all';

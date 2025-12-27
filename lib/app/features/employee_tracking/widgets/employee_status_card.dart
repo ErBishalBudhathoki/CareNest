@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:convert';
-import 'dart:typed_data';
+
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/constants/values/themes/app_theme_config.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
-import 'package:carenest/app/shared/design_system/modern_pricing_design_system.dart';
 import '../models/employee_tracking_model.dart';
-import 'package:flutter/foundation.dart';
 
 class EmployeeStatusCard extends StatelessWidget {
   final EmployeeStatus employee;
@@ -25,15 +22,15 @@ class EmployeeStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(
-        vertical: ModernPricingDesign.spacingSm,
+        vertical: 8.0,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(ModernPricingDesign.radiusLg),
-        border: Border.all(color: ModernPricingDesign.borderColor),
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -43,32 +40,32 @@ class EmployeeStatusCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(ModernPricingDesign.radiusLg),
+          borderRadius: BorderRadius.circular(12.0),
           child: Container(
-            padding: const EdgeInsets.all(ModernPricingDesign.spacingLg),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     _buildAvatar(),
-                    const SizedBox(width: ModernPricingDesign.spacingMd),
+                    const SizedBox(width: 16.0),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             employee.name,
-                            style: ModernPricingDesign.bodyMd.copyWith(
+                            style: const TextStyle(fontSize: 14).copyWith(
                               fontWeight: FontWeight.w600,
-                              color: ModernPricingDesign.textPrimary,
+                              color: const Color(0xFF1F2937),
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             employee.email,
-                            style: ModernPricingDesign.bodySm.copyWith(
-                              color: ModernPricingDesign.textSecondary,
+                            style: const TextStyle(fontSize: 12).copyWith(
+                              color: const Color(0xFF6B7280),
                             ),
                           ),
                         ],
@@ -78,7 +75,7 @@ class EmployeeStatusCard extends StatelessWidget {
                   ],
                 ),
                 if (showDetails) ...[
-                  const SizedBox(height: ModernPricingDesign.spacingMd),
+                  const SizedBox(height: 16.0),
                   _buildDetailsSection(),
                 ],
               ],
@@ -180,20 +177,20 @@ class EmployeeStatusCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: ModernPricingDesign.spacingSm,
-        vertical: ModernPricingDesign.spacingXs,
+        horizontal: 8.0,
+        vertical: 4.0,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
             statusColor,
-            statusColor.withValues(alpha: 0.8),
+            statusColor.withOpacity(0.1),
           ],
         ),
-        borderRadius: BorderRadius.circular(ModernPricingDesign.radiusRound),
+        borderRadius: BorderRadius.circular(8.0),
         boxShadow: [
           BoxShadow(
-            color: statusColor.withValues(alpha: 0.3),
+            color: statusColor.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -201,7 +198,7 @@ class EmployeeStatusCard extends StatelessWidget {
       ),
       child: Text(
         statusText,
-        style: ModernPricingDesign.caption.copyWith(
+        style: const TextStyle(fontSize: 12).copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w600,
         ),

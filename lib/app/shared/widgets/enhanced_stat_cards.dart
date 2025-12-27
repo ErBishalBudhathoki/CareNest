@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 
 /// Enhanced StatCard widget with improved UX/UI features
 class EnhancedStatCards extends StatelessWidget {
@@ -15,8 +14,8 @@ class EnhancedStatCards extends StatelessWidget {
   const EnhancedStatCards({
     super.key,
     required this.cards,
-    this.padding = const EdgeInsets.all(ModernSaasDesign.space3),
-    this.spacing = ModernSaasDesign.space3,
+    this.padding = const EdgeInsets.all(12.0),
+    this.spacing = 12.0,
     this.animate = true,
     this.animationDuration = const Duration(milliseconds: 600),
     this.animationDelayMs = 150,
@@ -150,26 +149,26 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
             return Transform.scale(
               scale: 1.0 + (_hoverController.value * 0.02),
               child: Container(
-                padding: const EdgeInsets.all(ModernSaasDesign.space4),
+                padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   gradient: widget.data.gradient ??
                       LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          widget.data.backgroundColor ??
-                              ModernSaasDesign.surface,
-                          (widget.data.backgroundColor ??
-                                  ModernSaasDesign.surface)
-                              .withValues(alpha: 0.8),
+                          widget.data.surfaceColor ??
+                              Colors.white,
+                          (widget.data.surfaceColor ??
+                                  Colors.white)
+                              .withOpacity(0.1),
                         ],
                       ),
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: ModernSaasDesign.shadowMd,
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
                   border: widget.data.showBorder
                       ? Border.all(
-                          color: (widget.data.color ?? ModernSaasDesign.border)
-                              .withValues(alpha: 0.3),
+                          color: (widget.data.color ?? const Color(0xFFE0E0E0))
+                              .withOpacity(0.1),
                           width: 1,
                         )
                       : null,
@@ -179,14 +178,14 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildHeader(),
-                    const SizedBox(height: ModernSaasDesign.space2),
+                    const SizedBox(height: 8.0),
                     _buildValue(),
                     if (widget.data.trend != null) ...[
-                      const SizedBox(height: ModernSaasDesign.space1),
+                      const SizedBox(height: 4.0),
                       _buildTrendIndicator(),
                     ],
                     if (widget.data.subtitle != null) ...[
-                      const SizedBox(height: ModernSaasDesign.spacing4),
+                      const SizedBox(height: 16.0),
                       _buildSubtitle(),
                     ],
                   ],
@@ -250,13 +249,13 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
       children: [
         if (widget.data.icon != null) ...[
           _buildIcon(),
-          const SizedBox(width: ModernSaasDesign.space2),
+          const SizedBox(width: 8.0),
         ],
         Expanded(
           child: Text(
             widget.data.title,
-            style: ModernSaasDesign.labelLarge.copyWith(
-              color: widget.data.titleColor ?? ModernSaasDesign.textSecondary,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
+              color: widget.data.titleColor ?? const Color(0xFF6B7280),
               letterSpacing: 0.5,
             ),
             overflow: TextOverflow.ellipsis,
@@ -268,7 +267,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
             icon: Icon(
               widget.data.actionIcon,
               size: 16,
-              color: ModernSaasDesign.textTertiary,
+              color: const Color(0xFF9CA3AF),
             ),
             onPressed: widget.data.onActionTap,
             padding: EdgeInsets.zero,
@@ -283,13 +282,13 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: (widget.data.color ?? ModernSaasDesign.primary)
-            .withValues(alpha: 0.1),
+        color: (widget.data.color ?? const Color(0xFF667EEA))
+            .withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
         widget.data.icon!,
-        color: widget.data.color ?? ModernSaasDesign.primary,
+        color: widget.data.color ?? const Color(0xFF667EEA),
         size: 20,
       ),
     );
@@ -298,8 +297,8 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
   Widget _buildValue() {
     return Text(
       widget.data.value,
-      style: ModernSaasDesign.displaySmall.copyWith(
-        color: widget.data.valueColor ?? ModernSaasDesign.textPrimary,
+      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700).copyWith(
+        color: widget.data.valueColor ?? const Color(0xFF1F2937),
         letterSpacing: -0.5,
       ),
       overflow: TextOverflow.ellipsis,
@@ -311,17 +310,17 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
     final trend = widget.data.trend!;
     final isPositive = trend.isPositive;
     final color =
-        isPositive ? ModernSaasDesign.success : ModernSaasDesign.error;
+        isPositive ? Colors.green : Colors.red;
 
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: ModernSaasDesign.spacing4,
+            horizontal: 16.0,
             vertical: 2,
           ),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -335,7 +334,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
               const SizedBox(width: 2),
               Text(
                 '${trend.percentage}%',
-                style: ModernSaasDesign.labelSmall.copyWith(
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
                   fontWeight: FontWeight.w600,
                   color: color,
                 ),
@@ -344,11 +343,11 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
           ),
         ),
         if (trend.period != null) ...[
-          const SizedBox(width: ModernSaasDesign.spacing4),
+          const SizedBox(width: 16.0),
           Text(
             trend.period!,
-            style: ModernSaasDesign.labelSmall.copyWith(
-              color: ModernSaasDesign.textTertiary,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
+              color: const Color(0xFF9CA3AF),
             ),
           ),
         ],
@@ -359,8 +358,8 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
   Widget _buildSubtitle() {
     return Text(
       widget.data.subtitle!,
-      style: ModernSaasDesign.bodySmall.copyWith(
-        color: widget.data.subtitleColor ?? ModernSaasDesign.textSecondary,
+      style: const TextStyle(fontSize: 12).copyWith(
+        color: widget.data.subtitleColor ?? const Color(0xFF6B7280),
         height: 1.3,
       ),
       overflow: TextOverflow.ellipsis,
@@ -377,7 +376,7 @@ class EnhancedStatCardData {
   final IconData? icon;
   final IconData? actionIcon;
   final Color? color;
-  final Color? backgroundColor;
+  final Color? surfaceColor;
   final Color? titleColor;
   final Color? valueColor;
   final Color? subtitleColor;
@@ -395,7 +394,7 @@ class EnhancedStatCardData {
     this.icon,
     this.actionIcon,
     this.color,
-    this.backgroundColor,
+    this.surfaceColor,
     this.titleColor,
     this.valueColor,
     this.subtitleColor,
@@ -417,7 +416,7 @@ class EnhancedStatCardData {
       title: 'Total Revenue',
       value: value,
       icon: Icons.attach_money,
-      color: ModernSaasDesign.success,
+      color: Colors.green,
       trend: trend,
       onTap: onTap,
       gradient: const LinearGradient(
@@ -436,7 +435,7 @@ class EnhancedStatCardData {
       title: 'Active Clients',
       value: value,
       icon: Icons.people,
-      color: ModernSaasDesign.primary,
+      color: const Color(0xFF667EEA),
       trend: trend,
       onTap: onTap,
       gradient: const LinearGradient(
@@ -455,7 +454,7 @@ class EnhancedStatCardData {
       title: 'Pending Invoices',
       value: value,
       icon: Icons.receipt_long,
-      color: ModernSaasDesign.warning,
+      color: Colors.orange,
       trend: trend,
       onTap: onTap,
       gradient: const LinearGradient(

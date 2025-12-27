@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class InvoiceEmailViewWidget extends StatefulWidget {
@@ -14,7 +15,7 @@ class InvoiceEmailViewWidget extends StatefulWidget {
 
 class _InvoiceEmailViewWidgetState extends State<InvoiceEmailViewWidget> {
   final PageController _pageController = PageController();
-  int _currentPageIndex = 0;
+  final int _currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {

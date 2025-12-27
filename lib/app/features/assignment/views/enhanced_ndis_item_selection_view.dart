@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:flutter/foundation.dart';
 
 class EnhancedNdisItemSelectionResult {
   final NDISItem ndisItem;
@@ -31,12 +31,12 @@ class EnhancedNdisItemSelectionView extends ConsumerStatefulWidget {
   final String? userState; // Australian state for pricing
 
   const EnhancedNdisItemSelectionView({
-    Key? key,
+    super.key,
     this.organizationId,
     this.clientId,
     this.highIntensity = false,
     this.userState,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<EnhancedNdisItemSelectionView> createState() =>
@@ -51,7 +51,7 @@ class _EnhancedNdisItemSelectionViewState
 
   List<NDISItem> _allNdisItems = [];
   List<NDISItem> _filteredNdisItems = [];
-  Map<String, Map<String, dynamic>> _pricingData = {};
+  final Map<String, Map<String, dynamic>> _pricingData = {};
   bool _isLoading = true;
   bool _isLoadingCustomPrices = false; // Track loading of custom prices
   String _searchQuery = '';
@@ -82,13 +82,13 @@ class _EnhancedNdisItemSelectionViewState
 
   Future<void> _initializeUserState() async {
     await _sharedPrefs.init();
-    String? orgID = await _sharedPrefs.getString('organizationId');
+    String? orgID = _sharedPrefs.getString('organizationId');
     debugPrint('DEBUG: _initializeUserState orgID: $orgID');
 
     // Get client state from SharedPreferences if client ID is provided
     String? clientState;
     if (widget.clientId != null) {
-      clientState = await _sharedPrefs.getString('clientState');
+      clientState = _sharedPrefs.getString('clientState');
       debugPrint('DEBUG: Client state from SharedPreferences: $clientState');
     }
 
@@ -143,7 +143,6 @@ class _EnhancedNdisItemSelectionViewState
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Failed to load NDIS items. Please try again.'),
-            backgroundColor: Colors.red,
           ),
         );
       }
@@ -169,7 +168,7 @@ class _EnhancedNdisItemSelectionViewState
     String? organizationId = widget.organizationId;
     if (organizationId == null) {
       await _sharedPrefs.init();
-      organizationId = await _sharedPrefs.getString('organizationId');
+      organizationId = _sharedPrefs.getString('organizationId');
       debugPrint(
           '  Retrieved organizationId from SharedPreferences: $organizationId');
     }
@@ -708,7 +707,7 @@ class _EnhancedNdisItemSelectionViewState
     debugPrint(
         'DEBUG: Item ${item.itemNumber} has custom pricing: $hasCustomPricing');
     if (hasCustomPricing) {
-      final customPricing = pricingData!['customPricing'];
+      final customPricing = pricingData['customPricing'];
       final customPrice = customPricing['customPrice'] ??
           customPricing['price'] ??
           customPricing['fixedPrice'];
@@ -892,7 +891,6 @@ class _EnhancedNdisItemSelectionViewState
                                 const SnackBar(
                                   content: Text(
                                       'Price cannot exceed the max capped price'),
-                                  backgroundColor: Colors.red,
                                 ),
                               );
                               return;
@@ -973,7 +971,6 @@ class _EnhancedNdisItemSelectionViewState
                                       const SnackBar(
                                         content: Text(
                                             'Custom price saved successfully'),
-                                        backgroundColor: Colors.green,
                                       ),
                                     );
                                   }
@@ -983,7 +980,6 @@ class _EnhancedNdisItemSelectionViewState
                                       SnackBar(
                                         content: Text(
                                             'Failed to save custom price: ${result['message']}'),
-                                        backgroundColor: Colors.red,
                                       ),
                                     );
                                   }
@@ -994,7 +990,6 @@ class _EnhancedNdisItemSelectionViewState
                                     const SnackBar(
                                       content: Text(
                                           'Missing organization ID or user email'),
-                                      backgroundColor: Colors.red,
                                     ),
                                   );
                                 }
@@ -1005,7 +1000,6 @@ class _EnhancedNdisItemSelectionViewState
                                   SnackBar(
                                     content:
                                         Text('Error saving custom price: $e'),
-                                    backgroundColor: Colors.red,
                                   ),
                                 );
                               }
@@ -1020,13 +1014,11 @@ class _EnhancedNdisItemSelectionViewState
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Please enter a valid price'),
-                                backgroundColor: Colors.red,
                               ),
                             );
                           }
                         },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
                   ),
                   child: isSaving
@@ -1046,9 +1038,9 @@ class _EnhancedNdisItemSelectionViewState
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.amber.withValues(alpha: 0.1),
+              color: Colors.amber.withOpacity(0.1),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+              border: Border.all(color: Colors.amber.withOpacity(0.1)),
             ),
             child: Row(
               children: [

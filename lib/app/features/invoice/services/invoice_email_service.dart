@@ -1,8 +1,9 @@
-import 'dart:io';
-import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/shared/utils/encryption/encrypt_decrypt.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/foundation.dart';
+import 'package:carenest/backend/api_method.dart';
+import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';

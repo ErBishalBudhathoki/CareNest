@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class EncryptionUtils {
   static String? _encryptionKey;
@@ -37,9 +37,9 @@ class EncryptionUtils {
     debugPrint("[WEB] encryptPasswordWithArgon2andSalt fallback using SHA-256");
     final salts = salt.isEmpty ? generateSalt() : salt;
     final passwordBytes = utf8.encode(password);
-    final combined = <int>[]
-      ..addAll(passwordBytes)
-      ..addAll(salts);
+    final combined = <int>[...passwordBytes, ...salts]
+      
+      ;
     final digest = crypto.sha256.convert(combined);
 
     final resultHex = _bytesToHex(Uint8List.fromList(digest.bytes));

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 /// Utility class for handling image processing operations
 /// Provides centralized methods for image decoding, validation, and error handling
@@ -61,7 +61,7 @@ class ImageUtils {
       }
       
       // Check minimum size - reject tiny placeholder images (less than 500 bytes)
-      if (decodedData != null && decodedData.length < 500) {
+      if (decodedData.length < 500) {
         debugPrint('ImageUtils: Image too small (${decodedData.length} bytes), likely a placeholder');
         return false;
       }
@@ -180,7 +180,7 @@ class ImageErrorHandler {
   /// Returns a circular container with person icon as fallback
   static Widget buildErrorWidget({
     double size = 50.0,
-    Color? backgroundColor,
+    Color? surfaceColor,
     Color? iconColor,
     IconData icon = Icons.person,
   }) {
@@ -189,7 +189,7 @@ class ImageErrorHandler {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: backgroundColor ?? Colors.grey[300],
+        color: surfaceColor ?? Colors.grey[300],
       ),
       child: Icon(
         icon,
@@ -204,14 +204,14 @@ class ImageErrorHandler {
   /// Returns a circular progress indicator with consistent styling
   static Widget buildLoadingWidget({
     double size = 50.0,
-    Color? backgroundColor,
+    Color? surfaceColor,
   }) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: backgroundColor ?? Colors.grey[100],
+        color: surfaceColor ?? Colors.grey[100],
       ),
       child: Center(
         child: SizedBox(

@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+
+import 'package:flutter/material.dart';
 
 /// Extension methods for expense calculations and transformations
 extension ExpenseListExtension on List<ExpenseModel> {

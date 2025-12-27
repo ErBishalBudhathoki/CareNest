@@ -1,16 +1,17 @@
-import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path/path.dart' as path;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:carenest/config/environment.dart';
 import 'package:open_file/open_file.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'file_types.dart';
-import '../../../../shared/design_system/modern_saas_design_system.dart';
 
 /// Enhanced file viewer widget that supports multiple file types
 /// including images, PDFs, and Word documents with proper error handling
@@ -355,8 +356,8 @@ class EnhancedFileViewerWidget extends StatelessWidget {
           children: [
             Text(
               'Failed to load image from server:',
-              style: ModernSaasDesign.headlineSmall.copyWith(
-                color: ModernSaasDesign.textSecondary,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+                color: const Color(0xFF6B7280),
               ),
             ),
             const SizedBox(height: 8),
@@ -383,19 +384,19 @@ class EnhancedFileViewerWidget extends StatelessWidget {
                 color: Colors.grey[700],
               ),
             ),
-            SizedBox(height: ModernSaasDesign.space1),
+            SizedBox(height: 4.0),
             Container(
-              padding: EdgeInsets.all(ModernSaasDesign.space2),
+              padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: ModernSaasDesign.error.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+                color: Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4.0),
                 border: Border.all(
-                    color: ModernSaasDesign.error.withValues(alpha: 0.3)),
+                    color: Colors.red.withOpacity(0.1)),
               ),
               child: Text(
                 error,
-                style: ModernSaasDesign.bodySmall.copyWith(
-                  color: ModernSaasDesign.error,
+                style: const TextStyle(fontSize: 12).copyWith(
+                  color: Colors.red,
                 ),
               ),
             ),
@@ -422,9 +423,8 @@ class EnhancedFileViewerWidget extends StatelessWidget {
               // Force rebuild to retry loading
               (context as Element).markNeedsBuild();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ModernSaasDesign.primary,
-              foregroundColor: ModernSaasDesign.textOnPrimary,
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
             ),
             child: const Text('Retry'),
           ),
@@ -463,7 +463,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                color: const Color(0xFF4CAF50).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -512,12 +512,12 @@ class EnhancedFileViewerWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: fileExists
-                          ? _getFileColor(filePath).withValues(alpha: 0.3)
-                          : Colors.red.withValues(alpha: 0.3),
+                          ? _getFileColor(filePath).withOpacity(0.1)
+                          : Colors.red.withOpacity(0.1),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -532,8 +532,8 @@ class EnhancedFileViewerWidget extends StatelessWidget {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: fileExists
-                                ? _getFileColor(filePath).withValues(alpha: 0.1)
-                                : Colors.red.withValues(alpha: 0.1),
+                                ? _getFileColor(filePath).withOpacity(0.1)
+                                : Colors.red.withOpacity(0.1),
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
@@ -607,33 +607,33 @@ class EnhancedFileViewerWidget extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   fileName,
-                                  style: ModernSaasDesign.bodySmall.copyWith(
+                                  style: const TextStyle(fontSize: 12).copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: fileExists
-                                        ? ModernSaasDesign.textPrimary
-                                        : ModernSaasDesign.error,
+                                        ? const Color(0xFF1F2937)
+                                        : Colors.red,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              SizedBox(height: ModernSaasDesign.space1),
+                              SizedBox(height: 4.0),
                               Text(
                                 fileExists
                                     ? _getFileSize(filePath)
                                     : 'File not found',
-                                style: ModernSaasDesign.bodySmall.copyWith(
+                                style: const TextStyle(fontSize: 12).copyWith(
                                   fontSize: 9,
                                   color: fileExists
-                                      ? ModernSaasDesign.textSecondary
-                                      : ModernSaasDesign.error,
+                                      ? const Color(0xFF6B7280)
+                                      : Colors.red,
                                 ),
                               ),
                               if (fileExists) ...[
-                                SizedBox(height: ModernSaasDesign.space1),
+                                SizedBox(height: 4.0),
                                 Text(
                                   'Tap to view',
-                                  style: ModernSaasDesign.bodySmall.copyWith(
+                                  style: const TextStyle(fontSize: 12).copyWith(
                                     fontSize: 8,
                                     color: _getFileColor(filePath),
                                     fontStyle: FontStyle.italic,
@@ -705,17 +705,17 @@ class EnhancedFileViewerWidget extends StatelessWidget {
         Icon(
           fileExists ? _getFileIcon(filePath) : Icons.error_outline,
           size: 40,
-          color: fileExists ? _getFileColor(filePath) : ModernSaasDesign.error,
+          color: fileExists ? _getFileColor(filePath) : Colors.red,
         ),
-        SizedBox(height: ModernSaasDesign.space2),
+        SizedBox(height: 8.0),
         Text(
           fileExists
               ? path.extension(filePath).toUpperCase().substring(1)
               : 'ERROR',
-          style: ModernSaasDesign.bodySmall.copyWith(
+          style: const TextStyle(fontSize: 12).copyWith(
             fontWeight: FontWeight.bold,
             color:
-                fileExists ? _getFileColor(filePath) : ModernSaasDesign.error,
+                fileExists ? _getFileColor(filePath) : Colors.red,
           ),
         ),
       ],
@@ -737,18 +737,18 @@ class EnhancedFileViewerWidget extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'Image failed to load',
-            style: ModernSaasDesign.bodySmall.copyWith(
+            style: const TextStyle(fontSize: 12).copyWith(
               fontWeight: FontWeight.bold,
-              color: ModernSaasDesign.error,
+              color: Colors.red,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
           Text(
             'Tap to retry',
-            style: ModernSaasDesign.bodySmall.copyWith(
+            style: const TextStyle(fontSize: 12).copyWith(
               fontSize: 8,
-              color: ModernSaasDesign.error.withValues(alpha: 0.7),
+              color: Colors.red.withOpacity(0.1),
             ),
             textAlign: TextAlign.center,
           ),
@@ -756,16 +756,16 @@ class EnhancedFileViewerWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.error.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusSm),
+              color: Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(4.0),
               border: Border.all(
-                  color: ModernSaasDesign.error.withValues(alpha: 0.3)),
+                  color: Colors.red.withOpacity(0.1)),
             ),
             child: Text(
               'Server file',
-              style: ModernSaasDesign.bodySmall.copyWith(
+              style: const TextStyle(fontSize: 12).copyWith(
                 fontSize: 7,
-                color: ModernSaasDesign.error,
+                color: Colors.red,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -789,9 +789,7 @@ class _FullScreenImageViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           path.basename(imagePath),
@@ -805,7 +803,6 @@ class _FullScreenImageViewer extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: const Text('Share functionality coming soon'),
-                  backgroundColor: ModernSaasDesign.primary,
                 ),
               );
             },
@@ -927,9 +924,8 @@ class _FullScreenImageViewer extends StatelessWidget {
                         },
                         icon: const Icon(Icons.refresh),
                         label: const Text('Retry'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ModernSaasDesign.primary,
-                          foregroundColor: ModernSaasDesign.textOnPrimary,
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -943,9 +939,8 @@ class _FullScreenImageViewer extends StatelessWidget {
                         },
                         icon: const Icon(Icons.open_in_new),
                         label: const Text('Open in Browser'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ModernSaasDesign.textSecondary,
-                          foregroundColor: ModernSaasDesign.textOnPrimary,
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
                         ),
                       ),
                     ],

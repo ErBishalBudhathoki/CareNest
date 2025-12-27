@@ -1,11 +1,8 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
-import 'package:carenest/app/features/invoice/viewmodels/line_items_viewmodel.dart';
 
 class LineItemsView extends ConsumerStatefulWidget {
   const LineItemsView({super.key});
@@ -34,21 +31,21 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
     });
   }
 
-  Widget _buildTile(String? title, Color? backgroundColor) {
+  Widget _buildTile(String? title, Color? surfaceColor) {
     return Container(
       height: 75,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(20)),
-        color: backgroundColor,
+        color: surfaceColor,
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: Text(
             title!,
-            style: ModernSaasDesign.bodyLarge.copyWith(
-              color: ModernSaasDesign.textOnPrimary,
+            style: const TextStyle(fontSize: 16).copyWith(
+              color: Colors.white,
             ),
           ),
         ),
@@ -66,7 +63,7 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
       appBar: AppBar(
         title: const Text(
           'Support item list with description',
-          style: ModernSaasDesign.headlineSmall,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
       ),
       body: Center(
@@ -83,7 +80,7 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
                   final itemName = item['itemDescription'] ?? '';
                   return _buildTile(
                     "$itemNumber\n$itemName",
-                    ModernSaasDesign.primary,
+                    const Color(0xFF667EEA),
                   );
                 }).toList(),
               );

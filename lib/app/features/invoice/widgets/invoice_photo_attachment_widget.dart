@@ -1,6 +1,6 @@
+
+
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +9,6 @@ import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
 import '../../../services/system_ui_service.dart';
-import 'package:flutter/foundation.dart';
 
 /// Widget for attaching photos to invoices
 /// Supports both gallery selection and camera capture with high quality
@@ -21,13 +20,13 @@ class InvoicePhotoAttachmentWidget extends ConsumerStatefulWidget {
   final int maxPhotos;
 
   const InvoicePhotoAttachmentWidget({
-    Key? key,
+    super.key,
     required this.onPhotosSelected,
     this.initialPhotos,
     this.photoDescription,
     this.onDescriptionChanged,
     this.maxPhotos = 5,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<InvoicePhotoAttachmentWidget> createState() =>
@@ -143,15 +142,14 @@ class _InvoicePhotoAttachmentWidgetState
             statusBarColor: AppColors.colorPrimary,
             activeControlsWidgetColor: AppColors.colorPrimary,
             cropFrameColor: AppColors.colorPrimary,
-            cropGridColor: AppColors.colorPrimary.withValues(alpha: 0.5),
-            dimmedLayerColor: Colors.black.withValues(alpha: 0.8),
+            cropGridColor: AppColors.colorPrimary.withOpacity(0.1),
+            dimmedLayerColor: Colors.black.withOpacity(0.1),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
             cropFrameStrokeWidth: 3,
             cropGridStrokeWidth: 1,
             cropGridRowCount: 3,
             cropGridColumnCount: 3,
-            backgroundColor: Colors.black,
           ),
           IOSUiSettings(
             title: 'Crop Invoice Photo',
@@ -199,16 +197,14 @@ class _InvoicePhotoAttachmentWidgetState
     _flushBarWidget.flushBar(
       title: isError ? 'Error' : 'Success',
       message: message,
-      backgroundColor:
-          isError ? AppColors.colorWarning : AppColors.colorSecondary,
       context: context,
+      backgroundColor: isError ? Colors.redAccent : Colors.greenAccent,
     );
   }
 
   void _showPhotoSourceDialog() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -272,7 +268,7 @@ class _InvoicePhotoAttachmentWidgetState
       leading: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.colorPrimary.withValues(alpha: 0.1),
+          color: AppColors.colorPrimary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
@@ -302,7 +298,7 @@ class _InvoicePhotoAttachmentWidgetState
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: ModernInvoiceDesign.surface,
+      color: Colors.white,
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
@@ -403,14 +399,14 @@ class _InvoicePhotoAttachmentWidgetState
                 child: DottedBorder(
                   borderType: BorderType.RRect,
                   radius: const Radius.circular(8),
-                  color: AppColors.colorPrimary.withValues(alpha: 0.5),
+                  color: AppColors.colorPrimary.withOpacity(0.1),
                   strokeWidth: 2,
                   dashPattern: const [8, 4],
                   child: Container(
                     height: 80,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: AppColors.colorPrimary.withValues(alpha: 0.05),
+                      color: AppColors.colorPrimary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: _isLoading

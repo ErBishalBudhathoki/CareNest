@@ -1,17 +1,13 @@
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/shared/widgets/showWarningDiaglog_widget.dart';
-import 'package:carenest/app/shared/widgets/textField_widget.dart';
+import 'package:carenest/app/shared/widgets/show_warning_dialog_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:carenest/app/features/auth/views/login_view.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:iconsax/iconsax.dart';
 
 class ChangePasswordView extends ConsumerWidget {
-  const ChangePasswordView({Key? key}) : super(key: key);
+  const ChangePasswordView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,9 +24,7 @@ class ChangePasswordView extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -41,14 +35,14 @@ class ChangePasswordView extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Icon(
-              Iconsax.arrow_left_2,
+              Icons.arrow_back,
               color: AppColors.colorBlack87,
               size: 20,
             ),
@@ -100,21 +94,21 @@ class ChangePasswordView extends ConsumerWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.colorPrimary.withValues(alpha: 0.8),
+                AppColors.colorPrimary.withOpacity(0.1),
                 AppColors.colorPrimary,
               ],
             ),
             borderRadius: BorderRadius.circular(60),
             boxShadow: [
               BoxShadow(
-                color: AppColors.colorPrimary.withValues(alpha: 0.3),
+                color: AppColors.colorPrimary.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
             ],
           ),
           child: const Icon(
-            Iconsax.lock_1,
+            Icons.lock_reset,
             size: 60,
             color: Colors.white,
           ),
@@ -149,7 +143,7 @@ class ChangePasswordView extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -187,7 +181,7 @@ class ChangePasswordView extends ConsumerWidget {
                   child: Row(
                     children: [
                       Icon(
-                        Iconsax.warning_2,
+                        Icons.warning_amber,
                         color: Colors.red[600],
                         size: 20,
                       ),
@@ -237,7 +231,7 @@ class ChangePasswordView extends ConsumerWidget {
               fontSize: 16,
             ),
             prefixIcon: Icon(
-              Iconsax.lock,
+              Icons.lock_outline,
               color: Colors.grey[400],
               size: 20,
             ),
@@ -246,7 +240,7 @@ class ChangePasswordView extends ConsumerWidget {
                 obscureNotifier.value = !obscureNotifier.value;
               },
               icon: Icon(
-                obscureText ? Iconsax.eye_slash : Iconsax.eye,
+                obscureText ? Icons.visibility_off : Icons.visibility,
                 color: Colors.grey[400],
                 size: 20,
               ),
@@ -306,13 +300,13 @@ class ChangePasswordView extends ConsumerWidget {
           end: Alignment.centerRight,
           colors: [
             AppColors.colorPrimary,
-            AppColors.colorPrimary.withValues(alpha: 0.8),
+            AppColors.colorPrimary.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorPrimary.withValues(alpha: 0.3),
+            color: AppColors.colorPrimary.withOpacity(0.1),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),

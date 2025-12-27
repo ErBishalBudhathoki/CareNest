@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 /// Modern SAAS Design System for Pricing Dashboard
 /// Implements contemporary design patterns with mobile-first responsive approach
@@ -549,7 +548,7 @@ class ModernCard extends StatelessWidget {
   final bool isGlass;
 
   const ModernCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.margin,
@@ -559,7 +558,7 @@ class ModernCard extends StatelessWidget {
     this.border,
     this.onTap,
     this.isGlass = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -611,7 +610,7 @@ class ModernButton extends StatelessWidget {
   final double? width;
 
   const ModernButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.icon,
@@ -619,7 +618,7 @@ class ModernButton extends StatelessWidget {
     this.variant = ButtonVariant.primary,
     this.size = ButtonSize.medium,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
