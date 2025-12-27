@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/stream/chacha20.dart';
-import 'package:flutter/foundation.dart';
 
 class EncryptDecrypt {
   static const _storage = FlutterSecureStorage();

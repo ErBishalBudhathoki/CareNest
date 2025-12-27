@@ -1,22 +1,18 @@
-import 'dart:async';
 import 'dart:io';
+
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 import 'package:carenest/app/shared/constants/values/themes/app_theme_config.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/core/utils/Services/launchMap_status.dart';
+import 'package:carenest/app/core/utils/Services/launch_map_status.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_selection_dialog.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:flutter/foundation.dart';
 
 const int kTimerDurationInSeconds = 8 * 60 * 60; // 8 hours
 
@@ -270,7 +266,7 @@ class _ClientAndAppointmentDetailsState
         organizationId: organizationId,
       );
 
-      // Start the background-persistent timer
+      // Start the surface-persistent timer
       final success =
           await timerService.startTimer(widget.userEmail, widget.clientEmail);
 
@@ -378,7 +374,6 @@ class _ClientAndAppointmentDetailsState
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Time updated successfully'),
-              backgroundColor: ModernInvoiceDesign.success,
             ),
           );
         }
@@ -389,7 +384,6 @@ class _ClientAndAppointmentDetailsState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error updating time: $e'),
-            backgroundColor: ModernInvoiceDesign.error,
           ),
         );
       }
@@ -438,15 +432,14 @@ class _ClientAndAppointmentDetailsState
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            valueColor:
-                AlwaysStoppedAnimation<Color>(ModernInvoiceDesign.primary),
+            valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF007AFF)),
             strokeWidth: 3,
           ),
           const SizedBox(height: 16),
           Text(
             'Loading appointment details...',
             style: AppThemeConfig.bodyStyle.copyWith(
-              color: ModernInvoiceDesign.neutral600,
+              color: const Color(0xFF757575),
             ),
           ),
         ],
@@ -463,7 +456,7 @@ class _ClientAndAppointmentDetailsState
     rows.add(
       TableRow(
         decoration: BoxDecoration(
-          color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+          color: const Color(0xFF007AFF).withValues(alpha: 0.1),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(12),
             topRight: Radius.circular(12),
@@ -535,7 +528,7 @@ class _ClientAndAppointmentDetailsState
         textAlign: TextAlign.center,
         style: AppThemeConfig.bodyStyle.copyWith(
           fontWeight: FontWeight.w600,
-          color: ModernInvoiceDesign.primary,
+          color: const Color(0xFF007AFF),
           fontSize: 14,
         ),
       ),
@@ -546,9 +539,7 @@ class _ClientAndAppointmentDetailsState
       String breakTime, int index) {
     return TableRow(
       decoration: BoxDecoration(
-        color: index.isEven
-            ? ModernInvoiceDesign.neutral50
-            : ModernInvoiceDesign.surface,
+        color: index.isEven ? const Color(0xFFFAFAFA) : Colors.white,
       ),
       children: [
         _buildTableCell(date),
@@ -567,7 +558,7 @@ class _ClientAndAppointmentDetailsState
         textAlign: TextAlign.center,
         style: AppThemeConfig.bodyStyle.copyWith(
           fontSize: 13,
-          color: ModernInvoiceDesign.neutral700,
+          color: const Color(0xFF424242),
         ),
       ),
     );
@@ -582,13 +573,13 @@ class _ClientAndAppointmentDetailsState
             Icon(
               Icons.error_outline,
               size: 64,
-              color: ModernInvoiceDesign.neutral400,
+              color: const Color(0xFFBDBDBD),
             ),
             const SizedBox(height: 16),
             Text(
               'No client data found',
               style: AppThemeConfig.titleStyle.copyWith(
-                color: ModernInvoiceDesign.neutral600,
+                color: const Color(0xFF757575),
               ),
             ),
           ],
@@ -611,13 +602,13 @@ class _ClientAndAppointmentDetailsState
             Icon(
               Icons.error_outline,
               size: 64,
-              color: ModernInvoiceDesign.neutral400,
+              color: const Color(0xFFBDBDBD),
             ),
             const SizedBox(height: 16),
             Text(
               'No client details found',
               style: AppThemeConfig.titleStyle.copyWith(
-                color: ModernInvoiceDesign.neutral600,
+                color: const Color(0xFF757575),
               ),
             ),
           ],
@@ -665,20 +656,20 @@ class _ClientAndAppointmentDetailsState
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              ModernInvoiceDesign.primary.withValues(alpha: 0.05),
-              ModernInvoiceDesign.secondary.withValues(alpha: 0.02),
+              const Color(0xFF007AFF).withValues(alpha: 0.1),
+              const Color(0xFF34C759).withValues(alpha: 0.1),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+            color: const Color(0xFF007AFF).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+              color: const Color(0xFF007AFF).withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -694,12 +685,12 @@ class _ClientAndAppointmentDetailsState
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: ModernInvoiceDesign.primary,
+                      color: const Color(0xFF007AFF),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.person,
-                      color: ModernInvoiceDesign.surface,
+                      color: Colors.white,
                       size: 24,
                     ),
                   ),
@@ -711,7 +702,7 @@ class _ClientAndAppointmentDetailsState
                         Text(
                           'Client Information',
                           style: AppThemeConfig.titleStyle.copyWith(
-                            color: ModernInvoiceDesign.primary,
+                            color: const Color(0xFF007AFF),
                             fontSize: 18,
                           ),
                         ),
@@ -719,7 +710,7 @@ class _ClientAndAppointmentDetailsState
                         Text(
                           'Personal details and contact information',
                           style: AppThemeConfig.captionStyle.copyWith(
-                            color: ModernInvoiceDesign.neutral600,
+                            color: const Color(0xFF757575),
                           ),
                         ),
                       ],
@@ -756,13 +747,13 @@ class _ClientAndAppointmentDetailsState
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: ModernInvoiceDesign.neutral100,
+              color: const Color(0xFFF5F5F5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               icon,
               size: 16,
-              color: ModernInvoiceDesign.neutral600,
+              color: const Color(0xFF757575),
             ),
           ),
           const SizedBox(width: 12),
@@ -773,7 +764,7 @@ class _ClientAndAppointmentDetailsState
                 Text(
                   label,
                   style: AppThemeConfig.captionStyle.copyWith(
-                    color: ModernInvoiceDesign.neutral600,
+                    color: const Color(0xFF757575),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -781,7 +772,7 @@ class _ClientAndAppointmentDetailsState
                 Text(
                   value,
                   style: AppThemeConfig.bodyStyle.copyWith(
-                    color: ModernInvoiceDesign.neutral800,
+                    color: const Color(0xFF212121),
                   ),
                 ),
               ],
@@ -795,11 +786,11 @@ class _ClientAndAppointmentDetailsState
   Widget _buildScheduleCard() {
     return Container(
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: ModernInvoiceDesign.neutral300.withValues(alpha: 0.3),
+            color: const Color(0xFFE0E0E0).withValues(alpha: 0.1),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -815,12 +806,12 @@ class _ClientAndAppointmentDetailsState
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: ModernInvoiceDesign.info,
+                    color: const Color(0xFF5AC8FA),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.schedule,
-                    color: ModernInvoiceDesign.surface,
+                    color: Colors.white,
                     size: 24,
                   ),
                 ),
@@ -831,7 +822,7 @@ class _ClientAndAppointmentDetailsState
                     Text(
                       'Schedule Details',
                       style: AppThemeConfig.titleStyle.copyWith(
-                        color: ModernInvoiceDesign.info,
+                        color: const Color(0xFF5AC8FA),
                         fontSize: 18,
                       ),
                     ),
@@ -839,7 +830,7 @@ class _ClientAndAppointmentDetailsState
                     Text(
                       'Appointment dates and times',
                       style: AppThemeConfig.captionStyle.copyWith(
-                        color: ModernInvoiceDesign.neutral600,
+                        color: const Color(0xFF757575),
                       ),
                     ),
                   ],
@@ -852,7 +843,7 @@ class _ClientAndAppointmentDetailsState
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: ModernInvoiceDesign.neutral200,
+                color: const Color(0xFFEEEEEE),
                 width: 1,
               ),
             ),
@@ -884,12 +875,12 @@ class _ClientAndAppointmentDetailsState
         gradient: LinearGradient(
           colors: isRunning
               ? [
-                  ModernInvoiceDesign.warning.withValues(alpha: 0.1),
-                  ModernInvoiceDesign.warning.withValues(alpha: 0.05)
+                  const Color(0xFFFF9500).withValues(alpha: 0.1),
+                  const Color(0xFFFF9500).withValues(alpha: 0.1)
                 ]
               : [
-                  ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-                  ModernInvoiceDesign.secondary.withValues(alpha: 0.05)
+                  const Color(0xFF007AFF).withValues(alpha: 0.1),
+                  const Color(0xFF34C759).withValues(alpha: 0.1)
                 ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -897,8 +888,8 @@ class _ClientAndAppointmentDetailsState
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isRunning
-              ? ModernInvoiceDesign.warning.withValues(alpha: 0.3)
-              : ModernInvoiceDesign.primary.withValues(alpha: 0.2),
+              ? const Color(0xFFFF9500).withValues(alpha: 0.1)
+              : const Color(0xFF007AFF).withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -916,15 +907,13 @@ class _ClientAndAppointmentDetailsState
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 32),
                     decoration: BoxDecoration(
-                      color: ModernInvoiceDesign.surface,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: isRunning
-                              ? ModernInvoiceDesign.warning
-                                  .withValues(alpha: 0.2)
-                              : ModernInvoiceDesign.primary
-                                  .withValues(alpha: 0.1),
+                              ? const Color(0xFFFF9500).withValues(alpha: 0.1)
+                              : const Color(0xFF007AFF).withValues(alpha: 0.1),
                           blurRadius: 15,
                           offset: const Offset(0, 5),
                         ),
@@ -945,8 +934,8 @@ class _ClientAndAppointmentDetailsState
                         fontSize: 42,
                         fontWeight: FontWeight.w300,
                         color: isRunning
-                            ? ModernInvoiceDesign.warning
-                            : ModernInvoiceDesign.primary,
+                            ? const Color(0xFFFF9500)
+                            : const Color(0xFF007AFF),
                         letterSpacing: 2,
                       ),
                     ),
@@ -969,7 +958,6 @@ class _ClientAndAppointmentDetailsState
                       const SnackBar(
                         content:
                             Text('Another client\'s shift is currently active'),
-                        backgroundColor: ModernInvoiceDesign.warning,
                       ),
                     );
                     return;
@@ -989,7 +977,6 @@ class _ClientAndAppointmentDetailsState
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Timer started successfully'),
-                          backgroundColor: ModernInvoiceDesign.success,
                           duration: Duration(seconds: 2),
                         ),
                       );
@@ -998,13 +985,13 @@ class _ClientAndAppointmentDetailsState
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isRunning
-                      ? ModernInvoiceDesign.warning
-                      : ModernInvoiceDesign.primary,
-                  foregroundColor: ModernInvoiceDesign.textOnPrimary,
+                      ? const Color(0xFFFF9500)
+                      : const Color(0xFF007AFF),
+                  foregroundColor: Colors.white,
                   elevation: isRunning ? 8 : 4,
                   shadowColor: isRunning
-                      ? ModernInvoiceDesign.warning.withValues(alpha: 0.4)
-                      : ModernInvoiceDesign.primary.withValues(alpha: 0.4),
+                      ? const Color(0xFFFF9500).withValues(alpha: 0.1)
+                      : const Color(0xFF007AFF).withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -1055,10 +1042,10 @@ class _ClientAndAppointmentDetailsState
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: ModernInvoiceDesign.info,
-              foregroundColor: ModernInvoiceDesign.textOnPrimary,
+              backgroundColor: const Color(0xFF5AC8FA),
+              foregroundColor: Colors.white,
               elevation: 4,
-              shadowColor: ModernInvoiceDesign.info.withValues(alpha: 0.4),
+              shadowColor: const Color(0xFF5AC8FA).withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -1081,7 +1068,7 @@ class _ClientAndAppointmentDetailsState
         ),
 
         // Notes Button
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
@@ -1097,10 +1084,10 @@ class _ClientAndAppointmentDetailsState
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: ModernInvoiceDesign.success,
-              foregroundColor: ModernInvoiceDesign.textOnPrimary,
+              backgroundColor: const Color(0xFF5AC8FA),
+              foregroundColor: Colors.white,
               elevation: 4,
-              shadowColor: ModernInvoiceDesign.success.withValues(alpha: 0.4),
+              shadowColor: const Color(0xFF34C759).withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -1137,21 +1124,18 @@ class _ClientAndAppointmentDetailsState
         }
 
         return Scaffold(
-          backgroundColor: ModernInvoiceDesign.neutral50,
           appBar: AppBar(
             title: Text(
               'Client Details',
               style: AppThemeConfig.titleStyle.copyWith(
-                color: ModernInvoiceDesign.primary,
+                color: const Color(0xFF007AFF),
                 fontSize: 20,
               ),
             ),
-            backgroundColor: ModernInvoiceDesign.surface,
             elevation: 0,
             centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios,
-                  color: ModernInvoiceDesign.primary),
+              icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF007AFF)),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -1176,7 +1160,7 @@ Future<LaunchMapStatus> launchMap(String address) async {
         success: true,
         title: 'Success',
         message: 'Launched Apple Maps',
-        backgroundColor: ModernInvoiceDesign.success,
+        surfaceColor: Colors.green,
       );
     } else if (await canLaunchUrl(Uri.parse('comgooglemaps://?q=$query'))) {
       await launchUrl(Uri.parse('comgooglemaps://?q=$query'));
@@ -1184,14 +1168,14 @@ Future<LaunchMapStatus> launchMap(String address) async {
         success: true,
         title: 'Success',
         message: 'Launched Google Maps',
-        backgroundColor: ModernInvoiceDesign.success,
+        surfaceColor: Colors.green,
       );
     } else {
       return LaunchMapStatus(
         success: false,
         title: 'Error',
         message: 'Could not launch any map application',
-        backgroundColor: ModernInvoiceDesign.error,
+        surfaceColor: Colors.red,
       );
     }
   } else if (Platform.isAndroid) {
@@ -1201,14 +1185,14 @@ Future<LaunchMapStatus> launchMap(String address) async {
         success: true,
         title: 'Success',
         message: 'Launched Google Maps',
-        backgroundColor: ModernInvoiceDesign.success,
+        surfaceColor: Colors.green,
       );
     } else {
       return LaunchMapStatus(
         success: false,
         title: 'Error',
         message: 'Could not launch Google Maps',
-        backgroundColor: ModernInvoiceDesign.error,
+        surfaceColor: Colors.red,
       );
     }
   }
@@ -1216,6 +1200,6 @@ Future<LaunchMapStatus> launchMap(String address) async {
     success: false,
     title: 'Error',
     message: 'Unsupported platform',
-    backgroundColor: ModernInvoiceDesign.error,
+    surfaceColor: Colors.red,
   );
 }

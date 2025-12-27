@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
@@ -8,8 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
 
 class NotificationHandler extends ConsumerStatefulWidget {
   final Widget child;
@@ -139,7 +138,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       case AppLifecycleState.inactive:
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
-        // App went to background or became inactive
+        // App went to surface or became inactive
         debugPrint('DEBUG_NOTIF_HANDLER: App paused/inactive');
         break;
     }
@@ -153,7 +152,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       // Add a small delay to ensure SharedPreferences operations complete
       await Future.delayed(const Duration(milliseconds: 100));
 
-      // Refresh the notification provider to load any new background notifications
+      // Refresh the notification provider to load any new surface notifications
       ref.read(notificationProvider.notifier).refresh();
 
       // Add another small delay to ensure the refresh completes
@@ -354,8 +353,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
           debugPrint('❌ Failed to store notification in provider: $e');
         }
 
-        // 6.5. Also store in persistent storage for backgrounded app state
-        // This ensures notifications are preserved when app is backgrounded but not terminated
+        // 6.5. Also store in persistent storage for surfaceed app state
+        // This ensures notifications are preserved when app is surfaceed but not terminated
         debugPrint('\n--- STORING NOTIFICATION IN PERSISTENT STORAGE ---');
         try {
           await _storeNotificationPersistently(
@@ -429,7 +428,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
     }
   }
 
-  // Method to store notification persistently (for backgrounded app state)
+  // Method to store notification persistently (for surfaceed app state)
   Future<void> _storeNotificationPersistently(
     String id,
     String? title,
@@ -440,7 +439,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
     try {
       final prefs = await SharedPreferences.getInstance();
       final existingNotifications =
-          prefs.getStringList('background_notifications') ?? [];
+          prefs.getStringList('surface_notifications') ?? [];
 
       // Create notification data
       final notificationData = {
@@ -462,7 +461,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
 
       // Save back to SharedPreferences
       await prefs.setStringList(
-          'background_notifications', existingNotifications);
+          'surface_notifications', existingNotifications);
 
       debugPrint('DEBUG_NOTIF_HANDLER: Notification stored persistently: $id');
     } catch (e) {

@@ -1,6 +1,7 @@
+
 import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class AnimatedBackground extends StatefulWidget {
   const AnimatedBackground({super.key});
@@ -50,7 +51,7 @@ class _GradientBlobPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width == 0 ? 430.0 : size.width;
     final h = size.height == 0 ? 900.0 : size.height;
-    // Main purple gradient background
+    // Main purple gradient surface
     final rect = Rect.fromLTWH(0, 0, w, h);
     final Paint paint = Paint()
       ..shader = LinearGradient(
@@ -72,7 +73,7 @@ class _GradientBlobPainter extends CustomPainter {
     final blobPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          const Color(0xFF7B64FD).withValues(alpha: .22),
+          const Color(0xFF7B64FD).withOpacity(0.1),
           Colors.transparent
         ],
         radius: 1,
@@ -91,8 +92,8 @@ class _GradientBlobPainter extends CustomPainter {
     final bottomPaint = Paint()
       ..shader = LinearGradient(
         colors: [
-          Colors.white.withValues(alpha: .97),
-          Colors.grey[100]!.withValues(alpha: 0.80)
+          Colors.white.withOpacity(0.1),
+          Colors.grey[100]!.withOpacity(0.1)
         ],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,

@@ -1,12 +1,13 @@
-import 'dart:math';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:typed_data';
+
 import 'package:carenest/app/features/auth/models/changePassword_model.dart';
 import 'package:carenest/app/shared/utils/encryption/encryption_utils.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:flutter/foundation.dart';
 
 class ChangePasswordViewModel extends ChangeNotifier {
   // Create a unique key for each instance

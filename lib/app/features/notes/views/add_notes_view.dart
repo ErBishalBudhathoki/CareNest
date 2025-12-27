@@ -1,13 +1,11 @@
 // create a UI to add notes with a button to save the notes, editable text view to edit notes and a button with a mic icon
 
-import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/widgets/button_widget.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -69,8 +67,8 @@ class _AddNotesViewState extends State<AddNotesView> {
             .flushBar(
               title: 'Error',
               message: 'Failed to initialize speech recognition',
-              backgroundColor: Colors.red,
               context: context,
+              backgroundColor: Colors.redAccent,
             )
             .show(context);
       }
@@ -91,8 +89,8 @@ class _AddNotesViewState extends State<AddNotesView> {
                 title: 'Error',
                 message:
                     'Microphone permission is required for speech recognition',
-                backgroundColor: Colors.red,
                 context: context,
+                backgroundColor: Colors.redAccent,
               )
               .show(context);
         }
@@ -131,7 +129,6 @@ class _AddNotesViewState extends State<AddNotesView> {
             fontSize: 16.0,
           ),
         ),
-        backgroundColor: AppColors.colorWhite,
         elevation: 0.0,
         leading: IconButton(
           icon: const Icon(
@@ -211,15 +208,15 @@ class _AddNotesViewState extends State<AddNotesView> {
             SizedBox(
               width: double.infinity,
               height: 60.0,
-              child: ElevatedButton(
+                       child: ElevatedButton(
                 onPressed: !_isInitialized || !_speechEnabled || _isSaving
                     ? null
                     : _toggleSpeech,
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
+                  backgroundColor: WidgetStateProperty.all<Color>(
                     AppColors.colorPrimary,
                   ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -230,7 +227,7 @@ class _AddNotesViewState extends State<AddNotesView> {
                   color: (!_isInitialized || !_speechEnabled || _isSaving)
                       ? Colors.grey
                       : AppColors.colorWhite,
-                ),
+     ),
               ),
             ),
           ],
@@ -256,8 +253,8 @@ class _AddNotesViewState extends State<AddNotesView> {
           .flushBar(
             title: 'Error',
             message: 'Please enter some notes before saving',
-            backgroundColor: Colors.red,
             context: context,
+            backgroundColor: Colors.redAccent,
           )
           .show(context);
       return;
@@ -277,9 +274,9 @@ class _AddNotesViewState extends State<AddNotesView> {
       if (!mounted) return;
 
       final flushbar = flushBarWidget.flushBar(
+        backgroundColor: Colors.greenAccent,
         title: response.title,
         message: response.message,
-        backgroundColor: response.backgroundColor,
         context: context,
         // duration: const Duration(seconds: 2),
       );
@@ -301,8 +298,8 @@ class _AddNotesViewState extends State<AddNotesView> {
           .flushBar(
             title: 'Error',
             message: 'An error occurred while saving notes',
-            backgroundColor: Colors.red,
             context: context,
+            backgroundColor: Colors.redAccent,
           )
           .show(context);
     } finally {

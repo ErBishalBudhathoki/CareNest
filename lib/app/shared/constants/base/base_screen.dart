@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 abstract class BaseScreen extends ConsumerWidget {
-  BaseScreen({super.key});
+  const BaseScreen({super.key});
 
   Widget phoneView(BuildContext context, WidgetRef ref);
 

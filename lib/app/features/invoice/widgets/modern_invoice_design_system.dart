@@ -202,6 +202,21 @@ class ModernInvoiceDesign {
     color: textPrimary,
   );
 
+  static const TextStyle titleLarge = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.1,
+    height: 1.4,
+    color: textPrimary,
+  );
+
+  static const TextStyle titleMedium = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    height: 1.4,
+    color: textPrimary,
+  );
+
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -243,13 +258,6 @@ class ModernInvoiceDesign {
     height: 1.2,
     color: textTertiary,
   );
-  
-  static const TextStyle titleMedium = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    color: textPrimary,
-  );
 
   // Spacing System - 8pt Grid
   static const double space1 = 4.0;
@@ -263,6 +271,9 @@ class ModernInvoiceDesign {
   static const double space12 = 48.0;
   static const double space16 = 64.0;
   static const double space20 = 80.0;
+  static const double space24 = 96.0;
+  static const double space32 = 128.0;
+  static const double space40 = 160.0;
 
   // Border Radius
   static const double radiusXs = 4.0;
@@ -396,6 +407,9 @@ class ModernInvoiceDesign {
   static const double breakpointDesktop = 1024;
   static const double breakpointLarge = 1280;
 
+  // Icon Sizes
+  static const double iconSize = 24.0;
+
   // Helper Methods
   static bool isMobile(BuildContext context) {
     return MediaQuery.of(context).size.width < breakpointMobile;
@@ -434,7 +448,7 @@ class Modern3DFloatingButton extends StatefulWidget {
   final String? label;
 
   const Modern3DFloatingButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onPressed,
     this.backgroundColor,
@@ -442,7 +456,7 @@ class Modern3DFloatingButton extends StatefulWidget {
     this.size = 56.0,
     this.isExtended = false,
     this.label,
-  }) : super(key: key);
+  });
 
   @override
   State<Modern3DFloatingButton> createState() => _Modern3DFloatingButtonState();
@@ -569,12 +583,12 @@ class HolographicProgressIndicator extends StatefulWidget {
   final bool isAnimated;
 
   const HolographicProgressIndicator({
-    Key? key,
+    super.key,
     required this.value,
     this.size = 60.0,
     this.strokeWidth = 6.0,
     this.isAnimated = true,
-  }) : super(key: key);
+  });
 
   @override
   State<HolographicProgressIndicator> createState() =>
@@ -666,14 +680,14 @@ class Modern3DAvatar extends StatelessWidget {
   final VoidCallback? onTap;
 
   const Modern3DAvatar({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.initials,
     this.size = 48.0,
     this.backgroundColor,
     this.hasGlowEffect = true,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -737,7 +751,7 @@ class AnimatedMeshBackground extends StatefulWidget {
   final Duration duration;
 
   const AnimatedMeshBackground({
-    Key? key,
+    super.key,
     required this.child,
     this.colors = const [
       Color(0xFF6366F1),
@@ -746,7 +760,7 @@ class AnimatedMeshBackground extends StatefulWidget {
       Color(0xFF06D6A0),
     ],
     this.duration = const Duration(seconds: 10),
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedMeshBackground> createState() => _AnimatedMeshBackgroundState();
@@ -826,7 +840,7 @@ class ModernInvoiceCard extends StatefulWidget {
   final Gradient? gradient;
 
   const ModernInvoiceCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.margin,
@@ -839,7 +853,7 @@ class ModernInvoiceCard extends StatefulWidget {
     this.isGlassmorphic = false,
     this.is3D = false,
     this.gradient,
-  }) : super(key: key);
+  });
 
   @override
   State<ModernInvoiceCard> createState() => _ModernInvoiceCardState();
@@ -980,7 +994,7 @@ class ModernInvoiceButton extends StatelessWidget {
   final double? width;
 
   const ModernInvoiceButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.icon,
@@ -991,7 +1005,7 @@ class ModernInvoiceButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1084,7 +1098,7 @@ class ModernSectionHeader extends StatelessWidget {
   final double? bottomSpacing;
 
   const ModernSectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.actionLabel,
     this.actionIcon,
@@ -1092,7 +1106,7 @@ class ModernSectionHeader extends StatelessWidget {
     this.actionOutlined = false,
     this.margin,
     this.bottomSpacing,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1148,7 +1162,7 @@ class ModernInvoiceTextField extends StatelessWidget {
   final String? errorText;
 
   const ModernInvoiceTextField({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.controller,
@@ -1162,7 +1176,7 @@ class ModernInvoiceTextField extends StatelessWidget {
     this.maxLines = 1,
     this.enabled = true,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

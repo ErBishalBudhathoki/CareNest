@@ -13,7 +13,7 @@ class MockApiMethod extends Mock implements ApiMethod {}
 
 /// Test-specific subclass of LineItemViewModel that returns empty support items
 class TestLineItemViewModel extends LineItemViewModel {
-  TestLineItemViewModel(ApiMethod api) : super(api);
+  TestLineItemViewModel(super.api);
 
   @override
   Future<List<Map<String, dynamic>>> getSupportItems() async {

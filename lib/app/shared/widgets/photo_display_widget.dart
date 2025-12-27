@@ -1,8 +1,7 @@
-import 'dart:io';
-import 'dart:typed_data';
+
+
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
 
 class PhotoDisplayWidget extends StatelessWidget {
   final String email;
@@ -33,7 +32,7 @@ class PhotoDisplayWidget extends StatelessWidget {
                 image: AssetImage('assets/icons/profile_placeholder.png'),
                 fit: BoxFit.cover,
               ),
-        border: Border.all(color: ModernSaasDesign.accent, width: 2),
+        border: Border.all(color: const Color(0xFF14B8A6), width: 2),
         boxShadow: const [
           BoxShadow(
             color: Colors.black26,

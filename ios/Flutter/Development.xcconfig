@@ -1,5 +1,5 @@
 #include "Debug.xcconfig"
 FLUTTER_FLAVOR=development
 FLUTTER_TARGET=lib/main_development.dart
-PRODUCT_BUNDLE_IDENTIFIER=com.CareNest.app.dev
+PRODUCT_BUNDLE_IDENTIFIER=com.bishal.invoice.dev
 DISPLAY_NAME=Invoice Dev

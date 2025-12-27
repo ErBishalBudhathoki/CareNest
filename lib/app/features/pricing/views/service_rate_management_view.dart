@@ -1,11 +1,7 @@
+import 'package:carenest/app/features/pricing/widgets/enhanced_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/features/pricing/widgets/enhanced_design_system.dart';
-import 'dart:ui';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter/foundation.dart';
+
 
 class ServiceRateManagementView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -13,11 +9,11 @@ class ServiceRateManagementView extends ConsumerStatefulWidget {
   final String organizationName;
 
   const ServiceRateManagementView({
-    Key? key,
+    super.key,
     required this.adminEmail,
     required this.organizationId,
     required this.organizationName,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<ServiceRateManagementView> createState() =>
@@ -32,9 +28,9 @@ class _ServiceRateManagementViewState
   String _selectedCategory = 'All';
   String _selectedRegion = 'All';
   bool _isLoading = false;
-  bool _showOnboarding = true;
-  Set<String> _selectedRateIds = {};
-  List<String> _activeFilters = [];
+  final bool _showOnboarding = true;
+  final Set<String> _selectedRateIds = {};
+  final List<String> _activeFilters = [];
 
   // Mock data for service rates
   final List<Map<String, dynamic>> _serviceRates = [
@@ -112,7 +108,6 @@ class _ServiceRateManagementViewState
     }).toList();
     final isEmpty = !_isLoading && filteredRates.isEmpty;
     return Scaffold(
-      backgroundColor: EnhancedDesignSystem.surfaceGray,
       body: Column(
         children: [
           _buildModernHeader(),
@@ -189,7 +184,7 @@ class _ServiceRateManagementViewState
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                                const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -238,7 +233,7 @@ class _ServiceRateManagementViewState
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                                const Color(0xFF10B981).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -278,17 +273,17 @@ class _ServiceRateManagementViewState
 
   // Widget _buildModernHeader() {
   //   return Container(
-  //     color: EnhancedDesignSystem.surfaceWhite,
+  //     color: Colors.white,
   //     child: SafeArea(
   //       child: Padding(
-  //         padding: const EdgeInsets.all(EnhancedDesignSystem.space6),
+  //         padding: const EdgeInsets.all(24.0),
   //         child: Row(
   //           children: [
   //             Container(
   //               decoration: BoxDecoration(
-  //                 color: EnhancedDesignSystem.gray100,
+  //                 color: const Color(0xFFF5F5F5),
   //                 borderRadius:
-  //                     BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+  //                     BorderRadius.circular(8.0),
   //               ),
   //               child: IconButton(
   //                 onPressed: () => Navigator.of(context).pop(),
@@ -296,23 +291,23 @@ class _ServiceRateManagementViewState
   //                   Icons.arrow_back_ios_new,
   //                   size: 20,
   //                 ),
-  //                 color: EnhancedDesignSystem.gray700,
+  //                 color: const Color(0xFF404040),
   //               ),
   //             ),
-  //             const SizedBox(width: EnhancedDesignSystem.space4),
+  //             const SizedBox(width: 16.0),
   //             Expanded(
   //               child: Column(
   //                 crossAxisAlignment: CrossAxisAlignment.start,
   //                 children: [
   //                   Text(
   //                     'Service Rate Management',
-  //                     style: EnhancedDesignSystem.headingXl,
+  //                     style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
   //                   ),
-  //                   const SizedBox(height: EnhancedDesignSystem.space2),
+  //                   const SizedBox(height: 8.0),
   //                   Text(
   //                     'Manage and optimize your service pricing across different regions and categories',
-  //                     style: EnhancedDesignSystem.bodyLg.copyWith(
-  //                       color: EnhancedDesignSystem.gray600,
+  //                     style: const TextStyle(fontSize: 16).copyWith(
+  //                       color: const Color(0xFF757575),
   //                     ),
   //                   ),
   //                 ],
@@ -320,15 +315,15 @@ class _ServiceRateManagementViewState
   //             ),
   //             Container(
   //               padding: const EdgeInsets.symmetric(
-  //                 horizontal: EnhancedDesignSystem.space4,
-  //                 vertical: EnhancedDesignSystem.space2,
+  //                 horizontal: 16.0,
+  //                 vertical: 8.0,
   //               ),
   //               decoration: BoxDecoration(
-  //                 color: EnhancedDesignSystem.successColor.withValues(alpha:0.1),
+  //                 color: Colors.green.withOpacity(0.1),
   //                 borderRadius:
-  //                     BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+  //                     BorderRadius.circular(12.0),
   //                 border: Border.all(
-  //                   color: EnhancedDesignSystem.successColor.withValues(alpha:0.3),
+  //                   color: Colors.green.withOpacity(0.1),
   //                 ),
   //               ),
   //               child: Row(
@@ -338,15 +333,15 @@ class _ServiceRateManagementViewState
   //                     width: 8,
   //                     height: 8,
   //                     decoration: BoxDecoration(
-  //                       color: EnhancedDesignSystem.successColor,
+  //                       color: Colors.green,
   //                       borderRadius: BorderRadius.circular(4),
   //                     ),
   //                   ),
-  //                   const SizedBox(width: EnhancedDesignSystem.space2),
+  //                   const SizedBox(width: 8.0),
   //                   Text(
   //                     'System Active',
-  //                     style: EnhancedDesignSystem.bodySm.copyWith(
-  //                       color: EnhancedDesignSystem.successColor,
+  //                     style: const TextStyle(fontSize: 12).copyWith(
+  //                       color: Colors.green,
   //                       fontWeight: FontWeight.w600,
   //                     ),
   //                   ),
@@ -373,11 +368,11 @@ class _ServiceRateManagementViewState
   Widget _buildHorizontalStats() {
     return Container(
       height: 145,
-      margin: const EdgeInsets.symmetric(vertical: EnhancedDesignSystem.space4),
+      margin: const EdgeInsets.symmetric(vertical: 16.0),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding:
-            const EdgeInsets.symmetric(horizontal: EnhancedDesignSystem.space4),
+            const EdgeInsets.symmetric(horizontal: 16.0),
         child: Row(
           children: [
             SizedBox(
@@ -387,12 +382,12 @@ class _ServiceRateManagementViewState
                 value: '${_serviceRates.length}',
                 subtitle: '+12 this month',
                 icon: Icons.rate_review,
-                color: EnhancedDesignSystem.primaryColor,
+                color: const Color(0xFF667EEA),
                 isLoading: _isLoading,
                 onTap: () => _filterByStatus('all'),
               ),
             ),
-            const SizedBox(width: EnhancedDesignSystem.space2),
+            const SizedBox(width: 8.0),
             SizedBox(
               width: 160,
               child: EnhancedStatCard(
@@ -401,12 +396,12 @@ class _ServiceRateManagementViewState
                     '${_serviceRates.where((r) => r['status'] == 'Active').length}',
                 subtitle: '3 urgent',
                 icon: Icons.check_circle,
-                color: EnhancedDesignSystem.successColor,
+                color: Colors.green,
                 isLoading: _isLoading,
                 onTap: () => _filterByStatus('active'),
               ),
             ),
-            const SizedBox(width: EnhancedDesignSystem.space2),
+            const SizedBox(width: 8.0),
             SizedBox(
               width: 160,
               child: EnhancedStatCard(
@@ -415,12 +410,12 @@ class _ServiceRateManagementViewState
                     '${_serviceRates.where((r) => r['status'] == 'Pending').length}',
                 subtitle: 'vs last quarter',
                 icon: Icons.pending,
-                color: EnhancedDesignSystem.warningColor,
+                color: Colors.orange,
                 isLoading: _isLoading,
                 onTap: () => _filterByStatus('pending'),
               ),
             ),
-            const SizedBox(width: EnhancedDesignSystem.space2),
+            const SizedBox(width: 8.0),
             SizedBox(
               width: 160,
               child: EnhancedStatCard(
@@ -430,7 +425,7 @@ class _ServiceRateManagementViewState
                     : '\$${(_serviceRates.map((r) => r['baseRate'] as double).reduce((a, b) => a + b) / _serviceRates.length).toStringAsFixed(2)}',
                 subtitle: 'projected monthly',
                 icon: Icons.attach_money,
-                color: EnhancedDesignSystem.infoColor,
+                color: Colors.blue,
                 isLoading: _isLoading,
               ),
             ),
@@ -466,9 +461,9 @@ class _ServiceRateManagementViewState
 
     return Container(
       margin:
-          const EdgeInsets.symmetric(horizontal: EnhancedDesignSystem.space6),
+          const EdgeInsets.symmetric(horizontal: 24.0),
       child: ListView.builder(
-        padding: const EdgeInsets.only(bottom: EnhancedDesignSystem.space6),
+        padding: const EdgeInsets.only(bottom: 24.0),
         itemCount: filteredRates.length,
         itemBuilder: (context, index) {
           final rate = filteredRates[index];
@@ -496,12 +491,12 @@ class _ServiceRateManagementViewState
 
   Widget _buildModernSearchAndFilters() {
     return Container(
-      padding: const EdgeInsets.all(EnhancedDesignSystem.space6),
+      padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: EnhancedDesignSystem.surfaceWhite,
+        color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(EnhancedDesignSystem.radiusLg),
-          topRight: Radius.circular(EnhancedDesignSystem.radiusLg),
+          topLeft: Radius.circular(12.0),
+          topRight: Radius.circular(12.0),
         ),
       ),
       child: Column(
@@ -513,7 +508,7 @@ class _ServiceRateManagementViewState
             onFilterTap: _showFilterDialog,
             onAddTap: _showAddRateDialog,
           ),
-          const SizedBox(height: EnhancedDesignSystem.space4),
+          const SizedBox(height: 16.0),
           Row(
             children: [
               Expanded(
@@ -524,7 +519,7 @@ class _ServiceRateManagementViewState
                   (value) => setState(() => _selectedCategory = value!),
                 ),
               ),
-              const SizedBox(width: EnhancedDesignSystem.space4),
+              const SizedBox(width: 16.0),
               Expanded(
                 child: _buildModernDropdown(
                   'Region',
@@ -548,25 +543,25 @@ class _ServiceRateManagementViewState
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: EnhancedDesignSystem.surfaceGray,
-        borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: EnhancedDesignSystem.gray300,
+          color: const Color(0xFFD4D4D4),
           width: 1,
         ),
       ),
       child: DropdownButtonFormField<String>(
-        value: value,
+        initialValue: value,
         isExpanded: true,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: EnhancedDesignSystem.bodyMd.copyWith(
-            color: EnhancedDesignSystem.gray600,
+          labelStyle: const TextStyle(fontSize: 14).copyWith(
+            color: const Color(0xFF757575),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: EnhancedDesignSystem.space4,
-            vertical: EnhancedDesignSystem.space2,
+            horizontal: 16.0,
+            vertical: 8.0,
           ),
           isDense: true,
         ),
@@ -575,15 +570,15 @@ class _ServiceRateManagementViewState
                   value: item,
                   child: Text(
                     item,
-                    style: EnhancedDesignSystem.bodyMd,
+                    style: const TextStyle(fontSize: 14),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ))
             .toList(),
         onChanged: onChanged,
-        dropdownColor: EnhancedDesignSystem.surfaceWhite,
-        style: EnhancedDesignSystem.bodyMd,
+        dropdownColor: Colors.white,
+        style: const TextStyle(fontSize: 14),
         menuMaxHeight: 300,
       ),
     );
@@ -618,7 +613,7 @@ class _ServiceRateManagementViewState
           SizedBox(
             width: 150,
             child: DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              initialValue: _selectedCategory,
               isExpanded: true,
               decoration: InputDecoration(
                 labelText: 'Category',
@@ -641,7 +636,7 @@ class _ServiceRateManagementViewState
           SizedBox(
             width: 150,
             child: DropdownButtonFormField<String>(
-              value: _selectedRegion,
+              initialValue: _selectedRegion,
               isExpanded: true,
               decoration: InputDecoration(
                 labelText: 'Region',
@@ -665,8 +660,7 @@ class _ServiceRateManagementViewState
             onPressed: _showAddRateDialog,
             icon: const Icon(Icons.add),
             label: const Text('Add Rate'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             ),
@@ -701,7 +695,7 @@ class _ServiceRateManagementViewState
         Column(
           children: [
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              initialValue: _selectedCategory,
               isExpanded: true,
               decoration: InputDecoration(
                 labelText: 'Category',
@@ -721,7 +715,7 @@ class _ServiceRateManagementViewState
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedRegion,
+              initialValue: _selectedRegion,
               isExpanded: true,
               decoration: InputDecoration(
                 labelText: 'Region',
@@ -746,8 +740,7 @@ class _ServiceRateManagementViewState
           onPressed: _showAddRateDialog,
           icon: const Icon(Icons.add),
           label: const Text('Add Rate'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.colorPrimary,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           ),
@@ -758,7 +751,7 @@ class _ServiceRateManagementViewState
 
   Widget _buildModernRateCard(Map<String, dynamic> rate) {
     return Container(
-        margin: const EdgeInsets.only(bottom: EnhancedDesignSystem.space4),
+        margin: const EdgeInsets.only(bottom: 16.0),
         child: Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -776,34 +769,34 @@ class _ServiceRateManagementViewState
                   children: [
                     Container(
                       padding:
-                          const EdgeInsets.all(EnhancedDesignSystem.space2),
+                          const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
-                        color: EnhancedDesignSystem.primaryColor
-                            .withValues(alpha: 0.1),
+                        color: const Color(0xFF667EEA)
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(
-                            EnhancedDesignSystem.radiusMd),
+                            8.0),
                       ),
                       child: Icon(
                         Icons.schedule,
-                        color: EnhancedDesignSystem.primaryColor,
+                        color: const Color(0xFF667EEA),
                         size: 20,
                       ),
                     ),
-                    const SizedBox(width: EnhancedDesignSystem.space4),
+                    const SizedBox(width: 16.0),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             rate['serviceName'],
-                            style: EnhancedDesignSystem.headingMd.copyWith(
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: EnhancedDesignSystem.space1),
+                          const SizedBox(height: 4.0),
                           Wrap(
-                            spacing: EnhancedDesignSystem.space2,
-                            runSpacing: EnhancedDesignSystem.space1,
+                            spacing: 8.0,
+                            runSpacing: 4.0,
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -811,14 +804,14 @@ class _ServiceRateManagementViewState
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: EnhancedDesignSystem.primaryColor
-                                      .withValues(alpha: 0.1),
+                                  color: const Color(0xFF667EEA)
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
                                   rate['category'],
-                                  style: EnhancedDesignSystem.bodySm.copyWith(
-                                    color: EnhancedDesignSystem.primaryColor,
+                                  style: const TextStyle(fontSize: 12).copyWith(
+                                    color: const Color(0xFF667EEA),
                                   ),
                                 ),
                               ),
@@ -831,13 +824,13 @@ class _ServiceRateManagementViewState
                                   color: Colors.transparent,
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: EnhancedDesignSystem.gray300,
+                                    color: const Color(0xFFD4D4D4),
                                   ),
                                 ),
                                 child: Text(
                                   rate['region'],
-                                  style: EnhancedDesignSystem.bodySm.copyWith(
-                                    color: EnhancedDesignSystem.gray600,
+                                  style: const TextStyle(fontSize: 12).copyWith(
+                                    color: const Color(0xFF757575),
                                   ),
                                 ),
                               ),
@@ -853,24 +846,24 @@ class _ServiceRateManagementViewState
                       ),
                       decoration: BoxDecoration(
                         color: rate['status'] == 'Active'
-                            ? EnhancedDesignSystem.successColor
-                                .withValues(alpha: 0.1)
-                            : EnhancedDesignSystem.warningColor
-                                .withValues(alpha: 0.1),
+                            ? Colors.green
+                                .withOpacity(0.1)
+                            : Colors.orange
+                                .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         rate['status'],
-                        style: EnhancedDesignSystem.bodySm.copyWith(
+                        style: const TextStyle(fontSize: 12).copyWith(
                           color: rate['status'] == 'Active'
-                              ? EnhancedDesignSystem.successColor
-                              : EnhancedDesignSystem.warningColor,
+                              ? Colors.green
+                              : Colors.orange,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: EnhancedDesignSystem.space6),
+                const SizedBox(height: 24.0),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     if (constraints.maxWidth < 400) {
@@ -880,19 +873,19 @@ class _ServiceRateManagementViewState
                           _buildRateInfo(
                             'Base Rate',
                             '\$${rate['baseRate'].toStringAsFixed(2)}/hr',
-                            EnhancedDesignSystem.successColor,
+                            Colors.green,
                           ),
-                          const SizedBox(height: EnhancedDesignSystem.space4),
+                          const SizedBox(height: 16.0),
                           _buildRateInfo(
                             'Weekend Rate',
                             '\$${rate['weekendRate'].toStringAsFixed(2)}/hr',
-                            EnhancedDesignSystem.infoColor,
+                            Colors.blue,
                           ),
-                          const SizedBox(height: EnhancedDesignSystem.space4),
+                          const SizedBox(height: 16.0),
                           _buildRateInfo(
                             'Holiday Rate',
                             '\$${rate['publicHolidayRate'].toStringAsFixed(2)}/hr',
-                            EnhancedDesignSystem.warningColor,
+                            Colors.orange,
                           ),
                         ],
                       );
@@ -903,28 +896,28 @@ class _ServiceRateManagementViewState
                           child: _buildRateInfo(
                             'Base Rate',
                             '\$${rate['baseRate'].toStringAsFixed(2)}/hr',
-                            EnhancedDesignSystem.successColor,
+                            Colors.green,
                           ),
                         ),
                         Expanded(
                           child: _buildRateInfo(
                             'Weekend Rate',
                             '\$${rate['weekendRate'].toStringAsFixed(2)}/hr',
-                            EnhancedDesignSystem.infoColor,
+                            Colors.blue,
                           ),
                         ),
                         Expanded(
                           child: _buildRateInfo(
                             'Holiday Rate',
                             '\$${rate['publicHolidayRate'].toStringAsFixed(2)}/hr',
-                            EnhancedDesignSystem.warningColor,
+                            Colors.orange,
                           ),
                         ),
                       ],
                     );
                   },
                 ),
-                const SizedBox(height: EnhancedDesignSystem.space6),
+                const SizedBox(height: 24.0),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     if (constraints.maxWidth < 300) {
@@ -934,13 +927,13 @@ class _ServiceRateManagementViewState
                           _buildActionButton(
                             icon: Icons.edit,
                             onPressed: () => _editRate(rate),
-                            color: EnhancedDesignSystem.gray600,
+                            color: const Color(0xFF757575),
                           ),
-                          const SizedBox(height: EnhancedDesignSystem.space2),
+                          const SizedBox(height: 8.0),
                           _buildActionButton(
                             icon: Icons.delete,
                             onPressed: () => _deleteRate(rate['id']),
-                            color: EnhancedDesignSystem.errorColor,
+                            color: Colors.red,
                           ),
                         ],
                       );
@@ -951,13 +944,13 @@ class _ServiceRateManagementViewState
                         _buildActionButton(
                           icon: Icons.edit,
                           onPressed: () => _editRate(rate),
-                          color: EnhancedDesignSystem.gray600,
+                          color: const Color(0xFF757575),
                         ),
-                        const SizedBox(width: EnhancedDesignSystem.space2),
+                        const SizedBox(width: 8.0),
                         _buildActionButton(
                           icon: Icons.delete,
                           onPressed: () => _deleteRate(rate['id']),
-                          color: EnhancedDesignSystem.errorColor,
+                          color: Colors.red,
                         ),
                       ],
                     );
@@ -975,14 +968,14 @@ class _ServiceRateManagementViewState
       children: [
         Text(
           label,
-          style: EnhancedDesignSystem.bodySm.copyWith(
-            color: EnhancedDesignSystem.gray600,
+          style: const TextStyle(fontSize: 12).copyWith(
+            color: const Color(0xFF757575),
           ),
         ),
-        const SizedBox(height: EnhancedDesignSystem.space1),
+        const SizedBox(height: 4.0),
         Text(
           value,
-          style: EnhancedDesignSystem.bodyLg.copyWith(
+          style: const TextStyle(fontSize: 16).copyWith(
             fontWeight: FontWeight.bold,
             color: color,
           ),
@@ -1013,11 +1006,11 @@ class _ServiceRateManagementViewState
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: Container(
           width: 500,
-          padding: const EdgeInsets.all(EnhancedDesignSystem.space6),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1025,51 +1018,51 @@ class _ServiceRateManagementViewState
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(EnhancedDesignSystem.space2),
+                    padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: EnhancedDesignSystem.primaryColor
-                          .withValues(alpha: 0.1),
+                      color: const Color(0xFF667EEA)
+                          .withOpacity(0.1),
                       borderRadius:
-                          BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+                          BorderRadius.circular(8.0),
                     ),
                     child: Icon(
                       Icons.add,
-                      color: EnhancedDesignSystem.primaryColor,
+                      color: const Color(0xFF667EEA),
                     ),
                   ),
-                  const SizedBox(width: EnhancedDesignSystem.space4),
+                  const SizedBox(width: 16.0),
                   Text(
                     'Add New Service Rate',
-                    style: EnhancedDesignSystem.headingMd.copyWith(
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: EnhancedDesignSystem.space6),
+              const SizedBox(height: 24.0),
               Text(
                 'Create a new service rate configuration. This feature will be fully implemented in the next update.',
-                style: EnhancedDesignSystem.bodyMd.copyWith(
-                  color: EnhancedDesignSystem.gray600,
+                style: const TextStyle(fontSize: 14).copyWith(
+                  color: const Color(0xFF757575),
                 ),
               ),
-              const SizedBox(height: EnhancedDesignSystem.space6),
+              const SizedBox(height: 24.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   _buildActionButton(
                     icon: Icons.close,
                     onPressed: () => Navigator.pop(context),
-                    color: EnhancedDesignSystem.gray600,
+                    color: const Color(0xFF757575),
                   ),
-                  const SizedBox(width: EnhancedDesignSystem.space2),
+                  const SizedBox(width: 8.0),
                   _buildActionButton(
                     icon: Icons.add,
                     onPressed: () {
                       Navigator.pop(context);
                       _showSnackBar('New rate feature coming soon!');
                     },
-                    color: EnhancedDesignSystem.primaryColor,
+                    color: const Color(0xFF667EEA),
                   ),
                 ],
               ),
@@ -1123,7 +1116,7 @@ class _ServiceRateManagementViewState
               });
               _showSnackBar('Rate deleted successfully');
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(),
             child: const Text('Delete'),
           ),
         ],
@@ -1137,11 +1130,11 @@ class _ServiceRateManagementViewState
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: Container(
           width: 400,
-          padding: const EdgeInsets.all(EnhancedDesignSystem.space6),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1149,52 +1142,52 @@ class _ServiceRateManagementViewState
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(EnhancedDesignSystem.space2),
+                    padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: EnhancedDesignSystem.primaryColor
-                          .withValues(alpha: 0.1),
+                      color: const Color(0xFF667EEA)
+                          .withOpacity(0.1),
                       borderRadius:
-                          BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+                          BorderRadius.circular(8.0),
                     ),
                     child: Icon(
                       Icons.tune,
-                      color: EnhancedDesignSystem.primaryColor,
+                      color: const Color(0xFF667EEA),
                     ),
                   ),
-                  const SizedBox(width: EnhancedDesignSystem.space4),
+                  const SizedBox(width: 16.0),
                   Text(
                     'Filter Service Rates',
-                    style: EnhancedDesignSystem.headingMd.copyWith(
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: EnhancedDesignSystem.space6),
+              const SizedBox(height: 24.0),
               Text(
                 'Category',
-                style: EnhancedDesignSystem.bodyMd.copyWith(
+                style: const TextStyle(fontSize: 14).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: EnhancedDesignSystem.space2),
+              const SizedBox(height: 8.0),
               Container(
                 decoration: BoxDecoration(
-                  color: EnhancedDesignSystem.gray50,
+                  color: const Color(0xFFFAFAFA),
                   borderRadius:
-                      BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+                      BorderRadius.circular(8.0),
                   border: Border.all(
-                    color: EnhancedDesignSystem.borderColor,
+                    color: const Color(0xFFE0E0E0),
                   ),
                 ),
                 child: DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   isExpanded: true,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
-                      horizontal: EnhancedDesignSystem.space4,
-                      vertical: EnhancedDesignSystem.space2,
+                      horizontal: 16.0,
+                      vertical: 8.0,
                     ),
                   ),
                   items: _categories
@@ -1202,7 +1195,7 @@ class _ServiceRateManagementViewState
                             value: category,
                             child: Text(
                               category,
-                              style: EnhancedDesignSystem.bodyMd,
+                              style: const TextStyle(fontSize: 14),
                             ),
                           ))
                       .toList(),
@@ -1213,31 +1206,31 @@ class _ServiceRateManagementViewState
                   },
                 ),
               ),
-              const SizedBox(height: EnhancedDesignSystem.space4),
+              const SizedBox(height: 16.0),
               Text(
                 'Region',
-                style: EnhancedDesignSystem.bodyMd.copyWith(
+                style: const TextStyle(fontSize: 14).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: EnhancedDesignSystem.space2),
+              const SizedBox(height: 8.0),
               Container(
                 decoration: BoxDecoration(
-                  color: EnhancedDesignSystem.gray50,
+                  color: const Color(0xFFFAFAFA),
                   borderRadius:
-                      BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+                      BorderRadius.circular(8.0),
                   border: Border.all(
-                    color: EnhancedDesignSystem.borderColor,
+                    color: const Color(0xFFE0E0E0),
                   ),
                 ),
                 child: DropdownButtonFormField<String>(
-                  value: _selectedRegion,
+                  initialValue: _selectedRegion,
                   isExpanded: true,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
-                      horizontal: EnhancedDesignSystem.space4,
-                      vertical: EnhancedDesignSystem.space2,
+                      horizontal: 16.0,
+                      vertical: 8.0,
                     ),
                   ),
                   items: _regions
@@ -1245,7 +1238,7 @@ class _ServiceRateManagementViewState
                             value: region,
                             child: Text(
                               region,
-                              style: EnhancedDesignSystem.bodyMd,
+                              style: const TextStyle(fontSize: 14),
                             ),
                           ))
                       .toList(),
@@ -1256,7 +1249,7 @@ class _ServiceRateManagementViewState
                   },
                 ),
               ),
-              const SizedBox(height: EnhancedDesignSystem.space6),
+              const SizedBox(height: 24.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -1271,22 +1264,22 @@ class _ServiceRateManagementViewState
                       Navigator.pop(context);
                       _showSnackBar('Filters cleared');
                     },
-                    color: EnhancedDesignSystem.gray600,
+                    color: const Color(0xFF757575),
                   ),
-                  const SizedBox(width: EnhancedDesignSystem.space2),
+                  const SizedBox(width: 8.0),
                   _buildActionButton(
                     icon: Icons.close,
                     onPressed: () => Navigator.pop(context),
-                    color: EnhancedDesignSystem.gray600,
+                    color: const Color(0xFF757575),
                   ),
-                  const SizedBox(width: EnhancedDesignSystem.space2),
+                  const SizedBox(width: 8.0),
                   _buildActionButton(
                     icon: Icons.check,
                     onPressed: () {
                       Navigator.pop(context);
                       _showSnackBar('Filters applied');
                     },
-                    color: EnhancedDesignSystem.primaryColor,
+                    color: const Color(0xFF667EEA),
                   ),
                 ],
               ),
@@ -1314,7 +1307,6 @@ class _ServiceRateManagementViewState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.colorPrimary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -1333,10 +1325,10 @@ class _ServiceRateManagementViewState
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: color.withOpacity(0.1),
         ),
       ),
       child: Material(

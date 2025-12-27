@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'improved_design_system.dart';
 
 /// Enhanced navigation system for pricing feature with improved UX
 class PricingNavigationController {
@@ -21,11 +20,11 @@ class EnhancedPricingBottomNav extends StatelessWidget {
   final bool showLabels;
 
   const EnhancedPricingBottomNav({
-    Key? key,
+    super.key,
     required this.currentRoute,
     required this.onRouteChanged,
     this.showLabels = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +35,8 @@ class EnhancedPricingBottomNav extends StatelessWidget {
         color: AppColors.colorWhite,
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorGrey400.withValues(alpha: 0.1),
-            blurRadius: PricingDesignSystem.elevationMedium,
+            color: AppColors.colorGrey400.withOpacity(0.1),
+            blurRadius: 4.0,
             offset: const Offset(0, -2),
           ),
         ],
@@ -45,8 +44,8 @@ class EnhancedPricingBottomNav extends StatelessWidget {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: PricingDesignSystem.spacingMedium,
-            vertical: PricingDesignSystem.spacingSmall,
+            horizontal: 16.0,
+            vertical: 8.0,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -68,18 +67,18 @@ class EnhancedPricingBottomNav extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => onRouteChanged(item.route),
-          borderRadius: BorderRadius.circular(PricingDesignSystem.radiusMedium),
+          borderRadius: BorderRadius.circular(8.0),
           child: Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: PricingDesignSystem.spacingMedium,
-              vertical: PricingDesignSystem.spacingSmall,
+              horizontal: 16.0,
+              vertical: 8.0,
             ),
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppColors.colorPrimary.withValues(alpha: 0.1)
+                  ? AppColors.colorPrimary.withOpacity(0.1)
                   : Colors.transparent,
               borderRadius:
-                  BorderRadius.circular(PricingDesignSystem.radiusMedium),
+                  BorderRadius.circular(8.0),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -92,7 +91,7 @@ class EnhancedPricingBottomNav extends StatelessWidget {
                   size: AppDimens.iconSizeSmall,
                 ),
                 if (showLabels) ...[
-                  const SizedBox(height: PricingDesignSystem.spacingMicro),
+                  const SizedBox(height: 4.0),
                   Text(
                     item.label,
                     style: TextStyle(
@@ -149,22 +148,22 @@ class EnhancedPricingTabBar extends StatelessWidget {
   final bool isScrollable;
 
   const EnhancedPricingTabBar({
-    Key? key,
+    super.key,
     required this.tabs,
     required this.selectedIndex,
     required this.onTabChanged,
     this.isScrollable = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(
-        horizontal: PricingDesignSystem.spacingMedium,
+        horizontal: 16.0,
       ),
       decoration: BoxDecoration(
         color: AppColors.colorGrey100,
-        borderRadius: BorderRadius.circular(PricingDesignSystem.radiusMedium),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
         children: tabs.asMap().entries.map((entry) {
@@ -182,26 +181,26 @@ class EnhancedPricingTabBar extends StatelessWidget {
                 child: InkWell(
                   onTap: () => onTabChanged(index),
                   borderRadius:
-                      BorderRadius.circular(PricingDesignSystem.radiusMedium),
+                      BorderRadius.circular(8.0),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin:
-                        const EdgeInsets.all(PricingDesignSystem.spacingMicro),
+                        const EdgeInsets.all(4.0),
                     padding: const EdgeInsets.symmetric(
-                      vertical: PricingDesignSystem.spacingMedium,
+                      vertical: 16.0,
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.colorWhite
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(
-                          PricingDesignSystem.radiusSmall),
+                          4.0),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
                                 color: AppColors.colorGrey400
-                                    .withValues(alpha: 0.1),
-                                blurRadius: PricingDesignSystem.elevationLow,
+                                    .withOpacity(0.1),
+                                blurRadius: 2.0,
                                 offset: const Offset(0, 1),
                               ),
                             ]
@@ -236,17 +235,17 @@ class EnhancedBreadcrumb extends StatelessWidget {
   final Function(String)? onItemTap;
 
   const EnhancedBreadcrumb({
-    Key? key,
+    super.key,
     required this.items,
     this.onItemTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: PricingDesignSystem.spacingMedium,
-        vertical: PricingDesignSystem.spacingSmall,
+        horizontal: 16.0,
+        vertical: 8.0,
       ),
       child: Row(
         children: _buildBreadcrumbItems(),
@@ -273,11 +272,11 @@ class EnhancedBreadcrumb extends StatelessWidget {
                   ? () => onItemTap!(item.route)
                   : null,
               borderRadius:
-                  BorderRadius.circular(PricingDesignSystem.radiusSmall),
+                  BorderRadius.circular(4.0),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: PricingDesignSystem.spacingSmall,
-                  vertical: PricingDesignSystem.spacingMicro,
+                  horizontal: 8.0,
+                  vertical: 4.0,
                 ),
                 child: Text(
                   item.label,
@@ -300,7 +299,7 @@ class EnhancedBreadcrumb extends StatelessWidget {
         widgets.add(
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: PricingDesignSystem.spacingMicro,
+              horizontal: 4.0,
             ),
             child: Icon(
               Icons.chevron_right,
@@ -320,16 +319,16 @@ class EnhancedBreadcrumb extends StatelessWidget {
 class EnhancedFloatingActionMenu extends StatefulWidget {
   final List<FloatingActionItem> items;
   final IconData mainIcon;
-  final Color? backgroundColor;
+  final Color? surfaceColor;
   final String? tooltip;
 
   const EnhancedFloatingActionMenu({
-    Key? key,
+    super.key,
     required this.items,
     this.mainIcon = Icons.add,
-    this.backgroundColor,
+    this.surfaceColor,
     this.tooltip,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedFloatingActionMenu> createState() =>
@@ -379,7 +378,7 @@ class _EnhancedFloatingActionMenuState extends State<EnhancedFloatingActionMenu>
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         ..._buildMenuItems(),
-        const SizedBox(height: PricingDesignSystem.spacingSmall),
+        const SizedBox(height: 8.0),
         _buildMainButton(),
       ],
     );
@@ -400,7 +399,7 @@ class _EnhancedFloatingActionMenuState extends State<EnhancedFloatingActionMenu>
               opacity: _animation.value,
               child: Padding(
                 padding: const EdgeInsets.only(
-                  bottom: PricingDesignSystem.spacingSmall,
+                  bottom: 8.0,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -408,18 +407,18 @@ class _EnhancedFloatingActionMenuState extends State<EnhancedFloatingActionMenu>
                     if (item.label != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: PricingDesignSystem.spacingMedium,
-                          vertical: PricingDesignSystem.spacingSmall,
+                          horizontal: 16.0,
+                          vertical: 8.0,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.colorWhite,
                           borderRadius: BorderRadius.circular(
-                              PricingDesignSystem.radiusSmall),
+                              4.0),
                           boxShadow: [
                             BoxShadow(
                               color:
-                                  AppColors.colorGrey400.withValues(alpha: 0.2),
-                              blurRadius: PricingDesignSystem.elevationMedium,
+                                  AppColors.colorGrey400.withOpacity(0.1),
+                              blurRadius: 4.0,
                               offset: const Offset(0, 2),
                             ),
                           ],
@@ -433,15 +432,13 @@ class _EnhancedFloatingActionMenuState extends State<EnhancedFloatingActionMenu>
                           ),
                         ),
                       ),
-                    const SizedBox(width: PricingDesignSystem.spacingSmall),
+                    const SizedBox(width: 8.0),
                     FloatingActionButton.small(
                       heroTag: "fab_menu_item_$index",
                       onPressed: () {
                         _toggle();
                         item.onTap();
                       },
-                      backgroundColor:
-                          item.backgroundColor ?? AppColors.colorPrimary,
                       child: Icon(
                         item.icon,
                         color: AppColors.colorWhite,
@@ -468,7 +465,6 @@ class _EnhancedFloatingActionMenuState extends State<EnhancedFloatingActionMenu>
       child: FloatingActionButton(
         heroTag: "fab_main_menu",
         onPressed: _toggle,
-        backgroundColor: widget.backgroundColor ?? AppColors.colorPrimary,
         child: AnimatedRotation(
           turns: _isOpen ? 0.125 : 0,
           duration: const Duration(milliseconds: 300),
@@ -511,12 +507,12 @@ class FloatingActionItem {
   final IconData icon;
   final String? label;
   final VoidCallback onTap;
-  final Color? backgroundColor;
+  final Color? surfaceColor;
 
   const FloatingActionItem({
     required this.icon,
     required this.onTap,
     this.label,
-    this.backgroundColor,
+    this.surfaceColor,
   });
 }

@@ -1,5 +1,4 @@
-import 'package:intl/intl.dart';
-import 'package:flutter/material.dart'; // For DateUtils
+// For DateUtils
 
 // Enum for regional pricing strategy
 enum PriceRegion {
@@ -25,7 +24,7 @@ class NDISItem {
   final String registrationGroupName;
   final String unit;
   final String
-      type; // "Price Limited Supports", "Quotable Supports", "Unit Price = $1"
+      type; // "Price Limited Supports", "Quotable Supports", "Unit Price = 0.1"
   final bool isQuotable;
   final DateTime? startDate;
   final DateTime? endDate;
@@ -255,7 +254,7 @@ class NDISItem {
   double getPriceForRegion(PriceRegion region,
       {PriceRegion fallbackRegion = PriceRegion.nsw}) {
     if (type == "Quotable Supports" || isQuotable) return 0.0;
-    if (type == "Unit Price = \$1") return 1.0;
+    if (type == "Unit Price = 0.1") return 1.0;
 
     return regionalPrices[region] ??
         regionalPrices[fallbackRegion] ??
@@ -272,8 +271,9 @@ class NDISItem {
 
   bool isActiveAsOf(DateTime date) {
     if (startDate == null) return true; // Assume active if no start date
-    if (endDate == null || endDate == DateTime(9999, 12, 31))
+    if (endDate == null || endDate == DateTime(9999, 12, 31)) {
       return date.isAfter(startDate!) || date.isAtSameMomentAs(startDate!);
+    }
     return (date.isAfter(startDate!) || date.isAtSameMomentAs(startDate!)) &&
         date.isBefore(endDate!
             .add(const Duration(days: 1) /* make end date inclusive */));

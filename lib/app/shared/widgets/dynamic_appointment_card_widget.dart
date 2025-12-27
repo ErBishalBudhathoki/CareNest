@@ -1,16 +1,11 @@
-import 'package:carenest/app/core/base/helper.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shimmer/shimmer.dart';
-import 'appointment_card_widget.dart';
 
 class DynamicAppointmentCardWidget extends StatefulWidget {
   final List clientEmailList;
@@ -32,6 +27,20 @@ class DynamicAppointmentCardWidget extends StatefulWidget {
 
 class _DynamicAppointmentCardWidgetState
     extends State<DynamicAppointmentCardWidget> {
+  // Color constants
+  static const Color _primaryColor = Color(0xFF6366F1);
+  static const Color _successColor = Color(0xFF34C759);
+  static const Color _errorColor = Color(0xFFEF4444);
+  static const Color _gray50 = Color(0xFFF9FAFB);
+  static const Color _gray800 = Color(0xFF1F2937);
+
+  // Spacing constants (xs=4, sm=8, md=16, lg=24, xl=32)
+  static const double _spacingXs = 4.0;
+  static const double _spacingSm = 8.0;
+  static const double _spacingMd = 16.0;
+  static const double _spacingLg = 24.0;
+  static const double _spacingXl = 32.0;
+
   // Enhanced responsive breakpoints
   bool _isSmallScreen(BuildContext context) {
     return MediaQuery.of(context).size.width < 600;
@@ -91,11 +100,11 @@ class _DynamicAppointmentCardWidgetState
 
   EdgeInsets _getAdaptivePadding(BuildContext context) {
     if (_isSmallScreen(context)) {
-      return EdgeInsets.all(ModernInvoiceDesign.space3);
+      return const EdgeInsets.all(_spacingSm);
     } else if (_isMediumScreen(context)) {
-      return EdgeInsets.all(ModernInvoiceDesign.space4);
+      return const EdgeInsets.all(_spacingMd);
     } else {
-      return EdgeInsets.all(ModernInvoiceDesign.space5);
+      return const EdgeInsets.all(_spacingLg);
     }
   }
 
@@ -111,56 +120,54 @@ class _DynamicAppointmentCardWidgetState
         height: cardHeight,
         margin: EdgeInsets.symmetric(
           horizontal: _isSmallScreen(context)
-              ? ModernInvoiceDesign.space3
-              : ModernInvoiceDesign.space4,
+              ? _spacingSm
+              : _spacingMd,
           vertical: _isSmallScreen(context)
-              ? ModernInvoiceDesign.space2
-              : ModernInvoiceDesign.space4,
+              ? _spacingXs
+              : _spacingMd,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(ModernInvoiceDesign.space6),
+          borderRadius: BorderRadius.circular(_spacingLg),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.all(ModernInvoiceDesign.space5),
+              margin: const EdgeInsets.all(_spacingLg),
               height: 24,
               width: 150,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(ModernInvoiceDesign.space2),
+                borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
             Container(
-              margin:
-                  EdgeInsets.symmetric(horizontal: ModernInvoiceDesign.space5),
+              margin: const EdgeInsets.symmetric(horizontal: _spacingLg),
               height: 16,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(ModernInvoiceDesign.space2),
+                borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
-            SizedBox(height: ModernInvoiceDesign.space4),
+            const SizedBox(height: _spacingMd),
             Container(
-              margin:
-                  EdgeInsets.symmetric(horizontal: ModernInvoiceDesign.space5),
+              margin: const EdgeInsets.symmetric(horizontal: _spacingLg),
               height: 16,
               width: screenSize.width * 0.6,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(ModernInvoiceDesign.space2),
+                borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
             const Spacer(),
             Container(
-              margin: EdgeInsets.all(ModernInvoiceDesign.space5),
+              margin: const EdgeInsets.all(_spacingLg),
               height: 40,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(ModernInvoiceDesign.space2),
+                borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
           ],
@@ -195,13 +202,11 @@ class _DynamicAppointmentCardWidgetState
   }
 
   Future<dynamic> getFutureClientsData() async {
-    //print("getFutureClientsData: ${widget.clientEmailList[0]}");
     String emails = widget.clientEmailList.join(',');
     futureClientsData = (apiMethod.fetchMultiplePatientData(emails));
     setState(() {
       setFutureClientsData = futureClientsData;
     });
-    //return futureClientsData;
     print("Future Clients Data: $futureClientsData");
     return [setFutureClientsData];
   }
@@ -251,11 +256,11 @@ class _DynamicAppointmentCardWidgetState
               final cardHeight = _getCardHeight(context);
               final adaptivePadding = _getAdaptivePadding(context);
               final verticalPadding = _isSmallScreen(context)
-                  ? ModernInvoiceDesign.space2
-                  : ModernInvoiceDesign.space4;
+                  ? _spacingSm
+                  : _spacingMd;
               final horizontalPadding = _isSmallScreen(context)
-                  ? ModernInvoiceDesign.space4
-                  : ModernInvoiceDesign.space5;
+                  ? _spacingMd
+                  : _spacingLg;
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -270,30 +275,27 @@ class _DynamicAppointmentCardWidgetState
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         return Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: ModernInvoiceDesign.space1,
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: _spacingXs,
                           ),
                           clipBehavior: Clip.antiAlias,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                ModernInvoiceDesign.space6),
+                            borderRadius: BorderRadius.circular(_spacingLg),
                           ),
                           child: Container(
-                            padding: EdgeInsets.all(ModernInvoiceDesign.space4),
+                            padding: const EdgeInsets.all(_spacingMd),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
+                              gradient: const LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  ModernInvoiceDesign.surface,
-                                  ModernInvoiceDesign.background,
+                                  Colors.white,
+                                  _gray50,
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(
-                                  ModernInvoiceDesign.space6),
+                              borderRadius: BorderRadius.circular(_spacingLg),
                               border: Border.all(
-                                color: ModernInvoiceDesign.primary
-                                    .withValues(alpha: 0.1),
+                                color: _primaryColor.withOpacity(0.1),
                                 width: 1,
                               ),
                             ),
@@ -304,43 +306,37 @@ class _DynamicAppointmentCardWidgetState
                               children: [
                                 // Header section
                                 Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: ModernInvoiceDesign.space4,
-                                    vertical: ModernInvoiceDesign.space2,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: _spacingMd,
+                                    vertical: _spacingSm,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: ModernInvoiceDesign.primary
-                                        .withValues(alpha: 0.08),
-                                    borderRadius: BorderRadius.circular(
-                                        ModernInvoiceDesign.space5),
+                                    color: _primaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(_spacingLg),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Container(
-                                        padding: EdgeInsets.all(
-                                            ModernInvoiceDesign.space2),
+                                        padding: const EdgeInsets.all(_spacingSm),
                                         decoration: BoxDecoration(
-                                          color: ModernInvoiceDesign.primary,
-                                          borderRadius: BorderRadius.circular(
-                                              ModernInvoiceDesign.space2),
+                                          color: _primaryColor,
+                                          borderRadius: BorderRadius.circular(_spacingSm),
                                         ),
                                         child: Icon(
-                                          Iconsax.calendar_1,
-                                          color:
-                                              ModernInvoiceDesign.textOnPrimary,
+                                          Icons.calendar_today_outlined,
+                                          color: Colors.white,
                                           size: _getIconSize(context),
                                         ),
                                       ),
-                                      SizedBox(
-                                          width: ModernInvoiceDesign.space2),
+                                      const SizedBox(width: _spacingSm),
                                       Text(
                                         'Appointment Details',
                                         style: TextStyle(
                                           fontSize: _getFontSize(context,
                                               type: 'header'),
                                           fontWeight: FontWeight.w700,
-                                          color: ModernInvoiceDesign.primary,
+                                          color: _primaryColor,
                                           letterSpacing: 0.5,
                                         ),
                                       ),
@@ -353,35 +349,31 @@ class _DynamicAppointmentCardWidgetState
                                   child: SingleChildScrollView(
                                     // FIX: Added to prevent overflow on smaller screens
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: ModernInvoiceDesign.space3,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: _spacingSm,
                                       ),
                                       child: Column(
                                         children: [
                                           _buildModernInfoRow(
                                             context,
-                                            Iconsax.user,
+                                            Icons.person_outline,
                                             'Client',
                                             "${snapshot.data![index].clientFirstName} ${snapshot.data![index].clientLastName}",
                                           ),
-                                          SizedBox(
-                                              height:
-                                                  ModernInvoiceDesign.space3),
+                                          const SizedBox(height: _spacingSm),
                                           _buildModernInfoRow(
                                             context,
-                                            Iconsax.location,
+                                            Icons.location_on_outlined,
                                             'Address',
                                             "${snapshot.data![index].clientAddress} ${snapshot.data![index].clientCity} ${snapshot.data![index].clientState} ${snapshot.data![index].clientZip}",
                                           ),
-                                          SizedBox(
-                                              height:
-                                                  ModernInvoiceDesign.space3),
+                                          const SizedBox(height: _spacingSm),
                                           Row(
                                             children: [
                                               Expanded(
                                                 child: _buildModernInfoRow(
                                                   context,
-                                                  Iconsax.timer_start,
+                                                  Icons.play_circle_outline,
                                                   'Start',
                                                   "${(setAppointmentData['data'][index]['schedule'] as List?)?.first?['startTime'] ?? 'N/A'}",
                                                   isCompact: true,
@@ -389,14 +381,12 @@ class _DynamicAppointmentCardWidgetState
                                               ),
                                               SizedBox(
                                                   width: _isSmallScreen(context)
-                                                      ? ModernInvoiceDesign
-                                                          .space1
-                                                      : ModernInvoiceDesign
-                                                          .space2),
+                                                      ? 4.0
+                                                      : 8.0),
                                               Expanded(
                                                 child: _buildModernInfoRow(
                                                   context,
-                                                  Iconsax.timer_pause,
+                                                  Icons.pause_circle_outline,
                                                   'End',
                                                   "${(setAppointmentData['data'][index]['schedule'] as List?)?.first?['endTime'] ?? 'N/A'}",
                                                   isCompact: true,
@@ -415,22 +405,20 @@ class _DynamicAppointmentCardWidgetState
                                   height: _isSmallScreen(context) ? 48 : 56,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
+                                    gradient: const LinearGradient(
                                       colors: [
-                                        ModernInvoiceDesign.primary,
-                                        ModernInvoiceDesign.secondary,
+                                        _primaryColor,
+                                        _successColor,
                                       ],
                                       begin: Alignment.centerLeft,
                                       end: Alignment.centerRight,
                                     ),
-                                    borderRadius: BorderRadius.circular(
-                                        ModernInvoiceDesign.space5),
+                                    borderRadius: BorderRadius.circular(_spacingLg),
                                   ),
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
-                                      borderRadius: BorderRadius.circular(
-                                          ModernInvoiceDesign.space5),
+                                      borderRadius: BorderRadius.circular(_spacingLg),
                                       onTap: () async {
                                         await Navigator.push(
                                           context,
@@ -446,41 +434,33 @@ class _DynamicAppointmentCardWidgetState
                                         );
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal:
-                                              ModernInvoiceDesign.space4,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: _spacingMd,
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
                                             Icon(
-                                              Iconsax.eye,
-                                              color: ModernInvoiceDesign
-                                                  .textOnPrimary,
+                                              Icons.visibility_outlined,
+                                              color: Colors.white,
                                               size: _getIconSize(context),
                                             ),
-                                            SizedBox(
-                                                width:
-                                                    ModernInvoiceDesign.space2),
+                                            const SizedBox(width: _spacingSm),
                                             Text(
                                               'View Details',
                                               style: TextStyle(
-                                                color: ModernInvoiceDesign
-                                                    .textOnPrimary,
+                                                color: Colors.white,
                                                 fontSize: _getFontSize(context,
                                                     type: 'button'),
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 0.5,
                                               ),
                                             ),
-                                            SizedBox(
-                                                width:
-                                                    ModernInvoiceDesign.space2),
+                                            const SizedBox(width: _spacingSm),
                                             Icon(
-                                              Iconsax.arrow_right_3,
-                                              color: ModernInvoiceDesign
-                                                  .textOnPrimary,
+                                              Icons.arrow_forward_ios,
+                                              color: Colors.white,
                                               size: _getIconSize(context),
                                             ),
                                           ],
@@ -496,22 +476,19 @@ class _DynamicAppointmentCardWidgetState
                       },
                     ),
                   ),
-                  SizedBox(
-                      height: ModernInvoiceDesign.space4), // Reduced spacing
+                  const SizedBox(height: _spacingMd), // Reduced spacing
                   // Modern page indicator
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ModernInvoiceDesign.space4,
-                      vertical: ModernInvoiceDesign.space2,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: _spacingMd,
+                      vertical: _spacingSm,
                     ),
                     decoration: BoxDecoration(
-                      color: ModernInvoiceDesign.surface,
-                      borderRadius:
-                          BorderRadius.circular(ModernInvoiceDesign.space5),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(_spacingLg),
                       boxShadow: [
                         BoxShadow(
-                          color: ModernInvoiceDesign.primary
-                              .withValues(alpha: 0.1),
+                          color: _primaryColor.withOpacity(0.1),
                           blurRadius: 8.0,
                           offset: const Offset(0, 2),
                         ),
@@ -525,9 +502,8 @@ class _DynamicAppointmentCardWidgetState
                         dotWidth: _isSmallScreen(context) ? 8.0 : 10.0,
                         expansionFactor: 3,
                         spacing: 6.0,
-                        activeDotColor: ModernInvoiceDesign.primary,
-                        dotColor:
-                            ModernInvoiceDesign.primary.withValues(alpha: 0.2),
+                        activeDotColor: _primaryColor,
+                        dotColor: _primaryColor.withOpacity(0.1),
                       ),
                     ),
                   ),
@@ -539,25 +515,24 @@ class _DynamicAppointmentCardWidgetState
           print(snapshot.error);
           return Container(
             height: context.height * 0.35,
-            margin:
-                EdgeInsets.symmetric(horizontal: ModernInvoiceDesign.space4),
+            margin: const EdgeInsets.symmetric(horizontal: _spacingMd),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ModernInvoiceDesign.space6),
+              borderRadius: BorderRadius.circular(_spacingLg),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  ModernInvoiceDesign.error.withValues(alpha: 0.1),
-                  ModernInvoiceDesign.error.withValues(alpha: 0.2),
+                  _errorColor.withOpacity(0.1),
+                  _errorColor.withOpacity(0.1),
                 ],
               ),
               border: Border.all(
-                color: ModernInvoiceDesign.error.withValues(alpha: 0.3),
+                color: _errorColor.withOpacity(0.1),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: ModernInvoiceDesign.error.withValues(alpha: 0.1),
+                  color: _errorColor.withOpacity(0.1),
                   blurRadius: 12.0,
                   offset: const Offset(0, 6),
                 ),
@@ -566,25 +541,25 @@ class _DynamicAppointmentCardWidgetState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Iconsax.warning_2,
-                  color: ModernInvoiceDesign.error,
+                const Icon(
+                  Icons.warning_amber_outlined,
+                  color: _errorColor,
                   size: 48,
                 ),
-                SizedBox(height: ModernInvoiceDesign.space4),
-                Text(
+                const SizedBox(height: _spacingMd),
+                const Text(
                   "Connection Error",
                   style: TextStyle(
-                    color: ModernInvoiceDesign.error,
+                    color: _errorColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: ModernInvoiceDesign.space2),
-                Text(
+                const SizedBox(height: _spacingSm),
+                const Text(
                   "Please check your internet connection",
                   style: TextStyle(
-                    color: ModernInvoiceDesign.error,
+                    color: _errorColor,
                     fontSize: 14,
                   ),
                   textAlign: TextAlign.center,
@@ -595,13 +570,13 @@ class _DynamicAppointmentCardWidgetState
         }
         return Container(
           height: context.height * 0.35,
-          margin: EdgeInsets.symmetric(horizontal: ModernInvoiceDesign.space4),
+          margin: const EdgeInsets.symmetric(horizontal: _spacingMd),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ModernInvoiceDesign.space6),
-            color: ModernInvoiceDesign.surface,
+            borderRadius: BorderRadius.circular(_spacingLg),
+            color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+                color: _primaryColor.withOpacity(0.1),
                 blurRadius: 12.0,
                 offset: const Offset(0, 6),
               ),
@@ -611,22 +586,21 @@ class _DynamicAppointmentCardWidgetState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(ModernInvoiceDesign.space5),
+                padding: const EdgeInsets.all(_spacingLg),
                 decoration: BoxDecoration(
-                  color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+                  color: _primaryColor.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      ModernInvoiceDesign.primary),
+                child: const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(_primaryColor),
                   strokeWidth: 3,
                 ),
               ),
-              SizedBox(height: ModernInvoiceDesign.space4),
-              Text(
+              const SizedBox(height: _spacingMd),
+              const Text(
                 "Loading appointments...",
                 style: TextStyle(
-                  color: ModernInvoiceDesign.textPrimary,
+                  color: _gray800,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -648,13 +622,13 @@ class _DynamicAppointmentCardWidgetState
   }) {
     return Container(
       padding: EdgeInsets.all(isCompact
-          ? ModernInvoiceDesign.space2
-          : ModernInvoiceDesign.space3), // Reduced padding
+          ? _spacingSm
+          : _spacingSm), // Reduced padding
       decoration: BoxDecoration(
-        color: ModernInvoiceDesign.background.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(ModernInvoiceDesign.space4),
+        color: _gray50.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(_spacingMd),
         border: Border.all(
-          color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
+          color: _primaryColor.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -664,16 +638,16 @@ class _DynamicAppointmentCardWidgetState
           Container(
             padding: EdgeInsets.all(isCompact ? 6 : 8),
             decoration: BoxDecoration(
-              color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(ModernInvoiceDesign.space2),
+              color: _primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(_spacingSm),
             ),
             child: Icon(
               icon,
-              color: ModernInvoiceDesign.primary,
+              color: _primaryColor,
               size: _getIconSize(context),
             ),
           ),
-          SizedBox(width: ModernInvoiceDesign.space2),
+          const SizedBox(width: _spacingSm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -683,17 +657,17 @@ class _DynamicAppointmentCardWidgetState
                   style: TextStyle(
                     fontSize: _getFontSize(context, type: 'caption'),
                     fontWeight: FontWeight.w600,
-                    color: ModernInvoiceDesign.primary,
+                    color: _primaryColor,
                     letterSpacing: 0.3,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   text,
                   style: TextStyle(
                     fontSize: _getFontSize(context, type: 'body'),
                     fontWeight: FontWeight.w500,
-                    color: ModernInvoiceDesign.textPrimary,
+                    color: _gray800,
                     height: 1.3,
                   ),
                   maxLines: isCompact ? 1 : (_isSmallScreen(context) ? 1 : 2),

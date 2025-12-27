@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
 import 'package:carenest/app/shared/design_system/modern_pricing_design_system.dart';
-import 'dart:ui';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class NdisItemManagementView extends ConsumerStatefulWidget {
@@ -34,9 +31,9 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   String _selectedUnit = 'Hour';
   bool _isActive = true;
   String _searchQuery = '';
-  bool _isLoading = false;
+  final bool _isLoading = false;
   bool _showOnboarding = true;
-  Set<String> _selectedItemIds = {};
+  final Set<String> _selectedItemIds = {};
 
   final List<String> _categories = [
     'Core Supports',
@@ -55,7 +52,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   ];
 
   // Mock data for NDIS items
-  List<Map<String, dynamic>> _ndisItems = [
+  final List<Map<String, dynamic>> _ndisItems = [
     {
       'id': '1',
       'code': '01_001_0103_1_1',
@@ -934,7 +931,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           onChanged: onChanged,
           decoration: InputDecoration(
             border: OutlineInputBorder(

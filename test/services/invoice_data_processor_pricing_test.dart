@@ -32,7 +32,7 @@ class StubApiMethod extends Mock implements ApiMethod {
 
 /// Test-specific LineItemViewModel that returns an empty list to satisfy dependencies.
 class TestLineItemViewModel extends LineItemViewModel {
-  TestLineItemViewModel(ApiMethod api) : super(api);
+  TestLineItemViewModel(super.api);
 
   @override
   Future<List<Map<String, dynamic>>> getSupportItems() async {
