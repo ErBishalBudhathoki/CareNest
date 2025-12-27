@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 
 /// Enhanced design system for modern, clean UI
 class EnhancedDesignSystem {
@@ -153,7 +152,7 @@ class EnhancedStatCard extends StatefulWidget {
   final bool isLoading;
 
   const EnhancedStatCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     this.subtitle,
@@ -161,7 +160,7 @@ class EnhancedStatCard extends StatefulWidget {
     required this.color,
     this.onTap,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedStatCard> createState() => _EnhancedStatCardState();
@@ -179,7 +178,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(EnhancedDesignSystem.space4),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -189,29 +188,29 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
                 Colors.grey.shade50,
               ],
             ),
-            borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+            borderRadius: BorderRadius.circular(12.0),
             border: Border.all(
               color: _isHovered
-                  ? widget.color.withValues(alpha: 0.4)
-                  : EnhancedDesignSystem.borderColor.withValues(alpha: 0.8),
+                  ? widget.color.withOpacity(0.1)
+                  : const Color(0xFFE0E0E0).withOpacity(0.1),
               width: _isHovered ? 2 : 1.5,
             ),
             boxShadow: _isHovered
                 ? [
                     BoxShadow(
-                      color: widget.color.withValues(alpha: 0.15),
+                      color: widget.color.withOpacity(0.1),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withOpacity(0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ]
                 : [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
+                      color: Colors.black.withOpacity(0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -236,9 +235,9 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: widget.color.withValues(alpha: 0.12),
+                color: widget.color.withOpacity(0.1),
                 borderRadius:
-                    BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+                    BorderRadius.circular(8.0),
               ),
               child: Icon(
                 widget.icon,
@@ -250,13 +249,13 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: EnhancedDesignSystem.gray100,
+                  color: const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Icon(
                   Icons.arrow_forward_ios,
                   size: 10,
-                  color: EnhancedDesignSystem.gray500,
+                  color: const Color(0xFFFAFAFA),
                 ),
               ),
           ],
@@ -266,7 +265,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                vertical: EnhancedDesignSystem.space2),
+                vertical: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -274,8 +273,8 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
                 // Value
                 Text(
                   widget.value,
-                  style: EnhancedDesignSystem.headingLg.copyWith(
-                    color: EnhancedDesignSystem.gray900,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600).copyWith(
+                    color: const Color(0xFF171717),
                     fontWeight: FontWeight.w800,
                     height: 1.0,
                     fontSize: 22,
@@ -288,8 +287,8 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
                 // Title
                 Text(
                   widget.title,
-                  style: EnhancedDesignSystem.bodyMd.copyWith(
-                    color: EnhancedDesignSystem.gray700,
+                  style: const TextStyle(fontSize: 14).copyWith(
+                    color: const Color(0xFF404040),
                     fontWeight: FontWeight.w600,
                     height: 1.1,
                     fontSize: 13,
@@ -308,8 +307,8 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
             padding: const EdgeInsets.only(top: 4),
             child: Text(
               widget.subtitle!,
-              style: EnhancedDesignSystem.bodySm.copyWith(
-                color: EnhancedDesignSystem.gray600,
+              style: const TextStyle(fontSize: 12).copyWith(
+                color: const Color(0xFF757575),
                 fontWeight: FontWeight.w500,
                 height: 1.2,
                 fontSize: 11,
@@ -333,9 +332,9 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: EnhancedDesignSystem.gray200,
+                color: const Color(0xFFE5E5E5),
                 borderRadius:
-                    BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+                    BorderRadius.circular(8.0),
               ),
             ),
             const Spacer(),
@@ -343,34 +342,34 @@ class _EnhancedStatCardState extends State<EnhancedStatCard> {
               width: 10,
               height: 10,
               decoration: BoxDecoration(
-                color: EnhancedDesignSystem.gray200,
+                color: const Color(0xFFE5E5E5),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ],
         ),
-        const SizedBox(height: EnhancedDesignSystem.space2),
+        const SizedBox(height: 8.0),
         Container(
           width: 60,
           height: 20,
           decoration: BoxDecoration(
-            color: EnhancedDesignSystem.gray200,
+            color: const Color(0xFFE5E5E5),
             borderRadius: BorderRadius.circular(4),
           ),
         ),
-        const SizedBox(height: EnhancedDesignSystem.space1),
+        const SizedBox(height: 4.0),
         Container(
           width: 80,
           height: 12,
           decoration: BoxDecoration(
-            color: EnhancedDesignSystem.gray200,
+            color: const Color(0xFFE5E5E5),
             borderRadius: BorderRadius.circular(4),
           ),
         ),
       ],
     )
         .animate(onPlay: (controller) => controller.repeat())
-        .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.5));
+        .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.1));
   }
 }
 
@@ -383,13 +382,13 @@ class EnhancedSearchBar extends StatefulWidget {
   final List<String> activeFilters;
 
   const EnhancedSearchBar({
-    Key? key,
+    super.key,
     required this.controller,
     this.hintText = 'Search...',
     this.onFilterTap,
     this.onAddTap,
     this.activeFilters = const [],
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedSearchBar> createState() => _EnhancedSearchBarState();
@@ -401,12 +400,12 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(EnhancedDesignSystem.space6),
+      padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: EnhancedDesignSystem.surfaceWhite,
+        color: Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: EnhancedDesignSystem.borderColor,
+            color: const Color(0xFFE0E0E0),
             width: 1,
           ),
         ),
@@ -418,13 +417,13 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: EnhancedDesignSystem.gray50,
+                    color: const Color(0xFFFAFAFA),
                     borderRadius:
-                        BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+                        BorderRadius.circular(12.0),
                     border: Border.all(
                       color: _isFocused
-                          ? EnhancedDesignSystem.primaryColor
-                          : EnhancedDesignSystem.borderColor,
+                          ? const Color(0xFF667EEA)
+                          : const Color(0xFFE0E0E0),
                       width: _isFocused ? 2 : 1,
                     ),
                   ),
@@ -433,19 +432,19 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
                     onChanged: (value) => setState(() {}),
                     decoration: InputDecoration(
                       hintText: widget.hintText,
-                      hintStyle: EnhancedDesignSystem.bodyMd.copyWith(
-                        color: EnhancedDesignSystem.gray400,
+                      hintStyle: const TextStyle(fontSize: 14).copyWith(
+                        color: const Color(0xFFA3A3A3),
                       ),
                       prefixIcon: Icon(
                         Icons.search,
-                        color: EnhancedDesignSystem.gray400,
+                        color: const Color(0xFFA3A3A3),
                         size: 20,
                       ),
                       suffixIcon: widget.controller.text.isNotEmpty
                           ? IconButton(
                               icon: Icon(
                                 Icons.clear,
-                                color: EnhancedDesignSystem.gray400,
+                                color: const Color(0xFFA3A3A3),
                                 size: 20,
                               ),
                               onPressed: () {
@@ -456,23 +455,23 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
                           : null,
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: EnhancedDesignSystem.space4,
-                        vertical: EnhancedDesignSystem.space3,
+                        horizontal: 16.0,
+                        vertical: 12.0,
                       ),
                     ),
-                    style: EnhancedDesignSystem.bodyMd,
+                    style: const TextStyle(fontSize: 14),
                     onTap: () => setState(() => _isFocused = true),
                     onTapOutside: (_) => setState(() => _isFocused = false),
                   ),
                 ),
               ),
-              const SizedBox(width: EnhancedDesignSystem.space3),
+              const SizedBox(width: 12.0),
               _buildActionButton(
                 icon: Icons.tune,
                 onTap: widget.onFilterTap,
                 badge: widget.activeFilters.length,
               ),
-              const SizedBox(width: EnhancedDesignSystem.space2),
+              const SizedBox(width: 8.0),
               _buildActionButton(
                 icon: Icons.add,
                 onTap: widget.onAddTap,
@@ -481,7 +480,7 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
             ],
           ),
           if (widget.activeFilters.isNotEmpty) ...<Widget>[
-            const SizedBox(height: EnhancedDesignSystem.space4),
+            const SizedBox(height: 16.0),
             _buildActiveFilters(),
           ]
         ],
@@ -502,23 +501,23 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
           height: 44,
           decoration: BoxDecoration(
             color: isPrimary
-                ? EnhancedDesignSystem.primaryColor
-                : EnhancedDesignSystem.surfaceWhite,
-            borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+                ? const Color(0xFF667EEA)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(12.0),
             border: isPrimary
                 ? null
-                : Border.all(color: EnhancedDesignSystem.borderColor),
-            boxShadow: EnhancedDesignSystem.shadowSm,
+                : Border.all(color: const Color(0xFFE0E0E0)),
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: onTap,
               borderRadius:
-                  BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+                  BorderRadius.circular(12.0),
               child: Icon(
                 icon,
-                color: isPrimary ? Colors.white : EnhancedDesignSystem.gray600,
+                color: isPrimary ? Colors.white : const Color(0xFF757575),
                 size: 20,
               ),
             ),
@@ -531,7 +530,7 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: EnhancedDesignSystem.errorColor,
+                color: Colors.red,
                 borderRadius: BorderRadius.circular(10),
               ),
               constraints: const BoxConstraints(
@@ -540,7 +539,7 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
               ),
               child: Text(
                 badge.toString(),
-                style: EnhancedDesignSystem.caption.copyWith(
+                style: const TextStyle(fontSize: 12).copyWith(
                   color: Colors.white,
                   fontSize: 10,
                 ),
@@ -554,19 +553,19 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
 
   Widget _buildActiveFilters() {
     return Wrap(
-      spacing: EnhancedDesignSystem.space2,
-      runSpacing: EnhancedDesignSystem.space2,
+      spacing: 8.0,
+      runSpacing: 8.0,
       children: widget.activeFilters.map((filter) {
         return Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: EnhancedDesignSystem.space3,
-            vertical: EnhancedDesignSystem.space1,
+            horizontal: 12.0,
+            vertical: 4.0,
           ),
           decoration: BoxDecoration(
-            color: EnhancedDesignSystem.primaryColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusSm),
+            color: const Color(0xFF667EEA).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(4.0),
             border: Border.all(
-              color: EnhancedDesignSystem.primaryColor.withValues(alpha: 0.3),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
             ),
           ),
           child: Row(
@@ -574,11 +573,11 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
             children: [
               Text(
                 filter,
-                style: EnhancedDesignSystem.bodySm.copyWith(
-                  color: EnhancedDesignSystem.primaryColor,
+                style: const TextStyle(fontSize: 12).copyWith(
+                  color: const Color(0xFF667EEA),
                 ),
               ),
-              const SizedBox(width: EnhancedDesignSystem.space1),
+              const SizedBox(width: 4.0),
               GestureDetector(
                 onTap: () {
                   // Remove filter logic would go here
@@ -586,7 +585,7 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
                 child: Icon(
                   Icons.close,
                   size: 14,
-                  color: EnhancedDesignSystem.primaryColor,
+                  color: const Color(0xFF667EEA),
                 ),
               ),
             ],
@@ -607,14 +606,14 @@ class EnhancedRateCard extends StatefulWidget {
   final VoidCallback? onToggleSelect;
 
   const EnhancedRateCard({
-    Key? key,
+    super.key,
     required this.rate,
     this.isSelected = false,
     this.onTap,
     this.onEdit,
     this.onDelete,
     this.onToggleSelect,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedRateCard> createState() => _EnhancedRateCardState();
@@ -633,36 +632,36 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: EnhancedDesignSystem.space4),
+        margin: const EdgeInsets.only(bottom: 16.0),
         decoration: BoxDecoration(
-          color: EnhancedDesignSystem.surfaceWhite,
-          borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
             color: widget.isSelected
-                ? EnhancedDesignSystem.primaryColor
+                ? const Color(0xFF667EEA)
                 : _isHovered
-                    ? EnhancedDesignSystem.gray300
-                    : EnhancedDesignSystem.borderColor,
+                    ? const Color(0xFFD4D4D4)
+                    : const Color(0xFFE0E0E0),
             width: widget.isSelected ? 2 : 1,
           ),
           boxShadow: _isHovered
-              ? EnhancedDesignSystem.shadowMd
-              : EnhancedDesignSystem.shadowSm,
+              ? [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))]
+              : [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: widget.onTap,
-            borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+            borderRadius: BorderRadius.circular(12.0),
             child: Padding(
-              padding: const EdgeInsets.all(EnhancedDesignSystem.space6),
+              padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(statusColor),
-                  const SizedBox(height: EnhancedDesignSystem.space4),
+                  const SizedBox(height: 16.0),
                   _buildRateInfo(),
-                  const SizedBox(height: EnhancedDesignSystem.space4),
+                  const SizedBox(height: 16.0),
                   _buildFooter(),
                 ],
               ),
@@ -680,9 +679,9 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
           Checkbox(
             value: widget.isSelected,
             onChanged: (_) => widget.onToggleSelect?.call(),
-            activeColor: EnhancedDesignSystem.primaryColor,
+            activeColor: const Color(0xFF667EEA),
           ),
-          const SizedBox(width: EnhancedDesignSystem.space3),
+          const SizedBox(width: 12.0),
         ],
         Expanded(
           child: Column(
@@ -690,21 +689,21 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
             children: [
               Text(
                 widget.rate['serviceName'],
-                style: EnhancedDesignSystem.headingSm,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: EnhancedDesignSystem.space1),
+              const SizedBox(height: 4.0),
               Row(
                 children: [
                   _buildChip(
                     widget.rate['category'],
-                    EnhancedDesignSystem.gray100,
-                    EnhancedDesignSystem.gray600,
+                    const Color(0xFFF5F5F5),
+                    const Color(0xFF757575),
                   ),
-                  const SizedBox(width: EnhancedDesignSystem.space2),
+                  const SizedBox(width: 8.0),
                   _buildChip(
                     widget.rate['region'],
-                    EnhancedDesignSystem.gray100,
-                    EnhancedDesignSystem.gray600,
+                    const Color(0xFFF5F5F5),
+                    const Color(0xFF757575),
                   ),
                 ],
               ),
@@ -713,11 +712,11 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
         ),
         _buildChip(
           widget.rate['status'],
-          statusColor.withValues(alpha: 0.1),
+          statusColor.withOpacity(0.1),
           statusColor,
         ),
         if (_isHovered) ...<Widget>[
-          const SizedBox(width: EnhancedDesignSystem.space3),
+          const SizedBox(width: 12.0),
           _buildQuickActions(),
         ]
       ],
@@ -726,10 +725,10 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
 
   Widget _buildRateInfo() {
     return Container(
-      padding: const EdgeInsets.all(EnhancedDesignSystem.space4),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: EnhancedDesignSystem.gray50,
-        borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+        color: const Color(0xFFFAFAFA),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
         children: [
@@ -738,33 +737,33 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
               'Base Rate',
               '\$${widget.rate['baseRate'].toStringAsFixed(2)}',
               '/hr',
-              EnhancedDesignSystem.successColor,
+              Colors.green,
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: EnhancedDesignSystem.borderColor,
+            color: const Color(0xFFE0E0E0),
           ),
           Expanded(
             child: _buildRateItem(
               'Weekend',
               '\$${widget.rate['weekendRate'].toStringAsFixed(2)}',
               '/hr',
-              EnhancedDesignSystem.warningColor,
+              Colors.orange,
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: EnhancedDesignSystem.borderColor,
+            color: const Color(0xFFE0E0E0),
           ),
           Expanded(
             child: _buildRateItem(
               'Holiday',
               '\$${widget.rate['publicHolidayRate'].toStringAsFixed(2)}',
               '/hr',
-              EnhancedDesignSystem.errorColor,
+              Colors.red,
             ),
           ),
         ],
@@ -778,24 +777,24 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
       children: [
         Text(
           label,
-          style: EnhancedDesignSystem.caption,
+          style: const TextStyle(fontSize: 12),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
-        const SizedBox(height: EnhancedDesignSystem.space1),
+        const SizedBox(height: 4.0),
         RichText(
           text: TextSpan(
             children: [
               TextSpan(
                 text: value,
-                style: EnhancedDesignSystem.headingSm.copyWith(
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600).copyWith(
                   color: color,
                 ),
               ),
               TextSpan(
                 text: suffix,
-                style: EnhancedDesignSystem.bodySm.copyWith(
-                  color: EnhancedDesignSystem.gray500,
+                style: const TextStyle(fontSize: 12).copyWith(
+                  color: const Color(0xFFFAFAFA),
                 ),
               ),
             ],
@@ -813,21 +812,21 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
         Icon(
           Icons.schedule,
           size: 14,
-          color: EnhancedDesignSystem.gray400,
+          color: const Color(0xFFA3A3A3),
         ),
-        const SizedBox(width: EnhancedDesignSystem.space1),
+        const SizedBox(width: 4.0),
         Expanded(
           child: Text(
             'Updated ${widget.rate['lastUpdated']}',
-            style: EnhancedDesignSystem.caption,
+            style: const TextStyle(fontSize: 12),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
         ),
-        const SizedBox(width: EnhancedDesignSystem.space1),
+        const SizedBox(width: 4.0),
         Text(
           'ID: ${widget.rate['id']}',
-          style: EnhancedDesignSystem.caption,
+          style: const TextStyle(fontSize: 12),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
@@ -835,19 +834,19 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
     );
   }
 
-  Widget _buildChip(String label, Color backgroundColor, Color textColor) {
+  Widget _buildChip(String label, Color surfaceColor, Color textColor) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: EnhancedDesignSystem.space2,
-        vertical: EnhancedDesignSystem.space1,
+        horizontal: 8.0,
+        vertical: 4.0,
       ),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusSm),
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(4.0),
       ),
       child: Text(
         label,
-        style: EnhancedDesignSystem.bodySm.copyWith(
+        style: const TextStyle(fontSize: 12).copyWith(
           color: textColor,
           fontWeight: FontWeight.w500,
         ),
@@ -864,7 +863,7 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
           onTap: widget.onEdit,
           tooltip: 'Edit',
         ),
-        const SizedBox(width: EnhancedDesignSystem.space1),
+        const SizedBox(width: 4.0),
         _buildActionButton(
           icon: Icons.delete_outline,
           onTap: widget.onDelete,
@@ -888,21 +887,21 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
         height: 32,
         decoration: BoxDecoration(
           color: isDestructive
-              ? EnhancedDesignSystem.errorColor.withValues(alpha: 0.1)
-              : EnhancedDesignSystem.gray100,
-          borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+              ? Colors.red.withOpacity(0.1)
+              : const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(EnhancedDesignSystem.radiusMd),
+            borderRadius: BorderRadius.circular(8.0),
             child: Icon(
               icon,
               size: 16,
               color: isDestructive
-                  ? EnhancedDesignSystem.errorColor
-                  : EnhancedDesignSystem.gray600,
+                  ? Colors.red
+                  : const Color(0xFF757575),
             ),
           ),
         ),
@@ -913,13 +912,13 @@ class _EnhancedRateCardState extends State<EnhancedRateCard> {
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'active':
-        return EnhancedDesignSystem.successColor;
+        return Colors.green;
       case 'pending':
-        return EnhancedDesignSystem.warningColor;
+        return Colors.orange;
       case 'inactive':
-        return EnhancedDesignSystem.errorColor;
+        return Colors.red;
       default:
-        return EnhancedDesignSystem.gray500;
+        return const Color(0xFFFAFAFA);
     }
   }
 }
@@ -933,19 +932,19 @@ class EnhancedEmptyState extends StatelessWidget {
   final VoidCallback? onAction;
 
   const EnhancedEmptyState({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     this.icon = Icons.inbox_outlined,
     this.actionLabel,
     this.onAction,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(EnhancedDesignSystem.space12),
+        padding: const EdgeInsets.all(4.02),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -953,46 +952,45 @@ class EnhancedEmptyState extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: EnhancedDesignSystem.gray100,
+                color: const Color(0xFFF5F5F5),
                 borderRadius:
-                    BorderRadius.circular(EnhancedDesignSystem.radiusXl),
+                    BorderRadius.circular(16.0),
               ),
               child: Icon(
                 icon,
                 size: 40,
-                color: EnhancedDesignSystem.gray400,
+                color: const Color(0xFFA3A3A3),
               ),
             ),
-            const SizedBox(height: EnhancedDesignSystem.space6),
+            const SizedBox(height: 24.0),
             Text(
               title,
-              style: EnhancedDesignSystem.headingMd.copyWith(
-                color: EnhancedDesignSystem.gray600,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+                color: const Color(0xFF757575),
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: EnhancedDesignSystem.space3),
+            const SizedBox(height: 12.0),
             Text(
               message,
-              style: EnhancedDesignSystem.bodyMd.copyWith(
-                color: EnhancedDesignSystem.gray500,
+              style: const TextStyle(fontSize: 14).copyWith(
+                color: const Color(0xFFFAFAFA),
               ),
               textAlign: TextAlign.center,
             ),
             if (actionLabel != null && onAction != null) ...<Widget>[
-              const SizedBox(height: EnhancedDesignSystem.space6),
+              const SizedBox(height: 24.0),
               ElevatedButton(
                 onPressed: onAction,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: EnhancedDesignSystem.primaryColor,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: EnhancedDesignSystem.space6,
-                    vertical: EnhancedDesignSystem.space3,
+                    horizontal: 24.0,
+                    vertical: 12.0,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(EnhancedDesignSystem.radiusLg),
+                        BorderRadius.circular(12.0),
                   ),
                 ),
                 child: Text(actionLabel!),

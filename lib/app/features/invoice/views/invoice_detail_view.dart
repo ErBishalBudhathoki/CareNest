@@ -3,22 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/viewmodels/invoice_detail_viewmodel.dart';
 import 'package:carenest/app/features/invoice/services/invoice_share_service.dart';
-import 'package:carenest/app/features/invoice/services/invoice_management_service.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/widgets/loading_indicator.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
 
 class InvoiceDetailView extends ConsumerStatefulWidget {
   final String invoiceId;
   final String organizationId;
 
   const InvoiceDetailView({
-    Key? key,
+    super.key,
     required this.invoiceId,
     required this.organizationId,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<InvoiceDetailView> createState() => _InvoiceDetailViewState();

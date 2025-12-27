@@ -1,5 +1,5 @@
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
@@ -44,8 +44,8 @@ class _AddClientDetailsWidgetState extends State<AddClientDetailsWidget> {
           PageViewDotIndicator(
             currentItem: _currentPageIndex,
             count: widget.myWidgets.length,
-            unselectedColor: ModernSaasDesign.neutral300,
-            selectedColor: ModernSaasDesign.primary,
+            unselectedColor: const Color(0xFFD4D4D4),
+            selectedColor: const Color(0xFF667EEA),
             duration: const Duration(milliseconds: 200),
           ),
         ],

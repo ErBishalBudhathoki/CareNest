@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
 
 /// Chip variants for different visual styles
 enum ModernChipVariant {
@@ -193,7 +192,7 @@ class ModernGradientCard extends StatelessWidget {
   final double elevation;
 
   const ModernGradientCard({
-    Key? key,
+    super.key,
     required this.child,
     required this.gradientColors,
     this.borderRadius = ModernPricingDesign.radiusMd,
@@ -201,7 +200,7 @@ class ModernGradientCard extends StatelessWidget {
     this.onTap,
     this.showShadow = true,
     this.elevation = ModernPricingDesign.elevationMd,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -248,12 +247,12 @@ class ModernEmptyState extends StatelessWidget {
   final Widget? action;
 
   const ModernEmptyState({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     this.icon = Icons.inbox,
     this.action,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -303,28 +302,28 @@ class ModernCheckbox extends StatelessWidget {
   final Color? checkColor;
 
   const ModernCheckbox({
-    Key? key,
+    super.key,
     required this.value,
     this.onChanged,
     this.activeColor,
     this.checkColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
         checkboxTheme: CheckboxThemeData(
-          fillColor: MaterialStateProperty.resolveWith<Color?>((states) {
-            if (states.contains(MaterialState.disabled)) {
+          fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
+            if (states.contains(WidgetState.disabled)) {
               return null;
             }
-            if (states.contains(MaterialState.selected)) {
+            if (states.contains(WidgetState.selected)) {
               return activeColor ?? ModernPricingDesign.primaryColor;
             }
             return null;
           }),
-          checkColor: MaterialStateProperty.all(checkColor ?? Colors.white),
+          checkColor: WidgetStateProperty.all(checkColor ?? Colors.white),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ModernPricingDesign.radiusSm),
           ),
@@ -348,14 +347,14 @@ class ModernGlassCard extends StatelessWidget {
   final Color backgroundColor;
 
   const ModernGlassCard({
-    Key? key,
+    super.key,
     required this.child,
     this.borderRadius = ModernPricingDesign.radiusMd,
     this.padding = const EdgeInsets.all(ModernPricingDesign.spacingMd),
     this.onTap,
     this.opacity = 0.1,
     this.backgroundColor = Colors.white,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -403,7 +402,7 @@ class ModernStatCard extends StatelessWidget {
   final bool isLoading;
 
   const ModernStatCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     this.subtitle,
@@ -412,7 +411,7 @@ class ModernStatCard extends StatelessWidget {
     this.changePercentage,
     this.onTap,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -537,7 +536,7 @@ class ModernActionButton extends StatelessWidget {
   final ModernActionButtonVariant? variant;
 
   const ModernActionButton({
-    Key? key,
+    super.key,
     this.text,
     this.onPressed,
     this.icon,
@@ -553,7 +552,7 @@ class ModernActionButton extends StatelessWidget {
     this.isOutlined = false,
     this.elevation = ModernPricingDesign.elevationSm,
     this.variant,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -696,7 +695,7 @@ class ModernSearchBar extends StatelessWidget {
   final Widget? suffixIcon;
 
   const ModernSearchBar({
-    Key? key,
+    super.key,
     required this.controller,
     this.hintText = 'Search...',
     this.onClear,
@@ -704,7 +703,7 @@ class ModernSearchBar extends StatelessWidget {
     this.onSubmitted,
     this.prefixIcon,
     this.suffixIcon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -775,7 +774,7 @@ class ModernChip extends StatelessWidget {
   final ModernChipVariant? variant;
 
   const ModernChip({
-    Key? key,
+    super.key,
     required this.label,
     this.isSelected = false,
     this.onTap,
@@ -783,7 +782,7 @@ class ModernChip extends StatelessWidget {
     this.selectedColor,
     this.unselectedColor,
     this.variant,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

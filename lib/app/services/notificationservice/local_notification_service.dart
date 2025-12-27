@@ -1,11 +1,12 @@
-import 'package:flutter/cupertino.dart';
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'dart:typed_data';
+
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
-import 'package:flutter/foundation.dart';
 
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =

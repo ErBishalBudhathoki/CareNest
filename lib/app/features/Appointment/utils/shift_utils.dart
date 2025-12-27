@@ -1,5 +1,5 @@
 bool isShiftCompleted(Map<String, dynamic> shift, List<dynamic> timeRecords) {
-  if (timeRecords == null || timeRecords.isEmpty) return false;
+  if (timeRecords.isEmpty) return false;
 
   String shiftKey = '${shift['date']}_${shift['startTime']}';
 

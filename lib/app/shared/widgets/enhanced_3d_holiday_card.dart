@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:math' as math;
 
 class Enhanced3DHolidayCard extends StatefulWidget {
   final Map<String, dynamic> holiday;

@@ -28,7 +28,7 @@ abstract class Routes {
   static const enhancedInvoiceGeneration = '/enhancedInvoiceGeneration';
   static const automaticInvoiceGeneration = '/automaticInvoiceGeneration';
   static const employeeSelection = '/employeeSelection';
- static const String invoiceList = '/invoiceList';
+  static const String invoiceList = '/invoiceList';
   static const String invoiceDetails = '/invoiceDetails';
   static const bankDetails = '/bank-details';
 }

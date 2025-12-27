@@ -10,13 +10,13 @@ class ModernResponsiveLayout extends StatelessWidget {
   final double tabletBreakpoint;
 
   const ModernResponsiveLayout({
-    Key? key,
+    super.key,
     required this.mobile,
     this.tablet,
     this.desktop,
     this.mobileBreakpoint = ModernSaasDesign.breakpointMd,
     this.tabletBreakpoint = ModernSaasDesign.breakpointLg,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class ModernResponsiveGrid extends StatelessWidget {
   final double childAspectRatio;
 
   const ModernResponsiveGrid({
-    Key? key,
+    super.key,
     required this.children,
     this.spacing = ModernSaasDesign.space4,
     this.runSpacing = ModernSaasDesign.space4,
@@ -53,7 +53,7 @@ class ModernResponsiveGrid extends StatelessWidget {
     this.tabletColumns = 2,
     this.desktopColumns = 3,
     this.childAspectRatio = 1.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,12 +90,12 @@ class ModernSectionHeader extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const ModernSectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     this.action,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -143,13 +143,13 @@ class ModernEmptyState extends StatelessWidget {
   final Color? iconColor;
 
   const ModernEmptyState({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.description,
     this.action,
     this.iconColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -209,12 +209,12 @@ class ModernErrorState extends StatelessWidget {
   final String retryText;
 
   const ModernErrorState({
-    Key? key,
+    super.key,
     this.title = 'Something went wrong',
     this.description = 'We encountered an error while loading your data.',
     this.onRetry,
     this.retryText = 'Try Again',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -240,10 +240,10 @@ class ModernLoadingState extends StatelessWidget {
   final bool showMessage;
 
   const ModernLoadingState({
-    Key? key,
+    super.key,
     this.message,
     this.showMessage = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -280,14 +280,14 @@ class ModernStatsCard extends StatelessWidget {
   final Color? color;
 
   const ModernStatsCard({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     this.change,
     this.isPositiveChange = true,
     this.icon,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -360,12 +360,12 @@ class ModernFilterChip extends StatelessWidget {
   final IconData? icon;
 
   const ModernFilterChip({
-    Key? key,
+    super.key,
     required this.label,
     required this.isSelected,
     required this.onTap,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -423,12 +423,12 @@ class ModernProgressIndicator extends StatelessWidget {
   final double height;
 
   const ModernProgressIndicator({
-    Key? key,
+    super.key,
     required this.value,
     this.label,
     this.color,
     this.height = 8,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

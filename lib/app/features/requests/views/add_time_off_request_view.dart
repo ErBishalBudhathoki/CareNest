@@ -5,8 +5,7 @@ import 'package:intl/intl.dart';
 class AddTimeOffRequestView extends StatefulWidget {
   final String email;
 
-  const AddTimeOffRequestView({Key? key, required this.email})
-      : super(key: key);
+  const AddTimeOffRequestView({super.key, required this.email});
 
   @override
   State<AddTimeOffRequestView> createState() => _AddTimeOffRequestViewState();
@@ -66,8 +65,7 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.colorBlue,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -104,7 +102,6 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle:
               false, // Ensure left-aligned title (to match other labels)
@@ -338,8 +335,7 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _showSuccessDialog,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.colorBlue,
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

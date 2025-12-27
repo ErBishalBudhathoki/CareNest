@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:crypto/crypto.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Comprehensive Invoice Number Generation Service
@@ -309,7 +310,7 @@ class InvoiceNumberGeneratorService {
     // Replace special characters with underscores for filename safety
     final safeInvoiceNumber =
         invoiceNumber.replaceAll(RegExp(r'[^a-zA-Z0-9\-_]'), '_');
-    return 'Invoice_${safeInvoiceNumber}.$extension';
+    return 'Invoice_$safeInvoiceNumber.$extension';
   }
 
   /// Parse invoice number to extract components

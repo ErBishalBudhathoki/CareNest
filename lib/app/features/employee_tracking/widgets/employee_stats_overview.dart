@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/constants/values/themes/app_theme_config.dart';
-import 'package:carenest/app/shared/design_system/modern_pricing_design_system.dart';
 import '../models/employee_tracking_model.dart';
 
 class EmployeeStatsOverview extends StatelessWidget {
@@ -103,17 +102,17 @@ class EmployeeStatsOverview extends StatelessWidget {
     final gradientColors = _getGradientColors(color);
 
     return Container(
-      padding: const EdgeInsets.all(ModernPricingDesign.spacingMd),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: gradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(ModernPricingDesign.radiusLg),
+        borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: gradientColors.first.withValues(alpha: 0.3),
+            color: gradientColors.first.withOpacity(0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -125,11 +124,11 @@ class EmployeeStatsOverview extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(ModernPricingDesign.spacingXs),
+            padding: const EdgeInsets.all(4.0),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Colors.white.withOpacity(0.1),
               borderRadius:
-                  BorderRadius.circular(ModernPricingDesign.radiusRound),
+                  BorderRadius.circular(8.0),
             ),
             child: Icon(
               icon,
@@ -137,10 +136,10 @@ class EmployeeStatsOverview extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: ModernPricingDesign.spacingXs),
+          const SizedBox(height: 4.0),
           Text(
             value.toString(),
-            style: ModernPricingDesign.headingLg.copyWith(
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600).copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
               fontSize: 20,
@@ -150,8 +149,8 @@ class EmployeeStatsOverview extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             title,
-            style: ModernPricingDesign.bodyMd.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
+            style: const TextStyle(fontSize: 14).copyWith(
+              color: Colors.white.withOpacity(0.1),
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
@@ -228,21 +227,21 @@ class EmployeeFilterChips extends StatelessWidget {
                   null,
                   AppColors.colorGrey600,
                 ),
-                const SizedBox(width: ModernPricingDesign.spacingSm),
+                const SizedBox(width: 8.0),
                 _buildFilterChip(
                   'Active',
                   statusCounts[WorkStatus.active] ?? 0,
                   WorkStatus.active,
                   AppColors.colorSuccess,
                 ),
-                const SizedBox(width: ModernPricingDesign.spacingSm),
+                const SizedBox(width: 8.0),
                 _buildFilterChip(
                   'On Break',
                   statusCounts[WorkStatus.onBreak] ?? 0,
                   WorkStatus.onBreak,
                   AppColors.colorWarning,
                 ),
-                const SizedBox(width: ModernPricingDesign.spacingSm),
+                const SizedBox(width: 8.0),
                 _buildFilterChip(
                   'Offline',
                   statusCounts[WorkStatus.offline] ?? 0,
@@ -271,8 +270,8 @@ class EmployeeFilterChips extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-          horizontal: ModernPricingDesign.spacingLg,
-          vertical: ModernPricingDesign.spacingSm,
+          horizontal: 24.0,
+          vertical: 8.0,
         ),
         decoration: BoxDecoration(
           gradient: isSelected
@@ -283,23 +282,23 @@ class EmployeeFilterChips extends StatelessWidget {
                 )
               : null,
           color: isSelected ? null : Colors.white,
-          borderRadius: BorderRadius.circular(ModernPricingDesign.radiusRound),
+          borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
             color:
-                isSelected ? Colors.transparent : color.withValues(alpha: 0.3),
+                isSelected ? Colors.transparent : color.withOpacity(0.1),
             width: 1.5,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: gradientColors.first.withValues(alpha: 0.3),
+                    color: gradientColors.first.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),
@@ -310,28 +309,28 @@ class EmployeeFilterChips extends StatelessWidget {
           children: [
             Text(
               label,
-              style: ModernPricingDesign.bodyMd.copyWith(
+              style: const TextStyle(fontSize: 14).copyWith(
                 color: isSelected ? Colors.white : color,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
             if (count > 0) ...[
-              const SizedBox(width: ModernPricingDesign.spacingXs),
+              const SizedBox(width: 4.0),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: ModernPricingDesign.spacingXs,
+                  horizontal: 4.0,
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white.withValues(alpha: 0.2)
-                      : color.withValues(alpha: 0.1),
+                      ? Colors.white.withOpacity(0.1)
+                      : color.withOpacity(0.1),
                   borderRadius:
-                      BorderRadius.circular(ModernPricingDesign.radiusRound),
+                      BorderRadius.circular(8.0),
                 ),
                 child: Text(
                   count.toString(),
-                  style: ModernPricingDesign.caption.copyWith(
+                  style: const TextStyle(fontSize: 12).copyWith(
                     color: isSelected ? Colors.white : color,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,

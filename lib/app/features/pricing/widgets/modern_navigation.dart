@@ -8,11 +8,11 @@ class ModernBottomNavigation extends StatelessWidget {
   final List<ModernNavItem> items;
 
   const ModernBottomNavigation({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
     required this.items,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +123,7 @@ class ModernFloatingActionButton extends StatelessWidget {
   final String? label;
 
   const ModernFloatingActionButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.icon,
     this.tooltip,
@@ -131,7 +131,7 @@ class ModernFloatingActionButton extends StatelessWidget {
     this.foregroundColor,
     this.isExtended = false,
     this.label,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +184,7 @@ class ModernAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
 
   const ModernAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.leading,
@@ -193,7 +193,7 @@ class ModernAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.elevation = 0,
     this.showBackButton = false,
     this.onBackPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -234,12 +234,12 @@ class ModernTabBar extends StatelessWidget {
   final bool isScrollable;
 
   const ModernTabBar({
-    Key? key,
+    super.key,
     required this.tabs,
     required this.selectedIndex,
     required this.onTap,
     this.isScrollable = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -324,13 +324,13 @@ class ModernDrawer extends StatelessWidget {
   final ValueChanged<int>? onItemTap;
 
   const ModernDrawer({
-    Key? key,
+    super.key,
     this.userEmail,
     this.userName,
     this.userAvatar,
     required this.items,
     this.onItemTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

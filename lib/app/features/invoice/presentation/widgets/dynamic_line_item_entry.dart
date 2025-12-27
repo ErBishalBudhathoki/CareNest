@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/invoice_line_item.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/features/auth/models/user_role.dart';
+import '../../domain/models/invoice_line_item.dart';
+
 import 'package:carenest/utils/hours_formatting.dart';
 
 class DynamicLineItemEntry extends StatefulWidget {
@@ -11,10 +9,10 @@ class DynamicLineItemEntry extends StatefulWidget {
   final void Function(List<InvoiceLineItem>) onChanged;
 
   const DynamicLineItemEntry({
-    Key? key,
+    super.key,
     required this.lineItems,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<DynamicLineItemEntry> createState() => _DynamicLineItemEntryState();

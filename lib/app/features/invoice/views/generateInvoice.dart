@@ -1,27 +1,27 @@
-import 'dart:io';
 import 'package:carenest/app/features/invoice/domain/models/invoice_line_item.dart';
+import 'dart:io';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
-import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
+import 'package:carenest/app/shared/utils/pdf/pdf_viewer_io.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/features/invoice/presentation/widgets/dynamic_line_item_entry.dart';
+import 'package:carenest/app/shared/design_system/modern_pricing_design_system.dart';
 
 class GenerateInvoice extends ConsumerStatefulWidget {
   final String adminEmail;
   final String organizationId;
 
   const GenerateInvoice({
-    Key? key,
+    super.key,
     required this.adminEmail,
     required this.organizationId,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<GenerateInvoice> createState() => _GenerateInvoiceState();
@@ -42,13 +42,17 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   String _startDate = '';
   String _endDate = '';
   String _pdfPath = '';
+  final double _taxRate = 0.0;
 
   final ApiMethod _apiMethod = ApiMethod();
   final NDISMatcher _ndisMatcher = NDISMatcher();
   late final EnhancedInvoiceService _invoiceService;
   List<String> _apiHolidays = [];
-  PriceRegion _currentRegionForInvoice =
+  // ignore: unused_field
+  final PriceRegion _currentRegionForInvoice =
       PriceRegion.nsw; // Default, this should be configurable
+
+  static const double _kDefaultBaseRate = 30.00;
 
   @override
   void initState() {
@@ -85,8 +89,12 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red.shade700,
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: ModernPricingDesign.errorColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ModernPricingDesign.radiusMd)),
+        margin: const EdgeInsets.all(ModernPricingDesign.spacingMd),
         duration: const Duration(seconds: 4),
       ),
     );
@@ -206,68 +214,114 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   }
 
   Widget _buildEmployeeSelectionDialog(List<Map<String, dynamic>> employees) {
-    return AlertDialog(
-      title: const Text('Select Employee'),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: employees.length,
-          itemBuilder: (context, index) {
-            final employee = employees[index];
-            return ListTile(
-              title: Text('${employee['firstName']} ${employee['lastName']}'),
-              subtitle: Text(employee['email'] ?? 'No email'),
-              onTap: () => Navigator.of(context).pop(employee),
-            );
-          },
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: ModernGradientCard(
+        gradientColors: const [Colors.white, Colors.white],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Select Employee', style: ModernPricingDesign.headingMd),
+            const SizedBox(height: ModernPricingDesign.spacingMd),
+            SizedBox(
+              height: 300,
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: employees.length,
+                separatorBuilder: (_, __) => const Divider(
+                    height: 1, color: ModernPricingDesign.borderColor),
+                itemBuilder: (context, index) {
+                  final employee = employees[index];
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                        '${employee['firstName']} ${employee['lastName']}',
+                        style: ModernPricingDesign.bodyMd
+                            .copyWith(fontWeight: FontWeight.w600)),
+                    subtitle: Text(employee['email'] ?? 'No email',
+                        style: ModernPricingDesign.bodySm.copyWith(
+                            color: ModernPricingDesign.textSecondary)),
+                    onTap: () => Navigator.of(context).pop(employee),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: ModernPricingDesign.spacingMd),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ModernActionButton(
+                text: 'Cancel',
+                variant: ModernActionButtonVariant.ghost,
+                onPressed: () => Navigator.of(context).pop(null),
+              ),
+            ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-            onPressed: () => Navigator.of(context).pop(null),
-            child: const Text('Cancel'))
-      ],
     );
   }
 
   Widget _buildClientSelectionDialog(List<Map<String, dynamic>> assignments) {
-    return AlertDialog(
-      title: const Text('Select Client'),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: assignments.isEmpty
-            ? const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                    "No clients found assigned to the selected employee.",
-                    textAlign: TextAlign.center),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: assignments.length,
-                itemBuilder: (context, index) {
-                  final assignment = assignments[index];
-                  final details =
-                      (assignment['clientDetails'] is Map<String, dynamic>)
-                          ? assignment['clientDetails'] as Map<String, dynamic>
-                          : <String, dynamic>{};
-                  return ListTile(
-                    title: Text(
-                        '${details['clientFirstName'] ?? 'N/A'} ${details['clientLastName'] ?? 'N/A'}'),
-                    subtitle:
-                        Text(details['clientEmail'] ?? 'No email provided'),
-                    onTap: () => Navigator.of(context).pop(assignment),
-                  );
-                },
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: ModernGradientCard(
+        gradientColors: const [Colors.white, Colors.white],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Select Client', style: ModernPricingDesign.headingMd),
+            const SizedBox(height: ModernPricingDesign.spacingMd),
+            SizedBox(
+              height: 300,
+              child: assignments.isEmpty
+                  ? Center(
+                      child: Text(
+                          "No clients found assigned to the selected employee.",
+                          textAlign: TextAlign.center,
+                          style: ModernPricingDesign.bodyMd.copyWith(
+                              color: ModernPricingDesign.textSecondary)),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: assignments.length,
+                      separatorBuilder: (_, __) => const Divider(
+                          height: 1, color: ModernPricingDesign.borderColor),
+                      itemBuilder: (context, index) {
+                        final assignment = assignments[index];
+                        final details = (assignment['clientDetails']
+                                is Map<String, dynamic>)
+                            ? assignment['clientDetails']
+                                as Map<String, dynamic>
+                            : <String, dynamic>{};
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                              '${details['clientFirstName'] ?? 'N/A'} ${details['clientLastName'] ?? 'N/A'}',
+                              style: ModernPricingDesign.bodyMd
+                                  .copyWith(fontWeight: FontWeight.w600)),
+                          subtitle: Text(
+                              details['clientEmail'] ?? 'No email provided',
+                              style: ModernPricingDesign.bodySm.copyWith(
+                                  color: ModernPricingDesign.textSecondary)),
+                          onTap: () => Navigator.of(context).pop(assignment),
+                        );
+                      },
+                    ),
+            ),
+            const SizedBox(height: ModernPricingDesign.spacingMd),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ModernActionButton(
+                text: 'Cancel',
+                variant: ModernActionButtonVariant.ghost,
+                onPressed: () => Navigator.of(context).pop(null),
               ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(null),
-          child: const Text('Cancel'),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -382,7 +436,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           continue;
         }
 
-        NDISItem? matchedNdisItem = null;
+        NDISItem? matchedNdisItem;
         final String? assignedNdisItemNumber =
             selectedClient['assignedNdisItemNumber'];
 
@@ -482,13 +536,13 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         }
 
         bool isHighIntensityShift = false;
-        String? preferredSupportCategory = null;
-        String? preferredRegGroup = null;
+        String? preferredSupportCategory;
+        String? preferredRegGroup;
         bool preferTTPProvider = false;
         log.finest(
             "  Context for Matcher: isHighIntensity=$isHighIntensityShift, preferredCat=$preferredSupportCategory, preferredRegGrp=$preferredRegGroup, TTP=$preferTTPProvider");
 
-        NDISItem? matchedNdisItem = null;
+        NDISItem? matchedNdisItem;
         final String? assignedNdisItemNumber =
             selectedClient['assignedNdisItemNumber'];
 
@@ -523,10 +577,9 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               matchedNdisItem.unit.toUpperCase() == 'E' ? 'item' : 'service';
 
           // Implement correct pricing logic as per user requirements
-          double unitPrice = 30.00; // Default base rate
+          double unitPrice = _kDefaultBaseRate; // Default base rate
+          // ignore: unused_local_variable
           String pricingSource = 'base_rate';
-          bool exceedsNdisCap = false;
-          double? priceCap;
 
           // Check if we have pricing data from bulk lookup
           final cachedPricing = bulkPricingData?[matchedNdisItem.itemNumber];
@@ -554,11 +607,11 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                 unitPrice = customPrice;
                 pricingSource = cachedPricing['source'] ?? 'custom';
                 log.info(
-                    "Using custom ${pricingSource} pricing for ${matchedNdisItem.itemNumber}: \$${unitPrice.toStringAsFixed(2)}");
+                    "Using custom $pricingSource pricing for ${matchedNdisItem.itemNumber}: \$${unitPrice.toStringAsFixed(2)}");
               } catch (e) {
                 log.warning(
                     "Error parsing custom pricing for ${matchedNdisItem.itemNumber}: $e. Using base rate.");
-                unitPrice = 30.00;
+                unitPrice = _kDefaultBaseRate;
                 pricingSource = 'base_rate';
               }
             } else if (cachedPricing['source'] == 'base-rate' &&
@@ -579,19 +632,19 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               } catch (e) {
                 log.warning(
                     "Error parsing base rate pricing for ${matchedNdisItem.itemNumber}: $e. Using fallback base rate.");
-                unitPrice = 30.00;
+                unitPrice = _kDefaultBaseRate;
                 pricingSource = 'base_rate';
               }
             } else {
               // No pricing found, use base rate fallback
-              unitPrice = 30.00;
+              unitPrice = _kDefaultBaseRate;
               pricingSource = 'base_rate';
               log.info(
                   "No pricing found for ${matchedNdisItem.itemNumber}, using base rate fallback: \$${unitPrice.toStringAsFixed(2)}");
             }
           } else {
             // No cached pricing data available, use base rate
-            unitPrice = 30.00;
+            unitPrice = _kDefaultBaseRate;
             pricingSource = 'base_rate';
             log.info(
                 "No pricing data available for ${matchedNdisItem.itemNumber}, using base rate: \$${unitPrice.toStringAsFixed(2)}");
@@ -600,7 +653,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           double quantity =
               (matchedNdisItem.unit.toUpperCase() == 'H') ? hours : 1.0;
 
-          if (matchedNdisItem.type == "Unit Price = \$1") {
+          if (matchedNdisItem.type == "Unit Price = 0.1") {
             unitPrice = 1.0;
             if (matchedNdisItem.unit.toUpperCase() == 'E') quantity = 1.0;
           }
@@ -609,7 +662,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
           if (unitPrice > 0.0 ||
               matchedNdisItem.type != "Price Limited Supports" ||
-              matchedNdisItem.type == "Unit Price = \$1") {
+              matchedNdisItem.type == "Unit Price = 0.1") {
             generatedItems.add(InvoiceLineItem(
               description: description,
               quantity: quantity,
@@ -719,6 +772,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
       // Use the enhanced invoice service to generate PDFs
       final pdfPaths = await _invoiceService.generateInvoicesWithPricing(
+        taxRate: _taxRate,
         context,
         selectedEmployeesAndClients: selectedEmployeesAndClients,
         validatePrices: true,
@@ -738,9 +792,15 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           _pdfPath = pdfPaths.first;
           _isLoading = false;
         });
-        log.info("PDF generated successfully at ${_pdfPath}");
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Invoice PDF generated! Tap again to view.')));
+        log.info("PDF generated successfully at $_pdfPath");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('Invoice PDF generated! Tap again to view.'),
+            backgroundColor: ModernPricingDesign.successColor,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(ModernPricingDesign.radiusMd)),
+            margin: const EdgeInsets.all(ModernPricingDesign.spacingMd)));
       } else {
         setState(() => _isLoading = false);
         _showErrorSnackBar('No PDF was generated. Please check your data.');
@@ -755,193 +815,183 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
   @override
   Widget build(BuildContext context) {
-    // Initial loading for NDIS items (only if _ndisMatcher.items is empty)
-    if (_isLoading && _ndisMatcher.items.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Generate Invoice')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 20),
-              Text(_statusMessage,
-                  style: Theme.of(context).textTheme.titleMedium),
-            ],
-          ),
-        ),
-      );
-    }
-
-    // Subsequent loading states (e.g., fetching assignments, processing data)
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Generate Invoice')),
+        backgroundColor: ModernPricingDesign.backgroundPrimary,
+        appBar: AppBar(
+          title: Text('Generate Invoice', style: ModernPricingDesign.headingMd),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconTheme:
+              const IconThemeData(color: ModernPricingDesign.textPrimary),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 20),
+              const CircularProgressIndicator(
+                  color: ModernPricingDesign.primaryColor),
+              const SizedBox(height: ModernPricingDesign.spacingLg),
               Text(_statusMessage,
-                  style: Theme.of(context).textTheme.titleMedium),
+                  style: ModernPricingDesign.bodyLg
+                      .copyWith(color: ModernPricingDesign.textSecondary)),
             ],
           ),
         ),
       );
     }
 
-    // Main UI when not loading or after initial data load
     return Scaffold(
+      backgroundColor: ModernPricingDesign.backgroundPrimary,
       appBar: AppBar(
-        title: const Text('Review & Generate Invoice'),
+        title: Text('Review & Generate',
+            style: ModernPricingDesign.headingMd
+                .copyWith(color: ModernPricingDesign.textPrimary)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: ModernPricingDesign.textPrimary),
         actions: [
           if (_pdfPath.isNotEmpty && File(_pdfPath).existsSync())
             IconButton(
-              icon: const Icon(Icons.share),
+              icon: const Icon(Icons.share,
+                  color: ModernPricingDesign.primaryColor),
               onPressed: () {
                 log.info("Share PDF button pressed. Path: $_pdfPath");
-                // Implement sharing logic for _pdfPath
-                // Example: Share.shareFiles([_pdfPath]);
                 _showErrorSnackBar('Sharing functionality to be implemented.');
               },
             )
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(ModernPricingDesign.spacingMd),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_providerName.isNotEmpty)
-              Card(
-                elevation: 2,
-                margin: const EdgeInsets.only(bottom: 8),
+              ModernGradientCard(
+                gradientColors: const [Colors.white, Colors.white],
                 child: ListTile(
-                  leading: const Icon(Icons.business_center_outlined,
-                      color: Colors.blueGrey),
-                  title: Text("Provider: $_providerName",
-                      style: const TextStyle(fontWeight: FontWeight.w500)),
-                  subtitle: Text("ABN: $_providerABN"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: ModernPricingDesign.primaryColor
+                          .withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.business_center_outlined,
+                        color: ModernPricingDesign.primaryColor),
+                  ),
+                  title: Text("Provider",
+                      style: ModernPricingDesign.caption
+                          .copyWith(color: ModernPricingDesign.textSecondary)),
+                  subtitle: Text(_providerName,
+                      style: ModernPricingDesign.bodyMd
+                          .copyWith(fontWeight: FontWeight.w600)),
+                  trailing: Text("ABN: $_providerABN",
+                      style: ModernPricingDesign.caption),
                 ),
               ),
+            const SizedBox(height: ModernPricingDesign.spacingMd),
             if (_clientName.isNotEmpty)
-              Card(
-                elevation: 2,
-                margin: const EdgeInsets.only(bottom: 16),
+              ModernGradientCard(
+                gradientColors: const [Colors.white, Colors.white],
                 child: ListTile(
-                  leading:
-                      const Icon(Icons.person_outline, color: Colors.blueGrey),
-                  title: Text("Client: $_clientName",
-                      style: const TextStyle(fontWeight: FontWeight.w500)),
-                  subtitle: Text("Invoice Period: $_startDate to $_endDate"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: ModernPricingDesign.secondaryColor
+                          .withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.person_outline,
+                        color: ModernPricingDesign.secondaryColor),
+                  ),
+                  title: Text("Client",
+                      style: ModernPricingDesign.caption
+                          .copyWith(color: ModernPricingDesign.textSecondary)),
+                  subtitle: Text(_clientName,
+                      style: ModernPricingDesign.bodyMd
+                          .copyWith(fontWeight: FontWeight.w600)),
+                  trailing: Text("$_startDate to $_endDate",
+                      style: ModernPricingDesign.caption),
                 ),
               ),
+            const SizedBox(height: ModernPricingDesign.spacingLg),
             if (_lineItems.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                    'Generated Invoice Line Items (${_lineItems.length})',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.symmetric(
+                    vertical: ModernPricingDesign.spacingSm),
+                child: Text('Generated Line Items (${_lineItems.length})',
+                    style: ModernPricingDesign.headingSm),
               )
             else if (!_isLoading)
-              Center(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.info_outline_rounded,
-                        size: 60,
-                        color: Theme.of(context)
-                            .primaryColor
-                            .withValues(alpha: 0.7)),
-                    const SizedBox(height: 16),
-                    Text(_statusMessage,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 16),
-                    if (_statusMessage
+              ModernEmptyState(
+                title: "No Items Generated",
+                message: _statusMessage,
+                icon: Icons.receipt_long_outlined,
+                action: (_statusMessage
                             .contains("Could not automatically generate") ||
                         _statusMessage.contains("No worked time") ||
                         _statusMessage.contains("No clients assigned") ||
                         _statusMessage.contains("No employees found"))
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.add_circle_outline),
-                        label: const Text('Add Items Manually'),
+                    ? ModernActionButton(
+                        text: 'Add Items Manually',
+                        icon: Icons.add_circle_outline,
+                        variant: ModernActionButtonVariant.secondary,
                         onPressed: () {
                           setState(() {
-                            if (_lineItems.isEmpty) {
-                              _lineItems.add(InvoiceLineItem(
-                                  description: '',
-                                  quantity: 1,
-                                  unitPrice: 0,
-                                  type: 'service',
-                                  source: LineItemSource.userAdded));
-                            } else {
-                              // Add to existing list if some were generated but more needed
-                              _lineItems.add(InvoiceLineItem(
-                                  description: '',
-                                  quantity: 1,
-                                  unitPrice: 0,
-                                  type: 'service',
-                                  source: LineItemSource.userAdded));
-                            }
+                            _lineItems.add(InvoiceLineItem(
+                                description: '',
+                                quantity: 1,
+                                unitPrice: 0,
+                                type: 'service',
+                                source: LineItemSource.userAdded));
                           });
                         },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            foregroundColor: Colors.white),
                       )
-                  ],
-                ),
-              )),
-            const SizedBox(height: 8),
-            DynamicLineItemEntry(
-              lineItems: _lineItems,
-              onChanged: (items) => setState(() => _lineItems = items),
-            ),
-            const SizedBox(height: 24),
+                    : null,
+              ),
+            const SizedBox(height: ModernPricingDesign.spacingSm),
+            if (_lineItems.isNotEmpty)
+              DynamicLineItemEntry(
+                lineItems: _lineItems,
+                onChanged: (items) => setState(() => _lineItems = items),
+              ),
+            const SizedBox(height: ModernPricingDesign.spacingXl),
             Center(
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.picture_as_pdf_rounded),
-                label: const Text('Generate & View PDF'),
-                style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 12),
-                    textStyle: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8))),
+              child: ModernActionButton(
+                text: 'Generate & View PDF',
+                icon: Icons.picture_as_pdf_rounded,
+                variant: ModernActionButtonVariant.primary,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
                 onPressed: _lineItems.isEmpty && !_isLoading
                     ? null
                     : _generateAndShowPdf,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: ModernPricingDesign.spacingLg),
             if (_pdfPath.isNotEmpty && File(_pdfPath).existsSync())
               Container(
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8)),
+                    border: Border.all(color: ModernPricingDesign.borderColor),
+                    borderRadius:
+                        BorderRadius.circular(ModernPricingDesign.radiusMd),
+                    boxShadow: ModernPricingDesign.cardShadow),
                 height: MediaQuery.of(context).size.height * 0.75,
                 child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius:
+                        BorderRadius.circular(ModernPricingDesign.radiusMd),
                     child: PdfViewPage(pdfPath: _pdfPath)),
               )
             else if (_pdfPath.isNotEmpty && !File(_pdfPath).existsSync())
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(ModernPricingDesign.spacingMd),
                 child: Center(
                     child: Text(
                   "Error: Generated PDF file not found at path:\n$_pdfPath\nPlease try generating again.",
-                  style: const TextStyle(color: Colors.red, fontSize: 14),
+                  style: ModernPricingDesign.bodyMd
+                      .copyWith(color: ModernPricingDesign.errorColor),
                   textAlign: TextAlign.center,
                 )),
               ),

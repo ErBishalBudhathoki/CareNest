@@ -21,7 +21,6 @@ Migrate all expense-related views and widgets from hardcoded styles/AppColors to
 ## Design System Changes to Apply
 
 ### 1. Import Updates
-- Add: `import 'package:invoice/app/features/pricing/widgets/modern_saas_design_system.dart';`
 - Remove/Replace: Direct AppColors usage
 
 ### 2. Color Replacements

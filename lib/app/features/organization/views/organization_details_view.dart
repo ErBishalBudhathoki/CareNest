@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -66,9 +63,8 @@ ${_generateShareableLink()}
     Flushbar(
       message: message,
       duration: const Duration(seconds: 2),
-      backgroundColor: ModernSaasDesign.primary,
-      margin: const EdgeInsets.all(ModernSaasDesign.space4),
-      borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+      margin: const EdgeInsets.all(16.0),
+      borderRadius: BorderRadius.circular(8.0),
       flushbarPosition: FlushbarPosition.TOP,
     ).show(context);
   }
@@ -82,11 +78,10 @@ ${_generateShareableLink()}
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusXl),
+            borderRadius: BorderRadius.circular(16.0),
           ),
-          backgroundColor: ModernSaasDesign.surface,
           child: Padding(
-            padding: const EdgeInsets.all(ModernSaasDesign.space6),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -95,7 +90,8 @@ ${_generateShareableLink()}
                   children: [
                     Text(
                       'QR Code',
-                      style: ModernSaasDesign.headlineLarge,
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.w600),
                     ),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
@@ -103,33 +99,37 @@ ${_generateShareableLink()}
                     ),
                   ],
                 ),
-                const SizedBox(height: ModernSaasDesign.space4),
+                const SizedBox(height: ModernSaasDesign.space6),
                 Container(
-                  padding: const EdgeInsets.all(ModernSaasDesign.space4),
+                  padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: ModernSaasDesign.surface,
-                    borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusLg),
-                    border: Border.all(color: ModernSaasDesign.border),
-                    boxShadow: ModernSaasDesign.shadowSm,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.0),
+                    border: Border.all(color: const Color(0xFFE0E0E0)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2))
+                    ],
                   ),
                   child: QrImageView(
                     data: shareableLink,
                     version: QrVersions.auto,
                     size: 200.0,
-                    backgroundColor: Colors.white,
                   ),
                 ),
-                const SizedBox(height: ModernSaasDesign.space4),
+                const SizedBox(height: ModernSaasDesign.space6),
                 Text(
                   'Scan this QR code to join ${widget.organizationName}',
-                  style: ModernSaasDesign.bodyMedium,
+                  style: const TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: ModernSaasDesign.space4),
+                const SizedBox(height: ModernSaasDesign.space6),
                 Text(
                   'Organization Code: ${widget.organizationCode}',
-                  style: ModernSaasDesign.labelLarge,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: ModernSaasDesign.space6),
@@ -173,22 +173,21 @@ ${_generateShareableLink()}
     required String title,
     required String value,
     required IconData icon,
-    VoidCallback? onTap,
     bool showCopyButton = false,
   }) {
     return ModernCard(
       margin: const EdgeInsets.symmetric(
-        horizontal: ModernSaasDesign.space4,
-        vertical: ModernSaasDesign.space2,
+        horizontal: 16.0,
+        vertical: 8.0,
       ),
-      padding: const EdgeInsets.all(ModernSaasDesign.space4),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(ModernSaasDesign.space2),
+            padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+              color: const Color(0xFF667EEA).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8.0),
             ),
             child: Icon(
               icon,
@@ -203,12 +202,14 @@ ${_generateShareableLink()}
               children: [
                 Text(
                   title,
-                  style: ModernSaasDesign.labelMedium,
+                  style: ModernSaasDesign.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                const SizedBox(height: ModernSaasDesign.space1),
+                const SizedBox(height: ModernSaasDesign.space2),
                 Text(
                   value,
-                  style: ModernSaasDesign.bodyLarge.copyWith(
+                  style: ModernSaasDesign.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -241,16 +242,15 @@ ${_generateShareableLink()}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ModernSaasDesign.background,
       appBar: AppBar(
         title: Text(
           'Organization Details',
-          style: ModernSaasDesign.headlineMedium.copyWith(
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)
+              .copyWith(
             color: ModernSaasDesign.textOnPrimary,
           ),
         ),
-        backgroundColor: ModernSaasDesign.primary,
-        foregroundColor: ModernSaasDesign.textOnPrimary,
+        foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
@@ -261,24 +261,28 @@ ${_generateShareableLink()}
             // Header Section
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(ModernSaasDesign.space6),
+              padding: const EdgeInsets.all(24.0),
               decoration: BoxDecoration(
                 gradient: ModernSaasDesign.primaryGradient,
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(ModernSaasDesign.radius3xl),
-                  bottomRight: Radius.circular(ModernSaasDesign.radius3xl),
+                  bottomLeft: Radius.circular(24.0),
+                  bottomRight: Radius.circular(24.0),
                 ),
-                boxShadow: ModernSaasDesign.shadowLg,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 16,
+                      offset: Offset(0, 8))
+                ],
               ),
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(ModernSaasDesign.space4),
+                    padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       color:
                           ModernSaasDesign.textOnPrimary.withValues(alpha: 0.2),
-                      borderRadius:
-                          BorderRadius.circular(ModernSaasDesign.radiusFull),
+                      borderRadius: BorderRadius.circular(999.0),
                     ),
                     child: const Icon(
                       Icons.business_rounded,
@@ -286,11 +290,13 @@ ${_generateShareableLink()}
                       color: ModernSaasDesign.textOnPrimary,
                     ),
                   ),
-                  const SizedBox(height: ModernSaasDesign.space4),
+                  const SizedBox(height: ModernSaasDesign.space6),
                   Text(
                     widget.organizationName ?? 'No Organization',
-                    style: ModernSaasDesign.displaySmall.copyWith(
-                      color: ModernSaasDesign.textOnPrimary,
+                    style: const TextStyle(
+                            fontSize: 28, fontWeight: FontWeight.w700)
+                        .copyWith(
+                     color: ModernSaasDesign.textOnPrimary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -339,37 +345,36 @@ ${_generateShareableLink()}
 
             const SizedBox(height: ModernSaasDesign.space6),
 
+
+
             // Share Section
             if (widget.organizationCode != null) ...[
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: ModernSaasDesign.space4),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Invite Team Members',
-                  style: ModernSaasDesign.headlineLarge,
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.w600),
                 ),
               ),
-              const SizedBox(height: ModernSaasDesign.space4),
+              const SizedBox(height: ModernSaasDesign.space6),
               ModernCard(
                 margin: const EdgeInsets.symmetric(
-                  horizontal: ModernSaasDesign.space4,
-                  vertical: ModernSaasDesign.space2,
+                  horizontal: 16.0,
+                  vertical: 8.0,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(ModernSaasDesign.space5),
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           Container(
-                            padding:
-                                const EdgeInsets.all(ModernSaasDesign.space2),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
-                              color: ModernSaasDesign.primary
-                                  .withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(
-                                  ModernSaasDesign.radiusMd),
+                              color: const Color(0xFF667EEA).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: const Icon(
                               Icons.group_add,
@@ -377,11 +382,11 @@ ${_generateShareableLink()}
                               size: 20,
                             ),
                           ),
-                          const SizedBox(width: ModernSaasDesign.space4),
+                          const SizedBox(width: ModernSaasDesign.space4), 
                           Expanded(
                             child: Text(
                               'Share organization code with team members',
-                              style: ModernSaasDesign.bodyLarge.copyWith(
+                              style: const TextStyle(fontSize: 16).copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -391,11 +396,11 @@ ${_generateShareableLink()}
                       const SizedBox(height: ModernSaasDesign.space2),
                       Text(
                         'Team members can use the organization code to join during signup.',
-                        style: ModernSaasDesign.bodyMedium.copyWith(
-                          color: ModernSaasDesign.textSecondary,
+                        style: const TextStyle(fontSize: 14).copyWith(
+                          color: ModernSaasDesign.textOnPrimary,
                         ),
                       ),
-                      const SizedBox(height: ModernSaasDesign.space4),
+                      const SizedBox(height: ModernSaasDesign.space6),
 
                       // Action Buttons
                       Column(
@@ -410,7 +415,7 @@ ${_generateShareableLink()}
                                   icon: Icons.share,
                                 ),
                               ),
-                              const SizedBox(width: ModernSaasDesign.space4),
+                              const SizedBox(width: ModernSaasDesign.space4), 
                               Expanded(
                                 child: ModernButton(
                                   text: 'Copy Link',
@@ -424,7 +429,7 @@ ${_generateShareableLink()}
                               ),
                             ],
                           ),
-                          const SizedBox(height: ModernSaasDesign.space4),
+                          const SizedBox(height: ModernSaasDesign.space6),
                           SizedBox(
                             width: double.infinity,
                             child: ModernButton(
@@ -444,8 +449,10 @@ ${_generateShareableLink()}
 
             const SizedBox(height: ModernSaasDesign.space6),
 
+
+
             // Future Features Section
-            Padding(
+                       Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: ModernSaasDesign.space4),
               child: Text(
@@ -454,26 +461,25 @@ ${_generateShareableLink()}
               ),
             ),
 
-            const SizedBox(height: ModernSaasDesign.space4),
+
+            const SizedBox(height: ModernSaasDesign.space6),
 
             ModernCard(
               margin: const EdgeInsets.symmetric(
-                horizontal: ModernSaasDesign.space4,
-                vertical: ModernSaasDesign.space2,
+                horizontal: 16.0,
+                vertical: 8.0,
               ),
-              padding: const EdgeInsets.all(ModernSaasDesign.space5),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(ModernSaasDesign.space2),
+                        padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
-                          color:
-                              ModernSaasDesign.primary.withValues(alpha: 0.1),
-                          borderRadius:
-                              BorderRadius.circular(ModernSaasDesign.radiusMd),
+                          color:  ModernSaasDesign.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: const Icon(
                           Icons.info_outline,
@@ -484,7 +490,7 @@ ${_generateShareableLink()}
                       const SizedBox(width: ModernSaasDesign.space4),
                       Text(
                         'Upcoming Features',
-                        style: ModernSaasDesign.headlineLarge.copyWith(
+                       style: ModernSaasDesign.headlineLarge.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -493,8 +499,8 @@ ${_generateShareableLink()}
                   const SizedBox(height: ModernSaasDesign.space4),
                   Text(
                     '• Organization member management\n• Role-based permissions\n• Organization settings\n• Usage analytics',
-                    style: ModernSaasDesign.bodyMedium.copyWith(
-                      color: ModernSaasDesign.textSecondary,
+                    style: const TextStyle(fontSize: 14).copyWith(
+                      color: const Color(0xFF6B7280),
                     ),
                   ),
                 ],

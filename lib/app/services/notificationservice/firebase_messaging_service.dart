@@ -1,11 +1,12 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 
 class FirebaseMessagingService {
   final LocalNotificationService _localNotificationService;
@@ -55,9 +56,9 @@ class FirebaseMessagingService {
     debugPrint(
         'DEBUG_FCM: Foreground message handling delegated to NotificationHandler widget');
 
-    // Handle when app is opened from a background state
+    // Handle when app is opened from a surface state
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      debugPrint('DEBUG_FCM: App opened from background via notification!');
+      debugPrint('DEBUG_FCM: App opened from surface via notification!');
       await _handleMessage(message, foreground: false);
       // Here you can navigate to specific screen based on the message data
       // For example: navigatorKey.currentState?.pushNamed('/notification_details', arguments: message.data);
@@ -77,7 +78,7 @@ class FirebaseMessagingService {
     });
 
     // Background message handler is registered in main.dart to avoid conflicts
-    // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    // FirebaseMessaging.onMessage(firebaseMessagingBackgroundHandler);
 
     // Get and log the FCM token for this device
     if (Platform.isIOS) {
@@ -174,7 +175,7 @@ class FirebaseMessagingService {
           _processNotificationData(message.data);
         }
 
-        // For background and terminated state messages, the system already shows the notification
+        // For surface and terminated state messages, the system already shows the notification
         // We only need to handle any specific actions when the user taps on them
         else {
           debugPrint(
@@ -226,10 +227,10 @@ class FirebaseMessagingService {
           // Process any UI updates or actions based on the data
           _processNotificationData(message.data);
         }
-        // For background data messages
+        // For surface data messages
         else {
           debugPrint('DEBUG_FCM: Background data message, processing silently');
-          // Process any background tasks if needed
+          // Process any surface tasks if needed
         }
       }
     } catch (e) {
@@ -291,7 +292,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint(
       'DEBUG_FCM: Background message notification: ${message.notification}');
 
-  // For background messages with notification payload
+  // For surface messages with notification payload
   if (message.notification != null) {
     debugPrint(
         'DEBUG_FCM: Background notification message received: ${message.notification!.title}');
@@ -302,7 +303,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       'body': message.notification!.body,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'type': message.data['type'] ?? 'general',
-      'isForeground': false, // Add flag to indicate background message
+      'isForeground': false, // Add flag to indicate surface message
     };
 
     // Store notification in persistent storage
@@ -314,21 +315,21 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       payloadData, // Store the enhanced payload data
     );
   }
-  // Handle data-only background messages
+  // Handle data-only surface messages
   else if (message.data.isNotEmpty) {
     debugPrint('DEBUG_FCM: Background data-only message received');
 
     final title = message.data['title'] ?? 'New Message';
     final body = message.data['body'] ?? 'You have a new update';
 
-    // Create enhanced payload with background flag
+    // Create enhanced payload with surface flag
     final Map<String, dynamic> payloadData = {
       ...message.data,
       'title': title,
       'body': body,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'type': message.data['type'] ?? 'data',
-      'isForeground': false, // Add flag to indicate background message
+      'isForeground': false, // Add flag to indicate surface message
     };
 
     // Store notification in persistent storage with enhanced payload
@@ -344,13 +345,13 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     final localNotificationService = LocalNotificationService();
     await localNotificationService.initialize();
 
-    // Create NotificationModel for the background notification
+    // Create NotificationModel for the surface notification
     final notification = NotificationModel(
       id: message.hashCode.toString(),
       title: title,
       body: body,
       timestamp: DateTime.now(),
-      type: payloadData['type'] ?? 'background',
+      type: payloadData['type'] ?? 'surface',
       data: payloadData,
     );
 
@@ -362,7 +363,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-// Helper function to store background notifications in persistent storage
+// Helper function to store surface notifications in persistent storage
 Future<void> storeBackgroundNotification(
   String id,
   String? title,
@@ -371,15 +372,15 @@ Future<void> storeBackgroundNotification(
   Map<String, dynamic> data,
 ) async {
   try {
-    // Use SharedPreferences to store background notifications
+    // Use SharedPreferences to store surface notifications
     // These will be loaded when the app starts
     final prefs = await SharedPreferences.getInstance();
     // CRITICAL: Force a reload to get the most recent list from disk before adding to it.
     await prefs.reload();
 
-    // Get existing background notifications
+    // Get existing surface notifications
     final existingNotifications =
-        prefs.getStringList('background_notifications') ?? [];
+        prefs.getStringList('surface_notifications') ?? [];
 
     // Create a proper NotificationModel instance first.
     final notificationModel = NotificationModel(
@@ -402,10 +403,10 @@ Future<void> storeBackgroundNotification(
 
     // Save back to SharedPreferences
     await prefs.setStringList(
-        'background_notifications', existingNotifications);
+        'surface_notifications', existingNotifications);
 
     debugPrint('DEBUG_FCM: Background notification stored successfully: $id');
   } catch (e) {
-    debugPrint('DEBUG_FCM: Error storing background notification: $e');
+    debugPrint('DEBUG_FCM: Error storing surface notification: $e');
   }
 }

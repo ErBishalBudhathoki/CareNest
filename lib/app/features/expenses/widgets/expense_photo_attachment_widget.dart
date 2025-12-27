@@ -1,9 +1,10 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import '../../../services/system_ui_service.dart';
-import '../../../shared/design_system/modern_saas_design_system.dart';
+import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 
 class ExpensePhotoAttachmentWidget extends StatefulWidget {
   final List<File>? initialPhotos;
@@ -110,7 +111,7 @@ class _ExpensePhotoAttachmentWidgetState
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(
-                    'Only ${remainingSlots} photos could be added due to limit')),
+                    'Only $remainingSlots photos could be added due to limit')),
           );
         }
       }
@@ -128,24 +129,23 @@ class _ExpensePhotoAttachmentWidgetState
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Receipt',
-            toolbarColor: ModernSaasDesign.primary,
-            toolbarWidgetColor: ModernSaasDesign.textOnPrimary,
+            toolbarColor: const Color(0xFF667EEA),
+            toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.ratio4x3,
             lockAspectRatio: false,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
-            statusBarColor: ModernSaasDesign.primary,
-            activeControlsWidgetColor: ModernSaasDesign.primary,
-            cropFrameColor: ModernSaasDesign.primary,
-            cropGridColor: ModernSaasDesign.primary.withValues(alpha: 0.5),
-            dimmedLayerColor: Colors.black.withValues(alpha: 0.8),
+            statusBarColor: const Color(0xFF667EEA),
+            activeControlsWidgetColor: const Color(0xFF667EEA),
+            cropFrameColor: const Color(0xFF667EEA),
+            cropGridColor: const Color(0xFF667EEA).withOpacity(0.1),
+            dimmedLayerColor: Colors.black.withOpacity(0.1),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
             cropFrameStrokeWidth: 3,
             cropGridStrokeWidth: 1,
             cropGridRowCount: 3,
             cropGridColumnCount: 3,
-            backgroundColor: ModernSaasDesign.surface,
           ),
           IOSUiSettings(
             title: 'Crop Receipt',
@@ -195,19 +195,19 @@ class _ExpensePhotoAttachmentWidgetState
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(ModernSaasDesign.radiusXl)),
+            top: Radius.circular(16.0)),
       ),
       builder: (BuildContext context) {
         return Container(
-          padding: EdgeInsets.all(ModernSaasDesign.space5),
+          padding: EdgeInsets.all(20.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'Select Photo Source',
-                style: ModernSaasDesign.headlineMedium,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
-              SizedBox(height: ModernSaasDesign.space5),
+              SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -229,7 +229,7 @@ class _ExpensePhotoAttachmentWidgetState
                   ),
                 ],
               ),
-              SizedBox(height: ModernSaasDesign.space5),
+              SizedBox(height: 20.0),
             ],
           ),
         );
@@ -245,12 +245,12 @@ class _ExpensePhotoAttachmentWidgetState
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(ModernSaasDesign.space5),
+        padding: EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+          color: const Color(0xFF667EEA).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
-            color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+            color: const Color(0xFF667EEA).withOpacity(0.1),
           ),
         ),
         child: Column(
@@ -258,13 +258,13 @@ class _ExpensePhotoAttachmentWidgetState
             Icon(
               icon,
               size: 40,
-              color: ModernSaasDesign.primary,
+              color: const Color(0xFF667EEA),
             ),
-            SizedBox(height: ModernSaasDesign.space2),
+            SizedBox(height: 8.0),
             Text(
               label,
-              style: ModernSaasDesign.labelLarge.copyWith(
-                color: ModernSaasDesign.primary,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
+                color: const Color(0xFF667EEA),
               ),
             ),
           ],
@@ -277,7 +277,7 @@ class _ExpensePhotoAttachmentWidgetState
   Widget build(BuildContext context) {
     return ModernCard(
       child: Padding(
-        padding: EdgeInsets.all(ModernSaasDesign.space4),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -285,15 +285,15 @@ class _ExpensePhotoAttachmentWidgetState
               children: [
                 Icon(
                   Icons.receipt,
-                  color: ModernSaasDesign.primary,
+                  color: const Color(0xFF667EEA),
                 ),
-                SizedBox(width: ModernSaasDesign.space2),
+                SizedBox(width: 8.0),
                 Text(
                   _selectedPhotos.isEmpty
                       ? 'Receipt Photos'
                       : 'Receipt Photos (${_selectedPhotos.length}/${widget.maxPhotos})',
-                  style: ModernSaasDesign.headlineSmall.copyWith(
-                    color: ModernSaasDesign.primary,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+                    color: const Color(0xFF667EEA),
                   ),
                 ),
                 const Spacer(),
@@ -302,17 +302,17 @@ class _ExpensePhotoAttachmentWidgetState
                     onPressed: _removeAllPhotos,
                     icon: Icon(
                       Icons.delete_sweep,
-                      color: ModernSaasDesign.error,
+                      color: Colors.red,
                     ),
                     tooltip: 'Remove all photos',
                   ),
               ],
             ),
-            SizedBox(height: ModernSaasDesign.space3),
+            SizedBox(height: 12.0),
             if (_selectedPhotos.isNotEmpty) ..._buildPhotosPreview(),
             if (_selectedPhotos.length < widget.maxPhotos)
               ..._buildAddPhotoButton(),
-            SizedBox(height: ModernSaasDesign.space4),
+            SizedBox(height: 16.0),
             TextFormField(
               controller: _descriptionController,
               decoration: InputDecoration(
@@ -320,7 +320,7 @@ class _ExpensePhotoAttachmentWidgetState
                 hintText: 'Describe what this receipt is for...',
                 border: OutlineInputBorder(
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusMd),
+                      BorderRadius.circular(8.0),
                 ),
                 prefixIcon: const Icon(Icons.description),
               ),
@@ -342,19 +342,19 @@ class _ExpensePhotoAttachmentWidgetState
           itemCount: _selectedPhotos.length,
           itemBuilder: (context, index) {
             return Container(
-              margin: EdgeInsets.only(right: ModernSaasDesign.space3),
+              margin: EdgeInsets.only(right: 12.0),
               width: 120,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+                borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(
-                  color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+                  color: const Color(0xFF667EEA).withOpacity(0.1),
                 ),
               ),
               child: Stack(
                 children: [
                   ClipRRect(
                     borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusMd),
+                        BorderRadius.circular(8.0),
                     child: Image.file(
                       _selectedPhotos[index],
                       fit: BoxFit.cover,
@@ -368,14 +368,14 @@ class _ExpensePhotoAttachmentWidgetState
                     child: GestureDetector(
                       onTap: () => _removePhoto(index),
                       child: Container(
-                        padding: EdgeInsets.all(ModernSaasDesign.space1),
+                        padding: EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
-                          color: ModernSaasDesign.error,
+                          color: Colors.red,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.close,
-                          color: ModernSaasDesign.textOnPrimary,
+                          color: Colors.white,
                           size: 16,
                         ),
                       ),
@@ -387,7 +387,7 @@ class _ExpensePhotoAttachmentWidgetState
           },
         ),
       ),
-      SizedBox(height: ModernSaasDesign.space3),
+      SizedBox(height: 12.0),
     ];
   }
 
@@ -397,42 +397,42 @@ class _ExpensePhotoAttachmentWidgetState
         width: double.infinity,
         height: 120,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+          borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
-            color: ModernSaasDesign.primary.withValues(alpha: 0.3),
+            color: const Color(0xFF667EEA).withOpacity(0.1),
             style: BorderStyle.solid,
           ),
-          color: ModernSaasDesign.primary.withValues(alpha: 0.05),
+          color: const Color(0xFF667EEA).withOpacity(0.1),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: _showImageSourceDialog,
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+            borderRadius: BorderRadius.circular(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.add_a_photo,
                   size: 40,
-                  color: ModernSaasDesign.primary,
+                  color: const Color(0xFF667EEA),
                 ),
-                SizedBox(height: ModernSaasDesign.space2),
+                SizedBox(height: 8.0),
                 Text(
                   _selectedPhotos.isEmpty
                       ? 'Add Receipt Photos'
                       : 'Add More Photos',
-                  style: ModernSaasDesign.labelLarge.copyWith(
-                    color: ModernSaasDesign.primary,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
+                    color: const Color(0xFF667EEA),
                   ),
                 ),
-                SizedBox(height: ModernSaasDesign.space1),
+                SizedBox(height: 4.0),
                 Text(
                   _selectedPhotos.isEmpty
                       ? 'Tap to take photo or select from gallery'
                       : 'Add up to ${widget.maxPhotos - _selectedPhotos.length} more photos',
-                  style: ModernSaasDesign.bodySmall.copyWith(
-                    color: ModernSaasDesign.textSecondary,
+                  style: const TextStyle(fontSize: 12).copyWith(
+                    color: const Color(0xFF6B7280),
                   ),
                   textAlign: TextAlign.center,
                 ),
