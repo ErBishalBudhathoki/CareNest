@@ -9,6 +9,7 @@ import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
+import 'package:carenest/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,8 +20,6 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:app_links/app_links.dart';
-
-import 'package:carenest/firebase_options.dart';
 import 'package:carenest/app/di/service_locator.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/routes/app_pages.dart';
@@ -45,6 +44,7 @@ import 'package:carenest/app/features/assignment_list/views/assignment_list_view
 import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
+
 
 final mediaStorePlugin = MediaStore();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/config/environment.dart';
-import 'package:carenest/utils/hours_formatting.dart';
+import 'package:carenest/app/features/invoice/utils/hours_formatting.dart';
 import '../../../shared/utils/shared_preferences_utils.dart';
 import '../../../core/services/file_conversion_service.dart';
 import 'invoice_number_generator_service.dart';
