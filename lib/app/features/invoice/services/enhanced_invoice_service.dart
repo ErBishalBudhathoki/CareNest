@@ -17,7 +17,7 @@ import 'package:carenest/app/features/invoice/repositories/invoice_repository.da
 import 'package:carenest/app/features/invoice/presentation/widgets/price_prompt_dialog.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/providers/period_providers.dart';
+import 'package:carenest/app/features/invoice/providers/period_providers.dart';
 
 /// Enhanced Invoice Service with Pricing Integration
 /// Task 5.4: Update invoice service with enhanced pricing integration

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:carenest/utils/hours_formatting.dart';
+import 'package:carenest/app/features/invoice/utils/hours_formatting.dart';
 import 'package:flutter/services.dart';
 
 /// Price Prompt Dialog Widget
