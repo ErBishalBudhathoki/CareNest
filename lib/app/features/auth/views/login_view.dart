@@ -1,7 +1,6 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:carenest/app/features/auth/widgets/auth_loading_indicator.dart';
-import 'package:carenest/app/features/auth/widgets/auth_validation_widget.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
 import 'package:carenest/app/shared/widgets/wave_animation_widget.dart';
@@ -287,7 +286,7 @@ class _LoginViewState extends ConsumerState<LoginView>
             bottom: keyboardOpen ? -size.height * 0.08 : 0.0,
             left: 0,
             right: 0,
-            child: Container(
+            child: SizedBox(
               height: size.height * 0.18,
               child: Stack(
                 children: [
@@ -651,9 +650,7 @@ class _LoginViewState extends ConsumerState<LoginView>
                             size: 20,
                           ),
                           onPressed: () {
-                            loginViewModel.model.isVisible =
-                                !loginViewModel.model.isVisible;
-                            loginViewModel.notifyListeners();
+                            loginViewModel.togglePasswordVisibility();
                           },
                         )
                       : (obscureTextNotifier != null

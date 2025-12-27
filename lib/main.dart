@@ -1,10 +1,14 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/features/business/views/add_business_details_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:carenest/app/features/invoice/views/automatic_invoice_generation_view.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
+import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
+import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
+import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +27,6 @@ import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/themes/app_themes.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:carenest/app/shared/constants/values/strings/app_strings.dart';
-import 'package:carenest/app/shared/widgets/splashScreen_widget.dart';
 import 'package:carenest/app/shared/widgets/notification_handler_widget.dart';
 
 // Views
@@ -33,19 +36,15 @@ import 'package:carenest/app/features/auth/views/forgot_password_view.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/home/views/home_view.dart';
-import 'package:carenest/app/features/busineess/views/add_business_details_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
 import 'package:carenest/app/features/assignment_list/views/assignment_list_view.dart';
-import 'package:carenest/app/shared/widgets/navBar_widget.dart';
-import 'package:carenest/app/shared/widgets/bottom_navBar_widget.dart';
 import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
-import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 
 final mediaStorePlugin = MediaStore();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -216,7 +215,7 @@ void _handleDeepLink(Uri uri) {
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -378,10 +377,10 @@ class MyApp extends ConsumerWidget {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
-            final userEmail = arguments?['userEmail'] as String? ?? '';
-            final clientEmail = arguments?['clientEmail'] as String? ?? '';
+            final userEmail = arguments['userEmail'] as String? ?? '';
+            final clientEmail = arguments['clientEmail'] as String? ?? '';
             final shiftData =
-                arguments?['shiftData'] as Map<String, dynamic>? ?? {};
+                arguments['shiftData'] as Map<String, dynamic>? ?? {};
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Shift Details'),
@@ -485,7 +484,6 @@ class MyApp extends ConsumerWidget {
               organizationId: organizationId,
             );
           },
-          Routes.bankDetails: (context) => const BankDetailsView(),
         },
       ),
     );

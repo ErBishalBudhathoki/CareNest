@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/employee_tracking_model.dart';
@@ -157,7 +158,7 @@ class EmployeeTrackingViewModel
         isRefreshing: false,
         lastUpdated: DateTime.now(),
       ));
-    } catch (e, st) {
+    } catch (e) {
       if (currentState != null) {
         state = AsyncValue.data(currentState.copyWith(isRefreshing: false));
       }

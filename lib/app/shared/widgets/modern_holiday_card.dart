@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'dart:math' as math;
 import 'dart:ui';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 
 class ModernHolidayCard extends StatefulWidget {
   final Map<String, dynamic> holiday;
@@ -137,28 +134,28 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
   }
 
   Color _getHolidayColor() {
-    if (widget.isToday) return ModernSaasDesign.primary;
-    if (widget.isUpcoming) return ModernSaasDesign.secondary;
-    return ModernSaasDesign.accent;
+    if (widget.isToday) return ModernInvoiceDesign.primary;
+    if (widget.isUpcoming) return ModernInvoiceDesign.secondary;
+    return ModernInvoiceDesign.accent;
   }
 
   LinearGradient _getStatusGradient(bool isToday, bool isUpcoming) {
     if (isToday) {
-      return ModernSaasDesign.primaryGradient;
+      return ModernInvoiceDesign.primaryGradient;
     } else if (isUpcoming) {
-      return ModernSaasDesign.successGradient;
+      return ModernInvoiceDesign.successGradient;
     } else {
-      return ModernSaasDesign.warningGradient;
+      return ModernInvoiceDesign.warningGradient;
     }
   }
 
   Color _getStatusColor(bool isToday, bool isUpcoming) {
     if (isToday) {
-      return ModernSaasDesign.primary;
+      return ModernInvoiceDesign.primary;
     } else if (isUpcoming) {
-      return ModernSaasDesign.secondary;
+      return ModernInvoiceDesign.secondary;
     } else {
-      return ModernSaasDesign.accent;
+      return ModernInvoiceDesign.accent;
     }
   }
 
@@ -201,11 +198,11 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
 
   List<BoxShadow> _getCardShadow(bool isToday, bool isUpcoming) {
     if (isToday) {
-      return ModernSaasDesign.shadowLarge;
+      return ModernInvoiceDesign.shadowLg;
     } else if (isUpcoming) {
-      return ModernSaasDesign.shadowMedium;
+      return ModernInvoiceDesign.shadowMd;
     } else {
-      return ModernSaasDesign.shadowSmall;
+      return ModernInvoiceDesign.shadowSm;
     }
   }
 
@@ -232,7 +229,7 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
         end: Alignment.bottomRight,
       );
     }
-    return ModernSaasDesign.primaryGradient;
+    return ModernInvoiceDesign.primaryGradient;
   }
 
   @override
@@ -248,7 +245,7 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
         return Transform.scale(
           scale: widget.isToday ? _pulseAnimation.value : _scaleAnimation.value,
           child: Container(
-            margin: const EdgeInsets.only(bottom: ModernSaasDesign.spacing16),
+            margin: const EdgeInsets.only(bottom: ModernInvoiceDesign.space4),
             child: Dismissible(
               key: Key('holiday_${widget.index}'),
               direction: DismissDirection.endToStart,
@@ -263,15 +260,15 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
                           color: Colors.white,
                           size: 20,
                         ),
-                        const SizedBox(width: ModernSaasDesign.spacing8),
+                        const SizedBox(width: ModernInvoiceDesign.space2),
                         Text('${widget.holiday['Holiday']} deleted'),
                       ],
                     ),
-                    backgroundColor: ModernSaasDesign.error,
+                    backgroundColor: ModernInvoiceDesign.error,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.circular(ModernSaasDesign.radiusLarge),
+                          BorderRadius.circular(ModernInvoiceDesign.radiusLg),
                     ),
                   ),
                 );
@@ -279,10 +276,10 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
               background: Container(
                 alignment: Alignment.centerRight,
                 padding:
-                    const EdgeInsets.only(right: ModernSaasDesign.spacing20),
+                    const EdgeInsets.only(right: ModernInvoiceDesign.space5),
                 decoration: BoxDecoration(
                   borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radiusXLarge),
+                      BorderRadius.circular(ModernInvoiceDesign.radiusXl),
                   gradient: const LinearGradient(
                     colors: [
                       Color(0xFFFF6B6B),
@@ -300,10 +297,10 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
                       color: Colors.white,
                       size: 28,
                     ),
-                    const SizedBox(height: ModernSaasDesign.spacing4),
+                    const SizedBox(height: ModernInvoiceDesign.space1),
                     Text(
                       'Delete',
-                      style: ModernSaasDesign.labelMedium.copyWith(
+                      style: ModernInvoiceDesign.labelMedium.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -323,7 +320,7 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusXLarge),
+                        BorderRadius.circular(ModernInvoiceDesign.radiusXl),
                     boxShadow: [
                       // Primary glow shadow
                       BoxShadow(
@@ -350,7 +347,7 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
                   ),
                   child: ClipRRect(
                     borderRadius:
-                        BorderRadius.circular(ModernSaasDesign.radiusXLarge),
+                        BorderRadius.circular(ModernInvoiceDesign.radiusXl),
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
@@ -462,20 +459,20 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
           gradient: LinearGradient(
             colors: widget.isToday
                 ? [
-                    ModernSaasDesign.primary,
-                    ModernSaasDesign.primary.withValues(alpha: 0.8),
-                    ModernSaasDesign.primary.withValues(alpha: 0.9),
+                    ModernInvoiceDesign.primary,
+                    ModernInvoiceDesign.primary.withValues(alpha: 0.8),
+                    ModernInvoiceDesign.primary.withValues(alpha: 0.9),
                   ]
                 : widget.isUpcoming
                     ? [
-                        ModernSaasDesign.secondary,
-                        ModernSaasDesign.secondary.withValues(alpha: 0.8),
-                        ModernSaasDesign.secondary.withValues(alpha: 0.9),
+                        ModernInvoiceDesign.secondary,
+                        ModernInvoiceDesign.secondary.withValues(alpha: 0.8),
+                        ModernInvoiceDesign.secondary.withValues(alpha: 0.9),
                       ]
                     : [
-                        ModernSaasDesign.accent,
-                        ModernSaasDesign.accent.withValues(alpha: 0.8),
-                        ModernSaasDesign.accent.withValues(alpha: 0.9),
+                        ModernInvoiceDesign.accent,
+                        ModernInvoiceDesign.accent.withValues(alpha: 0.8),
+                        ModernInvoiceDesign.accent.withValues(alpha: 0.9),
                       ],
             stops: const [0.0, 0.5, 1.0],
             begin: Alignment.topLeft,
@@ -544,10 +541,9 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
       children: [
         Text(
           widget.holiday['Holiday'] ?? 'Holiday',
-          style: TextStyle(
-            fontSize: 19,
+          style: ModernInvoiceDesign.titleLarge.copyWith(
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF1A202C),
+            color: ModernInvoiceDesign.textPrimary,
             height: 1.2,
             shadows: [
               Shadow(
@@ -566,15 +562,14 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
             Icon(
               Icons.calendar_today_rounded,
               size: 14,
-              color: const Color(0xFF718096),
+              color: ModernInvoiceDesign.textSecondary,
             ),
             const SizedBox(width: 4),
             Text(
               '${widget.holiday['Date']} • ${widget.holiday['Day']}',
-              style: const TextStyle(
-                fontSize: 13,
+              style: ModernInvoiceDesign.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF718096),
+                color: ModernInvoiceDesign.textSecondary,
                 letterSpacing: 0.2,
               ),
             ),
@@ -587,15 +582,14 @@ class _ModernHolidayCardState extends State<ModernHolidayCard>
               Icon(
                 Icons.schedule_rounded,
                 size: 14,
-                color: ModernSaasDesign.secondary,
+                color: ModernInvoiceDesign.secondary,
               ),
               const SizedBox(width: 4),
               Text(
-                _getDaysUntil(holidayDate!),
-                style: TextStyle(
-                  fontSize: 13,
+                _getDaysUntil(holidayDate),
+                style: ModernInvoiceDesign.labelMedium.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: ModernSaasDesign.secondary,
+                  color: ModernInvoiceDesign.secondary,
                   letterSpacing: 0.2,
                 ),
               ),

@@ -1,5 +1,6 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,7 +10,7 @@ import 'package:carenest/app/features/invoice/services/invoice_pdf_generator_ser
 import 'package:carenest/app/features/invoice/services/invoice_number_generator_service.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InvoiceShareService {
@@ -723,8 +724,6 @@ Your Invoice Team
           'invoiceNumber': invoice
               .invoiceNumber, // Always use the actual invoice number from the invoice object
           'jobTitle': invoiceData['jobTitle'] ?? 'Personal Care Assistance',
-          'startDate': invoiceData['startDate'] ?? '',
-          'endDate': invoiceData['endDate'] ?? '',
 
           // Financial data (match PDF generator expectations)
           'subtotal': financialSummary['subtotal'] ?? 0.0,

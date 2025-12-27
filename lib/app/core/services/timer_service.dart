@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:isolate';
-import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+
+import 'package:carenest/app/core/providers/app_providers.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TimerService extends ChangeNotifier {
   Timer? _timer;

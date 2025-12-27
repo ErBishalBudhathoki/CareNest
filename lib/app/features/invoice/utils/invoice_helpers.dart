@@ -1,5 +1,5 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class InvoiceHelpers {
   Map<String, String> itemMap = {
@@ -25,7 +25,7 @@ class InvoiceHelpers {
 
   String _sanitizeTimeString(String timeStr) {
     // Handle null or empty strings
-    if (timeStr == null || timeStr.isEmpty) {
+    if (timeStr.isEmpty) {
       debugPrint('Warning: Empty time string provided to _sanitizeTimeString');
       return '12:00 AM'; // Default time
     }
@@ -415,7 +415,7 @@ class InvoiceHelpers {
 
   double hoursBetweenPerListItem(String start, String end) {
     // Handle null or empty strings
-    if (start == null || start.isEmpty || end == null || end.isEmpty) {
+    if (start.isEmpty || end.isEmpty) {
       debugPrint('Warning: Empty time string provided to hoursBetweenPerListItem');
       return 0.0;
     }

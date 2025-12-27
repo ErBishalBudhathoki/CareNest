@@ -5,6 +5,7 @@ class GlassCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
   final double elevation;
+  
   const GlassCard({
     super.key,
     required this.child,
@@ -14,6 +15,8 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return ClipRRect(
       borderRadius: BorderRadius.circular(32),
       child: Blur(
@@ -22,8 +25,9 @@ class GlassCard extends StatelessWidget {
         colorOpacity: 0.06,
         child: Material(
           elevation: elevation,
-          color: Colors.white.withValues(alpha: 0.75),
+          color: theme.colorScheme.surface.withOpacity(0.1),
           borderRadius: BorderRadius.circular(32),
+          shadowColor: Colors.black26,
           child: Padding(
             padding: padding ?? const EdgeInsets.all(24),
             child: child,

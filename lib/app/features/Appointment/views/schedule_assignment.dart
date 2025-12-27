@@ -6,11 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
-import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.dart';
 import 'package:carenest/app/features/shift_assignment/views/shift_assignment_success_view.dart';
-import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:flutter/foundation.dart';
 
 class ScheduleAssignment extends ConsumerStatefulWidget {
   final String userEmail;
@@ -2403,13 +2399,5 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment>
       scheduleWithNdisItems,
     );
     return ins; // Explicitly return the result of the API call
-
-    Stream<Text> getDate(Duration refreshTime) async* {
-      while (true) {
-        await Future.delayed(refreshTime);
-        yield Text(
-            "Selected Date: ${DateFormat("yyyy-MM-dd").format(_focusedDay)}");
-      }
-    }
   }
 }

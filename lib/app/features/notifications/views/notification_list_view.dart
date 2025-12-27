@@ -5,7 +5,7 @@ import 'package:carenest/app/features/notifications/models/notification_model.da
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
 
 class NotificationListView extends ConsumerStatefulWidget {
-  const NotificationListView({Key? key}) : super(key: key);
+  const NotificationListView({super.key});
 
   @override
   ConsumerState<NotificationListView> createState() =>
@@ -57,7 +57,6 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
     final notificationNotifier = ref.read(notificationProvider.notifier);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -103,10 +102,10 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                   // Back button
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.colorWhite.withValues(alpha: 0.1),
+                      color: AppColors.colorWhite.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: AppColors.colorWhite.withValues(alpha: 0.2),
+                        color: AppColors.colorWhite.withOpacity(0.1),
                       ),
                     ),
                     child: IconButton(
@@ -138,8 +137,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                           Text(
                             '${state.unreadCount} unread',
                             style: TextStyle(
-                              color:
-                                  AppColors.colorWhite.withValues(alpha: 0.7),
+                              color: AppColors.colorWhite.withOpacity(0.1),
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -153,10 +151,10 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                     // Mark all as read
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                        color: const Color(0xFF3B82F6).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                          color: const Color(0xFF3B82F6).withOpacity(0.1),
                         ),
                       ),
                       child: IconButton(
@@ -167,7 +165,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                           Icons.done_all,
                           color: state.hasUnreadNotifications
                               ? const Color(0xFF3B82F6)
-                              : AppColors.colorWhite.withValues(alpha: 0.5),
+                              : AppColors.colorWhite.withOpacity(0.1),
                           size: 20,
                         ),
                         tooltip: 'Mark all as read',
@@ -178,10 +176,10 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                     // Clear all
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                        color: const Color(0xFFEF4444).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                          color: const Color(0xFFEF4444).withOpacity(0.1),
                         ),
                       ),
                       child: IconButton(
@@ -222,13 +220,13 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
             Icon(
               Icons.error_outline,
               size: 64,
-              color: AppColors.colorWhite.withValues(alpha: 0.5),
+              color: AppColors.colorWhite.withOpacity(0.1),
             ),
             const SizedBox(height: 16),
             Text(
               'Error loading notifications',
               style: TextStyle(
-                color: AppColors.colorWhite.withValues(alpha: 0.7),
+                color: AppColors.colorWhite.withOpacity(0.1),
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -237,7 +235,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
             Text(
               state.error!,
               style: TextStyle(
-                color: AppColors.colorWhite.withValues(alpha: 0.5),
+                color: AppColors.colorWhite.withOpacity(0.1),
                 fontSize: 14,
               ),
               textAlign: TextAlign.center,
@@ -246,7 +244,6 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
             ElevatedButton(
               onPressed: () => notifier.refresh(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: AppColors.colorWhite,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -269,10 +266,10 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                  color: const Color(0xFF10B981).withOpacity(0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                    color: const Color(0xFF10B981).withOpacity(0.1),
                     width: 2,
                   ),
                 ),
@@ -295,7 +292,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
               Text(
                 'You\'re all caught up! New notifications will appear here.',
                 style: TextStyle(
-                  color: AppColors.colorWhite.withValues(alpha: 0.7),
+                  color: AppColors.colorWhite.withOpacity(0.1),
                   fontSize: 14,
                 ),
                 textAlign: TextAlign.center,
@@ -337,20 +334,20 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: notification.isRead
-            ? AppColors.colorWhite.withValues(alpha: 0.05)
-            : AppColors.colorWhite.withValues(alpha: 0.1),
+            ? AppColors.colorWhite.withOpacity(0.1)
+            : AppColors.colorWhite.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: notification.isRead
-              ? AppColors.colorWhite.withValues(alpha: 0.1)
-              : const Color(0xFF3B82F6).withValues(alpha: 0.3),
+              ? AppColors.colorWhite.withOpacity(0.1)
+              : const Color(0xFF3B82F6).withOpacity(0.1),
           width: notification.isRead ? 1 : 2,
         ),
         boxShadow: notification.isRead
             ? null
             : [
                 BoxShadow(
-                  color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                  color: const Color(0xFF3B82F6).withOpacity(0.1),
                   blurRadius: 8,
                   spreadRadius: 0,
                 ),
@@ -375,7 +372,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: _getNotificationColor(notification.type)
-                        .withValues(alpha: 0.2),
+                        .withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -420,7 +417,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                       Text(
                         notification.body,
                         style: TextStyle(
-                          color: AppColors.colorWhite.withValues(alpha: 0.7),
+                          color: AppColors.colorWhite.withOpacity(0.1),
                           fontSize: 14,
                           height: 1.4,
                         ),
@@ -429,7 +426,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                       Text(
                         notification.timeAgo,
                         style: TextStyle(
-                          color: AppColors.colorWhite.withValues(alpha: 0.5),
+                          color: AppColors.colorWhite.withOpacity(0.1),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -442,7 +439,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                 PopupMenuButton<String>(
                   icon: Icon(
                     Icons.more_vert,
-                    color: AppColors.colorWhite.withValues(alpha: 0.5),
+                    color: AppColors.colorWhite.withOpacity(0.1),
                     size: 20,
                   ),
                   color: const Color(0xFF1E293B),
@@ -471,8 +468,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                             Text(
                               'Mark as read',
                               style: TextStyle(
-                                color:
-                                    AppColors.colorWhite.withValues(alpha: 0.9),
+                                color: AppColors.colorWhite.withOpacity(0.1),
                               ),
                             ),
                           ],
@@ -488,8 +484,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                           Text(
                             'Delete',
                             style: TextStyle(
-                              color:
-                                  AppColors.colorWhite.withValues(alpha: 0.9),
+                              color: AppColors.colorWhite.withOpacity(0.1),
                             ),
                           ),
                         ],
@@ -540,7 +535,6 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E293B),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -554,7 +548,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
         content: Text(
           'Are you sure you want to clear all notifications? This action cannot be undone.',
           style: TextStyle(
-            color: AppColors.colorWhite.withValues(alpha: 0.7),
+            color: AppColors.colorWhite.withOpacity(0.1),
           ),
         ),
         actions: [
@@ -563,7 +557,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
             child: Text(
               'Cancel',
               style: TextStyle(
-                color: AppColors.colorWhite.withValues(alpha: 0.7),
+                color: AppColors.colorWhite.withOpacity(0.1),
               ),
             ),
           ),
@@ -573,7 +567,6 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
               foregroundColor: AppColors.colorWhite,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),

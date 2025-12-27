@@ -1,9 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
 import 'package:carenest/app/features/expenses/data/expense_repository.dart';
 import 'package:carenest/app/di/service_locator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 // State class for expense management
 class ExpenseState {

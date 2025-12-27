@@ -8,7 +8,6 @@ import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:pinput/pinput.dart';
-import 'package:flutter/foundation.dart';
 
 class VerifyOTPView extends ConsumerStatefulWidget {
   final String otpGenerated;
@@ -48,7 +47,6 @@ class _VerifyOTPState extends ConsumerState<VerifyOTPView> {
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
         key: _scaffoldKey,
-        backgroundColor: AppColors.colorWhite,
         body: SafeArea(
             child: Padding(
                 padding: const EdgeInsets.all(AppDimens.padding),

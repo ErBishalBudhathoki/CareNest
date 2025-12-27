@@ -1,6 +1,4 @@
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ProfilePlaceholder extends StatelessWidget {
   final String firstName;
@@ -23,14 +21,14 @@ class ProfilePlaceholder extends StatelessWidget {
         children: [
           Text(
             'Welcome back',
-            style: ModernSaasDesign.bodyMedium,
+            style: const TextStyle(fontSize: 14),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             softWrap: false,
           ),
           Text(
             '$firstName $lastName',
-            style: ModernSaasDesign.headlineSmall.copyWith(
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
               fontWeight: FontWeight.w600,
             ),
             maxLines: 1,

@@ -2,7 +2,7 @@ import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
 import 'package:flutter/material.dart';
 
-class AppBarTitle extends StatelessWidget {
+class AppBarTitle extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   const AppBarTitle({super.key, required this.title});
 
@@ -25,5 +25,5 @@ class AppBarTitle extends StatelessWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(200);
+  Size get preferredSize => const Size.fromHeight(50);
 }

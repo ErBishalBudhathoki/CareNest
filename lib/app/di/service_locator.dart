@@ -1,7 +1,6 @@
 import 'package:carenest/app/features/invoice/services/download_service.dart';
 import 'package:carenest/app/features/invoice/services/invoice_email_service.dart';
 import 'package:carenest/app/features/invoice/services/invoice_pdf_generator_service.dart';
-import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/app/features/expenses/data/expense_repository.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:get_it/get_it.dart';

@@ -1,14 +1,11 @@
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
-import 'package:carenest/app/shared/widgets/alertDialog_widget.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
+import 'package:carenest/app/shared/widgets/alert_dialog_widget.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
-import 'package:carenest/app/shared/widgets/textField_widget.dart';
+import 'package:carenest/app/shared/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:iconsax/iconsax.dart';
@@ -96,10 +93,7 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
         widget.prefilledOrgCode!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final signupViewModel = ref.read(signupViewModelProvider);
-        signupViewModel.model.organizationCodeController.text =
-            widget.prefilledOrgCode!;
-        signupViewModel.model.isJoiningOrganization = true;
-        signupViewModel.notifyListeners();
+        signupViewModel.prefillOrganizationCode(widget.prefilledOrgCode!);
       });
     }
   }

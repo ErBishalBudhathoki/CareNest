@@ -1,7 +1,8 @@
-import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+
 import '../models/employee_tracking_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
@@ -40,7 +41,7 @@ class EmployeeTrackingRepository {
       debugPrint('🔍 DEBUG: Response type: ${response.runtimeType}');
       debugPrint('🔍 DEBUG: Full response: $response');
 
-      if (response != null && response['success'] == true) {
+      if (response['success'] == true) {
         debugPrint(
             '🔍 DEBUG: Parsing response data to EmployeeTrackingData model');
         final responseData = response['data'];
@@ -230,9 +231,9 @@ class EmployeeTrackingRepository {
 
           // Create full DateTime objects
           final startDateTime =
-              DateTime.parse('${shiftDate}T${convertedStartTime}:00');
+              DateTime.parse('${shiftDate}T$convertedStartTime:00');
           final endDateTime =
-              DateTime.parse('${shiftDate}T${convertedEndTime}:00');
+              DateTime.parse('${shiftDate}T$convertedEndTime:00');
 
           return {
             'id': record['recordId'] ?? record['shiftKey'] ?? '',
@@ -337,7 +338,7 @@ class EmployeeTrackingRepository {
         debugPrint('🔍 DEBUG: ERROR - API response failed or is null');
         debugPrint('🔍 DEBUG: Response: $response');
         throw Exception(
-            'Failed to fetch employee tracking data: ${response?['error'] ?? 'Unknown error'}');
+            'Failed to fetch employee tracking data: ${response['error'] ?? 'Unknown error'}');
       }
     } catch (e) {
       debugPrint('🔍 DEBUG: Exception in getEmployeeTrackingData: $e');

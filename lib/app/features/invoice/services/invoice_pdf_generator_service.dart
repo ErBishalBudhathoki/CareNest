@@ -1,11 +1,12 @@
+
+
+import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -13,7 +14,6 @@ import 'package:carenest/config/environment.dart';
 import 'package:carenest/utils/hours_formatting.dart';
 import '../../../shared/utils/shared_preferences_utils.dart';
 import '../../../core/services/file_conversion_service.dart';
-import '../../../features/admin/viewmodels/bank_details_viewmodel.dart';
 import 'invoice_number_generator_service.dart';
 
 class InvoicePdfGenerator {
@@ -110,7 +110,7 @@ class InvoicePdfGenerator {
                         style: pw.TextStyle(
                           fontSize: 0.1, // Nearly invisible
                           color:
-                              PdfColors.white, // White text on white background
+                              PdfColors.white, // White text on white surface
                         ),
                       ),
                     ),
@@ -272,7 +272,7 @@ class InvoicePdfGenerator {
       return 'Client Name Not Available';
     }
 
-    return '${firstName} ${lastName}'.trim();
+    return '$firstName $lastName'.trim();
   }
 
   String _buildClientAddress(Map<String, dynamic> clientData) {
@@ -605,7 +605,7 @@ class InvoicePdfGenerator {
                       '\$${_getSafeDouble(item['amount']).toStringAsFixed(2)}'),
                 ],
               );
-            }).toList(),
+            }),
           ],
         ),
         pw.SizedBox(height: 6),
@@ -663,10 +663,8 @@ class InvoicePdfGenerator {
               _buildTotalRow(
                   'Subtotal', _getSafeDouble(clientData['subtotal'])),
               if (showTax)
-                taxRate != null
-                    ? _buildTotalRow('Tax (${_formatPercentage(taxRate)}%)',
-                        _getSafeDouble(clientData['taxAmount']))
-                    : pw.Container(),
+                _buildTotalRow('Tax (${_formatPercentage(taxRate)}%)',
+                        _getSafeDouble(clientData['taxAmount'])),
               pw.Divider(color: PdfColors.black),
               _buildTotalRow('Total', _getSafeDouble(clientData['total']),
                   isBold: true),
@@ -958,7 +956,7 @@ class InvoicePdfGenerator {
                   _buildReceiptLinksCell(expense),
                 ],
               );
-            }).toList(),
+            }),
           ],
         ),
       ],
@@ -982,14 +980,28 @@ class InvoicePdfGenerator {
     // Collect all receipt URLs
     List<String> allReceiptUrls = [];
 
+    // Get the base URL from AppConfig
+    final baseUrl = AppConfig.baseUrl.endsWith('/')
+        ? AppConfig.baseUrl.substring(0, AppConfig.baseUrl.length - 1)
+        : AppConfig.baseUrl;
+
+    // Helper to create a full URL from a relative path
+    String toFullUrl(String url) {
+      if (url.startsWith('/')) {
+        return '$baseUrl$url';
+      }
+      return url;
+    }
+
     // Add from receiptFiles (preferred)
     for (var file in receiptFiles) {
       if (file is String && file.trim().isNotEmpty) {
         final cleanUrl = file.trim().replaceAll('`', '');
         if (cleanUrl.startsWith('http') || cleanUrl.startsWith('/')) {
+          final fullUrl = toFullUrl(cleanUrl);
           debugPrint(
-              'DEBUG_RECEIPT_LINKS: Adding URL from receiptFiles: $cleanUrl');
-          allReceiptUrls.add(cleanUrl);
+              'DEBUG_RECEIPT_LINKS: Adding URL from receiptFiles: $fullUrl');
+          allReceiptUrls.add(fullUrl);
         }
       }
     }
@@ -999,9 +1011,10 @@ class InvoicePdfGenerator {
       if (photo is String && photo.trim().isNotEmpty) {
         final cleanUrl = photo.trim().replaceAll('`', '');
         if (cleanUrl.startsWith('http') || cleanUrl.startsWith('/')) {
+          final fullUrl = toFullUrl(cleanUrl);
           debugPrint(
-              'DEBUG_RECEIPT_LINKS: Adding URL from receiptPhotos: $cleanUrl');
-          allReceiptUrls.add(cleanUrl);
+              'DEBUG_RECEIPT_LINKS: Adding URL from receiptPhotos: $fullUrl');
+          allReceiptUrls.add(fullUrl);
         }
       }
     }
@@ -1010,9 +1023,9 @@ class InvoicePdfGenerator {
     if (receiptUrl != null && receiptUrl.trim().isNotEmpty) {
       final cleanUrl = receiptUrl.trim().replaceAll('`', '');
       if (cleanUrl.startsWith('http') || cleanUrl.startsWith('/')) {
-        debugPrint(
-            'DEBUG_RECEIPT_LINKS: Adding URL from receiptUrl: $cleanUrl');
-        allReceiptUrls.add(cleanUrl);
+        final fullUrl = toFullUrl(cleanUrl);
+        debugPrint('DEBUG_RECEIPT_LINKS: Adding URL from receiptUrl: $fullUrl');
+        allReceiptUrls.add(fullUrl);
       }
     }
 

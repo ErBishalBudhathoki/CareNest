@@ -1,9 +1,10 @@
+
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
-import 'package:flutter/foundation.dart';
 
 /// Enhanced Invoice ViewModel
 /// Task 5.6: Update invoice service with enhanced pricing integration
@@ -51,9 +52,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
     try {
       // Update local state
       state = state.copyWith(isLoading: true, errorMessage: '');
-      if (taxRate == null) {
-        taxRate = 0.0;
-      }
+      taxRate ??= 0.0;
       // Validate date range if provided
       if (startDate != null && endDate != null) {
         if (endDate.isBefore(startDate)) {

@@ -1,6 +1,9 @@
+
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
@@ -15,7 +18,6 @@ import 'package:carenest/app/features/invoice/presentation/widgets/price_prompt_
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/providers/period_providers.dart';
-import 'package:carenest/services/date_period_service.dart';
 
 /// Enhanced Invoice Service with Pricing Integration
 /// Task 5.4: Update invoice service with enhanced pricing integration
@@ -399,7 +401,7 @@ class EnhancedInvoiceService {
       String? userEmail;
 
       try {
-        if (assignedClients != null && assignedClients['clients'] != null) {
+        if (assignedClients['clients'] != null) {
           final clients = assignedClients['clients'] as List;
           if (clients.isNotEmpty) {
             clientEmail = clients.first['clientEmail'] as String?;
@@ -696,8 +698,7 @@ class EnhancedInvoiceService {
       }
 
       // If there were errors in client processing, add them to metadata
-      if (assignedClients != null &&
-          assignedClients.containsKey('metadata') &&
+      if (assignedClients.containsKey('metadata') &&
           (assignedClients['metadata'] as Map<String, dynamic>)
               .containsKey('errors')) {
         metadata['processingErrors'] = assignedClients['metadata']['errors'];
@@ -895,16 +896,13 @@ class EnhancedInvoiceService {
       if (useAdminBankDetails == true) {
         for (int i = 0; i < _invoices.length; i++) {
           final client = _invoices[i];
-          if (client is Map<String, dynamic>) {
-            client['useAdminBankDetails'] = true;
-          }
-        }
+          client['useAdminBankDetails'] = true;
+                }
       } else {
         // Ensure explicit false for consistency if not present
         for (int i = 0; i < _invoices.length; i++) {
           final client = _invoices[i];
-          if (client is Map<String, dynamic> &&
-              !client.containsKey('useAdminBankDetails')) {
+          if (!client.containsKey('useAdminBankDetails')) {
             client['useAdminBankDetails'] = false;
           }
         }
@@ -1452,7 +1450,7 @@ class EnhancedInvoiceService {
                         }
                         // Recalculate total for this line item
                         final quantity = item['quantity'] ?? 1;
-                        final qty = (quantity is num) ? (quantity as num).toDouble() : 1.0;
+                        final qty = (quantity is num) ? (quantity).toDouble() : 1.0;
                         item['total'] = double.parse((roundedPrice * qty).toStringAsFixed(2));
                         return true;
                       }
@@ -2138,7 +2136,7 @@ class EnhancedInvoiceService {
         assignments = await _apiMethod.getUserAssignments(employeeEmail);
         debugPrint('Assignments from getUserAssignments: $assignments');
         // Validate assignments structure
-        if (assignments == null || !assignments.containsKey('assignments')) {
+        if (!assignments.containsKey('assignments')) {
           String errorMsg =
               'Invalid assignments data structure for $employeeEmail';
           debugPrint(errorMsg);
@@ -2890,9 +2888,7 @@ class EnhancedInvoiceService {
 
         // Call backend API to save invoice
         debugPrint(
-            'Saving invoice for client: ${invoice['clientName']} to /api/invoices' +
-                '\n\n' +
-                ' $invoiceData');
+            'Saving invoice for client: ${invoice['clientName']} to /api/invoices' '\n\n' ' $invoiceData');
         final response =
             await _apiMethod.post('/api/invoices', body: invoiceData);
 
