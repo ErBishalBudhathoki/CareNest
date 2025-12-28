@@ -31,16 +31,16 @@ class AppConfig {
     }
   }
 
-  static String get ownerEmail {
-    switch (appFlavor) {
-      case Flavor.development:
-        return Development.ownerEmail;
-      case Flavor.production:
-        return Production.ownerEmail;
-      default:
-        return '';
-    }
-  }
+  // static String get adminEmail {
+  //   switch (appFlavor) {
+  //     case Flavor.development:
+  //       return Development.ownerEmail;
+  //     case Flavor.production:
+  //       return Production.ownerEmail;
+  //     default:
+  //       return '';
+  //   }
+  // }
 
   static String get flavorName {
     switch (appFlavor) {
