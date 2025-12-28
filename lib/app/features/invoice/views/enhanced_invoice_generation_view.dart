@@ -2441,7 +2441,27 @@ class _EnhancedInvoiceGenerationViewState
         endDate: _selectedEndDate,
       );
     } catch (e) {
-      if (mounted) {
+      if (!mounted) return;
+
+      final errorMsg = e.toString();
+      if (errorMsg.contains('BANK_DETAILS_NOT_FOUND')) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Bank Details Missing'),
+            content: const Text(
+              'We could not find bank details for your organization.\n\n'
+              'Since you selected "Use Admin Bank Details", please ensure valid bank details are saved in the Settings or Admin Tools.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error generating invoices: $e'),

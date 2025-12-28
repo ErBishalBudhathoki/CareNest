@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -156,10 +155,12 @@ class EnhancedInvoiceService {
 
         // Worked times
         final workedTimeData = c['workedTimeData'] as Map<String, dynamic>?;
-        final workedTimes = workedTimeData?['workedTimes'] as List<dynamic>? ?? [];
+        final workedTimes =
+            workedTimeData?['workedTimes'] as List<dynamic>? ?? [];
         for (final wt in workedTimes) {
           if (wt is Map<String, dynamic>) {
-            final schedule = wt['correspondingSchedule'] as Map<String, dynamic>?;
+            final schedule =
+                wt['correspondingSchedule'] as Map<String, dynamic>?;
             considerDate(schedule?['date'] as String?);
           }
         }
@@ -276,7 +277,8 @@ class EnhancedInvoiceService {
 
       if (startDate != null && endDate != null) {
         // Normalize provided dates to remove time component
-        effectiveStart = DateTime(startDate.year, startDate.month, startDate.day);
+        effectiveStart =
+            DateTime(startDate.year, startDate.month, startDate.day);
         effectiveEnd = DateTime(endDate.year, endDate.month, endDate.day);
       } else {
         // No dates selected initially; will derive after loading clients
@@ -471,17 +473,21 @@ class EnhancedInvoiceService {
               // Collect date strings for the specific employee-client pair from assignedClients
               final itemDates = <String>[];
               try {
-                final clients = assignedClients['clients'] as List<dynamic>? ?? [];
+                final clients =
+                    assignedClients['clients'] as List<dynamic>? ?? [];
                 for (final c in clients) {
                   if (c is! Map<String, dynamic>) continue;
                   if ((c['clientEmail'] as String?) != clientEmail) continue;
 
                   // Worked times -> correspondingSchedule.date
-                  final workedTimeData = c['workedTimeData'] as Map<String, dynamic>?;
-                  final workedTimes = workedTimeData?['workedTimes'] as List<dynamic>? ?? [];
+                  final workedTimeData =
+                      c['workedTimeData'] as Map<String, dynamic>?;
+                  final workedTimes =
+                      workedTimeData?['workedTimes'] as List<dynamic>? ?? [];
                   for (final wt in workedTimes) {
                     if (wt is Map<String, dynamic>) {
-                      final schedule = wt['correspondingSchedule'] as Map<String, dynamic>?;
+                      final schedule =
+                          wt['correspondingSchedule'] as Map<String, dynamic>?;
                       final d = schedule?['date'] as String?;
                       if (d != null) itemDates.add(d);
                     }
@@ -491,7 +497,8 @@ class EnhancedInvoiceService {
                   final assignments = c['assignments'] as List<dynamic>? ?? [];
                   for (final a in assignments) {
                     if (a is! Map<String, dynamic>) continue;
-                    final dateList = (a['dateList'] as List<dynamic>? ?? []).whereType<String>();
+                    final dateList = (a['dateList'] as List<dynamic>? ?? [])
+                        .whereType<String>();
                     itemDates.addAll(dateList);
                     final sched = a['schedule'] as List<dynamic>? ?? [];
                     for (final s in sched) {
@@ -503,10 +510,12 @@ class EnhancedInvoiceService {
                   }
                 }
               } catch (e) {
-                debugPrint('EnhancedInvoiceService: Error collecting itemDates for $userEmail/$clientEmail: $e');
+                debugPrint(
+                    'EnhancedInvoiceService: Error collecting itemDates for $userEmail/$clientEmail: $e');
               }
 
-              final resolved = await periodService.resolvePeriodForEmployeeClient(
+              final resolved =
+                  await periodService.resolvePeriodForEmployeeClient(
                 employeeEmail: userEmail ?? 'unknown@example.com',
                 clientEmail: clientEmail ?? 'unknown@example.com',
                 itemDates: itemDates,
@@ -514,15 +523,19 @@ class EnhancedInvoiceService {
 
               effectiveStart = resolved.start;
               effectiveEnd = resolved.end;
-              debugPrint('EnhancedInvoiceService: Resolved period => $effectiveStart to $effectiveEnd');
+              debugPrint(
+                  'EnhancedInvoiceService: Resolved period => $effectiveStart to $effectiveEnd');
             } catch (e) {
-              debugPrint('EnhancedInvoiceService: Period resolution failed: $e');
+              debugPrint(
+                  'EnhancedInvoiceService: Period resolution failed: $e');
               // Month fallback to ensure a valid range exists
               final prevMonthStart = DateTime(now.year, now.month - 1, 1);
-              final prevMonthEnd = DateTime(prevMonthStart.year, prevMonthStart.month + 1, 0);
+              final prevMonthEnd =
+                  DateTime(prevMonthStart.year, prevMonthStart.month + 1, 0);
               effectiveStart = prevMonthStart;
               effectiveEnd = prevMonthEnd;
-              debugPrint('EnhancedInvoiceService: Applied previous-month fallback => $effectiveStart to $effectiveEnd');
+              debugPrint(
+                  'EnhancedInvoiceService: Applied previous-month fallback => $effectiveStart to $effectiveEnd');
             }
           }
 
@@ -632,20 +645,25 @@ class EnhancedInvoiceService {
 
               if (itemDates.isNotEmpty) {
                 try {
-                  final resolved = await periodService.resolvePeriodForEmployeeClient(
-                    employeeEmail: client['employeeEmail'] as String? ?? 'unknown@example.com',
-                    clientEmail: client['clientEmail'] as String? ?? 'unknown@example.com',
+                  final resolved =
+                      await periodService.resolvePeriodForEmployeeClient(
+                    employeeEmail: client['employeeEmail'] as String? ??
+                        'unknown@example.com',
+                    clientEmail: client['clientEmail'] as String? ??
+                        'unknown@example.com',
                     itemDates: itemDates,
                   );
                   client['startDate'] = df.format(resolved.start);
                   client['endDate'] = df.format(resolved.end);
                 } catch (e) {
-                  debugPrint('EnhancedInvoiceService: Per-client period derivation failed: $e');
+                  debugPrint(
+                      'EnhancedInvoiceService: Per-client period derivation failed: $e');
                 }
               }
             }
           } catch (e) {
-            debugPrint('EnhancedInvoiceService: Error during per-client period calculation: $e');
+            debugPrint(
+                'EnhancedInvoiceService: Error during per-client period calculation: $e');
           }
         }
 
@@ -897,7 +915,7 @@ class EnhancedInvoiceService {
         for (int i = 0; i < _invoices.length; i++) {
           final client = _invoices[i];
           client['useAdminBankDetails'] = true;
-                }
+        }
       } else {
         // Ensure explicit false for consistency if not present
         for (int i = 0; i < _invoices.length; i++) {
@@ -1428,8 +1446,11 @@ class EnhancedInvoiceService {
                       if (parsed != null && parsed > 0) {
                         // Attach price cap if present in bulk data
                         double? cap;
-                        final priceCapStr = cachedPricing['priceCap']?.toString();
-                        if (priceCapStr != null && priceCapStr.isNotEmpty && priceCapStr != 'null') {
+                        final priceCapStr =
+                            cachedPricing['priceCap']?.toString();
+                        if (priceCapStr != null &&
+                            priceCapStr.isNotEmpty &&
+                            priceCapStr != 'null') {
                           cap = double.tryParse(priceCapStr);
                         }
 
@@ -1439,10 +1460,12 @@ class EnhancedInvoiceService {
                           applied = cap;
                         }
                         // Round to 2 decimals
-                        final roundedPrice = double.parse(applied.toStringAsFixed(2));
+                        final roundedPrice =
+                            double.parse(applied.toStringAsFixed(2));
 
                         item['price'] = roundedPrice;
-                        item['pricingSource'] = 'Organization fallback base rate';
+                        item['pricingSource'] =
+                            'Organization fallback base rate';
                         item['hasCustomPricing'] = false;
                         if (cap != null) {
                           item['priceCap'] = cap;
@@ -1450,14 +1473,17 @@ class EnhancedInvoiceService {
                         }
                         // Recalculate total for this line item
                         final quantity = item['quantity'] ?? 1;
-                        final qty = (quantity is num) ? (quantity).toDouble() : 1.0;
-                        item['total'] = double.parse((roundedPrice * qty).toStringAsFixed(2));
+                        final qty =
+                            (quantity is num) ? (quantity).toDouble() : 1.0;
+                        item['total'] = double.parse(
+                            (roundedPrice * qty).toStringAsFixed(2));
                         return true;
                       }
                     }
                   }
                 } catch (e) {
-                  debugPrint('Enhanced Invoice Service: Error applying fallback base rate from bulk pricing for $ndisItemNumber: $e');
+                  debugPrint(
+                      'Enhanced Invoice Service: Error applying fallback base rate from bulk pricing for $ndisItemNumber: $e');
                 }
                 return false;
               }();
@@ -1469,98 +1495,99 @@ class EnhancedInvoiceService {
 
               // Only proceed with missing price prompts if price is still actually missing
               if (needsPricing) {
-              // Get pricing information from bulk pricing data
-              double? priceCap;
-              double? suggestedPrice =
-                  customPrice; // Use custom price if available
-              List<Map<String, dynamic>>? priceHistory = [];
+                // Get pricing information from bulk pricing data
+                double? priceCap;
+                double? suggestedPrice =
+                    customPrice; // Use custom price if available
+                List<Map<String, dynamic>>? priceHistory = [];
 
-              // Use bulk pricing data if available
-              debugPrint(
-                  'Enhanced Invoice Service: Using cached pricing for $ndisItemNumber: $cachedPricing');
+                // Use bulk pricing data if available
+                debugPrint(
+                    'Enhanced Invoice Service: Using cached pricing for $ndisItemNumber: $cachedPricing');
 
-              if (cachedPricing != null) {
-                try {
-                  // Custom price already handled above
+                if (cachedPricing != null) {
+                  try {
+                    // Custom price already handled above
 
-                  // Fallback to standard price if no custom price
-                  if (suggestedPrice == null || suggestedPrice <= 0) {
-                    if (cachedPricing['standardPrice'] != null) {
-                      final standardPriceStr =
-                          cachedPricing['standardPrice'].toString();
-                      if (standardPriceStr.isNotEmpty &&
-                          standardPriceStr != 'null') {
-                        suggestedPrice = double.tryParse(standardPriceStr);
-                        debugPrint(
-                            'Enhanced Invoice Service: Using standard price for $ndisItemNumber: $suggestedPrice');
+                    // Fallback to standard price if no custom price
+                    if (suggestedPrice == null || suggestedPrice <= 0) {
+                      if (cachedPricing['standardPrice'] != null) {
+                        final standardPriceStr =
+                            cachedPricing['standardPrice'].toString();
+                        if (standardPriceStr.isNotEmpty &&
+                            standardPriceStr != 'null') {
+                          suggestedPrice = double.tryParse(standardPriceStr);
+                          debugPrint(
+                              'Enhanced Invoice Service: Using standard price for $ndisItemNumber: $suggestedPrice');
+                        }
                       }
                     }
-                  }
 
-                  // Get price cap from bulk data
-                  if (cachedPricing['priceCap'] != null) {
-                    final priceCapStr = cachedPricing['priceCap'].toString();
-                    if (priceCapStr.isNotEmpty && priceCapStr != 'null') {
-                      priceCap = double.tryParse(priceCapStr);
+                    // Get price cap from bulk data
+                    if (cachedPricing['priceCap'] != null) {
+                      final priceCapStr = cachedPricing['priceCap'].toString();
+                      if (priceCapStr.isNotEmpty && priceCapStr != 'null') {
+                        priceCap = double.tryParse(priceCapStr);
+                      }
                     }
+                  } catch (e) {
+                    debugPrint(
+                        'Enhanced Invoice Service: Error parsing cached pricing for $ndisItemNumber: $e');
                   }
-                } catch (e) {
-                  debugPrint(
-                      'Enhanced Invoice Service: Error parsing cached pricing for $ndisItemNumber: $e');
                 }
-              }
 
-              // Fallback to individual API calls if bulk data is not available
-              if (suggestedPrice == null || suggestedPrice <= 0) {
+                // Fallback to individual API calls if bulk data is not available
+                if (suggestedPrice == null || suggestedPrice <= 0) {
+                  try {
+                    suggestedPrice =
+                        await _getSuggestedPrice(ndisItemNumber, clientId);
+                  } catch (e) {
+                    debugPrint(
+                        'Enhanced Invoice Service: Error getting suggested price for $ndisItemNumber: $e');
+                    suggestedPrice = null;
+                  }
+                }
+
+                if (priceCap == null) {
+                  try {
+                    priceCap = await _getPriceCap(ndisItemNumber);
+                  } catch (e) {
+                    debugPrint(
+                        'Enhanced Invoice Service: Error getting price cap for $ndisItemNumber: $e');
+                    priceCap = null;
+                  }
+                }
+
+                // Get price history (this is not typically in bulk data)
                 try {
-                  suggestedPrice =
-                      await _getSuggestedPrice(ndisItemNumber, clientId);
+                  priceHistory =
+                      await _getPriceHistory(ndisItemNumber, clientId);
                 } catch (e) {
                   debugPrint(
-                      'Enhanced Invoice Service: Error getting suggested price for $ndisItemNumber: $e');
-                  suggestedPrice = null;
+                      'Enhanced Invoice Service: Error getting price history for $ndisItemNumber: $e');
+                  priceHistory = [];
                 }
-              }
 
-              if (priceCap == null) {
-                try {
-                  priceCap = await _getPriceCap(ndisItemNumber);
-                } catch (e) {
-                  debugPrint(
-                      'Enhanced Invoice Service: Error getting price cap for $ndisItemNumber: $e');
-                  priceCap = null;
-                }
-              }
-
-              // Get price history (this is not typically in bulk data)
-              try {
-                priceHistory = await _getPriceHistory(ndisItemNumber, clientId);
-              } catch (e) {
-                debugPrint(
-                    'Enhanced Invoice Service: Error getting price history for $ndisItemNumber: $e');
-                priceHistory = [];
-              }
-
-              missingPricePrompts.add({
-                'promptId': 'client${clientIndex}_item$itemIndex',
-                'clientIndex': clientIndex,
-                'itemIndex': itemIndex,
-                'clientId': clientId,
-                'clientName': clientName,
-                'ndisItemNumber': ndisItemNumber ?? 'N/A',
-                'itemDescription': itemDescription,
-                'quantity': item['quantity'] is num
-                    ? (item['quantity'] as num).toDouble()
-                    : 1.0,
-                'unit': item['unit'] as String? ?? 'unit',
-                'priceCap': priceCap,
-                'suggestedPrice': suggestedPrice,
-                'priceHistory': priceHistory ?? [],
-                'hasCustomPricing': suggestedPrice != null &&
-                    suggestedPrice > 0 &&
-                    priceCap != null &&
-                    suggestedPrice != priceCap,
-              });
+                missingPricePrompts.add({
+                  'promptId': 'client${clientIndex}_item$itemIndex',
+                  'clientIndex': clientIndex,
+                  'itemIndex': itemIndex,
+                  'clientId': clientId,
+                  'clientName': clientName,
+                  'ndisItemNumber': ndisItemNumber ?? 'N/A',
+                  'itemDescription': itemDescription,
+                  'quantity': item['quantity'] is num
+                      ? (item['quantity'] as num).toDouble()
+                      : 1.0,
+                  'unit': item['unit'] as String? ?? 'unit',
+                  'priceCap': priceCap,
+                  'suggestedPrice': suggestedPrice,
+                  'priceHistory': priceHistory ?? [],
+                  'hasCustomPricing': suggestedPrice != null &&
+                      suggestedPrice > 0 &&
+                      priceCap != null &&
+                      suggestedPrice != priceCap,
+                });
               }
             }
           } catch (e) {
@@ -1636,7 +1663,8 @@ class EnhancedInvoiceService {
 
       // Fall back to standard price (metadata only)
       final standardPrice = await _apiMethod.getStandardPrice(ndisItemNumber);
-      debugPrint('Using standard price metadata for $ndisItemNumber: $standardPrice');
+      debugPrint(
+          'Using standard price metadata for $ndisItemNumber: $standardPrice');
       return standardPrice;
     } catch (e) {
       debugPrint('Error getting suggested price: $e');
@@ -1653,12 +1681,14 @@ class EnhancedInvoiceService {
   /// Returns: The standard price as `double` if available; otherwise `null`.
   /// Backend now returns `price: null` and cap metadata only; this method returns
   /// `null` when backend indicates no base price is available.
-  Future<double?> getStandardPriceForItem(String ndisItemNumber, {String? clientId}) async {
+  Future<double?> getStandardPriceForItem(String ndisItemNumber,
+      {String? clientId}) async {
     try {
       final price = await _apiMethod.getStandardPrice(ndisItemNumber);
       return price > 0 ? price : null;
     } catch (e) {
-      debugPrint('EnhancedInvoiceService: Error fetching standard price for $ndisItemNumber: $e');
+      debugPrint(
+          'EnhancedInvoiceService: Error fetching standard price for $ndisItemNumber: $e');
       return null;
     }
   }
@@ -2458,12 +2488,14 @@ class EnhancedInvoiceService {
             try {
               scheduleBreakHours = _parseBreakMinutesToHours(breakVal);
             } catch (e) {
-              debugPrint('Failed to parse schedule breakMinutes "$breakVal": $e');
+              debugPrint(
+                  'Failed to parse schedule breakMinutes "$breakVal": $e');
             }
           }
 
           actualWorkedTime = scheduledHours - scheduleBreakHours;
-          if (actualWorkedTime < 0) actualWorkedTime = 0.0; // Ensure non-negative
+          if (actualWorkedTime < 0)
+            actualWorkedTime = 0.0; // Ensure non-negative
         } else if (actualWorkedTime < 0) {
           actualWorkedTime = 0.0; // Ensure non-negative
         }
@@ -2592,7 +2624,10 @@ class EnhancedInvoiceService {
       if (raw.contains(':')) {
         final parts = raw.split(':');
         final h = int.tryParse(parts[0]) ?? 0;
-        final m = int.tryParse(parts.length > 1 ? parts[1].replaceAll(RegExp(r'[^0-9]'), '') : '0') ?? 0;
+        final m = int.tryParse(parts.length > 1
+                ? parts[1].replaceAll(RegExp(r'[^0-9]'), '')
+                : '0') ??
+            0;
         return h + (m / 60.0);
       }
 
@@ -2813,13 +2848,14 @@ class EnhancedInvoiceService {
         // Prepare complete invoice data for backend including all calculated payload data
         final invoiceData = {
           'organizationId': organizationId,
-          'invoiceNumber': _invoices[i]
-              ['invoiceNumber'] ?? 'INV-${DateTime.now().millisecondsSinceEpoch}', // Include the generated invoice number with fallback
+          'invoiceNumber': _invoices[i]['invoiceNumber'] ??
+              'INV-${DateTime.now().millisecondsSinceEpoch}', // Include the generated invoice number with fallback
           'clientId': invoice['clientId'] ?? '',
           'clientEmail': invoice['clientEmail'] ?? '',
           'clientName': invoice['clientName'] ?? '',
           'businessName': businessName,
-          'jobTitle': invoice['jobTitle'] ?? 'Personal Care Assistance', // Ensure job title is always set
+          'jobTitle': invoice['jobTitle'] ??
+              'Personal Care Assistance', // Ensure job title is always set
 
           // Add provider details for PDF generation
           'employeeName': providerName,
@@ -2888,7 +2924,9 @@ class EnhancedInvoiceService {
 
         // Call backend API to save invoice
         debugPrint(
-            'Saving invoice for client: ${invoice['clientName']} to /api/invoices' '\n\n' ' $invoiceData');
+            'Saving invoice for client: ${invoice['clientName']} to /api/invoices'
+            '\n\n'
+            ' $invoiceData');
         final response =
             await _apiMethod.post('/api/invoices', body: invoiceData);
 

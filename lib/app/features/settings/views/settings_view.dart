@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/routes/app_pages.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -92,8 +93,9 @@ class _SettingsViewState extends State<SettingsView> {
   DateTime? _lastTapTime;
 
   bool get _isOwner {
-    final owner = AppConfig.ownerEmail.trim().toLowerCase();
-    return owner.isNotEmpty && widget.userEmail.trim().toLowerCase() == owner;
+    final role = SharedPreferencesUtils().getRole();
+    // Assuming 'admin' is the enum value for admin rights
+    return role == UserRole.admin;
   }
 
   void _handleSecretTap() {

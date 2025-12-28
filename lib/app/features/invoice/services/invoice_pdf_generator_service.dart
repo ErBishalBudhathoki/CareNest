@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'dart:typed_data';
@@ -87,7 +85,8 @@ class InvoicePdfGenerator {
               clientData, attachedPhotos, photoDescription);
         }
 
-        final invoiceTotalWidget = await _buildInvoiceTotal(clientData, showTax, taxRate);
+        final invoiceTotalWidget =
+            await _buildInvoiceTotal(clientData, showTax, taxRate);
 
         pdf.addPage(
           pw.MultiPage(
@@ -109,8 +108,7 @@ class InvoicePdfGenerator {
                         watermark,
                         style: pw.TextStyle(
                           fontSize: 0.1, // Nearly invisible
-                          color:
-                              PdfColors.white, // White text on white surface
+                          color: PdfColors.white, // White text on white surface
                         ),
                       ),
                     ),
@@ -664,7 +662,7 @@ class InvoicePdfGenerator {
                   'Subtotal', _getSafeDouble(clientData['subtotal'])),
               if (showTax)
                 _buildTotalRow('Tax (${_formatPercentage(taxRate)}%)',
-                        _getSafeDouble(clientData['taxAmount'])),
+                    _getSafeDouble(clientData['taxAmount'])),
               pw.Divider(color: PdfColors.black),
               _buildTotalRow('Total', _getSafeDouble(clientData['total']),
                   isBold: true),
@@ -706,12 +704,18 @@ class InvoicePdfGenerator {
       // Admin selected: fetch admin bank details from backend using configured owner email
       try {
         final api = ApiMethod();
-        final String adminEmail = AppConfig.ownerEmail.trim();
+        // Use logged-in user's email instead of static config
+        final String? currentUserEmail = sharedUtils.getString('userEmail');
+        final String adminEmail = currentUserEmail ?? '';
+
         final String? organizationId = sharedUtils.getString('organizationId');
-        if (adminEmail.isEmpty || organizationId == null || organizationId.isEmpty) {
-          throw Exception('Missing adminEmail or organizationId');
+        if (adminEmail.isEmpty ||
+            organizationId == null ||
+            organizationId.isEmpty) {
+          throw Exception('Missing userEmail or organizationId');
         }
-        final resp = await api.getBankDetailsForUserEmail(adminEmail, organizationId);
+        final resp =
+            await api.getBankDetailsForUserEmail(adminEmail, organizationId);
         if (resp['success'] == true && resp['data'] is Map) {
           final data = Map<String, dynamic>.from(resp['data']);
           final adminBankName = (data['bankName'] ?? '').toString();
@@ -734,7 +738,8 @@ class InvoicePdfGenerator {
         throw Exception('BANK_DETAILS_REQUIRED');
       } catch (e) {
         debugPrint('Failed to fetch admin bank details: $e');
-        throw Exception('BANK_DETAILS_REQUIRED');
+        // Throw specific exception for UI to handle
+        throw Exception('BANK_DETAILS_NOT_FOUND');
       }
     } else {
       // Employee selected: prefer employee bank details; fall back to admin only if employee is missing
@@ -761,15 +766,25 @@ class InvoicePdfGenerator {
               employeeEmail = spEmail;
             }
           }
-          final String? organizationId = sharedUtils.getString('organizationId');
-          if (employeeEmail.isNotEmpty && organizationId != null && organizationId.isNotEmpty) {
-            final resp = await api.getBankDetailsForUserEmail(employeeEmail, organizationId);
+          final String? organizationId =
+              sharedUtils.getString('organizationId');
+          if (employeeEmail.isNotEmpty &&
+              organizationId != null &&
+              organizationId.isNotEmpty) {
+            final resp = await api.getBankDetailsForUserEmail(
+                employeeEmail, organizationId);
             if (resp['success'] == true && resp['data'] is Map) {
               final data = Map<String, dynamic>.from(resp['data']);
-              bankName = bankName.isNotEmpty ? bankName : (data['bankName'] ?? '').toString();
-              accountName = accountName.isNotEmpty ? accountName : (data['accountName'] ?? '').toString();
+              bankName = bankName.isNotEmpty
+                  ? bankName
+                  : (data['bankName'] ?? '').toString();
+              accountName = accountName.isNotEmpty
+                  ? accountName
+                  : (data['accountName'] ?? '').toString();
               bsb = bsb.isNotEmpty ? bsb : (data['bsb'] ?? '').toString();
-              accountNumber = accountNumber.isNotEmpty ? accountNumber : (data['accountNumber'] ?? '').toString();
+              accountNumber = accountNumber.isNotEmpty
+                  ? accountNumber
+                  : (data['accountNumber'] ?? '').toString();
             }
           }
         } catch (e) {
@@ -793,12 +808,18 @@ class InvoicePdfGenerator {
       // Employee missing: fall back to admin (network only)
       try {
         final api = ApiMethod();
-        final String adminEmail = AppConfig.ownerEmail.trim();
+        // Use logged-in user's email instead of static config
+        final String? currentUserEmail = sharedUtils.getString('userEmail');
+        final String adminEmail = currentUserEmail ?? '';
+
         final String? organizationId = sharedUtils.getString('organizationId');
-        if (adminEmail.isEmpty || organizationId == null || organizationId.isEmpty) {
+        if (adminEmail.isEmpty ||
+            organizationId == null ||
+            organizationId.isEmpty) {
           throw Exception('BANK_DETAILS_REQUIRED');
         }
-        final resp = await api.getBankDetailsForUserEmail(adminEmail, organizationId);
+        final resp =
+            await api.getBankDetailsForUserEmail(adminEmail, organizationId);
         if (resp['success'] == true && resp['data'] is Map) {
           final data = Map<String, dynamic>.from(resp['data']);
           final adminBankName = (data['bankName'] ?? '').toString();
@@ -821,7 +842,8 @@ class InvoicePdfGenerator {
         throw Exception('BANK_DETAILS_REQUIRED');
       } catch (e) {
         debugPrint('Failed to fetch admin bank details for fallback: $e');
-        throw Exception('BANK_DETAILS_REQUIRED');
+        // Throw specific exception for UI to handle
+        throw Exception('BANK_DETAILS_NOT_FOUND');
       }
     }
   }
