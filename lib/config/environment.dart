@@ -41,15 +41,4 @@ class AppConfig {
         return 'development';
     }
   }
-
-  static String get ownerEmail {
-    switch (appFlavor) {
-      case Flavor.development:
-        return Development.ownerEmail;
-      case Flavor.production:
-        return Production.ownerEmail;
-      default:
-        return Development.ownerEmail;
-    }
-  }
 }
