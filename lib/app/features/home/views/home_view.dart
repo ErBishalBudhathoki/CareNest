@@ -1,10 +1,7 @@
-
 import 'dart:typed_data';
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
 import 'package:carenest/app/features/expenses/views/expense_management_view.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/shared/widgets/app_bar_widget.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
 import 'package:carenest/app/shared/widgets/dynamic_appointment_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +10,7 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 
 // ... existing code ...
 
@@ -42,6 +40,17 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
+  // Color constants - Vibrant Dark Theme
+  static const Color _primaryColor = Color(0xFF8B5CF6); // Vibrant Violet
+  static const Color _primaryGradientStart = Color(0xFF8B5CF6);
+  static const Color _primaryGradientEnd = Color(0xFF6D28D9);
+  static const Color _cardBackground = Color(0xFF1E293B); // Slate 800
+  static const Color _scaffoldBackground = Color(0xFF0F172A); // Slate 900
+  static const Color _textPrimary = Colors.white;
+  static const Color _textSecondary = Color(0xFF94A3B8); // Slate 400
+  static const Color _successColor = Color(0xFF10B981); // Emerald 500
+  static const Color _accentColor = Color(0xFF06B6D4); // Cyan 500
+
   final PageController _pageController = PageController();
   late final PersistentTabController controller;
   late Future<dynamic> _appointmentDataFuture = Future.value(null);
@@ -141,7 +150,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Future<void> _loadUseAdminPreference() async {
     try {
       await _prefs.init();
-      final stored = _prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+      final stored =
+          _prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
       if (stored != null) {
         setState(() => _useAdminBankDetails = stored);
       }
@@ -153,7 +163,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
   /// Persists the current admin/employee bank details preference.
   Future<void> _persistUseAdminPreference(bool value) async {
     try {
-      await _prefs.setBool(SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
+      await _prefs.setBool(
+          SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
     } catch (e) {
       debugPrint('Failed to persist useAdminBankDetails preference: $e');
     }
@@ -359,7 +370,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           width: double.infinity,
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F5),
+            color: _cardBackground,
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Column(
@@ -368,42 +379,39 @@ class _HomeViewState extends ConsumerState<HomeView> {
               Container(
                 height: 20,
                 width: 150,
-                color: const Color(0xFFE5E5E5),
+                color: Colors.white.withOpacity(0.05),
               ),
               const SizedBox(height: 16.0),
               Container(
                 height: 14,
                 width: 200,
-                color: const Color(0xFFE5E5E5),
+                color: Colors.white.withOpacity(0.05),
               ),
               const SizedBox(height: 8.0),
               Container(
                 height: 14,
                 width: 250,
-                color: const Color(0xFFE5E5E5),
+                color: Colors.white.withOpacity(0.05),
               ),
               const Spacer(),
               Container(
                 height: 40,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE5E5E5),
-                  borderRadius:
-                      BorderRadius.circular(8.0),
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(
-            height:
-                16.0), // Space between card and indicator
+        const SizedBox(height: 16.0), // Space between card and indicator
         // Skeleton for the page indicator
         Container(
           height: 10,
           width: 60,
           decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F5),
+            color: _cardBackground,
             borderRadius: BorderRadius.circular(8.0),
           ),
         ),
@@ -419,10 +427,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _cardBackground,
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
-          color: const Color(0xFFE0E0E0),
+          color: Colors.white.withOpacity(0.05),
           width: 1.0,
         ),
       ),
@@ -434,14 +442,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: Colors.white.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: const Color(0xFFE0E0E0)),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
               ),
               child: const Text(
                 'Employee bank details are not set yet. Please add your bank details first.',
                 style: TextStyle(
-                  color: Color(0xFF6B7280),
+                  color: _textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -449,28 +457,65 @@ class _HomeViewState extends ConsumerState<HomeView> {
           const Text(
             'Select which bank details to display',
             style: TextStyle(
-              color: Color(0xFF6B7280),
+              color: _textSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 12.0),
           if (_hasBankDetails)
-            RadioListTile<bool>(
+            Theme(
+              data: ThemeData.dark().copyWith(
+                radioTheme: RadioThemeData(
+                  fillColor: WidgetStateProperty.resolveWith<Color>(
+                      (states) => _primaryColor),
+                ),
+              ),
+              child: RadioListTile<bool>(
+                title: const Text(
+                  'Employee Bank Details',
+                  style: TextStyle(
+                    color: _textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: const Text(
+                  'Use the employee’s saved bank details',
+                  style: TextStyle(color: _textSecondary),
+                ),
+                value: false,
+                groupValue: _useAdminBankDetails,
+                onChanged: (val) async {
+                  final newVal = val ?? false;
+                  setState(() {
+                    _useAdminBankDetails = newVal;
+                  });
+                  await _persistUseAdminPreference(newVal);
+                },
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          Theme(
+            data: ThemeData.dark().copyWith(
+              radioTheme: RadioThemeData(
+                fillColor: WidgetStateProperty.resolveWith<Color>(
+                    (states) => _primaryColor),
+              ),
+            ),
+            child: RadioListTile<bool>(
               title: const Text(
-                'Employee Bank Details',
+                'Admin Bank Details',
                 style: TextStyle(
-                  color: Color(0xFF1F2937),
+                  color: _textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               subtitle: const Text(
-                'Use the employee’s saved bank details',
-                style: TextStyle(color: Color(0xFF6B7280)),
+                'Use admin bank details (invoices created by admin only)',
+                style: TextStyle(color: _textSecondary),
               ),
-              value: false,
+              value: true,
               groupValue: _useAdminBankDetails,
-              activeColor: const Color(0xFF667EEA),
               onChanged: (val) async {
                 final newVal = val ?? false;
                 setState(() {
@@ -480,35 +525,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
               },
               contentPadding: EdgeInsets.zero,
             ),
-          RadioListTile<bool>(
-            title: const Text(
-              'Admin Bank Details',
-              style: TextStyle(
-                color: Color(0xFF1F2937),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            subtitle: const Text(
-              'Use admin bank details (invoices created by admin only)',
-              style: TextStyle(color: Color(0xFF6B7280)),
-            ),
-            value: true,
-            groupValue: _useAdminBankDetails,
-            activeColor: const Color(0xFF667EEA),
-            onChanged: (val) async {
-              final newVal = val ?? false;
-              setState(() {
-                _useAdminBankDetails = newVal;
-              });
-              await _persistUseAdminPreference(newVal);
-            },
-            contentPadding: EdgeInsets.zero,
           ),
           const SizedBox(height: 8.0),
           const Text(
             'Note: Invoice creation is restricted to admin users.',
             style: TextStyle(
-              color: Color(0xFF6B7280),
+              color: _textSecondary,
               fontSize: 12,
             ),
           ),
@@ -525,28 +547,49 @@ class _HomeViewState extends ConsumerState<HomeView> {
       final acc = (_bankDetails!['accountNumber'] as String).trim();
       if (acc.isNotEmpty) {
         final last4 = acc.length >= 4 ? acc.substring(acc.length - 4) : acc;
-        maskedAccount = '••••••$last4';
+        maskedAccount = '•••• •••• $last4';
       }
     }
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
+        color: _cardBackground,
+        borderRadius: BorderRadius.circular(24.0),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.05),
+          width: 1.0,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Your Bank Details',
-            style: TextStyle(
-              color: Color(0xFF6B7280),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'PRIMARY ACCOUNT',
+                style: TextStyle(
+                  color: _primaryColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.account_balance_wallet_outlined,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12.0),
           if (_bankDetailsLoading)
@@ -558,31 +601,47 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 Text(
                   (_bankDetails?['bankName'] ?? 'Bank').toString(),
                   style: const TextStyle(
-                    color: Color(0xFF1F2937),
+                    color: _textPrimary,
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 4.0),
                 Text(
-                  'Account: ${maskedAccount.isNotEmpty ? maskedAccount : 'Hidden'}',
+                  maskedAccount.isNotEmpty ? maskedAccount : 'Hidden',
                   style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: _textSecondary,
+                    fontSize: 16,
+                    letterSpacing: 1.0,
                   ),
                 ),
-                const SizedBox(height: 12.0),
-                ButtonWidget(
-                  buttonText: 'Update Your Bank Details',
-                  buttonColor: const Color(0xFF667EEA),
-                  textColor: Colors.white,
-                  onPressed: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BankDetailsView(),
+                const SizedBox(height: 24.0),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BankDetailsView(),
+                        ),
+                      );
+                      await _loadEmployeeBankDetails();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.white.withOpacity(0.2)),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    );
-                    await _loadEmployeeBankDetails();
-                  },
+                    ),
+                    icon: const Icon(Icons.edit_outlined,
+                        size: 18, color: Colors.white),
+                    label: const Text(
+                      'Update Bank Details',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ],
             )
@@ -591,7 +650,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
               Text(
                 _bankDetailsError!,
                 style: const TextStyle(
-                  color: Color(0xFF6B7280),
+                  color: _textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -599,23 +658,34 @@ class _HomeViewState extends ConsumerState<HomeView> {
             const Text(
               'No bank details saved yet.',
               style: TextStyle(
-                color: Color(0xFF6B7280),
+                color: _textSecondary,
               ),
             ),
-            const SizedBox(height: 12.0),
-            ButtonWidget(
-              buttonText: 'Add Your Bank Details',
-              buttonColor: const Color(0xFF667EEA),
-              textColor: Colors.white,
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const BankDetailsView(),
+            const SizedBox(height: 16.0),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BankDetailsView(),
+                    ),
+                  );
+                  await _loadEmployeeBankDetails();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _primaryColor,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                );
-                await _loadEmployeeBankDetails();
-              },
+                ),
+                child: const Text(
+                  'Add Your Bank Details',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ),
           ],
         ],
@@ -623,223 +693,371 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildExpenseCard() {
     return Container(
-      color: Colors.white,
-      child: Scaffold(
-        extendBodyBehindAppBar: false,
-        resizeToAvoidBottomInset: false,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(70.0),
-          child: Consumer(
-            builder: (context, ref, _) {
-              final photoDataState = ref.watch(photoDataProvider);
-              debugPrint(
-                  'Building HomeView AppBar with photo: ${photoDataState.photoData}');
-              return CustomAppBar(
-                email: widget.email,
-                firstName: initialData['firstName'] ?? 'First Name',
-                lastName: initialData['lastName'] ?? 'Last Name',
-                photoData: photoDataState.photoData,
+      width: double.infinity,
+      padding: const EdgeInsets.all(24.0),
+      decoration: BoxDecoration(
+        color: _cardBackground,
+        borderRadius: BorderRadius.circular(24.0),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.05),
+          width: 1.0,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Track Expenses',
+                style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.receipt_long_outlined,
+                  color: _primaryColor,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8.0),
+          const Text(
+            'Keep track of your daily spending and manage reimbursements.',
+            style: TextStyle(
+              color: _textSecondary,
+              fontSize: 14,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 24.0),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExpenseManagementView(
+                      adminEmail: widget.email,
+                      organizationId: widget.organizationId,
+                      organizationName: widget.organizationName,
+                    ),
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: _primaryColor.withOpacity(0.5)),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: const Text(
+                'Open Dashboard',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildClockInCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: _cardBackground,
+        borderRadius: BorderRadius.circular(20.0),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.05),
+          width: 1.0,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: _successColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.timer_outlined,
+              color: _successColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Ready to start?',
+                  style: TextStyle(
+                    color: _textPrimary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Shift starts soon',
+                  style: TextStyle(
+                    color: _textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Consumer(
+                    builder: (context, ref, child) {
+                      return ClockInAndOutView(
+                        email: widget.email,
+                      );
+                    },
+                  ),
+                ),
               );
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _successColor,
+              foregroundColor: Colors.white,
+              elevation: 4,
+              shadowColor: _successColor.withOpacity(0.5),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'Clock In',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
           ),
-        ),
-        body: Container(
-          color: Colors.white,
-          width: double.infinity,
-          height: double.infinity,
-          child: SafeArea(
-            child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    16.0, 0.0, 16.0, 0.0),
-                child: SingleChildScrollView(
-                  physics: const ClampingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Your Appointments',
-                        style: TextStyle(
-                          color: Color(0xFF1F2937),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: 'Lato',
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      FutureBuilder(
-                        future: _appointmentDataFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return _buildSkeletonLoader();
-                          } else if (snapshot.hasError) {
-                            // Only show error for actual errors, not for empty data
-                            return const Center(
-                              child: Text(
-                                'Unable to load appointments. Please try again.',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1F2937),
-                                ),
-                              ),
-                            );
-                          } else {
-                            // Handle both null data and empty data gracefully
-                            return getLength() == 0
-                                ? Center(
-                                    child: Text(
-                                      'No Appointments right now',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF1F2937),
-                                      ),
-                                    ),
-                                  )
-                                : DynamicAppointmentCardWidget(
-                                    currentUserEmail: widget.email,
-                                    listLength: getLength(),
-                                    clientEmailList: setAppointmentData['data']
-                                        .map((item) => item['clientEmail'])
-                                        .toList(),
-                                  );
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 20.0),
+        ],
+      ),
+    );
+  }
 
-                      // Employee Bank Details section (add/update)
-                      const Text(
-                        'Bank Details',
-                        style: TextStyle(
-                          color: Color(0xFF1F2937),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: 'Lato',
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildEmployeeBankDetailsSection(),
-                      const SizedBox(height: 20.0),
+  @override
+  Widget build(BuildContext context) {
+    final photoDataState = ref.watch(photoDataProvider);
 
-                      // Expense Management Section
-                      const Text(
-                        'Expense Management',
-                        style: TextStyle(
-                          color: Color(0xFF1F2937),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: 'Lato',
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(12.0),
-                          border: Border.all(
-                            color: const Color(0xFFE0E0E0),
-                            width: 1.0,
-                          ),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color:
-                          //         const Color(0xFFD4D4D4).withOpacity(0.1),
-                          //     spreadRadius: 1,
-                          //     blurRadius: 4,
-                          //     offset: const Offset(0, 2),
-                          //   ),
-                          // ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Manage your expenses and track spending',
-                              style: TextStyle(
-                                color: Color(0xFF6B7280),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 12.0),
-                            ButtonWidget(
-                              buttonText: "Open Expense Dashboard",
-                              buttonColor: const Color(0xFF667EEA),
-                              textColor: Colors.white,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ExpenseManagementView(
-                                      adminEmail: widget.email,
-                                      organizationId: widget.organizationId,
-                                      organizationName: widget.organizationName,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20.0),
-
-                      // Bank Details Configuration Section
-                      // Show only for admin users as per requirement
-                      if (ref.watch(userRoleProvider) == UserRole.admin) ...[
+    return Scaffold(
+      backgroundColor: _scaffoldBackground,
+      extendBodyBehindAppBar: false,
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Custom Header
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         const Text(
-                          'Bank Details Configuration',
+                          'Welcome back',
                           style: TextStyle(
-                            color: Color(0xFF1F2937),
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
+                            color: _textSecondary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${initialData['firstName'] ?? 'User'} ${initialData['lastName'] ?? ''}',
+                          style: const TextStyle(
+                            color: _textPrimary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                             fontFamily: 'Lato',
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        _buildBankDetailsConfiguration(),
-                        const SizedBox(height: 20.0),
                       ],
-
-                      ButtonWidget(
-                        buttonText: "ClockIn",
-                        buttonColor: Colors.white,
-                        textColor: const Color(0xFF667EEA),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Consumer(
-                                builder: (context, ref, child) {
-                                  final timerService =
-                                      ref.watch(timerServiceProvider);
-                                  return ClockInAndOutView(
-                                    email: widget.email,
-                                    // timerService: timerService,
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        },
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _primaryColor,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: _primaryColor.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16.0),
-                    ],
-                  ),
+                      child: CircleAvatar(
+                        radius: 24,
+                        backgroundColor: _cardBackground,
+                        child: ClipOval(
+                          child: ProfileImageWidget(
+                            photoData: photoDataState.photoData,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+
+              // Appointments Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Your Appointments',
+                    style: TextStyle(
+                      color: _textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Lato',
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Navigate to full schedule if needed
+                    },
+                    child: const Text(
+                      'View Schedule',
+                      style: TextStyle(
+                        color: _textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              FutureBuilder(
+                future: _appointmentDataFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return _buildSkeletonLoader();
+                  } else if (snapshot.hasError) {
+                    return const Center(
+                      child: Text(
+                        'Unable to load appointments.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: _textSecondary,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return getLength() == 0
+                        ? Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: _cardBackground,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'No Appointments right now',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: _textSecondary,
+                                ),
+                              ),
+                            ),
+                          )
+                        : DynamicAppointmentCardWidget(
+                            currentUserEmail: widget.email,
+                            listLength: getLength(),
+                            clientEmailList: setAppointmentData['data']
+                                .map((item) => item['clientEmail'])
+                                .toList(),
+                          );
+                  }
+                },
+              ),
+              const SizedBox(height: 24.0),
+
+              // Bank Details Section
+              const Text(
+                'Bank Details',
+                style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Lato',
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildEmployeeBankDetailsSection(),
+              const SizedBox(height: 24.0),
+
+              // Expense Management Section
+              const Text(
+                'Expense Management',
+                style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Lato',
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildExpenseCard(),
+              const SizedBox(height: 24.0),
+
+              // Clock In Section (Bottom Card)
+              _buildClockInCard(),
+              const SizedBox(height: 24.0),
+
+              // Bank Details Configuration (Admin Only)
+              if (ref.watch(userRoleProvider) == UserRole.admin) ...[
+                const Text(
+                  'Bank Details Configuration',
+                  style: TextStyle(
+                    color: _textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'Lato',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildBankDetailsConfiguration(),
+                const SizedBox(height: 24.0),
+              ],
+            ],
           ),
         ),
       ),

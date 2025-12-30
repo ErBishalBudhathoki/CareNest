@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -48,6 +47,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
     bool useAdminBankDetails = false,
     DateTime? startDate,
     DateTime? endDate,
+    String? invoiceType,
   }) async {
     try {
       // Update local state
@@ -66,7 +66,8 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
 
         // Prevent excessively long periods (align with backend: max ~3 months)
         final diffDays = endDate.difference(startDate).inDays;
-        if (diffDays > 93) { // ~3 months
+        if (diffDays > 93) {
+          // ~3 months
           final msg = 'Selected period cannot exceed 3 months';
           state = state.copyWith(isLoading: false, errorMessage: msg);
           ref.read(invoiceGenerationStateProvider.notifier).state =
@@ -107,6 +108,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
         useAdminBankDetails: useAdminBankDetails,
         startDate: startDate,
         endDate: endDate,
+        invoiceType: invoiceType,
       );
 
       // Extract validation summary and items exceeding price cap from the invoices

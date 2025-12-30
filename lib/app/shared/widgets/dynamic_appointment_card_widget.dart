@@ -27,12 +27,16 @@ class DynamicAppointmentCardWidget extends StatefulWidget {
 
 class _DynamicAppointmentCardWidgetState
     extends State<DynamicAppointmentCardWidget> {
-  // Color constants
-  static const Color _primaryColor = Color(0xFF6366F1);
-  static const Color _successColor = Color(0xFF34C759);
+  // Color constants - Vibrant Dark Theme
+  static const Color _primaryColor = Color(0xFF8B5CF6); // Vibrant Violet
+  static const Color _primaryGradientStart = Color(0xFF8B5CF6);
+  static const Color _primaryGradientEnd = Color(0xFF6D28D9);
+  static const Color _successColor = Color(0xFF10B981);
   static const Color _errorColor = Color(0xFFEF4444);
-  static const Color _gray50 = Color(0xFFF9FAFB);
-  static const Color _gray800 = Color(0xFF1F2937);
+  static const Color _cardBackground = Color(0xFF1E293B); // Slate 800
+  static const Color _cardBorder = Color(0xFF334155); // Slate 700
+  static const Color _textPrimary = Colors.white;
+  static const Color _textSecondary = Color(0xFF94A3B8); // Slate 400
 
   // Spacing constants (xs=4, sm=8, md=16, lg=24, xl=32)
   static const double _spacingXs = 4.0;
@@ -114,20 +118,16 @@ class _DynamicAppointmentCardWidgetState
     final adaptivePadding = _getAdaptivePadding(context);
 
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: _cardBackground,
+      highlightColor: _cardBorder,
       child: Container(
         height: cardHeight,
         margin: EdgeInsets.symmetric(
-          horizontal: _isSmallScreen(context)
-              ? _spacingSm
-              : _spacingMd,
-          vertical: _isSmallScreen(context)
-              ? _spacingXs
-              : _spacingMd,
+          horizontal: _isSmallScreen(context) ? _spacingSm : _spacingMd,
+          vertical: _isSmallScreen(context) ? _spacingXs : _spacingMd,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: _cardBackground,
           borderRadius: BorderRadius.circular(_spacingLg),
         ),
         child: Column(
@@ -138,7 +138,7 @@ class _DynamicAppointmentCardWidgetState
               height: 24,
               width: 150,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: _cardBorder,
                 borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
@@ -147,7 +147,7 @@ class _DynamicAppointmentCardWidgetState
               height: 16,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: _cardBorder,
                 borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
@@ -157,7 +157,7 @@ class _DynamicAppointmentCardWidgetState
               height: 16,
               width: screenSize.width * 0.6,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: _cardBorder,
                 borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
@@ -166,7 +166,7 @@ class _DynamicAppointmentCardWidgetState
               margin: const EdgeInsets.all(_spacingLg),
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: _cardBorder,
                 borderRadius: BorderRadius.circular(_spacingSm),
               ),
             ),
@@ -255,12 +255,10 @@ class _DynamicAppointmentCardWidgetState
               // Calculate dynamic height and padding using responsive system
               final cardHeight = _getCardHeight(context);
               final adaptivePadding = _getAdaptivePadding(context);
-              final verticalPadding = _isSmallScreen(context)
-                  ? _spacingSm
-                  : _spacingMd;
-              final horizontalPadding = _isSmallScreen(context)
-                  ? _spacingMd
-                  : _spacingLg;
+              final verticalPadding =
+                  _isSmallScreen(context) ? _spacingSm : _spacingMd;
+              final horizontalPadding =
+                  _isSmallScreen(context) ? _spacingMd : _spacingLg;
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -285,17 +283,10 @@ class _DynamicAppointmentCardWidgetState
                           child: Container(
                             padding: const EdgeInsets.all(_spacingMd),
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.white,
-                                  _gray50,
-                                ],
-                              ),
+                              color: _cardBackground,
                               borderRadius: BorderRadius.circular(_spacingLg),
                               border: Border.all(
-                                color: _primaryColor.withOpacity(0.1),
+                                color: _cardBorder,
                                 width: 1,
                               ),
                             ),
@@ -312,16 +303,19 @@ class _DynamicAppointmentCardWidgetState
                                   ),
                                   decoration: BoxDecoration(
                                     color: _primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(_spacingLg),
+                                    borderRadius:
+                                        BorderRadius.circular(_spacingLg),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Container(
-                                        padding: const EdgeInsets.all(_spacingSm),
+                                        padding:
+                                            const EdgeInsets.all(_spacingSm),
                                         decoration: BoxDecoration(
                                           color: _primaryColor,
-                                          borderRadius: BorderRadius.circular(_spacingSm),
+                                          borderRadius:
+                                              BorderRadius.circular(_spacingSm),
                                         ),
                                         child: Icon(
                                           Icons.calendar_today_outlined,
@@ -331,12 +325,12 @@ class _DynamicAppointmentCardWidgetState
                                       ),
                                       const SizedBox(width: _spacingSm),
                                       Text(
-                                        'Appointment Details',
+                                        'Upcoming',
                                         style: TextStyle(
                                           fontSize: _getFontSize(context,
                                               type: 'header'),
                                           fontWeight: FontWeight.w700,
-                                          color: _primaryColor,
+                                          color: Colors.white,
                                           letterSpacing: 0.5,
                                         ),
                                       ),
@@ -407,18 +401,27 @@ class _DynamicAppointmentCardWidgetState
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       colors: [
-                                        _primaryColor,
-                                        _successColor,
+                                        _primaryGradientStart,
+                                        _primaryGradientEnd,
                                       ],
                                       begin: Alignment.centerLeft,
                                       end: Alignment.centerRight,
                                     ),
-                                    borderRadius: BorderRadius.circular(_spacingLg),
+                                    borderRadius:
+                                        BorderRadius.circular(_spacingLg),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: _primaryColor.withOpacity(0.3),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                                   ),
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
-                                      borderRadius: BorderRadius.circular(_spacingLg),
+                                      borderRadius:
+                                          BorderRadius.circular(_spacingLg),
                                       onTap: () async {
                                         await Navigator.push(
                                           context,
@@ -484,11 +487,11 @@ class _DynamicAppointmentCardWidgetState
                       vertical: _spacingSm,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: _cardBackground,
                       borderRadius: BorderRadius.circular(_spacingLg),
                       boxShadow: [
                         BoxShadow(
-                          color: _primaryColor.withOpacity(0.1),
+                          color: Colors.black.withOpacity(0.2),
                           blurRadius: 8.0,
                           offset: const Offset(0, 2),
                         ),
@@ -573,10 +576,10 @@ class _DynamicAppointmentCardWidgetState
           margin: const EdgeInsets.symmetric(horizontal: _spacingMd),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(_spacingLg),
-            color: Colors.white,
+            color: _cardBackground,
             boxShadow: [
               BoxShadow(
-                color: _primaryColor.withOpacity(0.1),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 12.0,
                 offset: const Offset(0, 6),
               ),
@@ -600,7 +603,7 @@ class _DynamicAppointmentCardWidgetState
               const Text(
                 "Loading appointments...",
                 style: TextStyle(
-                  color: _gray800,
+                  color: _textSecondary,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -621,14 +624,13 @@ class _DynamicAppointmentCardWidgetState
     bool isCompact = false,
   }) {
     return Container(
-      padding: EdgeInsets.all(isCompact
-          ? _spacingSm
-          : _spacingSm), // Reduced padding
+      padding: EdgeInsets.all(
+          isCompact ? _spacingSm : _spacingSm), // Reduced padding
       decoration: BoxDecoration(
-        color: _gray50.withOpacity(0.1),
+        color: _cardBorder.withOpacity(0.3),
         borderRadius: BorderRadius.circular(_spacingMd),
         border: Border.all(
-          color: _primaryColor.withOpacity(0.1),
+          color: _cardBorder,
           width: 1,
         ),
       ),
@@ -638,7 +640,7 @@ class _DynamicAppointmentCardWidgetState
           Container(
             padding: EdgeInsets.all(isCompact ? 6 : 8),
             decoration: BoxDecoration(
-              color: _primaryColor.withOpacity(0.1),
+              color: _primaryColor.withOpacity(0.15),
               borderRadius: BorderRadius.circular(_spacingSm),
             ),
             child: Icon(
@@ -653,12 +655,12 @@ class _DynamicAppointmentCardWidgetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label,
+                  label.toUpperCase(),
                   style: TextStyle(
                     fontSize: _getFontSize(context, type: 'caption'),
                     fontWeight: FontWeight.w600,
-                    color: _primaryColor,
-                    letterSpacing: 0.3,
+                    color: _textSecondary,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -666,8 +668,8 @@ class _DynamicAppointmentCardWidgetState
                   text,
                   style: TextStyle(
                     fontSize: _getFontSize(context, type: 'body'),
-                    fontWeight: FontWeight.w500,
-                    color: _gray800,
+                    fontWeight: FontWeight.w600,
+                    color: _textPrimary,
                     height: 1.3,
                   ),
                   maxLines: isCompact ? 1 : (_isSmallScreen(context) ? 1 : 2),

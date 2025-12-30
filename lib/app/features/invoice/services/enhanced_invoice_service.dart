@@ -97,6 +97,25 @@ class EnhancedInvoiceService {
     return defaultValue;
   }
 
+  String _composeAddress(dynamic address) {
+    try {
+      if (address is Map<String, dynamic>) {
+        final parts = [
+          address['street'],
+          address['city'],
+          address['state'],
+          address['postcode'],
+          address['country']
+        ]
+            .map((e) => (e ?? '').toString().trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
+        return parts.join(', ');
+      }
+    } catch (_) {}
+    return '';
+  }
+
   /// Parse a date string in flexible formats to a DateTime.
   /// Supports ISO-8601, `dd/MM/yyyy`, `MM/dd/yyyy`, and `yyyy-MM-dd`.
   DateTime? _tryParseDateFlexible(String? dateStr) {
@@ -255,6 +274,7 @@ class EnhancedInvoiceService {
     bool useAdminBankDetails = false,
     DateTime? startDate,
     DateTime? endDate,
+    String? invoiceType,
   }) async {
     try {
       _isLoading = true;
@@ -884,6 +904,102 @@ class EnhancedInvoiceService {
       ref.read(invoiceGenerationStateProvider.notifier).state =
           InvoiceGenerationState.generating;
 
+      // Resolve admin invoice profile for header rendering
+      Map<String, dynamic>? adminProfile;
+      try {
+        if (organizationId != null && organizationId.isNotEmpty) {
+          // Prefer organization details for issuer header
+          final orgResp =
+              await _apiMethod.getOrganizationDetails(organizationId);
+          final org = (orgResp['organization'] ?? orgResp['data'])
+              as Map<String, dynamic>?;
+          if (org != null) {
+            adminProfile = {
+              'businessName': org['name'] ?? org['organizationName'] ?? '',
+              'businessAddress': _composeAddress(org['address']),
+              'contactEmail':
+                  (org['contactDetails'] ?? const {})['email'] ?? '',
+              'contactPhone':
+                  (org['contactDetails'] ?? const {})['phone'] ?? '',
+              'taxIdentifiers': {'abn': org['abn'] ?? ''},
+              'abn': org['abn'] ?? '',
+            };
+          } else {
+            final resp =
+                await _apiMethod.getAdminInvoiceProfile(organizationId);
+            if (resp['success'] == true &&
+                resp['data'] is Map<String, dynamic>) {
+              adminProfile = Map<String, dynamic>.from(resp['data']);
+              // Normalize ABN into flat 'abn' for PDF
+              final abn =
+                  (adminProfile['taxIdentifiers'] ?? const {})['abn'] ?? '';
+              adminProfile['abn'] = abn;
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Failed to load admin invoice profile: $e');
+      }
+
+      // Compose header context: issuer and billed entity based on invoiceType
+      final type = (invoiceType ?? '').toLowerCase();
+      if (type != 'client' && type != 'employee') {
+        throw Exception('Invoice type must be selected');
+      }
+      for (final client in _invoices) {
+        // Issuer: admin profile
+        if (adminProfile != null) {
+          client['adminProfile'] = {
+            'businessName': adminProfile['businessName'] ?? '',
+            'businessAddress': adminProfile['businessAddress'] ?? '',
+            'contactEmail': adminProfile['contactEmail'] ?? '',
+            'contactPhone': adminProfile['contactPhone'] ?? '',
+            'taxIdentifiers': adminProfile['taxIdentifiers'],
+          };
+        }
+        // Billed entity: client or employee
+        Map<String, dynamic> billed = {};
+        if (type == 'client') {
+          final details = {
+            'clientFirstName': client['clientFirstName'],
+            'clientLastName': client['clientLastName'],
+            'businessName': client['businessName'],
+          };
+          billed = {
+            'name': _formatClientDisplayName(details),
+            'email': client['clientEmail'] ?? '',
+            'address': [
+              client['clientAddress'] ?? '',
+              client['clientCity'] ?? '',
+              client['clientState'] ?? '',
+              client['clientZip'] ?? ''
+            ].where((e) => (e ?? '').toString().isNotEmpty).join(', '),
+            'phone': client['clientPhone'] ?? '',
+            'businessName': client['businessName'] ?? '',
+            'abn': client['clientABN'] ?? '',
+          };
+        } else {
+          final ed = client['employeeDetails'] as Map<String, dynamic>? ?? {};
+          final first = ed['firstName']?.toString() ?? '';
+          final last = ed['lastName']?.toString() ?? '';
+          final candidate = (ed['name']?.toString() ?? '$first $last').trim();
+          final resolvedName = candidate.isNotEmpty
+              ? candidate
+              : (client['employeeName']?.toString() ?? '');
+          billed = {
+            'name': (resolvedName ?? '').toString().isNotEmpty
+                ? resolvedName
+                : (ed['email'] ?? client['employeeEmail'] ?? ''),
+            'email': ed['email'] ?? client['employeeEmail'] ?? '',
+            'address': ed['address'] ?? ed['employeeAddress'] ?? '',
+            'phone': ed['phone'] ?? ed['mobile'] ?? '',
+            'abn': ed['abn'] ?? client['providerABN'] ?? '',
+          };
+        }
+        client['billTo'] = billed;
+        client['invoiceType'] = type;
+      }
+
       // Generate PDFs for each invoice
       debugPrint(
           'Enhanced Invoice Service: About to generate PDFs for ${_invoices.length} invoices');
@@ -954,8 +1070,9 @@ class EnhancedInvoiceService {
       ref.read(generatedInvoicePathsProvider.notifier).state = pdfPaths;
 
       // Save invoices to backend database and get updated invoice numbers
-      final updatedPdfPaths =
-          await _saveInvoicesToBackend(processedData, pdfPaths, organizationId);
+      final updatedPdfPaths = await _saveInvoicesToBackend(
+          processedData, pdfPaths, organizationId,
+          invoiceType: type, adminProfile: adminProfile);
 
       return updatedPdfPaths ?? pdfPaths;
     } catch (e) {
@@ -2673,10 +2790,11 @@ class EnhancedInvoiceService {
 
   /// Save generated invoices to backend database and regenerate PDFs with correct invoice numbers
   Future<List<String>?> _saveInvoicesToBackend(
-    Map<String, dynamic> processedData,
-    List<String> pdfPaths,
-    String? organizationId,
-  ) async {
+      Map<String, dynamic> processedData,
+      List<String> pdfPaths,
+      String? organizationId,
+      {String? invoiceType,
+      Map<String, dynamic>? adminProfile}) async {
     try {
       if (organizationId == null || organizationId.isEmpty) {
         debugPrint('Cannot save invoices: organizationId is null or empty');
@@ -2856,6 +2974,7 @@ class EnhancedInvoiceService {
           'businessName': businessName,
           'jobTitle': invoice['jobTitle'] ??
               'Personal Care Assistance', // Ensure job title is always set
+          'invoiceType': invoice['invoiceType'] ?? invoiceType ?? 'client',
 
           // Add provider details for PDF generation
           'employeeName': providerName,
@@ -2902,6 +3021,24 @@ class EnhancedInvoiceService {
             'uploadedAdditionalFileUrls':
                 processedData['uploadedAdditionalFileUrls'] ?? [],
           },
+          'issuer': {
+            'businessName': adminProfile?['businessName'] ??
+                invoice['adminProfile']?['businessName'] ??
+                '',
+            'businessAddress': adminProfile?['businessAddress'] ??
+                invoice['adminProfile']?['businessAddress'] ??
+                '',
+            'contactEmail': adminProfile?['contactEmail'] ??
+                invoice['adminProfile']?['contactEmail'] ??
+                '',
+            'contactPhone': adminProfile?['contactPhone'] ??
+                invoice['adminProfile']?['contactPhone'] ??
+                '',
+            'taxIdentifiers': adminProfile?['taxIdentifiers'] ??
+                invoice['adminProfile']?['taxIdentifiers'],
+            'abn': adminProfile?['abn'] ?? invoice['adminProfile']?['abn'],
+          },
+          'billedTo': invoice['billTo'] ?? {},
 
           'pdfPath': pdfPath,
           'generatedAt': DateTime.now().toIso8601String(),
