@@ -51,6 +51,7 @@ app.*.map.json
 /ios/Flutter/App.framework
 /ios/Flutter/Flutter.framework
 /ios/Flutter/Generated.xcconfig
+/ios/Flutter/Env.xcconfig
 /ios/Flutter/app.flx
 /ios/Flutter/app.zip
 /ios/Flutter/flutter_assets/

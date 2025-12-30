@@ -519,6 +519,11 @@ class InvoiceDataProcessor {
     clientData['clientState'] = clientDetail['clientState'] ?? '';
     clientData['clientZip'] = clientDetail['clientZip'] ?? '';
     clientData['clientPhone'] = clientDetail['clientPhone'] ?? '';
+    clientData['clientABN'] = clientDetail['abn'] ??
+        clientDetail['clientABN'] ??
+        (clientDetail['taxIdentifiers'] != null
+            ? clientDetail['taxIdentifiers']['abn']
+            : '');
 
     clientData['billingAddress'] =
         '${clientDetail['clientAddress'] ?? ''}, ${clientDetail['clientCity'] ?? ''}, ${clientDetail['clientState'] ?? ''} ${clientDetail['clientZip'] ?? ''}';
@@ -547,6 +552,18 @@ class InvoiceDataProcessor {
         employeeName.isNotEmpty ? employeeName : 'Unknown Employee';
     clientData['employeeEmail'] = userEmail;
     clientData['providerABN'] = providerABN;
+    // Preserve employee details for header rendering when employee invoice
+    clientData['employeeDetails'] = {
+      'name': employeeName,
+      'email': userEmail,
+      'address': employeeDetails?['address'] ??
+          employeeDetails?['employeeAddress'] ??
+          '',
+      'phone': employeeDetails?['phone'] ?? employeeDetails?['mobile'] ?? '',
+      'firstName': employeeDetails?['firstName'] ?? '',
+      'lastName': employeeDetails?['lastName'] ?? '',
+      'abn': employeeDetails?['abn'] ?? providerABN,
+    };
 
     // Defer period start/end calculation until items are built.
     // When no date range is selected, the period will be determined from
