@@ -1,7 +1,7 @@
+import 'package:carenest/app/features/invoice/models/period_config.dart';
+import 'package:carenest/app/features/invoice/repositories/period_config_repository.dart';
+import 'package:carenest/app/features/invoice/services/date_period_service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:carenest/models/period_config.dart';
-import 'package:carenest/services/date_period_service.dart';
-import 'package:carenest/repositories/period_config_repository.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 /// A lightweight fake repository backed by in-memory map for tests.

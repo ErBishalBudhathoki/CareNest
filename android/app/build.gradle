@@ -13,6 +13,14 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+def env = new Properties()
+def envFile = rootProject.file('../.env')
+if (envFile.exists()) {
+    envFile.withReader('UTF-8') { reader ->
+        env.load(reader)
+    }
+}
+
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
     flutterVersionCode = '1'
@@ -56,6 +64,11 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+        
+        manifestPlaceholders = [
+            applicationName: "android.app.Application",
+            GOOGLE_MAPS_API_KEY_FOR_ANDROID: env.getProperty('GOOGLE_MAPS_API_KEY_FOR_ANDROID') ?: ""
+        ]
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
