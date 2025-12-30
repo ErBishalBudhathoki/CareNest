@@ -76,6 +76,23 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
+# Script to read .env and generate Env.xcconfig
+pre_install do |installer|
+  env_file = File.join(File.dirname(__FILE__), '..', '.env')
+  xcconfig_file = File.join(File.dirname(__FILE__), 'Flutter', 'Env.xcconfig')
+  
+  if File.exist?(env_file)
+    env_content = File.read(env_file)
+    ios_key = env_content[/GOOGLE_MAPS_API_KEY_FOR_IOS=(.*)/, 1]
+    
+    if ios_key
+      File.open(xcconfig_file, 'w') do |file|
+        file.write("GOOGLE_MAPS_API_KEY_FOR_IOS=#{ios_key.strip}\n")
+      end
+    end
+  end
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!

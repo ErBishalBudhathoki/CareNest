@@ -1,6 +1,3 @@
-
-
-
 import 'dart:ui';
 import 'dart:math';
 
@@ -29,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'package:carenest/app/features/settings/views/settings_view.dart';
 import 'package:carenest/app/features/security/views/api_usage_dashboard_view.dart';
 
 class AdminDashboardView extends ConsumerStatefulWidget {
@@ -305,6 +303,8 @@ class _AdminDashboardViewControllerState
     final firstName = getInitialData['firstName'] ?? 'Test';
     final lastName = getInitialData['lastName'] ?? 'User';
     final photoDataState = ref.watch(photoDataProvider);
+    final displayPhoto = photoDataState.photoData ?? widget.photoData;
+
     return SliverAppBar(
       expandedHeight: 240.0, // Reduced from 320 to 240
       pinned: false,
@@ -468,21 +468,40 @@ class _AdminDashboardViewControllerState
                               ),
                               const SizedBox(width: 12),
                               // Settings gear
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: AppColors.colorWhite
-                                      .withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: AppColors.colorWhite
-                                        .withOpacity(0.1),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SettingsView(
+                                        userEmail: widget.email,
+                                        userName: '$firstName $lastName',
+                                        photoData: photoDataState.photoData,
+                                        organizationId: widget.organizationId,
+                                        organizationName:
+                                            widget.organizationName,
+                                        organizationCode:
+                                            widget.organizationCode,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        AppColors.colorWhite.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color:
+                                          AppColors.colorWhite.withOpacity(0.1),
+                                    ),
                                   ),
-                                ),
-                                child: const Icon(
-                                  Icons.settings_outlined,
-                                  color: AppColors.colorWhite,
-                                  size: 20,
+                                  child: const Icon(
+                                    Icons.settings_outlined,
+                                    color: AppColors.colorWhite,
+                                    size: 20,
+                                  ),
                                 ),
                               ),
                             ],
@@ -544,7 +563,7 @@ class _AdminDashboardViewControllerState
                                           ),
                                           child: AdminProfileImage(
                                             email: widget.email,
-                                            photoData: photoDataState.photoData,
+                                            photoData: displayPhoto,
                                             size: 70,
                                           ),
                                         ),
@@ -1178,10 +1197,10 @@ class _AdminDashboardViewControllerState
                           onTap: () => _navigateToBankDetails(),
                         ),
                         _buildImageActionTile(
-                          asset:
-                              'assets/icons/profile_placeholder.png',
+                          asset: 'assets/icons/profile_placeholder.png',
                           title: 'Client Pricing Review',
-                          subtitle: 'Review and manage client pricing before invoicing',
+                          subtitle:
+                              'Review and manage client pricing before invoicing',
                           color: const Color(0xFF14B8A6),
                           onTap: () => _navigateToClientPricingReview(),
                         ),
@@ -1210,8 +1229,7 @@ class _AdminDashboardViewControllerState
     await _sharedPrefs.init();
     final userRole = _sharedPrefs.getRole();
     if (userRole == UserRole.admin) {
-      Navigator.of(context, rootNavigator: true)
-          .pushNamed(Routes.bankDetails);
+      Navigator.of(context, rootNavigator: true).pushNamed(Routes.bankDetails);
     } else {
       showDialog(
         context: context,

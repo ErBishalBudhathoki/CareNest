@@ -306,15 +306,23 @@ class InvoicePdfGenerator {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  // Employee name - left aligned (not key-value)
+                  // Admin/Business name - left aligned (issuer)
                   pw.Text(
-                      _getSafeString(
-                          clientData['employeeName'] ?? 'Provider Name'),
+                      _getSafeString(clientData['adminProfile']
+                              ?['businessName'] ??
+                          'Business'),
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                   pw.SizedBox(height: 8),
                   // Key-value pairs with justified alignment
-                  _buildAlignedKeyValue('ABN:',
-                      _getSafeString(clientData['providerABN'] ?? 'N/A')),
+                  _buildAlignedKeyValue(
+                      'ABN:',
+                      _getSafeString(
+                        clientData['adminProfile']?['abn'] ??
+                            clientData['adminProfile']?['taxIdentifiers']
+                                ?['abn'] ??
+                            clientData['taxIdentifiers']?['abn'] ??
+                            'N/A',
+                      )),
                   pw.SizedBox(height: 3),
                   _buildAlignedKeyValue('Period Starting:',
                       _getSafeString(clientData['startDate'] ?? 'N/A')),
@@ -436,13 +444,21 @@ class InvoicePdfGenerator {
             children: [
               pw.Text('Bill To:',
                   style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-              pw.Text(_buildClientName(clientData)),
-              pw.Text(_getSafeString(clientData['clientEmail'] ?? '')),
-              pw.Text(_buildClientAddress(clientData)),
-              pw.Text(_getSafeString(clientData['clientPhone'] ?? '')),
-              // Only display business name in braces if it's not empty
-              if (_getSafeString(clientData['businessName'] ?? '').isNotEmpty)
-                pw.Text('(${_getSafeString(clientData['businessName'])})')
+              pw.Text(_getSafeString(clientData['billTo']?['name'] ?? '')),
+              pw.Text(_getSafeString(clientData['billTo']?['email'] ?? '')),
+              pw.Text(_getSafeString(clientData['billTo']?['address'] ?? '')),
+              pw.Text(_getSafeString(clientData['billTo']?['phone'] ?? '')),
+              if (_getSafeString(clientData['billTo']?['abn'] ?? '')
+                      .isNotEmpty &&
+                  (_getSafeString(clientData['invoiceType'] ?? '') ==
+                          'employee' ||
+                      _getSafeString(clientData['invoiceType'] ?? '') ==
+                          'client'))
+                pw.Text('ABN: ${_getSafeString(clientData['billTo']?['abn'])}'),
+              if (_getSafeString(clientData['billTo']?['businessName'] ?? '')
+                  .isNotEmpty)
+                pw.Text(
+                    '(${_getSafeString(clientData['billTo']?['businessName'])})')
             ],
           ),
         ),

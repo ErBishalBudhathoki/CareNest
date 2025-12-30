@@ -99,68 +99,83 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
     } catch (e) {
       // Ensure system UI is restored even if cropping fails
       await SystemUIService.showSystemUI();
-
-      debugPrint("Error picking or cropping image: $e");
-      _flushBarWidget.flushBar(
-        title: 'Error',
-        message: 'Could not select image. Please try again.',
-        backgroundColor: ModernInvoiceDesign.warning,
-        context: context,
-      );
+      debugPrint('Error picking/cropping image: $e');
+      if (mounted) {
+        _flushBarWidget.flushBar(
+          context: context,
+          title: "Error",
+          message: "Could not select image. Please try again.",
+          backgroundColor: ModernInvoiceDesign.warning,
+        );
+      }
     }
   }
 
   Future<void> _uploadPhoto() async {
-    if (_imageFile == null || _updatedPhotoBytes == null) return;
+    if (_imageFile == null) {
+      _flushBarWidget.flushBar(
+        context: context,
+        title: "Error",
+        message: "Please select an image first",
+        backgroundColor: ModernInvoiceDesign.warning,
+      );
+      return;
+    }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final response =
           await _apiMethod.uploadPhoto(context, widget.email, _imageFile!);
 
-      bool isSuccess = false;
-      if (response.containsKey('message')) {
-        String message = response['message'];
-        if (message.contains('Photo uploaded successfully')) {
-          await ref
-              .read(photoDataProvider.notifier)
-              .updatePhotoData(_updatedPhotoBytes!);
-          await SharedPreferencesUtils()
-              .setPhoto(_updatedPhotoBytes!, widget.email);
-          isSuccess = true;
-        }
-      }
-
-      if (mounted) {
-        if (isSuccess) {
+      if (response['statusCode'] == 200) {
+        // Success
+        if (mounted) {
           _flushBarWidget.flushBar(
-            title: 'Success!',
-            message: 'Your new photo is live.',
-            backgroundColor: ModernInvoiceDesign.secondary,
-            context: _scaffoldKey.currentContext!,
+            context: context,
+            title: "Success",
+            message: "Photo uploaded successfully",
+            backgroundColor: ModernInvoiceDesign.success,
           );
-          // Optionally pop after a short delay
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) Navigator.of(context).pop();
-          });
-        } else {
-          throw Exception("API did not confirm success.");
+        }
+
+        // Force refresh the photo provider to update UI everywhere
+        // This will trigger the network fetch in PhotoDataNotifier
+        await ref
+            .read(photoDataProvider.notifier)
+            .fetchPhotoData(widget.email, forceRefresh: true);
+
+        // Optionally pop after delay
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) Navigator.pop(context);
+        });
+      } else {
+        // Error
+        if (mounted) {
+          _flushBarWidget.flushBar(
+            context: context,
+            title: "Error",
+            message: response['message'] ?? "Upload failed",
+            backgroundColor: ModernInvoiceDesign.warning,
+          );
         }
       }
     } catch (e) {
-      debugPrint("Error uploading photo: $e");
       if (mounted) {
         _flushBarWidget.flushBar(
-          title: 'Upload Failed',
-          message: 'Could not upload photo. Please try again.',
+          context: context,
+          title: "Error",
+          message: "Error uploading photo: $e",
           backgroundColor: ModernInvoiceDesign.warning,
-          context: _scaffoldKey.currentContext!,
         );
       }
     } finally {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }

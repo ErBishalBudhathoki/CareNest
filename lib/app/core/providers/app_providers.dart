@@ -97,38 +97,56 @@ class PhotoDataNotifier extends StateNotifier<PhotoDataState> {
 
   PhotoDataNotifier(this._apiMethod) : super(const PhotoDataState());
 
-  Future<void> fetchPhotoData(String email) async {
+  Future<void> fetchPhotoData(String email, {bool forceRefresh = false}) async {
     debugPrint(
-        "\n=== PhotoDataNotifier.fetchPhotoData called for email: $email ===");
-    state = state.copyWith(isLoading: true);
-    try {
-      // Check cache first
+        "\n=== PhotoDataNotifier.fetchPhotoData called for email: $email (force: $forceRefresh) ===");
+
+    // If not forcing refresh, try to load from cache first for immediate display
+    if (!forceRefresh) {
       debugPrint("Checking cache for photo data...");
       final cachedPhoto = await SharedPreferencesUtils().getPhoto(email);
       if (cachedPhoto != null) {
         debugPrint("Found cached photo data, length: ${cachedPhoto.length}");
+        // Update state with cached data, set isLoading to false so we show the image immediately
+        // We will still fetch from network in background to ensure freshness
         state = state.copyWith(photoData: cachedPhoto, isLoading: false);
-        return;
+      } else {
+        state = state.copyWith(isLoading: true);
       }
-      debugPrint("No cached photo found, fetching from network...");
+    } else {
+      state = state.copyWith(isLoading: true);
+    }
 
-      // If not in cache, fetch from network
+    try {
+      debugPrint("Fetching fresh photo data from network...");
+
+      // Always fetch from network to ensure synchronization
       final photoData = await _apiMethod.getUserPhoto(email);
       debugPrint(
           "Network response received, photoData: ${photoData != null ? 'length ${photoData.length}' : 'null'}");
+
+      // Update state with fresh data
       state = state.copyWith(photoData: photoData, isLoading: false);
 
-      // Save to cache
+      // Update cache
       if (photoData != null) {
-        debugPrint("Saving photo data to cache...");
+        debugPrint("Updating cache with fresh photo data...");
         await SharedPreferencesUtils().setPhoto(photoData, email);
-        debugPrint("Photo data saved to cache successfully");
+        debugPrint("Photo data cache updated successfully");
       } else {
-        debugPrint("No photo data to save to cache");
+        // If network returns null (e.g. photo removed), clear cache?
+        // For now, keep existing behavior or clear if needed.
+        debugPrint("No photo data from network");
       }
     } catch (e) {
       debugPrint("Error in fetchPhotoData: $e");
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      // If network fails and we have cached data, we are good (isLoading set to false)
+      // If no cache, show error
+      if (state.photoData == null) {
+        state = state.copyWith(error: e.toString(), isLoading: false);
+      } else {
+        state = state.copyWith(isLoading: false); // Keep cached data
+      }
     }
     debugPrint("=== PhotoDataNotifier.fetchPhotoData completed ===");
   }

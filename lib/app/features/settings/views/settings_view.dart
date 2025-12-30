@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:carenest/app/core/providers/app_providers.dart'; // Ensure this is imported for photoDataProvider
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/features/organization/views/organization_details_view.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
@@ -8,6 +9,7 @@ import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // For ConsumerState
 
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
@@ -15,16 +17,18 @@ import 'package:carenest/app/features/security/views/api_usage_dashboard_view.da
 import 'package:carenest/app/features/pricing/views/pricing_analytics_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:carenest/app/features/settings/views/date_format_settings_view.dart';
+import 'package:carenest/app/features/photo/views/photo_upload_view.dart'; // Import for PhotoUploadScreen
 
 /// Modernized Settings View
 /// A visually refreshed settings page with fluid animations and a clean, grouped layout.
-class SettingsView extends StatefulWidget {
+class SettingsView extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? organizationName;
   final String? organizationCode;
   final String userEmail;
   final String userName;
   final Uint8List? photoData;
+  final VoidCallback? onPhotoUpdated;
 
   const SettingsView({
     super.key,
@@ -34,16 +38,78 @@ class SettingsView extends StatefulWidget {
     required this.userEmail,
     required this.userName,
     this.photoData,
+    this.onPhotoUpdated,
   });
 
   @override
-  State<SettingsView> createState() => _SettingsViewState();
+  ConsumerState<SettingsView> createState() => _SettingsViewState();
 }
 
-class _SettingsViewState extends State<SettingsView> {
+class _SettingsViewState extends ConsumerState<SettingsView> {
   // App version info
   String _version = '';
   String _buildNumber = '';
+  // Local photo data to show immediate updates
+  Uint8List? _currentPhotoData;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPhotoData = widget.photoData;
+    _initPackageInfo();
+    // Listen to photo updates from provider
+    // This will handle updates when other screens upload a new photo
+  }
+
+  // --- Owner-only secret gesture state ---
+  int _secretTapCount = 0;
+  DateTime? _lastTapTime;
+
+  bool get _isOwner {
+    final role = SharedPreferencesUtils().getRole();
+    // Assuming 'admin' is the enum value for admin rights
+    return role == UserRole.admin;
+  }
+
+  void _handleSecretTap() {
+    final now = DateTime.now();
+    if (_lastTapTime == null ||
+        now.difference(_lastTapTime!) > const Duration(seconds: 1)) {
+      // Reset sequence if too much time passed
+      _secretTapCount = 0;
+    }
+    _lastTapTime = now;
+    _secretTapCount++;
+
+    if (_secretTapCount >= 7) {
+      _secretTapCount = 0;
+      if (_isOwner) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ApiUsageDashboardView(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Restricted: Owner access only')),
+        );
+      }
+    }
+  }
+
+  Future<void> _initPackageInfo() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
+      setState(() {
+        _version = info.version; // e.g., 2025.08.30
+        _buildNumber = info.buildNumber; // e.g., 23
+      });
+    } catch (e) {
+      // Fallback: keep empty, UI will handle gracefully
+    }
+  }
 
   // Helper to show a consistently styled dialog for confirmations.
   void _showStyledDialog({
@@ -86,62 +152,6 @@ class _SettingsViewState extends State<SettingsView> {
         );
       },
     );
-  }
-
-  // --- Owner-only secret gesture state ---
-  int _secretTapCount = 0;
-  DateTime? _lastTapTime;
-
-  bool get _isOwner {
-    final role = SharedPreferencesUtils().getRole();
-    // Assuming 'admin' is the enum value for admin rights
-    return role == UserRole.admin;
-  }
-
-  void _handleSecretTap() {
-    final now = DateTime.now();
-    if (_lastTapTime == null ||
-        now.difference(_lastTapTime!) > const Duration(seconds: 1)) {
-      // Reset sequence if too much time passed
-      _secretTapCount = 0;
-    }
-    _lastTapTime = now;
-    _secretTapCount++;
-
-    if (_secretTapCount >= 7) {
-      _secretTapCount = 0;
-      if (_isOwner) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ApiUsageDashboardView(),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Restricted: Owner access only')),
-        );
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAppVersion();
-  }
-
-  Future<void> _loadAppVersion() async {
-    try {
-      final info = await PackageInfo.fromPlatform();
-      if (!mounted) return;
-      setState(() {
-        _version = info.version; // e.g., 2025.08.30
-        _buildNumber = info.buildNumber; // e.g., 23
-      });
-    } catch (e) {
-      // Fallback: keep empty, UI will handle gracefully
-    }
   }
 
   @override
@@ -379,52 +389,117 @@ class _SettingsViewState extends State<SettingsView> {
 
   // A custom SliverAppBar for the fluid, curved header.
   Widget _buildUserProfileHeader() {
+    final photoState = ref.watch(photoDataProvider);
+    final displayPhoto = photoState.photoData ?? _currentPhotoData;
+
     return SliverAppBar(
-      expandedHeight: 220.0,
-      pinned: false,
-      elevation: 0,
+      expandedHeight: 220,
+      pinned: true,
+      backgroundColor: AppColors.colorBackground,
       flexibleSpace: FlexibleSpaceBar(
-        background: ClipPath(
-          clipper: _HeaderClipper(),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.colorPrimary,
-                  AppColors.colorPrimary.withOpacity(0.8),
-                ],
+        background: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFE0E7FF), // Light indigo tint
+                    AppColors.colorBackground,
+                  ],
+                ),
               ),
             ),
-            child: Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 30),
-                ProfileImageWidget(
-                  photoData: widget.photoData,
-                  size: 90,
+                const SizedBox(height: 40),
+                Hero(
+                  tag: 'profile-image',
+                  child: GestureDetector(
+                    onTap: () async {
+                      // Navigate to Photo Upload View
+                      // Pass context to ensure we can use it after async gap if needed
+                      // Use a result to determine if we should refresh
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PhotoUploadScreen(
+                            email: widget.userEmail,
+                          ),
+                        ),
+                      );
+
+                      // After returning, fetch fresh data
+                      if (mounted) {
+                        ref.read(photoDataProvider.notifier).fetchPhotoData(
+                            widget.userEmail,
+                            forceRefresh: true);
+                        if (widget.onPhotoUpdated != null) {
+                          widget.onPhotoUpdated!();
+                        }
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        ProfileImageWidget(
+                          photoData: displayPhoto,
+                          size: 100,
+                          borderWidth: 4,
+                          borderColor: Colors.white,
+                          elevation: 8,
+                          shadowColor: Colors.black12,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.colorBlue,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 Text(
                   widget.userName,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.colorBlack,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   widget.userEmail,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 15,
+                    fontSize: 14,
+                    color: Colors.grey[600],
                   ),
                 ),
               ],
-            ).animate().fadeIn(duration: 500.ms),
-          ),
+            ),
+          ],
         ),
       ),
     );

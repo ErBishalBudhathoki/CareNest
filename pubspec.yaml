@@ -97,6 +97,7 @@ dependencies:
   package_info_plus: ^8.0.0
   archive: ^3.6.1
   iconsax: ^0.0.8
+  geocoding: ^4.0.0
 dev_dependencies:
   flutter_lints: ^5.0.0
   lints: ^5.1.1

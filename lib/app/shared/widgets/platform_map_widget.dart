@@ -30,6 +30,7 @@ class PlatformMapWidget extends StatelessWidget {
       );
     } else {
       return google_maps.GoogleMap(
+        liteModeEnabled: false,
         initialCameraPosition: google_maps.CameraPosition(
           target: google_maps.LatLng(center.latitude, center.longitude),
           zoom: zoom,

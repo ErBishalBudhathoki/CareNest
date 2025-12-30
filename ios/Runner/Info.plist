@@ -72,6 +72,8 @@
 		<string>maps</string>
 		<string>comgooglemaps</string>
 	</array>
+    <key>GoogleMapsAPIKey</key>
+    <string>$(GOOGLE_MAPS_API_KEY_FOR_IOS)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MKDirectionsApplicationSupportedModes</key>

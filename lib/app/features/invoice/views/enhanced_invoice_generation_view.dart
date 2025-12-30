@@ -45,6 +45,7 @@ class _EnhancedInvoiceGenerationViewState
   bool _useAdminBankDetails = false; // Default to employee bank details
   double _taxRate = 0.00; // Default 0% GST
   final TextEditingController _taxRateController = TextEditingController();
+  String? _invoiceType; // 'client' or 'employee' (mandatory)
 
   // Shared preferences helper for persisting user choices
   final SharedPreferencesUtils _prefs = SharedPreferencesUtils();
@@ -681,6 +682,8 @@ class _EnhancedInvoiceGenerationViewState
             ],
           ),
           const SizedBox(height: ModernInvoiceDesign.space4),
+          _buildInvoiceTypeConfiguration(),
+          const SizedBox(height: ModernInvoiceDesign.space4),
           _buildTaxConfiguration(),
           const SizedBox(height: ModernInvoiceDesign.space4),
           _buildBankDetailsConfiguration(),
@@ -690,6 +693,101 @@ class _EnhancedInvoiceGenerationViewState
           _buildPriceOverrideConfiguration(),
         ],
       ),
+    );
+  }
+
+  Widget _buildInvoiceTypeConfiguration() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.switch_left_rounded,
+              color: ModernInvoiceDesign.primary,
+              size: 20,
+            ),
+            const SizedBox(width: ModernInvoiceDesign.space4),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Invoice Type',
+                    style: ModernInvoiceDesign.bodyLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'Choose who will be billed on the invoice',
+                    style: ModernInvoiceDesign.bodySmall.copyWith(
+                      color: ModernInvoiceDesign.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: ModernInvoiceDesign.space2),
+        Row(
+          children: [
+            Expanded(
+              child: RadioListTile<String>(
+                title: Text(
+                  'Client Invoice (bill the client)',
+                  style: ModernInvoiceDesign.bodyMedium,
+                ),
+                value: 'client',
+                groupValue: _invoiceType,
+                onChanged: (value) {
+                  setState(() => _invoiceType = value);
+                },
+                activeColor: ModernInvoiceDesign.primary,
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+            ),
+            Expanded(
+              child: RadioListTile<String>(
+                title: Text(
+                  'Employee Invoice (bill the employee)',
+                  style: ModernInvoiceDesign.bodyMedium,
+                ),
+                value: 'employee',
+                groupValue: _invoiceType,
+                onChanged: (value) {
+                  setState(() => _invoiceType = value);
+                },
+                activeColor: ModernInvoiceDesign.primary,
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+            ),
+          ],
+        ),
+        if (_invoiceType == null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: ModernInvoiceDesign.error,
+                  size: 16,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Select an invoice type before generating',
+                    style: ModernInvoiceDesign.bodySmall.copyWith(
+                      color: ModernInvoiceDesign.error,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 
@@ -1316,10 +1414,13 @@ class _EnhancedInvoiceGenerationViewState
       InvoiceGenerationState invoiceState, String errorMessage) {
     final bool selectionPresent =
         widget.selectedEmployeesAndClients?.isNotEmpty == true;
+    final bool invoiceTypeSelected = _invoiceType != null;
     final bool hasClientGatingIssues =
         _strictClientGating && _missingClientRatesByItem.isNotEmpty;
-    final bool canGenerate =
-        selectionPresent && !_hasMissingBaseRates && !hasClientGatingIssues;
+    final bool canGenerate = selectionPresent &&
+        invoiceTypeSelected &&
+        !_hasMissingBaseRates &&
+        !hasClientGatingIssues;
     final bool isLoading = invoiceState == InvoiceGenerationState.loading ||
         _isValidatingPriceCaps;
     // Selected invoice period state
@@ -2439,6 +2540,7 @@ class _EnhancedInvoiceGenerationViewState
         useAdminBankDetails: _useAdminBankDetails,
         startDate: _selectedStartDate,
         endDate: _selectedEndDate,
+        invoiceType: _invoiceType,
       );
     } catch (e) {
       if (!mounted) return;
