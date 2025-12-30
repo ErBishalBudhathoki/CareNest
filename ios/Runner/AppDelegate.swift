@@ -8,7 +8,9 @@ import GoogleMaps
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey("REDACTED_FIREBASE_API_KEY")
+    if let apiKey = Bundle.main.object(forInfoDictionaryKey: "GoogleMapsAPIKey") as? String {
+        GMSServices.provideAPIKey(apiKey)
+    }
     
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let systemUIChannel = FlutterMethodChannel(name: "com.bishal.invoice/system_ui",

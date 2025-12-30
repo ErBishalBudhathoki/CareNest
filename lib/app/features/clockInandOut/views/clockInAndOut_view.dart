@@ -39,8 +39,15 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
+          debugPrint('Location permission denied');
           return;
         }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        debugPrint('Location permission permanently denied');
+        // Ideally show a dialog to open settings
+        return;
       }
 
       Position position = await Geolocator.getCurrentPosition();

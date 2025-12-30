@@ -1,5 +1,5 @@
+import 'package:carenest/app/features/invoice/utils/hours_formatting.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:carenest/utils/hours_formatting.dart';
 
 void main() {
   group('HoursFormatting.formatDecimalHours', () {

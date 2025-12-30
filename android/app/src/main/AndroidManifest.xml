@@ -66,6 +66,10 @@
         ================================================================================
         -->
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${GOOGLE_MAPS_API_KEY_FOR_ANDROID}" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -127,6 +131,6 @@
             android:value="2" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="REDACTED_FIREBASE_API_KEY" />
+            android:value="${GOOGLE_MAPS_API_KEY_FOR_ANDROID}" />
     </application>
 </manifest>
