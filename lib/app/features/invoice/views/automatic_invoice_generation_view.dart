@@ -6,6 +6,7 @@ import 'package:carenest/app/features/invoice/viewmodels/employee_selection_view
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
 import 'package:carenest/app/features/invoice/services/send_invoice_service.dart';
+import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 
 /// Automatic Invoice Generation View
@@ -1493,14 +1494,97 @@ class _AutomaticInvoiceGenerationViewState
     );
   }
 
-  void _viewPdf(String pdfPath) {
+  Future<void> _viewPdf(String pdfPath) async {
     if (File(pdfPath).existsSync()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PdfViewPage(pdfPath: pdfPath),
-        ),
-      );
+      try {
+        // Find the corresponding invoice data to extract receipt URLs
+        final state = ref.read(automaticInvoiceViewModelProvider);
+        List<String> receiptUrls = [];
+
+        // Try to find the invoice that matches this PDF path
+        final index = state.generatedPdfPaths.indexOf(pdfPath);
+        if (index != -1 && index < state.invoices.length) {
+          final invoiceData = state.invoices[index];
+
+          // Extract receipts logic
+          try {
+            final expenses = invoiceData['expenses'] as List<dynamic>?;
+            if (expenses != null) {
+              for (var expense in expenses) {
+                if (expense is Map<String, dynamic>) {
+                  final receiptFiles = expense['receiptFiles'] as List?;
+                  final receiptPhotos = expense['receiptPhotos'] as List?;
+                  final receiptUrl = expense['receiptUrl'] as String?;
+
+                  String? resolveToDownloadUrl(String value) {
+                    final resolved = AppConfig.resolveResourceUrl(value);
+                    if (!(resolved.startsWith('http://') ||
+                        resolved.startsWith('https://'))) {
+                      return null;
+                    }
+                    try {
+                      return AppConfig.buildFilesDownloadUrl(resolved);
+                    } catch (e) {
+                      debugPrint(
+                          'Error building receipt download URL in _viewPdf: $e');
+                      return resolved;
+                    }
+                  }
+
+                  if (receiptFiles != null) {
+                    for (var file in receiptFiles) {
+                      if (file is String && file.trim().isNotEmpty) {
+                        final fullUrl = resolveToDownloadUrl(file.trim());
+                        if (fullUrl != null) receiptUrls.add(fullUrl);
+                      }
+                    }
+                  }
+
+                  if (receiptPhotos != null) {
+                    for (var photo in receiptPhotos) {
+                      if (photo is String && photo.trim().isNotEmpty) {
+                        final fullUrl = resolveToDownloadUrl(photo.trim());
+                        if (fullUrl != null) receiptUrls.add(fullUrl);
+                      }
+                    }
+                  }
+
+                  if (receiptUrl != null && receiptUrl.trim().isNotEmpty) {
+                    final fullUrl = resolveToDownloadUrl(receiptUrl.trim());
+                    if (fullUrl != null) receiptUrls.add(fullUrl);
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            debugPrint('Error extracting receipts in _viewPdf: $e');
+          }
+        }
+
+        // Remove duplicates
+        receiptUrls = receiptUrls.toSet().toList();
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewPage(
+              pdfPath: pdfPath,
+              receiptUrls: receiptUrls,
+            ),
+          ),
+        );
+      } catch (e) {
+        debugPrint('Error viewing PDF: $e');
+        // Fallback to simple view
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PdfViewPage(pdfPath: pdfPath),
+            ),
+          );
+        }
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

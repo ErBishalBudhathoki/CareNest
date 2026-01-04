@@ -16,7 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:http/http.dart' as http;
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 
 // Global providers
@@ -46,19 +45,22 @@ final userPhotoProvider = FutureProvider.autoDispose<Uint8List?>((ref) async {
 
 class UserPhotoService {
   final Map<String, Uint8List> _photoCache = {};
+  final ApiMethod _api = ApiMethod();
 
   Future<Uint8List?> getUserPhoto(String email) async {
     if (_photoCache.containsKey(email)) {
       return _photoCache[email];
     }
 
-    final response = await http
-        .get(Uri.parse('http://192.168.20.2:8083/getUserPhoto/$email'));
-    if (response.statusCode == 200) {
-      _photoCache[email] = response.bodyBytes;
-      return response.bodyBytes;
+    try {
+      final photo = await _api.getUserPhoto(email);
+      if (photo != null) {
+        _photoCache[email] = photo;
+      }
+      return photo;
+    } catch (_) {
+      return null;
     }
-    return null;
   }
 }
 

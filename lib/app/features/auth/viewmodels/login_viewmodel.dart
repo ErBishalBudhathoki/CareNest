@@ -1,8 +1,8 @@
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -264,6 +264,7 @@ class LoginViewModel extends ChangeNotifier {
         email: user.email,
         organizationId: user.organizationId,
         name: user.name,
+        userId: user.id,
         organizationCode: organizationCode,
       );
 
@@ -380,28 +381,25 @@ class LoginViewModel extends ChangeNotifier {
   /// Register FCM token with enhanced security
   Future<void> _registerFcmToken(User user) async {
     try {
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken != null) {
-        await _apiMethod.registerFcmToken(
-          user.email,
-          user.organizationId,
-          fcmToken,
-          deviceId: _deviceId,
-          deviceInfo: _deviceInfo,
-        );
+      final tokenManager = FcmTokenManager();
+      await tokenManager.initialize(
+        user.email,
+        user.organizationId,
+        deviceId: _deviceId,
+        deviceInfo: _deviceInfo,
+      );
 
+      final storedToken = await tokenManager.getCurrentToken();
+      if (storedToken != null) {
         _logSecurityEvent('fcm_token_registered', {
           'email': user.email,
           'deviceId': _deviceId,
         });
-
-        debugPrint('FCM token registered successfully');
       } else {
         _logSecurityEvent('fcm_token_null', {
           'email': user.email,
           'deviceId': _deviceId,
         });
-        debugPrint('FCM token is null, skipping registration');
       }
     } catch (fcmError) {
       _logSecurityEvent('fcm_token_registration_failed', {

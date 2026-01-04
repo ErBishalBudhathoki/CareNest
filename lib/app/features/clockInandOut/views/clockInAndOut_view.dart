@@ -43,7 +43,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
           return;
         }
       }
-      
+
       if (permission == LocationPermission.deniedForever) {
         debugPrint('Location permission permanently denied');
         // Ideally show a dialog to open settings
@@ -79,8 +79,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
               children: [
                 // Top Section with Back Button and Total Hours
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     children: [
                       // Back Button
@@ -91,8 +90,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          icon: Icon(Icons.arrow_back,
-                              color: Colors.white),
+                          icon: Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -101,18 +99,14 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 20.0,
-                              vertical: 12.0),
+                              horizontal: 20.0, vertical: 12.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                                24.0),
+                            borderRadius: BorderRadius.circular(24.0),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF1F2937)
-                                    .withOpacity(0.1),
-                                blurRadius: 8.0 +
-                                    4.0,
+                                color: const Color(0xFF1F2937).withOpacity(0.1),
+                                blurRadius: 8.0 + 4.0,
                                 offset: Offset(0, 4.0),
                               ),
                             ],
@@ -132,7 +126,8 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                       ref.watch(timerServiceProvider);
                                   return Text(
                                     '0:00',
-                                    style: const TextStyle(fontSize: 14).copyWith(
+                                    style:
+                                        const TextStyle(fontSize: 14).copyWith(
                                       fontWeight: FontWeight.w500,
                                       color: const Color(0xFF1F2937),
                                     ),
@@ -160,10 +155,8 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft:
-                                  Radius.circular(24.0),
-                              topRight:
-                                  Radius.circular(24.0),
+                              topLeft: Radius.circular(24.0),
+                              topRight: Radius.circular(24.0),
                             ),
                           ),
                           child: Column(
@@ -180,8 +173,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                               SizedBox(height: 24.0),
                               // Clock In Button
                               Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16.0),
+                                padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: Consumer(
                                   builder: (context, ref, child) {
                                     final timer =
@@ -194,8 +186,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                         color: Color(0xFF667EEA),
                                       ),
                                       child: Material(
-                                        color: Colors.white
-                                            .withOpacity(0.1),
+                                        color: Colors.white.withOpacity(0.1),
                                         child: InkWell(
                                           customBorder: const CircleBorder(),
                                           onTap: () {
@@ -214,9 +205,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                                                 color: Colors.white,
                                                 size: 48,
                                               ),
-                                              SizedBox(
-                                                  height:
-                                                      8.0),
+                                              SizedBox(height: 8.0),
                                               Text(
                                                 timer.isRunning
                                                     ? 'Clock out'
@@ -238,8 +227,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
 
                               // Bottom Cards
                               Padding(
-                                padding:
-                                    EdgeInsets.all(16.0),
+                                padding: EdgeInsets.all(16.0),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -425,9 +413,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
           onTap: onTap,
           borderRadius: BorderRadius.circular(12.0),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: 20.0,
-                horizontal: 16.0),
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
