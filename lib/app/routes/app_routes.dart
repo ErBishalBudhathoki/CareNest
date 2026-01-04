@@ -31,4 +31,5 @@ abstract class Routes {
   static const String invoiceList = '/invoiceList';
   static const String invoiceDetails = '/invoiceDetails';
   static const bankDetails = '/bank-details';
+  static const adminRequests = '/admin/requests';
 }

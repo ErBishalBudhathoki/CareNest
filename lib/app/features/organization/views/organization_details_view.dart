@@ -46,6 +46,20 @@ class _OrganizationDetailsViewState extends State<OrganizationDetailsView> {
   final _bankingKey = GlobalKey();
   final _ndisKey = GlobalKey();
 
+  // Map controllers
+  final MapController _mapController = MapController();
+  google_maps.GoogleMapController? _googleMapController;
+  apple_maps.AppleMapController? _appleMapController;
+
+  @override
+  void dispose() {
+    // Dispose resources
+    _mapController.dispose();
+    _googleMapController?.dispose();
+    // AppleMapController does not have a dispose method, relies on widget disposal
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -1027,6 +1041,9 @@ ${_generateShareableLink()}
 
     if (Platform.isIOS) {
       return apple_maps.AppleMap(
+        onMapCreated: (apple_maps.AppleMapController controller) {
+          _appleMapController = controller;
+        },
         initialCameraPosition: apple_maps.CameraPosition(
           target: apple_maps.LatLng(
             _organizationLocation!.latitude,
@@ -1044,6 +1061,9 @@ ${_generateShareableLink()}
     } else if (Platform.isAndroid) {
       // Note: Google Maps requires an API key in AndroidManifest.xml
       return google_maps.GoogleMap(
+        onMapCreated: (google_maps.GoogleMapController controller) {
+          _googleMapController = controller;
+        },
         initialCameraPosition: google_maps.CameraPosition(
           target: google_maps.LatLng(
             _organizationLocation!.latitude,
@@ -1063,6 +1083,7 @@ ${_generateShareableLink()}
 
     // Fallback for Web/Desktop/Other
     return FlutterMap(
+      mapController: _mapController,
       options: MapOptions(
         initialCenter: _organizationLocation!,
         initialZoom: 15,

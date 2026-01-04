@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
+import 'package:carenest/firebase_options.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -287,80 +290,75 @@ class FirebaseMessagingService {
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (_) {}
+
   debugPrint('DEBUG_FCM: Background handler triggered!');
   debugPrint('DEBUG_FCM: Background message data: ${message.data}');
   debugPrint(
       'DEBUG_FCM: Background message notification: ${message.notification}');
 
-  // For surface messages with notification payload
+  final String? title =
+      message.notification?.title ?? message.data['title']?.toString();
+  final String? body =
+      message.notification?.body ?? message.data['body']?.toString();
+
+  if (title == null && body == null) {
+    return;
+  }
+
+  final String resolvedTitle = title ?? 'New Notification';
+  final String resolvedBody = body ?? '';
+  final String channelId =
+      message.data['channelId']?.toString() ?? 'timer_alerts';
+  final String type = message.data['type']?.toString() ??
+      message.data['channelId']?.toString() ??
+      'general';
+
+  final Map<String, dynamic> payloadData = {
+    ...message.data,
+    'title': resolvedTitle,
+    'body': resolvedBody,
+    'channelId': channelId,
+    'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+    'type': type,
+    'isForeground': 'false',
+  };
+
+  await storeBackgroundNotification(
+    message.messageId ?? message.hashCode.toString(),
+    resolvedTitle,
+    resolvedBody,
+    type,
+    payloadData,
+  );
+
   if (message.notification != null) {
-    debugPrint(
-        'DEBUG_FCM: Background notification message received: ${message.notification!.title}');
-
-    final Map<String, dynamic> payloadData = {
-      ...message.data,
-      'title': message.notification!.title,
-      'body': message.notification!.body,
-      'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'type': message.data['type'] ?? 'general',
-      'isForeground': false, // Add flag to indicate surface message
-    };
-
-    // Store notification in persistent storage
-    await storeBackgroundNotification(
-      message.hashCode.toString(),
-      message.notification!.title,
-      message.notification!.body,
-      message.data['type'] ?? 'general',
-      payloadData, // Store the enhanced payload data
-    );
+    return;
   }
-  // Handle data-only surface messages
-  else if (message.data.isNotEmpty) {
-    debugPrint('DEBUG_FCM: Background data-only message received');
 
-    final title = message.data['title'] ?? 'New Message';
-    final body = message.data['body'] ?? 'You have a new update';
+  final localNotificationService = LocalNotificationService();
+  await localNotificationService.initialize(requestPermissions: false);
 
-    // Create enhanced payload with surface flag
-    final Map<String, dynamic> payloadData = {
-      ...message.data,
-      'title': title,
-      'body': body,
-      'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'type': message.data['type'] ?? 'data',
-      'isForeground': false, // Add flag to indicate surface message
-    };
+  final notification = NotificationModel(
+    id: message.messageId ?? message.hashCode.toString(),
+    title: resolvedTitle,
+    body: resolvedBody,
+    timestamp: DateTime.now(),
+    type: type,
+    data: payloadData,
+  );
 
-    // Store notification in persistent storage with enhanced payload
-    await storeBackgroundNotification(
-      message.hashCode.toString(),
-      title,
-      body,
-      message.data['type'] ?? 'data',
-      payloadData, // Store the enhanced payload data
-    );
-
-    // Initialize local notification service for data-only messages
-    final localNotificationService = LocalNotificationService();
-    await localNotificationService.initialize();
-
-    // Create NotificationModel for the surface notification
-    final notification = NotificationModel(
-      id: message.hashCode.toString(),
-      title: title,
-      body: body,
-      timestamp: DateTime.now(),
-      type: payloadData['type'] ?? 'surface',
-      data: payloadData,
-    );
-
-    // Display the notification
-    await localNotificationService.createAndDisplayNotification(
-      notification,
-      payloadData,
-    );
-  }
+  await localNotificationService.createAndDisplayNotification(
+    notification,
+    payloadData,
+  );
 }
 
 // Helper function to store surface notifications in persistent storage
@@ -402,8 +400,7 @@ Future<void> storeBackgroundNotification(
     }
 
     // Save back to SharedPreferences
-    await prefs.setStringList(
-        'surface_notifications', existingNotifications);
+    await prefs.setStringList('surface_notifications', existingNotifications);
 
     debugPrint('DEBUG_FCM: Background notification stored successfully: $id');
   } catch (e) {

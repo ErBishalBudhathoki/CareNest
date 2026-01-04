@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,24 +11,24 @@ class LocalNotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> initialize() async {
+  Future<void> initialize({bool requestPermissions = true}) async {
     debugPrint('DEBUG_LOCAL_NOTIF: Initializing LocalNotificationService...');
 
     // Initialization settings for Android
     final AndroidInitializationSettings androidInitSettings =
-        const AndroidInitializationSettings('@drawable/ic_notification');
+        const AndroidInitializationSettings('ic_notification');
 
     // Initialization settings for iOS
     final DarwinInitializationSettings iosInitSettings =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+      requestAlertPermission: requestPermissions,
+      requestBadgePermission: requestPermissions,
+      requestSoundPermission: requestPermissions,
       // Note: onDidReceiveLocalNotification was removed in flutter_local_notifications 18.0.1+
     );
 
     // Request notification permissions for Android 13+ (API level 33+)
-    if (Platform.isAndroid) {
+    if (requestPermissions && Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
           _notificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
@@ -71,7 +70,7 @@ class LocalNotificationService {
       debugPrint('\n=== LOCAL NOTIFICATION DISPLAY ATTEMPT ===');
       debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
       debugPrint('Channel ID: $channelId');
-      debugPrint('Notification ID: ${notificationModel.hashCode}');
+      debugPrint('Notification ID: ${notificationModel.id}');
       debugPrint('Title: ${notificationModel.title}');
       debugPrint('Body: ${notificationModel.body}');
       debugPrint('Payload Keys: ${payload.keys.toList()}');
@@ -121,7 +120,8 @@ class LocalNotificationService {
         iOS: iosDetails,
       );
 
-      final notificationId = notificationModel.hashCode;
+      final notificationId = int.tryParse(notificationModel.id) ??
+          (notificationModel.id.hashCode & 0x7fffffff);
 
       debugPrint('\n--- NOTIFICATION DISPLAY CALL ---');
       debugPrint('Final Notification ID: $notificationId');

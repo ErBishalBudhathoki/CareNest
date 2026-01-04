@@ -762,12 +762,18 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
           );
         }
 
+        debugPrint('🚀 InvoiceDetailView: Navigating to PDF Viewer');
+        debugPrint(
+            '🚀 InvoiceDetailView: Invoice has ${invoice.receiptUrls.length} receipt URLs');
+        debugPrint('🚀 InvoiceDetailView: URLs: ${invoice.receiptUrls}');
+
         // Navigate to PDF viewer
         await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PdfViewPage(
               pdfPath: result['pdfPath'],
+              receiptUrls: invoice.receiptUrls,
             ),
           ),
         );
