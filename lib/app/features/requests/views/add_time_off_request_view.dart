@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
+import 'package:carenest/app/features/requests/viewmodels/config_viewmodel.dart';
 
-class AddTimeOffRequestView extends StatefulWidget {
+class AddTimeOffRequestView extends ConsumerStatefulWidget {
   final String email;
 
   const AddTimeOffRequestView({super.key, required this.email});
 
   @override
-  State<AddTimeOffRequestView> createState() => _AddTimeOffRequestViewState();
+  ConsumerState<AddTimeOffRequestView> createState() =>
+      _AddTimeOffRequestViewState();
 }
 
-class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
+class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
   final TextEditingController _noteController = TextEditingController();
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
-  String selectedType = 'Vacation';
+  String? selectedType;
   bool _showNoteField = false;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -27,7 +32,8 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
   void _showSuccessDialog() {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
+      barrierDismissible: false,
+      builder: (dialogContext) => Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -62,10 +68,15 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
+                    // Close the dialog using the dialog's context
+                    Navigator.of(dialogContext).pop();
+                    // Close the bottom sheet if the widget is still mounted
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -81,15 +92,58 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
     );
   }
 
+  Future<void> _submit() async {
+    if (selectedType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a leave type')),
+      );
+      return;
+    }
+
+    if (endDate.isBefore(startDate)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('End date cannot be before start date')),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final details = {
+      'timeOffType': selectedType,
+      'starts': startDate.toIso8601String(),
+      'ends': endDate.toIso8601String(),
+    };
+
+    final success =
+        await ref.read(requestsViewModelProvider.notifier).createRequest(
+              'Time Off',
+              details,
+              _noteController.text,
+            );
+
+    setState(() => _isSubmitting = false);
+
+    if (success) {
+      _showSuccessDialog();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to create request')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final leaveTypesAsync = ref.watch(leaveTypesProvider);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppBar(
           automaticallyImplyLeading: false,
-          leadingWidth: 40, // Set a fixed width to ensure alignment
+          leadingWidth: 40,
           leading: IconButton(
             icon: const Icon(Icons.close, color: Colors.black),
             onPressed: () => Navigator.pop(context),
@@ -103,53 +157,72 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
             ),
           ),
           elevation: 0,
-          centerTitle:
-              false, // Ensure left-aligned title (to match other labels)
-          toolbarHeight: 56, // Consistent height for alignment
+          centerTitle: false,
+          toolbarHeight: 56,
         ),
         Container(
-          height: MediaQuery.of(context).size.height * 0.55,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-            left: 16,
-            right: 16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          child: ListView(
-            padding: EdgeInsets.zero,
+          child: Column(
             children: [
               // Type Section
-              const Text(
-                'Type',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'Type',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      selectedType,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.colorBlack87,
+                child: leaveTypesAsync.when(
+                  data: (types) {
+                    // Set default if not set and types available
+                    if (selectedType == null && types.isNotEmpty) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted)
+                          setState(() => selectedType = types.first.name);
+                      });
+                    }
+
+                    return DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedType,
+                        isExpanded: true,
+                        hint: const Text('Select Leave Type'),
+                        items: types.map((type) {
+                          return DropdownMenuItem(
+                            value: type.name,
+                            child: Text(
+                              type.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: AppColors.colorBlack87,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() => selectedType = val);
+                        },
                       ),
-                    ),
-                    const Icon(Icons.arrow_drop_down,
-                        color: AppColors.colorBlue),
-                  ],
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, s) => const Text('Error loading types'),
                 ),
               ),
               const SizedBox(height: 16),
@@ -178,9 +251,31 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
                               firstDate: DateTime.now(),
                               lastDate:
                                   DateTime.now().add(const Duration(days: 365)),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: const ColorScheme.light(
+                                      primary: AppColors.colorBlue,
+                                      onPrimary: Colors.white,
+                                      onSurface: Colors.black,
+                                    ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: AppColors.colorBlue,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
                             );
                             if (date != null) {
-                              setState(() => startDate = date);
+                              setState(() {
+                                startDate = date;
+                                if (endDate.isBefore(startDate)) {
+                                  endDate = startDate;
+                                }
+                              });
                             }
                           },
                           child: Container(
@@ -223,6 +318,23 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
                               firstDate: startDate,
                               lastDate:
                                   DateTime.now().add(const Duration(days: 365)),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: const ColorScheme.light(
+                                      primary: AppColors.colorBlue,
+                                      onPrimary: Colors.white,
+                                      onSurface: Colors.black,
+                                    ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: AppColors.colorBlue,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
                             );
                             if (date != null) {
                               setState(() => endDate = date);
@@ -334,32 +446,41 @@ class _AddTimeOffRequestViewState extends State<AddTimeOffRequestView> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _showSuccessDialog,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                      onPressed: _isSubmitting ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         minimumSize: const Size(double.infinity, 48),
                       ),
-                      child: const Text(
-                        'Send for approval',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Send for approval',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 16), // Add some bottom padding
             ],
           ),
         ),
-
-        // Bottom Buttons
       ],
     );
   }

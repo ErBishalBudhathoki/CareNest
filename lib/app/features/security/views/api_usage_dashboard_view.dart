@@ -160,36 +160,14 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
 
     try {
       _sseClient = http.Client();
-      final base = _api.baseUrl;
-      final cleanBase =
-          base.endsWith('/') ? base.substring(0, base.length - 1) : base;
-      final uri = Uri.parse(
-          '$cleanBase/api/analytics/api-usage/stream/$_organizationId');
-      debugPrint('[SSE] Attempting connection to: $uri');
-      debugPrint('[SSE] Base URL: $base');
-
-      // Attach auth token for protected SSE endpoint
-      final sharedUtils = SharedPreferencesUtils();
-      await sharedUtils.init();
-      final token = sharedUtils.getAuthToken();
-      final hasToken = token != null && token.isNotEmpty;
-      final tokenHasBearer =
-          hasToken && token.toLowerCase().startsWith('bearer ');
-      debugPrint('[SSE] Auth token present: $hasToken');
-
-      final req = http.Request('GET', uri);
-      final String? authValue = hasToken
-          ? (token.toLowerCase().startsWith('bearer ')
-              ? token
-              : 'Bearer $token')
-          : null;
-      req.headers.addAll({
-        'Accept': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        if (authValue != null) 'Authorization': authValue,
-      });
-
-      final resp = await _sseClient!.send(req);
+      final resp = await _api.openSseStream(
+        'api/analytics/api-usage/stream/$_organizationId',
+        client: _sseClient!,
+        headers: const {
+          'Accept': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+        },
+      );
       debugPrint('[SSE] Response status: ${resp.statusCode}');
       if (resp.statusCode != 200) {
         if (mounted) {

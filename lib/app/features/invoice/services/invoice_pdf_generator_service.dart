@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/config/environment.dart';
@@ -95,55 +94,43 @@ class InvoicePdfGenerator {
                 marginRight: 15,
                 marginTop: 35,
                 marginBottom: 25),
+            maxPages: 200,
             build: (pw.Context context) => [
-              pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  // Add invisible watermark for app-based detection
-                  if (watermark.isNotEmpty)
-                    pw.Positioned(
-                      left: 0,
-                      top: 0,
-                      child: pw.Text(
-                        watermark,
-                        style: pw.TextStyle(
-                          fontSize: 0.1, // Nearly invisible
-                          color: PdfColors.white, // White text on white surface
-                        ),
-                      ),
-                    ),
-                  _buildInvoiceHeader(clientData),
-                  pw.SizedBox(height: 24),
-                  pw.SizedBox(
-                      height: 1, child: pw.Divider(color: PdfColors.black)),
-                  pw.SizedBox(height: 24),
-                  _buildBillingInfo(clientData),
-                  pw.SizedBox(height: 24),
-                  _buildInvoiceDetails(clientData),
-                  pw.SizedBox(height: 24),
-                  // Add expenses table if expenses are included
-                  if (_hasExpenses(clientData)) ...[
-                    _buildExpensesTable(clientData),
-                    pw.SizedBox(height: 24),
-                  ],
-                  invoiceTotalWidget,
-                  pw.SizedBox(height: 24),
-                  // Add photo attachments section if photos are provided or if expenses have photos
-                  if (photoAttachmentsSection != null) ...[
-                    photoAttachmentsSection,
-                    pw.SizedBox(height: 24),
-                  ],
-                  // Add download links section if uploaded files exist
-                  if ((uploadedPhotoUrls != null &&
-                          uploadedPhotoUrls.isNotEmpty) ||
-                      (uploadedAdditionalFileUrls != null &&
-                          uploadedAdditionalFileUrls.isNotEmpty)) ...[
-                    _buildDownloadLinksSection(
-                        uploadedPhotoUrls, uploadedAdditionalFileUrls),
-                    pw.SizedBox(height: 24),
-                  ],
-                ],
-              ),
+              if (watermark.isNotEmpty)
+                pw.Text(
+                  watermark,
+                  style: pw.TextStyle(
+                    fontSize: 0.1,
+                    color: PdfColors.white,
+                  ),
+                ),
+              _buildInvoiceHeader(clientData),
+              pw.SizedBox(height: 24),
+              pw.SizedBox(height: 1, child: pw.Divider(color: PdfColors.black)),
+              pw.SizedBox(height: 24),
+              _buildBillingInfo(clientData),
+              pw.SizedBox(height: 24),
+              _buildInvoiceDetails(clientData),
+              pw.SizedBox(height: 6),
+              _buildInvoiceItemsNote(),
+              pw.SizedBox(height: 24),
+              if (_hasExpenses(clientData)) ...[
+                _buildExpensesTable(clientData),
+                pw.SizedBox(height: 24),
+              ],
+              invoiceTotalWidget,
+              pw.SizedBox(height: 24),
+              if (photoAttachmentsSection != null) ...[
+                photoAttachmentsSection,
+                pw.SizedBox(height: 24),
+              ],
+              if ((uploadedPhotoUrls != null && uploadedPhotoUrls.isNotEmpty) ||
+                  (uploadedAdditionalFileUrls != null &&
+                      uploadedAdditionalFileUrls.isNotEmpty)) ...[
+                _buildDownloadLinksSection(
+                    uploadedPhotoUrls, uploadedAdditionalFileUrls),
+                pw.SizedBox(height: 24),
+              ],
             ],
           ),
         );
@@ -223,9 +210,9 @@ class InvoicePdfGenerator {
         debugPrint(
             'PDF Generator: Added final path to list: ${finalPdfFile.path}');
       }
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('Error generating PDFs: $e');
-      debugPrint('Stack trace: ${StackTrace.current}');
+      debugPrint('Stack trace: $st');
     }
 
     debugPrint(
@@ -480,154 +467,112 @@ class InvoicePdfGenerator {
 
   pw.Widget _buildInvoiceDetails(Map<String, dynamic> clientData) {
     final items = clientData['items'] as List<dynamic>? ?? [];
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        // pw.Text('Invoice Components',
-        //     style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-        pw.SizedBox(height: 10),
-        pw.Table(
-          border: pw.TableBorder.all(color: PdfColors.black),
-          columnWidths: {
-            0: const pw.FlexColumnWidth(3), // Invoice Components
-            1: const pw.FlexColumnWidth(2), // Time Worked
-            2: const pw.FlexColumnWidth(1), // Hours/Units
-            3: const pw.FlexColumnWidth(1), // Rate
-            4: const pw.FlexColumnWidth(1), // Total Amount
-          },
-          children: [
-            pw.TableRow(
-              decoration: pw.BoxDecoration(color: PdfColors.grey300),
-              children: [
-                _buildTableHeader('Invoice Components'),
-                _buildTableHeader('Time Worked'),
-                _buildTableHeader('Hours'),
-                _buildTableHeader('Rate'),
-                _buildTableHeader('Total Amount'),
-              ],
-            ),
-            ...items.map<pw.TableRow>((item) {
-              if (item is! Map<String, dynamic>) {
-                debugPrint('Warning: Invalid item format');
-                return pw.TableRow(children: List.filled(5, pw.Container()));
-              }
-              // Debug print to check item structure
-              debugPrint("""\n\nitem: ${item.toString()}\n\n""");
-              // Format the time worked string with state and hours
-              String timeWorked = '';
-              if (item['date'] != null &&
-                  item['startTime'] != null &&
-                  item['endTime'] != null) {
-                String date = _getSafeString(item['date']);
-                String startTime = _getSafeString(item['startTime']);
-                String endTime = _getSafeString(item['endTime']);
-                String clientState =
-                    _getSafeString(clientData['clientState'] ?? 'NSW');
-                String hours = _getSafeString(item['hours']);
+    final List<List<String>> rows = [
+      ['Invoice Components', 'Time Worked', 'Hours', 'Rate', 'Total Amount'],
+      ...items.map<List<String>>((item) {
+        if (item is! Map<String, dynamic>) {
+          debugPrint('Warning: Invalid item format');
+          return ['', '', '', '', ''];
+        }
 
-                // Display exact hours with up to 4 decimals (includes seconds)
-                double hoursDouble = _getSafeDouble(item['hours']);
-                String formattedHours = HoursFormatting.formatDecimalHours(
-                  hoursDouble,
-                  minDecimals: 2,
-                  maxDecimals: 4,
-                );
+        debugPrint("""\n\nitem: ${item.toString()}\n\n""");
 
-                timeWorked =
-                    '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
-              } else if (item['date'] != null &&
-                  item['timeStart'] != null &&
-                  item['timeEnd'] != null) {
-                // Fallback for legacy timeStart/timeEnd field names
-                String date = _getSafeString(item['date']);
-                String startTime = _getSafeString(item['timeStart']);
-                String endTime = _getSafeString(item['timeEnd']);
-                String clientState =
-                    _getSafeString(clientData['clientState'] ?? 'NSW');
+        String timeWorked = '';
+        if (item['date'] != null &&
+            item['startTime'] != null &&
+            item['endTime'] != null) {
+          final String date = _getSafeString(item['date']);
+          final String startTime = _getSafeString(item['startTime']);
+          final String endTime = _getSafeString(item['endTime']);
+          final String clientState =
+              _getSafeString(clientData['clientState'] ?? 'NSW');
 
-                // Display exact hours with up to 4 decimals (includes seconds)
-                double hoursDouble = _getSafeDouble(item['hours']);
-                String formattedHours = HoursFormatting.formatDecimalHours(
-                  hoursDouble,
-                  minDecimals: 2,
-                  maxDecimals: 4,
-                );
+          final double hoursDouble = _getSafeDouble(item['hours']);
+          final String formattedHours = HoursFormatting.formatDecimalHours(
+            hoursDouble,
+            minDecimals: 2,
+            maxDecimals: 4,
+          );
 
-                timeWorked =
-                    '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
-              }
+          timeWorked =
+              '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
+        } else if (item['date'] != null &&
+            item['timeStart'] != null &&
+            item['timeEnd'] != null) {
+          final String date = _getSafeString(item['date']);
+          final String startTime = _getSafeString(item['timeStart']);
+          final String endTime = _getSafeString(item['timeEnd']);
+          final String clientState =
+              _getSafeString(clientData['clientState'] ?? 'NSW');
 
-              // Format the description using itemNumber and itemName from nested ndisItem object
-              String description = '';
-              if (item['ndisItem'] != null &&
-                  item['ndisItem']['itemNumber'] != null &&
-                  item['ndisItem']['itemName'] != null) {
-                description =
-                    '${_getSafeString(item['ndisItem']['itemNumber'])} ${_getSafeString(item['ndisItem']['itemName'])}';
-                // if (item['day'] != null) {
-                //   description += ' - ${_getSafeString(item['day'])}';
-                // }
-                // if (item['activityType'] != null) {
-                //   description += ' - ${_getSafeString(item['activityType'])}';
-                // }
-                // if (item['dayType'] != null) {
-                //   description += ' - ${_getSafeString(item['dayType'])}';
-                // }
-              } else if (item['ndisItemNumber'] != null &&
-                  item['ndisItemName'] != null) {
-                // Fallback for direct ndisItem fields (backward compatibility)
-                description =
-                    '${_getSafeString(item['ndisItemNumber'])} ${_getSafeString(item['ndisItemName'])}';
-                // if (item['day'] != null) {
-                //   description += ' - ${_getSafeString(item['day'])}';
-                // }
-                // if (item['activityType'] != null) {
-                //   description += ' - ${_getSafeString(item['activityType'])}';
-                // }
-                // if (item['dayType'] != null) {
-                //   description += ' - ${_getSafeString(item['dayType'])}';
-                // }
-              } else if (item['itemCode'] != null) {
-                // Fallback to legacy format if ndisItem data is not available
-                description =
-                    '${_getSafeString(item['itemCode'])} ${_getSafeString(item['itemName'] ?? 'Assistance With Self-Care Activities')}';
-                // if (item['day'] != null) {
-                //   description += ' - ${_getSafeString(item['day'])}';
-                // }
-                // if (item['activityType'] != null) {
-                //   description += ' - ${_getSafeString(item['activityType'])}';
-                // }
-                // if (item['dayType'] != null) {
-                //   description += ' - ${_getSafeString(item['dayType'])}';
-                // }
-              }
+          final double hoursDouble = _getSafeDouble(item['hours']);
+          final String formattedHours = HoursFormatting.formatDecimalHours(
+            hoursDouble,
+            minDecimals: 2,
+            maxDecimals: 4,
+          );
 
-              return pw.TableRow(
-                children: [
-                  _buildTableCell(description),
-                  _buildTableCell(timeWorked),
-                  _buildNumericTableCell(
-                    HoursFormatting.formatDecimalHours(
-                      _getSafeDouble(item['hours']),
-                      minDecimals: 2,
-                      maxDecimals: 4,
-                    ),
-                  ),
-                  _buildNumericTableCell(
-                      '\$${_getSafeDouble(item['rate']).toStringAsFixed(2)}'),
-                  _buildNumericTableCell(
-                      '\$${_getSafeDouble(item['amount']).toStringAsFixed(2)}'),
-                ],
-              );
-            }),
-          ],
-        ),
-        pw.SizedBox(height: 6),
-        pw.Text(
-          'Note: Hours include seconds and are shown up to 4 decimals. Totals are Hours × Rate, rounded to 2 decimals.',
-          style: pw.TextStyle(fontSize: 8),
-        ),
-      ],
+          timeWorked =
+              '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
+        }
+
+        String description = '';
+        if (item['ndisItem'] != null &&
+            item['ndisItem']['itemNumber'] != null &&
+            item['ndisItem']['itemName'] != null) {
+          description =
+              '${_getSafeString(item['ndisItem']['itemNumber'])} ${_getSafeString(item['ndisItem']['itemName'])}';
+        } else if (item['ndisItemNumber'] != null &&
+            item['ndisItemName'] != null) {
+          description =
+              '${_getSafeString(item['ndisItemNumber'])} ${_getSafeString(item['ndisItemName'])}';
+        } else if (item['itemCode'] != null) {
+          description =
+              '${_getSafeString(item['itemCode'])} ${_getSafeString(item['itemName'] ?? 'Assistance With Self-Care Activities')}';
+        }
+
+        final String hoursText = HoursFormatting.formatDecimalHours(
+          _getSafeDouble(item['hours']),
+          minDecimals: 2,
+          maxDecimals: 4,
+        );
+        final String rateText =
+            '\$${_getSafeDouble(item['rate']).toStringAsFixed(2)}';
+        final String amountText =
+            '\$${_getSafeDouble(item['amount']).toStringAsFixed(2)}';
+
+        return [description, timeWorked, hoursText, rateText, amountText];
+      }),
+    ];
+
+    return pw.TableHelper.fromTextArray(
+      border: pw.TableBorder.all(color: PdfColors.black),
+      headerCount: 1,
+      headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+      cellPadding: const pw.EdgeInsets.all(5),
+      columnWidths: {
+        0: const pw.FlexColumnWidth(3),
+        1: const pw.FlexColumnWidth(2),
+        2: const pw.FlexColumnWidth(1),
+        3: const pw.FlexColumnWidth(1),
+        4: const pw.FlexColumnWidth(1),
+      },
+      cellAlignments: {
+        0: pw.Alignment.centerLeft,
+        1: pw.Alignment.centerLeft,
+        2: pw.Alignment.centerRight,
+        3: pw.Alignment.centerRight,
+        4: pw.Alignment.centerRight,
+      },
+      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+      data: rows,
+    );
+  }
+
+  pw.Widget _buildInvoiceItemsNote() {
+    return pw.Text(
+      'Note: Hours include seconds and are shown up to 4 decimals. Totals are Hours × Rate, rounded to 2 decimals.',
+      style: pw.TextStyle(fontSize: 8),
     );
   }
 
@@ -1018,25 +963,29 @@ class InvoicePdfGenerator {
     // Collect all receipt URLs
     List<String> allReceiptUrls = [];
 
-    // Get the base URL from AppConfig
-    final baseUrl = AppConfig.baseUrl.endsWith('/')
-        ? AppConfig.baseUrl.substring(0, AppConfig.baseUrl.length - 1)
-        : AppConfig.baseUrl;
-
-    // Helper to create a full URL from a relative path
-    String toFullUrl(String url) {
-      if (url.startsWith('/')) {
-        return '$baseUrl$url';
+    String? resolveToHttpUrl(String value) {
+      final resolved = AppConfig.resolveResourceUrl(value);
+      if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
+        return resolved;
       }
-      return url;
+      return null;
+    }
+
+    String buildDownloadUrl(String originalUrl) {
+      try {
+        return AppConfig.buildFilesDownloadUrl(originalUrl);
+      } catch (e) {
+        debugPrint('DEBUG_RECEIPT_LINKS: Failed to build download URL: $e');
+        return originalUrl;
+      }
     }
 
     // Add from receiptFiles (preferred)
     for (var file in receiptFiles) {
       if (file is String && file.trim().isNotEmpty) {
         final cleanUrl = file.trim().replaceAll('`', '');
-        if (cleanUrl.startsWith('http') || cleanUrl.startsWith('/')) {
-          final fullUrl = toFullUrl(cleanUrl);
+        final fullUrl = resolveToHttpUrl(cleanUrl);
+        if (fullUrl != null) {
           debugPrint(
               'DEBUG_RECEIPT_LINKS: Adding URL from receiptFiles: $fullUrl');
           allReceiptUrls.add(fullUrl);
@@ -1048,8 +997,8 @@ class InvoicePdfGenerator {
     for (var photo in receiptPhotos) {
       if (photo is String && photo.trim().isNotEmpty) {
         final cleanUrl = photo.trim().replaceAll('`', '');
-        if (cleanUrl.startsWith('http') || cleanUrl.startsWith('/')) {
-          final fullUrl = toFullUrl(cleanUrl);
+        final fullUrl = resolveToHttpUrl(cleanUrl);
+        if (fullUrl != null) {
           debugPrint(
               'DEBUG_RECEIPT_LINKS: Adding URL from receiptPhotos: $fullUrl');
           allReceiptUrls.add(fullUrl);
@@ -1060,8 +1009,8 @@ class InvoicePdfGenerator {
     // Add from receiptUrl (backward compatibility)
     if (receiptUrl != null && receiptUrl.trim().isNotEmpty) {
       final cleanUrl = receiptUrl.trim().replaceAll('`', '');
-      if (cleanUrl.startsWith('http') || cleanUrl.startsWith('/')) {
-        final fullUrl = toFullUrl(cleanUrl);
+      final fullUrl = resolveToHttpUrl(cleanUrl);
+      if (fullUrl != null) {
         debugPrint('DEBUG_RECEIPT_LINKS: Adding URL from receiptUrl: $fullUrl');
         allReceiptUrls.add(fullUrl);
       }
@@ -1084,7 +1033,7 @@ class InvoicePdfGenerator {
       return pw.Container(
         padding: const pw.EdgeInsets.all(4),
         child: pw.UrlLink(
-          destination: allReceiptUrls.first,
+          destination: buildDownloadUrl(allReceiptUrls.first),
           child: pw.Text(
             'Download Receipt',
             style: pw.TextStyle(
@@ -1107,7 +1056,7 @@ class InvoicePdfGenerator {
             final index = entry.key + 1;
             final url = entry.value;
             return pw.UrlLink(
-              destination: url,
+              destination: buildDownloadUrl(url),
               child: pw.Text(
                 'Receipt $index',
                 style: pw.TextStyle(
@@ -1131,12 +1080,9 @@ class InvoicePdfGenerator {
       debugPrint('PDF Generator: Downloading image from URL: $url');
 
       // Add timeout to prevent hanging
-      final response = await http.get(Uri.parse(url)).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          debugPrint('PDF Generator: Timeout downloading image from $url');
-          throw Exception('Download timeout');
-        },
+      final response = await ApiMethod().getRawUrl(
+        url,
+        timeout: const Duration(seconds: 30),
       );
 
       if (response.statusCode == 200) {
@@ -1232,6 +1178,14 @@ class InvoicePdfGenerator {
       pw.SizedBox(height: 10),
     ];
 
+    String buildDownloadUrl(String originalUrl) {
+      try {
+        return AppConfig.buildFilesDownloadUrl(originalUrl);
+      } catch (_) {
+        return originalUrl;
+      }
+    }
+
     // Add photo download links
     if (uploadedPhotoUrls != null && uploadedPhotoUrls.isNotEmpty) {
       widgets.addAll([
@@ -1241,11 +1195,16 @@ class InvoicePdfGenerator {
       ]);
 
       for (int i = 0; i < uploadedPhotoUrls.length; i++) {
+        final resolvedUrl = AppConfig.resolveResourceUrl(uploadedPhotoUrls[i]);
+        if (!(resolvedUrl.startsWith('http://') ||
+            resolvedUrl.startsWith('https://'))) {
+          continue;
+        }
         widgets.add(
           pw.Padding(
             padding: const pw.EdgeInsets.only(bottom: 3),
             child: pw.UrlLink(
-              destination: uploadedPhotoUrls[i],
+              destination: buildDownloadUrl(resolvedUrl),
               child: pw.Text(
                 'Download Photo ${i + 1}',
                 style: pw.TextStyle(
@@ -1271,11 +1230,17 @@ class InvoicePdfGenerator {
       ]);
 
       for (int i = 0; i < uploadedAdditionalFileUrls.length; i++) {
+        final resolvedUrl =
+            AppConfig.resolveResourceUrl(uploadedAdditionalFileUrls[i]);
+        if (!(resolvedUrl.startsWith('http://') ||
+            resolvedUrl.startsWith('https://'))) {
+          continue;
+        }
         widgets.add(
           pw.Padding(
             padding: const pw.EdgeInsets.only(bottom: 3),
             child: pw.UrlLink(
-              destination: uploadedAdditionalFileUrls[i],
+              destination: buildDownloadUrl(resolvedUrl),
               child: pw.Text(
                 'Download File ${i + 1}',
                 style: pw.TextStyle(

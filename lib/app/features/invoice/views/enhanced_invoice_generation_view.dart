@@ -14,6 +14,7 @@ import 'package:carenest/app/features/pricing/views/pricing_configuration_view.d
 import 'package:file_picker/file_picker.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/invoice/widgets/source_badge.dart';
+import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
 
 /// Enhanced Invoice Generation View
@@ -2257,7 +2258,7 @@ class _EnhancedInvoiceGenerationViewState
                             ...itemsExceedingCap.asMap().entries.map((entry) {
                               return _buildExceedingCapItem(
                                   entry.value, entry.key);
-                            }).toList(),
+                            }),
                             const SizedBox(height: 24),
                             // Action Guide Box
                             Container(
@@ -3249,11 +3250,82 @@ class _EnhancedInvoiceGenerationViewState
 
   Future<void> _viewPdf(String pdfPath) async {
     try {
+      // Find the corresponding invoice data to extract receipt URLs
+      final state = ref.read(enhancedInvoiceViewModelProvider);
+      List<String> receiptUrls = [];
+
+      // Try to find the invoice that matches this PDF path
+      // The paths in state.generatedPdfPaths should align with state.invoices
+      final index = state.generatedPdfPaths.indexOf(pdfPath);
+      if (index != -1 && index < state.invoices.length) {
+        final invoiceData = state.invoices[index];
+        debugPrint(
+            'Found invoice data for PDF $pdfPath at index $index. Extracting receipts...');
+
+        // Extract receipts logic (similar to InvoiceListModel)
+        try {
+          final expenses = invoiceData['expenses'] as List<dynamic>?;
+          if (expenses != null) {
+            for (var expense in expenses) {
+              if (expense is Map<String, dynamic>) {
+                final receiptFiles = expense['receiptFiles'] as List?;
+                final receiptPhotos = expense['receiptPhotos'] as List?;
+                final receiptUrl = expense['receiptUrl'] as String?;
+
+                String? resolveToDownloadUrl(String value) {
+                  final resolved = AppConfig.resolveResourceUrl(value);
+                  if (!(resolved.startsWith('http://') ||
+                      resolved.startsWith('https://'))) {
+                    return null;
+                  }
+                  try {
+                    return AppConfig.buildFilesDownloadUrl(resolved);
+                  } catch (_) {
+                    return resolved;
+                  }
+                }
+
+                if (receiptFiles != null) {
+                  for (var file in receiptFiles) {
+                    if (file is String && file.trim().isNotEmpty) {
+                      final fullUrl = resolveToDownloadUrl(file.trim());
+                      if (fullUrl != null) receiptUrls.add(fullUrl);
+                    }
+                  }
+                }
+
+                if (receiptPhotos != null) {
+                  for (var photo in receiptPhotos) {
+                    if (photo is String && photo.trim().isNotEmpty) {
+                      final fullUrl = resolveToDownloadUrl(photo.trim());
+                      if (fullUrl != null) receiptUrls.add(fullUrl);
+                    }
+                  }
+                }
+
+                if (receiptUrl != null && receiptUrl.trim().isNotEmpty) {
+                  final fullUrl = resolveToDownloadUrl(receiptUrl.trim());
+                  if (fullUrl != null) receiptUrls.add(fullUrl);
+                }
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Error extracting receipts in _viewPdf: $e');
+        }
+      }
+
+      // Remove duplicates
+      receiptUrls = receiptUrls.toSet().toList();
+      debugPrint(
+          'Passing ${receiptUrls.length} receipt URLs to PDF Viewer: $receiptUrls');
+
       await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => PdfViewPage(
             pdfPath: pdfPath,
+            receiptUrls: receiptUrls,
           ),
         ),
       );

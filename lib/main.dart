@@ -10,6 +10,7 @@ import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
 import 'package:carenest/firebase_options.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +28,7 @@ import 'package:carenest/app/shared/constants/themes/app_themes.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:carenest/app/shared/constants/values/strings/app_strings.dart';
 import 'package:carenest/app/shared/widgets/notification_handler_widget.dart';
+import 'package:carenest/config/environment.dart';
 
 // Views
 import 'package:carenest/app/features/auth/views/login_view.dart';
@@ -44,7 +46,7 @@ import 'package:carenest/app/features/assignment_list/views/assignment_list_view
 import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
-
+import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
 
 final mediaStorePlugin = MediaStore();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -60,6 +62,29 @@ bool isDeepLinkHandled() {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  // Dynamically detect flavor based on package name
+  // Development flavor typically has a suffix like '.dev'
+  try {
+    final packageInfo = await PackageInfo.fromPlatform();
+    final packageName = packageInfo.packageName;
+
+    if (packageName.endsWith('.dev')) {
+      AppConfig.appFlavor = Flavor.development;
+    } else {
+      AppConfig.appFlavor = Flavor.production;
+    }
+  } catch (e) {
+    debugPrint('Error getting package info: $e');
+    // Fallback default
+    AppConfig.appFlavor = Flavor.development;
+  }
+
+  debugPrint('=== Environment Configuration (Auto-Detected) ===');
+  debugPrint('App Flavor: ${AppConfig.flavorName}');
+  debugPrint('Base URL: ${AppConfig.baseUrl}');
+  debugPrint('Logging Enabled: ${AppConfig.enableLogging}');
+  debugPrint('=========================================');
 
   setupLocator();
 
@@ -483,6 +508,9 @@ class MyApp extends ConsumerWidget {
               invoiceId: invoiceId,
               organizationId: organizationId,
             );
+          },
+          Routes.adminRequests: (context) {
+            return const AdminRequestsDashboardView();
           },
         },
       ),

@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
+import 'package:carenest/app/features/requests/viewmodels/config_viewmodel.dart';
 
-class AddShiftRequestView extends StatefulWidget {
+class AddShiftRequestView extends ConsumerStatefulWidget {
   final String email;
 
   const AddShiftRequestView({super.key, required this.email});
 
   @override
-  State<AddShiftRequestView> createState() => _AddShiftRequestViewState();
+  ConsumerState<AddShiftRequestView> createState() =>
+      _AddShiftRequestViewState();
 }
 
-class _AddShiftRequestViewState extends State<AddShiftRequestView> {
+class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
   final TextEditingController _noteController = TextEditingController();
   DateTime selectedDate = DateTime.now();
+  DateTime? endDate;
   TimeOfDay startTime = TimeOfDay.now();
   TimeOfDay endTime = TimeOfDay.now();
   bool _showNoteField = false;
+  bool _isSubmitting = false;
+  String? selectedJob;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default end date is same as start date
+    endDate = selectedDate;
+  }
 
   @override
   void dispose() {
@@ -27,7 +41,8 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
   void _showSuccessDialog() {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
+      barrierDismissible: false,
+      builder: (dialogContext) => Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -62,10 +77,15 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
+                    // Close the dialog using the dialog's context
+                    Navigator.of(dialogContext).pop();
+                    // Close the bottom sheet if the widget is still mounted
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -81,8 +101,82 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
     );
   }
 
+  Future<void> _submit() async {
+    if (selectedJob == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a job')),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final start = DateTime(selectedDate.year, selectedDate.month,
+        selectedDate.day, startTime.hour, startTime.minute);
+
+    final endDateTime = endDate ?? selectedDate;
+    final end = DateTime(endDateTime.year, endDateTime.month, endDateTime.day,
+        endTime.hour, endTime.minute);
+
+    if (end.isBefore(start)) {
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('End time cannot be before start time')),
+      );
+      return;
+    }
+
+    final details = {
+      'job': selectedJob,
+      'starts': start.toIso8601String(),
+      'ends': end.toIso8601String(),
+    };
+
+    final success =
+        await ref.read(requestsViewModelProvider.notifier).createRequest(
+              'Shift',
+              details,
+              _noteController.text,
+            );
+
+    setState(() => _isSubmitting = false);
+
+    if (success) {
+      _showSuccessDialog();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to create request')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final jobRolesAsync = ref.watch(jobRolesProvider);
+
+    // Calculate total hours
+    final start = DateTime(selectedDate.year, selectedDate.month,
+        selectedDate.day, startTime.hour, startTime.minute);
+
+    final endDateTime = endDate ?? selectedDate;
+    var end = DateTime(endDateTime.year, endDateTime.month, endDateTime.day,
+        endTime.hour, endTime.minute);
+
+    // Logic: if user hasn't explicitly selected end date and end time is earlier than start time,
+    // it probably means next day if the end date is same as start date.
+    // However, now we have explicit end date picker, so we should respect that.
+    // If end date is same as start date and end time is before start time, it's invalid (or handled by validation).
+    // If user intended overnight, they should pick next day.
+    // But to keep it user friendly, if end date is not set (or same), we might assume next day if time is earlier?
+    // No, let's stick to explicit date selection now.
+
+    final duration = end.difference(start);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final totalHoursStr = duration.isNegative
+        ? 'Invalid duration'
+        : '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,45 +198,68 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
           elevation: 0,
         ),
         Container(
-          height: MediaQuery.of(context).size.height * 0.55,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-            left: 16,
-            right: 16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: const BoxDecoration(
             color: AppColors.colorWhite,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          child: ListView(
-            padding: EdgeInsets.zero,
+          child: Column(
             children: [
               // Job Section
-              const Text(
-                'Job',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'Job',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.colorGrey100,
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: const Row(
-                  children: [
-                    Text(
-                      'Shift manager',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.colorGrey800,
+                child: jobRolesAsync.when(
+                  data: (roles) {
+                    // Set default if not set and roles available
+                    if (selectedJob == null && roles.isNotEmpty) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted)
+                          setState(() => selectedJob = roles.first.title);
+                      });
+                    }
+
+                    return DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedJob,
+                        isExpanded: true,
+                        hint: const Text('Select Job'),
+                        items: roles.map((role) {
+                          return DropdownMenuItem(
+                            value: role.title,
+                            child: Text(
+                              role.title,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: AppColors.colorGrey800,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() => selectedJob = val);
+                        },
                       ),
-                    ),
-                  ],
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, s) => const Text('Error loading roles'),
                 ),
               ),
               const SizedBox(height: 16),
@@ -165,12 +282,31 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                           final date = await showDatePicker(
                             context: context,
                             initialDate: selectedDate,
-                            firstDate: DateTime.now(),
+                            firstDate: DateTime.now().subtract(
+                                const Duration(days: 30)), // Allow past dates?
                             lastDate:
                                 DateTime.now().add(const Duration(days: 365)),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: AppColors.colorBlue,
+                                    onPrimary: Colors.white,
+                                    onSurface: Colors.black,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
                           if (date != null) {
-                            setState(() => selectedDate = date);
+                            setState(() {
+                              selectedDate = date;
+                              // Ensure end date is not before new start date
+                              if (endDate != null && endDate!.isBefore(date)) {
+                                endDate = date;
+                              }
+                            });
                           }
                         },
                         child: Container(
@@ -195,6 +331,18 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                           final time = await showTimePicker(
                             context: context,
                             initialTime: startTime,
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: AppColors.colorBlue,
+                                    onPrimary: Colors.white,
+                                    onSurface: Colors.black,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
                           if (time != null) {
                             setState(() => startTime = time);
@@ -235,18 +383,45 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                   ),
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: AppColors.colorBlue,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          DateFormat('MMMM dd yyyy').format(selectedDate),
-                          style: const TextStyle(
-                            color: AppColors.colorWhite,
-                            fontSize: 16,
+                      GestureDetector(
+                        onTap: () async {
+                          final date = await showDatePicker(
+                            context: context,
+                            initialDate: endDate ?? selectedDate,
+                            firstDate: selectedDate, // Can't end before start
+                            lastDate:
+                                DateTime.now().add(const Duration(days: 365)),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: AppColors.colorBlue,
+                                    onPrimary: Colors.white,
+                                    onSurface: Colors.black,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (date != null) {
+                            setState(() => endDate = date);
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: AppColors.colorBlue,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            DateFormat('MMMM dd yyyy')
+                                .format(endDate ?? selectedDate),
+                            style: const TextStyle(
+                              color: AppColors.colorWhite,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -256,6 +431,18 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                           final time = await showTimePicker(
                             context: context,
                             initialTime: endTime,
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: AppColors.colorBlue,
+                                    onPrimary: Colors.white,
+                                    onSurface: Colors.black,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
                           if (time != null) {
                             setState(() => endTime = time);
@@ -284,10 +471,10 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
               const SizedBox(height: 16),
 
               // Total Hours Section
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Total hours',
                     style: TextStyle(
                       fontSize: 16,
@@ -295,8 +482,8 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                     ),
                   ),
                   Text(
-                    '08:00',
-                    style: TextStyle(
+                    totalHoursStr,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -389,27 +576,38 @@ class _AddShiftRequestViewState extends State<AddShiftRequestView> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _showSuccessDialog,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                      onPressed: _isSubmitting ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         minimumSize: const Size(double.infinity, 48),
                       ),
-                      child: const Text(
-                        'Send for approval',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Send for approval',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 16), // Add some bottom padding
             ],
           ),
         ),

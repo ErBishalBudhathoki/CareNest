@@ -9,6 +9,7 @@ class User {
   late final String phone;
   late final String? profilePic;
   late final UserRole role;
+  late final String? jobRole;
 
   User({
     required this.id,
@@ -18,6 +19,7 @@ class User {
     required this.phone,
     this.profilePic,
     required this.role,
+    this.jobRole,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -39,13 +41,14 @@ class User {
       }
 
       return User(
-        id: json['id']?.toString() ?? '',
+        id: (json['id'] ?? json['_id'] ?? json['userId'])?.toString() ?? '',
         organizationId: organizationId,
         name: name,
         email: json['email']?.toString() ?? '',
         phone: json['phone']?.toString() ?? '',
         profilePic: json['profilePic']?.toString(),
         role: json['role'] == 'admin' ? UserRole.admin : UserRole.normal,
+        jobRole: json['jobRole']?.toString(),
       );
     } catch (e) {
       debugPrint('Error parsing user data: $e');

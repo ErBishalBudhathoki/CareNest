@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/providers/pricing_settings_providers.dart';
-import 'package:carenest/app/features/invoice/providers/fallback_pricing_providers.dart';
-import 'package:carenest/app/features/invoice/widgets/fallback_price_dialog.dart';
 
 class PricingConfigurationView extends StatefulWidget {
   final String adminEmail;

@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
+import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -247,6 +248,22 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
     await configureForegroundNotifications();
     debugPrint(
         'DEBUG_NOTIF_HANDLER: Foreground notification listener configured');
+
+    try {
+      final sharedUtils = SharedPreferencesUtils();
+      await sharedUtils.init();
+      final email = sharedUtils.getUserEmail();
+      final organizationId = sharedUtils.getOrganizationId();
+      if (email != null &&
+          email.isNotEmpty &&
+          organizationId != null &&
+          organizationId.isNotEmpty) {
+        await FcmTokenManager().initialize(email, organizationId);
+      }
+    } catch (e) {
+      debugPrint(
+          'DEBUG_NOTIF_HANDLER: Failed to initialize FCM token manager: $e');
+    }
   }
 
   Future<dynamic> createAndDisplayNotification(

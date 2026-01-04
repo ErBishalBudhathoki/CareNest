@@ -12,8 +12,10 @@ class SharedPreferencesUtils {
   // Use a private static constant for the key to avoid typos.
   static const String _kUserEmailKey = 'userEmail';
   static const String _kRoleKey = 'userRole';
+  static const String _kUserIdKey = 'userId';
   // New: Auth token key
   static const String _kAuthTokenKey = 'authToken';
+
   /// Public key for storing date format preference (for ambiguous numeric dates)
   /// Allowed values: 'mdy' (US month-first), 'dmy' (day-first)
   static const String kDateFormatPreferenceKey = 'date_format_preference';
@@ -188,6 +190,7 @@ class SharedPreferencesUtils {
     required String email,
     required String organizationId,
     required String name,
+    String? userId,
     String? organizationCode,
   }) async {
     if (_sharedPreferences == null) {
@@ -196,6 +199,9 @@ class SharedPreferencesUtils {
     await _sharedPreferences!.setString(_kUserEmailKey, email);
     await _sharedPreferences!.setString(_kOrganizationIdKey, organizationId);
     await _sharedPreferences!.setString(_kNameKey, name);
+    if (userId != null && userId.isNotEmpty) {
+      await _sharedPreferences!.setString(_kUserIdKey, userId);
+    }
     if (organizationCode != null) {
       await _sharedPreferences!
           .setString(_kOrganizationCodeKey, organizationCode);
@@ -209,6 +215,10 @@ class SharedPreferencesUtils {
     return _sharedPreferences?.getString(_kUserEmailKey);
   }
 
+  String? getUserId() {
+    return _sharedPreferences?.getString(_kUserIdKey);
+  }
+
   /// Retrieves the user's organization ID.
   String? getOrganizationId() {
     return _sharedPreferences?.getString(_kOrganizationIdKey);
@@ -217,6 +227,11 @@ class SharedPreferencesUtils {
   /// Retrieves the user's organization code.
   String? getOrganizationCode() {
     return _sharedPreferences?.getString(_kOrganizationCodeKey);
+  }
+
+  /// Retrieves the user's name.
+  String? getName() {
+    return _sharedPreferences?.getString(_kNameKey);
   }
 
   /// Clears all user data from storage, typically on logout.
