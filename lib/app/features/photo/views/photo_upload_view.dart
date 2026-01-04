@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import '../../../services/system_ui_service.dart';
 
 // --- New Imports for Modern UI (Ensure you've run 'flutter pub get') ---

@@ -1131,6 +1131,15 @@ class _AdminDashboardViewControllerState
                     _buildActionCategorySection(
                       'Organization Management',
                       [
+                        _buildActionCard(
+                          icon: Icons.assignment_ind_rounded,
+                          title: 'Requests Dashboard',
+                          subtitle: 'Manage time-off and shift requests',
+                          color: const Color(0xFFFF5722),
+                          onTap: () =>
+                              Navigator.of(context, rootNavigator: true)
+                                  .pushNamed(Routes.adminRequests),
+                        ),
                         _buildImageActionTile(
                           asset:
                               'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',

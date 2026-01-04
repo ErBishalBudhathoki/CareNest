@@ -1,16 +1,12 @@
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path/path.dart' as path;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'package:carenest/config/environment.dart';
 import 'package:open_file/open_file.dart';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:carenest/backend/api_method.dart';
 import 'file_types.dart';
 
 /// Enhanced file viewer widget that supports multiple file types
@@ -95,34 +91,12 @@ class EnhancedFileViewerWidget extends StatelessWidget {
         path.startsWith('/uploads/');
   }
 
-  /// Get the base URL from AppConfig
-  String get _baseUrl => AppConfig.baseUrl;
-
   /// Get the full server URL for uploaded files
   String _getServerUrl(String path) {
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-      debugPrint('Path is already a full URL: $path');
-      return path;
-    }
-
-    // Use environment-based URL configuration
-    final baseUrl = _baseUrl;
-
-    // Handle different path formats
-    String fullUrl;
-    if (path.startsWith('/uploads/')) {
-      // Path already includes /uploads/, just prepend base URL
-      fullUrl = '$baseUrl${path.substring(1)}'; // Remove leading slash
-    } else {
-      // Extract just the filename from the full path
-      String filename = path.split('/').last;
-      // Construct the server URL with the uploads path (not uploads/receipts)
-      fullUrl = '${baseUrl}uploads/$filename';
-    }
-
+    final resolved = AppConfig.resolveResourceUrl(path);
     debugPrint(
-        'Constructing server URL: baseUrl=$baseUrl, originalPath=$path, fullUrl=$fullUrl');
-    return fullUrl;
+        'Constructing server URL: originalPath=$path, fullUrl=$resolved');
+    return resolved;
   }
 
   /// Get file size in readable format
@@ -217,15 +191,67 @@ class EnhancedFileViewerWidget extends StatelessWidget {
     }
   }
 
+  /// Check if file exists on server
+  Future<bool> _checkFileAvailability(String url) async {
+    try {
+      final response = await ApiMethod().head(url);
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Error checking file availability: $e');
+      return false;
+    }
+  }
+
   /// Download and open server file locally
   Future<void> _downloadAndOpenFile(
       BuildContext context, String filePath) async {
     BuildContext? dialogContext;
 
     try {
-      debugPrint('DEBUG: Starting download for file: $filePath');
+      final serverUrl = _getServerUrl(filePath);
+      debugPrint(
+          'DEBUG: Starting download for file: $filePath (URL: $serverUrl)');
 
-      // Show loading dialog and capture its context
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          dialogContext = context;
+          return const AlertDialog(
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text('Checking file availability...'),
+              ],
+            ),
+          );
+        },
+      );
+
+      // Check availability first
+      final isAvailable = await _checkFileAvailability(serverUrl);
+
+      if (!isAvailable) {
+        if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+          Navigator.of(dialogContext!).pop();
+          dialogContext = null;
+        }
+        _showErrorDialog(
+          context,
+          'File Unavailable',
+          'The requested file could not be found on the server. It may have been moved or deleted.',
+        );
+        return;
+      }
+
+      // Update dialog text
+      if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+        Navigator.of(dialogContext!).pop();
+        dialogContext = null;
+      }
+
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -243,10 +269,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
         },
       );
 
-      final serverUrl = _getServerUrl(filePath);
-      debugPrint('DEBUG: Downloading from URL: $serverUrl');
-
-      final response = await http.get(Uri.parse(serverUrl));
+      final response = await ApiMethod().getRawUrl(serverUrl);
       debugPrint('DEBUG: HTTP response status: ${response.statusCode}');
       debugPrint(
           'DEBUG: Response content length: ${response.bodyBytes.length}');
@@ -356,7 +379,8 @@ class EnhancedFileViewerWidget extends StatelessWidget {
           children: [
             Text(
               'Failed to load image from server:',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                  .copyWith(
                 color: const Color(0xFF6B7280),
               ),
             ),
@@ -390,8 +414,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.red.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(
-                    color: Colors.red.withOpacity(0.1)),
+                border: Border.all(color: Colors.red.withOpacity(0.1)),
               ),
               child: Text(
                 error,
@@ -423,7 +446,8 @@ class EnhancedFileViewerWidget extends StatelessWidget {
               // Force rebuild to retry loading
               (context as Element).markNeedsBuild();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
             child: const Text('Retry'),
@@ -714,8 +738,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
               : 'ERROR',
           style: const TextStyle(fontSize: 12).copyWith(
             fontWeight: FontWeight.bold,
-            color:
-                fileExists ? _getFileColor(filePath) : Colors.red,
+            color: fileExists ? _getFileColor(filePath) : Colors.red,
           ),
         ),
       ],
@@ -758,8 +781,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.red.withOpacity(0.1),
               borderRadius: BorderRadius.circular(4.0),
-              border: Border.all(
-                  color: Colors.red.withOpacity(0.1)),
+              border: Border.all(color: Colors.red.withOpacity(0.1)),
             ),
             child: Text(
               'Server file',
@@ -817,21 +839,9 @@ class _FullScreenImageViewer extends StatelessWidget {
     );
   }
 
-  /// Get the base URL from environment configuration
-  String get _baseUrl {
-    return kReleaseMode
-        ? dotenv.env['RELEASE_URL'].toString()
-        : dotenv.env['DEBUG_URL'].toString();
-  }
-
   /// Get the full server URL for uploaded files
   String _getServerUrl(String path) {
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-      return path;
-    }
-    // Use environment-based URL configuration
-    final baseUrl = _baseUrl;
-    return '$baseUrl${path.startsWith('/') ? path.substring(1) : path}';
+    return AppConfig.resolveResourceUrl(path);
   }
 
   /// Build the appropriate image widget based on file type
@@ -924,7 +934,8 @@ class _FullScreenImageViewer extends StatelessWidget {
                         },
                         icon: const Icon(Icons.refresh),
                         label: const Text('Retry'),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                         ),
                       ),
@@ -939,7 +950,8 @@ class _FullScreenImageViewer extends StatelessWidget {
                         },
                         icon: const Icon(Icons.open_in_new),
                         label: const Text('Open in Browser'),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                         ),
                       ),

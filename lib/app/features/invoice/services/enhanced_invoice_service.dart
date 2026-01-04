@@ -74,7 +74,7 @@ class EnhancedInvoiceService {
         _emailService = InvoiceEmailService(),
         _dataProcessor = InvoiceDataProcessor(ref),
         _pdfGenerator = InvoicePdfGenerator(),
-        _fileUploadService = FileUploadService() {
+        _fileUploadService = FileUploadService(api: _apiMethod) {
     // Set the enhanced service reference after initialization
     _dataProcessor.setEnhancedInvoiceService(this);
   }
@@ -1072,7 +1072,9 @@ class EnhancedInvoiceService {
       // Save invoices to backend database and get updated invoice numbers
       final updatedPdfPaths = await _saveInvoicesToBackend(
           processedData, pdfPaths, organizationId,
-          invoiceType: type, adminProfile: adminProfile);
+          invoiceType: type,
+          adminProfile: adminProfile,
+          useAdminBankDetails: useAdminBankDetails);
 
       return updatedPdfPaths ?? pdfPaths;
     } catch (e) {
@@ -2794,7 +2796,8 @@ class EnhancedInvoiceService {
       List<String> pdfPaths,
       String? organizationId,
       {String? invoiceType,
-      Map<String, dynamic>? adminProfile}) async {
+      Map<String, dynamic>? adminProfile,
+      bool useAdminBankDetails = false}) async {
     try {
       if (organizationId == null || organizationId.isEmpty) {
         debugPrint('Cannot save invoices: organizationId is null or empty');
@@ -2852,6 +2855,62 @@ class EnhancedInvoiceService {
         final clientPhone = clientDetails['clientPhone'] ?? '';
         final businessName =
             clientDetails['businessName'] ?? invoice['businessName'] ?? '';
+
+        // Resolve Bank Details for Metadata/Payload
+        Map<String, String> bankDetails = {};
+        try {
+          if (useAdminBankDetails) {
+            // Admin selected: fetch admin bank details
+            if (adminProfile != null &&
+                adminProfile['bankName'] != null &&
+                adminProfile['accountNumber'] != null) {
+              bankDetails = {
+                'bankName': adminProfile['bankName'].toString(),
+                'accountName': adminProfile['accountName'].toString(),
+                'bsb': adminProfile['bsb'].toString(),
+                'accountNumber': adminProfile['accountNumber'].toString(),
+              };
+            } else {
+              // Fallback to fetch
+              final sp = SharedPreferencesUtils();
+              await sp.init();
+              final String? currentUserEmail = sp.getUserEmail();
+              if (currentUserEmail != null && organizationId != null) {
+                final resp = await _apiMethod.getBankDetailsForUserEmail(
+                    currentUserEmail, organizationId);
+                if (resp['success'] == true && resp['data'] is Map) {
+                  final data = Map<String, dynamic>.from(resp['data']);
+                  bankDetails = {
+                    'bankName': (data['bankName'] ?? '').toString(),
+                    'accountName': (data['accountName'] ?? '').toString(),
+                    'bsb': (data['bsb'] ?? '').toString(),
+                    'accountNumber': (data['accountNumber'] ?? '').toString(),
+                  };
+                }
+              }
+            }
+          } else {
+            // Employee selected
+            if (employeeEmailForSave.isNotEmpty && organizationId != null) {
+              final resp = await _apiMethod.getBankDetailsForUserEmail(
+                  employeeEmailForSave, organizationId);
+              if (resp['success'] == true && resp['data'] is Map) {
+                final data = Map<String, dynamic>.from(resp['data']);
+                bankDetails = {
+                  'bankName': (data['bankName'] ?? '').toString(),
+                  'accountName': (data['accountName'] ?? '').toString(),
+                  'bsb': (data['bsb'] ?? '').toString(),
+                  'accountNumber': (data['accountNumber'] ?? '').toString(),
+                };
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Error resolving bank details for save: $e');
+        }
+
+        // Add to invoice for consistency
+        invoice.addAll(bankDetails);
 
         // Generate unique invoice number (always generate new format)
         String invoiceNumber = invoice['invoiceNumber'] ?? '';
@@ -2938,7 +2997,8 @@ class EnhancedInvoiceService {
               'employeeEmail': employeeEmailForSave,
               'startDate': startDate,
               'endDate': endDate,
-              // invoiceNumber removed to prevent duplicates; invoiceData.invoiceNumber is authoritative
+              // invoiceNumber is authoritative
+              'invoiceNumber': invoiceNumber,
               'items': invoice['items'] ?? [],
               'expenses': invoice['expenses'] ?? [],
               'itemsSubtotal': invoice['itemsSubtotal'] ?? 0.0,
@@ -2953,9 +3013,18 @@ class EnhancedInvoiceService {
               'taxRate': persistedTaxRate,
               'employeeDetails': employeeDetails,
               'clientDetails': clientDetails,
+              // Add bank details for regeneration
+              'bankDetails': bankDetails,
+              // Add bill to details
+              'billTo': invoice['billTo'] ?? {},
+              // Add useAdminBankDetails flag
+              'useAdminBankDetails': useAdminBankDetails,
+              // Add admin profile for issuer header
+              'adminProfile': invoice['adminProfile'] ?? {},
             }
           ],
-          // invoiceNumber removed from calculatedPayloadData root to prevent duplicates; invoiceData.invoiceNumber is authoritative
+          // invoiceNumber is authoritative
+          'invoiceNumber': invoiceNumber,
           'metadata': processedData['metadata'] ?? {},
         };
 
