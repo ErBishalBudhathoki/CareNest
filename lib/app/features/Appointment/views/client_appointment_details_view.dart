@@ -68,13 +68,13 @@ class _ClientAndAppointmentDetailsState
   void initState() {
     super.initState();
     _setupAnimations();
+    timerModel = ref.read(timerServiceProvider);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _syncTimerWithServer();
-      final timerService = ref.read(timerServiceProvider);
-      if (timerService.getTimerClientEmail() != widget.clientEmail ||
-          !timerService.isRunning) {
-        timerService.resetTimer(widget.clientEmail);
+      if (timerModel.getTimerClientEmail() != widget.clientEmail ||
+          !timerModel.isRunning) {
+        timerModel.resetTimer(widget.clientEmail);
       }
     });
 
@@ -183,28 +183,6 @@ class _ClientAndAppointmentDetailsState
     _scaleController.dispose();
     _timerPulseController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    timerModel = ref.read(timerServiceProvider);
-    if (!isInitCompleted) {
-      _initializeData();
-    }
-  }
-
-  Future<void> _initializeData() async {
-    await getAppointmentData().then((_) {
-      setState(() {
-        isInitCompleted = true;
-        clientDetails =
-            clientAndAppointmentData['data']?['clientDetails']?.isNotEmpty ==
-                    true
-                ? clientAndAppointmentData['data']!['clientDetails'][0]
-                : null;
-      });
-    });
   }
 
   Future<void> updateTimerModel() async {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +26,8 @@ class FcmTokenManager {
   static const String _tokenLastSentKey = 'fcm_token_last_sent';
 
   final ApiMethod _apiMethod = ApiMethod();
+  String? _deviceId;
+  String? _deviceInfo;
 
   // Singleton pattern
   static final FcmTokenManager _instance = FcmTokenManager._internal();
@@ -65,6 +69,21 @@ class FcmTokenManager {
 
   /// Get FCM token with retry mechanism for Firebase Installations Service errors
   Future<String?> _getTokenWithRetry({int maxRetries = 3}) async {
+    if (Platform.isIOS) {
+      String? apnsToken;
+      int attempts = 0;
+      while (attempts < 3 && apnsToken == null) {
+        apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken == null) {
+          await Future.delayed(const Duration(seconds: 1));
+          attempts++;
+        }
+      }
+      if (apnsToken == null) {
+        return null;
+      }
+    }
+
     for (int attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         debugPrint('FCM Token retrieval attempt $attempt/$maxRetries');
@@ -112,8 +131,16 @@ class FcmTokenManager {
   }
 
   /// Initialize the FCM token manager and register the token if needed
-  Future<void> initialize(String userEmail, String organizationId) async {
+  Future<void> initialize(
+    String userEmail,
+    String organizationId, {
+    String? deviceId,
+    String? deviceInfo,
+  }) async {
     try {
+      _deviceId = deviceId;
+      _deviceInfo = deviceInfo;
+
       debugPrint('\n=== FCM TOKEN MANAGER INITIALIZATION ===');
       debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
       debugPrint('User Email: $userEmail');
@@ -162,6 +189,8 @@ class FcmTokenManager {
             userEmail,
             organizationId,
             currentToken,
+            deviceId: _deviceId,
+            deviceInfo: _deviceInfo,
           );
           debugPrint('✅ Token sent to backend successfully');
 
@@ -209,6 +238,8 @@ class FcmTokenManager {
         userEmail,
         organizationId,
         newToken,
+        deviceId: _deviceId,
+        deviceInfo: _deviceInfo,
       );
       debugPrint('✅ Refreshed token sent to backend successfully');
 
@@ -281,12 +312,20 @@ class FcmTokenManager {
   }
 
   /// Force update the FCM token on the backend
-  Future<bool> forceUpdateToken(String userEmail, String organizationId) async {
+  Future<bool> forceUpdateToken(
+    String userEmail,
+    String organizationId, {
+    String? deviceId,
+    String? deviceInfo,
+  }) async {
     try {
+      _deviceId = deviceId;
+      _deviceInfo = deviceInfo;
+
       debugPrint('FCM Token Manager: Force updating token');
 
       // Get the current FCM token
-      final currentToken = await FirebaseMessaging.instance.getToken();
+      final currentToken = await _getTokenWithRetry();
 
       if (currentToken == null) {
         debugPrint(
@@ -299,6 +338,8 @@ class FcmTokenManager {
         userEmail,
         organizationId,
         currentToken,
+        deviceId: _deviceId,
+        deviceInfo: _deviceInfo,
       );
 
       // Save the token and timestamp

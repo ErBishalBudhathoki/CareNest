@@ -837,13 +837,16 @@ class _LoginViewState extends ConsumerState<LoginView>
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'Secured with 256-bit SSL encryption',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.colorFontSecondary,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
+              Flexible(
+                child: Text(
+                  'Secured with 256-bit SSL encryption',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.colorFontSecondary,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],

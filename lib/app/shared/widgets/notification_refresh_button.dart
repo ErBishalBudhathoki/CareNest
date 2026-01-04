@@ -2,7 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
 
 /// A button widget that allows users to manually refresh their FCM token
 /// and force registration with the backend.
@@ -45,21 +45,11 @@ class NotificationRefreshButton extends ConsumerWidget {
         try {
           // Get a fresh FCM token
           await FirebaseMessaging.instance.deleteToken();
-          final newToken = await FirebaseMessaging.instance.getToken();
-
-          if (newToken == null) {
-            throw Exception('Failed to get FCM token');
+          final updated =
+              await FcmTokenManager().forceUpdateToken(userEmail, organizationId);
+          if (!updated) {
+            throw Exception('Failed to refresh FCM token');
           }
-
-          debugPrint('New FCM token: ${newToken.substring(0, 15)}...');
-
-          // Send the token to the backend
-          final apiMethod = ApiMethod();
-          await apiMethod.registerFcmToken(
-            userEmail,
-            organizationId,
-            newToken,
-          );
 
           // Close loading dialog
           Navigator.of(context).pop();
@@ -175,23 +165,11 @@ class NotificationSettingsPanel extends ConsumerWidget {
                     try {
                       // Get a fresh FCM token
                       await FirebaseMessaging.instance.deleteToken();
-                      final newToken =
-                          await FirebaseMessaging.instance.getToken();
-
-                      if (newToken == null) {
-                        throw Exception('Failed to get FCM token');
+                      final updated = await FcmTokenManager()
+                          .forceUpdateToken(userEmail, organizationId);
+                      if (!updated) {
+                        throw Exception('Failed to refresh FCM token');
                       }
-
-                      debugPrint(
-                          'New FCM token: ${newToken.substring(0, 15)}...');
-
-                      // Send the token to the backend
-                      final apiMethod = ApiMethod();
-                      await apiMethod.registerFcmToken(
-                        userEmail,
-                        organizationId,
-                        newToken,
-                      );
 
                       // Close loading dialog
                       Navigator.of(context).pop();

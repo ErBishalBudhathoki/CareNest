@@ -63,6 +63,21 @@ node_modules/
 /backend/
 backend/
 
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Firebase & Google Secrets
+google-services.json
+GoogleService-Info.plist
+service-account.json
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+
 # Scripts and deployment files
 *.sh
 /android/*.sh

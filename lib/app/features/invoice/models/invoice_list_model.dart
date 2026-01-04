@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+import 'package:carenest/config/environment.dart';
+
 class InvoiceListModel {
   final String id;
   final String invoiceNumber;
@@ -18,6 +21,7 @@ class InvoiceListModel {
   final String? pdfPath;
   final String? shareableLink;
   final bool isDeleted;
+  final List<String> receiptUrls;
 
   InvoiceListModel({
     required this.id,
@@ -39,9 +43,89 @@ class InvoiceListModel {
     this.pdfPath,
     this.shareableLink,
     this.isDeleted = false,
+    this.receiptUrls = const [],
   });
 
   factory InvoiceListModel.fromJson(Map<String, dynamic> json) {
+    // Extract receipt URLs from calculatedPayloadData
+    List<String> extractedReceiptUrls = [];
+    try {
+      debugPrint('🔍 InvoiceListModel: Extracting receipt URLs from JSON...');
+      if (json['calculatedPayloadData'] != null) {
+        debugPrint('🔍 InvoiceListModel: Found calculatedPayloadData');
+        final clients = json['calculatedPayloadData']['clients'] as List?;
+        if (clients != null && clients.isNotEmpty) {
+          final expenses = clients[0]['expenses'] as List?;
+          if (expenses != null) {
+            debugPrint(
+                '🔍 InvoiceListModel: Found ${expenses.length} expenses');
+            for (var expense in expenses) {
+              if (expense is Map<String, dynamic>) {
+                final receiptFiles = expense['receiptFiles'] as List?;
+                final receiptPhotos = expense['receiptPhotos'] as List?;
+                final receiptUrl = expense['receiptUrl'] as String?;
+
+                debugPrint(
+                    '🔍 InvoiceListModel: Expense has - receiptUrl: $receiptUrl, files: ${receiptFiles?.length}, photos: ${receiptPhotos?.length}');
+
+                String? resolveToHttpUrl(String value) {
+                  final resolved = AppConfig.resolveResourceUrl(value);
+                  if (resolved.startsWith('http://') ||
+                      resolved.startsWith('https://')) {
+                    return resolved;
+                  }
+                  return null;
+                }
+
+                // Add from receiptFiles
+                if (receiptFiles != null) {
+                  for (var file in receiptFiles) {
+                    if (file is String && file.trim().isNotEmpty) {
+                      final fullUrl = resolveToHttpUrl(file.trim());
+                      if (fullUrl != null) extractedReceiptUrls.add(fullUrl);
+                    }
+                  }
+                }
+
+                // Add from receiptPhotos
+                if (receiptPhotos != null) {
+                  for (var photo in receiptPhotos) {
+                    if (photo is String && photo.trim().isNotEmpty) {
+                      final fullUrl = resolveToHttpUrl(photo.trim());
+                      if (fullUrl != null) extractedReceiptUrls.add(fullUrl);
+                    }
+                  }
+                }
+
+                // Add from receiptUrl
+                if (receiptUrl != null && receiptUrl.trim().isNotEmpty) {
+                  final fullUrl = resolveToHttpUrl(receiptUrl.trim());
+                  if (fullUrl != null) extractedReceiptUrls.add(fullUrl);
+                }
+              }
+            }
+          } else {
+            debugPrint(
+                '🔍 InvoiceListModel: No expenses found in calculatedPayloadData');
+          }
+        }
+      } else if (json['extractedReceiptUrls'] != null) {
+        // Fallback to cached URLs
+        debugPrint('🔍 InvoiceListModel: Using cached extractedReceiptUrls');
+        extractedReceiptUrls = List<String>.from(json['extractedReceiptUrls']);
+      } else {
+        debugPrint(
+            '🔍 InvoiceListModel: No calculatedPayloadData or extractedReceiptUrls found');
+      }
+    } catch (e) {
+      debugPrint('Error extracting receipt URLs in InvoiceListModel: $e');
+    }
+
+    // Remove duplicates
+    extractedReceiptUrls = extractedReceiptUrls.toSet().toList();
+    debugPrint(
+        '🔍 InvoiceListModel: Final extracted URLs: $extractedReceiptUrls');
+
     return InvoiceListModel(
       id: json['_id'] ?? '',
       invoiceNumber: json['invoiceNumber'] ?? '',
@@ -66,6 +150,7 @@ class InvoiceListModel {
       pdfPath: json['metadata']?['pdfPath'],
       shareableLink: json['sharing']?['shareableLink'],
       isDeleted: json['deletion']?['isDeleted'] ?? false,
+      receiptUrls: extractedReceiptUrls,
     );
   }
 
@@ -99,7 +184,10 @@ class InvoiceListModel {
       'sharing': {
         'shareableLink': shareableLink,
       },
-      'isDeleted': isDeleted,
+      'deletion': {
+        'isDeleted': isDeleted,
+      },
+      'extractedReceiptUrls': receiptUrls,
     };
   }
 
@@ -123,6 +211,7 @@ class InvoiceListModel {
     String? pdfPath,
     String? shareableLink,
     bool? isDeleted,
+    List<String>? receiptUrls,
   }) {
     return InvoiceListModel(
       id: id ?? this.id,
@@ -144,6 +233,7 @@ class InvoiceListModel {
       pdfPath: pdfPath ?? this.pdfPath,
       shareableLink: shareableLink ?? this.shareableLink,
       isDeleted: isDeleted ?? this.isDeleted,
+      receiptUrls: receiptUrls ?? this.receiptUrls,
     );
   }
 }
