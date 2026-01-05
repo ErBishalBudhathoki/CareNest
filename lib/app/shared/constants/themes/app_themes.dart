@@ -68,5 +68,5 @@ class AppTheme {
       colorScheme: ThemeData().colorScheme.copyWith(
           secondary: AppColors.colorAccent,
           primary: AppColors.colorPrimary,
-          onPrimary: AppColors.colorPrimary));
+          onPrimary: AppColors.colorWhite));
 }
