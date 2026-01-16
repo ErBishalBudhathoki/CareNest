@@ -312,3 +312,98 @@ build/
 .pub-cache/
 .pub/
 build/
+
+# ==========================================
+# Additional Development & Analysis Files
+# ==========================================
+
+# Analysis and compliance output files
+analysis_output*.txt
+analysis_report*.txt
+analysis_results.txt
+analyze_output.txt
+compliance_report*.txt
+full_analysis.txt
+
+# Planning and documentation files (not for production)
+payguide-*.md
+plan.md
+feature_plan.md
+terminal\ log.md
+terminal_log.md
+
+# Screenshots and debug images
+screenshots/
+flutter_*.png
+
+# Test mocks and fixtures
+test_mocks/
+
+# Universal links hosting (dev only)
+universal_links_hosting/
+
+# Python scripts (dev utilities)
+fix_*.py
+
+# Stitch/layout development files
+stitch_*/
+
+# Detail documentation folder
+detailDoc/
+
+# MD docs folder
+md\ docs/
+
+# Public folder (if not needed for deployment)
+public/
+
+# Tool folder
+tool/
+
+# Documentation markdown files that are development-only
+BUGFIX_*.md
+CHANGELOG_AND_MIGRATION.md
+DESIGN_SYSTEM_*.md
+DOCUMENTATION_SUMMARY.txt
+FEATURES_MIGRATION*.md
+FEATURE_IMPLEMENTATION_SUMMARY*.md
+FLUTTER_ANALYZE_PROGRESS_SUMMARY.md
+HOTFIX_*.md
+IMPLEMENTATION_SUMMARY.md
+MIGRATION_CODE_EXAMPLES_AND_SCRIPTS.md
+NDIS_PRICE_CAP*.md
+PRICE_OVERRIDE_IMPLEMENTATION_SUMMARY.md
+QUICK_REFERENCE.md
+QUICK_START_MIGRATION.md
+README_DOCUMENTATION.md
+TECHNICAL_ARCHITECTURE.md
+
+# Firebase local files
+.firebase/
+.firebaserc
+firebase.json
+
+# Kiro development folder
+.kiro/
+
+# Localization config (if generated)
+l10n.yaml
+
+# Trigger scripts
+trigger_*.dart
+
+# Silence logs
+silence\ emulation\ log.md
+silence_emulation_log.md
+
+# Signup flow analysis
+signup_flow_analysis.md
+
+# End to end tech doc
+endToEndTechDocPack.md
+
+# Next step planning
+next\ step.md
+
+# Generated PDFs at root
+*.pdf
