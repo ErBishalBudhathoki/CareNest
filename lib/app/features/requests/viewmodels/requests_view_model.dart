@@ -9,7 +9,7 @@ final requestsViewModelProvider =
 });
 
 class RequestState {
-  final List<Request> requests;
+  final List<RequestModel> requests;
   final Map<RequestStatus, int> statusCounts;
   final DateTimeRange? dateRange;
 
@@ -20,7 +20,7 @@ class RequestState {
   });
 
   RequestState copyWith({
-    List<Request>? requests,
+    List<RequestModel>? requests,
     Map<RequestStatus, int>? statusCounts,
     DateTimeRange? dateRange,
   }) {
@@ -36,10 +36,10 @@ class RequestsViewModel extends StateNotifier<AsyncValue<RequestState>> {
   final ApiMethod _apiMethod = ApiMethod();
 
   RequestsViewModel() : super(const AsyncValue.loading()) {
-    loadRequests();
+    fetchRequests();
   }
 
-  Map<RequestStatus, int> _calculateStatusCounts(List<Request> requests) {
+  Map<RequestStatus, int> _calculateStatusCounts(List<RequestModel> requests) {
     final counts = <RequestStatus, int>{};
     for (final status in RequestStatus.values) {
       counts[status] = requests.where((r) => r.status == status).length;
@@ -47,14 +47,14 @@ class RequestsViewModel extends StateNotifier<AsyncValue<RequestState>> {
     return counts;
   }
 
-  Future<void> loadRequests() async {
+  Future<void> fetchRequests() async {
     try {
       state = const AsyncValue.loading();
       final response = await _apiMethod.getRequests();
 
       if (response['success'] == true) {
-        final List<Request> requests = (response['data'] as List)
-            .map((json) => Request.fromJson(json))
+        final List<RequestModel> requests = (response['data'] as List)
+            .map((json) => RequestModel.fromJson(json))
             .toList();
 
         final statusCounts = _calculateStatusCounts(requests);
@@ -71,13 +71,13 @@ class RequestsViewModel extends StateNotifier<AsyncValue<RequestState>> {
     }
   }
 
-  Future<void> addRequest(Request request) async {
+  Future<void> addRequest(RequestModel request) async {
     try {
       final response = await _apiMethod.createRequest(request.toJson());
 
       if (response['success'] == true) {
         final currentState = state.value!;
-        final newRequest = Request.fromJson(response['data']);
+        final newRequest = RequestModel.fromJson(response['data']);
         final updatedRequests = [...currentState.requests, newRequest];
 
         state = AsyncValue.data(currentState.copyWith(
@@ -92,13 +92,13 @@ class RequestsViewModel extends StateNotifier<AsyncValue<RequestState>> {
     }
   }
 
-  Future<void> updateRequest(Request request) async {
+  Future<void> updateRequest(RequestModel request) async {
     try {
       final response = await _apiMethod.updateRequest(request.toJson());
 
       if (response['success'] == true) {
         final currentState = state.value!;
-        final updatedRequest = Request.fromJson(response['data']);
+        final updatedRequest = RequestModel.fromJson(response['data']);
         final updatedRequests = currentState.requests
             .map((r) => r.id == updatedRequest.id ? updatedRequest : r)
             .toList();
@@ -118,6 +118,6 @@ class RequestsViewModel extends StateNotifier<AsyncValue<RequestState>> {
   void updateDateRange(DateTimeRange dateRange) {
     final currentState = state.value!;
     state = AsyncValue.data(currentState.copyWith(dateRange: dateRange));
-    loadRequests(); // Reload requests with new date range
+    fetchRequests(); // Reload requests with new date range
   }
 }

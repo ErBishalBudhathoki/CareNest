@@ -16,7 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 
 // Global providers
 final sharedPreferencesProvider = Provider<SharedPreferencesUtils>((ref) {
@@ -332,28 +331,7 @@ class ShiftDataNotifier extends StateNotifier<List<dynamic>> {
   }
 }
 
-// Theme Provider
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeData>((ref) {
-  return ThemeNotifier();
-});
 
-class ThemeNotifier extends StateNotifier<ThemeData> {
-  ThemeNotifier() : super(_lightTheme);
-
-  static final _lightTheme = ThemeData.light().copyWith(
-    primaryColor: AppColors.colorBlue,
-    // Add your custom theme properties
-  );
-
-  static final _darkTheme = ThemeData.dark().copyWith(
-    primaryColor: AppColors.colorBlueGrey,
-    // Add your custom theme properties
-  );
-
-  void toggleTheme() {
-    state = state.brightness == Brightness.dark ? _lightTheme : _darkTheme;
-  }
-}
 
 // User Role Provider
 final userRoleProvider =
