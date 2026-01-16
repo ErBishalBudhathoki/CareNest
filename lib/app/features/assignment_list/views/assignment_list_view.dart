@@ -1,9 +1,10 @@
 import 'package:carenest/app/shared/widgets/enhanced_3d_assignment_card.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/assignment_list/views/edit_assignment_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // <--- THIS LINE FIXES THE ERROR
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/assignment_list/viewmodels/assignment_list_viewmodel.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:intl/intl.dart';
@@ -46,16 +47,36 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
     final viewModel = ref.read(assignmentListViewModelProvider.notifier);
 
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(
-          'Organization Assignments',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
-            color: const Color(0xFF1F2937),
-            fontWeight: FontWeight.w600,
+        elevation: 0,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceLight,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceLight,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: BauhausDesign.neutral, width: 2.0),
+              boxShadow: const [BauhausDesign.shadowHardXs],
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, size: 18, color: BauhausDesign.neutral),
+              onPressed: () => Navigator.of(context).pop(),
+              padding: EdgeInsets.zero,
+            ),
           ),
         ),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF667EEA)),
+        title: Text(
+          AppLocalizations.of(context)!.assignments.toUpperCase(),
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+            color: BauhausDesign.surfaceLight,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: _buildBody(state, viewModel),
     );
@@ -72,23 +93,24 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 64,
-              color: Colors.red,
+              color: BauhausDesign.error,
             ),
             const SizedBox(height: 16),
-            Text(
-              'Error Loading Assignments',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
-                color: Colors.red,
+              Text(
+                AppLocalizations.of(context)!.errorLoadingAssignments,
+                style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                  color: BauhausDesign.error,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
             const SizedBox(height: 8),
             Text(
               state.errorMessage,
-              style: const TextStyle(fontSize: 14).copyWith(
-                color: const Color(0xFF525252),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: BauhausDesign.neutral,
               ),
               textAlign: TextAlign.center,
             ),
@@ -96,8 +118,12 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             ElevatedButton(
               onPressed: () =>
                   viewModel.loadOrganizationAssignments(widget.organizationId),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: BauhausDesign.primary,
+                foregroundColor: BauhausDesign.surfaceLight,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                ),
               ),
               child: const Text('Retry'),
             ),
@@ -114,23 +140,24 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             Icon(
               Icons.assignment_outlined,
               size: 64,
-              color: const Color(0xFF525252),
+              color: BauhausDesign.neutral,
             ),
             const SizedBox(height: 16),
             Text(
-              'No Assignments Found',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
-                color: const Color(0xFF1F2937),
+              AppLocalizations.of(context)!.noAssignmentsFound,
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: BauhausDesign.textLight,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'There are no assignments for this organization yet.',
-              style: const TextStyle(fontSize: 14).copyWith(
-                color: const Color(0xFF525252),
-              ),
-              textAlign: TextAlign.center,
-            ),
+                Text(
+                  AppLocalizations.of(context)!.noAssignmentsMessage,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.neutral,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
           ],
         ),
       );
@@ -152,12 +179,31 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
 
   Widget _buildAssignmentCard(
       Map<String, dynamic> assignment, BuildContext context) {
-    return Enhanced3DAssignmentCard(
-      assignment: assignment,
-      onEdit: () => _showEditDialog(context, assignment),
-      employeeName: null, // Will be loaded from assignment data
-      clientName: null, // Will be loaded from assignment data
-    );
+    try {
+      return Enhanced3DAssignmentCard(
+        assignment: assignment,
+        onEdit: () => _showEditDialog(context, assignment),
+        employeeName: null, // Will be loaded from assignment data
+        clientName: null, // Will be loaded from assignment data
+      );
+    } catch (e, stackTrace) {
+      debugPrint('Error building assignment card: $e\n$stackTrace');
+      return Card(
+        color: BauhausDesign.error.withValues(alpha: 0.1),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Icon(Icons.error, color: BauhausDesign.error),
+              const SizedBox(height: 8),
+              Text('Error displaying assignment',
+                  style: TextStyle(color: BauhausDesign.error)),
+              Text(e.toString(), style: TextStyle(fontSize: 10)),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   void _showEditDialog(BuildContext context, Map<String, dynamic> assignment) {
@@ -259,10 +305,10 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 0,
-      color: Colors.white,
+      color: BauhausDesign.surfaceLight,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: const Color(0xFFE0E0E0), width: 1),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        side: BorderSide(color: BauhausDesign.neutral.withValues(alpha: 0.1), width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -282,15 +328,16 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                             ? _getDisplayName(userEmail)
                             : '${(employeeDetails?["firstName"] ?? "") + " " + (employeeDetails?["lastName"] ?? "")}'
                                 .trim(),
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
-                          color: const Color(0xFF1F2937),
+                        style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: BauhausDesign.textLight,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Client: ${clientDetails?.clientFirstName ?? ''} ${clientDetails?.clientLastName ?? _getDisplayName(clientEmail)}',
-                        style: const TextStyle(fontSize: 14).copyWith(
-                          color: const Color(0xFF6B7280),
+                        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                          color: BauhausDesign.neutral,
                         ),
                       ),
                     ],
@@ -302,13 +349,13 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF667EEA).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        color: BauhausDesign.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                       ),
                       child: Text(
                         '${scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length} Shift${(scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length) != 1 ? 's' : ''}',
-                        style: const TextStyle(fontSize: 12).copyWith(
-                          color: const Color(0xFF667EEA),
+                        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                          color: BauhausDesign.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -318,7 +365,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                       onPressed: widget.onEdit,
                       icon: const Icon(Icons.edit),
                       iconSize: 20,
-                      color: const Color(0xFF667EEA),
+                      color: BauhausDesign.primary,
                     ),
                   ],
                 ),
@@ -338,20 +385,19 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
               ),
               label: Text(
                 showFullDetails ? 'Show Less Details' : 'Show More Details',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: const Color(0xFF667EEA),
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
             const SizedBox(height: 12),
             if (dateList.isNotEmpty) ...[
-              const Text(
-                'Shift Details:',
-                style: TextStyle(
-                  fontSize: 14,
+              Text(
+                AppLocalizations.of(context)!.shiftDetails,
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+                  color: BauhausDesign.textLight,
                 ),
               ),
               const SizedBox(height: 8),
@@ -390,10 +436,9 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
                     'and ${(scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length) - 3} more shift${(scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length) - 3 != 1 ? 's' : ''}...',
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                       fontStyle: FontStyle.italic,
-                      color: const Color(0xFF525252),
+                      color: BauhausDesign.neutral,
                     ),
                   ),
                 ),
@@ -404,17 +449,15 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
               children: [
                 Text(
                   'Created: ${_formatDate(createdAt)}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: const Color(0xFF525252),
+                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                    color: BauhausDesign.neutral,
                   ),
                 ),
                 Text(
                   'Total Hours: ${_calculateTotalHours(startTimeList, endTimeList, breakList)}',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF667EEA),
+                    color: BauhausDesign.primary,
                   ),
                 ),
               ],
@@ -448,9 +491,9 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
                   '${clientDetails!.clientAddress}, ${clientDetails!.clientCity}, ${clientDetails!.clientState} ${clientDetails!.clientZip}'),
             ] else ...[
               _buildInfoRow('Email', widget.assignment['clientEmail'] ?? ''),
-              const Text('Additional client details not available',
-                  style: TextStyle(
-                      fontStyle: FontStyle.italic, color: Colors.grey)),
+              Text('Additional client details not available',
+                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                      fontStyle: FontStyle.italic, color: BauhausDesign.neutral)),
             ],
           ],
         ),
@@ -460,15 +503,15 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
           [
             if (employeeDetails != null) ...[
               _buildInfoRow('Email', employeeDetails!['email'] ?? ''),
-              const Text(
+              Text(
                   'Additional employee details available via user management',
-                  style: TextStyle(
-                      fontStyle: FontStyle.italic, color: Colors.grey)),
+                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                      fontStyle: FontStyle.italic, color: BauhausDesign.neutral)),
             ] else ...[
               _buildInfoRow('Email', widget.assignment['userEmail'] ?? ''),
-              const Text('Additional employee details not available',
-                  style: TextStyle(
-                      fontStyle: FontStyle.italic, color: Colors.grey)),
+              Text('Additional employee details not available',
+                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                      fontStyle: FontStyle.italic, color: BauhausDesign.neutral)),
             ],
           ],
         ),
@@ -481,19 +524,18 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
+        color: BauhausDesign.backgroundLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 14,
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: BauhausDesign.neutral,
             ),
           ),
           const SizedBox(height: 8),
@@ -513,19 +555,17 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
             width: 80,
             child: Text(
               '$label:',
-              style: TextStyle(
-                fontSize: 12,
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
+                color: BauhausDesign.neutral.withValues(alpha: 0.7),
               ),
             ),
           ),
           Expanded(
             child: Text(
               value.isNotEmpty ? value : 'Not provided',
-              style: TextStyle(
-                fontSize: 12,
-                color: value.isNotEmpty ? Colors.black87 : Colors.grey[500],
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: value.isNotEmpty ? BauhausDesign.neutral : BauhausDesign.neutral.withValues(alpha: 0.5),
                 fontStyle:
                     value.isNotEmpty ? FontStyle.normal : FontStyle.italic,
               ),
@@ -546,9 +586,8 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
             flex: 2,
             child: Text(
               _formatShiftDate(date),
-              style: TextStyle(
-                fontSize: 12,
-                color: const Color(0xFF1F2937),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: BauhausDesign.textLight,
               ),
             ),
           ),
@@ -556,9 +595,8 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
             flex: 2,
             child: Text(
               '$startTime - $endTime',
-              style: TextStyle(
-                fontSize: 12,
-                color: const Color(0xFF1F2937),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: BauhausDesign.textLight,
               ),
             ),
           ),
@@ -566,15 +604,14 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
             flex: 1,
             child: Text(
               'Break: $breakTime',
-              style: TextStyle(
-                fontSize: 12,
-                color: const Color(0xFF525252),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: BauhausDesign.neutral,
               ),
             ),
           ),
           if (isHighIntensity)
             Icon(Icons.fitness_center,
-                size: 16, color: const Color(0xFF667EEA)),
+                size: 16, color: BauhausDesign.primary),
         ],
       ),
     );
@@ -795,7 +832,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: const Color(0xFFE5E5E5),
+                    color: BauhausDesign.neutral.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -805,21 +842,21 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                 children: [
                   Text(
                     'Edit Assignment',
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1F2937),
+                      color: BauhausDesign.textLight,
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(
                       Icons.close,
-                      color: const Color(0xFF6B7280),
+                      color: BauhausDesign.neutral,
                     ),
-                    style: IconButton.styleFrom(backgroundColor: Colors.blue,
+                    style: IconButton.styleFrom(
+                      backgroundColor: BauhausDesign.primary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                       ),
                     ),
                   ),
@@ -836,19 +873,19 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF667EEA).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        color: BauhausDesign.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Employee: ${editedAssignment['userEmail'] ?? ''}',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500),
                           ),
                           Text(
                             'Client: ${editedAssignment['clientEmail'] ?? ''}',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
@@ -879,10 +916,9 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Shifts:',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -911,7 +947,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: const Color(0xFFE5E5E5),
+                    color: BauhausDesign.neutral.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -925,22 +961,21 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: const Color(0xFFD4D4D4)),
-                          foregroundColor: const Color(0xFF6B7280),
+                          side: BorderSide(color: BauhausDesign.neutral.withValues(alpha: 0.2)),
+                          foregroundColor: BauhausDesign.neutral,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 8,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                           ),
                           minimumSize: const Size(80, 36),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Cancel',
-                          style: TextStyle(
+                          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                             fontWeight: FontWeight.w500,
-                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -949,14 +984,15 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                     Flexible(
                       child: ElevatedButton(
                         onPressed: isLoading ? null : _saveChanges,
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: BauhausDesign.primary,
+                          foregroundColor: BauhausDesign.surfaceLight,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 8,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                           ),
                           elevation: 0,
                           shadowColor: Colors.transparent,
@@ -969,14 +1005,13 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
+                                      BauhausDesign.surfaceLight),
                                 ),
                               )
-                            : const Text(
+                            : Text(
                                 'Save Changes',
-                                style: TextStyle(
+                                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 14,
                                 ),
                               ),
                       ),
@@ -1010,7 +1045,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
               children: [
                 Text(
                   'Shift ${index + 1}',
-                  style: const TextStyle(
+                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1036,7 +1071,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                       }
                     });
                   },
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: Icon(Icons.delete, color: BauhausDesign.error),
                   iconSize: 20,
                 ),
               ],
@@ -1044,10 +1079,10 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 60,
                   child: Text('Date:',
-                      style: TextStyle(fontWeight: FontWeight.w500)),
+                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500)),
                 ),
                 Expanded(
                   child: InkWell(
@@ -1056,8 +1091,8 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 12),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.1)),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                       ),
                       child: Text(
                         index < dateList.length
@@ -1072,10 +1107,10 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 60,
                   child: Text('Start:',
-                      style: TextStyle(fontWeight: FontWeight.w500)),
+                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500)),
                 ),
                 Expanded(
                   child: InkWell(
@@ -1085,8 +1120,8 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 12),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.1)),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                       ),
                       child: Text(
                         index < startTimeList.length
@@ -1101,10 +1136,10 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 60,
                   child: Text('End:',
-                      style: TextStyle(fontWeight: FontWeight.w500)),
+                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500)),
                 ),
                 Expanded(
                   child: InkWell(
@@ -1114,8 +1149,8 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 12),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.1)),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                       ),
                       child: Text(
                         index < endTimeList.length
@@ -1130,10 +1165,10 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 60,
                   child: Text('Break:',
-                      style: TextStyle(fontWeight: FontWeight.w500)),
+                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500)),
                 ),
                 Expanded(
                   child: TextFormField(
@@ -1162,10 +1197,10 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 120,
                   child: Text('High Intensity:',
-                      style: TextStyle(fontWeight: FontWeight.w500)),
+                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500)),
                 ),
                 Expanded(
                   child: Switch(
@@ -1180,7 +1215,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                         highIntensityList[index] = value;
                       });
                     },
-                    activeThumbColor: const Color(0xFF667EEA),
+                    activeColor: BauhausDesign.primary,
                   ),
                 ),
               ],
@@ -1193,15 +1228,15 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.1)),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 ),
                 child: Row(
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       width: 80,
                       child: Text('NDIS Item:',
-                          style: TextStyle(fontWeight: FontWeight.w500)),
+                          style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(fontWeight: FontWeight.w500)),
                     ),
                     Expanded(
                       child: Text(
@@ -1209,11 +1244,11 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                                 scheduleNdisItems[index] != null
                             ? scheduleNdisItems[index]!.itemName
                             : 'Select NDIS Item',
-                        style: TextStyle(
+                        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                           color: index < scheduleNdisItems.length &&
                                   scheduleNdisItems[index] != null
-                              ? Colors.black
-                              : Colors.grey[600],
+                              ? BauhausDesign.neutral
+                              : BauhausDesign.neutral.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -1229,7 +1264,7 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                         },
                       )
                     else
-                      const Icon(Icons.search, color: Colors.grey),
+                      Icon(Icons.search, color: BauhausDesign.neutral),
                   ],
                 ),
               ),
@@ -1241,9 +1276,8 @@ class _EditAssignmentDialogState extends ConsumerState<EditAssignmentDialog> {
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
                   'Custom Price: \$${scheduleCustomPricing[index]!['price']} (${scheduleCustomPricing[index]!['pricingType']})',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.colorPrimary,
+                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                    color: BauhausDesign.primary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
