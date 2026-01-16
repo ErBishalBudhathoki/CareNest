@@ -15,12 +15,16 @@ class AutomaticInvoiceGenerationView extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? organizationName;
   final String? email;
+  final bool autoMode;
+  final String? invoiceType;
 
   const AutomaticInvoiceGenerationView({
     super.key,
     this.organizationId,
     this.organizationName,
     this.email,
+    this.autoMode = false,
+    this.invoiceType,
   });
 
   @override
@@ -56,6 +60,11 @@ class _AutomaticInvoiceGenerationViewState
     _initializeAnimations();
     _loadOrganizationId();
     _loadUseAdminPreference();
+    if (widget.autoMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _generateInvoices();
+      });
+    }
   }
 
   void _initializeAnimations() {

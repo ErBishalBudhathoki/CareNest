@@ -73,7 +73,7 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
         organizationId: _user!.organizationId,
         userId: _user!.id.isNotEmpty ? _user!.id : _user!.email,
         type: type,
-        status: 'Pending',
+        status: RequestStatus.pending,
         details: details,
         note: note,
       );
@@ -111,7 +111,7 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
     for (final request in requests) {
       final id = request.id;
       if (id == null || id.isEmpty) continue;
-      next[id] = request.status;
+      next[id] = request.status.name;
     }
     return prefs.setString(cacheKey, jsonEncode(next));
   }
@@ -129,7 +129,7 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
       final previous = previousStatuses[id];
       if (previous == null || previous == request.status) continue;
 
-      final statusLower = request.status.toLowerCase();
+      final statusLower = request.status.name.toLowerCase();
       final title = 'Request ${request.status}';
       final body = 'Your ${request.type} request has been $statusLower.';
 
