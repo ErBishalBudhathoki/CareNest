@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'add_shift_request_view.dart';
 import 'add_time_off_request_view.dart';
+import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
+import 'package:carenest/app/features/requests/viewmodels/requests_view_model.dart';
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
 
 class RequestsView extends ConsumerStatefulWidget {
@@ -263,11 +264,11 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           // Status Counts and List
           Expanded(
             child: requestsState.when(
-              data: (requests) {
+              data: (state) {
                 // Filter requests based on date range
                 // A request is in range if its 'starts' date is within [startDate, endDate]
                 // Or created date? Usually shift start date.
-                final filteredRequests = requests.where((r) {
+                final filteredRequests = state.requests.where((r) {
                   DateTime? reqDate;
                   if (r.details['starts'] != null) {
                     reqDate = DateTime.parse(r.details['starts']);
@@ -288,12 +289,12 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 }).toList();
 
                 final pending =
-                    filteredRequests.where((r) => r.status == 'Pending').length;
+                    filteredRequests.where((r) => r.status == RequestStatus.pending || r.status == RequestStatus.pendingLocal).length;
                 final declined = filteredRequests
-                    .where((r) => r.status == 'Declined')
+                    .where((r) => r.status == RequestStatus.rejected)
                     .length;
                 final approved = filteredRequests
-                    .where((r) => r.status == 'Approved')
+                    .where((r) => r.status == RequestStatus.approved)
                     .length;
 
                 return Column(
@@ -345,7 +346,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                                               ),
                                               const SizedBox(width: 4),
                                               Text(
-                                                request.status,
+                                                request.status.label,
                                                 style: TextStyle(
                                                   color: _getStatusColor(
                                                       request.status),
@@ -434,25 +435,29 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     );
   }
 
-  IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'approved':
+  IconData _getStatusIcon(RequestStatus status) {
+    switch (status) {
+      case RequestStatus.approved:
         return Icons.check_circle;
-      case 'declined':
+      case RequestStatus.rejected:
+      case RequestStatus.cancelled:
         return Icons.cancel;
-      case 'pending':
+      case RequestStatus.pending:
+      case RequestStatus.pendingLocal:
       default:
         return Icons.access_time;
     }
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'approved':
+  Color _getStatusColor(RequestStatus status) {
+    switch (status) {
+      case RequestStatus.approved:
         return Colors.green;
-      case 'declined':
+      case RequestStatus.rejected:
+      case RequestStatus.cancelled:
         return Colors.red;
-      case 'pending':
+      case RequestStatus.pending:
+      case RequestStatus.pendingLocal:
       default:
         return Colors.orange;
     }

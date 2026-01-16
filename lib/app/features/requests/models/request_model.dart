@@ -1,9 +1,51 @@
+enum RequestStatus {
+  pending,
+  approved,
+  rejected,
+  cancelled,
+  pendingLocal;
+
+  String get label {
+    switch (this) {
+      case RequestStatus.pending:
+        return 'Pending';
+      case RequestStatus.approved:
+        return 'Approved';
+      case RequestStatus.rejected:
+        return 'Rejected';
+      case RequestStatus.cancelled:
+        return 'Cancelled';
+      case RequestStatus.pendingLocal:
+        return 'Pending (Local)';
+    }
+  }
+
+  static RequestStatus fromString(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return RequestStatus.pending;
+      case 'approved':
+        return RequestStatus.approved;
+      case 'rejected':
+      case 'declined':
+        return RequestStatus.rejected;
+      case 'cancelled':
+        return RequestStatus.cancelled;
+      case 'pending (local)':
+      case 'pendinglocal':
+        return RequestStatus.pendingLocal;
+      default:
+        return RequestStatus.pending;
+    }
+  }
+}
+
 class RequestModel {
   final String? id;
   final String organizationId;
   final String userId;
   final String type;
-  final String status;
+  final RequestStatus status;
   final Map<String, dynamic> details;
   final String? note;
   final DateTime? createdAt;
@@ -27,7 +69,7 @@ class RequestModel {
       organizationId: json['organizationId'] ?? '',
       userId: json['userId'] ?? '',
       type: json['type'] ?? '',
-      status: json['status'] ?? 'Pending',
+      status: RequestStatus.fromString(json['status'] ?? 'Pending'),
       details: json['details'] != null
           ? Map<String, dynamic>.from(json['details'])
           : {},
@@ -45,7 +87,7 @@ class RequestModel {
       'organizationId': organizationId,
       'userId': userId,
       'type': type,
-      'status': status,
+      'status': status.label,
       'details': details,
       'note': note,
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
@@ -58,7 +100,7 @@ class RequestModel {
     String? organizationId,
     String? userId,
     String? type,
-    String? status,
+    RequestStatus? status,
     Map<String, dynamic>? details,
     String? note,
     DateTime? createdAt,

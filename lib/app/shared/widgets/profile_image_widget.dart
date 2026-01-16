@@ -47,6 +47,12 @@ class ProfileImageWidget extends StatelessWidget {
   /// Custom error widget builder
   final Widget Function(BuildContext context, Object error)? errorBuilder;
 
+  /// Shape of the image (Circle or Rectangle)
+  final BoxShape shape;
+
+  /// Border radius (only used when shape is Rectangle)
+  final BorderRadius? borderRadius;
+
   const ProfileImageWidget({
     super.key,
     this.photoData,
@@ -62,6 +68,8 @@ class ProfileImageWidget extends StatelessWidget {
     this.onTap,
     this.showLoading = true,
     this.errorBuilder,
+    this.shape = BoxShape.circle,
+    this.borderRadius,
   });
 
   @override
@@ -72,7 +80,8 @@ class ProfileImageWidget extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
+          shape: shape,
+          borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
           color: surfaceColor ?? Colors.grey[100],
           border: Border.all(
             color: borderColor,
@@ -88,9 +97,14 @@ class ProfileImageWidget extends StatelessWidget {
                 ]
               : null,
         ),
-        child: ClipOval(
-          child: _buildImageContent(context),
-        ),
+        child: shape == BoxShape.circle
+            ? ClipOval(
+                child: _buildImageContent(context),
+              )
+            : ClipRRect(
+                borderRadius: borderRadius ?? BorderRadius.zero,
+                child: _buildImageContent(context),
+              ),
       ),
     );
   }
