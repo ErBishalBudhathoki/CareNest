@@ -59,9 +59,8 @@ app.*.map.json
 # Node.js related
 node_modules/
 
-# Backend folder - exclude entire backend
+# Backend folder - exclude root backend/ only (it's a separate repo)
 /backend/
-backend/
 
 # Environment Variables
 .env
@@ -146,9 +145,9 @@ test_*.sh
 *_test.dart
 *_test.js
 
-# Debug and fix files
-debug_*.dart
-fix_*.dart
+# Debug and fix files (only at root level, not in lib/)
+/debug_*.dart
+/fix_*.dart
 fix_*.js
 
 # Sensitive files and keys
@@ -167,8 +166,8 @@ backend/firebase-admin-config.js
 # Firebase configuration files
 **/google-services.json
 **/GoogleService-Info.plist
-lib/firebase_options.dart
-**/firebase_options.dart
+# Note: firebase_options.dart is now tracked - CI needs it
+# If you regenerate via FlutterFire CLI, commit the changes
 
 # Documentation that might contain sensitive info
 SENSITIVE_FILES_GUIDE.md
@@ -195,7 +194,9 @@ check_*.js
 .vercel/
 next\ step.md
 tast.md
-backend/
+# Root backend folder only (it's a separate repo)
+# Note: lib/backend/ is allowed and should be tracked
+/backend/
 
 # Java heap dump files
 *.hprof

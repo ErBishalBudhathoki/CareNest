@@ -1,0 +1,70 @@
+  /// Create a shift swap offer
+  Future<Map<String, dynamic>> createSwapOffer({
+    required String organizationId,
+    required String userId,
+    required String userEmail,
+    required Map<String, dynamic> details,
+  }) async {
+    try {
+      final url = '${_baseUrl}api/requests/create';
+      final payload = {
+        'organizationId': organizationId,
+        'userId': userId,
+        'userEmail': userEmail,
+        'type': 'SHIFT_SWAP_OFFER',
+        'details': details,
+      };
+
+      final response = await post(url, body: payload);
+      return response;
+    } catch (e) {
+      debugPrint('Error creating swap offer: $e');
+      return {'success': false, 'message': 'Error creating swap offer: $e'};
+    }
+  }
+
+  /// Claim a shift swap offer
+  Future<Map<String, dynamic>> claimSwapOffer({
+    required String requestId,
+    required String claimantId,
+    required String claimantName,
+    required String userEmail,
+  }) async {
+    try {
+      // Backend should implement a specific endpoint or we use a general update/action endpoint
+      // For now, assuming we might need a specific action or update status with details
+      // But typically "claiming" might be a status update or a specific action.
+      // Let's assume we post to a claim endpoint or update status with specific details.
+      
+      // If backend doesn't have specific claim endpoint yet, we might use updateRequestStatus 
+      // but usually claiming requires atomic check. 
+      // Let's pretend we have a specific endpoint based on the plan, 
+      // OR we reuse updateRequestStatus if that's what we decided. 
+      // valid plan said: "Implement claimRequest(requestId, claimantId, claimantName) logic"
+      
+      final url = '${_baseUrl}api/requests/$requestId/claim';
+      final payload = {
+        'claimantId': claimantId,
+        'claimantName': claimantName,
+        'userEmail': userEmail,
+      };
+
+      final response = await post(url, body: payload);
+      return response;
+    } catch (e) {
+      debugPrint('Error claiming swap offer: $e');
+      return {'success': false, 'message': 'Error claiming swap offer: $e'};
+    }
+  }
+
+  /// Get open shift offers for an organization
+  Future<Map<String, dynamic>> getOpenShifts(String organizationId) async {
+    try {
+      final url = '${_baseUrl}api/requests/organization/$organizationId?type=SHIFT_SWAP_OFFER&status=PENDING';
+      final response = await get(url);
+      return response;
+    } catch (e) {
+      debugPrint('Error fetching open shifts: $e');
+      return {'success': false, 'message': 'Error fetching open shifts: $e'};
+    }
+  }
