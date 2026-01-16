@@ -22,7 +22,7 @@ class _AdminRequestsDashboardViewState
   @override
   void initState() {
     super.initState();
-      lib/app/features/requests/repositories/    debugPrint('AdminRequestsDashboardView: Initializing');
+    debugPrint('AdminRequestsDashboardView: Initializing');
     _tabController = TabController(length: 3, vsync: this);
   }
 
@@ -93,13 +93,13 @@ class _AdminRequestsDashboardViewState
       body: requestsState.when(
         data: (requests) {
           final pending = requests
-              .where((r) => r.status.toLowerCase() == 'pending')
+              .where((r) => r.status == RequestStatus.pending || r.status == RequestStatus.pendingLocal)
               .toList();
           final approved = requests
-              .where((r) => r.status.toLowerCase() == 'approved')
+              .where((r) => r.status == RequestStatus.approved)
               .toList();
           final declined = requests
-              .where((r) => r.status.toLowerCase() == 'declined')
+              .where((r) => r.status == RequestStatus.rejected)
               .toList();
 
           return TabBarView(

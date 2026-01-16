@@ -53,7 +53,7 @@ class RequestRepository {
       RequestModel request, String userEmail) async {
     final newRequest = request.copyWith(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      status: 'Pending (Local)',
+      status: RequestStatus.pendingLocal,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );

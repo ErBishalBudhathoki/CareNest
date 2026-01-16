@@ -9,6 +9,17 @@ class SharedPreferencesUtils {
   SharedPreferences? get sharedPreferences => _sharedPreferences;
 
   SharedPreferencesUtils(); // Constructor
+
+  static SharedPreferencesUtils? _instance;
+
+  static Future<SharedPreferencesUtils> getInstance() async {
+    if (_instance == null) {
+      _instance = SharedPreferencesUtils();
+      await _instance!.init();
+    }
+    return _instance!;
+  }
+
   // Use a private static constant for the key to avoid typos.
   static const String _kUserEmailKey = 'userEmail';
   static const String _kRoleKey = 'userRole';
@@ -23,6 +34,10 @@ class SharedPreferencesUtils {
   /// Public key for storing user preference of using admin bank details
   /// When true, invoices will use admin bank details; otherwise employee details
   static const String kUseAdminBankDetailsKey = 'useAdminBankDetails';
+
+  /// Public key for storing theme preference
+  /// Allowed values: 'light', 'dark', 'system'
+  static const String kThemePreferenceKey = 'theme_preference';
 
   Future<void> init() async {
     _sharedPreferences = await SharedPreferences.getInstance();
@@ -292,6 +307,38 @@ class SharedPreferencesUtils {
         return 'dmy';
       default:
         return null;
+    }
+  }
+
+  /// Saves the user's theme preference.
+  ///
+  /// Expected values: 'light', 'dark', 'system'
+  Future<void> saveThemePreference(String preference) async {
+    if (_sharedPreferences == null) await init();
+    final normalized = preference.trim().toLowerCase();
+    if (normalized != 'light' &&
+        normalized != 'dark' &&
+        normalized != 'system') {
+      debugPrint('⚠️ Invalid theme preference: $preference, defaulting to system');
+      await _sharedPreferences!.setString(kThemePreferenceKey, 'system');
+      return;
+    }
+    await _sharedPreferences!.setString(kThemePreferenceKey, normalized);
+    debugPrint('🎨 Theme preference saved: $normalized');
+  }
+
+  /// Retrieves the stored theme preference.
+  /// Returns 'light', 'dark', or 'system' (default).
+  String getThemePreference() {
+    final v = _sharedPreferences?.getString(kThemePreferenceKey);
+    switch (v?.toLowerCase()) {
+      case 'light':
+        return 'light';
+      case 'dark':
+        return 'dark';
+      case 'system':
+      default:
+        return 'system';
     }
   }
 }
