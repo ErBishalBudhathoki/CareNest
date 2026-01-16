@@ -21,6 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      # Setup Java 17 (required for compileSdkVersion 36)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.0'
@@ -28,31 +35,36 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       
-      # Build Android APK based on deploy_target or pull_request
+      # Build Android App Bundle based on deploy_target or pull_request
       - name: Build Android APK (Development)
         if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'development')
-        run: flutter build apk --flavor development
+        run: flutter build appbundle --flavor development
       
       - name: Build Android APK (Production)
         if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'production')
-        run: flutter build apk --flavor production
+        run: flutter build appbundle --flavor production --release
       
       # Setup Ruby and Fastlane
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.0'
           bundler-cache: true
+          working-directory: android
+      
       - name: Install Fastlane
-        run: gem install fastlane
+        working-directory: android
+        run: |
+          gem install bundler
+          bundle install || gem install fastlane
       
       # Deploy to Google Play
       - name: Deploy to Google Play
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        working-directory: android
         env:
           GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
         run: |
-          echo "$GOOGLE_PLAY_API_KEY" > android/fastlane/google-play-service-key.json
-          cd android
+          echo "$GOOGLE_PLAY_API_KEY" > fastlane/google-play-service-key.json
           fastlane deploy_${{ github.event.inputs.deploy_target || 'production' }}
       
       # iOS Certificate Setup (commented out for future use)
