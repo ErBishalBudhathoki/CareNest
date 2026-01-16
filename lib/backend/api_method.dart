@@ -4706,7 +4706,7 @@ class ApiMethod extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error fetching tax settings: $e');
-      rethrow;
+      throw e;
     }
   }
 
