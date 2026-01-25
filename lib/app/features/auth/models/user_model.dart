@@ -53,6 +53,7 @@ class User {
   late final String? classificationLevel;
   late final String? payPoint;
   late final String? employmentType;
+  late final DateTime? dob; // Added Date of Birth
 
   User({
     required this.id,
@@ -71,7 +72,15 @@ class User {
     this.classificationLevel,
     this.payPoint,
     this.employmentType,
+    this.dob,
   });
+
+  static UserRole _parseRole(dynamic role) {
+    final roleStr = role?.toString().toLowerCase();
+    if (roleStr == 'admin') return UserRole.admin;
+    if (roleStr == 'client') return UserRole.client;
+    return UserRole.normal;
+  }
 
   factory User.fromJson(Map<String, dynamic> json) {
     try {
@@ -98,7 +107,7 @@ class User {
         email: json['email']?.toString() ?? '',
         phone: json['phone']?.toString() ?? '',
         profilePic: json['profilePic']?.toString(),
-        role: json['role'] == 'admin' ? UserRole.admin : UserRole.normal,
+        role: _parseRole(json['role']),
         jobRole: json['jobRole']?.toString(),
         payRate: (json['payRate'] as num?)?.toDouble() ?? 0.0,
         detailedRates: json['rates'] != null ? RatesModel.fromJson(json['rates']) : null,
@@ -108,6 +117,7 @@ class User {
         classificationLevel: json['classificationLevel']?.toString(),
         payPoint: json['payPoint']?.toString(),
         employmentType: json['employmentType']?.toString(),
+        dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
       );
     } catch (e) {
       debugPrint('Error parsing user data: $e');

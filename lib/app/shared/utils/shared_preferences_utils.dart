@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:carenest/app/features/auth/models/user_role.dart';
@@ -8,15 +9,27 @@ class SharedPreferencesUtils {
   SharedPreferences? _sharedPreferences;
   SharedPreferences? get sharedPreferences => _sharedPreferences;
 
-  SharedPreferencesUtils(); // Constructor
+  // Private constructor
+  SharedPreferencesUtils._internal();
+
+  /// Visible for testing purposes only
+  @visibleForTesting
+  SharedPreferencesUtils.forTesting();
 
   static SharedPreferencesUtils? _instance;
+  static Completer<void>? _initCompleter;
 
   static Future<SharedPreferencesUtils> getInstance() async {
     if (_instance == null) {
-      _instance = SharedPreferencesUtils();
+      _instance = SharedPreferencesUtils._internal();
       await _instance!.init();
     }
+    return _instance!;
+  }
+
+  // Factory constructor to return the singleton instance
+  factory SharedPreferencesUtils() {
+    _instance ??= SharedPreferencesUtils._internal();
     return _instance!;
   }
 
@@ -40,7 +53,23 @@ class SharedPreferencesUtils {
   static const String kThemePreferenceKey = 'theme_preference';
 
   Future<void> init() async {
-    _sharedPreferences = await SharedPreferences.getInstance();
+    if (_sharedPreferences != null) return;
+    
+    // Prevent race conditions with multiple concurrent init calls
+    if (_initCompleter != null) {
+      return _initCompleter!.future;
+    }
+    
+    _initCompleter = Completer<void>();
+    
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      _initCompleter!.complete();
+    } catch (e) {
+      debugPrint('Error initializing SharedPreferences: $e');
+      _initCompleter!.completeError(e);
+      _initCompleter = null; // Reset to allow retry
+    }
   }
 
   Future<void> setString(String key, String value) async {
@@ -99,11 +128,11 @@ class SharedPreferencesUtils {
   }
 
   Future<String?> getUserEmailFromSharedPreferences() async {
-    return _sharedPreferences?.getString('user_email');
+    return _sharedPreferences?.getString(_kUserEmailKey);
   }
 
   Future<void> saveEmailToSharedPreferences(String email) async {
-    await _sharedPreferences?.setString('user_email', email);
+    await _sharedPreferences?.setString(_kUserEmailKey, email);
   }
 
   // Future<void> setPhoto(Uint8List photo) async {

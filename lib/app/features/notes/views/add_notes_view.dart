@@ -1,14 +1,13 @@
 // create a UI to add notes with a button to save the notes, editable text view to edit notes and a button with a mic icon
 
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
-import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../../shared/constants/bauhaus_design.dart';
 // import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 class AddNotesView extends StatefulWidget {
@@ -29,7 +28,6 @@ class _AddNotesViewState extends State<AddNotesView> {
   late final TextEditingController _notesController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'add_notes_scaffold_key');
-  FlushBarWidget flushBarWidget = FlushBarWidget();
   ApiMethod apiMethod = ApiMethod();
 
   late stt.SpeechToText _speechToText;
@@ -63,14 +61,7 @@ class _AddNotesViewState extends State<AddNotesView> {
       }
     } catch (e) {
       if (mounted) {
-        flushBarWidget
-            .flushBar(
-              title: 'Error',
-              message: 'Failed to initialize speech recognition',
-              context: context,
-              backgroundColor: Colors.redAccent,
-            )
-            .show(context);
+        _showSnackBar('Failed to initialize speech recognition', isError: true);
       }
     }
   }
@@ -84,15 +75,9 @@ class _AddNotesViewState extends State<AddNotesView> {
         await _speechToText.listen(onResult: _onSpeechResult);
       } else {
         if (mounted) {
-          flushBarWidget
-              .flushBar(
-                title: 'Error',
-                message:
-                    'Microphone permission is required for speech recognition',
-                context: context,
-                backgroundColor: Colors.redAccent,
-              )
-              .show(context);
+          _showSnackBar(
+              'Microphone permission is required for speech recognition',
+              isError: true);
         }
       }
     } else {
@@ -119,115 +104,111 @@ class _AddNotesViewState extends State<AddNotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey, // key for flushbar
+      key: _scaffoldKey,
+      backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Add Notes',
-          style: TextStyle(
-            color: AppColors.colorBlack,
-            fontWeight: FontWeight.w600,
-            fontSize: 16.0,
-          ),
+          style: BauhausDesign.getTextTheme(context).headlineMedium,
         ),
         elevation: 0.0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: AppColors.colorBlack,
-          ),
+        backgroundColor: BauhausDesign.surfaceLight,
+        centerTitle: true,
+        leading: BauhausIconButton(
+          icon: Icons.arrow_back_ios_new,
           onPressed: () {
             Navigator.pop(context);
           },
+          variant: BauhausActionVariant.ghost,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: BauhausDesign.neutral,
+            height: 1,
+          ),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20.0,
-          vertical: 20.0,
-        ),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           children: [
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.colorWhite,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: AppColors.colorPrimary,
-                    width: 1.0,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 20.0,
-                  ),
-                  child: TextField(
-                    maxLines: null,
-                    controller: _notesController,
-                    decoration: const InputDecoration.collapsed(
-                      hintText: 'Add notes',
-                      hintStyle: TextStyle(
-                        color: AppColors.colorGrey,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16.0,
-                      ),
-                    ),
+              child: BauhausCard(
+                padding: const EdgeInsets.all(BauhausDesign.space4),
+                child: TextField(
+                  maxLines: null,
+                  controller: _notesController,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium,
+                  decoration: InputDecoration(
+                    hintText: 'Add notes...',
+                    hintStyle: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textMuted,
+                        ),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                   ),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            ButtonWidget(
-              buttonText: _isSaving ? 'Saving...' : 'Save',
-              buttonColor: AppColors.colorPrimary,
-              textColor: Colors.white,
+            const SizedBox(height: BauhausDesign.space6),
+            BauhausActionButton(
+              text: _isSaving ? 'Saving...' : 'Save',
               isLoading: _isSaving,
               onPressed: _saveNotes,
+              isFullWidth: true,
             ),
             // button with mic icon
-            const SizedBox(
-              height: 20.0,
-            ),
+            const SizedBox(height: BauhausDesign.space6),
             Text(
               !_isInitialized
                   ? 'Initializing...'
                   : _speechToText.isListening
-                      ? accumulatedText
+                      ? accumulatedText.isEmpty
+                          ? 'Listening...'
+                          : accumulatedText
                       : _speechEnabled
-                          ? 'Tap to start listening...'
+                          ? 'Tap to start listening'
                           : 'Speech not available',
-              style: TextStyle(
-                color: !_isInitialized || !_speechEnabled
-                    ? Colors.grey
-                    : Colors.black,
-              ),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                    color: (!_isInitialized || !_speechEnabled)
+                        ? BauhausDesign.textMuted
+                        : BauhausDesign.textDark,
+                  ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
+            const SizedBox(height: BauhausDesign.space2),
             SizedBox(
               width: double.infinity,
               height: 60.0,
-                       child: ElevatedButton(
-                onPressed: !_isInitialized || !_speechEnabled || _isSaving
+              child: InkWell(
+                onTap: !_isInitialized || !_speechEnabled || _isSaving
                     ? null
                     : _toggleSpeech,
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(
-                    AppColors.colorPrimary,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: (!_isInitialized || !_speechEnabled || _isSaving)
+                        ? BauhausDesign.neutral.withOpacity(0.3)
+                        : BauhausDesign.primary,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    boxShadow: const [BauhausDesign.shadowHard],
                   ),
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                  child: Center(
+                    child: Icon(
+                      _speechToText.isNotListening ? Icons.mic_off : Icons.mic,
+                      color: (!_isInitialized || !_speechEnabled || _isSaving)
+                          ? BauhausDesign.textMuted
+                          : BauhausDesign.surfaceWhite,
+                      size: 28,
                     ),
                   ),
                 ),
-                child: Icon(
-                  _speechToText.isNotListening ? Icons.mic_off : Icons.mic,
-                  color: (!_isInitialized || !_speechEnabled || _isSaving)
-                      ? Colors.grey
-                      : AppColors.colorWhite,
-     ),
               ),
             ),
           ],
@@ -246,17 +227,24 @@ class _AddNotesViewState extends State<AddNotesView> {
     }
   }
 
+  void _showSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: BauhausDesign.surfaceWhite,
+              ),
+        ),
+        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
+      ),
+    );
+  }
+
   void _saveNotes() async {
     if (_notesController.text.trim().isEmpty) {
-      if (!mounted) return;
-      flushBarWidget
-          .flushBar(
-            title: 'Error',
-            message: 'Please enter some notes before saving',
-            context: context,
-            backgroundColor: Colors.redAccent,
-          )
-          .show(context);
+      _showSnackBar('Please enter some notes before saving', isError: true);
       return;
     }
 
@@ -273,35 +261,17 @@ class _AddNotesViewState extends State<AddNotesView> {
 
       if (!mounted) return;
 
-      final flushbar = flushBarWidget.flushBar(
-        backgroundColor: Colors.greenAccent,
-        title: response.title,
-        message: response.message,
-        context: context,
-        // duration: const Duration(seconds: 2),
-      );
-
-      // Await the flushbar and then pop if successful
       if (response.success) {
-        await flushbar.show(context);
-        // Ensure the widget is still mounted before popping
+        _showSnackBar(response.message); // Success
+        await Future.delayed(const Duration(seconds: 1)); // Wait for snackbar
         if (mounted) {
           Navigator.of(context).pop(true);
         }
       } else {
-        // For errors, just show the flushbar without waiting
-        flushbar.show(context);
+        _showSnackBar(response.message, isError: true);
       }
     } catch (error) {
-      if (!mounted) return;
-      flushBarWidget
-          .flushBar(
-            title: 'Error',
-            message: 'An error occurred while saving notes',
-            context: context,
-            backgroundColor: Colors.redAccent,
-          )
-          .show(context);
+      _showSnackBar('An error occurred while saving notes', isError: true);
     } finally {
       if (mounted) {
         setState(() {

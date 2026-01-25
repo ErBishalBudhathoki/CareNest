@@ -54,6 +54,7 @@ class RequestRepository {
     final newRequest = request.copyWith(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       status: RequestStatus.pendingLocal,
+      createdBy: userEmail,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );

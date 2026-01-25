@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -173,9 +174,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Pricing Analytics',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.pricingAnalyticsTitle,
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF0F172A),
@@ -183,7 +184,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Monitor pricing performance and analyze trends across your services',
+                      AppLocalizations.of(context)!.monitorPricingPerformance,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -211,9 +212,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Text(
-                      'Live Data',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.liveData,
+                      style: const TextStyle(
                         color: Color(0xFF10B981),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -241,9 +242,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Total Revenue',
+                title: AppLocalizations.of(context)!.totalRevenue,
                 value: '0.125K',
-                subtitle: '+12.5% this month',
+                subtitle: AppLocalizations.of(context)!.thisMonthStat('+12.5%'),
                 icon: Icons.attach_money,
                 color: const Color(0xFF6366F1),
               ),
@@ -252,9 +253,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Avg Rate',
+                title: AppLocalizations.of(context)!.avgRate,
                 value: '\$85.50',
-                subtitle: '-2.3% vs last month',
+                subtitle: AppLocalizations.of(context)!.vsLastMonthStat('-2.3'),
                 icon: Icons.trending_down,
                 color: const Color(0xFFEF4444),
               ),
@@ -263,9 +264,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Utilization',
+                title: AppLocalizations.of(context)!.utilization,
                 value: '78.5%',
-                subtitle: '+5.2% improvement',
+                subtitle: AppLocalizations.of(context)!.improvementStat('+5.2'),
                 icon: Icons.trending_up,
                 color: const Color(0xFF10B981),
               ),
@@ -274,9 +275,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Profit Margin',
+                title: AppLocalizations.of(context)!.profitMargin,
                 value: '23.8%',
-                subtitle: '+1.8% growth',
+                subtitle: AppLocalizations.of(context)!.growthStat('+1.8'),
                 icon: Icons.pie_chart,
                 color: const Color(0xFF3B82F6),
               ),
@@ -378,7 +379,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             children: [
               Expanded(
                 child: _buildKPICard(
-                  'Total Revenue',
+                  AppLocalizations.of(context)!.totalRevenue,
                   '\$${(_analyticsData['revenue']['total'] as double).toStringAsFixed(0)}',
                   '${_analyticsData['revenue']['change']}%',
                   _analyticsData['revenue']['trend'] == 'up',
@@ -389,7 +390,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               const SizedBox(width: 16),
               Expanded(
                 child: _buildKPICard(
-                  'Avg Rate',
+                  AppLocalizations.of(context)!.avgRate,
                   '\$${(_analyticsData['averageRate']['total'] as double).toStringAsFixed(2)}',
                   '${_analyticsData['averageRate']['change']}%',
                   _analyticsData['averageRate']['trend'] == 'up',
@@ -404,7 +405,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             children: [
               Expanded(
                 child: _buildKPICard(
-                  'Utilization',
+                  AppLocalizations.of(context)!.utilization,
                   '${(_analyticsData['utilizationRate']['total'] as double).toStringAsFixed(1)}%',
                   '${_analyticsData['utilizationRate']['change']}%',
                   _analyticsData['utilizationRate']['trend'] == 'up',
@@ -415,7 +416,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               const SizedBox(width: 16),
               Expanded(
                 child: _buildKPICard(
-                  'Profit Margin',
+                  AppLocalizations.of(context)!.profitMargin,
                   '${(_analyticsData['profitMargin']['total'] as double).toStringAsFixed(1)}%',
                   '${_analyticsData['profitMargin']['change']}%',
                   _analyticsData['profitMargin']['trend'] == 'up',
@@ -545,24 +546,24 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Analytics Overview',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.analyticsOverview,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
             _buildChartPlaceholder(
-              'Revenue Trend',
-              'Line chart showing revenue over time',
+              AppLocalizations.of(context)!.revenueTrendTitle,
+              AppLocalizations.of(context)!.revenueTrendChartDesc,
               Icons.show_chart,
               Colors.green,
             ),
             const SizedBox(height: 16),
             _buildChartPlaceholder(
-              'Service Distribution',
-              'Pie chart showing service revenue distribution',
+              AppLocalizations.of(context)!.serviceDistributionTitle,
+              AppLocalizations.of(context)!.serviceDistributionChartDesc,
               Icons.pie_chart,
               Colors.blue,
             ),
@@ -583,9 +584,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           children: [
             Row(
               children: [
-                const Text(
-                  'Revenue Analysis',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.revenueAnalysis,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -593,7 +594,12 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 const Spacer(),
                 DropdownButton<String>(
                   value: _selectedMetric,
-                  items: ['Revenue', 'Hours', 'Rate', 'Margin']
+                  items: [
+                    AppLocalizations.of(context)!.metricRevenue,
+                    AppLocalizations.of(context)!.metricHours,
+                    AppLocalizations.of(context)!.metricRate,
+                    AppLocalizations.of(context)!.metricMargin
+                  ]
                       .map((metric) => DropdownMenuItem(
                             value: metric,
                             child: Text(metric),
@@ -609,15 +615,15 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             ),
             const SizedBox(height: 16),
             _buildChartPlaceholder(
-              'Revenue by Period',
-              'Bar chart showing revenue breakdown by selected period',
+              AppLocalizations.of(context)!.revenueByPeriodTitle,
+              AppLocalizations.of(context)!.revenueByPeriodChartDesc,
               Icons.bar_chart,
               Colors.green,
             ),
             const SizedBox(height: 16),
             _buildChartPlaceholder(
-              'Revenue by Service Category',
-              'Horizontal bar chart showing revenue by service category',
+              AppLocalizations.of(context)!.revenueByCategoryTitle,
+              AppLocalizations.of(context)!.revenueCategoryChartDesc,
               Icons.horizontal_split,
               Colors.blue,
             ),
@@ -636,9 +642,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Top Performing Services',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.topPerformingServices,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -666,9 +672,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Pricing Trends by Category',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.pricingTrendsByCategory,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -726,7 +732,8 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Code: ${service['code']}',
+                      AppLocalizations.of(context)!
+                          .codeLabelValue(service['code']),
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -769,7 +776,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             children: [
               Expanded(
                 child: _buildServiceMetric(
-                  'Revenue',
+                  AppLocalizations.of(context)!.metricRevenue,
                   '\$${service['revenue'].toStringAsFixed(0)}',
                   Icons.attach_money,
                   Colors.green,
@@ -777,7 +784,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               ),
               Expanded(
                 child: _buildServiceMetric(
-                  'Hours',
+                  AppLocalizations.of(context)!.metricHours,
                   '${service['hours']}',
                   Icons.schedule,
                   Colors.blue,
@@ -785,7 +792,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               ),
               Expanded(
                 child: _buildServiceMetric(
-                  'Rate',
+                  AppLocalizations.of(context)!.metricRate,
                   '\$${service['rate'].toStringAsFixed(2)}',
                   Icons.trending_up,
                   Colors.orange,
@@ -828,11 +835,12 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
   }
 
   Widget _buildTrendCard(Map<String, dynamic> trend, int index) {
-    final trendColor = trend['trend'] == 'Increasing'
-        ? Colors.green
-        : trend['trend'] == 'Decreasing'
-            ? Colors.red
-            : Colors.orange;
+    final trendColor =
+        trend['trend'] == AppLocalizations.of(context)!.trendIncreasing
+            ? Colors.green
+            : trend['trend'] == AppLocalizations.of(context)!.trendDecreasing
+                ? Colors.red
+                : Colors.orange;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -890,7 +898,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Average Rate',
+                      AppLocalizations.of(context)!.averageRate,
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -911,7 +919,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Change',
+                      AppLocalizations.of(context)!.changeLabel,
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -933,7 +941,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Volume',
+                      AppLocalizations.of(context)!.volume,
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -1012,7 +1020,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Icon(Icons.lightbulb, color: Colors.blue[600]),
               const SizedBox(width: 8),
               Text(
-                'Quick Insights',
+                AppLocalizations.of(context)!.quickInsights,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -1023,16 +1031,17 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           ),
           const SizedBox(height: 12),
           _buildInsightItem(
-            '• Revenue increased by 12.5% compared to last period',
+            AppLocalizations.of(context)!.revenueInsightLabel('12.5'),
           ),
           _buildInsightItem(
-            '• Support Worker Level 2 is the top revenue generator',
+            AppLocalizations.of(context)!
+                .topServiceInsightLabel('Support Worker Level 2'),
           ),
           _buildInsightItem(
-            '• Average service rate decreased by 2.3% - consider rate review',
+            AppLocalizations.of(context)!.avgRateInsightLabel('2.3'),
           ),
           _buildInsightItem(
-            '• Utilization rate improved by 5.2% - good efficiency trend',
+            AppLocalizations.of(context)!.utilizationInsightLabel('5.2'),
           ),
         ],
       ),
@@ -1064,7 +1073,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Revenue Breakdown',
+            AppLocalizations.of(context)!.revenueBreakdown,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -1075,14 +1084,18 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           Row(
             children: [
               Expanded(
-                child: _buildBreakdownItem('NDIS Core', '\$75,000', '60%'),
+                child: _buildBreakdownItem(
+                    AppLocalizations.of(context)!.ndisCore, '\$75,000', '60%'),
               ),
               Expanded(
-                child:
-                    _buildBreakdownItem('Capacity Building', '\$30,000', '24%'),
+                child: _buildBreakdownItem(
+                    AppLocalizations.of(context)!.capacityBuilding,
+                    '\$30,000',
+                    '24%'),
               ),
               Expanded(
-                child: _buildBreakdownItem('Other', '\$20,000', '16%'),
+                child: _buildBreakdownItem(
+                    AppLocalizations.of(context)!.other, '\$20,000', '16%'),
               ),
             ],
           ),

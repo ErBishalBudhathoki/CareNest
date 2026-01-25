@@ -408,3 +408,8 @@ next\ step.md
 
 # Generated PDFs at root
 *.pdf
+
+# Remotion Video Project Folders
+video-promo/
+video-promo-broken/
+video-promo-clean/

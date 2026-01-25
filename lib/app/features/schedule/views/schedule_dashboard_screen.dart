@@ -3,13 +3,14 @@
 //
 // @file lib/app/features/schedule/views/schedule_dashboard_screen.dart
 
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/schedule/widgets/smart_assign_dialog.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/backend/api_method.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Schedule Dashboard Screen with Bauhaus styling
 class ScheduleDashboardScreen extends StatefulWidget {
@@ -25,12 +26,13 @@ class ScheduleDashboardScreen extends StatefulWidget {
   });
 
   @override
-  State<ScheduleDashboardScreen> createState() => _ScheduleDashboardScreenState();
+  State<ScheduleDashboardScreen> createState() =>
+      _ScheduleDashboardScreenState();
 }
 
 class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
   final ApiMethod _api = ApiMethod();
-  
+
   List<ShiftModel> _shifts = [];
   bool _isLoading = true;
   String? _error;
@@ -51,7 +53,8 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
 
     try {
       // Get shifts for the current week
-      final startOfWeek = _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+      final startOfWeek =
+          _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
       final endOfWeek = startOfWeek.add(const Duration(days: 7));
 
       final response = await _api.getScheduleShifts(
@@ -71,7 +74,8 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
         });
       } else {
         setState(() {
-          _error = response['error']?.toString() ?? 'Failed to load shifts';
+          _error = response['error']?.toString() ??
+              AppLocalizations.of(context)!.failedToLoadShifts;
           _isLoading = false;
         });
       }
@@ -108,13 +112,17 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
             'employeeEmail': employeeEmail,
             'status': 'approved',
           });
-          
-          if (result['success'] == true) {
-            Navigator.of(context).pop();
-            _loadShifts();
-            _showSuccessSnackbar('Shift assigned successfully');
-          } else {
-            _showErrorSnackbar(result['error']?.toString() ?? 'Failed to assign shift');
+
+          if (mounted) {
+            if (result['success'] == true) {
+              Navigator.of(context).pop();
+              _loadShifts();
+              _showSuccessSnackbar(
+                  AppLocalizations.of(context)!.shiftAssignedSuccessfully);
+            } else {
+              _showErrorSnackbar(result['error']?.toString() ??
+                  AppLocalizations.of(context)!.failedToAssignShift);
+            }
           }
         },
       ),
@@ -126,15 +134,15 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
+            const Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
+            const SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: Text(
                 message,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.surfaceWhite,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           ],
@@ -154,15 +162,15 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline, color: Colors.white),
-            const SizedBox(width: 12),
+            const Icon(Icons.error_outline, color: BauhausDesign.surfaceWhite),
+            const SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: Text(
                 message,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.surfaceWhite,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           ],
@@ -183,25 +191,17 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: _buildBauhausAppBar(),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: BauhausDesign.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: BauhausDesign.primary))
           : _error != null
               ? _buildErrorState()
               : _buildContent(),
       floatingActionButton: widget.isAdmin
-          ? Container(
-              decoration: BoxDecoration(
-                color: BauhausDesign.primary,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                boxShadow: [BauhausDesign.shadowHard],
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-              ),
-              child: FloatingActionButton(
-                onPressed: _showCreateShiftDialog,
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.white,
-                child: const Icon(Icons.add, size: 28),
-              ),
+          ? BauhausActionButton(
+              onPressed: _showCreateShiftDialog,
+              icon: Icons.add,
+              text: AppLocalizations.of(context)!.createButton,
+              variant: BauhausActionVariant.primary,
             )
           : null,
     );
@@ -219,21 +219,19 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding:
+                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
             child: Row(
               children: [
-                IconButton(
+                BauhausIconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+                  icon: Icons.arrow_back,
+                  variant: BauhausActionVariant.ghost,
                 ),
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
-                  'Schedule',
-                  style: GoogleFonts.oswald(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
-                  ),
+                  AppLocalizations.of(context)!.scheduleTitle,
+                  style: BauhausDesign.getTextTheme(context).displaySmall,
                 ),
                 const Spacer(),
                 _buildFilterDropdown(),
@@ -260,12 +258,25 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
         child: DropdownButton<String>(
           value: _selectedFilter,
           isDense: true,
-          icon: const Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
-          items: const [
-            DropdownMenuItem(value: 'all', child: Text('All Shifts')),
-            DropdownMenuItem(value: 'pending', child: Text('Pending')),
-            DropdownMenuItem(value: 'approved', child: Text('Approved')),
-            DropdownMenuItem(value: 'completed', child: Text('Completed')),
+          icon:
+              const Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
+          items: [
+            DropdownMenuItem(
+                value: 'all',
+                child: Text(AppLocalizations.of(context)!.allShifts,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
+            DropdownMenuItem(
+                value: 'pending',
+                child: Text(AppLocalizations.of(context)!.statusPendingShift,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
+            DropdownMenuItem(
+                value: 'approved',
+                child: Text(AppLocalizations.of(context)!.statusApprovedShift,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
+            DropdownMenuItem(
+                value: 'completed',
+                child: Text(AppLocalizations.of(context)!.statusCompletedShift,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -273,11 +284,6 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
               _loadShifts();
             }
           },
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.w500,
-          ),
         ),
       ),
     );
@@ -285,54 +291,12 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
 
   Widget _buildErrorState() {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space6),
-        child: Container(
-          padding: const EdgeInsets.all(BauhausDesign.space6),
-          decoration: BauhausDesign.cardDecoration,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space4),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.error.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.error, width: 1.5),
-                ),
-                child: const Icon(
-                  Icons.error_outline,
-                  color: BauhausDesign.error,
-                  size: 48,
-                ),
-              ),
-              const SizedBox(height: BauhausDesign.space4),
-              Text(
-                'Failed to Load Shifts',
-                style: GoogleFonts.oswald(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
-                ),
-              ),
-              const SizedBox(height: BauhausDesign.space2),
-              Text(
-                _error ?? 'Unknown error',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: BauhausDesign.neutral,
-                ),
-              ),
-              const SizedBox(height: BauhausDesign.space4),
-              BauhausButton(
-                text: 'Retry',
-                onPressed: _loadShifts,
-                icon: Icons.refresh,
-              ),
-            ],
-          ),
-        ),
+      child: BauhausEmptyState(
+        title: AppLocalizations.of(context)!.failedToLoadShifts,
+        message: _error ?? AppLocalizations.of(context)!.unknownError,
+        icon: Icons.error_outline,
+        actionLabel: AppLocalizations.of(context)!.retryButton,
+        onAction: _loadShifts,
       ),
     );
   }
@@ -342,16 +306,15 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
       children: [
         _buildWeekNavigator(),
         Expanded(
-          child: _shifts.isEmpty
-              ? _buildEmptyState()
-              : _buildShiftsList(),
+          child: _shifts.isEmpty ? _buildEmptyState() : _buildShiftsList(),
         ),
       ],
     );
   }
 
   Widget _buildWeekNavigator() {
-    final startOfWeek = _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+    final startOfWeek =
+        _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
     final endOfWeek = startOfWeek.add(const Duration(days: 6));
     final dateFormat = DateFormat('MMM d');
 
@@ -365,49 +328,37 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
       ),
       child: Row(
         children: [
-          IconButton(
+          BauhausIconButton(
             onPressed: () {
               setState(() {
                 _selectedDate = _selectedDate.subtract(const Duration(days: 7));
               });
               _loadShifts();
             },
-            icon: const Icon(Icons.chevron_left, color: BauhausDesign.textDark),
-            style: IconButton.styleFrom(
-              backgroundColor: BauhausDesign.backgroundLight,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                side: const BorderSide(color: BauhausDesign.neutral),
-              ),
-            ),
+            icon: Icons.chevron_left,
+            variant: BauhausActionVariant.neutral,
+            isSmall: true,
           ),
           Expanded(
             child: Center(
               child: Text(
                 '${dateFormat.format(startOfWeek)} - ${dateFormat.format(endOfWeek)}',
-                style: GoogleFonts.oswald(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
-                ),
+                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                      color: BauhausDesign.textDark,
+                    ),
               ),
             ),
           ),
-          IconButton(
+          BauhausIconButton(
             onPressed: () {
               setState(() {
                 _selectedDate = _selectedDate.add(const Duration(days: 7));
               });
               _loadShifts();
             },
-            icon: const Icon(Icons.chevron_right, color: BauhausDesign.textDark),
-            style: IconButton.styleFrom(
-              backgroundColor: BauhausDesign.backgroundLight,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                side: const BorderSide(color: BauhausDesign.neutral),
-              ),
-            ),
+            icon: Icons.chevron_right,
+            variant: BauhausActionVariant.neutral,
+            isSmall: true,
           ),
         ],
       ),
@@ -416,56 +367,13 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space6),
-        child: Container(
-          padding: const EdgeInsets.all(BauhausDesign.space6),
-          decoration: BauhausDesign.cardDecoration,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space4),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.accent.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.accent, width: 1.5),
-                ),
-                child: const Icon(
-                  Icons.calendar_today,
-                  color: BauhausDesign.accent,
-                  size: 48,
-                ),
-              ),
-              const SizedBox(height: BauhausDesign.space4),
-              Text(
-                'No Shifts Scheduled',
-                style: GoogleFonts.oswald(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
-                ),
-              ),
-              const SizedBox(height: BauhausDesign.space2),
-              Text(
-                'Create a new shift to get started',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: BauhausDesign.neutral,
-                ),
-              ),
-              if (widget.isAdmin) ...[
-                const SizedBox(height: BauhausDesign.space4),
-                BauhausButton(
-                  text: 'Create Shift',
-                  onPressed: _showCreateShiftDialog,
-                  icon: Icons.add,
-                ),
-              ],
-            ],
-          ),
-        ),
+      child: BauhausEmptyState(
+        title: AppLocalizations.of(context)!.noShiftsScheduled,
+        message: AppLocalizations.of(context)!.createShiftToStart,
+        icon: Icons.calendar_today,
+        actionLabel:
+            widget.isAdmin ? AppLocalizations.of(context)!.createShift : null,
+        onAction: widget.isAdmin ? _showCreateShiftDialog : null,
       ),
     );
   }
@@ -519,15 +427,13 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
           decoration: BoxDecoration(
             color: isToday ? BauhausDesign.primary : BauhausDesign.secondary,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            boxShadow: [BauhausDesign.shadowHardXs],
+            boxShadow: const [BauhausDesign.shadowHardXs],
           ),
           child: Text(
             DateFormat('EEE, MMM d').format(date),
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: BauhausDesign.surfaceWhite,
+                ),
           ),
         ),
         if (isToday) ...[
@@ -544,12 +450,10 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
             ),
             child: Text(
               'TODAY',
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
-                letterSpacing: 0.5,
-              ),
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ),
         ],
@@ -563,133 +467,93 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
-      child: Container(
-        decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-          boxShadow: [BauhausDesign.shadowHardSm],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              if (widget.isAdmin && shift.employeeEmail == null) {
-                _showSmartAssignDialog(shift);
-              }
-            },
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            child: Padding(
-              padding: const EdgeInsets.all(BauhausDesign.space4),
-              child: Row(
+      child: BauhausCard(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        onTap: () {
+          if (widget.isAdmin && shift.employeeEmail == null) {
+            _showSmartAssignDialog(shift);
+          }
+        },
+        child: Row(
+          children: [
+            // Time column
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  timeFormat.format(shift.startTime),
+                  style: BauhausDesign.getTextTheme(context).titleMedium,
+                ),
+                Text(
+                  timeFormat.format(shift.endTime),
+                  style: BauhausDesign.getTextTheme(context).bodySmall,
+                ),
+              ],
+            ),
+
+            // Vertical divider
+            Container(
+              margin:
+                  const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
+              width: 2,
+              height: 40,
+              decoration: BoxDecoration(
+                color: statusColor,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+
+            // Details column
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Time column
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        timeFormat.format(shift.startTime),
-                        style: GoogleFonts.oswald(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: BauhausDesign.textDark,
-                        ),
-                      ),
-                      Text(
-                        timeFormat.format(shift.endTime),
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: BauhausDesign.neutral,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    shift.clientName ??
+                        shift.clientEmail ??
+                        AppLocalizations.of(context)!.noClient,
+                    style: BauhausDesign.getTextTheme(context).bodyLarge,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  
-                  // Vertical divider
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
-                    width: 2,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      borderRadius: BorderRadius.circular(1),
-                    ),
-                  ),
-                  
-                  // Details column
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          shift.clientName ?? shift.clientEmail ?? 'No Client',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 2),
+                  Text(
+                    shift.employeeName ??
+                        shift.employeeEmail ??
+                        AppLocalizations.of(context)!.unassigned,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: shift.employeeEmail != null
+                              ? BauhausDesign.neutral
+                              : BauhausDesign.primary,
+                          fontWeight: shift.employeeEmail != null
+                              ? FontWeight.normal
+                              : FontWeight.w600,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          shift.employeeName ?? shift.employeeEmail ?? 'Unassigned',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: shift.employeeEmail != null
-                                ? BauhausDesign.neutral
-                                : BauhausDesign.primary,
-                            fontWeight: shift.employeeEmail != null
-                                ? FontWeight.normal
-                                : FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                  
-                  // Status badge
-                  _buildStatusBadge(shift.status),
-                  
-                  if (widget.isAdmin && shift.employeeEmail == null)
-                    const Padding(
-                      padding: EdgeInsets.only(left: BauhausDesign.space2),
-                      child: Icon(
-                        Icons.auto_awesome,
-                        color: BauhausDesign.accent,
-                        size: 20,
-                      ),
-                    ),
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildStatusBadge(ShiftStatus status) {
-    final color = _getStatusColor(status);
-    final label = status.value[0].toUpperCase() + status.value.substring(1);
+            // Status badge
+            BauhausChip(
+              text: shift.status.value[0].toUpperCase() +
+                  shift.status.value.substring(1),
+              color: statusColor,
+              isSmall: true,
+            ),
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: BauhausDesign.space2,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: color, width: 1),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: color,
-          letterSpacing: 0.3,
+            if (widget.isAdmin && shift.employeeEmail == null)
+              const Padding(
+                padding: EdgeInsets.only(left: BauhausDesign.space2),
+                child: Icon(
+                  Icons.auto_awesome,
+                  color: BauhausDesign.accent,
+                  size: 20,
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -725,23 +589,99 @@ class _CreateShiftDialog extends StatefulWidget {
 
 class _CreateShiftDialogState extends State<_CreateShiftDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _clientController = TextEditingController();
   final _notesController = TextEditingController();
-  
+
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _startTime = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
   bool _isLoading = false;
+  
+  List<Map<String, dynamic>> _clients = [];
+  List<dynamic> _employees = [];
+  bool _isFetchingData = true;
+  String? _selectedClientEmail;
+  String? _selectedEmployeeEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      debugPrint('Fetching data for Organization ID: ${widget.organizationId}');
+      
+      final clientsFuture = ApiMethod().getClientsByOrganizationId(widget.organizationId);
+      final employeesFuture = ApiMethod().getOrganizationEmployees(widget.organizationId);
+
+      final results = await Future.wait([clientsFuture, employeesFuture]);
+      
+      if (mounted) {
+        setState(() {
+          _clients = (results[0] as List<Map<String, dynamic>>).map((c) {
+            // Normalize keys to standard format
+            return {
+              'firstName': c['firstName'] ?? c['clientFirstName'],
+              'lastName': c['lastName'] ?? c['clientLastName'],
+              'email': c['email'] ?? c['clientEmail'],
+              '_id': c['_id'] ?? c['id'],
+            };
+          }).toList();
+          
+          debugPrint('Clients fetched: ${_clients.length}');
+          if (_clients.isNotEmpty) {
+            debugPrint('First client data: ${_clients.first}');
+          } else {
+             debugPrint('No clients found in response. Raw result: ${results[0]}');
+          }
+          
+          final empResult = results[1] as Map<String, dynamic>;
+          if (empResult['success'] == true) {
+            _employees = empResult['employees'] as List<dynamic>;
+            debugPrint('Employees fetched: ${_employees.length}');
+          } else {
+            debugPrint('Failed to fetch employees: ${empResult['message']}');
+          }
+          
+          _isFetchingData = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      // If direct fetch fails, try alternative method to get all clients
+      try {
+        final allClients = await ApiMethod().fetchClientData();
+        if (mounted) {
+           setState(() {
+             _clients = allClients.map((c) => {
+               'firstName': c.clientFirstName,
+               'lastName': c.clientLastName,
+               'email': c.clientEmail,
+               'phone': c.clientPhone,
+               '_id': c.id,
+             }).toList();
+             _isFetchingData = false;
+           });
+        }
+      } catch (retryError) {
+        debugPrint('Retry fetch failed: $retryError');
+        if (mounted) {
+          setState(() => _isFetchingData = false);
+        }
+      }
+    }
+  }
 
   @override
   void dispose() {
-    _clientController.dispose();
     _notesController.dispose();
     super.dispose();
   }
 
   Future<void> _createShift() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedClientEmail == null) return;
 
     setState(() => _isLoading = true);
 
@@ -761,26 +701,35 @@ class _CreateShiftDialogState extends State<_CreateShiftDialog> {
       _endTime.minute,
     );
 
-    final result = await ApiMethod().createShift({
+    final Map<String, dynamic> shiftData = {
       'organizationId': widget.organizationId,
-      'clientEmail': _clientController.text.trim(),
+      'clientEmail': _selectedClientEmail,
       'startTime': startDateTime.toIso8601String(),
       'endTime': endDateTime.toIso8601String(),
       'notes': _notesController.text.trim(),
-      'status': 'pending',
-    });
+      'status': _selectedEmployeeEmail != null ? 'approved' : 'pending',
+    };
 
-    setState(() => _isLoading = false);
+    if (_selectedEmployeeEmail != null) {
+      shiftData['employeeEmail'] = _selectedEmployeeEmail;
+    }
 
-    if (result['success'] == true) {
-      widget.onCreated();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result['error']?.toString() ?? 'Failed to create shift'),
-          backgroundColor: BauhausDesign.error,
-        ),
-      );
+    final result = await ApiMethod().createShift(shiftData);
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+
+      if (result['success'] == true) {
+        widget.onCreated();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['error']?.toString() ??
+                AppLocalizations.of(context)!.failedToCreateShift),
+            backgroundColor: BauhausDesign.error,
+          ),
+        );
+      }
     }
   }
 
@@ -792,6 +741,7 @@ class _CreateShiftDialogState extends State<_CreateShiftDialog> {
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
       child: Container(
+        padding: const EdgeInsets.all(BauhausDesign.space6),
         constraints: const BoxConstraints(maxWidth: 400),
         decoration: BoxDecoration(
           color: BauhausDesign.surfaceLight,
@@ -800,203 +750,266 @@ class _CreateShiftDialogState extends State<_CreateShiftDialog> {
         ),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(BauhausDesign.space6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(BauhausDesign.space2),
-                      decoration: BoxDecoration(
-                        color: BauhausDesign.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                        border: Border.all(color: BauhausDesign.primary),
-                      ),
-                      child: const Icon(
-                        Icons.add_circle_outline,
-                        color: BauhausDesign.primary,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: BauhausDesign.space3),
-                    Text(
-                      'Create New Shift',
-                      style: GoogleFonts.oswald(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textDark,
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: BauhausDesign.space6),
-                
-                // Client Email Field
-                TextFormField(
-                  controller: _clientController,
-                  decoration: BauhausDesign.inputDecoration.copyWith(
-                    labelText: 'Client Email',
-                    labelStyle: GoogleFonts.inter(color: BauhausDesign.textDark),
-                    prefixIcon: const Icon(Icons.person_outline, color: BauhausDesign.neutral),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.createNewShift,
+                style: BauhausDesign.getTextTheme(context).displaySmall,
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              if (_isFetchingData)
+                const Center(child: CircularProgressIndicator())
+              else if (_clients.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.error.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                    border: Border.all(color: BauhausDesign.error),
                   ),
-                  style: GoogleFonts.inter(color: BauhausDesign.textDark),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Client email is required';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                
-                const SizedBox(height: BauhausDesign.space4),
-                
-                // Date Picker
-                _buildDatePicker(),
-                
-                const SizedBox(height: BauhausDesign.space4),
-                
-                // Time Pickers
-                Row(
-                  children: [
-                    Expanded(child: _buildTimePicker('Start', _startTime, (t) => setState(() => _startTime = t))),
-                    const SizedBox(width: BauhausDesign.space3),
-                    Expanded(child: _buildTimePicker('End', _endTime, (t) => setState(() => _endTime = t))),
-                  ],
-                ),
-                
-                const SizedBox(height: BauhausDesign.space4),
-                
-                // Notes Field
-                TextFormField(
-                  controller: _notesController,
-                  decoration: BauhausDesign.inputDecoration.copyWith(
-                    labelText: 'Notes (Optional)',
-                    labelStyle: GoogleFonts.inter(color: BauhausDesign.textDark),
-                    prefixIcon: const Icon(Icons.notes, color: BauhausDesign.neutral),
-                  ),
-                  style: GoogleFonts.inter(color: BauhausDesign.textDark),
-                  maxLines: 2,
-                ),
-                
-                const SizedBox(height: BauhausDesign.space6),
-                
-                // Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: BauhausDesign.secondaryButtonStyle,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: BauhausDesign.error),
+                      const SizedBox(width: BauhausDesign.space3),
+                      Expanded(
                         child: Text(
-                          'Cancel',
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
-                            color: BauhausDesign.secondary,
+                          'No clients found for this organization.',
+                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: BauhausDesign.error,
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: BauhausDesign.space3),
-                    Expanded(
-                      child: BauhausButton(
-                        text: _isLoading ? 'Creating...' : 'Create Shift',
-                        onPressed: _isLoading ? null : _createShift,
+                    ],
+                  ),
+                )
+              else
+                DropdownButtonFormField<String>(
+                  value: _selectedClientEmail,
+                  decoration: BauhausDesign.inputDecoration(
+                    AppLocalizations.of(context)!.clientEmailLabel,
+                  ).copyWith(
+                    prefixIcon: const Icon(Icons.person, color: BauhausDesign.textMuted),
+                    filled: true,
+                    fillColor: BauhausDesign.surfaceWhite,
+                  ),
+                  items: _clients.map((client) {
+                    final name = '${client['firstName']} ${client['lastName']}';
+                    final email = client['email'] as String?; // Handle potential null
+                    if (email == null) return null; // Skip if email is null
+
+                    return DropdownMenuItem<String>(
+                      value: email,
+                      child: Text(
+                        '$name ($email)',
+                        overflow: TextOverflow.ellipsis,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                          color: BauhausDesign.textDark,
+                        ),
                       ),
-                    ),
-                  ],
+                    );
+                  }).whereType<DropdownMenuItem<String>>().toList(), // Filter out nulls
+                  onChanged: (value) => setState(() => _selectedClientEmail = value),
+                  validator: (value) => value == null
+                      ? AppLocalizations.of(context)!.requiredField
+                      : null,
+                  isExpanded: true,
+                  icon: const Icon(Icons.arrow_drop_down, color: BauhausDesign.neutral),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.textDark,
+                  ),
+                  dropdownColor: BauhausDesign.surfaceWhite,
                 ),
+              const SizedBox(height: BauhausDesign.space4),
+              if (!_isFetchingData) ...[
+                DropdownButtonFormField<String>(
+                  value: _selectedEmployeeEmail,
+                  decoration: BauhausDesign.inputDecoration(
+                    'Assign Employee (Optional)',
+                  ).copyWith(
+                    prefixIcon: const Icon(Icons.badge, color: BauhausDesign.textMuted),
+                    filled: true,
+                    fillColor: BauhausDesign.surfaceWhite,
+                  ),
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('Unassigned'),
+                    ),
+                    ..._employees.map((emp) {
+                      final name = '${emp['firstName']} ${emp['lastName']}';
+                      final email = emp['email'] as String?; // Handle potential null
+                      if (email == null) return null; // Skip if email is null
+
+                      return DropdownMenuItem<String>(
+                        value: email,
+                        child: Text(
+                          name,
+                          overflow: TextOverflow.ellipsis,
+                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
+                        ),
+                      );
+                    }).whereType<DropdownMenuItem<String>>(), // Filter out nulls
+                  ],
+                  onChanged: (value) => setState(() => _selectedEmployeeEmail = value),
+                  isExpanded: true,
+                  icon: const Icon(Icons.arrow_drop_down, color: BauhausDesign.neutral),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.textDark,
+                  ),
+                  dropdownColor: BauhausDesign.surfaceWhite,
+                ),
+                const SizedBox(height: BauhausDesign.space4),
               ],
-            ),
+              const SizedBox(height: BauhausDesign.space4),
+              Text(
+                AppLocalizations.of(context)!.dateTimeLabel,
+                style:
+                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+              ),
+              const SizedBox(height: BauhausDesign.space2),
+              GestureDetector(
+                onTap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: _selectedDate,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    builder: (context, child) {
+                      return Theme(
+                        data: ThemeData.light().copyWith(
+                          colorScheme: const ColorScheme.light(
+                            primary: BauhausDesign.primary,
+                            onPrimary: BauhausDesign.surfaceWhite,
+                            surface: BauhausDesign.surfaceLight,
+                            onSurface: BauhausDesign.textDark,
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (date != null) {
+                    setState(() => _selectedDate = date);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: BauhausDesign.neutral),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.calendar_today,
+                          size: 16, color: BauhausDesign.textMuted),
+                      const SizedBox(width: BauhausDesign.space2),
+                      Text(DateFormat('MMM dd, yyyy').format(_selectedDate),
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(color: BauhausDesign.textDark)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space2),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildTimePicker(
+                      AppLocalizations.of(context)!.startLabel,
+                      _startTime,
+                      (time) => setState(() => _startTime = time),
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Expanded(
+                    child: _buildTimePicker(
+                      AppLocalizations.of(context)!.endLabel,
+                      _endTime,
+                      (time) => setState(() => _endTime = time),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              BauhausTextField(
+                controller: _notesController,
+                label: AppLocalizations.of(context)!.notesLabel,
+                hintText: AppLocalizations.of(context)!.additionalDetailsHint,
+                maxLines: 3,
+              ),
+              const SizedBox(height: BauhausDesign.space6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(AppLocalizations.of(context)!.cancelButton,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(color: BauhausDesign.neutral)),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  BauhausActionButton(
+                    text: AppLocalizations.of(context)!.createShift,
+                    onPressed: _isLoading ? null : _createShift,
+                    isLoading: _isLoading,
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildDatePicker() {
-    return InkWell(
+  Widget _buildTimePicker(
+      String label, TimeOfDay time, Function(TimeOfDay) onChanged) {
+    return GestureDetector(
       onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: _selectedDate,
-          firstDate: DateTime.now(),
-          lastDate: DateTime.now().add(const Duration(days: 365)),
-        );
-        if (date != null) {
-          setState(() => _selectedDate = date);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        decoration: BoxDecoration(
-          color: BauhausDesign.backgroundLight,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.calendar_today, color: BauhausDesign.neutral, size: 20),
-            const SizedBox(width: BauhausDesign.space3),
-            Text(
-              DateFormat('EEE, MMM d, yyyy').format(_selectedDate),
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                color: BauhausDesign.textDark,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimePicker(String label, TimeOfDay time, ValueChanged<TimeOfDay> onChanged) {
-    return InkWell(
-      onTap: () async {
-        final picked = await showTimePicker(
+        final newTime = await showTimePicker(
           context: context,
           initialTime: time,
+          builder: (context, child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                colorScheme: const ColorScheme.light(
+                  primary: BauhausDesign.primary, // clock hand color
+                  onPrimary: BauhausDesign.surfaceWhite,
+                  surface: BauhausDesign.surfaceLight, // background color
+                  onSurface: BauhausDesign.textDark, // text color
+                ),
+              ),
+              child: child!,
+            );
+          },
         );
-        if (picked != null) {
-          onChanged(picked);
+        if (newTime != null) {
+          onChanged(newTime);
         }
       },
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          color: BauhausDesign.backgroundLight,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(color: BauhausDesign.neutral),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                color: BauhausDesign.neutral,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              time.format(context),
-              style: GoogleFonts.oswald(
-                fontSize: 16,
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            const Icon(Icons.access_time,
+                size: 16, color: BauhausDesign.textMuted),
+            const SizedBox(width: BauhausDesign.space2),
+            Text(time.format(context),
+                style: BauhausDesign.getTextTheme(context)
+                    .bodyMedium
+                    ?.copyWith(color: BauhausDesign.textDark)),
           ],
         ),
       ),

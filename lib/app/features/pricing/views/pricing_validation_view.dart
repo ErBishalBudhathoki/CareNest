@@ -1,5 +1,6 @@
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -128,17 +129,17 @@ class _PricingValidationViewState extends State<PricingValidationView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pricing Validation',
-            style: TextStyle(color: Colors.white)),
+        title: Text(AppLocalizations.of(context)!.pricingValidationTitle,
+            style: const TextStyle(color: Colors.white)),
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           indicatorColor: Colors.white,
-          tabs: const [
-            Tab(text: 'Validation Results'),
-            Tab(text: 'Validation Rules'),
-            Tab(text: 'Reports'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.tabValidationResults),
+            Tab(text: AppLocalizations.of(context)!.tabValidationRules),
+            Tab(text: AppLocalizations.of(context)!.tabReports),
           ],
         ),
       ),
@@ -199,9 +200,9 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 Positioned(
                   left: 80,
                   bottom: 20,
-                  child: const Text(
-                    'Pricing Validation',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.pricingValidationTitle,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -216,10 +217,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
             indicatorColor: Colors.white,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
-            tabs: const [
-              Tab(text: 'Validation Results'),
-              Tab(text: 'Validation Rules'),
-              Tab(text: 'Reports'),
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.tabValidationResults),
+              Tab(text: AppLocalizations.of(context)!.tabValidationRules),
+              Tab(text: AppLocalizations.of(context)!.tabReports),
             ],
           ),
         ],
@@ -235,31 +236,31 @@ class _PricingValidationViewState extends State<PricingValidationView>
         children: [
           Expanded(
             child: _buildStatCard(
-              'Total Issues',
+              AppLocalizations.of(context)!.totalIssues,
               '23',
               Icons.error_outline,
               Colors.red,
-              '+5 from last week',
+              AppLocalizations.of(context)!.fromLastWeekStat('5'),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: _buildStatCard(
-              'Resolved',
+              AppLocalizations.of(context)!.resolvedData,
               '18',
               Icons.check_circle_outline,
               Colors.green,
-              '78% resolution rate',
+              AppLocalizations.of(context)!.resolutionRateStat('78'),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: _buildStatCard(
-              'Active Rules',
+              AppLocalizations.of(context)!.activeRules,
               '12',
               Icons.rule,
               Colors.blue,
-              '3 updated today',
+              AppLocalizations.of(context)!.updatedTodayStat('3'),
             ),
           ),
         ],
@@ -376,9 +377,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
             Container(
               padding: const EdgeInsets.all(8),
               color: Colors.blue[100],
-              child: const Text(
-                "VALIDATION RESULTS TAB",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              child: Text(
+                AppLocalizations.of(context)!.validationResultsTabTitle,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             _buildValidationFilters(),
@@ -405,7 +407,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         children: [
           TextField(
             decoration: InputDecoration(
-              hintText: 'Search validation results...',
+              hintText: AppLocalizations.of(context)!.searchValidationHint,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -427,21 +429,36 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 child: DropdownButtonFormField<String>(
                   initialValue: _selectedValidationType,
                   decoration: InputDecoration(
-                    labelText: 'Type',
+                    labelText: AppLocalizations.of(context)!.typeLabel,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   items: [
-                    'All',
-                    'Price Range',
-                    'Duplicate Entry',
-                    'Missing Data',
-                    'Rate Consistency'
+                    {
+                      'value': 'All',
+                      'label': AppLocalizations.of(context)!.allValidationTypes
+                    },
+                    {
+                      'value': 'Price Range',
+                      'label': AppLocalizations.of(context)!.priceRange
+                    },
+                    {
+                      'value': 'Duplicate Entry',
+                      'label': AppLocalizations.of(context)!.duplicateEntry
+                    },
+                    {
+                      'value': 'Missing Data',
+                      'label': AppLocalizations.of(context)!.missingData
+                    },
+                    {
+                      'value': 'Rate Consistency',
+                      'label': AppLocalizations.of(context)!.rateConsistency
+                    }
                   ]
-                      .map((type) => DropdownMenuItem(
-                            value: type,
-                            child: Text(type),
+                      .map((item) => DropdownMenuItem(
+                            value: item['value'] as String,
+                            child: Text(item['label'] as String),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -456,15 +473,32 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 child: DropdownButtonFormField<String>(
                   initialValue: _selectedSeverity,
                   decoration: InputDecoration(
-                    labelText: 'Severity',
+                    labelText: AppLocalizations.of(context)!.severityLabel,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  items: ['All', 'Error', 'Warning', 'Info']
-                      .map((severity) => DropdownMenuItem(
-                            value: severity,
-                            child: Text(severity),
+                  items: [
+                    {
+                      'value': 'All',
+                      'label': AppLocalizations.of(context)!.allValidationTypes
+                    },
+                    {
+                      'value': 'Error',
+                      'label': AppLocalizations.of(context)!.severityError
+                    },
+                    {
+                      'value': 'Warning',
+                      'label': AppLocalizations.of(context)!.severityWarning
+                    },
+                    {
+                      'value': 'Info',
+                      'label': AppLocalizations.of(context)!.severityInfo
+                    }
+                  ]
+                      .map((item) => DropdownMenuItem(
+                            value: item['value'] as String,
+                            child: Text(item['label'] as String),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -561,7 +595,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
             ),
             const SizedBox(height: 4),
             Text(
-              'Item: ${result['itemCode']} • ${result['timestamp']}',
+              AppLocalizations.of(context)!.itemTimestampLabel(
+                result['itemCode'].toString(),
+                result['timestamp'].toString(),
+              ),
               style: TextStyle(
                 color: Colors.grey[500],
                 fontSize: 11,
@@ -576,7 +613,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Details:',
+                  '${AppLocalizations.of(context)!.detailsLabel}:',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[700],
@@ -634,7 +671,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                           horizontal: 8),
                                       minimumSize: const Size(60, 36),
                                     ),
-                                    child: const Text('Resolve'),
+                                    child: Text(AppLocalizations.of(context)!
+                                        .resolveAction),
                                   ),
                                   TextButton(
                                     onPressed: () =>
@@ -644,7 +682,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                           horizontal: 8),
                                       minimumSize: const Size(60, 36),
                                     ),
-                                    child: const Text('View Details'),
+                                    child: Text(AppLocalizations.of(context)!
+                                        .viewDetailsAction),
                                   ),
                                 ],
                               ),
@@ -688,8 +727,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                         horizontal: 4),
                                     minimumSize: const Size(40, 36),
                                   ),
-                                  child: const Text('Resolve',
-                                      style: TextStyle(fontSize: 12)),
+                                  child: Text(
+                                      AppLocalizations.of(context)!
+                                          .resolveAction,
+                                      style: const TextStyle(fontSize: 12)),
                                 ),
                               ),
                               SizedBox(
@@ -702,8 +743,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                         horizontal: 4),
                                     minimumSize: const Size(40, 36),
                                   ),
-                                  child: const Text('View Details',
-                                      style: TextStyle(fontSize: 12)),
+                                  child: Text(
+                                      AppLocalizations.of(context)!
+                                          .viewDetailsAction,
+                                      style: const TextStyle(fontSize: 12)),
                                 ),
                               ),
                             ],
@@ -727,9 +770,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
             Container(
               padding: const EdgeInsets.all(8),
               color: Colors.green[100],
-              child: const Text(
-                "VALIDATION RULES TAB",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              child: Text(
+                AppLocalizations.of(context)!.validationRulesTabTitle,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             Expanded(
@@ -823,7 +867,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               ),
               const SizedBox(width: 4),
               Text(
-                '${rule['violations']} violations',
+                '${rule['violations']} ${AppLocalizations.of(context)!.violationsLabel}',
                 style: TextStyle(
                   color: Colors.red[400],
                   fontSize: 12,
@@ -832,7 +876,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               ),
               const Spacer(),
               Text(
-                'Updated: ${rule['lastUpdated']}',
+                '${AppLocalizations.of(context)!.lastUpdatedLabel}: ${rule['lastUpdated']}',
                 style: TextStyle(
                   color: Colors.grey[500],
                   fontSize: 12,
@@ -846,7 +890,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               TextButton.icon(
                 onPressed: () => _editValidationRule(rule),
                 icon: const Icon(Icons.edit, size: 16),
-                label: const Text('Edit'),
+                label: Text(AppLocalizations.of(context)!.editAction),
               ),
               TextButton.icon(
                 onPressed: () => _toggleValidationRule(rule['id']),
@@ -854,12 +898,14 @@ class _PricingValidationViewState extends State<PricingValidationView>
                   isActive ? Icons.pause : Icons.play_arrow,
                   size: 16,
                 ),
-                label: Text(isActive ? 'Disable' : 'Enable'),
+                label: Text(isActive
+                    ? AppLocalizations.of(context)!.disableAction
+                    : AppLocalizations.of(context)!.enableAction),
               ),
               const Spacer(),
               TextButton(
                 onPressed: () => _runValidationRule(rule['id']),
-                child: const Text('Run Now'),
+                child: Text(AppLocalizations.of(context)!.runNowAction),
               ),
             ],
           ),
@@ -877,9 +923,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
             Container(
               padding: const EdgeInsets.all(8),
               color: Colors.purple[100],
-              child: const Text(
-                "REPORTS TAB",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              child: Text(
+                AppLocalizations.of(context)!.reportsTabTitle,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             Expanded(
@@ -887,41 +934,41 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 padding: const EdgeInsets.all(16),
                 child: ListView(
                   children: [
-                    const Text(
-                      'Validation Reports',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.validationReportsTitle,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
                     _buildReportCard(
-                      'Daily Validation Summary',
-                      'Comprehensive daily report of all validation activities',
+                      AppLocalizations.of(context)!.dailyValidationSummary,
+                      AppLocalizations.of(context)!.dailyValidationSummaryDesc,
                       Icons.today,
                       Colors.blue,
                       () => _generateReport('daily'),
                     ),
                     const SizedBox(height: 12),
                     _buildReportCard(
-                      'Weekly Trends Analysis',
-                      'Weekly analysis of validation trends and patterns',
+                      AppLocalizations.of(context)!.weeklyTrendsAnalysis,
+                      AppLocalizations.of(context)!.weeklyTrendsAnalysisDesc,
                       Icons.trending_up,
                       Colors.green,
                       () => _generateReport('weekly'),
                     ),
                     const SizedBox(height: 12),
                     _buildReportCard(
-                      'Rule Performance Report',
-                      'Performance metrics for all validation rules',
+                      AppLocalizations.of(context)!.rulePerformanceReport,
+                      AppLocalizations.of(context)!.rulePerformanceReportDesc,
                       Icons.analytics,
                       Colors.orange,
                       () => _generateReport('performance'),
                     ),
                     const SizedBox(height: 12),
                     _buildReportCard(
-                      'Custom Report Builder',
-                      'Create custom validation reports with specific criteria',
+                      AppLocalizations.of(context)!.customReportBuilder,
+                      AppLocalizations.of(context)!.customReportBuilderDesc,
                       Icons.build,
                       Colors.purple,
                       () => _openCustomReportBuilder(),
@@ -1013,35 +1060,42 @@ class _PricingValidationViewState extends State<PricingValidationView>
         _validationResults[index]['status'] = 'Resolved';
       }
     });
-    _showSnackBar('Validation issue resolved successfully');
+    _showSnackBar(AppLocalizations.of(context)!.validationIssueResolved);
   }
 
   void _viewValidationDetails(Map<String, dynamic> result) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Validation Details - ${result['id']}'),
+        title: Text(
+            AppLocalizations.of(context)!.validationDetailsTitle(result['id'])),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Type: ${result['type']}'),
+            Text(
+                '${AppLocalizations.of(context)!.typeLabel}: ${result['type']}'),
             const SizedBox(height: 8),
-            Text('Severity: ${result['severity']}'),
+            Text(
+                '${AppLocalizations.of(context)!.severityLabel}: ${result['severity']}'),
             const SizedBox(height: 8),
-            Text('Item Code: ${result['itemCode']}'),
+            Text(
+                '${AppLocalizations.of(context)!.itemLabel}: ${result['itemCode']}'),
             const SizedBox(height: 8),
-            Text('Message: ${result['message']}'),
+            Text(
+                '${AppLocalizations.of(context)!.messageLabel}: ${result['message']}'),
             const SizedBox(height: 8),
-            Text('Details: ${result['details']}'),
+            Text(
+                '${AppLocalizations.of(context)!.detailsLabel}: ${result['details']}'),
             const SizedBox(height: 8),
-            Text('Timestamp: ${result['timestamp']}'),
+            Text(
+                '${AppLocalizations.of(context)!.timestampLabel}: ${result['timestamp']}'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.closeAction),
           ),
         ],
       ),
@@ -1049,7 +1103,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
   }
 
   void _editValidationRule(Map<String, dynamic> rule) {
-    _showSnackBar('Edit validation rule: ${rule['name']}');
+    _showSnackBar(
+        AppLocalizations.of(context)!.editValidationRuleMsg(rule['name']));
   }
 
   void _toggleValidationRule(String ruleId) {
@@ -1062,19 +1117,19 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 : 'Active';
       }
     });
-    _showSnackBar('Validation rule status updated');
+    _showSnackBar(AppLocalizations.of(context)!.validationRuleStatusUpdated);
   }
 
   void _runValidationRule(String ruleId) {
-    _showSnackBar('Running validation rule...');
+    _showSnackBar(AppLocalizations.of(context)!.runningValidationRule);
   }
 
   void _generateReport(String type) {
-    _showSnackBar('Generating $type report...');
+    _showSnackBar(AppLocalizations.of(context)!.generatingReport(type));
   }
 
   void _openCustomReportBuilder() {
-    _showSnackBar('Opening custom report builder...');
+    _showSnackBar(AppLocalizations.of(context)!.openingCustomReportBuilder);
   }
 
   void _showSnackBar(String message) {

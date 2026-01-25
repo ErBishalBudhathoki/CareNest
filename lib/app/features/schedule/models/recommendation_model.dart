@@ -18,6 +18,8 @@ class RecommendationModel {
   final int availabilityScore; // Availability score 0-100
   final int distanceScore;    // Proximity score 0-100
   final double? distanceKm;   // Distance in kilometers
+  final int? aiScore;         // AI-adjusted score
+  final String? reasoning;    // AI reasoning text
   final List<String> skills;  // Employee's skills
 
   const RecommendationModel({
@@ -31,6 +33,8 @@ class RecommendationModel {
     this.availabilityScore = 0,
     this.distanceScore = 0,
     this.distanceKm,
+    this.aiScore,
+    this.reasoning,
     this.skills = const [],
   });
 
@@ -47,6 +51,8 @@ class RecommendationModel {
       availabilityScore: (json['availabilityScore'] as num?)?.toInt() ?? 0,
       distanceScore: (json['distanceScore'] as num?)?.toInt() ?? 0,
       distanceKm: (json['distanceKm'] as num?)?.toDouble(),
+      aiScore: (json['aiScore'] as num?)?.toInt(),
+      reasoning: json['reasoning']?.toString(),
       skills: (json['skills'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
@@ -67,6 +73,8 @@ class RecommendationModel {
       'availabilityScore': availabilityScore,
       'distanceScore': distanceScore,
       if (distanceKm != null) 'distanceKm': distanceKm,
+      if (aiScore != null) 'aiScore': aiScore,
+      if (reasoning != null) 'reasoning': reasoning,
       'skills': skills,
     };
   }

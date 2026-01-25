@@ -1,6 +1,8 @@
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class TimesheetView extends StatefulWidget {
   final String email;
@@ -18,159 +20,185 @@ class _TimesheetViewState extends State<TimesheetView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.colorBlue),
+          icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Timesheet',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
+        title: Text(
+          AppLocalizations.of(context)!.timesheetTitle,
+          style: BauhausDesign.getTextTheme(context).titleLarge,
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_horiz, color: AppColors.colorBlue),
+            icon: const Icon(Icons.more_horiz_rounded),
             onPressed: () {
               // Add menu options
             },
           ),
         ],
-        elevation: 0,
       ),
       body: Column(
         children: [
           // Date Range Section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space6,
+              vertical: BauhausDesign.space4,
+            ),
+            color: BauhausDesign.surfaceWhite,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                _buildDateChip(DateFormat('MM/dd/yyyy').format(startDate)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space3),
                   child: Text(
-                    DateFormat('MM/dd/yyyy').format(startDate),
-                    style: const TextStyle(fontSize: 16),
+                    AppLocalizations.of(context)!.toLabel,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textMuted,
+                        ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Text('to', style: TextStyle(fontSize: 16)),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    DateFormat('MM/dd/yyyy').format(endDate),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Time Summary
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildTimeColumn('Regular', '8:00'),
-                _buildTimeColumn('OT', '--'),
-                _buildTimeColumn('Total', '8:00'),
-                _buildTimeColumn('Absence', '--'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Requests Card
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ListTile(
-                title: const Text('Requests'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: AppColors.colorOrange,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        '1',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const Icon(Icons.chevron_right),
-                  ],
-                ),
-                onTap: () {
-                  // Navigate to requests
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Week Total
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Week total 8:00',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Show more details
-                  },
-                  child: const Text(
-                    'More',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+                _buildDateChip(DateFormat('MM/dd/yyyy').format(endDate)),
               ],
             ),
           ),
 
-          // Daily Time List
           Expanded(
-            child: ListView.builder(
-              itemCount: 7,
-              itemBuilder: (context, index) {
-                final date = DateTime.now().subtract(Duration(days: index));
-                return _buildDayTimeCard(date);
-              },
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(BauhausDesign.space6),
+              child: Column(
+                children: [
+                  // Time Summary
+                  BauhausCard(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildTimeColumn(
+                            AppLocalizations.of(context)!.regularLabel, '8:00'),
+                        _buildTimeColumn(
+                            AppLocalizations.of(context)!.otLabel, '--'),
+                        _buildTimeColumn(
+                            AppLocalizations.of(context)!.totalLabel, '8:00'),
+                        _buildTimeColumn(
+                            AppLocalizations.of(context)!.absenceLabel, '--'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: BauhausDesign.space4),
+
+                  // Requests Card
+                  BauhausActionTile(
+                    title: AppLocalizations.of(context)!.requestsLabel,
+                    icon: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: BauhausDesign.warning,
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusPill),
+                      ),
+                      child: Text(
+                        '1',
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
+                    onTap: () {
+                      // Navigate to requests
+                    },
+                    showChevron: true,
+                  ),
+
+                  const SizedBox(height: BauhausDesign.space2),
+
+                  // Week Total Header
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.weekTotalLabel('8:00'),
+                          style: BauhausDesign.getTextTheme(context)
+                              .labelLarge
+                              ?.copyWith(
+                                color: BauhausDesign.textMuted,
+                              ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // Show more details
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.moreLabel,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  color: BauhausDesign.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: BauhausDesign.space2),
+
+                  // Daily Time List
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 7,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: BauhausDesign.space3),
+                    itemBuilder: (context, index) {
+                      final date =
+                          DateTime.now().subtract(Duration(days: index));
+                      return _buildDayTimeCard(date);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDateChip(String date) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: BauhausDesign.backgroundLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusPill),
+        border: Border.all(color: BauhausDesign.neutral),
+      ),
+      child: Text(
+        date,
+        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }
@@ -180,18 +208,16 @@ class _TimesheetViewState extends State<TimesheetView> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 14,
-          ),
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: BauhausDesign.textMuted,
+              ),
         ),
         const SizedBox(height: 4),
         Text(
           time,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
         ),
       ],
     );
@@ -202,68 +228,62 @@ class _TimesheetViewState extends State<TimesheetView> {
     final dayFormat = DateFormat('dd');
     final weekdayFormat = DateFormat('EEE');
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              // Date Column
-              Container(
-                width: 50,
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                      color: isToday
-                          ? AppColors.colorBlue
-                          : AppColors.colorTransparent,
-                      width: 4,
-                    ),
-                  ),
+    return BauhausCard(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      child: Row(
+        children: [
+          // Date Column
+          Container(
+            width: 50,
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: isToday ? BauhausDesign.primary : Colors.transparent,
+                  width: 4,
                 ),
-                padding: const EdgeInsets.only(left: 8),
-                child: Column(
-                  children: [
-                    Text(
-                      dayFormat.format(date),
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+              ),
+            ),
+            padding: const EdgeInsets.only(left: 8),
+            child: Column(
+              children: [
+                Text(
+                  dayFormat.format(date),
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineSmall
+                      ?.copyWith(
                         color: isToday
-                            ? AppColors.colorBlue
-                            : AppColors.colorGrey500,
+                            ? BauhausDesign.primary
+                            : BauhausDesign.textDark,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    Text(
-                      weekdayFormat.format(date),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color:
-                            isToday ? AppColors.colorBlue : AppColors.colorGrey,
-                      ),
-                    ),
-                  ],
                 ),
-              ),
-              const SizedBox(width: 20),
-              // Time Details
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildTimeDetail('Regular', isToday ? '8:00' : '--'),
-                    _buildTimeDetail('OT', '--'),
-                    _buildTimeDetail('Total', isToday ? '8:00' : '--'),
-                  ],
+                Text(
+                  weekdayFormat.format(date),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: isToday
+                                ? BauhausDesign.primary
+                                : BauhausDesign.textMuted,
+                          ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          const SizedBox(width: BauhausDesign.space4),
+          // Time Details
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildTimeDetail(AppLocalizations.of(context)!.regularLabel,
+                    isToday ? '8:00' : '--'),
+                _buildTimeDetail(AppLocalizations.of(context)!.otLabel, '--'),
+                _buildTimeDetail(AppLocalizations.of(context)!.totalLabel,
+                    isToday ? '8:00' : '--'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -274,18 +294,19 @@ class _TimesheetViewState extends State<TimesheetView> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 14,
-          ),
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: BauhausDesign.textMuted,
+              ),
         ),
         const SizedBox(height: 4),
         Text(
           time,
-          style: TextStyle(
-            fontSize: 16,
-            color: time == '--' ? AppColors.colorBlue : AppColors.colorBlack,
-          ),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: time == '--'
+                    ? BauhausDesign.primary
+                    : BauhausDesign.textDark,
+              ),
         ),
       ],
     );

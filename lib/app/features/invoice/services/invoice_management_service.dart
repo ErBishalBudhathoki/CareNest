@@ -10,6 +10,7 @@ class InvoiceManagementService {
     int page = 1,
     int limit = 20,
     String? status,
+    String? invoiceType,
     String? search,
   }) async {
     try {
@@ -21,6 +22,10 @@ class InvoiceManagementService {
 
       if (status != null && status.isNotEmpty) {
         queryParams['status'] = status;
+      }
+
+      if (invoiceType != null && invoiceType.isNotEmpty) {
+        queryParams['invoiceType'] = invoiceType;
       }
 
       if (search != null && search.isNotEmpty) {
@@ -43,6 +48,33 @@ class InvoiceManagementService {
       return {
         'success': false,
         'message': 'Error fetching invoices: $e',
+      };
+    }
+  }
+
+  /// Update invoice payment status
+  Future<Map<String, dynamic>> updatePaymentStatus({
+    required String invoiceId,
+    required String organizationId,
+    required String status,
+    String? notes,
+    double? paidAmount,
+    String? updatedBy,
+  }) async {
+    try {
+      final result = await _apiMethod.updateInvoicePaymentStatus(
+        invoiceId,
+        organizationId,
+        status,
+        notes: notes,
+        paidAmount: paidAmount,
+        updatedBy: updatedBy,
+      );
+      return result;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error updating payment status: $e',
       };
     }
   }

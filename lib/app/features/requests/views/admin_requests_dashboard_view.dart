@@ -1,7 +1,9 @@
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/viewmodels/admin_requests_viewmodel.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -22,46 +24,44 @@ class _AdminRequestsDashboardViewState
   @override
   void initState() {
     super.initState();
-    debugPrint('AdminRequestsDashboardView: Initializing');
     _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
-    debugPrint('AdminRequestsDashboardView: Disposing');
     _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('AdminRequestsDashboardView: Building');
     // Listen for new notifications
     ref.listen(notificationProvider, (previous, next) {
-      // Cast to ensure type safety and satisfy linter
       final NotificationState currentState = next as NotificationState;
       final NotificationState? previousState = previous as NotificationState?;
 
       if (previousState != null &&
           currentState.notifications.length >
               previousState.notifications.length) {
-        // Check if the latest notification is related to a request
         if (currentState.notifications.isNotEmpty) {
           final latest = currentState.notifications.first;
           if (latest.data != null &&
               latest.data!['type'] == 'request_created') {
-            // Refresh the request list
-            ref.read(adminRequestsViewModelProvider.notifier).fetchRequests();
+            try {
+              ref.read(adminRequestsViewModelProvider.notifier).fetchRequests();
+            } catch (e) {
+              debugPrint('Error fetching requests in listener: $e');
+            }
 
-            // Show a snackbar
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('New Request: ${latest.title}'),
+                backgroundColor: BauhausDesign.primary,
                 action: SnackBarAction(
                   label: 'View',
+                  textColor: BauhausDesign.surfaceWhite,
                   onPressed: () {
-                    // If we are already on this screen, just switch to Pending tab if needed
-                    _tabController.animateTo(0); // Switch to Pending
+                    _tabController.animateTo(0);
                   },
                 ),
               ),
@@ -74,32 +74,103 @@ class _AdminRequestsDashboardViewState
     final requestsState = ref.watch(adminRequestsViewModelProvider);
 
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: const Text('Requests Dashboard'),
-        backgroundColor: AppColors.colorPrimary,
-        foregroundColor: Colors.white,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          indicatorColor: AppColors.colorAccent,
-          tabs: const [
-            Tab(text: 'Pending'),
-            Tab(text: 'Approved'),
-            Tab(text: 'Declined'),
-          ],
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: BauhausIconButton(
+            icon: Icons.arrow_back,
+            onPressed: () => Navigator.of(context).pop(),
+            isSmall: true,
+            variant: BauhausActionVariant.neutral,
+          ),
+        ),
+        title: Text(
+          AppLocalizations.of(context)!.requestsDashboardTitle,
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: BauhausIconButton(
+              icon: Icons.refresh,
+              onPressed: () {
+                try {
+                  ref
+                      .read(adminRequestsViewModelProvider.notifier)
+                      .fetchRequests();
+                } catch (e) {
+                  debugPrint('Error refreshing requests: $e');
+                }
+              },
+              isSmall: true,
+              variant: BauhausActionVariant.neutral,
+            ),
+          ),
+        ],
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space4,
+                vertical: BauhausDesign.space2),
+            child: Container(
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceWhite,
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                border: Border.all(color: BauhausDesign.neutral, width: 2.0),
+                boxShadow: const [BauhausDesign.shadowHardXs],
+              ),
+              child: TabBar(
+                controller: _tabController,
+                labelColor: BauhausDesign.textDark,
+                unselectedLabelColor: BauhausDesign.neutral,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                indicator: BoxDecoration(
+                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                ),
+                indicatorPadding: const EdgeInsets.all(4),
+                labelStyle:
+                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                unselectedLabelStyle:
+                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                tabs: [
+                  Tab(text: AppLocalizations.of(context)!.pendingTab),
+                  Tab(text: AppLocalizations.of(context)!.approvedTab),
+                  Tab(text: AppLocalizations.of(context)!.declinedTab),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
       body: requestsState.when(
         data: (requests) {
           final pending = requests
-              .where((r) => r.status == RequestStatus.pending || r.status == RequestStatus.pendingLocal)
+              .where((r) =>
+                  r.status == RequestStatus.pending ||
+                  r.status == RequestStatus.claimed)
               .toList();
           final approved = requests
               .where((r) => r.status == RequestStatus.approved)
               .toList();
           final declined = requests
-              .where((r) => r.status == RequestStatus.rejected)
+              .where((r) => r.status == RequestStatus.declined)
               .toList();
 
           return TabBarView(
@@ -111,91 +182,179 @@ class _AdminRequestsDashboardViewState
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ref.read(adminRequestsViewModelProvider.notifier).fetchRequests();
-        },
-        child: const Icon(Icons.refresh),
+        loading: () => const Center(
+            child: CircularProgressIndicator(color: BauhausDesign.primary)),
+        error: (e, st) => Center(
+            child: Text('Error: $e',
+                style: BauhausDesign.getTextTheme(context)
+                    .bodyMedium
+                    ?.copyWith(color: BauhausDesign.error))),
       ),
     );
   }
 
   Widget _buildRequestList(List<RequestModel> requests, bool showActions) {
     if (requests.isEmpty) {
-      return const Center(child: Text('No requests found'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BauhausEmptyState(
+              title: "No requests found",
+              icon: Icons.inbox_outlined,
+            ),
+            const SizedBox(height: BauhausDesign.space4),
+          ],
+        ),
+      );
     }
 
     return ListView.builder(
       itemCount: requests.length,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
       itemBuilder: (context, index) {
         final request = requests[index];
-        return Card(
-          elevation: 2,
-          margin: const EdgeInsets.only(bottom: 12),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+        return Padding(
+          padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          child: BauhausCard(
+            padding: EdgeInsets.zero,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      request.type,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: AppColors.colorPrimary,
+                // Header bar
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.neutral.withOpacity(0.05),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(BauhausDesign.radiusMd - 1),
+                      topRight: Radius.circular(BauhausDesign.radiusMd - 1),
+                    ),
+                    border: const Border(
+                      bottom: BorderSide(
+                        color: BauhausDesign.neutral,
+                        width: 1.5,
                       ),
-                    ),
-                    Text(
-                      request.createdAt != null
-                          ? DateFormat('MMM d, y').format(request.createdAt!)
-                          : '',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text('User: ${request.userId}'), // Should ideally show name
-                const SizedBox(height: 8),
-                _buildDetails(request),
-                if (request.note != null && request.note!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      'Note: ${request.note}',
-                      style: const TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
-                if (showActions) ...[
-                  const Divider(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
-                        onPressed: () => _handleAction(request, 'Declined'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppColors.error,
-                        ),
-                        child: const Text('Decline'),
+                      BauhausChip(
+                        label: request.type.toUpperCase(),
+                        isSmall: true,
+                        variant: BauhausChipVariant.primary,
                       ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () => _handleAction(request, 'Approved'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.colorPrimary,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Approve'),
+                      Text(
+                        request.createdAt != null
+                            ? DateFormat('MMM d, y').format(request.createdAt!)
+                            : '',
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
-                ],
+                ),
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(BauhausDesign.space4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.person,
+                              size: 16, color: BauhausDesign.textMuted),
+                          const SizedBox(width: BauhausDesign.space2),
+                          Text(
+                            '${AppLocalizations.of(context)!.userLabelCaps} ${request.createdBy ?? request.userId}',
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(
+                                  color: BauhausDesign.textDark,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: BauhausDesign.space3),
+                      _buildDetails(request),
+                      if (request.note != null && request.note!.isNotEmpty)
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(top: BauhausDesign.space3),
+                          child: Container(
+                            padding: const EdgeInsets.all(BauhausDesign.space2),
+                            decoration: BoxDecoration(
+                              color: BauhausDesign.neutral.withOpacity(0.05),
+                              borderRadius:
+                                  BorderRadius.circular(BauhausDesign.radiusSm),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.note_outlined,
+                                    size: 14, color: BauhausDesign.textMuted),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    request.note!,
+                                    style: BauhausDesign.getTextTheme(context)
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: BauhausDesign.textMuted,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (showActions) ...[
+                        const SizedBox(height: BauhausDesign.space4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            BauhausActionButton(
+                              text: AppLocalizations.of(context)!.declineButton,
+                              onPressed: () =>
+                                  _handleAction(request, 'Declined'),
+                              variant: BauhausActionVariant.danger,
+                              isSmall: true,
+                              isOutlined: true,
+                            ),
+                            const SizedBox(width: BauhausDesign.space3),
+                            if (request.type == 'SHIFT_SWAP_OFFER' &&
+                                (request.details['claimantEmail'] == null ||
+                                    request.details['claimantEmail']
+                                        .toString()
+                                        .isEmpty))
+                              BauhausChip(
+                                label: "WAITING FOR CLAIM",
+                                variant: BauhausChipVariant.neutral,
+                                isSmall: true,
+                              )
+                            else
+                              BauhausActionButton(
+                                text:
+                                    AppLocalizations.of(context)!.approveButton,
+                                onPressed: () =>
+                                    _handleAction(request, 'Approved'),
+                                variant: BauhausActionVariant.success,
+                                isSmall: true,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -205,7 +364,6 @@ class _AdminRequestsDashboardViewState
   }
 
   Widget _buildDetails(RequestModel request) {
-    // Custom display based on request type
     if (request.type == 'Time Off') {
       final startsStr =
           request.details['starts'] ?? request.details['startDate'];
@@ -215,27 +373,27 @@ class _AdminRequestsDashboardViewState
       String from = startsStr ?? '';
       String to = endsStr ?? '';
 
-      if (startsStr != null) {
-        try {
+      try {
+        if (startsStr != null) {
           from = DateFormat('MMM d, y').format(DateTime.parse(startsStr));
-        } catch (e) {
-          // Keep original string if parse fails
         }
-      }
-      if (endsStr != null) {
-        try {
+        if (endsStr != null) {
           to = DateFormat('MMM d, y').format(DateTime.parse(endsStr));
-        } catch (e) {
-          // Keep original string if parse fails
         }
+      } catch (e) {
+        // Keep original
       }
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('From: $from'),
-          Text('To: $to'),
-          if (type != null) Text('Type: $type'),
+          _buildDetailRow(AppLocalizations.of(context)!.fromLabelCaps, from),
+          const SizedBox(height: 4),
+          _buildDetailRow(AppLocalizations.of(context)!.toLabelCaps, to),
+          if (type != null) ...[
+            const SizedBox(height: 4),
+            _buildDetailRow(AppLocalizations.of(context)!.typeLabelCaps, type),
+          ],
         ],
       );
     } else if (request.type == 'Shift') {
@@ -258,13 +416,11 @@ class _AdminRequestsDashboardViewState
             final endDt = DateTime.parse(endsStr);
             endTime = DateFormat('h:mm a').format(endDt);
           } else if (request.details['endTime'] != null) {
-            // Legacy format fallback
             endTime = request.details['endTime'];
           }
 
           timeRange = '$startTime - $endTime';
         } catch (e) {
-          // Fallback for legacy
           if (request.details['date'] != null) {
             date = request.details['date'];
           }
@@ -280,58 +436,220 @@ class _AdminRequestsDashboardViewState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (job != null)
-            Text('Job: $job',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          if (date.isNotEmpty) Text('Date: $date'),
-          if (timeRange.isNotEmpty) Text('Time: $timeRange'),
+            _buildDetailRow(AppLocalizations.of(context)!.jobLabelCaps, job),
+          if (date.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            _buildDetailRow(AppLocalizations.of(context)!.dateLabelCaps, date),
+          ],
+          if (timeRange.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            _buildDetailRow(
+                AppLocalizations.of(context)!.timeLabelCaps, timeRange),
+          ],
+        ],
+      );
+    } else if (request.type == 'SHIFT_SWAP_OFFER') {
+      final dateStr = request.details['date'];
+      final start = request.details['startTime'];
+      final end = request.details['endTime'];
+      final client = request.details['clientName'];
+      final claimantName = request.details['claimantName'];
+      final claimantEmail = request.details['claimantEmail'];
+
+      String formattedDate = '';
+      if (dateStr != null) {
+        try {
+          formattedDate =
+              DateFormat('MMM d, y').format(DateTime.parse(dateStr));
+        } catch (e) {
+          formattedDate = dateStr;
+        }
+      }
+
+      String displayClaimant = claimantName ?? claimantEmail ?? 'Unknown';
+      if (claimantName != null &&
+          claimantName.toLowerCase() == 'you' &&
+          claimantEmail != null) {
+        displayClaimant = claimantEmail;
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (client != null) _buildDetailRow("CLIENT", client),
+          if (formattedDate.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            _buildDetailRow(
+                AppLocalizations.of(context)!.dateLabelCaps, formattedDate),
+          ],
+          if (start != null && end != null) ...[
+            const SizedBox(height: 4),
+            _buildDetailRow(
+                AppLocalizations.of(context)!.timeLabelCaps, '$start - $end'),
+          ],
+          if (claimantName != null || claimantEmail != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.person_pin,
+                    size: 16, color: BauhausDesign.accent),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "CLAIMED BY",
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                                color: BauhausDesign.textMuted,
+                                fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        displayClaimant,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(color: BauhausDesign.textDark),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ]
         ],
       );
     }
-    return Text(request.details.toString());
+    return Text(
+      request.details.toString(),
+      style: BauhausDesign.getTextTheme(context).bodyMedium,
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space2),
+        Expanded(
+          child: Text(
+            value,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: BauhausDesign.textDark,
+                ),
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _handleAction(RequestModel request, String status) async {
     if (status == 'Declined') {
-      // Show dialog for reason
       final reasonController = TextEditingController();
       final confirm = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Decline Request'),
-          content: TextField(
-            controller: reasonController,
-            decoration: const InputDecoration(
-              labelText: 'Reason (optional)',
-              hintText: 'Enter reason for declining',
+        builder: (dialogContext) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: BauhausCard(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Text(
+                    "Decline Request",
+                    style: BauhausDesign.getTextTheme(context)
+                        .titleMedium
+                        ?.copyWith(
+                          color: BauhausDesign.error,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                BauhausTextField(
+                  controller: reasonController,
+                  label: "Reason",
+                  hintText: "Enter reason for cancellation",
+                  maxLines: 3,
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    BauhausActionButton(
+                      text: "Cancel",
+                      variant: BauhausActionVariant.neutral,
+                      isOutlined: true,
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                    ),
+                    const SizedBox(width: BauhausDesign.space3),
+                    BauhausActionButton(
+                      text: "Confirm",
+                      variant: BauhausActionVariant.danger,
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Decline'),
-            ),
-          ],
         ),
       );
 
-      if (confirm == true) {
-        if (!mounted) return;
+      if (confirm != true) return;
+
+      try {
         await ref
             .read(adminRequestsViewModelProvider.notifier)
-            .updateRequestStatus(
-              request.id!,
-              status,
-              reason: reasonController.text,
-            );
+            .updateRequestStatus(request.id!, 'rejected',
+                reason: reasonController.text);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Request declined'),
+              backgroundColor: BauhausDesign.error,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
       }
     } else {
-      await ref
-          .read(adminRequestsViewModelProvider.notifier)
-          .updateRequestStatus(request.id!, status);
+      try {
+        await ref
+            .read(adminRequestsViewModelProvider.notifier)
+            .updateRequestStatus(request.id!, 'approved');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Request approved'),
+              backgroundColor: BauhausDesign.success,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      }
     }
   }
 }

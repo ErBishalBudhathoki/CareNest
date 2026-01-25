@@ -1,12 +1,14 @@
 import 'dart:async';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/business_name_dropdown_widget.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
+
 import 'package:carenest/app/shared/widgets/text_field_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class AddClientDetails extends ConsumerStatefulWidget {
   const AddClientDetails({super.key});
@@ -57,108 +59,103 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
     final size = MediaQuery.of(context).size;
     final textVisibleNotifier = ValueNotifier<bool>(false);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: ModernSaasDesign.surface,
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: ModernSaasDesign.surface,
-        foregroundColor: ModernSaasDesign.textPrimary,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
         iconTheme: IconThemeData(
-          color: ModernSaasDesign.textPrimary,
+          color: BauhausDesign.surfaceWhite,
         ),
         title: Text(
-          'Add Client',
-          style: ModernSaasDesign.headlineSmall.copyWith(
-            fontWeight: FontWeight.w600,
-            color: ModernSaasDesign.textPrimary,
-          ),
+          l10n.addClient,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: BauhausDesign.surfaceWhite,
+              ),
         ),
         centerTitle: true,
       ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(ModernSaasDesign.space6),
+          padding: EdgeInsets.all(BauhausDesign.space6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Section
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(ModernSaasDesign.space6),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      ModernSaasDesign.primary.withValues(alpha: 0.1),
-                      ModernSaasDesign.primary.withValues(alpha: 0.05),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(ModernSaasDesign.radius2xl),
-                ),
+              BauhausCard(
+                padding: EdgeInsets.all(BauhausDesign.space6),
                 child: Column(
                   children: [
                     Icon(
                       Icons.person_add_rounded,
                       size: 48,
-                      color: ModernSaasDesign.primary,
+                      color: BauhausDesign.primary,
                     ),
-                    SizedBox(height: ModernSaasDesign.space3),
+                    SizedBox(height: BauhausDesign.space3),
                     Text(
-                      'New Client',
-                      style: ModernSaasDesign.headlineSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: ModernSaasDesign.textPrimary,
-                      ),
+                      l10n.newClientTitle,
+                      style: BauhausDesign.getTextTheme(context)
+                          .headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.primary,
+                          ),
                     ),
-                    SizedBox(height: ModernSaasDesign.space2),
+                    SizedBox(height: BauhausDesign.space2),
                     Text(
-                      'Add client information to get started',
-                      style: ModernSaasDesign.bodyMedium.copyWith(
-                        color: ModernSaasDesign.textSecondary,
-                      ),
+                      l10n.addClientDesc,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: ModernSaasDesign.space8),
+              SizedBox(height: BauhausDesign.space8),
 
               // Personal Information Section
               _buildSectionHeader(
-                  'Personal Information', Icons.person_rounded, theme),
-              SizedBox(height: ModernSaasDesign.space4),
-              _buildPersonalInfoSection(textVisibleNotifier, size),
-              SizedBox(height: ModernSaasDesign.space8),
+                  context, l10n.personalInfoSection, Icons.person_rounded),
+              SizedBox(height: BauhausDesign.space4),
+              _buildPersonalInfoSection(
+                  context, textVisibleNotifier, size, l10n),
+              SizedBox(height: BauhausDesign.space8),
 
               // Contact Information Section
               _buildSectionHeader(
-                  'Contact Information', Icons.contact_mail_rounded, theme),
-              SizedBox(height: ModernSaasDesign.space4),
-              _buildContactInfoSection(textVisibleNotifier, size),
-              SizedBox(height: ModernSaasDesign.space8),
+                  context, l10n.contactInformation, Icons.contact_mail_rounded),
+              SizedBox(height: BauhausDesign.space4),
+              _buildContactInfoSection(
+                  context, textVisibleNotifier, size, l10n),
+              SizedBox(height: BauhausDesign.space8),
 
               // Address Information Section
               _buildSectionHeader(
-                  'Address Information', Icons.location_on_rounded, theme),
-              SizedBox(height: ModernSaasDesign.space4),
-              _buildAddressInfoSection(textVisibleNotifier, size),
-              SizedBox(height: ModernSaasDesign.space8),
+                  context, l10n.addressInformation, Icons.location_on_rounded),
+              SizedBox(height: BauhausDesign.space4),
+              _buildAddressInfoSection(
+                  context, textVisibleNotifier, size, l10n),
+              SizedBox(height: BauhausDesign.space8),
 
               // Business Information Section
               _buildSectionHeader(
-                  'Business Information', Icons.business_rounded, theme),
-              SizedBox(height: ModernSaasDesign.space4),
-              _buildBusinessInfoSection(),
-              SizedBox(height: ModernSaasDesign.space10),
+                  context, l10n.businessInformation, Icons.business_rounded),
+              SizedBox(height: BauhausDesign.space4),
+              _buildBusinessInfoSection(context),
+              SizedBox(height: BauhausDesign.space10),
 
               // Submit Button
-              _buildSubmitButton(theme),
-              SizedBox(height: ModernSaasDesign.space6),
+              _buildSubmitButton(context, theme, l10n),
+              SizedBox(height: BauhausDesign.space6),
             ],
           ),
         ),
@@ -167,28 +164,29 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
   }
 
   /// Builds a section header with icon and title
-  Widget _buildSectionHeader(String title, IconData icon, ThemeData theme) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, IconData icon) {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(ModernSaasDesign.space2),
+          padding: EdgeInsets.all(BauhausDesign.space2),
           decoration: BoxDecoration(
-            color: ModernSaasDesign.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(ModernSaasDesign.radiusMd),
+            color: BauhausDesign.primary,
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           ),
           child: Icon(
             icon,
             size: 20,
-            color: ModernSaasDesign.primary,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
-        SizedBox(width: ModernSaasDesign.space3),
+        SizedBox(width: BauhausDesign.space3),
         Text(
           title,
-          style: ModernSaasDesign.bodyLarge.copyWith(
-            fontWeight: FontWeight.w600,
-            color: ModernSaasDesign.textPrimary,
-          ),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: BauhausDesign.textDark,
+              ),
         ),
       ],
     );
@@ -196,25 +194,21 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
 
   /// Builds the personal information section
   Widget _buildPersonalInfoSection(
-      ValueNotifier<bool> textVisibleNotifier, Size size) {
-    return Container(
-      padding: EdgeInsets.all(ModernSaasDesign.space5),
-      decoration: BoxDecoration(
-        color: ModernSaasDesign.surfaceVariant,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusXl),
-        border: Border.all(
-          color: ModernSaasDesign.border,
-        ),
-      ),
+      BuildContext context,
+      ValueNotifier<bool> textVisibleNotifier,
+      Size size,
+      AppLocalizations l10n) {
+    return BauhausCard(
+      padding: EdgeInsets.all(BauhausDesign.space5),
       child: Column(
         children: [
           TextFieldWidget(
             suffixIconClickable: false,
             obscureTextNotifier: textVisibleNotifier,
-            hintText: 'First Name',
+            hintText: l10n.firstNameHint,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter first name';
+                return l10n.firstNameRequired;
               }
               return null;
             },
@@ -226,14 +220,14 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
               _clientFirstNameController.text = value!;
             },
           ),
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: BauhausDesign.space4),
           TextFieldWidget(
             suffixIconClickable: false,
             obscureTextNotifier: textVisibleNotifier,
-            hintText: 'Last Name',
+            hintText: l10n.lastNameHint,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter last name';
+                return l10n.lastNameRequired;
               }
               return null;
             },
@@ -252,29 +246,25 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
 
   /// Builds the contact information section
   Widget _buildContactInfoSection(
-      ValueNotifier<bool> textVisibleNotifier, Size size) {
-    return Container(
-      padding: EdgeInsets.all(ModernSaasDesign.space5),
-      decoration: BoxDecoration(
-        color: ModernSaasDesign.surfaceVariant,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusXl),
-        border: Border.all(
-          color: ModernSaasDesign.border,
-        ),
-      ),
+      BuildContext context,
+      ValueNotifier<bool> textVisibleNotifier,
+      Size size,
+      AppLocalizations l10n) {
+    return BauhausCard(
+      padding: EdgeInsets.all(BauhausDesign.space5),
       child: Column(
         children: [
           TextFieldWidget(
             suffixIconClickable: false,
             obscureTextNotifier: textVisibleNotifier,
-            hintText: 'Email Address',
+            hintText: l10n.emailAddress,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter email address';
+                return l10n.emailRequired;
               }
               if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                   .hasMatch(value)) {
-                return 'Please enter a valid email address';
+                return l10n.emailInvalid;
               }
               return null;
             },
@@ -286,14 +276,14 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
               _clientEmailController.text = value!;
             },
           ),
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: BauhausDesign.space4),
           TextFieldWidget(
             suffixIconClickable: false,
             obscureTextNotifier: textVisibleNotifier,
-            hintText: 'Phone Number',
+            hintText: l10n.phoneNumber,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter phone number';
+                return l10n.phoneRequired;
               }
               return null;
             },
@@ -312,25 +302,21 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
 
   /// Builds the address information section
   Widget _buildAddressInfoSection(
-      ValueNotifier<bool> textVisibleNotifier, Size size) {
-    return Container(
-      padding: EdgeInsets.all(ModernSaasDesign.space5),
-      decoration: BoxDecoration(
-        color: ModernSaasDesign.surfaceVariant,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusXl),
-        border: Border.all(
-          color: ModernSaasDesign.border,
-        ),
-      ),
+      BuildContext context,
+      ValueNotifier<bool> textVisibleNotifier,
+      Size size,
+      AppLocalizations l10n) {
+    return BauhausCard(
+      padding: EdgeInsets.all(BauhausDesign.space5),
       child: Column(
         children: [
           TextFieldWidget(
             suffixIconClickable: false,
             obscureTextNotifier: textVisibleNotifier,
-            hintText: 'Street Address',
+            hintText: l10n.streetAddressHint,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter street address';
+                return l10n.streetAddressRequired;
               }
               return null;
             },
@@ -342,7 +328,7 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
               _clientAddressController.text = value!;
             },
           ),
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: BauhausDesign.space4),
           Row(
             children: [
               Expanded(
@@ -350,10 +336,10 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                 child: TextFieldWidget(
                   suffixIconClickable: false,
                   obscureTextNotifier: textVisibleNotifier,
-                  hintText: 'City',
+                  hintText: l10n.city,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter city';
+                      return l10n.cityRequired;
                     }
                     return null;
                   },
@@ -366,15 +352,15 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                   },
                 ),
               ),
-              SizedBox(width: ModernSaasDesign.space3),
+              SizedBox(width: BauhausDesign.space3),
               Expanded(
                 child: TextFieldWidget(
                   suffixIconClickable: false,
                   obscureTextNotifier: textVisibleNotifier,
-                  hintText: 'State',
+                  hintText: l10n.state,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter state';
+                      return l10n.stateRequired;
                     }
                     return null;
                   },
@@ -389,14 +375,14 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
               ),
             ],
           ),
-          SizedBox(height: ModernSaasDesign.space4),
+          SizedBox(height: BauhausDesign.space4),
           TextFieldWidget(
             suffixIconClickable: false,
             obscureTextNotifier: textVisibleNotifier,
-            hintText: 'ZIP Code',
+            hintText: l10n.zipCodeHint,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter ZIP code';
+                return l10n.zipCodeRequired;
               }
               return null;
             },
@@ -414,16 +400,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
   }
 
   /// Builds the business information section
-  Widget _buildBusinessInfoSection() {
-    return Container(
-      padding: EdgeInsets.all(ModernSaasDesign.space5),
-      decoration: BoxDecoration(
-        color: ModernSaasDesign.surfaceVariant,
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusXl),
-        border: Border.all(
-          color: ModernSaasDesign.border,
-        ),
-      ),
+  Widget _buildBusinessInfoSection(BuildContext context) {
+    return BauhausCard(
+      padding: EdgeInsets.all(BauhausDesign.space5),
       child: BusinessNameDropdown(
         onChanged: (selectedValue) {
           _clientBusinessNameController.text = selectedValue;
@@ -434,52 +413,40 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
   }
 
   /// Builds the submit button with modern styling
-  Widget _buildSubmitButton(ThemeData theme) {
-    return Container(
+  Widget _buildSubmitButton(
+      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    return SizedBox(
       width: double.infinity,
-      height: ModernSaasDesign.space12 + ModernSaasDesign.space2,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(ModernSaasDesign.radiusXl),
-        gradient: LinearGradient(
-          colors: [
-            ModernSaasDesign.primary,
-            ModernSaasDesign.primary.withValues(alpha: 0.8),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: ModernSaasDesign.primary.withValues(alpha: 0.3),
-            blurRadius: ModernSaasDesign.space2,
-            offset: const Offset(0, ModernSaasDesign.space1),
-          ),
-        ],
-      ),
-      child: ButtonWidget(
-        buttonText: 'Add Client',
-        buttonColor: ModernSaasDesign.primary,
-        textColor: ModernSaasDesign.surface,
+      child: BauhausActionButton(
+        text: l10n.addClientButton,
+        variant: BauhausActionVariant.primary,
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text('Add Client'),
-                  content:
-                      const Text('Are you sure you want to add this client?'),
+                  backgroundColor: BauhausDesign.surfaceWhite,
+                  title: Text(l10n.addClient,
+                      style:
+                          BauhausDesign.getTextTheme(context).headlineMedium),
+                  content: Text(l10n.confirmAddClient,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium),
                   actions: [
-                    TextButton(
+                    BauhausActionButton(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: const Text('Cancel'),
+                      text: l10n.cancelButton,
+                      variant: BauhausActionVariant.ghost,
                     ),
-                    TextButton(
+                    BauhausActionButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
                         await _addClient();
                       },
-                      child: const Text('Add Client'),
+                      text: l10n.addClientButton,
+                      variant: BauhausActionVariant.primary,
                     ),
                   ],
                 );
@@ -492,6 +459,7 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
   }
 
   Future<void> _addClient() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final apiMethod = ref.read(apiMethodProvider);
       final sharedPreferencesUtils = ref.read(sharedPreferencesProvider);
@@ -525,9 +493,13 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
         if (mounted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Client added successfully!'),
-              backgroundColor: ModernSaasDesign.success,
+            SnackBar(
+              content: Text(l10n.clientAddedSuccess),
+              backgroundColor: BauhausDesign.success,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              ),
             ),
           );
         }
@@ -539,9 +511,13 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
         // Show error message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to add client. Please try again.'),
-              backgroundColor: ModernSaasDesign.error,
+            SnackBar(
+              content: Text(l10n.clientAddFailed),
+              backgroundColor: BauhausDesign.error,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              ),
             ),
           );
         }
@@ -552,9 +528,13 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
-            backgroundColor: ModernSaasDesign.error,
+          SnackBar(
+            content: Text(l10n.errorGenericMessage),
+            backgroundColor: BauhausDesign.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            ),
           ),
         );
       }

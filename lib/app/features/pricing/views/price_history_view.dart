@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -96,19 +97,19 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     },
   ];
 
-  final List<String> _timeRanges = [
-    '7 days',
-    '30 days',
-    '90 days',
-    '6 months',
-    '1 year'
-  ];
-  final List<String> _categories = [
-    'All',
-    'Core Support',
-    'Capacity Building',
-    'Capital Support'
-  ];
+  List<String> _getTimeRanges(BuildContext context) => [
+        AppLocalizations.of(context)!.timeRange7Days,
+        AppLocalizations.of(context)!.timeRange30Days,
+        AppLocalizations.of(context)!.timeRange90Days,
+        AppLocalizations.of(context)!.timeRange6Months,
+        AppLocalizations.of(context)!.timeRange1Year,
+      ];
+  List<String> _getCategories(BuildContext context) => [
+        AppLocalizations.of(context)!.allCategories,
+        AppLocalizations.of(context)!.coreSupport,
+        AppLocalizations.of(context)!.capacityBuilding,
+        AppLocalizations.of(context)!.capitalSupport,
+      ];
 
   @override
   void initState() {
@@ -180,7 +181,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Price History',
+                                AppLocalizations.of(context)!.priceHistoryTitle,
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 24 : 28,
                                   fontWeight: FontWeight.bold,
@@ -192,7 +193,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                               if (!isSmallScreen) ...[
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Track pricing changes over time',
+                                  AppLocalizations.of(context)!
+                                      .trackPricingChanges,
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey[600],
@@ -224,9 +226,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                                   ),
                                 ),
                                 const SizedBox(width: 6),
-                                const Text(
-                                  'System Active',
-                                  style: TextStyle(
+                                Text(
+                                  AppLocalizations.of(context)!.systemActive,
+                                  style: const TextStyle(
                                     color: Color(0xFF10B981),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -243,7 +245,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                         children: [
                           Expanded(
                             child: Text(
-                              'Track pricing changes over time',
+                              AppLocalizations.of(context)!.trackPricingChanges,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -272,9 +274,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                                   ),
                                 ),
                                 const SizedBox(width: 4),
-                                const Text(
-                                  'System Active',
-                                  style: TextStyle(
+                                Text(
+                                  AppLocalizations.of(context)!.systemActive,
+                                  style: const TextStyle(
                                     color: Color(0xFF10B981),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w500,
@@ -361,7 +363,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           SizedBox(
             width: 160,
             child: _buildStatCard(
-              'Total Changes',
+              AppLocalizations.of(context)!.totalChanges,
               '$totalChanges',
               Icons.timeline,
               AppColors.colorBlue,
@@ -372,7 +374,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           SizedBox(
             width: 160,
             child: _buildStatCard(
-              'Price Increases',
+              AppLocalizations.of(context)!.priceIncreases,
               '$increases',
               Icons.trending_up,
               AppColors.colorGreen,
@@ -383,7 +385,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           SizedBox(
             width: 160,
             child: _buildStatCard(
-              'Price Decreases',
+              AppLocalizations.of(context)!.priceDecreases,
               '$decreases',
               Icons.trending_down,
               AppColors.colorRed,
@@ -394,7 +396,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           SizedBox(
             width: 160,
             child: _buildStatCard(
-              'Avg Change',
+              AppLocalizations.of(context)!.avgChange,
               '${avgChange.toStringAsFixed(1)}%',
               Icons.percent,
               AppColors.colorPurple,
@@ -494,10 +496,10 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             ),
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.transparent,
-            tabs: const [
-              Tab(text: 'Price Changes'),
-              Tab(text: 'Trends'),
-              Tab(text: 'Analytics'),
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.tabPriceChanges),
+              Tab(text: AppLocalizations.of(context)!.tabTrends),
+              Tab(text: AppLocalizations.of(context)!.tabAnalytics),
             ],
           ),
         ),
@@ -537,7 +539,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       final searchField = TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: 'Search price history...',
+          hintText: AppLocalizations.of(context)!.searchHistoryHint,
           hintStyle:
               const TextStyle(color: AppColors.colorGrey400, fontSize: 14),
           prefixIcon: const Icon(Icons.search, color: AppColors.colorGrey400),
@@ -567,7 +569,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         isExpanded: true,
         isDense: true,
         decoration: InputDecoration(
-          labelText: 'Time Range',
+          labelText: AppLocalizations.of(context)!.timeRangeLabel,
           labelStyle:
               const TextStyle(color: AppColors.colorGrey600, fontSize: 14),
           filled: true,
@@ -588,9 +590,21 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         ),
-        items: _timeRanges.map((range) {
+        items: _getTimeRanges(context).map((range) {
           return DropdownMenuItem(
-            value: range,
+            value: range == AppLocalizations.of(context)!.timeRange7Days
+                ? '7 days'
+                : range == AppLocalizations.of(context)!.timeRange30Days
+                    ? '30 days'
+                    : range == AppLocalizations.of(context)!.timeRange90Days
+                        ? '90 days'
+                        : range ==
+                                AppLocalizations.of(context)!.timeRange6Months
+                            ? '6 months'
+                            : range ==
+                                    AppLocalizations.of(context)!.timeRange1Year
+                                ? '1 year'
+                                : range,
             child: Text(
               range,
               overflow: TextOverflow.ellipsis,
@@ -607,7 +621,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         isExpanded: true,
         isDense: true,
         decoration: InputDecoration(
-          labelText: 'Category',
+          labelText: AppLocalizations.of(context)!.categoryLabel,
           labelStyle:
               const TextStyle(color: AppColors.colorGrey600, fontSize: 14),
           filled: true,
@@ -628,9 +642,18 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         ),
-        items: _categories.map((category) {
+        items: _getCategories(context).map((category) {
           return DropdownMenuItem(
-            value: category,
+            value: category == AppLocalizations.of(context)!.allCategories
+                ? 'All'
+                : category == AppLocalizations.of(context)!.coreSupport
+                    ? 'Core Support'
+                    : category == AppLocalizations.of(context)!.capacityBuilding
+                        ? 'Capacity Building'
+                        : category ==
+                                AppLocalizations.of(context)!.capitalSupport
+                            ? 'Capital Support'
+                            : category,
             child: Text(
               category,
               overflow: TextOverflow.ellipsis,
@@ -755,7 +778,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      history['status'],
+                      history['status'] == 'Active'
+                          ? AppLocalizations.of(context)!.statusActive
+                          : AppLocalizations.of(context)!.statusPending,
                       style: TextStyle(
                         color: history['status'] == 'Active'
                             ? Colors.green[700]
@@ -776,7 +801,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             children: [
               Expanded(
                 child: _buildPriceInfo(
-                  'Old Price',
+                  AppLocalizations.of(context)!.oldPrice,
                   '\$${history['oldPrice'].toStringAsFixed(2)}',
                   Colors.grey[600]!,
                 ),
@@ -786,7 +811,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
               const SizedBox(width: 16),
               Expanded(
                 child: _buildPriceInfo(
-                  'New Price',
+                  AppLocalizations.of(context)!.newPrice,
                   '\$${history['newPrice'].toStringAsFixed(2)}',
                   changeColor,
                 ),
@@ -794,7 +819,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
               const SizedBox(width: 24),
               Expanded(
                 child: _buildPriceInfo(
-                  'Change',
+                  AppLocalizations.of(context)!.changeLabel,
                   '${isIncrease ? '+' : ''}\$${history['changeAmount'].toStringAsFixed(2)}',
                   changeColor,
                 ),
@@ -802,7 +827,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
               const SizedBox(width: 16),
               Expanded(
                 child: _buildPriceInfo(
-                  'Percentage',
+                  AppLocalizations.of(context)!.percentage,
                   '${isIncrease ? '+' : ''}${history['changePercentage'].toStringAsFixed(1)}%',
                   changeColor,
                 ),
@@ -823,7 +848,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   children: [
                     Expanded(
                       child: Text(
-                        'Reason: ${history['reason']}',
+                        '${AppLocalizations.of(context)!.reasonLabel}: ${history['reason']}',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[700],
@@ -839,7 +864,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   children: [
                     Expanded(
                       child: Text(
-                        'Changed: ${history['changeDate']}',
+                        '${AppLocalizations.of(context)!.changeDateLabel}: ${history['changeDate']}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -851,7 +876,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        'Effective: ${history['effectiveDate']}',
+                        '${AppLocalizations.of(context)!.effectiveDateLabel}: ${history['effectiveDate']}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -864,7 +889,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        'By: ${history['changedBy']}',
+                        '${AppLocalizations.of(context)!.changedByLabel}: ${history['changedBy']}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -910,8 +935,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   }
 
   Widget _buildTrendsTab() {
-    return const Padding(
-      padding: EdgeInsets.all(24),
+    return Padding(
+      padding: const EdgeInsets.all(24),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -919,7 +944,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             Icon(Icons.trending_up, size: 64, color: Colors.grey),
             SizedBox(height: 16),
             Text(
-              'Price Trends',
+              AppLocalizations.of(context)!.priceTrendsTitle,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -928,7 +953,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             ),
             SizedBox(height: 8),
             Text(
-              'Visual charts and trends analysis',
+              AppLocalizations.of(context)!.visualChartsAndTrends,
               style: TextStyle(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -939,8 +964,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   }
 
   Widget _buildAnalyticsTab() {
-    return const Padding(
-      padding: EdgeInsets.all(24),
+    return Padding(
+      padding: const EdgeInsets.all(24),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -948,7 +973,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             Icon(Icons.analytics, size: 64, color: Colors.grey),
             SizedBox(height: 16),
             Text(
-              'Price Analytics',
+              AppLocalizations.of(context)!.priceAnalyticsTitle,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -957,7 +982,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             ),
             SizedBox(height: 8),
             Text(
-              'Detailed analytics and insights',
+              AppLocalizations.of(context)!.detailedAnalyticsInsights,
               style: TextStyle(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -976,12 +1001,12 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       setState(() {
         _isLoading = false;
       });
-      _showSnackBar('Data refreshed successfully');
+      _showSnackBar(AppLocalizations.of(context)!.dataRefreshedSuccess);
     });
   }
 
   void _exportHistory() {
-    _showSnackBar('Exporting price history to CSV...');
+    _showSnackBar(AppLocalizations.of(context)!.exportingHistory);
   }
 
   void _showSnackBar(String message) {

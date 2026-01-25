@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausActionCard extends StatelessWidget {
   final String title;
@@ -43,14 +42,14 @@ class BauhausActionCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(BauhausDesign.space4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(BauhausDesign.space2),
                       decoration: BoxDecoration(
                         color: baseColor.withOpacity(0.2), // Light tint
                         border: Border.all(
@@ -64,35 +63,36 @@ class BauhausActionCard extends StatelessWidget {
                         size: 24,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: BauhausDesign.space4),
                     Expanded(
                       child: Text(
                         title.toUpperCase(),
-                        style: GoogleFonts.oswald(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .titleLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textDark,
+                            ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: BauhausDesign.space4),
                 Text(
                   description,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: BauhausDesign.textDark,
-                    height: 1.5,
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: BauhausDesign.textDark,
+                            height: 1.5,
+                          ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: BauhausDesign.space5),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                      horizontal: BauhausDesign.space4,
+                      vertical: BauhausDesign.space2,
                     ),
                     decoration: BoxDecoration(
                       color: baseColor,
@@ -110,12 +110,13 @@ class BauhausActionCard extends StatelessWidget {
                     ),
                     child: Text(
                       actionLabel.toUpperCase(),
-                      style: GoogleFonts.oswald(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: BauhausDesign
-                            .surfaceLight, // White text on bold color
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign
+                                .surfaceWhite, // White text on bold color
+                          ),
                     ),
                   ),
                 ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausSliderThumbShape extends SliderComponentShape {
   final double thumbSize;

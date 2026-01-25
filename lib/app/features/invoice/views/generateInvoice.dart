@@ -1,5 +1,4 @@
 import 'package:carenest/app/features/invoice/domain/models/invoice_line_item.dart';
-import 'dart:io';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
@@ -10,8 +9,8 @@ import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:carenest/app/features/invoice/presentation/widgets/dynamic_line_item_entry.dart';
-import 'package:carenest/app/shared/design_system/modern_pricing_design_system.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class GenerateInvoice extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -43,6 +42,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   String _endDate = '';
   String _pdfPath = '';
   final double _taxRate = 0.0;
+  String _invoiceRecipientType = 'client'; // Default to client invoice
 
   final ApiMethod _apiMethod = ApiMethod();
   final NDISMatcher _ndisMatcher = NDISMatcher();
@@ -89,12 +89,14 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        backgroundColor: ModernPricingDesign.errorColor,
+        content: Text(message,
+            style: BauhausDesign.getTextTheme(context).bodyMedium
+                ?.copyWith(color: BauhausDesign.surfaceWhite)),
+        backgroundColor: BauhausDesign.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ModernPricingDesign.radiusMd)),
-        margin: const EdgeInsets.all(ModernPricingDesign.spacingMd),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd)),
+        margin: const EdgeInsets.all(BauhausDesign.space4),
         duration: const Duration(seconds: 4),
       ),
     );
@@ -216,43 +218,42 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   Widget _buildEmployeeSelectionDialog(List<Map<String, dynamic>> employees) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      child: ModernGradientCard(
-        gradientColors: const [Colors.white, Colors.white],
+      child: BauhausCard(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Select Employee', style: ModernPricingDesign.headingMd),
-            const SizedBox(height: ModernPricingDesign.spacingMd),
+            Text('Select Employee', style: BauhausDesign.getTextTheme(context).headlineMedium),
+            const SizedBox(height: BauhausDesign.space4),
             SizedBox(
               height: 300,
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: employees.length,
                 separatorBuilder: (_, __) => const Divider(
-                    height: 1, color: ModernPricingDesign.borderColor),
+                    height: 1, color: BauhausDesign.neutral),
                 itemBuilder: (context, index) {
                   final employee = employees[index];
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
                         '${employee['firstName']} ${employee['lastName']}',
-                        style: ModernPricingDesign.bodyMd
-                            .copyWith(fontWeight: FontWeight.w600)),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w600)),
                     subtitle: Text(employee['email'] ?? 'No email',
-                        style: ModernPricingDesign.bodySm.copyWith(
-                            color: ModernPricingDesign.textSecondary)),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: BauhausDesign.textMuted, fontSize: 12)),
                     onTap: () => Navigator.of(context).pop(employee),
                   );
                 },
               ),
             ),
-            const SizedBox(height: ModernPricingDesign.spacingMd),
+            const SizedBox(height: BauhausDesign.space4),
             Align(
               alignment: Alignment.centerRight,
-              child: ModernActionButton(
+              child: BauhausActionButton(
                 text: 'Cancel',
-                variant: ModernActionButtonVariant.ghost,
+                variant: BauhausActionVariant.ghost,
                 onPressed: () => Navigator.of(context).pop(null),
               ),
             ),
@@ -265,14 +266,13 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   Widget _buildClientSelectionDialog(List<Map<String, dynamic>> assignments) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      child: ModernGradientCard(
-        gradientColors: const [Colors.white, Colors.white],
+      child: BauhausCard(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Select Client', style: ModernPricingDesign.headingMd),
-            const SizedBox(height: ModernPricingDesign.spacingMd),
+            Text('Select Client', style: BauhausDesign.getTextTheme(context).headlineMedium),
+            const SizedBox(height: BauhausDesign.space4),
             SizedBox(
               height: 300,
               child: assignments.isEmpty
@@ -280,14 +280,14 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                       child: Text(
                           "No clients found assigned to the selected employee.",
                           textAlign: TextAlign.center,
-                          style: ModernPricingDesign.bodyMd.copyWith(
-                              color: ModernPricingDesign.textSecondary)),
+                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                              color: BauhausDesign.textMuted)),
                     )
                   : ListView.separated(
                       shrinkWrap: true,
                       itemCount: assignments.length,
                       separatorBuilder: (_, __) => const Divider(
-                          height: 1, color: ModernPricingDesign.borderColor),
+                          height: 1, color: BauhausDesign.neutral),
                       itemBuilder: (context, index) {
                         final assignment = assignments[index];
                         final details = (assignment['clientDetails']
@@ -299,23 +299,23 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                           contentPadding: EdgeInsets.zero,
                           title: Text(
                               '${details['clientFirstName'] ?? 'N/A'} ${details['clientLastName'] ?? 'N/A'}',
-                              style: ModernPricingDesign.bodyMd
-                                  .copyWith(fontWeight: FontWeight.w600)),
+                              style: BauhausDesign.getTextTheme(context).bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600)),
                           subtitle: Text(
                               details['clientEmail'] ?? 'No email provided',
-                              style: ModernPricingDesign.bodySm.copyWith(
-                                  color: ModernPricingDesign.textSecondary)),
+                              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                                  color: BauhausDesign.textMuted, fontSize: 12)),
                           onTap: () => Navigator.of(context).pop(assignment),
                         );
                       },
                     ),
             ),
-            const SizedBox(height: ModernPricingDesign.spacingMd),
+            const SizedBox(height: BauhausDesign.space4),
             Align(
               alignment: Alignment.centerRight,
-              child: ModernActionButton(
+              child: BauhausActionButton(
                 text: 'Cancel',
-                variant: ModernActionButtonVariant.ghost,
+                variant: BauhausActionVariant.ghost,
                 onPressed: () => Navigator.of(context).pop(null),
               ),
             ),
@@ -783,6 +783,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         photoDescription: '', // No photo description
         additionalAttachments: [], // No additional attachments in this view
         priceOverrides: null, // No price overrides in this view
+        invoiceType: _invoiceRecipientType,
       );
 
       if (!mounted) return;
@@ -795,21 +796,30 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         log.info("PDF generated successfully at $_pdfPath");
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: const Text('Invoice PDF generated! Tap again to view.'),
-            backgroundColor: ModernPricingDesign.successColor,
+            backgroundColor: BauhausDesign.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
                 borderRadius:
-                    BorderRadius.circular(ModernPricingDesign.radiusMd)),
-            margin: const EdgeInsets.all(ModernPricingDesign.spacingMd)));
+                    BorderRadius.circular(BauhausDesign.radiusMd)),
+            margin: const EdgeInsets.all(BauhausDesign.space4),
+            duration: const Duration(seconds: 4)));
       } else {
-        setState(() => _isLoading = false);
-        _showErrorSnackBar('No PDF was generated. Please check your data.');
+        setState(() {
+          _statusMessage = 'PDF generation returned no paths.';
+          _isLoading = false;
+        });
+        log.warning("PDF generation returned empty list.");
+        _showErrorSnackBar('PDF generation failed or yielded no file.');
       }
     } catch (e, s) {
-      log.severe("Error in _generateAndShowPdf", e, s);
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      _showErrorSnackBar('Error generating PDF: ${e.toString()}');
+      log.severe("Error generating PDF", e, s);
+      if (mounted) {
+        setState(() {
+          _statusMessage = 'Error generating PDF.';
+          _isLoading = false;
+        });
+        _showErrorSnackBar('Error generating PDF: ${e.toString()}');
+      }
     }
   }
 
@@ -817,186 +827,222 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: ModernPricingDesign.backgroundPrimary,
-        appBar: AppBar(
-          title: Text('Generate Invoice', style: ModernPricingDesign.headingMd),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme:
-              const IconThemeData(color: ModernPricingDesign.textPrimary),
-        ),
+        backgroundColor: BauhausDesign.backgroundLight,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const CircularProgressIndicator(
-                  color: ModernPricingDesign.primaryColor),
-              const SizedBox(height: ModernPricingDesign.spacingLg),
-              Text(_statusMessage,
-                  style: ModernPricingDesign.bodyLg
-                      .copyWith(color: ModernPricingDesign.textSecondary)),
+                  color: BauhausDesign.primary),
+              const SizedBox(height: BauhausDesign.space6),
+              Text(_statusMessage, style: BauhausDesign.getTextTheme(context).bodyLarge),
             ],
           ),
         ),
       );
     }
 
-    return Scaffold(
-      backgroundColor: ModernPricingDesign.backgroundPrimary,
-      appBar: AppBar(
-        title: Text('Review & Generate',
-            style: ModernPricingDesign.headingMd
-                .copyWith(color: ModernPricingDesign.textPrimary)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: ModernPricingDesign.textPrimary),
-        actions: [
-          if (_pdfPath.isNotEmpty && File(_pdfPath).existsSync())
-            IconButton(
-              icon: const Icon(Icons.share,
-                  color: ModernPricingDesign.primaryColor),
-              onPressed: () {
-                log.info("Share PDF button pressed. Path: $_pdfPath");
-                _showErrorSnackBar('Sharing functionality to be implemented.');
-              },
-            )
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(ModernPricingDesign.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_providerName.isNotEmpty)
-              ModernGradientCard(
-                gradientColors: const [Colors.white, Colors.white],
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: ModernPricingDesign.primaryColor
-                          .withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+    // Success View
+    if (_lineItems.isNotEmpty && _pdfPath.isNotEmpty) {
+      return Scaffold(
+        backgroundColor: BauhausDesign.backgroundLight,
+        appBar: AppBar(
+          title:
+              Text('Invoice Generated', style: BauhausDesign.getTextTheme(context).headlineMedium),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back,
+                color: BauhausDesign.textDark),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space6),
+            child: BauhausCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_circle_outline,
+                      size: 64, color: BauhausDesign.success),
+                  const SizedBox(height: BauhausDesign.space4),
+                  Text('Success!', style: BauhausDesign.getTextTheme(context).headlineLarge),
+                  const SizedBox(height: BauhausDesign.space2),
+                  Text('Invoice PDF is ready.',
+                      style: BauhausDesign.getTextTheme(context).bodyMedium),
+                  const SizedBox(height: BauhausDesign.space6),
+                  SizedBox(
+                    width: double.infinity,
+                    child: BauhausActionButton(
+                      text: 'View PDF',
+                      variant: BauhausActionVariant.primary,
+                      icon: Icons.picture_as_pdf,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PdfViewPage(pdfPath: _pdfPath),
+                          ),
+                        );
+                      },
                     ),
-                    child: const Icon(Icons.business_center_outlined,
-                        color: ModernPricingDesign.primaryColor),
                   ),
-                  title: Text("Provider",
-                      style: ModernPricingDesign.caption
-                          .copyWith(color: ModernPricingDesign.textSecondary)),
-                  subtitle: Text(_providerName,
-                      style: ModernPricingDesign.bodyMd
-                          .copyWith(fontWeight: FontWeight.w600)),
-                  trailing: Text("ABN: $_providerABN",
-                      style: ModernPricingDesign.caption),
-                ),
-              ),
-            const SizedBox(height: ModernPricingDesign.spacingMd),
-            if (_clientName.isNotEmpty)
-              ModernGradientCard(
-                gradientColors: const [Colors.white, Colors.white],
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: ModernPricingDesign.secondaryColor
-                          .withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                  const SizedBox(height: BauhausDesign.space4),
+                  SizedBox(
+                    width: double.infinity,
+                    child: BauhausActionButton(
+                      text: 'Done',
+                      variant: BauhausActionVariant.ghost,
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                    child: const Icon(Icons.person_outline,
-                        color: ModernPricingDesign.secondaryColor),
                   ),
-                  title: Text("Client",
-                      style: ModernPricingDesign.caption
-                          .copyWith(color: ModernPricingDesign.textSecondary)),
-                  subtitle: Text(_clientName,
-                      style: ModernPricingDesign.bodyMd
-                          .copyWith(fontWeight: FontWeight.w600)),
-                  trailing: Text("$_startDate to $_endDate",
-                      style: ModernPricingDesign.caption),
-                ),
-              ),
-            const SizedBox(height: ModernPricingDesign.spacingLg),
-            if (_lineItems.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: ModernPricingDesign.spacingSm),
-                child: Text('Generated Line Items (${_lineItems.length})',
-                    style: ModernPricingDesign.headingSm),
-              )
-            else if (!_isLoading)
-              ModernEmptyState(
-                title: "No Items Generated",
-                message: _statusMessage,
-                icon: Icons.receipt_long_outlined,
-                action: (_statusMessage
-                            .contains("Could not automatically generate") ||
-                        _statusMessage.contains("No worked time") ||
-                        _statusMessage.contains("No clients assigned") ||
-                        _statusMessage.contains("No employees found"))
-                    ? ModernActionButton(
-                        text: 'Add Items Manually',
-                        icon: Icons.add_circle_outline,
-                        variant: ModernActionButtonVariant.secondary,
-                        onPressed: () {
-                          setState(() {
-                            _lineItems.add(InvoiceLineItem(
-                                description: '',
-                                quantity: 1,
-                                unitPrice: 0,
-                                type: 'service',
-                                source: LineItemSource.userAdded));
-                          });
-                        },
-                      )
-                    : null,
-              ),
-            const SizedBox(height: ModernPricingDesign.spacingSm),
-            if (_lineItems.isNotEmpty)
-              DynamicLineItemEntry(
-                lineItems: _lineItems,
-                onChanged: (items) => setState(() => _lineItems = items),
-              ),
-            const SizedBox(height: ModernPricingDesign.spacingXl),
-            Center(
-              child: ModernActionButton(
-                text: 'Generate & View PDF',
-                icon: Icons.picture_as_pdf_rounded,
-                variant: ModernActionButtonVariant.primary,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                onPressed: _lineItems.isEmpty && !_isLoading
-                    ? null
-                    : _generateAndShowPdf,
+                ],
               ),
             ),
-            const SizedBox(height: ModernPricingDesign.spacingLg),
-            if (_pdfPath.isNotEmpty && File(_pdfPath).existsSync())
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: ModernPricingDesign.borderColor),
-                    borderRadius:
-                        BorderRadius.circular(ModernPricingDesign.radiusMd),
-                    boxShadow: ModernPricingDesign.cardShadow),
-                height: MediaQuery.of(context).size.height * 0.75,
-                child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(ModernPricingDesign.radiusMd),
-                    child: PdfViewPage(pdfPath: _pdfPath)),
-              )
-            else if (_pdfPath.isNotEmpty && !File(_pdfPath).existsSync())
-              Padding(
-                padding: const EdgeInsets.all(ModernPricingDesign.spacingMd),
-                child: Center(
-                    child: Text(
-                  "Error: Generated PDF file not found at path:\n$_pdfPath\nPlease try generating again.",
-                  style: ModernPricingDesign.bodyMd
-                      .copyWith(color: ModernPricingDesign.errorColor),
-                  textAlign: TextAlign.center,
-                )),
+          ),
+        ),
+      );
+    }
+
+    // Confirmation View
+    return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
+      appBar: AppBar(
+        title: Text('Generate Invoice', style: BauhausDesign.getTextTheme(context).headlineMedium),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: BauhausDesign.textDark),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        child: Column(
+          children: [
+            BauhausCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Review Details', style: BauhausDesign.getTextTheme(context).headlineMedium),
+                  const Divider(color: BauhausDesign.neutral),
+                  _buildDetailRow('Employee', _providerName),
+                  _buildDetailRow('Client', _clientName),
+                  _buildDetailRow('Period', '$_startDate to $_endDate'),
+                  const SizedBox(height: BauhausDesign.space4),
+                  // Invoice Type Selection
+                  Text('Invoice Type',
+                      style: BauhausDesign.getTextTheme(context).labelSmall),
+                  const SizedBox(height: BauhausDesign.space1),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTypeOption(
+                          label: 'For Client',
+                          value: 'client',
+                          icon: Icons.business,
+                        ),
+                      ),
+                      const SizedBox(width: BauhausDesign.space2),
+                      Expanded(
+                        child: _buildTypeOption(
+                          label: 'For Employee',
+                          value: 'employee',
+                          icon: Icons.person,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: BauhausDesign.space4),
+                  Text('Generated Lines: ${_lineItems.length}',
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                ],
               ),
+            ),
+            const SizedBox(height: BauhausDesign.space6),
+            SizedBox(
+              width: double.infinity,
+              child: BauhausActionButton(
+                text: 'Generate PDF',
+                variant: BauhausActionVariant.primary,
+                icon: Icons.description,
+                onPressed: _generateAndShowPdf,
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTypeOption({
+    required String label,
+    required String value,
+    required IconData icon,
+  }) {
+    final isSelected = _invoiceRecipientType == value;
+    return GestureDetector(
+      onTap: () => setState(() => _invoiceRecipientType = value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: BauhausDesign.space2,
+          horizontal: BauhausDesign.space4,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? BauhausDesign.primary.withOpacity(0.1)
+              : Colors.transparent,
+          border: Border.all(
+            color: isSelected
+                ? BauhausDesign.primary
+                : BauhausDesign.neutral,
+          ),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected
+                  ? BauhausDesign.primary
+                  : BauhausDesign.textMuted,
+            ),
+            const SizedBox(width: BauhausDesign.space1),
+            Text(
+              label,
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: isSelected
+                    ? BauhausDesign.primary
+                    : BauhausDesign.textMuted,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding:
+          const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: BauhausDesign.getTextTheme(context).bodyMedium
+                  ?.copyWith(color: BauhausDesign.textMuted)),
+          Text(value,
+              style: BauhausDesign.getTextTheme(context).bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 
 void popUpClientDetails(BuildContext context, String message, String title) {
@@ -6,28 +8,27 @@ void popUpClientDetails(BuildContext context, String message, String title) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: BauhausDesign.surfaceWhite,
           title: Text(message,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
-                color: const Color(0xFF1F2937),
+              style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: BauhausDesign.textDark,
               )),
           content: Text(
             '$title details added successfully',
-            style: const TextStyle(fontSize: 16).copyWith(
-              color: const Color(0xFF1F2937),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+              color: BauhausDesign.textDark,
               height: 1.5,
-              fontFamily: 'Lato',
             ),
           ),
           actions: [
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                ),
+            BauhausActionButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('OK',
-                    style: TextStyle(
-                        color: Colors.white, fontSize: 16)))
+                text: 'OK',
+                variant: BauhausActionVariant.primary,
+            )
           ],
         );
       },
@@ -37,28 +38,27 @@ void popUpClientDetails(BuildContext context, String message, String title) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: BauhausDesign.surfaceWhite,
           title: Text(message,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
-                color: Colors.red,
+              style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: BauhausDesign.error,
               )),
           content: Text(
             'Failed or data already added for $title',
-            style: const TextStyle(fontSize: 16).copyWith(
-              color: const Color(0xFF1F2937),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+              color: BauhausDesign.textDark,
               height: 1.5,
-              fontFamily: 'Lato',
             ),
           ),
           actions: [
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                ),
+            BauhausActionButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('OK',
-                    style: TextStyle(
-                        color: Colors.white, fontSize: 16)))
+                text: 'OK',
+                variant: BauhausActionVariant.primary,
+            )
           ],
         );
       },

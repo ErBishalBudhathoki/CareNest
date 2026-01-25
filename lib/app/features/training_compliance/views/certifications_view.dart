@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class CertificationsView extends ConsumerStatefulWidget {
   const CertificationsView({super.key});
@@ -29,7 +30,8 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text('Certifications', style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(AppLocalizations.of(context)!.certificationsTitle,
+            style: BauhausDesign.getTextTheme(context).headlineLarge),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -41,15 +43,19 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showUploadDialog(context),
         backgroundColor: BauhausDesign.primary,
-        label: Text('Upload', style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(color: Colors.white)),
+        label: Text(AppLocalizations.of(context)!.uploadButton,
+            style: BauhausDesign.getTextTheme(context)
+                .labelLarge
+                ?.copyWith(color: Colors.white)),
         icon: const Icon(Icons.upload, color: Colors.white),
       ),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator(color: BauhausDesign.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: BauhausDesign.primary))
           : state.certifications.isEmpty
               ? Center(
                   child: Text(
-                    'No certifications found.\nUpload one to get started.',
+                    AppLocalizations.of(context)!.noCertificationsMessage,
                     textAlign: TextAlign.center,
                     style: BauhausDesign.getTextTheme(context).bodyLarge,
                   ),
@@ -57,7 +63,8 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
               : ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: state.certifications.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space3),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: BauhausDesign.space3),
                   itemBuilder: (context, index) {
                     final cert = state.certifications[index];
                     return Container(
@@ -72,7 +79,8 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                               Expanded(
                                 child: Text(
                                   cert.name,
-                                  style: BauhausDesign.getTextTheme(context).headlineLarge,
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .headlineLarge,
                                 ),
                               ),
                               _buildStatusBadge(context, cert.status),
@@ -80,18 +88,26 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                           ),
                           const SizedBox(height: BauhausDesign.space2),
                           Text(
-                            'Issuer: ${cert.issuer}',
-                            style: BauhausDesign.getTextTheme(context).bodyMedium,
+                            AppLocalizations.of(context)!
+                                .issuerLabel(cert.issuer),
+                            style:
+                                BauhausDesign.getTextTheme(context).bodyMedium,
                           ),
                           Text(
-                            'Expires: ${DateFormat('dd MMM yyyy').format(cert.expiryDate)}',
-                            style: BauhausDesign.getTextTheme(context).bodyMedium,
+                            AppLocalizations.of(context)!.expiresLabel(
+                                DateFormat('dd MMM yyyy')
+                                    .format(cert.expiryDate)),
+                            style:
+                                BauhausDesign.getTextTheme(context).bodyMedium,
                           ),
                           if (cert.notes != null && cert.notes!.isNotEmpty) ...[
                             const SizedBox(height: BauhausDesign.space2),
                             Text(
-                              'Notes: ${cert.notes}',
-                              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(fontStyle: FontStyle.italic),
+                              AppLocalizations.of(context)!
+                                  .notesDetailLabel(cert.notes!),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium
+                                  ?.copyWith(fontStyle: FontStyle.italic),
                             ),
                           ],
                         ],
@@ -119,7 +135,8 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space3, vertical: BauhausDesign.space1),
+      padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space3, vertical: BauhausDesign.space1),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
@@ -147,10 +164,12 @@ class UploadCertificationDialog extends ConsumerStatefulWidget {
   const UploadCertificationDialog({super.key});
 
   @override
-  ConsumerState<UploadCertificationDialog> createState() => _UploadCertificationDialogState();
+  ConsumerState<UploadCertificationDialog> createState() =>
+      _UploadCertificationDialogState();
 }
 
-class _UploadCertificationDialogState extends ConsumerState<UploadCertificationDialog> {
+class _UploadCertificationDialogState
+    extends ConsumerState<UploadCertificationDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _issuerController = TextEditingController();
@@ -166,7 +185,8 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
-      title: Text('Upload Certification', style: BauhausDesign.getTextTheme(context).headlineLarge),
+      title: Text(AppLocalizations.of(context)!.uploadCertificationTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -175,14 +195,21 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: BauhausDesign.inputDecoration.copyWith(labelText: 'Certification Name'),
-                validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText:
+                        AppLocalizations.of(context)!.certificationNameLabel),
+                validator: (v) => v?.isEmpty == true
+                    ? AppLocalizations.of(context)!.requiredValidation
+                    : null,
               ),
               const SizedBox(height: BauhausDesign.space3),
               TextFormField(
                 controller: _issuerController,
-                decoration: BauhausDesign.inputDecoration.copyWith(labelText: 'Issuer'),
-                validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(context)!.issuerFieldLabel),
+                validator: (v) => v?.isEmpty == true
+                    ? AppLocalizations.of(context)!.requiredValidation
+                    : null,
               ),
               const SizedBox(height: BauhausDesign.space3),
               GestureDetector(
@@ -207,7 +234,9 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
                       const Icon(Icons.calendar_today, size: 20),
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
-                        _expiryDate == null ? 'Select Expiry Date' : DateFormat('dd MMM yyyy').format(_expiryDate!),
+                        _expiryDate == null
+                            ? AppLocalizations.of(context)!.selectExpiryDate
+                            : DateFormat('dd MMM yyyy').format(_expiryDate!),
                         style: BauhausDesign.getTextTheme(context).bodyMedium,
                       ),
                     ],
@@ -217,15 +246,20 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
               const SizedBox(height: BauhausDesign.space3),
               GestureDetector(
                 onTap: () async {
-                  final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'jpg', 'png']);
+                  final result = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ['pdf', 'jpg', 'png']);
                   if (result != null) {
-                    setState(() => _selectedFile = File(result.files.single.path!));
+                    setState(
+                        () => _selectedFile = File(result.files.single.path!));
                   }
                 },
                 child: Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: _selectedFile != null ? BauhausDesign.primary.withOpacity(0.1) : BauhausDesign.backgroundLight,
+                    color: _selectedFile != null
+                        ? BauhausDesign.primary.withOpacity(0.1)
+                        : BauhausDesign.backgroundLight,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(color: BauhausDesign.neutral),
                   ),
@@ -235,7 +269,9 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
                       const SizedBox(width: BauhausDesign.space2),
                       Expanded(
                         child: Text(
-                          _selectedFile == null ? 'Select File (PDF, JPG, PNG)' : _selectedFile!.path.split('/').last,
+                          _selectedFile == null
+                              ? AppLocalizations.of(context)!.selectFile
+                              : _selectedFile!.path.split('/').last,
                           style: BauhausDesign.getTextTheme(context).bodyMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -247,7 +283,9 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
               const SizedBox(height: BauhausDesign.space3),
               TextFormField(
                 controller: _notesController,
-                decoration: BauhausDesign.inputDecoration.copyWith(labelText: 'Notes (Optional)'),
+                decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText:
+                        AppLocalizations.of(context)!.notesOptionalLabel),
                 maxLines: 2,
               ),
             ],
@@ -257,13 +295,20 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Cancel', style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(color: BauhausDesign.textDark)),
+          child: Text(AppLocalizations.of(context)!.cancelButton,
+              style: BauhausDesign.getTextTheme(context)
+                  .labelLarge
+                  ?.copyWith(color: BauhausDesign.textDark)),
         ),
         BauhausButton(
-          text: 'Upload',
+          text: AppLocalizations.of(context)!.uploadButtonAction,
           onPressed: () {
-            if (_formKey.currentState!.validate() && _expiryDate != null && _selectedFile != null) {
-              ref.read(certificationsViewModelProvider.notifier).uploadCertification(
+            if (_formKey.currentState!.validate() &&
+                _expiryDate != null &&
+                _selectedFile != null) {
+              ref
+                  .read(certificationsViewModelProvider.notifier)
+                  .uploadCertification(
                     _selectedFile!,
                     _nameController.text,
                     _issuerController.text,
@@ -272,9 +317,13 @@ class _UploadCertificationDialogState extends ConsumerState<UploadCertificationD
                   );
               Navigator.pop(context);
             } else if (_expiryDate == null) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select expiry date')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.selectExpiryDateError)));
             } else if (_selectedFile == null) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a file')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content:
+                      Text(AppLocalizations.of(context)!.selectFileError)));
             }
           },
         ),
