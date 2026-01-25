@@ -8,79 +8,72 @@ on:
   workflow_dispatch:
     inputs:
       deploy_target:
-        description: 'Deploy target (development or production)'
+        description: 'Deploy target (development, production, or internal)'
         required: true
         default: 'development'
         type: choice
         options:
           - development
           - production
+          - internal
 
 jobs:
-  build:
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      # Setup Java 17 (required for compileSdkVersion 36)
+
+      # Setup Java 17 (Required for Android Gradle Plugin 8.0+)
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-      
+          cache: 'gradle'
+
+      # Setup Flutter
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.0'
           channel: 'stable'
+          cache: true
+
+      # Install Dependencies
       - run: flutter pub get
+
+      # Static Analysis (Fail fast if code is bad)
       - run: flutter analyze
-      
-      # Build Android App Bundle based on deploy_target or pull_request
-      - name: Build Android APK (Development)
-        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'development')
-        run: flutter build appbundle --flavor development
-      
-      - name: Build Android APK (Production)
-        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'production')
-        run: flutter build appbundle --flavor production --release
-      
-      # Setup Ruby and Fastlane
+
+      # Setup Ruby for Fastlane
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.0'
           bundler-cache: true
           working-directory: android
-      
+
+      # Install Fastlane
       - name: Install Fastlane
         working-directory: android
         run: |
           gem install bundler
           bundle install || gem install fastlane
-      
-      # Deploy to Google Play
+
+      # Deploy to Google Play (Only on push to main or workflow_dispatch)
       - name: Deploy to Google Play
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         working-directory: android
         env:
           GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
         run: |
+          # Create the API key file from secret
           echo "$GOOGLE_PLAY_API_KEY" > fastlane/google-play-service-key.json
-          fastlane deploy_${{ github.event.inputs.deploy_target || 'production' }}
-      
-      # iOS Certificate Setup (commented out for future use)
-      # - name: Setup iOS certificates
-      #   if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      #   uses: apple-actions/import-codesign-certs@v1
-      #   with:
-      #     p12-file-base64: ${{ secrets.IOS_P12_CERTIFICATE }}
-      #     p12-password: ${{ secrets.IOS_P12_PASSWORD }}
-      
-      # Deploy to TestFlight (commented out for future use)
-      # - name: Deploy to TestFlight
-      #   if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      #   env:
-      #     APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
-      #     APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
-      #   run: |
-      #     cd ios
-      #     fastlane deploy_${{ github.event.inputs.deploy_target || 'production' }}
+          
+          # Determine the lane to run
+          TARGET_LANE="deploy_${{ github.event.inputs.deploy_target || 'development' }}"
+          
+          # On push to main, default to development (safer than production)
+          if [ "${{ github.event_name }}" == "push" ]; then
+             TARGET_LANE="deploy_development"
+          fi
+          
+          echo "Running Fastlane lane: $TARGET_LANE"
+          fastlane $TARGET_LANE
