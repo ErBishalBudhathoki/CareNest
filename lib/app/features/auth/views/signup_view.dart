@@ -1,14 +1,16 @@
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/routes/app_pages.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/alert_dialog_widget.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_liquid_animation.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
-import 'package:carenest/app/shared/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class SignUpView extends ConsumerStatefulWidget {
   final String? prefilledOrgCode;
@@ -16,24 +18,17 @@ class SignUpView extends ConsumerStatefulWidget {
   const SignUpView({super.key, this.prefilledOrgCode});
 
   @override
-  @override
   ConsumerState<SignUpView> createState() {
-    return _SignupUserNameControllerState();
+    return _SignUpViewState();
   }
 }
 
-class _SignupUserNameControllerState extends ConsumerState<SignUpView>
+class _SignUpViewState extends ConsumerState<SignUpView>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'signup_scaffold_key');
   final GlobalKey<FormState> _formKey =
       GlobalKey<FormState>(debugLabel: 'signup_form_key');
-  final _signUpUserFirstNameController = TextEditingController();
-  final _signUpUserLastNameController = TextEditingController();
-  final _signUpEmailController = TextEditingController();
-  final _signUpPasswordController = TextEditingController();
-  final _signUpConfirmPasswordController = TextEditingController();
-  final _signupABNController = TextEditingController();
 
   // Animation controllers
   late AnimationController _fadeController;
@@ -41,8 +36,9 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  var ins;
-  dynamic result;
+  // Password visibility state
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   void initState() {
@@ -53,7 +49,7 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.white,
+        systemNavigationBarColor: BauhausDesign.surfaceLight,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -102,12 +98,6 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
-    _signUpUserFirstNameController.dispose();
-    _signUpUserLastNameController.dispose();
-    _signUpEmailController.dispose();
-    _signUpPasswordController.dispose();
-    _signUpConfirmPasswordController.dispose();
-    _signupABNController.dispose();
     super.dispose();
   }
 
@@ -119,31 +109,18 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.white,
+      backgroundColor: BauhausDesign.surfaceLight,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: IconButton(
-            icon: Icon(
-              Iconsax.arrow_left,
-              color: AppColors.colorBlack87,
-              size: 20,
-            ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: BauhausIconButton(
+            icon: Iconsax.arrow_left,
             onPressed: () => Navigator.pop(context),
+            variant: BauhausActionVariant.neutral,
+            isSmall: true,
           ),
         ),
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -151,49 +128,55 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
           statusBarIconBrightness: Brightness.dark,
         ),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.colorPrimary.withValues(alpha: 0.08),
-              AppColors.colorSecondary.withValues(alpha: 0.05),
-              Colors.white,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(
-              horizontal: size.width > 600 ? 80 : 24,
-              vertical: 20,
+      body: Stack(
+        children: [
+          // Background Color
+          Container(color: BauhausDesign.backgroundLight),
+
+          // Liquid Animation Header
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: BauhausLiquidAnimation(
+              height: size.height * 0.35,
+              yOffset: size.height * 0.25,
             ),
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: Consumer(
-                  builder: (context, ref, child) {
-                    final signupViewModel = ref.watch(signupViewModelProvider);
-                    return Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        _buildHeader(),
-                        const SizedBox(height: 40),
-                        _buildSignupForm(signupViewModel, flushBarWidget),
-                        const SizedBox(height: 24),
-                        _buildLoginLink(),
-                        const SizedBox(height: 20),
-                      ],
-                    );
-                  },
+          ),
+
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width > 600 ? 80 : 24,
+                vertical: 20,
+              ),
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final signupViewModel =
+                          ref.watch(signupViewModelProvider);
+                      return Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          _buildHeader(),
+                          const SizedBox(height: 40),
+                          _buildSignupForm(signupViewModel, flushBarWidget),
+                          const SizedBox(height: 24),
+                          _buildLoginLink(),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -205,48 +188,34 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.colorPrimary,
-                AppColors.colorSecondary,
-              ],
-            ),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.colorPrimary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            color: BauhausDesign.secondary,
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Icon(
             Iconsax.user_add,
-            color: Colors.white,
+            color: BauhausDesign.surfaceLight,
             size: 36,
           ),
         ),
         const SizedBox(height: 32),
         Text(
-          'Create Account',
-          style: TextStyle(
-            color: AppColors.colorBlack87,
-            fontSize: 32,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
-          ),
+          AppLocalizations.of(context)!.signupTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+              ),
         ),
         const SizedBox(height: 8),
         Text(
-          'Join us and start managing your invoices efficiently',
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.colorBlack54,
-            fontWeight: FontWeight.w400,
-            height: 1.4,
-          ),
+          AppLocalizations.of(context)!.signupSubtitle,
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.w400,
+                height: 1.4,
+              ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -257,18 +226,7 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       dynamic signupViewModel, FlushBarWidget flushBarWidget) {
     return Container(
       padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
+      decoration: BauhausDesign.cardDecoration,
       child: Form(
         key: _formKey,
         child: Column(
@@ -298,99 +256,88 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Personal Information',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorBlack87,
-          ),
+          AppLocalizations.of(context)!.personalInfoSection,
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: BauhausDesign.textDark,
+              ),
         ),
         const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
-              child: TextFieldWidget(
-                suffixIconClickable: false,
-                hintText: 'First Name',
+              child: BauhausTextField(
+                controller: signupViewModel.model.firstNameController,
+                label: AppLocalizations.of(context)!.firstNameHint,
+                hintText: 'John',
+                prefixIcon: Icon(Iconsax.user, color: BauhausDesign.textMuted),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter first name';
+                    return AppLocalizations.of(context)!.firstNameRequired;
                   }
                   return null;
                 },
-                obscureTextNotifier: ValueNotifier<bool>(false),
-                prefixIconData: Iconsax.user,
-                suffixIconData: null,
-                controller: signupViewModel.model.firstNameController,
                 onChanged: (value) {
                   signupViewModel.model.firstNameController.text = value;
                 },
-                onSaved: (value) {},
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: TextFieldWidget(
-                suffixIconClickable: false,
-                hintText: 'Last Name',
+              child: BauhausTextField(
+                controller: signupViewModel.model.lastNameController,
+                label: AppLocalizations.of(context)!.lastNameHint,
+                hintText: 'Doe',
+                prefixIcon: Icon(Iconsax.user, color: BauhausDesign.textMuted),
                 validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter last name';
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.lastNameRequired;
                   }
                   return null;
                 },
-                obscureTextNotifier: ValueNotifier<bool>(false),
-                prefixIconData: Iconsax.user,
-                suffixIconData: null,
-                controller: signupViewModel.model.lastNameController,
                 onChanged: (value) {
                   signupViewModel.model.lastNameController.text = value;
                 },
-                onSaved: (value) {},
               ),
             ),
           ],
         ),
         const SizedBox(height: 20),
-        TextFieldWidget(
-          hintText: 'Email Address',
+        BauhausTextField(
+          controller: signupViewModel.model.emailController,
+          label: AppLocalizations.of(context)!.emailLabel,
+          hintText: 'john@example.com',
+          prefixIcon: Icon(Iconsax.sms, color: BauhausDesign.textMuted),
+          keyboardType: TextInputType.emailAddress,
           validator: (value) {
-            if (value!.isEmpty ||
+            if (value == null ||
+                value.isEmpty ||
                 !value.contains('@') ||
                 !value.contains('.')) {
-              return 'Please enter a valid email';
+              return AppLocalizations.of(context)!.emailInvalid;
             }
             return null;
           },
           onChanged: (value) {
             signupViewModel.model.isValidEmail(value);
           },
-          onSaved: (value) {
-            signupViewModel.model.emailController.text = value!;
-          },
-          obscureTextNotifier: ValueNotifier<bool>(false),
-          suffixIconClickable: false,
-          controller: signupViewModel.model.emailController,
-          prefixIconData: Iconsax.sms,
         ),
         const SizedBox(height: 20),
-        TextFieldWidget(
-          suffixIconClickable: false,
-          hintText: 'ABN (11 digits)',
+        BauhausTextField(
+          controller: signupViewModel.model.abnController,
+          label: AppLocalizations.of(context)!.abnHint,
+          hintText: '11 digits',
+          prefixIcon: Icon(Iconsax.building_4, color: BauhausDesign.textMuted),
+          keyboardType: TextInputType.number,
           validator: (value) {
-            if (value!.isEmpty || value.length != 11) {
-              return 'Please enter a valid 11-digit ABN';
+            if (value == null || value.isEmpty || value.length != 11) {
+              return AppLocalizations.of(context)!.abnInvalid;
             }
             return null;
           },
-          obscureTextNotifier: ValueNotifier<bool>(false),
-          prefixIconData: Iconsax.building_4,
-          suffixIconData: null,
-          controller: signupViewModel.model.abnController,
           onChanged: (value) {
             signupViewModel.model.abnController.text = value;
           },
-          onSaved: (value) {},
         ),
       ],
     );
@@ -401,42 +348,36 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Account Type',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorBlack87,
-          ),
+          AppLocalizations.of(context)!.accountTypeSection,
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: BauhausDesign.textLight,
+              ),
         ),
         const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.colorPrimary.withValues(alpha: 0.2),
-              width: 1,
-            ),
-          ),
+        BauhausCard(
+          backgroundColor: BauhausDesign.backgroundLight,
+          borderColor: BauhausDesign.primary.withOpacity(0.2),
+          padding: EdgeInsets.zero,
           child: Column(
             children: [
               _buildRoleOption(
                 signupViewModel,
                 'normal',
-                'Normal User',
-                'Access basic invoice features',
+                AppLocalizations.of(context)!.normalUser,
+                AppLocalizations.of(context)!.normalUserDesc,
                 Iconsax.user,
               ),
               Container(
                 height: 1,
-                color: Colors.grey[200],
+                color: BauhausDesign.neutral.withOpacity(0.1),
                 margin: const EdgeInsets.symmetric(horizontal: 16),
               ),
               _buildRoleOption(
                 signupViewModel,
                 'admin',
-                'Administrator',
-                'Full access and organization management',
+                AppLocalizations.of(context)!.administrator,
+                AppLocalizations.of(context)!.administratorDesc,
                 Iconsax.crown,
               ),
             ],
@@ -459,7 +400,7 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
         signupViewModel.model.selectedRole = value;
         signupViewModel.notifyListeners();
       },
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -469,13 +410,15 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.colorPrimary.withValues(alpha: 0.1)
-                    : Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
+                    ? BauhausDesign.primary.withOpacity(0.1)
+                    : BauhausDesign.neutral.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               ),
               child: Icon(
                 icon,
-                color: isSelected ? AppColors.colorPrimary : Colors.grey[600],
+                color: isSelected
+                    ? BauhausDesign.primary
+                    : BauhausDesign.neutral.withOpacity(0.5),
                 size: 24,
               ),
             ),
@@ -486,19 +429,19 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.colorBlack87,
-                    ),
+                    style:
+                        BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: BauhausDesign.textLight,
+                            ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.colorBlack54,
-                    ),
+                    style:
+                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                              color: BauhausDesign.neutral,
+                            ),
                   ),
                 ],
               ),
@@ -510,7 +453,7 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
                 signupViewModel.model.selectedRole = newValue!;
                 signupViewModel.notifyListeners();
               },
-              activeColor: AppColors.colorPrimary,
+              activeColor: BauhausDesign.primary,
             ),
           ],
         ),
@@ -523,31 +466,24 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Organization Setup',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorBlack87,
-          ),
+          AppLocalizations.of(context)!.organizationSetupSection,
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: BauhausDesign.textLight,
+              ),
         ),
         const SizedBox(height: 16),
-        Container(
+        BauhausCard(
+          backgroundColor: BauhausDesign.secondary.withOpacity(0.05),
+          borderColor: BauhausDesign.secondary.withOpacity(0.2),
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.colorSecondary.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.colorSecondary.withValues(alpha: 0.2),
-              width: 1,
-            ),
-          ),
           child: Column(
             children: [
               Row(
                 children: [
                   Icon(
                     Iconsax.building,
-                    color: AppColors.colorSecondary,
+                    color: BauhausDesign.secondary,
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -556,19 +492,21 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Create New Organization',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.colorBlack87,
-                          ),
+                          AppLocalizations.of(context)!.createNewOrg,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: BauhausDesign.textLight,
+                              ),
                         ),
                         Text(
-                          'Set up your own organization',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.colorBlack54,
-                          ),
+                          AppLocalizations.of(context)!.createNewOrgDesc,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodySmall
+                              ?.copyWith(
+                                color: BauhausDesign.neutral,
+                              ),
                         ),
                       ],
                     ),
@@ -579,31 +517,30 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
                       signupViewModel.model.isCreatingOrganization = value;
                       signupViewModel.notifyListeners();
                     },
-                    activeColor: AppColors.colorSecondary,
+                    activeColor: BauhausDesign.secondary,
                   ),
                 ],
               ),
               if (signupViewModel.model.isCreatingOrganization) ...[
                 const SizedBox(height: 16),
-                TextFieldWidget(
-                  suffixIconClickable: false,
-                  hintText: 'Organization Name',
+                BauhausTextField(
+                  controller: signupViewModel.model.organizationNameController,
+                  label: AppLocalizations.of(context)!.organizationNameHint,
+                  hintText: AppLocalizations.of(context)!.organizationNameHint,
+                  prefixIcon:
+                      Icon(Iconsax.building_4, color: BauhausDesign.textMuted),
                   validator: (value) {
                     if (signupViewModel.model.isCreatingOrganization &&
                         (value == null || value.isEmpty)) {
-                      return 'Please enter organization name';
+                      return AppLocalizations.of(context)!
+                          .organizationNameRequired;
                     }
                     return null;
                   },
-                  obscureTextNotifier: ValueNotifier<bool>(false),
-                  prefixIconData: Iconsax.building_4,
-                  suffixIconData: null,
-                  controller: signupViewModel.model.organizationNameController,
                   onChanged: (value) {
                     signupViewModel.model.organizationNameController.text =
                         value;
                   },
-                  onSaved: (value) {},
                 ),
               ],
             ],
@@ -618,31 +555,24 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Join Organization',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorBlack87,
-          ),
+          AppLocalizations.of(context)!.joinOrgSection,
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: BauhausDesign.textLight,
+              ),
         ),
         const SizedBox(height: 16),
-        Container(
+        BauhausCard(
+          backgroundColor: BauhausDesign.neutral.withOpacity(0.05),
+          borderColor: BauhausDesign.neutral.withOpacity(0.2),
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.colorAccent.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.colorAccent.withValues(alpha: 0.2),
-              width: 1,
-            ),
-          ),
           child: Column(
             children: [
               Row(
                 children: [
                   Icon(
                     Iconsax.people,
-                    color: AppColors.colorAccent,
+                    color: BauhausDesign.neutral,
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -651,19 +581,21 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Join Existing Organization',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.colorBlack87,
-                          ),
+                          AppLocalizations.of(context)!.joinExistingOrg,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: BauhausDesign.textLight,
+                              ),
                         ),
                         Text(
-                          'Enter organization code to join',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.colorBlack54,
-                          ),
+                          AppLocalizations.of(context)!.joinExistingOrgDesc,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodySmall
+                              ?.copyWith(
+                                color: BauhausDesign.neutral,
+                              ),
                         ),
                       ],
                     ),
@@ -675,31 +607,29 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
                           value ?? false;
                       signupViewModel.notifyListeners();
                     },
-                    activeColor: AppColors.colorAccent,
+                    activeColor: BauhausDesign.neutral,
                   ),
                 ],
               ),
               if (signupViewModel.model.isJoiningOrganization) ...[
                 const SizedBox(height: 16),
-                TextFieldWidget(
-                  suffixIconClickable: false,
-                  hintText: 'Organization Code',
+                BauhausTextField(
+                  controller: signupViewModel.model.organizationCodeController,
+                  label: AppLocalizations.of(context)!.organizationCodeHint,
+                  hintText: 'Enter code',
+                  prefixIcon: Icon(Iconsax.key, color: BauhausDesign.textMuted),
                   validator: (value) {
                     if (signupViewModel.model.isJoiningOrganization &&
                         (value == null || value.isEmpty)) {
-                      return 'Please enter organization code';
+                      return AppLocalizations.of(context)!
+                          .organizationCodeRequired;
                     }
                     return null;
                   },
-                  obscureTextNotifier: ValueNotifier<bool>(false),
-                  prefixIconData: Iconsax.key,
-                  suffixIconData: null,
-                  controller: signupViewModel.model.organizationCodeController,
                   onChanged: (value) {
                     signupViewModel.model.organizationCodeController.text =
                         value;
                   },
-                  onSaved: (value) {},
                 ),
               ],
             ],
@@ -714,54 +644,67 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Security',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorBlack87,
-          ),
+          AppLocalizations.of(context)!.securitySection,
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: BauhausDesign.textLight,
+              ),
         ),
         const SizedBox(height: 16),
-        TextFieldWidget(
-          hintText: 'Password',
+        BauhausTextField(
           controller: signupViewModel.model.passwordController,
+          label: AppLocalizations.of(context)!.passwordLabel,
+          hintText: AppLocalizations.of(context)!.passwordMinLength,
+          prefixIcon: Icon(Iconsax.lock, color: BauhausDesign.textMuted),
+          obscureText: !_isPasswordVisible,
+          suffixIcon: IconButton(
+            icon: Icon(
+              _isPasswordVisible ? Iconsax.eye : Iconsax.eye_slash,
+              color: BauhausDesign.textMuted,
+            ),
+            onPressed: () {
+              setState(() {
+                _isPasswordVisible = !_isPasswordVisible;
+              });
+            },
+          ),
           validator: (value) {
-            if (value!.isEmpty) {
-              return 'Please enter your password';
+            if (value == null || value.isEmpty) {
+              return AppLocalizations.of(context)!.passwordRequired;
             }
             if (value.length < 6) {
-              return 'Password must be at least 6 characters';
+              return AppLocalizations.of(context)!.passwordMinLength;
             }
             return null;
           },
-          onChanged: (value) {},
-          onSaved: (value) {
-            signupViewModel.model.passwordController.text = value!;
-          },
-          obscureTextNotifier: ValueNotifier<bool>(true),
-          suffixIconClickable: true,
-          prefixIconData: Iconsax.lock,
         ),
         const SizedBox(height: 20),
-        TextFieldWidget(
-          hintText: 'Confirm Password',
+        BauhausTextField(
           controller: signupViewModel.model.confirmPasswordController,
+          label: AppLocalizations.of(context)!.confirmPasswordHint,
+          hintText: 'Re-enter password',
+          prefixIcon: Icon(Iconsax.lock, color: BauhausDesign.textMuted),
+          obscureText: !_isConfirmPasswordVisible,
+          suffixIcon: IconButton(
+            icon: Icon(
+              _isConfirmPasswordVisible ? Iconsax.eye : Iconsax.eye_slash,
+              color: BauhausDesign.textMuted,
+            ),
+            onPressed: () {
+              setState(() {
+                _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+              });
+            },
+          ),
           validator: (value) {
-            if (value!.isEmpty) {
-              return 'Please confirm your password';
+            if (value == null || value.isEmpty) {
+              return AppLocalizations.of(context)!.confirmPasswordRequired;
             }
             if (value != signupViewModel.model.passwordController.text) {
-              return 'Passwords do not match';
+              return AppLocalizations.of(context)!.passwordsDoNotMatch;
             }
             return null;
           },
-          onChanged: (value) {},
-          onSaved: (value) {
-            signupViewModel.model.confirmPasswordController.text = value!;
-          },
-          obscureTextNotifier: ValueNotifier<bool>(true),
-          suffixIconClickable: true,
-          prefixIconData: Iconsax.lock,
         ),
       ],
     );
@@ -772,68 +715,15 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
     return Consumer(
       builder: (context, ref, child) {
         final isLoading = signupViewModel.isLoading ?? false;
-        return Container(
-          width: double.infinity,
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                AppColors.colorPrimary,
-                AppColors.colorSecondary,
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.colorPrimary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: isLoading
-                  ? null
-                  : () => _handleSignup(signupViewModel, flushBarWidget),
-              child: Center(
-                child: isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Iconsax.user_add,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Create Account',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
-            ),
-          ),
+        return BauhausActionButton(
+          text: AppLocalizations.of(context)!.signupTitle,
+          variant:
+              BauhausActionVariant.secondary, // Uses secondary color (purple)
+          isLoading: isLoading,
+          icon: Iconsax.user_add,
+          backgroundColor: BauhausDesign.secondary,
+          textColor: Colors.white,
+          onPressed: () => _handleSignup(signupViewModel, flushBarWidget),
         );
       },
     );
@@ -886,16 +776,16 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('An error occurred. Please try again.'),
-              backgroundColor: Colors.red,
+              content: const Text('An error occurred. Please try again.'),
+              backgroundColor: BauhausDesign.error,
             ),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Please fill in all fields correctly.'),
-            backgroundColor: Colors.orange,
+            content: const Text('Please fill in all fields correctly.'),
+            backgroundColor: BauhausDesign.warning,
           ),
         );
       }
@@ -907,22 +797,20 @@ class _SignupUserNameControllerState extends ConsumerState<SignUpView>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Already have an account? ',
-          style: TextStyle(
-            color: AppColors.colorBlack54,
-            fontSize: 16,
-          ),
+          AppLocalizations.of(context)!.alreadyHaveAccount,
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: BauhausDesign.neutral,
+              ),
         ),
         GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Text(
-            'Sign In',
-            style: TextStyle(
-              color: AppColors.colorPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              decoration: TextDecoration.underline,
-            ),
+            AppLocalizations.of(context)!.loginLink,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                ),
           ),
         ),
       ],

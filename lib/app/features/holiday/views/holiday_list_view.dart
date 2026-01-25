@@ -1,16 +1,22 @@
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:carenest/app/shared/widgets/modern_holiday_card.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/features/holiday/views/add_holiday_view.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class HolidayListView extends ConsumerStatefulWidget {
   final List<dynamic> holidays;
+  final bool readonly;
 
-  const HolidayListView({super.key, required this.holidays});
+  const HolidayListView({
+    super.key, 
+    required this.holidays,
+    this.readonly = false,
+  });
 
   @override
   _HolidayListViewState createState() => _HolidayListViewState();
@@ -20,291 +26,36 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
   @override
   void initState() {
     super.initState();
-    // Sort the list of holidays by date
-    widget.holidays.sort((a, b) => DateFormat("dd-MM-yyyy")
-        .parse("${a['Date']}")
-        .compareTo(DateFormat("dd-MM-yyyy").parse("${b['Date']}")));
+    _sortHolidays();
+  }
+
+  void _sortHolidays() {
+    widget.holidays.sort((a, b) {
+      final dateA = _parseDate(a['Date']) ?? DateTime.now();
+      final dateB = _parseDate(b['Date']) ?? DateTime.now();
+      return dateA.compareTo(dateB);
+    });
   }
 
   void _addHoliday(Map<String, String> holiday) {
     setState(() {
-      // Add the new holiday to the list
       widget.holidays.add(holiday);
-      widget.holidays.sort((a, b) => DateFormat("dd-MM-yyyy")
-          .parse("${a['Date']}")
-          .compareTo(DateFormat("dd-MM-yyyy").parse("${b['Date']}")));
+      _sortHolidays();
     });
   }
 
-  var holiday = {};
   void _deleteHoliday(int index) {
     setState(() {
-      holiday = widget.holidays[index];
+      final holiday = widget.holidays[index];
       debugPrint(holiday['_id']);
       _deleteHolidayItem(holiday['_id']);
-      // Remove the holiday at the specified index from the list
       widget.holidays.removeAt(index);
     });
   }
 
   Future<dynamic> _deleteHolidayItem(String id) async {
     final apiMethod = ref.read(apiMethodProvider);
-    // debugPrint("Username:  ${_userEmailController.text.trim()}");
-    // debugPrint("Password:  ${_passwordController.text.trim()}");
-    var ins = await apiMethod.deleteHolidayItem(
-      id,
-    );
-    //debugPrint("Response: "+ ins['email'].toString() + ins['password'].toString());
-    return ins;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: ModernInvoiceDesign.background,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: ModernInvoiceDesign.textPrimary,
-        title: Text(
-          'Holidays',
-          style: ModernInvoiceDesign.headlineMedium.copyWith(
-            fontWeight: FontWeight.bold,
-            color: ModernInvoiceDesign.textPrimary,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: ModernInvoiceDesign.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: ModernInvoiceDesign.border,
-              ),
-              boxShadow: ModernInvoiceDesign.shadowSm,
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_rounded,
-              color: ModernInvoiceDesign.textPrimary,
-              size: 20,
-            ),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Header Section
-          Container(
-            width: screenWidth,
-            margin: const EdgeInsets.all(16),
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: ModernInvoiceDesign.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: ModernInvoiceDesign.border,
-                ),
-                boxShadow: ModernInvoiceDesign.shadowMd,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: ModernInvoiceDesign.primary
-                              .withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Image.asset(
-                          'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',
-                          width: 32,
-                          height: 32,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Holiday Management',
-                              style:
-                                  ModernInvoiceDesign.headlineMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: ModernInvoiceDesign.textPrimary,
-                              ),
-                            ),
-                            Text(
-                              'Manage your holiday calendar',
-                              style: ModernInvoiceDesign.bodyMedium.copyWith(
-                                color: ModernInvoiceDesign.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: ModernInvoiceDesign.backgroundSecondary,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: ModernInvoiceDesign.border,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/icons/3D Icons/3dicons-calender-dynamic-color.png',
-                          width: 24,
-                          height: 24,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Total Holidays: ${widget.holidays.length}',
-                          style: ModernInvoiceDesign.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: ModernInvoiceDesign.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-              .animate()
-              .fadeIn(duration: 800.ms, curve: Curves.easeOutCubic)
-              .slideY(begin: 0.3),
-
-          // Holiday List
-          Expanded(
-            child: widget.holidays.isEmpty
-                ? _buildEmptyState(theme)
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: widget.holidays.length,
-                    itemBuilder: (context, index) {
-                      final holiday = widget.holidays[index];
-                      final DateTime? holidayDate = _parseDate(holiday['Date']);
-                      final bool isUpcoming = holidayDate != null &&
-                          holidayDate.isAfter(DateTime.now());
-                      final bool isToday = holidayDate != null &&
-                          DateFormat('dd-MM-yyyy').format(holidayDate) ==
-                              DateFormat('dd-MM-yyyy').format(DateTime.now());
-
-                      return ModernHolidayCard(
-                        holiday: holiday,
-                        index: index,
-                        onDelete: () => _deleteHoliday(index),
-                        isUpcoming: isUpcoming,
-                        isToday: isToday,
-                      )
-                          .animate(delay: Duration(milliseconds: 100 * index))
-                          .fadeIn(duration: const Duration(milliseconds: 600))
-                          .slideX(
-                              begin: 0.2,
-                              duration: const Duration(milliseconds: 400));
-                    },
-                  ),
-          ),
-        ],
-      ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          color: ModernInvoiceDesign.primary,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: ModernInvoiceDesign.shadowPrimaryGlow,
-        ),
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddHolidayScreen(
-                  addHoliday: _addHoliday,
-                  holidays: widget.holidays,
-                ),
-              ),
-            );
-          },
-          icon: Icon(
-            Icons.add_rounded,
-            color: ModernInvoiceDesign.textOnPrimary,
-            size: 20,
-          ),
-          label: Text(
-            'Add Holiday',
-            style: ModernInvoiceDesign.bodyMedium.copyWith(
-              fontWeight: FontWeight.w600,
-              color: ModernInvoiceDesign.textOnPrimary,
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-      )
-          .animate(delay: 1000.ms)
-          .scale(duration: 600.ms, curve: Curves.elasticOut)
-          .shimmer(delay: 1500.ms, duration: 2000.ms),
-    );
-  }
-
-  Widget _buildEmptyState(ThemeData theme) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: ModernInvoiceDesign.neutral100,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: ModernInvoiceDesign.border,
-                width: 2,
-              ),
-            ),
-            child: Image.asset(
-              'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',
-              width: 80,
-              height: 80,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'No Holidays Yet',
-            style: ModernInvoiceDesign.titleLarge.copyWith(
-              fontWeight: FontWeight.bold,
-              color: ModernInvoiceDesign.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Add your first holiday to get started',
-            style: ModernInvoiceDesign.bodyMedium.copyWith(
-              color: ModernInvoiceDesign.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.8, 0.8));
+    return await apiMethod.deleteHolidayItem(id);
   }
 
   DateTime? _parseDate(String? dateString) {
@@ -314,5 +65,312 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     } catch (e) {
       return null;
     }
+  }
+
+  String _getDaysUntil(DateTime date) {
+    final now = DateTime.now();
+    final difference = date.difference(now).inDays;
+
+    if (difference == 0) {
+      return AppLocalizations.of(context)!.today;
+    } else if (difference == 1) {
+      return 'Tomorrow'; // Consider adding to l10n
+    } else if (difference > 1) {
+      return 'In $difference days'; // Consider adding to l10n
+    } else {
+      return AppLocalizations.of(context)!.past;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // ignore: unused_local_variable
+    final screenWidth = MediaQuery.of(context).size.width;
+    final l10n = AppLocalizations.of(context)!;
+    
+    return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        leading: Center(
+          child: BauhausIconButton(
+            icon: Icons.arrow_back_ios_new,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        title: Text(
+          l10n.holidays,
+          style: BauhausDesign.getTextTheme(context).headlineMedium,
+        ),
+      ),
+      body: Column(
+        children: [
+          // Header Section
+          Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            child: BauhausCard(
+              padding: const EdgeInsets.all(BauhausDesign.space6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(BauhausDesign.space3),
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.primary.withOpacity(0.1),
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusMd),
+                        ),
+                        child: Icon(Icons.calendar_month,
+                            color: BauhausDesign.primary, size: 32),
+                      ),
+                      const SizedBox(width: BauhausDesign.space4),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.holidayList,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .headlineSmall,
+                            ),
+                            Text(
+                              l10n.holidayListDesc,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: BauhausDesign.textMuted,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: BauhausDesign.space4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space4,
+                        vertical: BauhausDesign.space3),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.surfaceOffWhite,
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusMd),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.event_available,
+                            size: 20, color: BauhausDesign.textDark),
+                        const SizedBox(width: BauhausDesign.space3),
+                        Text(
+                          '${l10n.total}: ${widget.holidays.length}',
+                          style: BauhausDesign.getTextTheme(context).labelLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1),
+          ),
+
+          // Holiday List
+          Expanded(
+            child: widget.holidays.isEmpty
+                ? _buildEmptyState(l10n)
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space4),
+                    itemCount: widget.holidays.length,
+                    itemBuilder: (context, index) {
+                      final holiday = widget.holidays[index];
+                      final DateTime? holidayDate = _parseDate(holiday['Date']);
+                      // Format check for date parsing safety
+                      if (holidayDate == null) return const SizedBox.shrink();
+
+                      final bool isUpcoming = holidayDate.isAfter(DateTime.now()
+                          .subtract(const Duration(days: 1))); // Include today
+                      final bool isToday =
+                          DateFormat('dd-MM-yyyy').format(holidayDate) ==
+                              DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+                      return Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: BauhausDesign.space3),
+                        child: BauhausCard(
+                          padding: const EdgeInsets.all(16),
+                          child: InkWell(
+                            onTap: null, // No action on tap for now
+                            child: Row(
+                              children: [
+                                // Date Circle
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: isToday
+                                        ? BauhausDesign.primary
+                                        : (isUpcoming
+                                            ? BauhausDesign.secondary
+                                            : BauhausDesign.neutral),
+                                    shape: BoxShape.circle,
+                                    boxShadow: isToday
+                                        ? [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.2),
+                                              blurRadius: 4,
+                                              offset: const Offset(2, 2),
+                                            )
+                                          ]
+                                        : null,
+                                    border: Border.all(
+                                        color: BauhausDesign.textDark,
+                                        width: 2),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        DateFormat('dd').format(holidayDate),
+                                        style: BauhausDesign.getTextTheme(
+                                                context)
+                                            .headlineSmall
+                                            ?.copyWith(
+                                              color: BauhausDesign.surfaceWhite,
+                                              height: 1,
+                                            ),
+                                      ),
+                                      Text(
+                                        DateFormat('MMM')
+                                            .format(holidayDate)
+                                            .toUpperCase(),
+                                        style: BauhausDesign.getTextTheme(
+                                                context)
+                                            .labelSmall
+                                            ?.copyWith(
+                                              color: BauhausDesign.surfaceWhite,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: BauhausDesign.space4),
+                                // Details
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        holiday['Holiday'] ?? l10n.holiday,
+                                        style:
+                                            BauhausDesign.getTextTheme(context)
+                                                .titleMedium,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${holiday['Date']} • ${holiday['Day']}',
+                                        style:
+                                            BauhausDesign.getTextTheme(context)
+                                                .bodySmall
+                                                ?.copyWith(
+                                                  color:
+                                                      BauhausDesign.textMuted,
+                                                ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Status & Delete
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    if (isUpcoming) ...[
+                                      BauhausChip(
+                                        text: isToday
+                                            ? l10n.today.toUpperCase()
+                                            : _getDaysUntil(holidayDate)
+                                                .toUpperCase(),
+                                        variant: isToday
+                                            ? BauhausChipVariant.primary
+                                            : BauhausChipVariant.neutral,
+                                        size: BauhausChipSize.small,
+                                      ),
+                                      const SizedBox(height: 8),
+                                    ],
+                                    // Delete Action - Only show if not readonly
+                                    if (!widget.readonly)
+                                      InkWell(
+                                        onTap: () => _deleteHoliday(index),
+                                        borderRadius: BorderRadius.circular(
+                                            BauhausDesign.radiusFull),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          child: Icon(Icons.delete_outline,
+                                              size: 20,
+                                              color: BauhausDesign.error),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ).animate(delay: (50 * index).ms).fadeIn().slideX(),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: widget.readonly
+          ? null
+          : BauhausActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddHolidayScreen(
+                      addHoliday: _addHoliday,
+                      holidays: widget.holidays,
+                    ),
+                  ),
+                );
+              },
+              icon: Icons.add,
+              text: l10n.addHoliday,
+              isFullWidth: false,
+            ),
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    return BauhausEmptyState(
+      title: 'No Holidays Yet', // Consider adding to l10n
+      subtitle: 'Add your first holiday to get started', // Consider adding to l10n
+      icon: Icons.calendar_today,
+      onAction: widget.readonly
+          ? null
+          : () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddHolidayScreen(
+                    addHoliday: _addHoliday,
+                    holidays: widget.holidays,
+                  ),
+                ),
+              );
+            },
+      actionLabel: widget.readonly ? null : l10n.addHoliday,
+    );
   }
 }

@@ -44,11 +44,23 @@ class TimesheetEntry {
       }
     }
 
+    // Handle timeWorked
+    String? timeWorkedStr;
+    if (json['timeWorked'] is num) {
+      int seconds = (json['timeWorked'] as num).toInt();
+      int h = seconds ~/ 3600;
+      int m = (seconds % 3600) ~/ 60;
+      int s = seconds % 60;
+      timeWorkedStr = '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    } else {
+      timeWorkedStr = json['timeWorked']?.toString();
+    }
+
     return TimesheetEntry(
       id: id,
       userEmail: json['userEmail']?.toString() ?? '',
       clientEmail: json['clientEmail']?.toString(),
-      timeWorked: json['timeWorked']?.toString(),
+      timeWorked: timeWorkedStr,
       shiftDate: json['shiftDate']?.toString(),
       shiftStartTime:
           json['shiftStartTime']?.toString() ?? json['startTime']?.toString(),

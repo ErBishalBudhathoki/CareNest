@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../models/trip.dart';
-import '../../../../backend/api_method.dart';
+import '../models/trip_model.dart';
+import '../repositories/mileage_repository.dart';
 import '../../../shared/utils/shared_preferences_utils.dart';
 import '../controllers/mileage_controller.dart';
 
 class MileageViewModel extends ChangeNotifier {
   final MileageController _controller;
   final MileageState _state;
+  final MileageRepository _repository;
 
-  MileageViewModel(this._controller, this._state) {
+  MileageViewModel(this._controller, this._state, this._repository) {
     _fetchRecentTrips();
   }
 
@@ -78,16 +79,6 @@ class MileageViewModel extends ChangeNotifier {
       return;
     }
 
-    // Since controller.submitTrip uses internal state for distance, 
-    // we might need a separate method for manual entry or hack it.
-    // The controller assumes GPS tracking for distance.
-    // Let's check MileageController... 
-    // It uses `state.currentDistance`.
-    // We should probably add a `submitManualTrip` to controller or just handle it here via API.
-    // For now, I'll use API directly here to avoid changing controller too much, 
-    // or better: update controller to accept distance.
-    
-    // I'll call the API directly here for manual entry to keep it simple and robust.
     try {
       final prefs = await SharedPreferencesUtils.getInstance();
       final userId = prefs.getUserId();
@@ -106,10 +97,9 @@ class MileageViewModel extends ChangeNotifier {
         'clientId': _selectedClientId,
       };
 
-      final api = ApiMethod();
-      final response = await api.post('api/trips', body: tripData); // Fixed endpoint
+      final success = await _repository.saveTrip(tripData);
 
-      if (response != null && (response['success'] == true || response['status'] == 201)) {
+      if (success) {
         // Clear inputs
         startLocationController.clear();
         endLocationController.clear();
@@ -134,13 +124,10 @@ class MileageViewModel extends ChangeNotifier {
       final userId = prefs.getUserId();
       
       if (userId != null) {
-        final api = ApiMethod();
-        final response = await api.get('api/trips/employee/$userId'); // Fixed endpoint
-        
-        if (response != null && response['success'] == true) {
-          final List<dynamic> data = response['data'];
-          _recentTrips = data.map((json) => Trip.fromJson(json)).toList();
-        }
+        // Fetch recent trips (no date filter = all recent)
+        // Ideally API supports pagination or limit. 
+        // For now, repo fetches all, we might want to optimize this later.
+        _recentTrips = await _repository.getTrips(userId);
       }
     } catch (e) {
       print('Error fetching history: $e');
@@ -162,5 +149,6 @@ class MileageViewModel extends ChangeNotifier {
 final mileageViewModelProvider = ChangeNotifierProvider<MileageViewModel>((ref) {
   final controller = ref.watch(mileageControllerProvider.notifier);
   final state = ref.watch(mileageControllerProvider);
-  return MileageViewModel(controller, state);
+  final repository = ref.watch(mileageRepositoryProvider);
+  return MileageViewModel(controller, state, repository);
 });

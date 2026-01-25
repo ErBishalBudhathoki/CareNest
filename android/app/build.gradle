@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
     id "com.google.gms.google-services"
+    id "com.google.firebase.crashlytics"
 }
 
 def localProperties = new Properties()
@@ -59,7 +60,7 @@ android {
 
     defaultConfig {
         applicationId "com.bishal.invoice"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 24
         targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -69,6 +70,8 @@ android {
             applicationName: "android.app.Application",
             GOOGLE_MAPS_API_KEY_FOR_ANDROID: env.getProperty('GOOGLE_MAPS_API_KEY_FOR_ANDROID') ?: ""
         ]
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -82,12 +85,12 @@ android {
             dimension "environment"
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
-            resValue "string", "app_name", "Invoice Dev"
+            resValue "string", "app_name", "CareNest Dev"
         }
         
         production {
             dimension "environment"
-            resValue "string", "app_name", "Invoice"
+            resValue "string", "app_name", "CareNest"
         }
     }
 
@@ -128,9 +131,30 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-crashlytics'
     implementation "com.google.firebase:firebase-appcheck-playintegrity"
     // Replace SafetyNet with Play Integrity API
     implementation 'com.google.android.play:integrity:1.5.0'
     // Edge-to-edge display support
     implementation 'androidx.core:core-splashscreen:1.0.1'
+
+    // Testing dependencies
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'tools.fastlane:screengrab:2.1.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.test.espresso:espresso-core:3.5.1'
+        force 'androidx.test:runner:1.5.2'
+        force 'androidx.test:rules:1.5.0'
+        force 'androidx.test.ext:junit:1.1.5'
+    }
+    // Exclude deprecated SafetyNet API (replaced by Play Integrity API)
+    exclude group: 'com.google.android.gms', module: 'play-services-safetynet'
+    exclude group: 'com.google.firebase', module: 'firebase-appcheck-safetynet'
 }

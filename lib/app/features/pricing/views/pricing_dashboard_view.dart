@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/features/pricing/views/modern_pricing_dashboard_view.dart';
+import 'package:carenest/app/features/pricing/views/bauhaus_pricing_dashboard_view.dart';
 
 
 /// Main pricing dashboard view that delegates to the modern implementation
@@ -23,6 +23,6 @@ class _PricingDashboardViewState extends State<PricingDashboardView> {
   @override
   Widget build(BuildContext context) {
     // Use the new modern dashboard implementation
-    return const ModernPricingDashboardView();
+    return const BauhausPricingDashboardView();
   }
 }

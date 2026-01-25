@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:intl/intl.dart';
 import 'dart:typed_data';
 
@@ -25,7 +24,7 @@ class BauhausHomeHeader extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
       color: BauhausDesign.accent, // Yellow background
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,44 +43,47 @@ class BauhausHomeHeader extends StatelessWidget {
                         children: [
                           Text(
                             dateStr,
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
-                              letterSpacing: 1.0,
-                            ),
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textDark,
+                                  letterSpacing: 1.0,
+                                ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: BauhausDesign.space2),
                           Text(
                             'HELLO,',
-                            style: GoogleFonts.oswald(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
-                              height: 1.0,
-                            ),
+                            style: BauhausDesign.getTextTheme(context)
+                                .headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textDark,
+                                  height: 1.0,
+                                ),
                           ),
                           Text(
                             userName.toUpperCase(),
-                            style: GoogleFonts.oswald(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
-                              height: 1.0,
-                            ),
+                            style: BauhausDesign.getTextTheme(context)
+                                .displaySmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textDark,
+                                  height: 1.0,
+                                ),
                             maxLines: 1,
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    _buildProfileImage(),
+                    const SizedBox(width: BauhausDesign.space4),
+                    _buildProfileImage(context),
                   ],
                 ),
                 if ((organizationName != null &&
                         organizationName!.isNotEmpty) ||
                     onRefresh != null) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: BauhausDesign.space4),
                   IntrinsicHeight(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,8 +93,8 @@ class BauhausHomeHeader extends StatelessWidget {
                           Container(
                             alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
+                              horizontal: BauhausDesign.space2,
+                              vertical: BauhausDesign.space1,
                             ),
                             decoration: BoxDecoration(
                               color: BauhausDesign.surfaceLight,
@@ -103,12 +105,13 @@ class BauhausHomeHeader extends StatelessWidget {
                             ),
                             child: Text(
                               organizationName!.toUpperCase(),
-                              style: GoogleFonts.inter(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: BauhausDesign.textDark,
-                                letterSpacing: 0.5,
-                              ),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .labelSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: BauhausDesign.textDark,
+                                    letterSpacing: 0.5,
+                                  ),
                             ),
                           ),
                         ],
@@ -130,7 +133,7 @@ class BauhausHomeHeader extends StatelessWidget {
     return _AnimatedRefreshButton(onTap: onRefresh);
   }
 
-  Widget _buildProfileImage() {
+  Widget _buildProfileImage(BuildContext context) {
     return Container(
       width: 60,
       height: 60,
@@ -156,11 +159,12 @@ class BauhausHomeHeader extends StatelessWidget {
           : Center(
               child: Text(
                 userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                style: GoogleFonts.oswald(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
-                ),
+                style: BauhausDesign.getTextTheme(context)
+                    .headlineMedium
+                    ?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.textDark,
+                    ),
               ),
             ),
     );
@@ -193,11 +197,11 @@ class _AnimatedRefreshButtonState extends State<_AnimatedRefreshButton> {
         duration: const Duration(milliseconds: 100),
         child: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space2),
           decoration: BoxDecoration(
-            color: _isPressed 
-                ? BauhausDesign.neutral.withOpacity(0.1) 
-                : BauhausDesign.surfaceLight,
+            color: _isPressed
+                ? BauhausDesign.neutral.withOpacity(0.1)
+                : BauhausDesign.surfaceWhite,
             border: Border.all(
               color: BauhausDesign.textDark,
               width: 2,

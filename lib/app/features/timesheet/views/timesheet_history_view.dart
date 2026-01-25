@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/timesheet/viewmodels/timesheet_viewmodel.dart';
 import 'package:carenest/app/features/timesheet/models/timesheet_model.dart';
 import 'package:carenest/app/features/timesheet/repositories/timesheet_repository.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 // Simple provider for history, fetching last 365 days
-final timesheetHistoryProvider = FutureProvider.autoDispose.family<List<TimesheetEntry>, String>((ref, email) async {
+final timesheetHistoryProvider = FutureProvider.autoDispose
+    .family<List<TimesheetEntry>, String>((ref, email) async {
   final repository = ref.read(timesheetRepositoryProvider);
   final end = DateTime.now();
-  final start = end.subtract(const Duration(days: 365)); // Last year to catch older test data
-  debugPrint('TIMESHEET_HISTORY: Fetching from ${start.toIso8601String()} to ${end.toIso8601String()} for $email');
-  final result = await repository.fetchTimesheets(email: email, startDate: start, endDate: end);
+  final start = end.subtract(
+      const Duration(days: 365)); // Last year to catch older test data
+  debugPrint(
+      'TIMESHEET_HISTORY: Fetching from ${start.toIso8601String()} to ${end.toIso8601String()} for $email');
+  final result = await repository.fetchTimesheets(
+      email: email, startDate: start, endDate: end);
   debugPrint('TIMESHEET_HISTORY: Found ${result.length} entries');
   return result;
 });
@@ -28,32 +33,12 @@ class TimesheetHistoryView extends ConsumerWidget {
     final historyAsync = ref.watch(timesheetHistoryProvider(email));
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
-      appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'HISTORY',
-          style: GoogleFonts.oswald(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
-          ),
-        ),
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(2),
-          child: Divider(height: 2, thickness: 2, color: BauhausDesign.textDark),
-        ),
-      ),
+      backgroundColor: BauhausDesign.backgroundLight,
+      appBar: _buildBauhausAppBar(context),
       body: RefreshIndicator(
         onRefresh: () async {
-           debugPrint('TIMESHEET_HISTORY: Refreshing...');
-           return ref.refresh(timesheetHistoryProvider(email).future);
+          debugPrint('TIMESHEET_HISTORY: Refreshing...');
+          return ref.refresh(timesheetHistoryProvider(email).future);
         },
         color: BauhausDesign.primary,
         child: historyAsync.when(
@@ -61,35 +46,82 @@ class TimesheetHistoryView extends ConsumerWidget {
             // Group entries by week
             final weeks = _groupByWeek(entries);
             if (weeks.isEmpty) {
-               return Stack(
-                 children: [
-                   ListView(), // Ensure RefreshIndicator works even when empty
-                   Center(
-                      child: Text('No history found', style: GoogleFonts.robotoMono(color: BauhausDesign.neutral)),
-                   ),
-                 ],
-               );
+              return Stack(
+                children: [
+                  ListView(), // Ensure RefreshIndicator works even when empty
+                  Center(
+                    child: BauhausEmptyState(
+                      title: AppLocalizations.of(context)!.noHistoryTitle,
+                      subtitle: AppLocalizations.of(context)!.noHistorySubtitle,
+                      icon: Icons.history_outlined,
+                    ),
+                  ),
+                ],
+              );
             }
-            
+
             return ListView.separated(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               itemCount: weeks.length,
-              separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space4),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: BauhausDesign.space4),
               itemBuilder: (context, index) {
                 final weekStart = weeks.keys.elementAt(index);
                 final weekEntries = weeks[weekStart]!;
                 final weekEnd = weekStart.add(const Duration(days: 6));
-                
-                return _buildWeekCard(context, ref, weekStart, weekEnd, weekEntries);
+
+                return _buildWeekCard(
+                    context, ref, weekStart, weekEnd, weekEntries);
               },
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator(color: BauhausDesign.primary)),
+          loading: () => const Center(
+              child: CircularProgressIndicator(color: BauhausDesign.primary)),
           error: (e, s) => Stack(
-             children: [
-                ListView(),
-                Center(child: Text('Error: $e', style: GoogleFonts.robotoMono(color: BauhausDesign.error))),
-             ],
+            children: [
+              ListView(),
+              Center(
+                child: BauhausErrorState(
+                  message: 'Error: $e',
+                  onRetry: () => ref.refresh(timesheetHistoryProvider(email)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildBauhausAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: BauhausDesign.surfaceLight,
+          border: Border(
+            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            child: Row(
+              children: [
+                BauhausIconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icons.arrow_back,
+                  variant: BauhausActionVariant.ghost,
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                Text(
+                  AppLocalizations.of(context)!.historyTitle,
+                  style: BauhausDesign.getTextTheme(context).displaySmall,
+                ),
+                const Spacer(),
+              ],
+            ),
           ),
         ),
       ),
@@ -97,16 +129,20 @@ class TimesheetHistoryView extends ConsumerWidget {
   }
 
   // Helper to group entries by Monday of their week
-  Map<DateTime, List<TimesheetEntry>> _groupByWeek(List<TimesheetEntry> entries) {
+  Map<DateTime, List<TimesheetEntry>> _groupByWeek(
+      List<TimesheetEntry> entries) {
     final Map<DateTime, List<TimesheetEntry>> groups = {};
     for (var entry in entries) {
-      final date = entry.workDate ?? (entry.shiftDate != null ? DateTime.tryParse(entry.shiftDate!) : null);
+      final date = entry.workDate ??
+          (entry.shiftDate != null
+              ? DateTime.tryParse(entry.shiftDate!)
+              : null);
       if (date != null) {
         // Find Monday
         final monday = date.subtract(Duration(days: date.weekday - 1));
         final key = DateTime(monday.year, monday.month, monday.day);
         if (!groups.containsKey(key)) {
-            groups[key] = [];
+          groups[key] = [];
         }
         groups[key]!.add(entry);
       }
@@ -116,68 +152,94 @@ class TimesheetHistoryView extends ConsumerWidget {
     return Map.fromEntries(sortedKeys.map((k) => MapEntry(k, groups[k]!)));
   }
 
-  Widget _buildWeekCard(BuildContext context, WidgetRef ref, DateTime start, DateTime end, List<TimesheetEntry> entries) {
-     final dateFormat = DateFormat('MMM dd');
-     // Calculate total hours
-     int totalSeconds = 0;
-     for (var e in entries) {
-         if (e.timeWorked != null) {
-             final parts = e.timeWorked!.split(':');
-             if(parts.length == 3) totalSeconds += int.parse(parts[0])*3600 + int.parse(parts[1])*60 + int.parse(parts[2]);
-         }
-     }
-     final h = totalSeconds ~/ 3600;
-     final m = (totalSeconds % 3600) ~/ 60;
-     final totalStr = '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}';
+  Widget _buildWeekCard(BuildContext context, WidgetRef ref, DateTime start,
+      DateTime end, List<TimesheetEntry> entries) {
+    final dateFormat = DateFormat('MMM dd');
+    // Calculate total hours
+    int totalSeconds = 0;
+    for (var e in entries) {
+      if (e.timeWorked != null) {
+        final parts = e.timeWorked!.split(':');
+        if (parts.length == 3) {
+          totalSeconds += int.parse(parts[0]) * 3600 +
+              int.parse(parts[1]) * 60 +
+              int.parse(parts[2]);
+        }
+      }
+    }
+    final h = totalSeconds ~/ 3600;
+    final m = (totalSeconds % 3600) ~/ 60;
+    final totalStr =
+        '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}';
 
-     return Container(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        decoration: BoxDecoration(
-           color: BauhausDesign.surfaceLight,
-           border: Border.all(color: BauhausDesign.textDark, width: 2),
-           boxShadow: const [BauhausDesign.shadowHardSm],
-        ),
-        child: Column(
-           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                      Text(
-                          '${dateFormat.format(start)} - ${dateFormat.format(end)}',
-                          style: GoogleFonts.oswald(fontSize: 18, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
-                      ),
-                      Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          color: BauhausDesign.primary,
-                          child: Text(
-                              totalStr,
-                              style: GoogleFonts.jetBrainsMono(fontSize: 14, fontWeight: FontWeight.bold, color: BauhausDesign.surfaceLight),
-                          ),
-                      )
-                  ],
-              ),
-              const SizedBox(height: BauhausDesign.space2),
+    return BauhausCard(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Text(
-                  '${entries.length} Shifts',
-                  style: GoogleFonts.robotoMono(fontSize: 12, color: BauhausDesign.neutral),
+                '${dateFormat.format(start)} - ${dateFormat.format(end)}',
+                style:
+                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark,
+                        ),
               ),
-              const SizedBox(height: BauhausDesign.space3),
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                       onPressed: () {
-                           // Logic to navigate to TimesheetView focused on this week
-                           debugPrint('TIMESHEET_DEBUG: View Details tapped for week starting $start');
-                           ref.read(timesheetDateProvider.notifier).state = start;
-                           debugPrint('TIMESHEET_DEBUG: Provider state updated. Popping context.');
-                           Navigator.pop(context);
-                      },
-                      child: Text('VIEW DETAILS',  style: GoogleFonts.robotoMono(fontWeight: FontWeight.bold, color: BauhausDesign.primary)),
-                  ),
-              )
-           ],
-        ),
-     );
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space2,
+                    vertical: BauhausDesign.space1),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.primary,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
+                ),
+                child: Text(
+                  totalStr,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.surfaceWhite,
+                            fontFamily: 'monospace',
+                          ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            AppLocalizations.of(context)!.shiftsCount(entries.length),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                // Logic to navigate to TimesheetView focused on this week
+                debugPrint(
+                    'TIMESHEET_DEBUG: View Details tapped for week starting $start');
+                ref.read(timesheetDateProvider.notifier).state = start;
+                debugPrint(
+                    'TIMESHEET_DEBUG: Provider state updated. Popping context.');
+                Navigator.pop(context);
+              },
+              child: Text(
+                AppLocalizations.of(context)!.viewDetailsButton,
+                style:
+                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.primary,
+                        ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

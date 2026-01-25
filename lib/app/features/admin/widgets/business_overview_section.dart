@@ -1,4 +1,4 @@
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -118,7 +118,7 @@ class BusinessOverviewSection extends StatelessWidget {
     required Color color,
     required int index,
   }) {
-    return Container(
+    final card = Container(
       width: 140,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
@@ -186,9 +186,16 @@ class BusinessOverviewSection extends StatelessWidget {
         ),
       ),
     )
+        ;
+
+    final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (disableAnimations) {
+      return card;
+    }
+
+    return card
         .animate(delay: (index * 150).ms)
         .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutQuart)
         .fadeIn(duration: 600.ms, curve: Curves.easeOutQuart);
   }
 }
-

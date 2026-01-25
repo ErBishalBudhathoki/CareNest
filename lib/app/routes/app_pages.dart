@@ -1,7 +1,7 @@
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
-import 'package:carenest/app/features/business/views/add_business_details_view.dart';
+
 import 'package:carenest/app/features/home/views/home_view.dart';
 import 'package:carenest/app/features/auth/views/login_view.dart';
 import 'package:carenest/app/features/auth/views/signup_view.dart';
@@ -17,6 +17,9 @@ import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:carenest/app/features/requests/views/requests_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
+import 'package:carenest/app/features/business/views/business_list_view.dart';
+import 'package:carenest/app/features/client/views/client_list_view.dart';
+import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
 part 'app_routes.dart';
 
 class AppPages {
@@ -32,7 +35,9 @@ class AppPages {
     const SignUpView(),
     const ForgotPasswordView(),
     const AddClientDetails(),
-    const AddBusinessDetails(),
+    // const AddBusinessDetails(), // Removed as per instruction
+    const BusinessListView(),
+    const ClientListView(),
     const AssignC2E(),
     const ClientAndAppointmentDetails(
       userEmail: '',
@@ -52,6 +57,7 @@ class AppPages {
       organizationId: '',
       userEmail: '',
     ),
+    const ClientDashboardView(),
     // const AssignmentListView(),
     //const BottomNavBarWidget(email: '', role: UserRole.normal),
   ];

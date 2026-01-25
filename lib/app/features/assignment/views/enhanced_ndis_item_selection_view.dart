@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/backend/api_method.dart';
 
 class EnhancedNdisItemSelectionResult {
   final NDISItem ndisItem;
@@ -594,19 +596,18 @@ class _EnhancedNdisItemSelectionViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BauhausDesign.background,
       appBar: AppBar(
-        title: const Text('Select NDIS Item'),
+        backgroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
+        elevation: 0,
+        title: Text(
+          'Select NDIS Item',
+          style: BauhausDesign.getTextTheme(context).titleLarge,
+        ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(20),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(
-              widget.highIntensity
-                  ? 'High Intensity Pricing'
-                  : 'Standard Pricing',
-              style: const TextStyle(fontSize: 12, color: Colors.white70),
-            ),
-          ),
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral),
         ),
       ),
       body: Column(
@@ -617,49 +618,54 @@ class _EnhancedNdisItemSelectionViewState
               children: [
                 TextField(
                   onChanged: _filterNdisItems,
-                  decoration: const InputDecoration(
+                  decoration: BauhausDesign.defaultInputDecoration.copyWith(
                     labelText: 'Search by Item Number or Description',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.search),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: BauhausDesign.space4),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(BauhausDesign.space4),
                   decoration: BoxDecoration(
-                    color: Colors.blue
-                        .withAlpha(26), // 0.1 * 255 = 25.5, rounded to 26
-                    borderRadius: BorderRadius.circular(8),
+                    color: BauhausDesign.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                    border: Border.all(
+                        color: BauhausDesign.primary.withOpacity(0.2)),
                   ),
                   child: Row(
                     children: [
                       Icon(Icons.info_outline,
-                          color: Colors.blue[700], size: 20),
-                      const SizedBox(width: 8),
+                          color: BauhausDesign.primary, size: 20),
+                      const SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Text(
                           'Pricing shown for ${widget.highIntensity ? "High Intensity" : "Standard"} rates in $_userState. Tap the price icon to set custom pricing.',
-                          style:
-                              TextStyle(color: Colors.blue[700], fontSize: 12),
+                          style: BauhausDesign.getTextTheme(context)
+                              .labelSmall
+                              ?.copyWith(
+                                color: BauhausDesign.textMuted,
+                              ),
                         ),
                       ),
                       if (_isLoadingCustomPrices) ...[
-                        // Show loading indicator when custom prices are loading
-                        const SizedBox(width: 8),
+                        const SizedBox(width: BauhausDesign.space3),
                         SizedBox(
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.blue[700]!),
+                                BauhausDesign.primary),
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: BauhausDesign.space2),
                         Text(
-                          'Loading prices...',
-                          style:
-                              TextStyle(color: Colors.blue[700], fontSize: 12),
+                          'Loading...',
+                          style: BauhausDesign.getTextTheme(context)
+                              .labelSmall
+                              ?.copyWith(
+                                color: BauhausDesign.primary,
+                              ),
                         ),
                       ],
                     ],
@@ -723,75 +729,121 @@ class _EnhancedNdisItemSelectionViewState
           '  Should use custom price: ${isForCurrentClient || isNotClientSpecific}');
     }
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    return BauhausCard(
+      margin: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space4, vertical: BauhausDesign.space2),
+      padding: EdgeInsets.zero,
       child: Column(
         children: [
-          ListTile(
-            title: Text(
-              item.itemName,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.itemNumber,
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 4),
-                Row(
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _selectItem(item),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              child: Padding(
+                padding: const EdgeInsets.all(BauhausDesign.space4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: currentPrice != cappedPrice
-                            ? Colors.orange.withAlpha(51) // 0.2 * 255 = 51
-                            : Colors.green.withAlpha(51), // 0.2 * 255 = 51
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '\$${currentPrice.toStringAsFixed(2)}/hr',
-                        style: TextStyle(
-                          color: currentPrice != cappedPrice
-                              ? Colors.orange[700]
-                              : Colors.green[700],
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.itemName,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          const SizedBox(height: BauhausDesign.space1),
+                          Text(
+                            item.itemNumber,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                ),
+                          ),
+                          const SizedBox(height: BauhausDesign.space2),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: BauhausDesign.space2,
+                                    vertical: BauhausDesign.space1),
+                                decoration: BoxDecoration(
+                                  color: currentPrice != cappedPrice
+                                      ? BauhausDesign.warning.withOpacity(0.1)
+                                      : BauhausDesign.success.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(
+                                      BauhausDesign.radiusPill),
+                                ),
+                                child: Text(
+                                  '\$${currentPrice.toStringAsFixed(2)}/hr',
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: currentPrice != cappedPrice
+                                            ? BauhausDesign.warning
+                                            : BauhausDesign.success,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                ),
+                              ),
+                              const SizedBox(width: BauhausDesign.space2),
+                              Text(
+                                pricingSource,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .labelSmall
+                                    ?.copyWith(
+                                      color: BauhausDesign.textMuted,
+                                      fontSize: 10,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      pricingSource,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 11,
-                      ),
+                    Column(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            showOverride
+                                ? Icons.expand_less
+                                : Icons.attach_money,
+                            color: showOverride
+                                ? BauhausDesign.primary
+                                : BauhausDesign.textMuted,
+                          ),
+                          onPressed: () =>
+                              _togglePriceOverride(item.itemNumber),
+                          tooltip: 'Set custom price',
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          style: IconButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        ),
+                        const SizedBox(height: BauhausDesign.space4),
+                        IconButton(
+                          icon: Icon(Icons.arrow_forward_ios,
+                              size: 16, color: BauhausDesign.textMuted),
+                          onPressed: () => _selectItem(item),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          style: IconButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    showOverride ? Icons.expand_less : Icons.attach_money,
-                    color: showOverride ? Colors.blue : Colors.grey[600],
-                  ),
-                  onPressed: () => _togglePriceOverride(item.itemNumber),
-                  tooltip: 'Set custom price',
-                ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onPressed: () => _selectItem(item),
-                ),
-              ],
-            ),
-            onTap: () => _selectItem(item),
           ),
           if (showOverride) _buildPriceOverrideSection(item),
         ],
@@ -808,18 +860,18 @@ class _EnhancedNdisItemSelectionViewState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        border: Border(top: BorderSide(color: Colors.grey[300]!)),
+        color: BauhausDesign.backgroundLight,
+        border: Border(top: BorderSide(color: BauhausDesign.neutral)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(
           children: [
-            Icon(Icons.info_outline, size: 16, color: Colors.blue[600]),
+            Icon(Icons.info_outline, size: 16, color: BauhausDesign.primary),
             const SizedBox(width: 8),
             Text(
               'Max Capped Price: \$${cappedPrice.toStringAsFixed(2)}/hr',
               style: TextStyle(
-                color: Colors.blue[600],
+                color: BauhausDesign.primary,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
@@ -939,7 +991,8 @@ class _EnhancedNdisItemSelectionViewState
                                   // Optimistically update local pricing state so UI reflects immediately
                                   if (mounted) {
                                     setState(() {
-                                      final isClientSpecific = widget.clientId != null;
+                                      final isClientSpecific =
+                                          widget.clientId != null;
                                       final customPricingData = {
                                         'price': price,
                                         'customPrice': price,
@@ -949,7 +1002,8 @@ class _EnhancedNdisItemSelectionViewState
                                         'source': isClientSpecific
                                             ? 'Client Custom Price'
                                             : 'Organization Custom Price',
-                                        'updatedAt': DateTime.now().toIso8601String(),
+                                        'updatedAt':
+                                            DateTime.now().toIso8601String(),
                                       };
 
                                       _pricingData[item.itemNumber] = {
@@ -958,8 +1012,10 @@ class _EnhancedNdisItemSelectionViewState
                                       };
 
                                       // Collapse override and mark as enabled
-                                      _showPriceOverride[item.itemNumber] = false;
-                                      _isCustomPriceEnabled[item.itemNumber] = true;
+                                      _showPriceOverride[item.itemNumber] =
+                                          false;
+                                      _isCustomPriceEnabled[item.itemNumber] =
+                                          true;
                                     });
                                   }
 
@@ -1018,15 +1074,16 @@ class _EnhancedNdisItemSelectionViewState
                             );
                           }
                         },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: BauhausDesign.primary,
+                    foregroundColor: BauhausDesign.surfaceWhite,
                   ),
                   child: isSaving
                       ? const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                              color: Colors.white, strokeWidth: 2))
+                              color: BauhausDesign.surfaceWhite, strokeWidth: 2))
                       : const Text('Save',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
@@ -1038,13 +1095,13 @@ class _EnhancedNdisItemSelectionViewState
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(0.1),
+              color: BauhausDesign.warning.withOpacity(0.1),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: Colors.amber.withOpacity(0.1)),
+              border: Border.all(color: BauhausDesign.warning.withOpacity(0.1)),
             ),
             child: Row(
               children: [
-                Icon(Icons.warning_amber, size: 16, color: Colors.amber[700]),
+                Icon(Icons.warning_amber, size: 16, color: BauhausDesign.warning),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -1052,7 +1109,7 @@ class _EnhancedNdisItemSelectionViewState
                         ? 'Custom pricing will be saved for this client and can be reused for future assignments.'
                         : 'Custom pricing will be saved for this organization and can be reused for future assignments.',
                     style: TextStyle(
-                      color: Colors.amber[700],
+                      color: BauhausDesign.warning,
                       fontSize: 11,
                     ),
                   ),

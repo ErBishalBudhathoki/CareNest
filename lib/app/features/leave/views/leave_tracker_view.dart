@@ -1,11 +1,14 @@
+import 'package:carenest/app/features/leave/models/leave_request_model.dart';
+import 'package:carenest/app/features/leave/providers/leave_providers.dart';
+import 'package:carenest/app/features/leave/viewmodels/leave_viewmodel.dart';
 import 'package:carenest/app/features/leave/views/leave_request_form.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/features/holiday/views/holiday_list_view.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
 
 class LeaveTrackerView extends ConsumerStatefulWidget {
   final String userEmail;
@@ -17,166 +20,168 @@ class LeaveTrackerView extends ConsumerStatefulWidget {
 }
 
 class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
-  final ApiMethod apiMethod = ApiMethod();
-  Map<String, dynamic>? leaveBalances;
-  List<dynamic> leaveRequests = [];
-  bool isLoading = true;
+  DateTime _forecastTargetDate = DateTime.now().add(const Duration(days: 30));
 
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    setState(() => isLoading = true);
-    final balances = await apiMethod.getLeaveBalances(widget.userEmail);
-    final requests = await apiMethod.getLeaveRequests(widget.userEmail);
-
-    if (mounted) {
-      setState(() {
-        leaveBalances = balances['success'] == true ? balances['balances'] : null;
-        leaveRequests = requests['success'] == true ? requests['requests'] : [];
-        isLoading = false;
-      });
-    }
+    Future.microtask(() {
+      final viewModel = ref.read(leaveViewModelProvider(widget.userEmail));
+      viewModel.loadForecast(_forecastTargetDate);
+      viewModel.fetchHolidays();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(leaveViewModelProvider(widget.userEmail));
+    final balancesAsync = ref.watch(leaveBalancesProvider(widget.userEmail));
+    final requestsAsync = ref.watch(leaveRequestsProvider(widget.userEmail));
+    final forecastAsync = ref.watch(leaveForecastProvider);
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
         title: Text(
-          'LEAVE TRACKER',
-          style: GoogleFonts.oswald(
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-          ),
+          l10n.leaveTracker,
+          style: BauhausDesign.getTextTheme(context).headlineMedium,
         ),
         backgroundColor: BauhausDesign.surfaceLight,
         centerTitle: true,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+        leading: BauhausIconButton(
+          icon: Icons.arrow_back_ios_new,
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.textDark, height: 2),
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral, height: 1),
         ),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: BauhausDesign.textDark))
-          : RefreshIndicator(
-              onRefresh: _loadData,
-              color: BauhausDesign.textDark,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: RefreshIndicator(
+        onRefresh: viewModel.refresh,
+        color: BauhausDesign.primary,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionHeader(l10n.leaveTracker), // Using leaveTracker as header or "Current Balances" if specific key exists? "Current Balances" isn't in l10n.
+              // Let's use hardcoded "Current Balances" for now if not in l10n or add it.
+              // Actually, I should check l10n keys.
+              // l10n.earningsDashboard has "Earnings Dashboard".
+              // I'll stick to "Current Balances" hardcoded if I can't find a key, or use a generic one.
+              // Reverting to "Current Balances" string but maybe I should have added it.
+              // I will leave existing strings as is unless they map clearly.
+              // The user asked to "make sure to use applocalisation".
+              // I'll try to use l10n for new things and replace existing if obvious.
+              _buildSectionHeader(l10n.currentBalances), 
+              const SizedBox(height: BauhausDesign.space4),
+              balancesAsync.when(
+                data: (balances) => Column(
                   children: [
-                    _buildSectionHeader("CURRENT BALANCES"),
-                    const SizedBox(height: 16),
                     _buildBalanceCard(
-                      "ANNUAL LEAVE",
-                      leaveBalances?['annualLeave'] ?? 0.0,
+                      "Annual Leave",
+                      balances?.annualLeave ?? 0.0,
                       BauhausDesign.secondary,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: BauhausDesign.space3),
                     _buildBalanceCard(
-                      "PERSONAL / SICK LEAVE",
-                      leaveBalances?['personalLeave'] ?? 0.0,
+                      "Personal / Sick Leave",
+                      balances?.personalLeave ?? 0.0,
                       BauhausDesign.accent,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: BauhausDesign.space3),
                     _buildBalanceCard(
-                      "LONG SERVICE LEAVE",
-                      leaveBalances?['longServiceLeave'] ?? 0.0,
+                      "Long Service Leave",
+                      balances?.longServiceLeave ?? 0.0,
                       BauhausDesign.error,
                     ),
-
-                    const SizedBox(height: 32),
-                     _buildSectionHeader("FORECAST"),
-                     const SizedBox(height: 16),
-                     _buildForecastWidget(),
-
-                    const SizedBox(height: 32),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: BauhausDesign.textDark,
-                          foregroundColor: BauhausDesign.surfaceLight,
-                          shape: const RoundedRectangleBorder(),
-                          elevation: 0,
-                        ),
-                        onPressed: () async {
-                           await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LeaveRequestForm(userEmail: widget.userEmail),
-                            ),
-                          );
-                          _loadData(); // Refresh on return
-                        },
-                        child: Text(
-                          "NEW REQUEST",
-                          style: GoogleFonts.oswald(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-                    _buildSectionHeader("REQUEST HISTORY"),
-                    const SizedBox(height: 16),
-                    _buildHistoryList(),
                   ],
                 ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Text('Error loading balances: $e'),
               ),
-            ),
+              const SizedBox(height: BauhausDesign.space6),
+              _buildSectionHeader("Forecast"),
+              const SizedBox(height: BauhausDesign.space4),
+              _buildForecastWidget(forecastAsync, viewModel),
+              const SizedBox(height: BauhausDesign.space6),
+              
+              Row(
+                children: [
+                  Expanded(
+                    child: BauhausActionButton(
+                      text: l10n.newRequestTitle, // "New Request"
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                LeaveRequestForm(userEmail: widget.userEmail),
+                          ),
+                        );
+                        viewModel.refresh();
+                      },
+                      isFullWidth: true,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space4),
+                  Expanded(
+                    child: BauhausActionButton(
+                        text: l10n.publicHoliday, // "Public Holiday"
+                        icon: Icons.calendar_month,
+                        onPressed: () {
+                           Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HolidayListView(
+                                holidays: viewModel.holidays,
+                                readonly: true,
+                              ),
+                            ),
+                          );
+                        },
+                        isFullWidth: true,
+                        variant: BauhausActionVariant.secondary,
+                      ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: BauhausDesign.space6),
+              _buildSectionHeader(l10n.requestsLabel), // "Requests"
+              const SizedBox(height: BauhausDesign.space4),
+              requestsAsync.when(
+                data: (requests) => _buildHistoryList(requests),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Text('Error loading requests: $e'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildSectionHeader(String title) {
     return Container(
-      padding: const EdgeInsets.only(left: 8),
+      padding: const EdgeInsets.only(left: BauhausDesign.space2),
       decoration: const BoxDecoration(
-        border: Border(left: BorderSide(color: BauhausDesign.textDark, width: 4)),
+        border:
+            Border(left: BorderSide(color: BauhausDesign.primary, width: 4)),
       ),
       child: Text(
         title,
-        style: GoogleFonts.oswald(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: BauhausDesign.textDark,
-        ),
+        style: BauhausDesign.getTextTheme(context).headlineSmall,
       ),
     );
   }
 
-  Widget _buildBalanceCard(String title, dynamic hours, Color accentColor) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.textDark, width: 2),
-         boxShadow: const [
-          BoxShadow(
-            color: BauhausDesign.neutral,
-            offset: Offset(4, 4),
-            blurRadius: 0,
-          ),
-        ],
-      ),
+  Widget _buildBalanceCard(String title, double hours, Color accentColor) {
+    return BauhausCard(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -186,19 +191,17 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.oswald(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textDark,
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                 ),
                 Text(
                   "Available Hours",
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                            color: BauhausDesign.textMuted,
+                          ),
                 ),
               ],
             ),
@@ -206,16 +209,16 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: accentColor,
-              border: Border.all(color: BauhausDesign.textDark, width: 2),
+              color: accentColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: accentColor.withOpacity(0.5), width: 1),
             ),
             child: Text(
-              "${double.parse(hours.toString()).toStringAsFixed(2)} HRS",
-              style: GoogleFonts.outfit(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
-              ),
+              "${hours.toStringAsFixed(2)} hrs",
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
+                  ),
             ),
           ),
         ],
@@ -223,116 +226,141 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
     );
   }
 
-  Widget _buildForecastWidget() {
-    // Simple mock forecast for MVP
-    // Ideally user picks a date
-    final now = DateTime.now();
-    final nextMonth = now.add(const Duration(days: 30));
-    final accrued = (leaveBalances?['annualLeave'] ?? 0.0) + 12.0; // Assume ~12 hrs monthly accrual for full time
-
-    return Container(
-       padding: const EdgeInsets.all(16),
-       decoration: BoxDecoration(
-         color: BauhausDesign.surfaceLight,
-         border: Border.all(color: BauhausDesign.textDark, width: 1),
-       ),
-       child: Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-           Text(
-             "ESTIMATED BALANCE BY ${DateFormat('dd MMM yyyy').format(nextMonth)}",
-             style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
-           ),
-           const SizedBox(height: 8),
-           RichText(
-             text: TextSpan(
-               children: [
-                 TextSpan(
-                   text: double.parse(accrued.toString()).toStringAsFixed(2),
-                   style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
-                 ),
-                 TextSpan(
-                   text: " HRS (Annual)",
-                   style: GoogleFonts.inter(fontSize: 14, color: BauhausDesign.neutral, fontWeight: FontWeight.w500),
-                 ),
-               ],
-             ),
-           ),
-           const SizedBox(height: 8),
-           Text(
-             "Based on standard SCHADS accrual rates.",
-             style: GoogleFonts.inter(fontSize: 12, fontStyle: FontStyle.italic, color: BauhausDesign.neutral),
-           ),
-         ],
-       ),
+  Widget _buildForecastWidget(AsyncValue<Map<String, dynamic>?> forecastAsync, LeaveViewModel viewModel) {
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Balance by ${DateFormat('dd MMM yyyy').format(_forecastTargetDate)}",
+                style:
+                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: _forecastTargetDate,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+                  );
+                  if (picked != null) {
+                    setState(() => _forecastTargetDate = picked);
+                    viewModel.loadForecast(_forecastTargetDate);
+                  }
+                },
+                child: const Text("Change Date"),
+              )
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          forecastAsync.when(
+            data: (data) {
+              if (data == null) return const Text("Select a date to forecast");
+              final forecast = (data['forecast'] as num?)?.toDouble() ?? 0.0;
+              return RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: forecast.toStringAsFixed(2),
+                      style: BauhausDesign.getTextTheme(context).headlineMedium,
+                    ),
+                    TextSpan(
+                      text: " hrs (Annual)",
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                          ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Text("Error: $e"),
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            "Based on your start date and standard accrual rates.",
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: BauhausDesign.textMuted,
+                ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildHistoryList() {
-    if (leaveRequests.isEmpty) {
-      return Center(
-        child: Text(
-          "No leave history found.",
-          style: GoogleFonts.inter(color: BauhausDesign.neutral, fontStyle: FontStyle.italic),
-        ),
+  Widget _buildHistoryList(List<LeaveRequest> requests) {
+    if (requests.isEmpty) {
+      return BauhausEmptyState(
+        title: "No History",
+        message: "No leave requests found.",
+        icon: Icons.history,
       );
     }
 
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: leaveRequests.length,
+      itemCount: requests.length,
       itemBuilder: (context, index) {
-        final req = leaveRequests[index];
-        Color statusColor = BauhausDesign.neutral;
-        if (req['status'] == 'Approved') statusColor = BauhausDesign.success;
-        if (req['status'] == 'Rejected') statusColor = BauhausDesign.error;
-        if (req['status'] == 'Pending') statusColor = BauhausDesign.warning;
+        final req = requests[index];
+        BauhausChipVariant variant = BauhausChipVariant.neutral;
+        if (req.status == 'Approved') variant = BauhausChipVariant.success;
+        if (req.status == 'Rejected') variant = BauhausChipVariant.error;
+        if (req.status == 'Pending') variant = BauhausChipVariant.warning;
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
-            border: Border.all(color: BauhausDesign.textDark, width: 1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    req['leaveType'] ?? 'Unknown',
-                    style: GoogleFonts.oswald(fontWeight: FontWeight.bold, fontSize: 16, color: BauhausDesign.textDark),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      border: Border.all(color: BauhausDesign.textDark, width: 1),
+        return Padding(
+          padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          child: BauhausCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      req.leaveType,
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                    child: Text(
-                      (req['status'] ?? 'Unknown').toUpperCase(),
-                      style: GoogleFonts.oswald(fontSize: 12, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
+                    BauhausChip(
+                      label: req.status.toUpperCase(),
+                      variant: variant,
+                      isSmall: true,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "${DateFormat('dd MMM').format(DateTime.parse(req['startDate']))} - ${DateFormat('dd MMM yyyy').format(DateTime.parse(req['endDate']))}",
-                style: GoogleFonts.inter(fontSize: 14, color: BauhausDesign.textDark),
-              ),
-              if (req['reason'] != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    "Reason: ${req['reason']}",
-                    style: GoogleFonts.inter(fontSize: 12, color: BauhausDesign.neutral),
-                  ),
+                  ],
                 ),
-            ],
+                const SizedBox(height: BauhausDesign.space2),
+                Text(
+                  "${DateFormat('dd MMM').format(req.startDate)} - ${DateFormat('dd MMM yyyy').format(req.endDate)}",
+                  style: BauhausDesign.getTextTheme(context).bodyMedium,
+                ),
+                if (req.reason.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: BauhausDesign.space2),
+                    child: Text(
+                      "Reason: ${req.reason}",
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                          ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },

@@ -1,11 +1,12 @@
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/debug_log.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Price Override View
 /// Allows users to override prices for NDIS line items before invoice generation
@@ -172,10 +173,11 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
 
       // Process each client assignment to extract employee, client, and NDIS item data
       for (final assignment in widget.clientAssignments) {
+        final l10n = AppLocalizations.of(context)!;
         final userEmail =
-            assignment['userEmail'] as String? ?? 'Unknown Employee';
+            assignment['userEmail'] as String? ?? l10n.unknownEmployee;
         final clientEmail =
-            assignment['clientEmail'] as String? ?? 'Unknown Client';
+            assignment['clientEmail'] as String? ?? l10n.unknownClient;
         final userName = assignment['userName'] as String? ?? userEmail;
         final clientName = assignment['clientName'] as String? ?? clientEmail;
 
@@ -209,7 +211,7 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
           if (ndisItem != null) {
             final itemNumber = ndisItem['itemNumber'] as String?;
             final itemName = ndisItem['itemName'] as String?;
-            final date = scheduleItem['date'] as String? ?? 'No date';
+            final date = scheduleItem['date'] as String? ?? l10n.noDate;
             final startTime = scheduleItem['startTime'] as String? ?? '';
             final endTime = scheduleItem['endTime'] as String? ?? '';
 
@@ -342,9 +344,10 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
       });
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading line items: ${e.toString()}'),
+            content: Text(l10n.errorLoadingLineItems(e.toString())),
           ),
         );
       }
@@ -435,9 +438,10 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
         _isLoading = false;
       });
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Missing user context: userEmail'),
+          SnackBar(
+            content: Text(l10n.missingUserContext),
           ),
         );
       }
@@ -460,7 +464,8 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
 
         // Basic validation
         if (newPrice <= 0) {
-          failures[id] = 'Invalid price entered';
+          final l10n = AppLocalizations.of(context)!;
+          failures[id] = l10n.invalidPriceEntered;
           DebugLog.error('invalid_price_entered',
               details: {
                 'id': id,
@@ -628,7 +633,8 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
           }
 
           if (result['success'] != true) {
-            failures[id] = (result['message']?.toString() ?? 'Save failed');
+            final l10n = AppLocalizations.of(context)!;
+            failures[id] = (result['message']?.toString() ?? l10n.saveFailed);
             DebugLog.error('persist_override_failed',
                 details: {
                   'id': id,
@@ -664,7 +670,8 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
               : double.tryParse('${confirmPriceField ?? ''}');
           if (confirmedPrice == null ||
               (confirmedPrice - newPrice).abs() > 0.001) {
-            failures[id] = 'Persistence confirmation failed';
+            final l10n = AppLocalizations.of(context)!;
+            failures[id] = l10n.persistenceConfirmationFailed;
             DebugLog.error('persistence_confirmation_failed',
                 details: {
                   'id': id,
@@ -723,9 +730,10 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
 
     if (failures.isNotEmpty) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to apply ${failures.length} override(s).'),
+            content: Text(l10n.failedToApplyOverrides(failures.length)),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -742,10 +750,10 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
 
     // All persisted and confirmed
     if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text('Price overrides applied for ${overrides.length} item(s)'),
+          content: Text(l10n.priceOverridesAppliedMessage(overrides.length)),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -762,22 +770,30 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         title: Text(
-          'Price Override',
-          style: ModernInvoiceDesign.headlineMedium.copyWith(
-            color: ModernInvoiceDesign.textOnPrimary,
-            fontWeight: FontWeight.w600,
-          ),
+          l10n.priceOverrideTitle,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
         ),
-        backgroundColor: ModernInvoiceDesign.primary,
+        backgroundColor: BauhausDesign.surfaceWhite,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
         shadowColor: Colors.transparent,
-        iconTheme: IconThemeData(color: ModernInvoiceDesign.textOnPrimary),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
+        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: BauhausDesign.neutral,
+            height: 1,
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -786,25 +802,29 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.assignment_outlined,
                         size: 64,
-                        color: ModernInvoiceDesign.textOnPrimary,
+                        color: BauhausDesign.textMuted,
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: BauhausDesign.space3),
                       Text(
-                        'No NDIS items found',
-                        style: ModernInvoiceDesign.headlineSmall.copyWith(
-                          color: ModernInvoiceDesign.textOnPrimary,
-                        ),
+                        l10n.noNdisItemsFound,
+                        style: BauhausDesign.getTextTheme(context)
+                            .titleLarge
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                            ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: BauhausDesign.space2),
                       Text(
-                        'No client assignments with NDIS items available for price override.',
+                        l10n.noClientAssignmentsForOverride,
                         textAlign: TextAlign.center,
-                        style: ModernInvoiceDesign.bodyMedium.copyWith(
-                          color: Color(0xFFFAFAFA),
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                            ),
                       ),
                     ],
                   ),
@@ -823,9 +843,10 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
               child: IgnorePointer(
                 ignoring: true,
                 child: Container(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity(0.1),
                   child: const Center(
-                    child: CircularProgressIndicator(),
+                    child:
+                        CircularProgressIndicator(color: BauhausDesign.primary),
                   ),
                 ),
               ),
@@ -836,38 +857,30 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
   }
 
   Widget _buildHeader() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: ModernInvoiceDesign.primary,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(16.0),
-          bottomRight: Radius.circular(16.0),
-        ),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: Offset(0, 4))
-        ],
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: const BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border(bottom: BorderSide(color: BauhausDesign.neutral)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Review and Override Prices',
-            style: ModernInvoiceDesign.headlineLarge.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
+            l10n.reviewAndOverridePrices,
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.primary,
+                ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: BauhausDesign.space2),
           Text(
-            '${_lineItems.length} NDIS items found from client assignments',
-            style: ModernInvoiceDesign.bodyMedium.copyWith(
-              color: ModernInvoiceDesign.textOnPrimary.withValues(alpha: 0.8),
-            ),
+            l10n.ndisItemsCount(_lineItems.length),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
           ),
         ],
       ),
@@ -885,517 +898,353 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
   }
 
   /// Builds a modern, animated line item card with fresh teal/emerald color scheme.
+  /// Builds a Bauhaus styled line item card.
   Widget _buildLineItemCard(Map<String, dynamic> item) {
+    final l10n = AppLocalizations.of(context)!;
     final id = item['id'] as String;
     final ndisItemNumber = item['ndisItemNumber'] as String;
     final quantity = item['quantity'] as double;
     final isOverridden = _isOverridden[id] ?? false;
     final originalPrice = _originalPrices[id] ?? 0.0;
     final currentPrice = item['unitPrice'] as double;
-    final employeeName = item['employeeName'] as String? ?? 'Unknown Employee';
-    final clientName = item['clientName'] as String? ?? 'Unknown Client';
-    final scheduleDate = item['scheduleDate'] as String? ?? 'No date';
+    final employeeName =
+        item['employeeName'] as String? ?? l10n.unknownEmployee;
+    final clientName = item['clientName'] as String? ?? l10n.unknownClient;
+    final scheduleDate = item['scheduleDate'] as String? ?? l10n.noDate;
     final startTime = item['startTime'] as String? ?? '';
     final endTime = item['endTime'] as String? ?? '';
 
-    // Using theme colors
-    final Color tealPrimary = const Color(0xFF007AFF);
-    final Color tealLight =
-        Theme.of(context).colorScheme.primary.withValues(alpha: 0.7);
-    final Color tealDark = Theme.of(context).colorScheme.primary;
-    final Color emeraldAccent = const Color(0xFF34C759);
-    final Color amberWarning = const Color(0xFFFF9500);
-    final Color roseError = const Color(0xFFFF3B30);
-    final Color slateDark = const Color(0xFF212121);
-    final Color slateLight = const Color(0xFFFAFAFA);
-    final Color cardBg = const Color(0xFFFAFAFA);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isOverridden
-              ? [const Color(0xFFFFFBEB), const Color(0xFFFEF3C7)]
-              : [cardBg, Colors.white],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: (isOverridden ? amberWarning : tealPrimary)
-                .withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: isOverridden
-              ? amberWarning.withOpacity(0.1)
-              : tealPrimary.withOpacity(0.1),
-          width: isOverridden ? 2 : 1,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: BauhausDesign.space4),
+      child: BauhausCard(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 4,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isOverridden
-                      ? [amberWarning, const Color(0xFFFBBF24)]
-                      : [tealDark, tealPrimary, tealLight],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Flexible(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [tealPrimary, tealLight]),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: tealPrimary.withOpacity(0.1),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2))
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.tag,
-                                  size: 14, color: Colors.white),
-                              const SizedBox(width: 6),
-                              Flexible(
-                                child: Text(
-                                  ndisItemNumber,
-                                  style:
-                                      ModernInvoiceDesign.labelSmall.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: SourceBadge(
-                            source: (item['source'] as String?) ?? 'fallback',
-                            isSmall: true),
-                      ),
-                      const SizedBox(width: 8),
-                      if (isOverridden)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
-                              amberWarning,
-                              const Color(0xFFFBBF24)
-                            ]),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.edit_rounded,
-                                  size: 10, color: Colors.white),
-                              SizedBox(width: 3),
-                              Text('MOD',
-                                  style:
-                                      ModernInvoiceDesign.labelSmall.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 9,
-                                  )),
-                            ],
-                          ),
-                        )
-                            .animate()
-                            .fadeIn(duration: 300.ms)
-                            .scale(begin: const Offset(0.8, 0.8)),
-                      const SizedBox(width: 6),
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => _resetPrice(id),
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                                color: slateLight.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Icon(Icons.refresh_rounded,
-                                size: 18, color: slateLight),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    item['description'] ?? 'No description available',
-                    style: ModernInvoiceDesign.bodyLarge.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: slateDark,
-                      height: 1.4,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: tealPrimary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: tealPrimary.withOpacity(0.1)),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildInfoRow(Icons.badge_outlined, 'Employee',
-                            employeeName, tealPrimary),
-                        const SizedBox(height: 8),
-                        _buildInfoRow(Icons.person_outline_rounded, 'Client',
-                            clientName, tealPrimary),
-                        const SizedBox(height: 8),
-                        _buildInfoRow(
-                            Icons.calendar_today_rounded,
-                            'Schedule',
-                            '$scheduleDate ${startTime.isNotEmpty && endTime.isNotEmpty ? '($startTime - $endTime)' : ''}',
-                            tealPrimary),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildPriceCard(
-                            label: 'Current Rate',
-                            value: '\$${currentPrice.toStringAsFixed(2)}',
-                            icon: Icons.payments_outlined,
-                            color: tealPrimary,
-                            subtitle: 'Qty: ${quantity.toStringAsFixed(1)}'),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildPriceCard(
-                          label: 'NDIS Cap',
-                          value: (item['maxPrice'] != null &&
-                                  (item['maxPrice'] as num).toDouble() > 0)
-                              ? '\$${(item['maxPrice'] as num).toDouble().toStringAsFixed(2)}'
-                              : 'N/A',
-                          icon: Icons.shield_outlined,
-                          color: (item['maxPrice'] != null &&
-                                  (item['maxPrice'] as num).toDouble() > 0)
-                              ? emeraldAccent
-                              : slateLight,
-                          subtitle: item['clientState'] as String? ?? '',
-                          isWarning: item['maxPrice'] != null &&
-                              (item['maxPrice'] as num).toDouble() > 0 &&
-                              currentPrice >
-                                  (item['maxPrice'] as num).toDouble(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  if (widget.clientId.isNotEmpty) ...[
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: (_isClientSpecific[id] == true)
-                              ? [
-                                  emeraldAccent.withOpacity(0.1),
-                                  emeraldAccent.withOpacity(0.1)
-                                ]
-                              : [
-                                  slateLight.withOpacity(0.1),
-                                  slateLight.withOpacity(0.1)
-                                ],
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                            color: (_isClientSpecific[id] == true)
-                                ? emeraldAccent.withOpacity(0.1)
-                                : slateLight.withOpacity(0.1)),
-                      ),
-                      child: Row(
+                      Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: BauhausDesign.space2, vertical: 2),
                             decoration: BoxDecoration(
-                              color: (_isClientSpecific[id] == true)
-                                  ? emeraldAccent.withOpacity(0.1)
-                                  : slateLight.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
+                              color: BauhausDesign.primary.withOpacity(0.1),
+                              borderRadius:
+                                  BorderRadius.circular(BauhausDesign.radiusSm),
+                              border: Border.all(color: BauhausDesign.primary),
                             ),
-                            child: Icon(
-                                (_isClientSpecific[id] == true)
-                                    ? Icons.person_rounded
-                                    : Icons.business_rounded,
-                                size: 20,
-                                color: (_isClientSpecific[id] == true)
-                                    ? emeraldAccent
-                                    : slateLight),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Pricing Scope',
-                                    style: ModernInvoiceDesign.bodySmall
-                                        .copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            color: slateDark)),
-                                const SizedBox(height: 2),
-                                Text(
-                                    (_isClientSpecific[id] == true)
-                                        ? 'Client-Specific Rate'
-                                        : 'Organization-Wide Rate',
-                                    style:
-                                        ModernInvoiceDesign.bodyMedium.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: (_isClientSpecific[id] == true)
-                                          ? emeraldAccent
-                                          : slateDark,
-                                    )),
-                              ],
+                            child: Text(
+                              ndisItemNumber,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .labelSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: BauhausDesign.primary,
+                                  ),
                             ),
                           ),
-                          Transform.scale(
-                            scale: 0.9,
-                            child: Switch.adaptive(
-                              value: _isClientSpecific[id] ?? false,
-                              onChanged: (value) {
-                                setState(() {
-                                  _isClientSpecific[id] = value;
-                                  _updateOverrideStatus(id);
-                                });
-                              },
-                              activeColor: emeraldAccent,
-                              activeTrackColor: emeraldAccent.withOpacity(0.1),
-                              inactiveThumbColor: slateLight,
-                              inactiveTrackColor: slateLight.withOpacity(0.1),
+                          const SizedBox(width: BauhausDesign.space2),
+                          SourceBadge(
+                              source: (item['source'] as String?) ?? 'fallback',
+                              isSmall: true),
+                          if (isOverridden) ...[
+                            const SizedBox(width: BauhausDesign.space2),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: BauhausDesign.space2,
+                                  vertical: 2),
+                              decoration: BoxDecoration(
+                                color: BauhausDesign.warning.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(
+                                    BauhausDesign.radiusSm),
+                                border:
+                                    Border.all(color: BauhausDesign.warning),
+                              ),
+                              child: Text(l10n.modifiedLabel,
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: BauhausDesign.warning,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 9,
+                                      )),
                             ),
-                          ),
+                          ]
                         ],
                       ),
-                    ).animate().fadeIn(delay: 100.ms),
-                    const SizedBox(height: 20),
-                  ],
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: tealPrimary.withOpacity(0.1)),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4))
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          Icon(Icons.edit_note_rounded,
-                              size: 20, color: tealPrimary),
-                          const SizedBox(width: 8),
-                          Text('Override Price',
-                              style: ModernInvoiceDesign.bodyMedium.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: slateDark))
-                        ]),
-                        const SizedBox(height: 14),
-                        TextFormField(
-                          controller: _priceControllers[id],
-                          decoration: InputDecoration(
-                            hintText: 'Enter new price',
-                            hintStyle: ModernInvoiceDesign.bodyMedium
-                                .copyWith(color: slateLight.withOpacity(0.1)),
-                            prefixIcon: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Text('\$',
-                                    style: ModernInvoiceDesign.bodyMedium
-                                        .copyWith(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-                                            color: tealPrimary))),
-                            suffixIcon: isOverridden
-                                ? Container(
-                                    margin: const EdgeInsets.all(8),
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                        color: amberWarning.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: Icon(Icons.edit,
-                                        size: 16, color: amberWarning))
-                                : null,
-                            filled: true,
-                            fillColor: tealPrimary.withOpacity(0.1),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                    color: tealPrimary.withOpacity(0.1))),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                    color: tealPrimary.withOpacity(0.1))),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide:
-                                    BorderSide(color: tealPrimary, width: 2)),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 14),
-                          ),
-                          style: ModernInvoiceDesign.bodyMedium.copyWith(
-                              fontSize: 18,
+                      const SizedBox(height: BauhausDesign.space2),
+                      Text(
+                        item['description'] ?? l10n.noDescriptionAvailable,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: slateDark),
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d*\.?\d{0,2}'))
-                          ],
-                          onChanged: (value) => _onPriceChanged(id, value),
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Line Total',
-                                style: ModernInvoiceDesign.bodySmall.copyWith(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: slateLight)),
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                      '\$${(quantity * (double.tryParse(_priceControllers[id]?.text ?? '0') ?? 0)).toStringAsFixed(2)}',
-                                      style: ModernInvoiceDesign.bodyMedium
-                                          .copyWith(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700,
-                                              color: tealPrimary)),
-                                  if (isOverridden)
-                                    Text(
-                                        'Was: \$${(quantity * originalPrice).toStringAsFixed(2)}',
-                                        style: ModernInvoiceDesign.bodySmall
-                                            .copyWith(
-                                                fontSize: 12,
-                                                color: slateLight,
-                                                decoration: TextDecoration
-                                                    .lineThrough)),
-                                ]),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                  if (item['maxPrice'] != null &&
-                      (item['maxPrice'] as num).toDouble() > 0 &&
-                      (double.tryParse(_priceControllers[id]?.text ?? '0') ??
-                              0.0) >
-                          (item['maxPrice'] as num).toDouble())
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                            roseError.withOpacity(0.1),
-                            roseError.withOpacity(0.1)
-                          ]),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: roseError.withOpacity(0.1)),
-                        ),
-                        child: Row(children: [
-                          Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                  color: roseError.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Icon(Icons.warning_amber_rounded,
-                                  color: roseError, size: 18)),
-                          const SizedBox(width: 12),
-                          Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                Text('Price Exceeds NDIS Cap',
-                                    style: ModernInvoiceDesign.bodySmall
-                                        .copyWith(
-                                            color: roseError,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600)),
-                                const SizedBox(height: 2),
-                                Text(
-                                    'Maximum: \$${(item['maxPrice'] as num).toDouble().toStringAsFixed(2)}',
-                                    style: ModernInvoiceDesign.bodySmall
-                                        .copyWith(
-                                            color: roseError.withValues(
-                                                alpha: 0.8))),
-                              ])),
-                        ]),
-                      ).animate().fadeIn().shake(hz: 2, duration: 400.ms),
-                    ),
+                ),
+                if (isOverridden)
+                  IconButton(
+                    icon: const Icon(Icons.refresh_rounded,
+                        color: BauhausDesign.textMuted),
+                    onPressed: () => _resetPrice(id),
+                    tooltip: l10n.resetPriceTooltip,
+                  ),
+              ],
+            ),
+            const SizedBox(height: BauhausDesign.space4),
+            Container(
+              padding: const EdgeInsets.all(BauhausDesign.space3),
+              decoration: BoxDecoration(
+                color: BauhausDesign.backgroundLight,
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                border: Border.all(color: BauhausDesign.neutral),
+              ),
+              child: Column(
+                children: [
+                  _buildInfoRow(
+                      Icons.badge_outlined, l10n.employeeLabel, employeeName),
+                  const SizedBox(height: BauhausDesign.space2),
+                  _buildInfoRow(Icons.person_outline_rounded, l10n.clientLabel,
+                      clientName),
+                  const SizedBox(height: BauhausDesign.space2),
+                  _buildInfoRow(
+                      Icons.calendar_today_rounded,
+                      l10n.scheduleLabel,
+                      '$scheduleDate ${startTime.isNotEmpty && endTime.isNotEmpty ? '($startTime - $endTime)' : ''}'),
                 ],
               ),
             ),
+            const SizedBox(height: BauhausDesign.space4),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPriceCard(
+                      label: l10n.currentRateLabel,
+                      value: l10n.priceDisplay(
+                          l10n.currencySymbol, currentPrice.toStringAsFixed(2)),
+                      icon: Icons.payments_outlined,
+                      color: BauhausDesign.primary,
+                      subtitle: 'Qty: ${quantity.toStringAsFixed(1)}'),
+                ),
+                const SizedBox(width: BauhausDesign.space3),
+                Expanded(
+                  child: _buildPriceCard(
+                    label: l10n.ndisCapLabel,
+                    value: (item['maxPrice'] != null &&
+                            (item['maxPrice'] as num).toDouble() > 0)
+                        ? l10n.priceDisplay(
+                            l10n.currencySymbol,
+                            (item['maxPrice'] as num)
+                                .toDouble()
+                                .toStringAsFixed(2))
+                        : l10n.naLabel,
+                    icon: Icons.shield_outlined,
+                    color: (item['maxPrice'] != null &&
+                            (item['maxPrice'] as num).toDouble() > 0)
+                        ? BauhausDesign.success
+                        : BauhausDesign.textMuted,
+                    subtitle: item['clientState'] as String? ?? '',
+                    isWarning: item['maxPrice'] != null &&
+                        (item['maxPrice'] as num).toDouble() > 0 &&
+                        currentPrice > (item['maxPrice'] as num).toDouble(),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: BauhausDesign.space4),
+            if (widget.clientId.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                decoration: BoxDecoration(
+                  color: (_isClientSpecific[id] == true)
+                      ? BauhausDesign.success.withOpacity(0.05)
+                      : BauhausDesign.backgroundLight,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                  border: Border.all(
+                      color: (_isClientSpecific[id] == true)
+                          ? BauhausDesign.success
+                          : BauhausDesign.neutral),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                        (_isClientSpecific[id] == true)
+                            ? Icons.person_rounded
+                            : Icons.business_rounded,
+                        size: 20,
+                        color: (_isClientSpecific[id] == true)
+                            ? BauhausDesign.success
+                            : BauhausDesign.textMuted),
+                    const SizedBox(width: BauhausDesign.space3),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.pricingScopeLabel,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .labelSmall
+                                  ?.copyWith(color: BauhausDesign.textMuted)),
+                          Text(
+                              (_isClientSpecific[id] == true)
+                                  ? l10n.clientSpecificRateLabel
+                                  : l10n.orgWideRateLabel,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodySmall
+                                  ?.copyWith(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                    Switch.adaptive(
+                      value: _isClientSpecific[id] ?? false,
+                      onChanged: (value) {
+                        setState(() {
+                          _isClientSpecific[id] = value;
+                          _updateOverrideStatus(id);
+                        });
+                      },
+                      activeColor: BauhausDesign.success,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+            ],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.overridePriceLabel,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelLarge
+                        ?.copyWith(fontWeight: FontWeight.bold)),
+                const SizedBox(height: BauhausDesign.space2),
+                BauhausTextField(
+                  controller: _priceControllers[id],
+                  hintText: l10n.enterNewPriceHint,
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Text('\$',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))
+                  ],
+                  onChanged: (value) => _onPriceChanged(id, value),
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(l10n.lineTotalLabel,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(color: BauhausDesign.textMuted)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                            l10n.priceDisplay(
+                                l10n.currencySymbol,
+                                (quantity *
+                                        (double.tryParse(
+                                                _priceControllers[id]?.text ??
+                                                    '0') ??
+                                            0))
+                                    .toStringAsFixed(2)),
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyLarge
+                                ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: BauhausDesign.primary)),
+                        if (isOverridden)
+                          Text(
+                              l10n.wasPriceLabel(l10n.priceDisplay(
+                                  l10n.currencySymbol,
+                                  (quantity * originalPrice)
+                                      .toStringAsFixed(2))),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodySmall
+                                  ?.copyWith(
+                                      color: BauhausDesign.textMuted,
+                                      decoration: TextDecoration.lineThrough)),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            if (item['maxPrice'] != null &&
+                (item['maxPrice'] as num).toDouble() > 0 &&
+                (double.tryParse(_priceControllers[id]?.text ?? '0') ?? 0.0) >
+                    (item['maxPrice'] as num).toDouble())
+              Padding(
+                padding: const EdgeInsets.only(top: BauhausDesign.space3),
+                child: Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.error.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                    border: Border.all(color: BauhausDesign.error),
+                  ),
+                  child: Row(children: [
+                    const Icon(Icons.warning_amber_rounded,
+                        color: BauhausDesign.error, size: 20),
+                    const SizedBox(width: BauhausDesign.space3),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.priceExceedsCap,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .labelSmall
+                                  ?.copyWith(
+                                      color: BauhausDesign.error,
+                                      fontWeight: FontWeight.bold)),
+                          Text(
+                              l10n.maximumPriceLabel(l10n.priceDisplay(
+                                  l10n.currencySymbol,
+                                  (item['maxPrice'] as num)
+                                      .toDouble()
+                                      .toStringAsFixed(2))),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodySmall
+                                  ?.copyWith(color: BauhausDesign.error)),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
+              ),
           ],
         ),
       ),
-    )
-        .animate()
-        .fadeIn(duration: 400.ms)
-        .slideY(begin: 0.1, end: 0, duration: 400.ms);
+    );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, Color color) {
+  Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(children: [
-      Icon(icon, size: 16, color: color.withOpacity(0.1)),
-      const SizedBox(width: 8),
+      Icon(icon, size: 16, color: BauhausDesign.textMuted),
+      const SizedBox(width: BauhausDesign.space2),
       Text('$label: ',
-          style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF94A3B8))),
+          style: BauhausDesign.getTextTheme(context)
+              .labelSmall
+              ?.copyWith(color: BauhausDesign.textMuted)),
       Expanded(
           child: Text(value,
-              style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1E293B)),
+              style: BauhausDesign.getTextTheme(context)
+                  .labelSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis)),
     ]);
   }
@@ -1407,23 +1256,23 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
       required Color color,
       String? subtitle,
       bool isWarning = false}) {
-    final displayColor = isWarning ? const Color(0xFFF43F5E) : color;
+    final l10n = AppLocalizations.of(context)!;
+    final displayColor = isWarning ? BauhausDesign.error : color;
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
           color: displayColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(color: displayColor.withOpacity(0.1))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Icon(icon, size: 16, color: displayColor),
-          const SizedBox(width: 6),
+          const SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(label,
-                style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF94A3B8)),
+                style: BauhausDesign.getTextTheme(context)
+                    .labelSmall
+                    ?.copyWith(color: BauhausDesign.textMuted),
                 overflow: TextOverflow.ellipsis),
           ),
           if (subtitle != null && subtitle.isNotEmpty)
@@ -1431,96 +1280,62 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6)),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm)),
               child: Text(subtitle,
-                  style: TextStyle(
-                      fontSize: 9, fontWeight: FontWeight.w600, color: color),
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelSmall
+                      ?.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 9),
                   overflow: TextOverflow.ellipsis),
             ),
         ]),
-        const SizedBox(height: 6),
+        const SizedBox(height: BauhausDesign.space1),
         Text(value,
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: isWarning ? displayColor : const Color(0xFF1E293B))),
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isWarning ? displayColor : BauhausDesign.textDark)),
         if (isWarning)
-          const Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Text('Exceeds cap!',
-                  style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFFF43F5E)))),
+          Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(l10n.exceedsCapWarning,
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelSmall
+                      ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.error))),
       ]),
     );
   }
 
   Widget _buildActionButtons() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
-        ],
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: const BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border(top: BorderSide(color: BauhausDesign.neutral)),
       ),
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton(
+            child: BauhausActionButton(
+              text: l10n.cancel,
               onPressed: () {
                 Navigator.pop(context);
               },
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF757575),
-                side: BorderSide(color: const Color(0xFFEEEEEE)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: Text(
-                'Cancel',
-                style: ModernInvoiceDesign.labelLarge.copyWith(
-                  color: const Color(0xFF757575),
-                ),
-              ),
+              variant: BauhausActionVariant.neutral,
+              isOutlined: true,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: BauhausDesign.space4),
           Expanded(
-            child: ElevatedButton(
+            child: BauhausActionButton(
+              text: l10n.applyOverrides,
+              isLoading: _isLoading,
               onPressed: _isLoading ? null : _applyOverrides,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Text(
-                      'Apply Overrides',
-                      style: ModernInvoiceDesign.labelLarge.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+              variant: BauhausActionVariant.primary,
             ),
           ),
         ],
@@ -1541,49 +1356,34 @@ class SourceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
+    final l10n = AppLocalizations.of(context)!;
+    BauhausChipVariant variant;
     String label;
 
     switch (source.toLowerCase()) {
       case 'custom':
-        color = Colors.purple;
-        label = 'Custom';
+        variant = BauhausChipVariant.primary;
+        label = l10n.sourceCustom;
         break;
       case 'client-specific':
       case 'client_specific':
-        color = Colors.orange;
-        label = 'Client';
+        variant = BauhausChipVariant.warning;
+        label = l10n.sourceClientSpecific;
         break;
       case 'organization':
       case 'org':
-        color = Colors.blue;
-        label = 'Org';
+        variant = BauhausChipVariant.info;
+        label = l10n.sourceOrganization;
         break;
       default:
-        color = Colors.grey;
-        label = 'NDIS';
+        variant = BauhausChipVariant.neutral;
+        label = l10n.sourceNdisCap;
     }
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmall ? 6 : 8,
-        vertical: isSmall ? 2 : 4,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(isSmall ? 4 : 6),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: isSmall ? 10 : 12,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+    return BauhausChip(
+      label: label,
+      variant: variant,
+      isSmall: isSmall,
     );
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/values/themes/app_theme_config.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../models/employee_tracking_model.dart';
 
 class EmployeeStatusCard extends StatelessWidget {
@@ -20,86 +20,64 @@ class EmployeeStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 8.0,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12.0),
-          child: Container(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: BauhausCard(
+        onTap: onTap,
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    _buildAvatar(),
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            employee.name,
-                            style: const TextStyle(fontSize: 14).copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF1F2937),
+                _buildAvatar(),
+                const SizedBox(width: BauhausDesign.space4),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        employee.name,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textDark,
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            employee.email,
-                            style: const TextStyle(fontSize: 12).copyWith(
-                              color: const Color(0xFF6B7280),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                    _buildStatusBadge(),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        employee.email,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                              fontSize: 12,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
-                if (showDetails) ...[
-                  const SizedBox(height: 16.0),
-                  _buildDetailsSection(),
-                ],
+                _buildStatusBadge(context),
               ],
             ),
-          ),
+            if (showDetails) ...[
+              const SizedBox(height: BauhausDesign.space4),
+              _buildDetailsSection(context),
+            ],
+          ],
         ),
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideX(begin: 0.2, end: 0);
+      ).animate().fadeIn(duration: 300.ms).slideX(begin: 0.2, end: 0),
+    );
   }
 
   Widget _buildAvatar() {
-    debugPrint('🔍 DEBUG: Building avatar for ${employee.name}');
-    debugPrint('🔍 DEBUG: ProfileImage value: ${employee.profileImage}');
-    debugPrint(
-        '🔍 DEBUG: ProfileImage is null: ${employee.profileImage == null}');
-    debugPrint(
-        '🔍 DEBUG: ProfileImage length: ${employee.profileImage?.length}');
-
     return Container(
       width: 50,
       height: 50,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.colorGrey200,
+        color: BauhausDesign.neutral.withOpacity(0.1),
         border: Border.all(
           color: _getStatusColor(),
           width: 2,
@@ -115,13 +93,7 @@ class EmployeeStatusCard extends StatelessWidget {
     );
   }
 
-  /// Builds the profile image using the unified ProfileImageWidget
-  ///
-  /// Uses EmployeeProfileImage for consistent styling and status indication
   Widget _buildProfileImage() {
-    debugPrint('🔍 DEBUG: _buildProfileImage called for ${employee.name}');
-    debugPrint('🔍 DEBUG: Filename for ${employee.name}: ${employee.filename}');
-
     return EmployeeProfileImage(
       profileImage: employee.profileImage,
       photoData: employee.photoData,
@@ -134,101 +106,93 @@ class EmployeeStatusCard extends StatelessWidget {
     );
   }
 
-  /// Builds a default avatar when no profile image is available
-  ///
-  /// Returns a circular container with person icon as fallback
   Widget _buildDefaultAvatar() {
     return Container(
       width: 50.0,
       height: 50.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.colorGrey200,
+        color: BauhausDesign.neutral.withOpacity(0.1),
       ),
       child: Icon(
         Icons.person,
         size: 30.0,
-        color: AppColors.colorGrey600,
+        color: BauhausDesign.textMuted,
       ),
     );
   }
 
-  /// Gets the status indicator color based on employee work status
-  ///
-  /// Returns appropriate color for the status indicator dot
   Color? _getStatusIndicatorColor() {
     switch (employee.status) {
       case WorkStatus.active:
-        return Colors.green;
+        return BauhausDesign.success;
       case WorkStatus.onBreak:
-        return Colors.orange;
+        return BauhausDesign.warning;
       case WorkStatus.offline:
-        return Colors.grey;
+        return BauhausDesign.neutral;
       case WorkStatus.clockedOut:
-        return Colors.red;
-      default:
-        return null;
+        return BauhausDesign.error;
     }
   }
 
-  Widget _buildStatusBadge() {
-    final statusColor = _getStatusColor();
-    final statusText = _getStatusText();
+  Widget _buildStatusBadge(BuildContext context) {
+    // Map status to chip variant
+    BauhausChipVariant variant;
+    String label;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8.0,
-        vertical: 4.0,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            statusColor,
-            statusColor.withOpacity(0.1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: statusColor.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Text(
-        statusText,
-        style: const TextStyle(fontSize: 12).copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    switch (employee.status) {
+      case WorkStatus.active:
+        variant = BauhausChipVariant.success;
+        label = 'Active';
+        break;
+      case WorkStatus.onBreak:
+        variant = BauhausChipVariant.warning;
+        label = 'On Break';
+        break;
+      case WorkStatus.offline:
+        variant = BauhausChipVariant.neutral;
+        label = 'Offline';
+        break;
+      case WorkStatus.clockedOut:
+        variant = BauhausChipVariant.error; // or neutral/outlined
+        label = 'Clocked Out';
+        break;
+    }
+
+    return BauhausChip(
+      label: label,
+      variant: variant,
+      isSmall: true,
+      onTap: null, // Non-interactive badge
     );
   }
 
-  Widget _buildDetailsSection() {
+  Widget _buildDetailsSection(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppThemeConfig.spacingS),
+      padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: AppColors.colorGrey50,
-        borderRadius: AppThemeConfig.borderRadiusS,
+        color: BauhausDesign.backgroundLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
       ),
       child: Column(
         children: [
           if (employee.currentLocation != null)
             _buildDetailRow(
+              context,
               Icons.location_on,
               'Location',
               employee.currentLocation!,
             ),
           if (employee.hoursWorked > 0)
             _buildDetailRow(
+              context,
               Icons.access_time,
               'Hours Worked',
               '${employee.hoursWorked.toStringAsFixed(1)}h',
             ),
           if (employee.lastSeen != null)
             _buildDetailRow(
+              context,
               Icons.schedule,
               'Last Seen',
               _formatLastSeen(employee.lastSeen!),
@@ -238,28 +202,32 @@ class EmployeeStatusCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value) {
+  Widget _buildDetailRow(
+      BuildContext context, IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppThemeConfig.spacingXS),
+      padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
       child: Row(
         children: [
           Icon(
             icon,
             size: 16,
-            color: AppColors.colorGrey600,
+            color: BauhausDesign.textMuted,
           ),
-          const SizedBox(width: AppThemeConfig.spacingS),
+          const SizedBox(width: BauhausDesign.space2),
           Text(
             '$label:',
-            style: AppThemeConfig.captionStyle.copyWith(
-              fontWeight: AppThemeConfig.fontWeightMedium,
-            ),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: BauhausDesign.textMuted,
+                ),
           ),
-          const SizedBox(width: AppThemeConfig.spacingXS),
+          const SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(
               value,
-              style: AppThemeConfig.captionStyle,
+              style: BauhausDesign.getTextTheme(context)
+                  .bodySmall
+                  ?.copyWith(color: BauhausDesign.textDark),
               textAlign: TextAlign.end,
             ),
           ),
@@ -271,25 +239,12 @@ class EmployeeStatusCard extends StatelessWidget {
   Color _getStatusColor() {
     switch (employee.status) {
       case WorkStatus.active:
-        return AppColors.colorSuccess;
+        return BauhausDesign.success;
       case WorkStatus.onBreak:
-        return AppColors.colorWarning;
+        return BauhausDesign.warning;
       case WorkStatus.offline:
       case WorkStatus.clockedOut:
-        return AppColors.colorGrey500;
-    }
-  }
-
-  String _getStatusText() {
-    switch (employee.status) {
-      case WorkStatus.active:
-        return 'Active';
-      case WorkStatus.onBreak:
-        return 'On Break';
-      case WorkStatus.offline:
-        return 'Offline';
-      case WorkStatus.clockedOut:
-        return 'Clocked Out';
+        return BauhausDesign.neutral;
     }
   }
 

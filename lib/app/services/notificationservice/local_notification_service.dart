@@ -167,6 +167,10 @@ class LocalNotificationService {
         return 'Timer Alerts';
       case 'message':
         return 'Message Notifications';
+      case 'timesheet_reminders':
+        return 'Timesheet Reminders';
+      case 'expense_reminders':
+        return 'Expense Reminders';
       default:
         return 'General Notifications';
     }
@@ -180,6 +184,10 @@ class LocalNotificationService {
         return 'Notifications for timer alerts';
       case 'message':
         return 'Notifications for messages';
+      case 'timesheet_reminders':
+        return 'Reminders to submit your timesheets';
+      case 'expense_reminders':
+        return 'Reminders to upload expense receipts';
       default:
         return 'General application notifications';
     }
@@ -283,12 +291,42 @@ class LocalNotificationService {
           showBadge: true,
         );
 
+        // Timesheet reminders channel
+        const AndroidNotificationChannel timesheetChannel =
+            AndroidNotificationChannel(
+          'timesheet_reminders',
+          'Timesheet Reminders',
+          description: 'Reminders to submit your timesheets',
+          importance: Importance.high,
+          playSound: true,
+          sound: null,
+          enableVibration: true,
+          enableLights: true,
+          showBadge: true,
+        );
+
+        // Expense reminders channel
+        const AndroidNotificationChannel expenseChannel =
+            AndroidNotificationChannel(
+          'expense_reminders',
+          'Expense Reminders',
+          description: 'Reminders to upload expense receipts',
+          importance: Importance.defaultImportance,
+          playSound: true,
+          sound: null,
+          enableVibration: true,
+          enableLights: true,
+          showBadge: true,
+        );
+
         // Create the notification channels
         await androidPlugin.createNotificationChannel(mainChannel);
         await androidPlugin.createNotificationChannel(timerChannel);
         await androidPlugin.createNotificationChannel(messageChannel);
+        await androidPlugin.createNotificationChannel(timesheetChannel);
+        await androidPlugin.createNotificationChannel(expenseChannel);
         debugPrint(
-            'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message');
+            'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders');
       }
     }
   }

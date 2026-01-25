@@ -69,8 +69,8 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
   }
 
   /// Get formatted employee name (extract from email)
-  String getEmployeeName() {
-    if (_assignment?.userEmail.isEmpty ?? true) return 'Unknown Employee';
+  String getEmployeeName({String defaultName = 'Unknown Employee'}) {
+    if (_assignment?.userEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.userEmail;
     final atIndex = email.indexOf('@');
     if (atIndex > 0) {
@@ -86,8 +86,8 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
   }
 
   /// Get formatted client name (extract from email)
-  String getClientName() {
-    if (_assignment?.clientEmail.isEmpty ?? true) return 'Unknown Client';
+  String getClientName({String defaultName = 'Unknown Client'}) {
+    if (_assignment?.clientEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.clientEmail;
     final atIndex = email.indexOf('@');
     if (atIndex > 0) {
@@ -120,8 +120,8 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
   }
 
   /// Calculate total working hours across all shifts
-  String getTotalWorkingHours() {
-    if (_assignment == null) return '0 hours';
+  String getTotalWorkingHours({String hoursSuffix = 'hours'}) {
+    if (_assignment == null) return '0 $hoursSuffix';
 
     double totalHours = 0;
 
@@ -142,19 +142,19 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
       }
     }
 
-    return '${totalHours.toStringAsFixed(1)} hours';
+    return '${totalHours.toStringAsFixed(1)} $hoursSuffix';
   }
 
   /// Calculate shift duration in hours, handling overnight shifts
   double _calculateShiftDuration(DateTime startTime, DateTime endTime) {
     Duration duration = endTime.difference(startTime);
-    
+
     // Handle overnight shifts (when end time is before start time)
     if (duration.isNegative) {
       // Add 24 hours for overnight shifts
       duration = duration + const Duration(days: 1);
     }
-    
+
     return duration.inMinutes / 60.0;
   }
 
@@ -163,27 +163,30 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
     try {
       // Handle different time formats: "HH:MM", "H:MM AM/PM", etc.
       String cleanTimeStr = timeStr.trim();
-      
+
       // Check if it's AM/PM format
       bool isPM = cleanTimeStr.toLowerCase().contains('pm');
       bool isAM = cleanTimeStr.toLowerCase().contains('am');
-      
+
       // Remove AM/PM and extra spaces
-      cleanTimeStr = cleanTimeStr.replaceAll(RegExp(r'\s*(am|pm)\s*', caseSensitive: false), '');
-      
+      cleanTimeStr = cleanTimeStr.replaceAll(
+          RegExp(r'\s*(am|pm)\s*', caseSensitive: false), '');
+
       final parts = cleanTimeStr.split(':');
       if (parts.length >= 2) {
         int hour = int.parse(parts[0]);
         final minuteParts = parts[1].split(' ');
-        final minute = int.parse(minuteParts.isNotEmpty ? minuteParts[0] : parts[1]); // Handle any trailing spaces
-        
+        final minute = int.parse(minuteParts.isNotEmpty
+            ? minuteParts[0]
+            : parts[1]); // Handle any trailing spaces
+
         // Convert 12-hour to 24-hour format
         if (isPM && hour != 12) {
           hour += 12;
         } else if (isAM && hour == 12) {
           hour = 0;
         }
-        
+
         final now = DateTime.now();
         return DateTime(now.year, now.month, now.day, hour, minute);
       }
@@ -201,12 +204,12 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
       if (breakStr.toLowerCase() == 'no' || breakStr.toLowerCase() == 'none') {
         return 0.0;
       }
-      
+
       // Handle "Yes" break case (default to 30 minutes)
       if (breakStr.toLowerCase() == 'yes') {
         return 0.5; // 30 minutes = 0.5 hours
       }
-      
+
       // Handle different break formats: "30 min", "1 hour", "1.5", etc.
       final cleanStr =
           breakStr.toLowerCase().replaceAll(RegExp(r'[^0-9.]'), '');
@@ -224,5 +227,4 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
     }
     return 0.0;
   }
-
 }

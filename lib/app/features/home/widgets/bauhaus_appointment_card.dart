@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausAppointmentCard extends StatelessWidget {
   final Map<String, dynamic> appointment;
@@ -15,8 +14,6 @@ class BauhausAppointmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Extract Data
-    // Extract Data
-    // Fallbacks for various API response structures
     Map<String, dynamic>? clientDetails;
     if (appointment['clientDetails'] != null) {
       if (appointment['clientDetails'] is Map) {
@@ -75,7 +72,7 @@ class BauhausAppointmentCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(BauhausDesign.space4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -84,7 +81,8 @@ class BauhausAppointmentCard extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                          horizontal: BauhausDesign.space2,
+                          vertical: BauhausDesign.space1),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary, // Red background
                         border:
@@ -92,18 +90,19 @@ class BauhausAppointmentCard extends StatelessWidget {
                       ),
                       child: Text(
                         date.toUpperCase(),
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.surfaceLight,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.surfaceWhite,
+                            ),
                       ),
                     ),
                     const Spacer(),
                     Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(BauhausDesign.space1),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceLight,
+                        color: BauhausDesign.surfaceWhite,
                         border:
                             Border.all(color: BauhausDesign.textDark, width: 2),
                         shape: BoxShape.circle,
@@ -113,35 +112,37 @@ class BauhausAppointmentCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: BauhausDesign.space4),
 
                 // Client Name
                 Text(
                   clientName.isNotEmpty
                       ? clientName.toUpperCase()
                       : 'UNKNOWN CLIENT',
-                  style: GoogleFonts.oswald(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textDark,
-                    height: 1.1,
-                  ),
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineMedium
+                      ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: BauhausDesign.textDark,
+                        height: 1.1,
+                      ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: BauhausDesign.space2),
 
                 // Time & Location
                 Row(
                   children: [
                     const Icon(Icons.access_time,
                         size: 18, color: BauhausDesign.neutral),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: BauhausDesign.space2),
                     Text(
                       time,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textDark,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: BauhausDesign.textDark,
+                          ),
                     ),
                   ],
                 ),

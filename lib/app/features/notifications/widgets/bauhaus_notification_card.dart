@@ -1,5 +1,6 @@
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 
 class BauhausNotificationCard extends StatelessWidget {
@@ -27,7 +28,7 @@ class BauhausNotificationCard extends StatelessWidget {
       case 'error':
         return BauhausDesign.error;
       default:
-        return BauhausDesign.accent; // Yellow for default
+        return BauhausDesign.secondary; // Default blueish
     }
   }
 
@@ -52,134 +53,105 @@ class BauhausNotificationCard extends StatelessWidget {
     final icon = _getTypeIcon(notification.type);
     final isUnread = !notification.isRead;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: BauhausDesign.neutral,
-            offset: Offset(4, 4),
-            blurRadius: 0,
+    return BauhausCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icon Box
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: themeColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              border: Border.all(
+                color: themeColor,
+                width: 2,
+              ),
+            ),
+            child: Icon(
+              icon,
+              color: themeColor,
+              size: 24,
+            ),
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
+          const SizedBox(width: BauhausDesign.space4),
+
+          // Content
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Icon Box
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: themeColor,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 2,
-                    ),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: (themeColor == BauhausDesign.accent)
-                        ? BauhausDesign.textDark
-                        : BauhausDesign.textLight,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16),
-
-                // Content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              notification.title,
-                              style: const TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w900,
-                                fontSize: 16,
-                                color: BauhausDesign.textDark,
-                                height: 1.2,
-                              ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        notification.title,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textDark,
                             ),
-                          ),
-                          if (isUnread) ...[
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: BauhausDesign.primary,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: BauhausDesign.neutral,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        notification.body,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: BauhausDesign.textDark.withOpacity(0.7),
-                          height: 1.4,
+                    ),
+                    if (isUnread) ...[
+                      const SizedBox(width: BauhausDesign.space2),
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_rounded,
-                            size: 14,
-                            color: BauhausDesign.neutral.withOpacity(0.6),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            notification.timeAgo,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: BauhausDesign.neutral.withOpacity(0.6),
-                            ),
-                          ),
-                          const Spacer(),
-                          // Context Menu / Options
-                          if (onMarkRead != null || onDelete != null)
-                            _buildOptionsMenu(context),
-                        ],
-                      ),
                     ],
-                  ),
+                  ],
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Text(
+                  notification.body,
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: BauhausDesign.textMuted,
+                          ),
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 14,
+                      color: BauhausDesign.textMuted,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      notification.timeAgo,
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const Spacer(),
+                    // Context Menu / Options
+                    if (onMarkRead != null || onDelete != null)
+                      _buildOptionsMenu(context),
+                  ],
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -192,17 +164,14 @@ class BauhausNotificationCard extends StatelessWidget {
         padding: EdgeInsets.zero,
         icon: const Icon(
           Icons.more_horiz_rounded,
-          color: BauhausDesign.neutral,
+          color: BauhausDesign.textMuted,
           size: 20,
         ),
-        color: BauhausDesign.surfaceLight,
-        shadowColor: BauhausDesign.neutral,
-        elevation:
-            0, // We'll use custom decoration if possible, but PopupMenu is tricky.
-        // Standard Material popup is okay for now, or minimal style.
+        color: BauhausDesign.surfaceWhite,
+        elevation: 4,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 1),
         ),
         onSelected: (value) {
           if (value == 'read' && onMarkRead != null) onMarkRead!();
@@ -212,34 +181,34 @@ class BauhausNotificationCard extends StatelessWidget {
           if (!notification.isRead && onMarkRead != null)
             PopupMenuItem(
               value: 'read',
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.check_circle_outline,
+                  const Icon(Icons.check_circle_outline,
                       color: BauhausDesign.success, size: 18),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text('Mark as read',
-                      style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: BauhausDesign.textDark)),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          )),
                 ],
               ),
             ),
           if (onDelete != null)
             PopupMenuItem(
               value: 'delete',
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.delete_outline,
+                  const Icon(Icons.delete_outline,
                       color: BauhausDesign.error, size: 18),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text('Delete',
-                      style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: BauhausDesign.textDark)),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          )),
                 ],
               ),
             ),

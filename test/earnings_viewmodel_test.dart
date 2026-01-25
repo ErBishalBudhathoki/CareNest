@@ -99,7 +99,7 @@ void main() {
       final repo = _RecordingEarningsRepository();
       final vm = EarningsViewModel(repo, 'user@example.com', autoLoad: false);
 
-      final r = vm.calculateTax(1000, 'Weekly');
+      final r = vm.calculateTax(1000, TaxFrequency.weekly);
       expect(r['gross'], 1000);
       expect(r['tax']!, closeTo(141.67, 0.1));
       expect(r['net']!, closeTo(858.33, 0.1));

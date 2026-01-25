@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
 import 'package:carenest/app/features/expenses/views/expense_management_view.dart';
-import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/shared/widgets/dynamic_appointment_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -10,9 +8,23 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
-// ... existing code ...
+// Bauhaus Widgets
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/features/home/widgets/bauhaus_home_header.dart';
+import 'package:carenest/app/features/home/widgets/bauhaus_action_card.dart';
+import 'package:carenest/app/features/home/widgets/bauhaus_appointment_card.dart';
+import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
+import 'package:carenest/app/services/reminder/reminder_provider.dart';
+import 'package:carenest/app/services/geofence/geofence_provider.dart';
+import 'package:carenest/app/services/geofence/geofence_service.dart';
+import 'package:carenest/app/features/requests/views/shift_exchange_view.dart';
+import 'package:carenest/app/features/earnings/views/earnings_dashboard_view.dart';
+import 'package:carenest/app/features/leave/views/leave_tracker_view.dart';
+import 'package:carenest/app/features/training_compliance/views/training_compliance_hub_view.dart';
+import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   final String email;
@@ -21,7 +33,6 @@ class HomeView extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? organizationName;
   final String? organizationCode;
-  // final String lastName;
 
   const HomeView({
     super.key,
@@ -32,7 +43,6 @@ class HomeView extends ConsumerStatefulWidget {
     this.organizationName,
     this.organizationCode,
     Uint8List? photoDataFromParent,
-    // required this.lastName,
   });
 
   @override
@@ -40,31 +50,16 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  // Color constants - Vibrant Dark Theme
-  static const Color _primaryColor = Color(0xFF8B5CF6); // Vibrant Violet
-  static const Color _primaryGradientStart = Color(0xFF8B5CF6);
-  static const Color _primaryGradientEnd = Color(0xFF6D28D9);
-  static const Color _cardBackground = Color(0xFF1E293B); // Slate 800
-  static const Color _scaffoldBackground = Color(0xFF0F172A); // Slate 900
-  static const Color _textPrimary = Colors.white;
-  static const Color _textSecondary = Color(0xFF94A3B8); // Slate 400
-  static const Color _successColor = Color(0xFF10B981); // Emerald 500
-  static const Color _accentColor = Color(0xFF06B6D4); // Cyan 500
-
   final PageController _pageController = PageController();
-  late final PersistentTabController controller;
   late Future<dynamic> _appointmentDataFuture = Future.value(null);
   var eml;
   var initialData = {};
   var setAppointmentData;
-  var appointmentData = {};
-  late List<dynamic> clientEmailList = [];
   bool isDataFetched = false;
-  // Controls bank details selection UI in HomeView (visual only for normal users)
+
+  // Bank details state
   bool _useAdminBankDetails = false;
-  // Shared preferences helper
   final SharedPreferencesUtils _prefs = SharedPreferencesUtils();
-  // Employee bank details status
   bool _bankDetailsLoading = false;
   bool _hasBankDetails = false;
   String? _bankDetailsError;
@@ -73,14 +68,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void dispose() {
     _pageController.dispose();
-
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    // Fetch photo data when the view initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(photoDataProvider.notifier).fetchPhotoData(widget.email);
     });
@@ -89,9 +82,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   Future<void> _initializeData() async {
     try {
-      await Future.microtask(() {});
-
-      // Ensure photo data is fetched
       final photoDataNotifier = ref.read(photoDataProvider.notifier);
       await photoDataNotifier.fetchPhotoData(widget.email);
 
@@ -99,9 +89,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         await getInitData();
         isDataFetched = true;
       }
-      // Load employee bank details status for Home UI
       await _loadEmployeeBankDetails();
-      // Load persisted preference for admin vs employee bank details
       await _loadUseAdminPreference();
 
       setState(() {
@@ -112,8 +100,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
   }
 
-  /// Loads the current user's bank details from backend to show status on Home.
-  /// Uses ApiMethod.getBankDetails which reads `userEmail` and `organizationId` from SharedPreferences.
   Future<void> _loadEmployeeBankDetails() async {
     setState(() {
       _bankDetailsLoading = true;
@@ -145,8 +131,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
   }
 
-  /// Loads the persisted preference for using admin bank details.
-  /// Defaults to false if not previously set.
   Future<void> _loadUseAdminPreference() async {
     try {
       await _prefs.init();
@@ -160,7 +144,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
   }
 
-  /// Persists the current admin/employee bank details preference.
   Future<void> _persistUseAdminPreference(bool value) async {
     try {
       await _prefs.setBool(
@@ -174,10 +157,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       initialData = await apiMethod.getInitData(widget.email);
-      // debugPrint("INS: "+ins['firstName']!);
       setState(() {
         eml = initialData;
-        isDataFetched = true; // Set flag to true after fetching data
+        isDataFetched = true;
       });
       return initialData;
     } catch (e) {
@@ -185,7 +167,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
   }
 
-  /// Fetches appointment data and handles errors gracefully
   Future<dynamic> getAppointmentData() async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
@@ -195,17 +176,45 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
       if (appointmentData.containsKey('data') &&
           appointmentData['data'] is List) {
-        final appointments =
+        final rawAssignments =
             List<Map<String, dynamic>>.from(appointmentData['data']);
+        final appointments = <Map<String, dynamic>>[];
+
+        for (var assignment in rawAssignments) {
+          if (assignment['schedule'] != null &&
+              assignment['schedule'] is List) {
+            final scheduleList = assignment['schedule'] as List;
+
+            // Find the closest FUTURE shift
+            Map<String, dynamic>? nextUpcomingShift;
+            DateTime? nextShiftDate;
+
+            for (var shift in scheduleList) {
+              final shiftDate =
+                  _parseDateTime(shift['date'], shift['startTime']);
+              if (shiftDate != null && shiftDate.isAfter(now)) {
+                if (nextShiftDate == null ||
+                    shiftDate.isBefore(nextShiftDate)) {
+                  nextShiftDate = shiftDate;
+                  nextUpcomingShift = shift;
+                }
+              }
+            }
+
+            // Only add if we have an upcoming shift
+            if (nextUpcomingShift != null) {
+              final newAssignment = Map<String, dynamic>.from(assignment);
+              // Set the schedule to ONLY the next upcoming shift for the card display
+              newAssignment['schedule'] = [nextUpcomingShift];
+              appointments.add(newAssignment);
+            }
+          }
+        }
 
         appointments.sort((firstAppointment, secondAppointment) {
-          debugPrint('Sorting appointment: ${firstAppointment.toString()}');
-
-          // Handle different data structures
           dynamic firstSchedule;
           dynamic secondSchedule;
 
-          // Check if appointment has schedule array
           if (firstAppointment['schedule'] != null &&
               firstAppointment['schedule'] is List) {
             final scheduleList = firstAppointment['schedule'] as List;
@@ -218,13 +227,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             secondSchedule = scheduleList.isNotEmpty ? scheduleList[0] : null;
           }
 
-          debugPrint('First schedule: $firstSchedule');
-          debugPrint('Second schedule: $secondSchedule');
-
-          if (firstSchedule == null || secondSchedule == null) {
-            debugPrint('One of the schedules is null');
-            return 0;
-          }
+          if (firstSchedule == null || secondSchedule == null) return 0;
 
           try {
             final firstAppointmentDateTime = _parseDateTime(
@@ -234,16 +237,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
             if (firstAppointmentDateTime == null ||
                 secondAppointmentDateTime == null) {
-              debugPrint('Failed to parse one or both appointment times');
               return 0;
             }
 
             return firstAppointmentDateTime
-                .difference(now)
-                .abs()
-                .compareTo(secondAppointmentDateTime.difference(now).abs());
+                .compareTo(secondAppointmentDateTime);
           } catch (e) {
-            debugPrint('Error parsing appointment dates: $e');
             return 0;
           }
         });
@@ -251,6 +250,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
         setState(() {
           setAppointmentData = {'data': appointments};
         });
+
+        // Schedule shift reminders for upcoming appointments
+        _scheduleAppointmentReminders(appointments);
+
+        // Register geofences for client locations
+        _registerGeofences(appointments);
+
         return {'data': appointments};
       } else {
         setState(() {
@@ -267,87 +273,59 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
   }
 
-  /// Returns the number of appointments, handling null data gracefully
-  int getLength() {
-    try {
-      if (setAppointmentData != null &&
-          setAppointmentData['data'] != null &&
-          setAppointmentData['data'] is List) {
-        return setAppointmentData['data'].length;
-      }
-    } catch (e) {
-      debugPrint('Error getting appointment length: $e');
-    }
-    return 0;
-  }
-
-  /// Safely parse date and time strings into DateTime object
   DateTime? _parseDateTime(dynamic date, dynamic time) {
     try {
-      if (date == null || time == null) {
-        debugPrint('_parseDateTime: null input - date: $date, time: $time');
-        return null;
-      }
+      if (date == null || time == null) return null;
 
       String dateStr = date.toString().trim();
       String timeStr = time.toString().trim();
-      debugPrint('_parseDateTime: parsing date: "$dateStr", time: "$timeStr"');
 
-      // Handle different date formats
       DateTime parsedDate;
       if (dateStr.contains('-')) {
-        // ISO format: YYYY-MM-DD
         parsedDate = DateTime.parse(dateStr);
       } else if (dateStr.contains('/')) {
-        // US format: MM/DD/YYYY or DD/MM/YYYY
         final parts = dateStr.split('/');
         if (parts.length == 3) {
-          // Assume MM/DD/YYYY format
           parsedDate = DateTime(
               int.parse(parts[2]), int.parse(parts[0]), int.parse(parts[1]));
         } else {
-          return null;
+          try {
+            // Try DD/MM/YYYY fallback
+            parsedDate = DateTime(
+                int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+          } catch (e) {
+            return null;
+          }
         }
       } else {
         return null;
       }
 
-      // Handle different time formats
       TimeOfDay parsedTime;
       if (timeStr.contains(':')) {
         final timeParts = timeStr.split(':');
         if (timeParts.length >= 2) {
           try {
             int hour = int.parse(timeParts[0].trim());
-            // Extract minute part and remove any non-numeric characters
             String minutePart = timeParts[1].replaceAll(RegExp(r'[^0-9]'), '');
             int minute = minutePart.isNotEmpty ? int.parse(minutePart) : 0;
 
-            debugPrint('_parseDateTime: parsed hour: $hour, minute: $minute');
-
-            // Handle AM/PM format
             if (timeStr.toUpperCase().contains('PM') && hour != 12) {
               hour += 12;
             } else if (timeStr.toUpperCase().contains('AM') && hour == 12) {
               hour = 0;
             }
-
-            debugPrint('_parseDateTime: final hour: $hour, minute: $minute');
             parsedTime = TimeOfDay(hour: hour, minute: minute);
           } catch (e) {
-            debugPrint('_parseDateTime: Error parsing time parts: $e');
             return null;
           }
         } else {
-          debugPrint('_parseDateTime: Invalid time format - not enough parts');
           return null;
         }
       } else {
-        debugPrint('_parseDateTime: Invalid time format - no colon found');
         return null;
       }
 
-      // Combine date and time
       return DateTime(
         parsedDate.year,
         parsedDate.month,
@@ -356,182 +334,526 @@ class _HomeViewState extends ConsumerState<HomeView> {
         parsedTime.minute,
       );
     } catch (e) {
-      debugPrint('Error parsing date "$date" and time "$time": $e');
       return null;
     }
   }
 
-  Widget _buildSkeletonLoader() {
-    return Column(
-      children: [
-        // Skeleton for the card
-        Container(
-          height: 180, // Approximate height of the card
-          width: double.infinity,
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: _cardBackground,
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 20,
-                width: 150,
-                color: Colors.white.withOpacity(0.05),
-              ),
-              const SizedBox(height: 16.0),
-              Container(
-                height: 14,
-                width: 200,
-                color: Colors.white.withOpacity(0.05),
-              ),
-              const SizedBox(height: 8.0),
-              Container(
-                height: 14,
-                width: 250,
-                color: Colors.white.withOpacity(0.05),
-              ),
-              const Spacer(),
-              Container(
-                height: 40,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16.0), // Space between card and indicator
-        // Skeleton for the page indicator
-        Container(
-          height: 10,
-          width: 60,
-          decoration: BoxDecoration(
-            color: _cardBackground,
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-        ),
-      ],
-    );
+  /// Schedule shift reminders for upcoming appointments.
+  void _scheduleAppointmentReminders(List<Map<String, dynamic>> appointments) {
+    try {
+      final reminderScheduler = ref.read(reminderSchedulerProvider);
+
+      for (final appointment in appointments) {
+        // Extract schedule data
+        final scheduleList = appointment['schedule'] as List?;
+        if (scheduleList == null || scheduleList.isEmpty) continue;
+
+        final schedule = scheduleList[0];
+        final shiftStartTime =
+            _parseDateTime(schedule['date'], schedule['startTime']);
+
+        if (shiftStartTime == null) continue;
+
+        // Extract client name
+        final clientName = appointment['clientFirstName']?.toString() ??
+            appointment['clientName']?.toString() ??
+            'Client';
+
+        // Extract appointment ID (try multiple possible fields)
+        final appointmentId = appointment['_id']?.toString() ??
+            appointment['id']?.toString() ??
+            '${appointment.hashCode}';
+
+        // Extract client address if available
+        final clientAddress = appointment['clientAddress']?.toString();
+
+        // Schedule reminders
+        reminderScheduler.scheduleShiftReminders(
+          appointmentId: appointmentId,
+          clientName: clientName,
+          shiftStartTime: shiftStartTime,
+          userEmail: widget.email,
+          clientAddress: clientAddress,
+        );
+      }
+
+      debugPrint(
+          'HomeView: Scheduled reminders for ${appointments.length} appointments');
+    } catch (e) {
+      debugPrint('HomeView: Error scheduling reminders: $e');
+    }
   }
 
-  /// Builds the bank details configuration UI with radio toggles.
-  /// Allows a normal user to choose between using employee or admin bank details.
-  /// This UI does not trigger invoice creation and serves as a visual configuration.
-  Widget _buildBankDetailsConfiguration() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: _cardBackground,
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.05),
-          width: 1.0,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  /// Register geofences for upcoming appointments with valid location data
+  Future<void> _registerGeofences(
+      List<Map<String, dynamic>> appointments) async {
+    try {
+      final geofenceService = ref.read(geofenceServiceProvider);
+      final isEnabled = await geofenceService.isGeofencingEnabled();
+
+      if (!isEnabled) return;
+
+      for (final appointment in appointments) {
+        // Extract schedule data
+        final scheduleList = appointment['schedule'] as List?;
+        if (scheduleList == null || scheduleList.isEmpty) continue;
+
+        final schedule = scheduleList[0];
+        final shiftStartTime =
+            _parseDateTime(schedule['date'], schedule['startTime']);
+
+        if (shiftStartTime == null) continue;
+
+        // Only register for upcoming shifts (e.g. within next 24 hours)
+        final now = DateTime.now();
+        if (shiftStartTime.isBefore(now) ||
+            shiftStartTime.difference(now).inHours > 24) {
+          continue;
+        }
+
+        // Extract location data
+        final clientLat =
+            double.tryParse(appointment['clientLatitude']?.toString() ?? '');
+        final clientLng =
+            double.tryParse(appointment['clientLongitude']?.toString() ?? '');
+
+        if (clientLat == null || clientLng == null) continue;
+
+        final clientId = appointment['clientId']?.toString() ?? '';
+        final clientName = appointment['clientFirstName']?.toString() ??
+            appointment['clientName']?.toString() ??
+            'Client';
+        final appointmentId = appointment['_id']?.toString() ??
+            appointment['id']?.toString() ??
+            '';
+
+        await geofenceService.registerGeofence(GeofenceLocation(
+          clientId: clientId,
+          clientName: clientName,
+          latitude: clientLat,
+          longitude: clientLng,
+          appointmentId: appointmentId,
+          shiftStartTime: shiftStartTime,
+        ));
+      }
+
+      // If we have geofences and enabled, ensure monitoring is active
+      if (geofenceService.activeGeofences.isNotEmpty &&
+          !geofenceService.isMonitoring) {
+        // Initialize monitoring if not already active
+        initializeGeofenceMonitoring(ref);
+      }
+    } catch (e) {
+      debugPrint('Error registering geofences: $e');
+    }
+  }
+
+  Future<void> _refreshData() async {
+    try {
+      if (mounted) {
+        setState(() {
+          isDataFetched = false;
+        });
+      }
+      await _initializeData();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Data refreshed')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error refreshing data: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Current user's name logic
+    String displayUserName = 'User';
+    if (eml != null && eml is Map) {
+      displayUserName = eml['firstName'] ?? 'User';
+    }
+
+    final photoDataState = ref.watch(photoDataProvider);
+    final photoData = photoDataState.photoData;
+
+    return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
+      body: Stack(
         children: [
-          if (!_hasBankDetails)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+          // Background pattern
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.05,
+              child: Image.asset(
+                'assets/images/grid_pattern.png',
+                repeat: ImageRepeat.repeat,
               ),
-              child: const Text(
-                'Employee bank details are not set yet. Please add your bank details first.',
-                style: TextStyle(
-                  color: _textSecondary,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          const Text(
-            'Select which bank details to display',
-            style: TextStyle(
-              color: _textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 12.0),
-          if (_hasBankDetails)
-            Theme(
-              data: ThemeData.dark().copyWith(
-                radioTheme: RadioThemeData(
-                  fillColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) => _primaryColor),
-                ),
-              ),
-              child: RadioListTile<bool>(
-                title: const Text(
-                  'Employee Bank Details',
-                  style: TextStyle(
-                    color: _textPrimary,
-                    fontWeight: FontWeight.w600,
+          RefreshIndicator(
+            onRefresh: _refreshData,
+            color: BauhausDesign.primary,
+            backgroundColor: BauhausDesign.surfaceWhite,
+            strokeWidth: 3,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  // Bold Bauhaus Header
+                  BauhausHomeHeader(
+                    userName: displayUserName,
+                    organizationName: widget.organizationName,
+                    photoData: photoData ?? widget.photoData,
+                    onRefresh: _refreshData,
                   ),
-                ),
-                subtitle: const Text(
-                  'Use the employee’s saved bank details',
-                  style: TextStyle(color: _textSecondary),
-                ),
-                value: false,
-                groupValue: _useAdminBankDetails,
-                onChanged: (val) async {
-                  final newVal = val ?? false;
-                  setState(() {
-                    _useAdminBankDetails = newVal;
-                  });
-                  await _persistUseAdminPreference(newVal);
-                },
-                contentPadding: EdgeInsets.zero,
+
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // --- APPOINTMENTS ---
+                        BauhausSectionHeader(
+                            title:
+                                AppLocalizations.of(context)!.upcomingShifts),
+                        const SizedBox(height: 16),
+
+                        FutureBuilder<dynamic>(
+                          future: _appointmentDataFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return _buildBauhausSkeleton();
+                            }
+
+                            final data = setAppointmentData?['data'] as List?;
+                            if (data == null || data.isEmpty) {
+                              return BauhausEmptyState(
+                                title: AppLocalizations.of(context)!
+                                    .noUpcomingAppointments,
+                                message: AppLocalizations.of(context)!
+                                    .noUpcomingShiftsMessage,
+                                icon: Icons.calendar_today_outlined,
+                              );
+                            }
+
+                            return ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: data.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 16),
+                              itemBuilder: (context, index) {
+                                final appointment = data[index];
+                                final clientEmail = appointment['clientEmail'];
+
+                                return BauhausAppointmentCard(
+                                  appointment: appointment,
+                                  onTap: () {
+                                    if (clientEmail != null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ClientAndAppointmentDetails(
+                                            userEmail: widget.email,
+                                            clientEmail: clientEmail,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 48),
+
+                        // --- QUICK ACTIONS ---
+                        BauhausSectionHeader(
+                            title: AppLocalizations.of(context)!.quickActions),
+                        const SizedBox(height: 16),
+
+                        // Clock In Action
+                        BauhausActionCard(
+                          title: AppLocalizations.of(context)!.timeClock,
+                          description:
+                              AppLocalizations.of(context)!.timeClockDesc,
+                          icon: Icons.timer_outlined,
+                          baseColor: BauhausDesign.success,
+                          actionLabel: AppLocalizations.of(context)!.open,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ClockInAndOutView(
+                                  email: widget.email,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Leave Tracker
+                        BauhausActionCard(
+                          title: AppLocalizations.of(context)!.leaveTracker,
+                          description:
+                              AppLocalizations.of(context)!.leaveTrackerDesc,
+                          icon: Icons.flight_takeoff,
+                          baseColor: BauhausDesign.secondary,
+                          actionLabel: AppLocalizations.of(context)!.open,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LeaveTrackerView(
+                                  userEmail: widget.email,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Training & Compliance Action
+                        BauhausActionCard(
+                          title:
+                              AppLocalizations.of(context)!.trainingCompliance,
+                          description: AppLocalizations.of(context)!
+                              .trainingComplianceDesc,
+                          icon: Icons.school_outlined,
+                          baseColor: BauhausDesign.warning,
+                          actionLabel: AppLocalizations.of(context)!.openHub,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const TrainingComplianceHubView(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Expense Action
+                        BauhausActionCard(
+                          title: AppLocalizations.of(context)!.trackExpenses,
+                          description:
+                              AppLocalizations.of(context)!.trackExpensesDesc,
+                          icon: Icons.receipt_long_outlined,
+                          baseColor: BauhausDesign.secondary,
+                          actionLabel:
+                              AppLocalizations.of(context)!.openDashboard,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ExpenseManagementView(
+                                  adminEmail: widget.email,
+                                  organizationId: widget.organizationId,
+                                  organizationName: widget.organizationName,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Shift Exchange Action
+                        BauhausActionCard(
+                          title: AppLocalizations.of(context)!.shiftExchange,
+                          description:
+                              AppLocalizations.of(context)!.shiftExchangeDesc,
+                          icon: Icons
+                              .swap_horiz_outlined, // or Icons.local_offer_outlined
+                          baseColor:
+                              BauhausDesign.primary, // Red/Primary for action
+                          actionLabel: AppLocalizations.of(context)!.viewOffers,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ShiftExchangeView(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Mileage Tracker Action
+                        BauhausActionCard(
+                          title: AppLocalizations.of(context)!.mileageTracker,
+                          description:
+                              AppLocalizations.of(context)!.mileageTrackerDesc,
+                          icon: Icons.route_outlined,
+                          baseColor:
+                              BauhausDesign.accent, // Yellow for distinction
+                          actionLabel:
+                              AppLocalizations.of(context)!.startTracking,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const MileageTrackerView(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Earnings Dashboard Action
+                        BauhausActionCard(
+                          title: AppLocalizations.of(context)!.earnings,
+                          description:
+                              AppLocalizations.of(context)!.earningsDesc,
+                          icon: Icons.monetization_on_outlined,
+                          baseColor: const Color(0xFF4CAF50), // Green
+                          actionLabel:
+                              AppLocalizations.of(context)!.viewEarnings,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EarningsDashboardView(
+                                  organizationId: widget.organizationId,
+                                  organizationName: widget.organizationName,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 48),
+
+                        // --- BANKING DETAILS ---
+                        BauhausSectionHeader(
+                            title:
+                                AppLocalizations.of(context)!.bankingPayouts),
+                        const SizedBox(height: 16),
+
+                        // Styled Bank Configuration Panel (The Admin/Employee Toggle)
+                        BauhausCard(
+                          child: Column(
+                            children: [
+                              // Header
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                decoration: BoxDecoration(
+                                  color: BauhausDesign.primary.withOpacity(0.1),
+                                  border: const Border(
+                                      bottom: BorderSide(
+                                          color: BauhausDesign.textDark,
+                                          width: 2)),
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .selectBankDetails
+                                      .toUpperCase(),
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ),
+                              // Content
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    if (!_hasBankDetails)
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        margin:
+                                            const EdgeInsets.only(bottom: 16),
+                                        decoration: BoxDecoration(
+                                          color: BauhausDesign.neutral
+                                              .withOpacity(0.1),
+                                          border: Border.all(
+                                              color: BauhausDesign.neutral),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.info_outline,
+                                                size: 20,
+                                                color: BauhausDesign.neutral),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .bankDetailsNotSet,
+                                                style:
+                                                    BauhausDesign.getTextTheme(
+                                                            context)
+                                                        .bodySmall,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                    // Custom Radio Options
+                                    _buildBauhausRadioOption(
+                                      label: AppLocalizations.of(context)!
+                                          .employeeBankDetails,
+                                      subLabel: AppLocalizations.of(context)!
+                                          .employeeBankDetailsDesc,
+                                      value: false,
+                                      groupValue: _useAdminBankDetails,
+                                      onChanged: (val) async {
+                                        setState(
+                                            () => _useAdminBankDetails = false);
+                                        await _persistUseAdminPreference(false);
+                                      },
+                                    ),
+                                    const Divider(
+                                        height: 24,
+                                        thickness: 1,
+                                        color: BauhausDesign.neutral),
+                                    _buildBauhausRadioOption(
+                                      label: AppLocalizations.of(context)!
+                                          .adminBankDetails,
+                                      subLabel: AppLocalizations.of(context)!
+                                          .adminBankDetailsDesc,
+                                      value: true,
+                                      groupValue: _useAdminBankDetails,
+                                      onChanged: (val) async {
+                                        setState(
+                                            () => _useAdminBankDetails = true);
+                                        await _persistUseAdminPreference(true);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Employee Bank Details Card (View/Edit)
+                        _buildBauhausEmployeeBankCard(),
+
+                        const SizedBox(height: 48),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ),
-          Theme(
-            data: ThemeData.dark().copyWith(
-              radioTheme: RadioThemeData(
-                fillColor: WidgetStateProperty.resolveWith<Color>(
-                    (states) => _primaryColor),
-              ),
-            ),
-            child: RadioListTile<bool>(
-              title: const Text(
-                'Admin Bank Details',
-                style: TextStyle(
-                  color: _textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: const Text(
-                'Use admin bank details (invoices created by admin only)',
-                style: TextStyle(color: _textSecondary),
-              ),
-              value: true,
-              groupValue: _useAdminBankDetails,
-              onChanged: (val) async {
-                final newVal = val ?? false;
-                setState(() {
-                  _useAdminBankDetails = newVal;
-                });
-                await _persistUseAdminPreference(newVal);
-              },
-              contentPadding: EdgeInsets.zero,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          const Text(
-            'Note: Invoice creation is restricted to admin users.',
-            style: TextStyle(
-              color: _textSecondary,
-              fontSize: 12,
             ),
           ),
         ],
@@ -539,527 +861,211 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  /// Builds the employee bank details status section with CTA to add/update.
-  /// Navigates to BankDetailsView for editing and refreshes status on return.
-  Widget _buildEmployeeBankDetailsSection() {
-    String maskedAccount = '';
+  Widget _buildBauhausRadioOption({
+    required String label,
+    required String subLabel,
+    required bool value,
+    required bool groupValue,
+    required Function(bool?) onChanged,
+  }) {
+    final isSelected = value == groupValue;
+    return GestureDetector(
+      onTap: () => onChanged(value),
+      child: Container(
+        color: Colors.transparent,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Custom Radio Circle
+            Container(
+              width: 20,
+              height: 20,
+              margin: const EdgeInsets.only(top: 2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected
+                      ? BauhausDesign.primary
+                      : BauhausDesign.neutral,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? Center(
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(
+                            color: BauhausDesign.primary,
+                            shape: BoxShape.circle),
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? BauhausDesign.textDark
+                              : BauhausDesign.neutral,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subLabel,
+                    style:
+                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                              color: BauhausDesign.neutral,
+                            ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBauhausEmployeeBankCard() {
+    String maskedAccount = 'Hidden';
+    String bankName = 'Bank Name';
+
     if (_bankDetails != null && (_bankDetails!['accountNumber'] is String)) {
       final acc = (_bankDetails!['accountNumber'] as String).trim();
       if (acc.isNotEmpty) {
         final last4 = acc.length >= 4 ? acc.substring(acc.length - 4) : acc;
         maskedAccount = '•••• •••• $last4';
       }
+      bankName = (_bankDetails?['bankName'] ?? 'Bank').toString();
     }
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24.0),
-      decoration: BoxDecoration(
-        color: _cardBackground,
-        borderRadius: BorderRadius.circular(24.0),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.05),
-          width: 1.0,
-        ),
-      ),
+    return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'PRIMARY ACCOUNT',
-                style: TextStyle(
-                  color: _primaryColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.0,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.account_balance_wallet_outlined,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12.0),
-          if (_bankDetailsLoading)
-            const Center(child: CircularProgressIndicator())
-          else if (_hasBankDetails)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (_bankDetails?['bankName'] ?? 'Bank').toString(),
-                  style: const TextStyle(
-                    color: _textPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  maskedAccount.isNotEmpty ? maskedAccount : 'Hidden',
-                  style: const TextStyle(
-                    color: _textSecondary,
-                    fontSize: 16,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-                const SizedBox(height: 24.0),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const BankDetailsView(),
-                        ),
-                      );
-                      await _loadEmployeeBankDetails();
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.white.withOpacity(0.2)),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    icon: const Icon(Icons.edit_outlined,
-                        size: 18, color: Colors.white),
-                    label: const Text(
-                      'Update Bank Details',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          else ...[
-            if (_bankDetailsError != null)
-              Text(
-                _bankDetailsError!,
-                style: const TextStyle(
-                  color: _textSecondary,
-                  fontSize: 12,
-                ),
-              ),
-            const SizedBox(height: 8.0),
-            const Text(
-              'No bank details saved yet.',
-              style: TextStyle(
-                color: _textSecondary,
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const BankDetailsView(),
-                    ),
-                  );
-                  await _loadEmployeeBankDetails();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Text(
-                  'Add Your Bank Details',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildExpenseCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24.0),
-      decoration: BoxDecoration(
-        color: _cardBackground,
-        borderRadius: BorderRadius.circular(24.0),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.05),
-          width: 1.0,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Track Expenses',
-                style: TextStyle(
-                  color: _textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: _primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.receipt_long_outlined,
-                  color: _primaryColor,
-                  size: 20,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8.0),
-          const Text(
-            'Keep track of your daily spending and manage reimbursements.',
-            style: TextStyle(
-              color: _textSecondary,
-              fontSize: 14,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 24.0),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ExpenseManagementView(
-                      adminEmail: widget.email,
-                      organizationId: widget.organizationId,
-                      organizationName: widget.organizationName,
-                    ),
-                  ),
-                );
-              },
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: _primaryColor.withOpacity(0.5)),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: const Text(
-                'Open Dashboard',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildClockInCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        color: _cardBackground,
-        borderRadius: BorderRadius.circular(20.0),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.05),
-          width: 1.0,
-        ),
-      ),
-      child: Row(
-        children: [
+          // Header
           Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: _successColor.withOpacity(0.1),
-              shape: BoxShape.circle,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: const BoxDecoration(
+              color: BauhausDesign.textDark, // Black Header
+              border: Border(
+                  bottom: BorderSide(color: BauhausDesign.textDark, width: 0)),
             ),
-            child: const Icon(
-              Icons.timer_outlined,
-              color: _successColor,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Ready to start?',
-                  style: TextStyle(
-                    color: _textPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
                 Text(
-                  'Shift starts soon',
-                  style: TextStyle(
-                    color: _textSecondary,
-                    fontSize: 12,
-                  ),
+                  AppLocalizations.of(context)!.primaryAccount.toUpperCase(),
+                  style:
+                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.surfaceWhite,
+                          ),
                 ),
+                const Icon(Icons.account_balance,
+                    color: BauhausDesign.surfaceWhite, size: 18),
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Consumer(
-                    builder: (context, ref, child) {
-                      return ClockInAndOutView(
-                        email: widget.email,
-                      );
-                    },
-                  ),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _successColor,
-              foregroundColor: Colors.white,
-              elevation: 4,
-              shadowColor: _successColor.withOpacity(0.5),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'Clock In',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    final photoDataState = ref.watch(photoDataProvider);
-
-    return Scaffold(
-      backgroundColor: _scaffoldBackground,
-      extendBodyBehindAppBar: false,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Custom Header
-              Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Welcome back',
-                          style: TextStyle(
-                            color: _textSecondary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: _bankDetailsLoading
+                ? const Center(child: BauhausLoadingState(showMessage: false))
+                : !_hasBankDetails
+                    ? Column(
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.noBankDetails,
+                            style:
+                                BauhausDesign.getTextTheme(context).bodyMedium,
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${initialData['firstName'] ?? 'User'} ${initialData['lastName'] ?? ''}',
-                          style: const TextStyle(
-                            color: _textPrimary,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Lato',
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: BauhausActionButton(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const BankDetailsView()),
+                                );
+                                await _loadEmployeeBankDetails();
+                              },
+                              text: AppLocalizations.of(context)!
+                                  .addBankDetails
+                                  .toUpperCase(),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: _primaryColor,
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _primaryColor.withOpacity(0.2),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            bankName.toUpperCase(),
+                            style: BauhausDesign.getTextTheme(context)
+                                .headlineSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            maskedAccount,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelMedium
+                                ?.copyWith(
+                                  color: BauhausDesign.neutral,
+                                ),
+                          ),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            width: double.infinity,
+                            child: BauhausActionButton(
+                              variant: BauhausActionVariant.ghost,
+                              isOutlined: true,
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const BankDetailsView()),
+                                );
+                                await _loadEmployeeBankDetails();
+                              },
+                              icon: Icons.edit,
+                              text: AppLocalizations.of(context)!
+                                  .updateBankDetails
+                                  .toUpperCase(),
+                            ),
                           ),
                         ],
                       ),
-                      child: CircleAvatar(
-                        radius: 24,
-                        backgroundColor: _cardBackground,
-                        child: ClipOval(
-                          child: ProfileImageWidget(
-                            photoData: photoDataState.photoData,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Appointments Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Your Appointments',
-                    style: TextStyle(
-                      color: _textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Lato',
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Navigate to full schedule if needed
-                    },
-                    child: const Text(
-                      'View Schedule',
-                      style: TextStyle(
-                        color: _textSecondary,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12.0),
-              FutureBuilder(
-                future: _appointmentDataFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return _buildSkeletonLoader();
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                      child: Text(
-                        'Unable to load appointments.',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: _textSecondary,
-                        ),
-                      ),
-                    );
-                  } else {
-                    return getLength() == 0
-                        ? Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              color: _cardBackground,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'No Appointments right now',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: _textSecondary,
-                                ),
-                              ),
-                            ),
-                          )
-                        : DynamicAppointmentCardWidget(
-                            currentUserEmail: widget.email,
-                            listLength: getLength(),
-                            clientEmailList: setAppointmentData['data']
-                                .map((item) => item['clientEmail'])
-                                .toList(),
-                          );
-                  }
-                },
-              ),
-              const SizedBox(height: 24.0),
-
-              // Bank Details Section
-              const Text(
-                'Bank Details',
-                style: TextStyle(
-                  color: _textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Lato',
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildEmployeeBankDetailsSection(),
-              const SizedBox(height: 24.0),
-
-              // Expense Management Section
-              const Text(
-                'Expense Management',
-                style: TextStyle(
-                  color: _textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Lato',
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildExpenseCard(),
-              const SizedBox(height: 24.0),
-
-              // Clock In Section (Bottom Card)
-              _buildClockInCard(),
-              const SizedBox(height: 24.0),
-
-              // Bank Details Configuration (Admin Only)
-              if (ref.watch(userRoleProvider) == UserRole.admin) ...[
-                const Text(
-                  'Bank Details Configuration',
-                  style: TextStyle(
-                    color: _textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'Lato',
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _buildBankDetailsConfiguration(),
-                const SizedBox(height: 24.0),
-              ],
-            ],
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBauhausSkeleton() {
+    return Container(
+      height: 120,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
+      ),
+      child: const Center(
+        child: BauhausLoadingState(showMessage: false),
       ),
     );
   }
