@@ -1,5 +1,6 @@
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 /// A bold, colorful action block following Bauhaus design principles.
 /// Used for creating visually striking action tiles with full-color backgrounds.
@@ -223,6 +224,8 @@ class BauhausInvoiceGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -237,7 +240,7 @@ class BauhausInvoiceGrid extends StatelessWidget {
             borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
           ),
           child: Text(
-            'INVOICE MANAGEMENT',
+            l10n.invoiceManagement.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
               fontWeight: FontWeight.w900,
               color: BauhausDesign.textLight,
@@ -253,8 +256,8 @@ class BauhausInvoiceGrid extends StatelessWidget {
             Expanded(
               child: BauhausActionBlock(
                 icon: Icons.receipt_long_rounded,
-                title: 'Generate',
-                subtitle: 'Create new invoice for clients',
+                title: l10n.generate,
+                subtitle: l10n.generateSubtitle,
                 backgroundColor: BauhausDesign.primary,
                 textColor: BauhausDesign.textDark,
                 onTap: onGenerateInvoice,
@@ -265,8 +268,8 @@ class BauhausInvoiceGrid extends StatelessWidget {
             Expanded(
               child: BauhausActionBlock(
                 icon: Icons.folder_copy_rounded,
-                title: 'All Invoices',
-                subtitle: 'Auto-generate for all users',
+                title: l10n.allInvoices,
+                subtitle: l10n.allInvoicesSubtitle,
                 backgroundColor: BauhausDesign.secondary,
                 textColor: BauhausDesign.textLight,
                 onTap: onAllInvoices,
@@ -277,11 +280,11 @@ class BauhausInvoiceGrid extends StatelessWidget {
         ),
         const SizedBox(height: BauhausDesign.space3),
 
-        // Second Row: Full Width - Enhanced Invoice
+        // Second Row: Full Width - Employee Invoice
         BauhausWideActionBlock(
           icon: Icons.payments_rounded,
-          title: 'Employee Invoice',
-          subtitle: 'Generate pay-rate invoices for employees',
+          title: l10n.employeeInvoice,
+          subtitle: l10n.employeeInvoiceSubtitle,
           backgroundColor: BauhausDesign.primary,
           textColor: BauhausDesign.textDark,
           onTap: onEmployeeInvoice,
@@ -291,8 +294,8 @@ class BauhausInvoiceGrid extends StatelessWidget {
         // Third Row: Full Width - Enhanced Invoice
         BauhausWideActionBlock(
           icon: Icons.auto_awesome_rounded,
-          title: 'Enhanced Invoice',
-          subtitle: 'Generate invoices with pricing integration',
+          title: l10n.enhancedInvoice,
+          subtitle: l10n.enhancedInvoiceSubtitle,
           backgroundColor: BauhausDesign.accent,
           textColor: BauhausDesign.textDark,
           onTap: onEnhancedInvoice,
@@ -302,8 +305,8 @@ class BauhausInvoiceGrid extends StatelessWidget {
         // Fourth Row: Full Width - Invoice List
         BauhausWideActionBlock(
           icon: Icons.list_alt_rounded,
-          title: 'Invoice List',
-          subtitle: 'View and manage generated invoices',
+          title: l10n.invoiceList,
+          subtitle: l10n.invoiceListSubtitle,
           backgroundColor: BauhausDesign.success,
           textColor: BauhausDesign.textDark,
           onTap: onInvoiceList,

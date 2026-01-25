@@ -1,12 +1,9 @@
 import 'dart:io';
-import 'dart:convert';
-import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/training_compliance/models/certification.dart';
 import 'package:carenest/app/features/training_compliance/models/training_module.dart';
 import 'package:carenest/app/features/training_compliance/models/compliance_checklist.dart';
-import 'package:carenest/config/environment.dart';
+import 'package:carenest/backend/api_method.dart';
 import 'package:http/http.dart' as http;
-import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 class TrainingComplianceRepository {
   final ApiMethod _apiMethod;
@@ -22,35 +19,26 @@ class TrainingComplianceRepository {
     required DateTime expiryDate,
     String? notes,
   }) async {
-    final sharedUtils = SharedPreferencesUtils();
-    await sharedUtils.init();
-    final token = sharedUtils.getAuthToken();
+    final fields = {
+      'name': name,
+      'issuer': issuer,
+      'expiryDate': expiryDate.toIso8601String(),
+    };
     
-    // Construct URL manually as AppConfig.baseUrl might end with / or not
-    String baseUrl = AppConfig.baseUrl;
-    if (!baseUrl.endsWith('/')) baseUrl += '/';
+    if (notes != null) fields['notes'] = notes;
     
-    final uri = Uri.parse('${baseUrl}api/certifications/upload');
-    final request = http.MultipartRequest('POST', uri);
+    final filePart = await http.MultipartFile.fromPath('certification', file.path);
     
-    if (token != null) {
-      request.headers['Authorization'] = token.startsWith('Bearer ') ? token : 'Bearer $token';
-    }
+    final response = await _apiMethod.postMultipart(
+      'api/certifications/upload',
+      fields: fields,
+      files: [filePart],
+    );
     
-    request.files.add(await http.MultipartFile.fromPath('certification', file.path));
-    request.fields['name'] = name;
-    request.fields['issuer'] = issuer;
-    request.fields['expiryDate'] = expiryDate.toIso8601String();
-    if (notes != null) request.fields['notes'] = notes;
-
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-    
-    if (response.statusCode == 201) {
-      final body = json.decode(response.body);
-      return Certification.fromJson(body['data']);
+    if (response['success'] == true) {
+      return Certification.fromJson(response['data']);
     } else {
-      throw Exception('Failed to upload certification: ${response.body}');
+      throw Exception(response['message'] ?? 'Failed to upload certification');
     }
   }
   

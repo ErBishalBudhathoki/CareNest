@@ -1,3 +1,5 @@
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -70,7 +72,7 @@ class EnhancedAuthDialog {
     return showDialog<void>(
       context: context,
       barrierDismissible: barrierDismissible,
-      barrierColor: Colors.black.withValues(alpha: 0.6),
+      barrierColor: BauhausDesign.neutral.withValues(alpha: 0.6),
       builder: (BuildContext context) {
         return _ModernDialog(
           type: type,
@@ -630,6 +632,31 @@ class EnhancedAuthDialog {
 
     return dialog;
   }
+
+  /// Show generic error dialog
+  static Future<void> showErrorDialog(
+    BuildContext context, {
+    String? title,
+    String? message,
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.error,
+      icon: Icons.error_outline,
+      title: title ?? 'Error',
+      message: message ?? 'An error occurred.',
+      primaryAction: _DialogAction(
+        label: actionLabel ?? 'OK',
+        style: _ActionStyle.primary,
+        onPressed: () {
+          Navigator.of(context).pop();
+          onAction?.call();
+        },
+      ),
+    );
+  }
 }
 
 /// Modern dialog widget with enhanced UX patterns
@@ -719,15 +746,15 @@ class _ModernDialogState extends State<_ModernDialog>
   Color _getSemanticColor() {
     switch (widget.type) {
       case _DialogType.error:
-        return const Color(0xFFE53E3E);
+        return BauhausDesign.error;
       case _DialogType.warning:
-        return const Color(0xFFED8936);
+        return BauhausDesign.warning;
       case _DialogType.info:
-        return const Color(0xFF3182CE);
+        return BauhausDesign.secondary;
       case _DialogType.success:
-        return const Color(0xFF38A169);
+        return BauhausDesign.success;
       case _DialogType.question:
-        return const Color(0xFF805AD5);
+        return BauhausDesign.primary;
     }
   }
 
@@ -738,8 +765,8 @@ class _ModernDialogState extends State<_ModernDialog>
     final surfaceBrightness =
         ThemeData.estimateBrightnessForColor(surfaceColor);
     final effectiveOnSurface = surfaceBrightness == Brightness.dark
-        ? Colors.white
-        : const Color(0xFF0F172A);
+        ? BauhausDesign.surfaceLight
+        : BauhausDesign.neutral;
 
     return AnimatedBuilder(
       animation: Listenable.merge([_scaleAnimation, _fadeAnimation]),
@@ -756,21 +783,8 @@ class _ModernDialogState extends State<_ModernDialog>
                   maxWidth: MediaQuery.of(context).size.width * 0.95,
                   minWidth: 340,
                 ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                    BoxShadow(
-                      color: semanticColor.withValues(alpha: 0.1),
-                      blurRadius: 40,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
+                decoration: BauhausDesign.cardDecoration.copyWith(
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -798,21 +812,20 @@ class _ModernDialogState extends State<_ModernDialog>
             builder: (context, child) {
               return Transform.scale(
                 scale: _iconAnimation.value,
-                child: Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: semanticColor.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: semanticColor.withValues(alpha: 0.2),
-                      width: 2,
+                child: Center(
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: semanticColor,
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 2),
                     ),
-                  ),
-                  child: Icon(
-                    widget.icon,
-                    size: 32,
-                    color: semanticColor,
+                    child: Icon(
+                      widget.icon,
+                      size: 40,
+                      color: BauhausDesign.backgroundLight,
+                    ),
                   ),
                 ),
               );
@@ -821,7 +834,7 @@ class _ModernDialogState extends State<_ModernDialog>
           const SizedBox(height: 16),
           Text(
             widget.title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: effectiveOnSurface,
                 ),
@@ -833,60 +846,36 @@ class _ModernDialogState extends State<_ModernDialog>
   }
 
   Widget _buildContent(Color effectiveOnSurface) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Text(
-        widget.message,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: effectiveOnSurface.withValues(alpha: 0.8),
-              height: 1.5,
-            ),
-        textAlign: TextAlign.center,
+      child: Column(
+        children: [
+          Text(
+            widget.message,
+            textAlign: TextAlign.center,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.neutral.withOpacity(0.8),
+                  height: 1.5,
+                ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildActions() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          // Check if we should stack buttons vertically for better text display
-          _shouldStackButtons()
-              ? Column(
-                  children: [
-                    if (widget.secondaryAction != null) ...[
-                      SizedBox(
-                        width: double.infinity,
-                        child: _buildActionButton(widget.secondaryAction!),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    SizedBox(
-                      width: double.infinity,
-                      child: _buildActionButton(widget.primaryAction),
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    if (widget.secondaryAction != null) ...[
-                      Expanded(
-                        child: _buildActionButton(widget.secondaryAction!),
-                      ),
-                      const SizedBox(width: 12),
-                    ],
-                    Expanded(
-                      child: _buildActionButton(widget.primaryAction),
-                    ),
-                  ],
-                ),
-          if (widget.helpAction != null) ...[
+          _buildActionButton(widget.primaryAction),
+          if (widget.secondaryAction != null) ...[
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: _buildActionButton(widget.helpAction!),
-            ),
+            _buildActionButton(widget.secondaryAction!),
+          ],
+          if (widget.helpAction != null) ...[
+            const SizedBox(height: 8),
+            _buildActionButton(widget.helpAction!),
           ],
         ],
       ),
@@ -895,121 +884,22 @@ class _ModernDialogState extends State<_ModernDialog>
 
   Widget _buildActionButton(_DialogAction action) {
     final semanticColor = _getSemanticColor();
-
-    return AnimatedContainer(
-      duration: EnhancedAuthDialog._buttonHoverDuration,
-      height: 48,
-      child: _buildButtonByStyle(action, semanticColor),
-    );
-  }
-
-  Widget _buildButtonByStyle(_DialogAction action, Color semanticColor) {
-    final buttonContent = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (action.icon != null) ...[
-          Icon(action.icon, size: 18),
-          const SizedBox(width: 8),
-        ],
-        Flexible(
-          child: Text(
-            action.label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.visible,
-          ),
-        ),
-      ],
-    );
-
-    switch (action.style) {
-      case _ActionStyle.text:
-        return TextButton(
-          onPressed: action.onPressed,
-          style: _getTextButtonStyle(semanticColor),
-          child: buttonContent,
-        );
-      case _ActionStyle.primary:
-      case _ActionStyle.secondary:
-      case _ActionStyle.destructive:
-        return ElevatedButton(
-          onPressed: action.onPressed,
-          style: _getButtonStyle(action.style, semanticColor),
-          child: buttonContent,
-        );
-    }
-  }
-
-  // Helper method to determine if buttons should be stacked vertically
-  bool _shouldStackButtons() {
-    if (widget.secondaryAction == null) return false;
-
-    // Calculate approximate text width for both buttons
-    final primaryTextLength = widget.primaryAction.label.length;
-    final secondaryTextLength = widget.secondaryAction!.label.length;
-
-    // Stack vertically if either button text is long or combined length is too much
-    return primaryTextLength > 12 ||
-        secondaryTextLength > 12 ||
-        (primaryTextLength + secondaryTextLength) > 20;
-  }
-
-  ButtonStyle _getButtonStyle(_ActionStyle style, Color semanticColor) {
-    switch (style) {
-      case _ActionStyle.primary:
-        return ElevatedButton.styleFrom(
-          backgroundColor: semanticColor,
-          foregroundColor: Colors.white,
-          elevation: 2,
-          shadowColor: semanticColor.withValues(alpha: 0.3),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        );
-      case _ActionStyle.secondary:
-        return ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          foregroundColor: semanticColor,
-          elevation: 0,
-          side: BorderSide(color: semanticColor.withValues(alpha: 0.3)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        );
-      case _ActionStyle.destructive:
-        return ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFE53E3E),
-          foregroundColor: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        );
-      case _ActionStyle.text:
-        // This case should not be reached as text buttons use _getTextButtonStyle
-        return TextButton.styleFrom(
-          foregroundColor: semanticColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        );
-    }
-  }
-
-  ButtonStyle _getTextButtonStyle(Color semanticColor) {
-    return TextButton.styleFrom(
-      foregroundColor: semanticColor,
-      backgroundColor: semanticColor.withValues(alpha: 0.08),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return SizedBox(
+      width: double.infinity,
+      child: BauhausActionButton(
+        text: action.label,
+        onPressed: action.onPressed,
+        backgroundColor: action.style == _ActionStyle.primary
+            ? semanticColor
+            : (action.style == _ActionStyle.destructive
+                ? BauhausDesign.error
+                : BauhausDesign.backgroundLight),
+        textColor: action.style == _ActionStyle.primary ||
+                action.style == _ActionStyle.destructive
+            ? BauhausDesign.surfaceWhite
+            : BauhausDesign.neutral,
+        icon: action.icon,
       ),
-      overlayColor: semanticColor.withValues(alpha: 0.12),
     );
   }
 }

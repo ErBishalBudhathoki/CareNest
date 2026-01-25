@@ -1,7 +1,7 @@
 import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// View displayed after a successful shift assignment
 ///
@@ -25,26 +25,7 @@ class ShiftSuccessView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      appBar: AppBar(
-        title: Text(
-          'SHIFT DETAILS',
-          style: GoogleFonts.oswald(
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: BauhausDesign.surfaceLight,
-        foregroundColor: BauhausDesign.textDark,
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(
-            height: 4,
-            color: BauhausDesign.neutral,
-          ),
-        ),
-      ),
+      appBar: _buildBauhausAppBar(context),
       body: Padding(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
@@ -65,7 +46,8 @@ class ShiftSuccessView extends StatelessWidget {
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
                       color: BauhausDesign.success,
-                      border: Border.all(color: BauhausDesign.neutral, width: 2),
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 2),
                     ),
                     child: const Icon(
                       Icons.check,
@@ -76,7 +58,7 @@ class ShiftSuccessView extends StatelessWidget {
                   const SizedBox(width: BauhausDesign.space3),
                   Expanded(
                     child: Text(
-                      'ASSIGNMENT SUCCESSFUL!',
+                      AppLocalizations.of(context)!.assignmentSuccessfulCaps,
                       style: textTheme.headlineLarge?.copyWith(
                         color: BauhausDesign.success,
                         fontWeight: FontWeight.bold,
@@ -102,17 +84,18 @@ class ShiftSuccessView extends StatelessWidget {
                 children: [
                   _buildDetailRow(
                     context,
-                    label: 'EMPLOYEE',
+                    label: AppLocalizations.of(context)!.employeeLabel,
                     value: userEmail,
                     icon: Icons.person,
                     color: BauhausDesign.secondary,
                   ),
                   const SizedBox(height: BauhausDesign.space3),
-                  Container(height: 2, color: BauhausDesign.neutral.withOpacity(0.2)),
+                  Container(
+                      height: 2, color: BauhausDesign.neutral.withOpacity(0.2)),
                   const SizedBox(height: BauhausDesign.space3),
                   _buildDetailRow(
                     context,
-                    label: 'CLIENT',
+                    label: AppLocalizations.of(context)!.clientLabel,
                     value: clientEmail,
                     icon: Icons.business,
                     color: BauhausDesign.primary,
@@ -133,9 +116,8 @@ class ShiftSuccessView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
               ),
               child: Text(
-                'ASSIGNED SHIFTS',
-                style: GoogleFonts.oswald(
-                  fontSize: 14,
+                AppLocalizations.of(context)!.assignedShifts.toUpperCase(),
+                style: textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: BauhausDesign.textLight,
                   letterSpacing: 1,
@@ -156,6 +138,46 @@ class ShiftSuccessView extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildBauhausAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: BauhausDesign.surfaceLight,
+          border: Border(
+            bottom: BorderSide(color: BauhausDesign.neutral, width: 4),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back,
+                      color: BauhausDesign.textDark),
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                Text(
+                  AppLocalizations.of(context)!.shiftDetails.toUpperCase(),
+                  style: BauhausDesign.getTextTheme(context)
+                      .displaySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -185,20 +207,18 @@ class ShiftSuccessView extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: GoogleFonts.oswald(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.neutral,
-                  letterSpacing: 1,
-                ),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.neutral,
+                      letterSpacing: 1,
+                    ),
               ),
               Text(
                 value,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
-                ),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: BauhausDesign.textDark,
+                    ),
                 overflow: TextOverflow.ellipsis,
               ),
             ],

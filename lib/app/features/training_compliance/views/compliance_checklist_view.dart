@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:carenest/app/features/training_compliance/models/compliance_checklist.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ComplianceChecklistView extends ConsumerStatefulWidget {
   const ComplianceChecklistView({super.key});
 
   @override
-  ConsumerState<ComplianceChecklistView> createState() => _ComplianceChecklistViewState();
+  ConsumerState<ComplianceChecklistView> createState() =>
+      _ComplianceChecklistViewState();
 }
 
-class _ComplianceChecklistViewState extends ConsumerState<ComplianceChecklistView> {
+class _ComplianceChecklistViewState
+    extends ConsumerState<ComplianceChecklistView> {
   @override
   void initState() {
     super.initState();
@@ -27,7 +30,8 @@ class _ComplianceChecklistViewState extends ConsumerState<ComplianceChecklistVie
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text('Compliance Checklists', style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(AppLocalizations.of(context)!.complianceChecklistsTitle,
+            style: BauhausDesign.getTextTheme(context).headlineLarge),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -37,18 +41,20 @@ class _ComplianceChecklistViewState extends ConsumerState<ComplianceChecklistVie
         ),
       ),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator(color: BauhausDesign.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: BauhausDesign.primary))
           : state.checklists.isEmpty
               ? Center(
                   child: Text(
-                    'No checklists available.',
+                    AppLocalizations.of(context)!.noChecklistsMessage,
                     style: BauhausDesign.getTextTheme(context).bodyLarge,
                   ),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: state.checklists.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space3),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: BauhausDesign.space3),
                   itemBuilder: (context, index) {
                     final checklist = state.checklists[index];
                     return _buildChecklistCard(context, checklist);
@@ -57,10 +63,12 @@ class _ComplianceChecklistViewState extends ConsumerState<ComplianceChecklistVie
     );
   }
 
-  Widget _buildChecklistCard(BuildContext context, ComplianceChecklist checklist) {
+  Widget _buildChecklistCard(
+      BuildContext context, ComplianceChecklist checklist) {
     final isCompleted = checklist.userStatus?.isCompleted ?? false;
     final totalItems = checklist.items.length;
-    final completedItems = checklist.userStatus?.itemsStatus.values.where((v) => v).length ?? 0;
+    final completedItems =
+        checklist.userStatus?.itemsStatus.values.where((v) => v).length ?? 0;
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -77,7 +85,8 @@ class _ComplianceChecklistViewState extends ConsumerState<ComplianceChecklistVie
                 ),
               ),
               if (isCompleted)
-                const Icon(Icons.verified, color: BauhausDesign.success, size: 24),
+                const Icon(Icons.verified,
+                    color: BauhausDesign.success, size: 24),
             ],
           ),
           const SizedBox(height: BauhausDesign.space2),
@@ -89,7 +98,8 @@ class _ComplianceChecklistViewState extends ConsumerState<ComplianceChecklistVie
           LinearProgressIndicator(
             value: totalItems > 0 ? completedItems / totalItems : 0,
             backgroundColor: BauhausDesign.neutral.withOpacity(0.1),
-            valueColor: AlwaysStoppedAnimation<Color>(isCompleted ? BauhausDesign.success : BauhausDesign.accent),
+            valueColor: AlwaysStoppedAnimation<Color>(
+                isCompleted ? BauhausDesign.success : BauhausDesign.accent),
             minHeight: 8,
             borderRadius: BorderRadius.circular(4),
           ),
@@ -97,10 +107,17 @@ class _ComplianceChecklistViewState extends ConsumerState<ComplianceChecklistVie
           SizedBox(
             width: double.infinity,
             child: BauhausButton(
-              text: isCompleted ? 'View' : 'Start Checklist',
-              backgroundColor: isCompleted ? BauhausDesign.secondary : BauhausDesign.primary,
+              text: isCompleted
+                  ? AppLocalizations.of(context)!.viewButton
+                  : AppLocalizations.of(context)!.startChecklistButton,
+              backgroundColor:
+                  isCompleted ? BauhausDesign.secondary : BauhausDesign.primary,
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => ChecklistDetailView(checklist: checklist)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            ChecklistDetailView(checklist: checklist)));
               },
             ),
           ),
@@ -116,7 +133,8 @@ class ChecklistDetailView extends ConsumerStatefulWidget {
   const ChecklistDetailView({super.key, required this.checklist});
 
   @override
-  ConsumerState<ChecklistDetailView> createState() => _ChecklistDetailViewState();
+  ConsumerState<ChecklistDetailView> createState() =>
+      _ChecklistDetailViewState();
 }
 
 class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
@@ -139,7 +157,8 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(widget.checklist.title, style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(widget.checklist.title,
+            style: BauhausDesign.getTextTheme(context).headlineLarge),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -161,7 +180,8 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
                 final isChecked = _itemsStatus[itemId] ?? false;
 
                 return CheckboxListTile(
-                  title: Text(item.text, style: BauhausDesign.getTextTheme(context).bodyLarge),
+                  title: Text(item.text,
+                      style: BauhausDesign.getTextTheme(context).bodyLarge),
                   value: isChecked,
                   activeColor: BauhausDesign.success,
                   onChanged: (val) {
@@ -176,19 +196,21 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
           Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             child: BauhausButton(
-              text: 'Save Progress',
+              text: AppLocalizations.of(context)!.saveProgressButton,
               onPressed: () {
                 final isCompleted = widget.checklist.items.every((item) {
-                   final itemId = item.id ?? item.text;
-                   // If required, must be checked. Assuming all required for now or check isRequired
-                   return !item.isRequired || (_itemsStatus[itemId] ?? false);
+                  final itemId = item.id ?? item.text;
+                  // If required, must be checked. Assuming all required for now or check isRequired
+                  return !item.isRequired || (_itemsStatus[itemId] ?? false);
                 });
-                
-                ref.read(complianceViewModelProvider.notifier).updateChecklistStatus(
-                  widget.checklist.id!,
-                  _itemsStatus,
-                  isCompleted,
-                );
+
+                ref
+                    .read(complianceViewModelProvider.notifier)
+                    .updateChecklistStatus(
+                      widget.checklist.id!,
+                      _itemsStatus,
+                      isCompleted,
+                    );
                 Navigator.pop(context);
               },
             ),

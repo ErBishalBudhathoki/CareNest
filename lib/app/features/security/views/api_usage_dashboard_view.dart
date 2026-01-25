@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ApiUsageDashboardView extends StatefulWidget {
   const ApiUsageDashboardView({super.key});
@@ -60,7 +63,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
   Future<void> _loadAll() async {
     if (_organizationId == null) {
       setState(() {
-        _error = 'Organization ID not available';
+        _error = AppLocalizations.of(context)!.organizationIdNotAvailable;
         _loading = false;
       });
       return;
@@ -93,8 +96,10 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       for (int i = 0; i < 3; i++) {
         final r = results[i];
         if (r['success'] == false) {
-          firstError =
-              (r['message'] ?? r['error'] ?? 'Request failed').toString();
+          firstError = (r['message'] ??
+                  r['error'] ??
+                  AppLocalizations.of(context)!.requestFailed)
+              .toString();
           break;
         }
       }
@@ -145,7 +150,8 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Failed to load API usage data: $e';
+        _error =
+            AppLocalizations.of(context)!.failedToLoadApiUsage(e.toString());
         _loading = false;
       });
     }
@@ -171,10 +177,8 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       debugPrint('[SSE] Response status: ${resp.statusCode}');
       if (resp.statusCode != 200) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('Live stream unavailable (${resp.statusCode})')),
-          );
+          _showErrorSnackbar(AppLocalizations.of(context)!
+              .liveStreamUnavailable('${resp.statusCode}'));
         }
         return;
       }
@@ -216,10 +220,6 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
         }
       }, onError: (err) {
         debugPrint('[SSE] Stream error: $err');
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Live stream disconnected')),
-        );
       }, onDone: () {
         debugPrint('[SSE] Stream closed by server');
         // Retry after 5 seconds if still mounted
@@ -248,23 +248,17 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       if (!mounted) return;
 
       if (res['success'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('IP address $ipAddress unblocked successfully')),
-        );
+        _showSuccessSnackbar(
+            AppLocalizations.of(context)!.ipUnblockedSuccess(ipAddress));
         _loadAll(); // Reload data to reflect changes
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'Failed to unblock IP: ${res['message'] ?? 'Unknown error'}')),
-        );
+        _showErrorSnackbar(AppLocalizations.of(context)!.failedToUnblockIp(
+            res['message'] ?? AppLocalizations.of(context)!.unknown));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error unblocking IP: $e')),
-      );
+      _showErrorSnackbar(
+          AppLocalizations.of(context)!.errorUnblockingIp(e.toString()));
     }
   }
 
@@ -277,22 +271,17 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
       if (!mounted) return;
 
       if (res['success'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Rate limit reset for $ip')),
-        );
+        _showSuccessSnackbar(
+            AppLocalizations.of(context)!.rateLimitResetFor(ip));
         _loadAll();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'Failed to reset rate limit: ${(res['message'] ?? 'Unknown error')}')),
-        );
+        _showErrorSnackbar(AppLocalizations.of(context)!.failedToResetRateLimit(
+            (res['message'] ?? AppLocalizations.of(context)!.unknown)));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error resetting rate limit: $e')),
-      );
+      _showErrorSnackbar(
+          AppLocalizations.of(context)!.errorResettingRateLimit(e.toString()));
     }
   }
 
@@ -325,47 +314,143 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
     }
   }
 
+  void _showSuccessSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
+            const SizedBox(width: BauhausDesign.space3),
+            Expanded(
+              child: Text(
+                message,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.surfaceWhite,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: BauhausDesign.success,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: BauhausDesign.surfaceWhite),
+            const SizedBox(width: BauhausDesign.space3),
+            Expanded(
+              child: Text(
+                message,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.surfaceWhite,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: BauhausDesign.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('API Usage Dashboard'),
-        actions: [
-          IconButton(
-            tooltip: 'Refresh real-time data',
-            onPressed: _refreshRealTimeData,
-            icon: const Icon(Icons.refresh),
-          ),
-          IconButton(
-            tooltip: 'Reload all data',
-            onPressed: _loadAll,
-            icon: const Icon(Icons.download),
-          ),
-        ],
-      ),
+      backgroundColor: BauhausDesign.backgroundLight,
+      appBar: _buildBauhausAppBar(),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(color: BauhausDesign.primary))
           : _error != null
-              ? Center(child: Text(_error!))
+              ? Center(
+                  child: BauhausErrorState(message: _error!, onRetry: _loadAll))
               : RefreshIndicator(
                   onRefresh: _loadAll,
+                  color: BauhausDesign.primary,
                   child: ListView(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(BauhausDesign.space4),
                     children: [
                       _buildOverviewCards(),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: BauhausDesign.space4),
                       _buildSecuritySection(),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: BauhausDesign.space4),
                       _buildMetricsSection(),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: BauhausDesign.space4),
                       _buildRateLimitSection(),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: BauhausDesign.space4),
                       _buildActiveConnections(),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: BauhausDesign.space4),
                       _buildLiveEvents(),
                     ],
                   ),
                 ),
+    );
+  }
+
+  PreferredSizeWidget _buildBauhausAppBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: BauhausDesign.surfaceLight,
+          border: Border(
+            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            child: Row(
+              children: [
+                BauhausIconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icons.arrow_back,
+                  variant: BauhausActionVariant.ghost,
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                Text(
+                  AppLocalizations.of(context)!.apiSecurity,
+                  style: BauhausDesign.getTextTheme(context).displaySmall,
+                ),
+                const Spacer(),
+                BauhausIconButton(
+                  tooltip: AppLocalizations.of(context)!.realTimeTooltip,
+                  onPressed: _refreshRealTimeData,
+                  icon: Icons.refresh,
+                  variant: _realTimeLoading
+                      ? BauhausActionVariant.primary
+                      : BauhausActionVariant.neutral,
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                BauhausIconButton(
+                  tooltip: AppLocalizations.of(context)!.reloadAllTooltip,
+                  onPressed: _loadAll,
+                  icon: Icons.download,
+                  variant: BauhausActionVariant.neutral,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -378,69 +463,163 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
     final activeUsers = _activeConnections.length;
 
     return Wrap(
-      spacing: 12,
-      runSpacing: 12,
+      spacing: BauhausDesign.space4,
+      runSpacing: BauhausDesign.space4,
       children: [
-        _StatCard(
-          title: 'Total API Calls',
+        _buildStatCard(
+          title: AppLocalizations.of(context)!.totalApiCalls,
           value: '$totalCalls',
           color: const Color(0xFF667EEA),
           icon: Icons.api,
         ),
-        _StatCard(
-          title: 'Success Rate',
+        _buildStatCard(
+          title: AppLocalizations.of(context)!.successRate,
           value: '$successRate%',
-          color: Colors.green,
+          color: BauhausDesign.success,
           icon: Icons.check_circle,
         ),
-        _StatCard(
-          title: 'Avg Response Time',
+        _buildStatCard(
+          title: AppLocalizations.of(context)!.avgResponseTime,
           value: '${avgResponseTime}ms',
-          color: Colors.orange,
+          color: BauhausDesign.warning,
           icon: Icons.speed,
         ),
-        _StatCard(
-          title: 'Active Users',
+        _buildStatCard(
+          title: AppLocalizations.of(context)!.activeUsers,
           value: '$activeUsers',
-          color: Colors.blue,
+          color: BauhausDesign.primary,
           icon: Icons.people,
         ),
       ],
     );
   }
 
+  Widget _buildStatCard({
+    required String title,
+    required String value,
+    required Color color,
+    IconData? icon,
+  }) {
+    return Container(
+      width: (MediaQuery.of(context).size.width - (BauhausDesign.space4 * 3)) /
+          2, // 2 columns
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 16, color: color),
+                const SizedBox(width: BauhausDesign.space2),
+              ],
+              Expanded(
+                child: Text(title,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(color: BauhausDesign.textMuted)),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(value,
+              style:
+                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      )),
+        ],
+      ),
+    );
+  }
+
+  Widget _CardSection({required String title, required Widget child}) {
+    return BauhausCard(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const Divider(
+              height: BauhausDesign.space6, color: BauhausDesign.neutral),
+          child,
+        ],
+      ),
+    );
+  }
+
   Widget _buildSecuritySection() {
     return _CardSection(
-      title: 'Security Status',
+      title: AppLocalizations.of(context)!.securityStatus,
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.block, size: 20, color: Colors.red),
-            title: const Text('Blocked IP Addresses'),
-            subtitle: Text('${_blockedIPs.length} IPs currently blocked'),
-            trailing: Chip(
-              label: Text('${_blockedIPs.length}'),
+            contentPadding: EdgeInsets.zero,
+            leading:
+                const Icon(Icons.block, size: 20, color: BauhausDesign.error),
+            title: Text(
+              AppLocalizations.of(context)!.blockedIpAddresses,
+              style: BauhausDesign.getTextTheme(context).bodyLarge,
+            ),
+            subtitle: Text(
+              AppLocalizations.of(context)!
+                  .ipsCurrentlyBlocked('${_blockedIPs.length}'),
+              style: BauhausDesign.getTextTheme(context).bodySmall,
+            ),
+            trailing: BauhausChip(
+              text: '${_blockedIPs.length}',
+              color: BauhausDesign.error,
+              isSmall: true,
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.warning, size: 20, color: Colors.orange),
-            title: const Text('Failed Attempts'),
-            subtitle: Text('${_failedAttempts.length} recent failed attempts'),
-            trailing: Chip(
-              label: Text('${_failedAttempts.length}'),
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.warning,
+                size: 20, color: BauhausDesign.warning),
+            title: Text(
+              AppLocalizations.of(context)!.failedAttempts,
+              style: BauhausDesign.getTextTheme(context).bodyLarge,
+            ),
+            subtitle: Text(
+              AppLocalizations.of(context)!
+                  .recentFailedAttempts('${_failedAttempts.length}'),
+              style: BauhausDesign.getTextTheme(context).bodySmall,
+            ),
+            trailing: BauhausChip(
+              text: '${_failedAttempts.length}',
+              color: BauhausDesign.warning,
+              isSmall: true,
             ),
           ),
           if (_blockedIPs.isNotEmpty)
             ..._blockedIPs.take(3).map((ip) => ListTile(
                   dense: true,
+                  contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.computer, size: 16),
-                  title: Text(ip['ip'] ?? 'Unknown'),
+                  title: Text(ip['ip'] ?? AppLocalizations.of(context)!.unknown,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium),
                   subtitle: Text(
-                      'Expires: ${ip['expiresAt']?.split('T').isNotEmpty == true ? ip['expiresAt']?.split('T')[0] ?? 'Unknown' : 'Unknown'}'),
+                      AppLocalizations.of(context)!.expiresDetailLabel(
+                          ip['expiresAt']?.split('T').isNotEmpty == true
+                              ? ip['expiresAt']?.split('T')[0] ??
+                                  AppLocalizations.of(context)!.unknown
+                              : AppLocalizations.of(context)!.unknown),
+                      style: BauhausDesign.getTextTheme(context).bodySmall),
                   trailing: IconButton(
                     icon: const Icon(Icons.lock_open, size: 16),
                     onPressed: () => _unblockIpAddress(ip['ip']),
-                    tooltip: 'Unblock this IP',
+                    tooltip: AppLocalizations.of(context)!.unblockThisIp,
                   ),
                 )),
         ],
@@ -456,46 +635,63 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
     return Column(
       children: [
         _CardSection(
-          title: 'Top Endpoints',
+          title: AppLocalizations.of(context)!.topEndpoints,
           child: Column(
             children: endpointStats.entries.take(5).map<Widget>((entry) {
               final endpoint = entry.key;
               final stats = entry.value;
+              final successRate = stats['successRate'] ?? 0;
               return ListTile(
                 dense: true,
+                contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.http, size: 16),
-                title: Text(endpoint),
+                title: Text(endpoint,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium),
                 subtitle: Text(
-                    'Calls: ${stats['count']} • Avg: ${stats['avgTime']?.toStringAsFixed(1) ?? '0'}ms'),
-                trailing: Chip(
-                  label: Text(
-                      '${stats['successRate']?.toStringAsFixed(0) ?? '0'}%'),
-                  backgroundColor: (stats['successRate'] ?? 0) > 90
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.orange.withOpacity(0.1),
+                  AppLocalizations.of(context)!.calls('${stats['count']}',
+                      stats['avgTime']?.toStringAsFixed(1) ?? '0'),
+                  style: BauhausDesign.getTextTheme(context).bodySmall,
+                ),
+                trailing: BauhausChip(
+                  text: '${successRate.toStringAsFixed(0)}%',
+                  color: successRate > 90
+                      ? BauhausDesign.success
+                      : BauhausDesign.warning,
+                  isSmall: true,
                 ),
               );
             }).toList(),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: BauhausDesign.space4),
         _CardSection(
-          title: 'Top Users',
+          title: AppLocalizations.of(context)!.topUsers,
           child: Column(
             children: userPatterns.take(5).map<Widget>((user) {
-              final displayName =
-                  user['userEmail'] ?? user['userId'] ?? 'Unknown';
+              final displayName = user['userEmail'] ??
+                  user['userId'] ??
+                  AppLocalizations.of(context)!.unknown;
               return ListTile(
                 dense: true,
+                contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.person, size: 16),
-                title: Text(displayName),
+                title: Text(displayName,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium),
                 subtitle: Text(
-                    'Calls: ${user['totalCalls']} • Last: ${user['lastActivity']?.split('T').isNotEmpty == true ? user['lastActivity']?.split('T')[0] ?? 'Unknown' : 'Unknown'}'),
-                trailing: Chip(
-                  label: Text(user['activityLevel'] ?? 'low'),
-                  backgroundColor: user['activityLevel'] == 'high'
-                      ? Colors.blue.withOpacity(0.1)
-                      : Colors.grey.withOpacity(0.1),
+                  AppLocalizations.of(context)!.callsAndLast(
+                      '${user['totalCalls']}',
+                      user['lastActivity']?.split('T').isNotEmpty == true
+                          ? user['lastActivity']?.split('T')[0] ??
+                              AppLocalizations.of(context)!.unknown
+                          : AppLocalizations.of(context)!.unknown),
+                  style: BauhausDesign.getTextTheme(context).bodySmall,
+                ),
+                trailing: BauhausChip(
+                  text: user['activityLevel'] ?? 'low',
+                  color: user['activityLevel'] == 'high'
+                      ? BauhausDesign.primary
+                      : BauhausDesign.neutral,
+                  isSmall: true,
                 ),
               );
             }).toList(),
@@ -507,7 +703,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
 
   Widget _buildRateLimitSection() {
     return _CardSection(
-      title: 'Rate Limit',
+      title: AppLocalizations.of(context)!.rateLimit,
       child: Column(
         children: () {
           final List<Widget> items = [];
@@ -515,10 +711,12 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
           // Show configured limits (if available)
           final data = _rateLimitConfig;
           if (data == null) {
-            items.add(const ListTile(
+            items.add(ListTile(
               dense: true,
-              title: Text('No rate limit configuration data'),
-              leading: Icon(Icons.info, size: 16),
+              contentPadding: EdgeInsets.zero,
+              title: Text(AppLocalizations.of(context)!.noRateLimitConfig,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium),
+              leading: const Icon(Icons.info, size: 16),
             ));
           } else {
             final mapData = data as Map;
@@ -534,24 +732,31 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
 
               items.add(ListTile(
                 dense: true,
+                contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.lock_clock, size: 16),
-                title: Text(endpoint),
+                title: Text(endpoint,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium),
                 subtitle: Text(
-                    '$maxVal requests per ${windowMsVal ~/ 60000} minutes'),
-                trailing: Chip(
-                  label: Text('$maxVal'),
-                  backgroundColor: maxVal <= 5
-                      ? Colors.red.withOpacity(0.1)
+                  AppLocalizations.of(context)!
+                      .requestsPerMinutes('$maxVal', '${windowMsVal ~/ 60000}'),
+                  style: BauhausDesign.getTextTheme(context).bodySmall,
+                ),
+                trailing: BauhausChip(
+                  text: '$maxVal',
+                  color: maxVal <= 5
+                      ? BauhausDesign.error
                       : maxVal <= 10
-                          ? Colors.orange.withOpacity(0.1)
-                          : Colors.green.withOpacity(0.1),
+                          ? BauhausDesign.warning
+                          : BauhausDesign.success,
+                  isSmall: true,
                 ),
               ));
             });
           }
 
           // Divider between config and current rate-limited users
-          items.add(const Divider());
+          items
+              .add(const Divider(color: BauhausDesign.neutral, thickness: 0.5));
 
           // Aggregate current rate-limited entries by IP (blocked IPs + failed attempts)
           final Map<String, Map<String, dynamic>> rateLimitedByIp = {};
@@ -590,9 +795,15 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
           });
 
           items.add(ListTile(
+            contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.security, size: 18),
-            title: const Text('Rate-limited Users (by IP)'),
-            subtitle: Text('${entries.length} entries'),
+            title: Text(AppLocalizations.of(context)!.rateLimitedUsers,
+                style: BauhausDesign.getTextTheme(context)
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+            subtitle: Text(
+                AppLocalizations.of(context)!.entries('${entries.length}'),
+                style: BauhausDesign.getTextTheme(context).bodySmall),
             trailing: TextButton.icon(
               onPressed: entries.isEmpty
                   ? null
@@ -605,64 +816,80 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
                         );
                         if (!mounted) return;
                         if (res['success'] == true) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('All rate limits reset')),
-                          );
+                          _showSuccessSnackbar(
+                              AppLocalizations.of(context)!.allRateLimitsReset);
                           _loadAll();
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    'Failed to reset all: ${(res['message'] ?? 'Unknown error')}')),
-                          );
+                          _showErrorSnackbar(AppLocalizations.of(context)!
+                              .failedToResetAll((res['message'] ??
+                                  AppLocalizations.of(context)!.unknown)));
                         }
                       } catch (e) {
                         if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error resetting all: $e')),
-                        );
+                        _showErrorSnackbar(AppLocalizations.of(context)!
+                            .errorResettingAll(e.toString()));
                       }
                     },
-              icon: const Icon(Icons.refresh),
-              label: const Text('Reset All'),
+              icon: const Icon(Icons.refresh, size: 16),
+              label: Text(AppLocalizations.of(context)!.resetAll),
+              style: TextButton.styleFrom(
+                foregroundColor: BauhausDesign.primary,
+              ),
             ),
           ));
 
           if (entries.isEmpty) {
-            items.add(const ListTile(
+            items.add(ListTile(
               dense: true,
-              leading: Icon(Icons.verified_user, size: 16, color: Colors.green),
-              title: Text('No users are currently rate limited'),
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.verified_user,
+                  size: 16, color: BauhausDesign.success),
+              title: Text(AppLocalizations.of(context)!.noRateLimitedUsers,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium),
             ));
           } else {
             items.addAll(entries.take(10).map((e) {
-              final ip = (e['ip'] ?? 'Unknown').toString();
+              final ip =
+                  (e['ip'] ?? AppLocalizations.of(context)!.unknown).toString();
               final attempts = _asInt(e['attempts']);
               final lastAttemptAt = (e['lastAttemptAt'] ?? '').toString();
               final blockedUntil = (e['blockedUntil'] ?? '').toString();
               final isBlocked = blockedUntil.isNotEmpty;
               final subtitleParts = <String>[
-                'Attempts: $attempts',
+                AppLocalizations.of(context)!.attempts('$attempts'),
                 if (lastAttemptAt.isNotEmpty)
-                  'Last: ${(lastAttemptAt.split('T').isNotEmpty ? lastAttemptAt.split('T').first : lastAttemptAt)}',
+                  AppLocalizations.of(context)!.last(
+                      (lastAttemptAt.split('T').isNotEmpty
+                          ? lastAttemptAt.split('T').first
+                          : lastAttemptAt)),
                 if (isBlocked)
-                  'Blocked until: ${(blockedUntil.split('T').length > 1 ? '${blockedUntil.split('T')[0]} ${blockedUntil.split('T')[1].substring(0, 5)}' : blockedUntil)}',
+                  AppLocalizations.of(context)!.blockedUntil((blockedUntil
+                              .split('T')
+                              .length >
+                          1
+                      ? '${blockedUntil.split('T')[0]} ${blockedUntil.split('T')[1].substring(0, 5)}'
+                      : blockedUntil)),
               ];
 
               return ListTile(
                 dense: true,
+                contentPadding: EdgeInsets.zero,
                 leading: Icon(
                   isBlocked ? Icons.lock : Icons.error_outline,
                   size: 16,
-                  color: isBlocked ? Colors.red : Colors.orange,
+                  color:
+                      isBlocked ? BauhausDesign.error : BauhausDesign.warning,
                 ),
-                title: Text(ip),
-                subtitle: Text(subtitleParts.join(' • ')),
+                title: Text(ip,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium),
+                subtitle: Text(subtitleParts.join(' • '),
+                    style: BauhausDesign.getTextTheme(context).bodySmall),
                 trailing: TextButton.icon(
                   onPressed: () => _resetRateLimitForIp(ip),
                   icon: const Icon(Icons.restore_from_trash, size: 16),
-                  label: const Text('Reset'),
+                  label: Text(AppLocalizations.of(context)!.reset),
+                  style: TextButton.styleFrom(
+                      foregroundColor: BauhausDesign.primary),
                 ),
               );
             }));
@@ -682,30 +909,45 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
 
   Widget _buildActiveConnections() {
     return _CardSection(
-      title: 'Active Connections',
+      title: AppLocalizations.of(context)!.activeConnections,
       child: Column(
         children: _activeConnections.isEmpty
             ? [
-                const ListTile(
+                ListTile(
                   dense: true,
-                  title: Text('No active connections'),
-                  leading: Icon(Icons.wifi_off, size: 16),
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(AppLocalizations.of(context)!.noActiveConnections,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium),
+                  leading: const Icon(Icons.wifi_off, size: 16),
                 )
               ]
             : _activeConnections.take(5).map<Widget>((connection) {
                 return ListTile(
                   dense: true,
-                  leading:
-                      const Icon(Icons.wifi, size: 16, color: Colors.green),
-                  title: Text(connection['email'] ??
-                      connection['userId'] ??
-                      connection['ip'] ??
-                      'Unknown'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.wifi,
+                      size: 16, color: BauhausDesign.success),
+                  title: Text(
+                    connection['email'] ??
+                        connection['userId'] ??
+                        connection['ip'] ??
+                        AppLocalizations.of(context)!.unknown,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium,
+                  ),
                   subtitle: Text(
-                      'Connected: ${connection['connectedAt']?.split('T').length > 1 ? connection['connectedAt']?.split('T')[1]?.substring(0, 5) ?? 'Unknown' : 'Unknown'}'),
-                  trailing: Chip(
-                    label: Text('${connection['requests'] ?? 0}'),
-                    backgroundColor: Colors.blue.withOpacity(0.1),
+                    AppLocalizations.of(context)!.connected(
+                        connection['connectedAt']?.split('T').length > 1
+                            ? connection['connectedAt']
+                                    ?.split('T')[1]
+                                    ?.substring(0, 5) ??
+                                AppLocalizations.of(context)!.unknown
+                            : AppLocalizations.of(context)!.unknown),
+                    style: BauhausDesign.getTextTheme(context).bodySmall,
+                  ),
+                  trailing: BauhausChip(
+                    text: '${connection['requests'] ?? 0}',
+                    color: BauhausDesign.primary,
+                    isSmall: true,
                   ),
                 );
               }).toList(),
@@ -715,7 +957,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
 
   Widget _buildLiveEvents() {
     return _CardSection(
-      title: 'Live (SSE)',
+      title: AppLocalizations.of(context)!.liveSse,
       child: Column(
         children: _liveEvents.map<Widget>((ev) {
           final method = ev['method'] ?? '';
@@ -727,108 +969,14 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
           final userInfo = userEmail.isNotEmpty ? ' • User: $userEmail' : '';
           return ListTile(
             dense: true,
+            contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.bolt, size: 20),
-            title: Text('$method $path'),
-            subtitle: Text('Status: $status • IP: $ip$userInfo'),
+            title: Text('$method $path',
+                style: BauhausDesign.getTextTheme(context).bodyMedium),
+            subtitle: Text('Status: $status • IP: $ip$userInfo',
+                style: BauhausDesign.getTextTheme(context).bodySmall),
           );
         }).toList(),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-  final IconData? icon;
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.color,
-    this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 16, color: color),
-                const SizedBox(width: 8),
-              ],
-              Expanded(
-                child: Text(title,
-                    style: TextStyle(fontSize: 12, color: Colors.black54)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color,
-              )),
-        ],
-      ),
-    );
-  }
-}
-
-class _CardSection extends StatelessWidget {
-  final String title;
-  final Widget child;
-  const _CardSection({required this.title, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: Colors.black12.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
-          const Divider(height: 20),
-          child,
-        ],
       ),
     );
   }

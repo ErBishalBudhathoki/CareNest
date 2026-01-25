@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
 import 'package:carenest/app/shared/widgets/enhanced_quick_action_cards.dart';
 import 'package:carenest/app/shared/widgets/enhanced_search_filter.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Enhanced Pricing Dashboard with improved UX/UI
 class EnhancedPricingDashboardView extends StatefulWidget {
@@ -107,9 +108,9 @@ class _EnhancedPricingDashboardViewState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Pricing Overview',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.pricingOverviewTitle,
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF0F172A),
@@ -117,7 +118,7 @@ class _EnhancedPricingDashboardViewState
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Comprehensive pricing management and analytics dashboard',
+                      AppLocalizations.of(context)!.pricingOverviewSubtitle,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -145,9 +146,9 @@ class _EnhancedPricingDashboardViewState
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Text(
-                      'System Active',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.systemActive,
+                      style: const TextStyle(
                         color: Color(0xFF10B981),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -175,9 +176,9 @@ class _EnhancedPricingDashboardViewState
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Total Services',
+                title: AppLocalizations.of(context)!.totalServicesStat,
                 value: '23',
-                subtitle: '+3 new this month',
+                subtitle: AppLocalizations.of(context)!.newThisMonthStat('3'),
                 icon: Icons.business_center,
                 color: const Color(0xFF6366F1),
               ),
@@ -186,9 +187,10 @@ class _EnhancedPricingDashboardViewState
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Avg Rate',
+                title: AppLocalizations.of(context)!.avgRateStat,
                 value: '\$85.00',
-                subtitle: '+5.2% vs last month',
+                subtitle:
+                    AppLocalizations.of(context)!.vsLastMonthStatRange('5.2'),
                 icon: Icons.trending_up,
                 color: const Color(0xFF10B981),
               ),
@@ -197,9 +199,10 @@ class _EnhancedPricingDashboardViewState
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Active Rates',
+                title: AppLocalizations.of(context)!.activeRatesStatLabel,
                 value: '156',
-                subtitle: '87.5% of total',
+                subtitle:
+                    AppLocalizations.of(context)!.percentageOfTotalStat('87.5'),
                 icon: Icons.check_circle,
                 color: const Color(0xFF3B82F6),
               ),
@@ -208,9 +211,9 @@ class _EnhancedPricingDashboardViewState
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Revenue',
+                title: AppLocalizations.of(context)!.revenueStat,
                 value: '\$24.5K',
-                subtitle: '+12.5% growth',
+                subtitle: AppLocalizations.of(context)!.growthStatLabel('12.5'),
                 icon: Icons.attach_money,
                 color: const Color(0xFF8B5CF6),
               ),
@@ -307,28 +310,28 @@ class _EnhancedPricingDashboardViewState
   Widget _buildQuickActions() {
     final quickActions = [
       QuickActionData.pricing(
-        title: 'Add New Rate',
-        subtitle: 'Create pricing rule',
+        title: AppLocalizations.of(context)!.addRateAction,
+        subtitle: AppLocalizations.of(context)!.addRateSubtitle,
         icon: Icons.add_circle_outline,
         onTap: () => _navigateToAddRate(),
       ),
       QuickActionData.pricing(
-        title: 'Bulk Update',
-        subtitle: 'Update multiple rates',
+        title: AppLocalizations.of(context)!.bulkUpdatesTitle,
+        subtitle: AppLocalizations.of(context)!.bulkUpdateSubtitle,
         icon: Icons.edit_note,
         onTap: () => _navigateToBulkUpdate(),
       ),
       QuickActionData.pricing(
-        title: 'Price History',
-        subtitle: 'View rate changes',
+        title: AppLocalizations.of(context)!.priceHistoryTitle,
+        subtitle: AppLocalizations.of(context)!.priceHistorySubtitleLabel,
         icon: Icons.history,
         onTap: () => _navigateToPriceHistory(),
       ),
       QuickActionData.pricing(
-        title: 'Analytics',
-        subtitle: 'Pricing insights',
+        title: AppLocalizations.of(context)!.pricingAnalyticsTitle,
+        subtitle: AppLocalizations.of(context)!.pricingInsightsSubtitle,
         icon: Icons.analytics,
-        badge: 'New',
+        badge: AppLocalizations.of(context)!.newBadge,
         onTap: () => _navigateToAnalytics(),
       ),
     ];
@@ -342,7 +345,7 @@ class _EnhancedPricingDashboardViewState
             vertical: AppDimens.paddingMedium,
           ),
           child: Text(
-            'Quick Actions',
+            AppLocalizations.of(context)!.quickActions,
             style: TextStyle(
               fontSize: AppDimens.fontSizeMedium,
               fontWeight: FontWeight.w600,
@@ -376,21 +379,21 @@ class _EnhancedPricingDashboardViewState
   Widget _buildSearchAndFilter() {
     final filterOptions = [
       FilterOption(
-        label: 'Active Rates',
+        label: AppLocalizations.of(context)!.activeRatesStatLabel,
         value: 'active',
         icon: Icons.check_circle,
         color: AppColors.colorGreen,
         count: 45,
       ),
       FilterOption(
-        label: 'Pending Approval',
+        label: AppLocalizations.of(context)!.pendingApprovalFilter,
         value: 'pending',
         icon: Icons.pending,
         color: AppColors.colorOrange,
         count: 12,
       ),
       FilterOption(
-        label: 'Expired',
+        label: AppLocalizations.of(context)!.expiredFilter,
         value: 'expired',
         icon: Icons.cancel,
         color: AppColors.colorRed,
@@ -401,7 +404,7 @@ class _EnhancedPricingDashboardViewState
     return Padding(
       padding: const EdgeInsets.all(AppDimens.paddingLarge),
       child: EnhancedSearchFilterBar(
-        searchHint: 'Search pricing rules...',
+        searchHint: AppLocalizations.of(context)!.searchPricingRulesHint,
         onSearchChanged: (query) {
           setState(() {
             _searchQuery = query;
@@ -465,10 +468,10 @@ class _EnhancedPricingDashboardViewState
                 fontSize: AppDimens.fontSizeNormal,
                 fontWeight: FontWeight.w600,
               ),
-              tabs: const [
-                Tab(text: 'Current Rates'),
-                Tab(text: 'Rate History'),
-                Tab(text: 'Configurations'),
+              tabs: [
+                Tab(text: AppLocalizations.of(context)!.currentRatesTab),
+                Tab(text: AppLocalizations.of(context)!.rateHistoryTab),
+                Tab(text: AppLocalizations.of(context)!.configurationsTab),
               ],
             ),
           ),
@@ -495,25 +498,25 @@ class _EnhancedPricingDashboardViewState
   /// Build current rates tab
   Widget _buildCurrentRatesTab() {
     final columns = [
-      const EnhancedDataColumn(
-        label: Text('Service'),
+      EnhancedDataColumn(
+        label: Text(AppLocalizations.of(context)!.serviceColumn),
         sortable: true,
       ),
-      const EnhancedDataColumn(
-        label: Text('Rate'),
+      EnhancedDataColumn(
+        label: Text(AppLocalizations.of(context)!.rateColumn),
         numeric: true,
         sortable: true,
       ),
       EnhancedDataColumn(
-        label: const Text('Status'),
+        label: Text(AppLocalizations.of(context)!.statusLabel),
         sortable: true,
       ),
       EnhancedDataColumn(
-        label: const Text('Last Updated'),
+        label: Text(AppLocalizations.of(context)!.lastUpdatedColumn),
         sortable: true,
       ),
       EnhancedDataColumn(
-        label: const Text('Actions'),
+        label: Text(AppLocalizations.of(context)!.actionsLabel),
         sortable: false,
       ),
     ];
@@ -523,20 +526,21 @@ class _EnhancedPricingDashboardViewState
         cells: [
           EnhancedDataCell(child: const Text('Personal Care')),
           EnhancedDataCell(child: const Text('\$85.00/hr')),
-          EnhancedDataCell.status(status: 'Active'),
+          EnhancedDataCell.status(
+              status: AppLocalizations.of(context)!.statusActive),
           EnhancedDataCell(child: const Text('2 days ago')),
           EnhancedDataCell.actions(
             actions: [
               ActionButton(
                 icon: Icons.edit,
                 onPressed: () => _editRate('personal_care'),
-                tooltip: 'Edit Rate',
+                tooltip: AppLocalizations.of(context)!.editRateTooltip,
                 color: AppColors.colorBlue,
               ),
               ActionButton(
                 icon: Icons.history,
                 onPressed: () => _viewRateHistory('personal_care'),
-                tooltip: 'View History',
+                tooltip: AppLocalizations.of(context)!.viewHistoryTooltip,
                 color: AppColors.colorGrey600,
               ),
             ],
@@ -550,7 +554,7 @@ class _EnhancedPricingDashboardViewState
       columns: columns,
       rows: rows,
       isLoading: _isLoading,
-      emptyMessage: 'No pricing rates found',
+      emptyMessage: AppLocalizations.of(context)!.noPricingRatesFound,
       onSort: (columnIndex, ascending) {
         // Handle sorting with both parameters
         // You can use both columnIndex and ascending to implement your sorting logic
@@ -561,16 +565,16 @@ class _EnhancedPricingDashboardViewState
   /// Build rate history tab
   Widget _buildRateHistoryTab() {
     // Similar implementation for rate history
-    return const Center(
-      child: Text('Rate History Content'),
+    return Center(
+      child: Text(AppLocalizations.of(context)!.rateHistoryContent),
     );
   }
 
   /// Build configurations tab
   Widget _buildConfigurationsTab() {
     // Similar implementation for configurations
-    return const Center(
-      child: Text('Configurations Content'),
+    return Center(
+      child: Text(AppLocalizations.of(context)!.configurationsContent),
     );
   }
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/theme_providers.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ThemeSettingsView extends ConsumerWidget {
   const ThemeSettingsView({super.key});
@@ -13,8 +14,8 @@ class ThemeSettingsView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        title: const Text(
-          'THEME',
+        title: Text(
+          AppLocalizations.of(context)!.themeAppBarTitle,
           style: TextStyle(
             fontFamily: 'Inter',
             fontWeight: FontWeight.w900,
@@ -69,7 +70,7 @@ class ThemeSettingsView extends ConsumerWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      'Choose your preferred appearance mode.',
+                      AppLocalizations.of(context)!.themeInfoMessage,
                       style: BauhausDesign.getTextTheme(context)
                           .bodyMedium
                           ?.copyWith(
@@ -84,7 +85,7 @@ class ThemeSettingsView extends ConsumerWidget {
             const SizedBox(height: 32),
 
             Text(
-              'APPEARANCE',
+              AppLocalizations.of(context)!.appearance,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
                     color: BauhausDesign.neutral,
                     fontWeight: FontWeight.bold,
@@ -95,7 +96,7 @@ class ThemeSettingsView extends ConsumerWidget {
 
             _buildOptionCard(
               context,
-              title: 'Light Mode',
+              title: AppLocalizations.of(context)!.lightMode,
               icon: Icons.light_mode_outlined,
               isSelected: currentMode == ThemeMode.light,
               onTap: () =>
@@ -104,7 +105,7 @@ class ThemeSettingsView extends ConsumerWidget {
             const SizedBox(height: 16),
             _buildOptionCard(
               context,
-              title: 'Dark Mode',
+              title: AppLocalizations.of(context)!.darkMode,
               icon: Icons.dark_mode_outlined,
               isSelected: currentMode == ThemeMode.dark,
               onTap: () =>
@@ -113,7 +114,7 @@ class ThemeSettingsView extends ConsumerWidget {
             const SizedBox(height: 16),
             _buildOptionCard(
               context,
-              title: 'System Default',
+              title: AppLocalizations.of(context)!.systemDefault,
               icon: Icons.settings_brightness_outlined,
               isSelected: currentMode == ThemeMode.system,
               onTap: () => ref

@@ -200,7 +200,8 @@ class MileageController extends StateNotifier<MileageState> {
         return true;
       } else {
         // API Error
-        throw Exception(response['message'] ?? 'API failed');
+        final message = response == null ? null : response['message'];
+        throw Exception(message?.toString() ?? 'API failed');
       }
     } catch (e) {
       // 3. Offline Handling: Cache Trip

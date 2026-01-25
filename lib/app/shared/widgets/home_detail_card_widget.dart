@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class HomeDetailCard extends StatefulWidget {
   final String buttonLabel;
@@ -121,7 +121,7 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                     // Main card container with enhanced shadow
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(32),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                         gradient: LinearGradient(
                           colors: [
                             widget.gradientStartColor,
@@ -132,13 +132,12 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: widget.gradientStartColor
-                                .withValues(alpha: 0.3),
+                            color: widget.gradientStartColor.withOpacity(0.3),
                             blurRadius: _elevationAnimation.value,
                             offset: Offset(0, _elevationAnimation.value / 2),
                           ),
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: _elevationAnimation.value / 2,
                             offset: const Offset(0, 2),
                           ),
@@ -150,12 +149,12 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(32),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                         gradient: LinearGradient(
                           colors: _isHovered
                               ? [
-                                  Colors.white.withValues(alpha: 0.1),
-                                  Colors.white.withValues(alpha: 0.05),
+                                  BauhausDesign.surfaceWhite.withOpacity(0.1),
+                                  BauhausDesign.surfaceWhite.withOpacity(0.05),
                                 ]
                               : [
                                   Colors.transparent,
@@ -170,7 +169,7 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                     // Content inside the card
                     Positioned.fill(
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(BauhausDesign.space4),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -178,12 +177,12 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                             Text(
                               widget.cardLabel,
                               textAlign: TextAlign.center,
-                              style: ModernSaasDesign.headlineSmall.copyWith(
-                                color: ModernSaasDesign.textOnPrimary,
+                              style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                                color: BauhausDesign.surfaceWhite,
                                 letterSpacing: -0.5,
                                 height: 1.1,
                                 shadows: [
-                                  Shadow(
+                                  const Shadow(
                                     color: Colors.black26,
                                     blurRadius: 8,
                                     offset: Offset(0, 2),
@@ -191,50 +190,48 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: BauhausDesign.space3),
 
                             // Enhanced Button with ripple effect
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
+                                    color: Colors.black.withOpacity(0.1),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
                               child: Material(
-                                color: Colors.white.withValues(alpha: 0.95),
-                                borderRadius: BorderRadius.circular(24),
+                                color: BauhausDesign.surfaceWhite.withOpacity(0.95),
+                                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                                 child: InkWell(
                                   onTap: widget.onPressed,
-                                  borderRadius: BorderRadius.circular(24),
-                                  splashColor: widget.gradientStartColor
-                                      .withValues(alpha: 0.2),
-                                  highlightColor: widget.gradientStartColor
-                                      .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                                  splashColor: widget.gradientStartColor.withOpacity(0.2),
+                                  highlightColor: widget.gradientStartColor.withOpacity(0.1),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
+                                    padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space3),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.add_circle_outline_rounded,
                                           color: widget.gradientStartColor,
                                           size: 18,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          widget.buttonLabel,
-                                          style: ModernSaasDesign.labelLarge
-                                              .copyWith(
-                                            color: widget.gradientStartColor,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 0.2,
+                                        const SizedBox(width: BauhausDesign.space2),
+                                        Flexible(
+                                          child: Text(
+                                            widget.buttonLabel,
+                                            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                                              color: widget.gradientStartColor,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.2,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],
@@ -258,18 +255,17 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         child: Container(
                           height: 180,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
+                                color: Colors.black.withOpacity(0.1),
                                 blurRadius: 20,
-                                offset: Offset(
-                                    0, 10 + _floatingAnimation.value.abs()),
+                                offset: Offset(0, 10 + _floatingAnimation.value.abs()),
                               ),
                             ],
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                             child: widget.image,
                           ),
                         ),
@@ -281,11 +277,11 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                       Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(32),
+                            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                             gradient: LinearGradient(
                               colors: [
                                 Colors.transparent,
-                                Colors.white.withValues(alpha: 0.1),
+                                BauhausDesign.surfaceWhite.withOpacity(0.1),
                                 Colors.transparent,
                               ],
                               stops: const [0.0, 0.5, 1.0],
@@ -299,7 +295,7 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                             )
                             .shimmer(
                               duration: 2000.ms,
-                              color: Colors.white.withValues(alpha: 0.3),
+                              color: BauhausDesign.surfaceWhite.withOpacity(0.3),
                             ),
                       ),
                   ],

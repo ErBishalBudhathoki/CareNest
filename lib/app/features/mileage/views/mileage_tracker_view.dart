@@ -1,7 +1,7 @@
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../shared/design_system/bauhaus_design_system.dart';
+import '../../../shared/constants/bauhaus_design.dart';
 import '../viewmodels/mileage_view_model.dart';
 import '../widgets/manual_entry_form.dart';
 import '../widgets/tracker_card.dart';
@@ -13,32 +13,37 @@ class MileageTrackerView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(mileageViewModelProvider);
+    final textTheme = BauhausDesign.getTextTheme(context);
 
     // Show error snackbar if error exists
-    if (viewModel.error != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    ref.listen<String?>(mileageViewModelProvider.select((s) => s.error),
+        (_, error) {
+      if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(viewModel.error!),
+            content: Text(
+              error,
+              style: textTheme.bodyMedium?.copyWith(
+                    color: BauhausDesign.surfaceWhite,
+                  ),
+            ),
             backgroundColor: BauhausDesign.error,
           ),
         );
-      });
-    }
+      }
+    });
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: BauhausDesign.surfaceLight,
         elevation: 0,
         centerTitle: true,
         title: Text(
           'MILEAGE TRACKER',
-          style: GoogleFonts.oswald(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: BauhausDesign.neutral,
-            letterSpacing: 1.0,
+          style: textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
           ),
         ),
         bottom: PreferredSize(
@@ -50,60 +55,80 @@ class MileageTrackerView extends ConsumerWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(BauhausDesign.space6),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Rate Info Banner
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                vertical: BauhausDesign.space3,
+                horizontal: BauhausDesign.space4,
+              ),
+              decoration: BoxDecoration(
+                color: BauhausDesign.accent,
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                boxShadow: const [BauhausDesign.shadowHardSm],
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, color: BauhausDesign.textDark, size: 20),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Text(
+                    'Reimbursement Rate: \$0.99 / km', // Dynamic in future
+                    style: textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.textDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: BauhausDesign.space6),
+
             // 1. Tracker Card
             TrackerCard(
               isTracking: viewModel.isTracking,
               onToggle: () => _handleToggle(context, viewModel),
             ),
-            
-            const SizedBox(height: BauhausDesign.space8),
-            
+
+            const SizedBox(height: BauhausDesign.space6),
+
             // 2. Manual Entry Form
             ManualEntryForm(viewModel: viewModel),
-            
-            const SizedBox(height: BauhausDesign.space8),
-            
+
+            const SizedBox(height: BauhausDesign.space6),
+
             // 3. Recent Trips Header
-            Row(
-              children: [
-                Container(
-                  width: 8,
-                  height: 24,
-                  color: BauhausDesign.primary,
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Text(
-                  'RECENT TRIPS',
-                  style: GoogleFonts.oswald(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: BauhausDesign.neutral,
-                  ),
-                ),
-              ],
-            ),
+            BauhausSectionHeader(title: 'Recent Trips'),
+
             const SizedBox(height: BauhausDesign.space4),
-            
+
             // 4. Trip List
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: viewModel.recentTrips.length,
-              itemBuilder: (context, index) {
-                return TripListItem(trip: viewModel.recentTrips[index]);
-              },
-            ),
+            if (viewModel.recentTrips.isEmpty)
+              BauhausEmptyState(
+                title: 'No Trips Yet',
+                message: 'Start tracking or add a manual entry.',
+                icon: Icons.directions_car,
+              )
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: viewModel.recentTrips.length,
+                itemBuilder: (context, index) {
+                  return TripListItem(trip: viewModel.recentTrips[index]);
+                },
+              ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _handleToggle(BuildContext context, MileageViewModel viewModel) async {
+  Future<void> _handleToggle(
+      BuildContext context, MileageViewModel viewModel) async {
     if (viewModel.isTracking) {
       // Stop tracking -> Confirm End Trip
       final distance = await viewModel.stopTracking();
@@ -116,19 +141,31 @@ class MileageTrackerView extends ConsumerWidget {
     }
   }
 
-  void _showEndTripDialog(BuildContext context, MileageViewModel viewModel, double distance) {
+  void _showEndTripDialog(
+      BuildContext context, MileageViewModel viewModel, double distance) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => _EndTripDialog(
         distance: distance,
         onSubmit: (withClient, clientId) async {
-          final success = await viewModel.submitTrip('Start', 'End'); // Locations would ideally come from controller
+          final success = await viewModel.submitTrip(
+              'Start', 'End'); // Locations would ideally come from controller
           if (context.mounted) {
             Navigator.pop(context);
             if (success) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Trip saved successfully!')),
+                SnackBar(
+                  content: Text(
+                    'Trip saved successfully!',
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.surfaceWhite,
+                        ),
+                  ),
+                  backgroundColor: BauhausDesign.success,
+                ),
               );
             }
           }
@@ -158,102 +195,72 @@ class _EndTripDialogState extends State<_EndTripDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: BauhausDesign.surfaceLight,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      child: Container(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      insetPadding: const EdgeInsets.all(BauhausDesign.space4),
+      child: BauhausCard(
         padding: const EdgeInsets.all(BauhausDesign.space6),
-        decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: const [BauhausDesign.shadowHard],
-        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'TRIP COMPLETE',
-              style: GoogleFonts.oswald(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: BauhausDesign.neutral,
-              ),
+              'Trip Complete',
+              style: BauhausDesign.getTextTheme(context).headlineSmall,
             ),
             const SizedBox(height: BauhausDesign.space4),
             Text(
               'Total Distance: ${widget.distance.toStringAsFixed(2)} km',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: BauhausDesign.getTextTheme(context).titleMedium,
             ),
             const SizedBox(height: BauhausDesign.space6),
-            
+
             // Client Toggle
             Row(
               children: [
                 Text(
-                  'WITH CLIENT?',
-                  style: GoogleFonts.oswald(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  'With Client?',
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                 ),
                 const Spacer(),
                 Switch(
                   value: _isWithClient,
                   onChanged: (val) => setState(() => _isWithClient = val),
-                  activeColor: BauhausDesign.secondary,
+                  activeColor: BauhausDesign.primary,
                 ),
               ],
             ),
-            
+
             if (_isWithClient) ...[
               const SizedBox(height: BauhausDesign.space4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedClientId,
-                    hint: const Text('Select Client'),
-                    items: ['John Doe', 'Jane Smith'].map((e) => 
-                      DropdownMenuItem(value: e, child: Text(e))
-                    ).toList(),
-                    onChanged: (val) => setState(() => _selectedClientId = val),
-                  ),
-                ),
+              DropdownButtonFormField<String>(
+                value: _selectedClientId,
+                decoration: BauhausDesign.inputDecoration('Select Client'),
+                dropdownColor: BauhausDesign.surfaceWhite,
+                items: ['John Doe', 'Jane Smith']
+                    .map((e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e,
+                            style:
+                                BauhausDesign.getTextTheme(context).bodyMedium,
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (val) => setState(() => _selectedClientId = val),
               ),
             ],
-            
+
             const SizedBox(height: BauhausDesign.space8),
-            
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () => widget.onSubmit(_isWithClient, _selectedClientId),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: BauhausDesign.neutral,
-                        boxShadow: const [BauhausDesign.shadowHardSm],
-                      ),
-                      child: Center(
-                        child: Text(
-                          'SUBMIT TRIP',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+
+            BauhausActionButton(
+              text: 'Submit Trip',
+              onPressed: () =>
+                  widget.onSubmit(_isWithClient, _selectedClientId),
+              isFullWidth: true,
             ),
           ],
         ),

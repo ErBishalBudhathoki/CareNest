@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../models/analytics_models.dart';
-import '../theme/bauhaus_theme.dart';
 import 'bauhaus_container.dart';
 
 class FinancialTrendChart extends StatelessWidget {
@@ -16,7 +16,12 @@ class FinancialTrendChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('FINANCIAL TREND', style: BauhausTheme.headerStyle),
+          Text('FINANCIAL TREND',
+              style:
+                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: BauhausDesign.textDark,
+                      )),
           const SizedBox(height: 16),
           Expanded(
             child: metrics.isEmpty
@@ -28,11 +33,11 @@ class FinancialTrendChart extends StatelessWidget {
                       barTouchData: BarTouchData(
                         enabled: true,
                         touchTooltipData: BarTouchTooltipData(
-                          getTooltipColor: (_) => BauhausTheme.black,
+                          getTooltipColor: (_) => BauhausDesign.neutral,
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
                             return BarTooltipItem(
                               '${rod.toY.toInt()}',
-                              const TextStyle(color: BauhausTheme.white),
+                              TextStyle(color: BauhausDesign.surfaceWhite),
                             );
                           },
                         ),
@@ -46,13 +51,16 @@ class FinancialTrendChart extends StatelessWidget {
                               if (value.toInt() >= 0 &&
                                   value.toInt() < metrics.length) {
                                 try {
-                                  final date =
-                                      DateTime.parse(metrics[value.toInt()].date);
+                                  final date = DateTime.parse(
+                                      metrics[value.toInt()].date);
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
                                       '${date.day}/${date.month}',
-                                      style: BauhausTheme.labelStyle,
+                                      style: BauhausDesign.getTextTheme(context)
+                                          .labelSmall
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.bold),
                                     ),
                                   );
                                 } catch (_) {
@@ -70,8 +78,9 @@ class FinancialTrendChart extends StatelessWidget {
                             getTitlesWidget: (value, meta) {
                               return Text(
                                 value.toInt().toString(),
-                                style: BauhausTheme.labelStyle
-                                    .copyWith(fontSize: 10),
+                                style: BauhausDesign.getTextTheme(context)
+                                    .labelSmall
+                                    ?.copyWith(fontSize: 10),
                               );
                             },
                           ),
@@ -84,19 +93,20 @@ class FinancialTrendChart extends StatelessWidget {
                       gridData: FlGridData(
                         show: true,
                         drawVerticalLine: true,
-                        getDrawingHorizontalLine: (value) => const FlLine(
-                          color: BauhausTheme.black,
+                        getDrawingHorizontalLine: (value) => FlLine(
+                          color: BauhausDesign.neutral,
                           strokeWidth: 0.5,
                           dashArray: [5, 5],
                         ),
-                        getDrawingVerticalLine: (value) => const FlLine(
-                          color: BauhausTheme.black,
+                        getDrawingVerticalLine: (value) => FlLine(
+                          color: BauhausDesign.neutral,
                           strokeWidth: 0.5,
                         ),
                       ),
                       borderData: FlBorderData(
                         show: true,
-                        border: Border.all(color: BauhausTheme.black, width: 2),
+                        border:
+                            Border.all(color: BauhausDesign.neutral, width: 2),
                       ),
                       barGroups: metrics.asMap().entries.map((entry) {
                         final index = entry.key;
@@ -106,13 +116,13 @@ class FinancialTrendChart extends StatelessWidget {
                           barRods: [
                             BarChartRodData(
                               toY: metric.revenue,
-                              color: BauhausTheme.blue,
+                              color: BauhausDesign.primary,
                               width: 12,
                               borderRadius: BorderRadius.zero,
                             ),
                             BarChartRodData(
                               toY: metric.laborCost,
-                              color: BauhausTheme.red,
+                              color: BauhausDesign.error,
                               width: 12,
                               borderRadius: BorderRadius.zero,
                             ),
@@ -126,9 +136,9 @@ class FinancialTrendChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _LegendItem(color: BauhausTheme.blue, label: 'REVENUE'),
+              _LegendItem(color: BauhausDesign.primary, label: 'REVENUE'),
               const SizedBox(width: 16),
-              _LegendItem(color: BauhausTheme.red, label: 'LABOR COST'),
+              _LegendItem(color: BauhausDesign.error, label: 'LABOR COST'),
             ],
           ),
         ],
@@ -163,7 +173,10 @@ class _LegendItem extends StatelessWidget {
           color: color,
         ),
         const SizedBox(width: 4),
-        Text(label, style: BauhausTheme.labelStyle),
+        Text(label,
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(fontWeight: FontWeight.bold)),
       ],
     );
   }

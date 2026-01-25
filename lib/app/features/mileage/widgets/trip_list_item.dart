@@ -1,7 +1,7 @@
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../shared/design_system/bauhaus_design_system.dart';
-import '../../../../models/trip.dart';
+import '../../../shared/constants/bauhaus_design.dart';
+import '../models/trip_model.dart';
 
 class TripListItem extends StatelessWidget {
   final Trip trip;
@@ -13,65 +13,61 @@ class TripListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-        boxShadow: const [BauhausDesign.shadowHardSm],
-      ),
-      child: Row(
-        children: [
-          // Geometric Status Indicator
-          _buildStatusIndicator(),
-          const SizedBox(width: BauhausDesign.space4),
-          
-          // Details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _getClientName(),
-                  style: GoogleFonts.oswald(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: BauhausDesign.neutral,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+      child: BauhausCard(
+        child: Row(
+          children: [
+            // Status Chip
+            _buildStatusChip(),
+            const SizedBox(width: BauhausDesign.space4),
+
+            // Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _getClientName(),
+                    style: BauhausDesign.getTextTheme(context)
+                        .titleMedium
+                        ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
-                ),
-                const SizedBox(height: BauhausDesign.space1),
-                Text(
-                  trip.date.toString().split(' ')[0],
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: BauhausDesign.neutral.withOpacity(0.7),
+                  const SizedBox(height: BauhausDesign.space1),
+                  Text(
+                    trip.date.toString().split(' ')[0], // Or use DateFormat
+                    style:
+                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                              color: BauhausDesign.textMuted,
+                            ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          
-          // Distance
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space3,
-              vertical: BauhausDesign.space1,
-            ),
-            decoration: BoxDecoration(
-              color: BauhausDesign.neutral,
-              borderRadius: BorderRadius.zero,
-            ),
-            child: Text(
-              '${trip.distance.toStringAsFixed(1)} km',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
+                ],
               ),
             ),
-          ),
-        ],
+
+            // Distance Badge
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space3,
+                vertical: BauhausDesign.space1,
+              ),
+              decoration: BoxDecoration(
+                color: BauhausDesign.neutral.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                border: Border.all(color: BauhausDesign.neutral, width: 1),
+              ),
+              child: Text(
+                '${trip.distance.toStringAsFixed(1)} km',
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.textDark,
+                    ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -86,24 +82,49 @@ class TripListItem extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusIndicator() {
-    final bool isApproved = trip.status == 'APPROVED';
-    final bool isRejected = trip.status == 'REJECTED';
-    
-    // Geometric shape: Circle for Approved, Square for Pending/Rejected
-    // Colors: Blue (Approved), Yellow (Pending), Red (Rejected)
-    
-    Color color = BauhausDesign.accent; // Pending
-    if (isApproved) color = BauhausDesign.secondary;
-    if (isRejected) color = BauhausDesign.primary;
+  Widget _buildStatusChip() {
+    BauhausChipVariant variant = BauhausChipVariant.neutral;
+    if (trip.status == 'APPROVED') variant = BauhausChipVariant.success;
+    if (trip.status == 'REJECTED') variant = BauhausChipVariant.error;
+    if (trip.status == 'PENDING') variant = BauhausChipVariant.warning;
+
+    // Use a small icon or initial instead of full chip to save space if needed?
+    // Or just a small dot?
+    // Let's use a small dot/icon styled container for compact list item
+
+    Color color = BauhausDesign.neutral;
+    IconData icon = Icons.help_outline;
+
+    switch (variant) {
+      case BauhausChipVariant.success:
+        color = BauhausDesign.success;
+        icon = Icons.check;
+        break;
+      case BauhausChipVariant.error:
+        color = BauhausDesign.error;
+        icon = Icons.close;
+        break;
+      case BauhausChipVariant.warning:
+        color = BauhausDesign.warning;
+        icon = Icons.access_time;
+        break;
+      default:
+        color = BauhausDesign.neutral;
+        break;
+    }
 
     return Container(
-      width: 16,
-      height: 16,
+      width: 32,
+      height: 32,
       decoration: BoxDecoration(
-        color: color,
-        shape: isApproved ? BoxShape.circle : BoxShape.rectangle,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: color.withOpacity(0.2),
+        shape: BoxShape.circle,
+        border: Border.all(color: color, width: 1.5),
+      ),
+      child: Icon(
+        icon,
+        size: 16,
+        color: BauhausDesign.textDark,
       ),
     );
   }

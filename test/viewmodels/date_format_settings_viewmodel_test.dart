@@ -6,7 +6,11 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 /// Fake SharedPreferencesUtils backed by in-memory map for deterministic tests.
 class _FakePrefs extends SharedPreferencesUtils {
   final Map<String, String> _store = {};
+
+  _FakePrefs() : super.forTesting();
+  
   bool _inited = false;
+
   @override
   Future<void> init() async {
     _inited = true;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class BulkOperationsView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -119,7 +120,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Bulk Operations',
+                              AppLocalizations.of(context)!.bulkOperationsTitle,
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 24 : 28,
                                 fontWeight: FontWeight.bold,
@@ -131,7 +132,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                             if (!isSmallScreen) ...[
                               const SizedBox(height: 8),
                               Text(
-                                'Manage and optimize your service pricing across different regions and categories',
+                                AppLocalizations.of(context)!
+                                    .bulkOperationsDesc,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey[600],
@@ -164,8 +166,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              const Text(
-                                'System Active',
+                              Text(
+                                AppLocalizations.of(context)!.systemActive,
                                 style: TextStyle(
                                   color: Color(0xFF10B981),
                                   fontSize: 12,
@@ -183,7 +185,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                       children: [
                         Expanded(
                           child: Text(
-                            'Import and export data in batch operations',
+                            AppLocalizations.of(context)!
+                                .bulkOperationsSmallDesc,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
@@ -212,8 +215,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              const Text(
-                                'System Active',
+                              Text(
+                                AppLocalizations.of(context)!.systemActive,
                                 style: TextStyle(
                                   color: Color(0xFF10B981),
                                   fontSize: 10,
@@ -328,20 +331,20 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         _buildActionButton(
           icon: Icons.refresh,
           onPressed: _refreshData,
-          tooltip: 'Refresh',
+          tooltip: AppLocalizations.of(context)!.refreshAction,
         ),
         const SizedBox(width: 8),
         _buildActionButton(
           icon: Icons.help_outline,
           onPressed: _showHelp,
-          tooltip: 'Help',
+          tooltip: AppLocalizations.of(context)!.helpAction,
         ),
         const SizedBox(width: 8),
         ElevatedButton.icon(
           onPressed: _showBulkOperationDialog,
           icon: const Icon(Icons.add, size: 16),
-          label: const Text(
-            'New',
+          label: Text(
+            AppLocalizations.of(context)!.newAction,
             style: TextStyle(fontSize: 12),
           ),
           style: ElevatedButton.styleFrom(
@@ -405,7 +408,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Total Operations',
+                title: AppLocalizations.of(context)!.totalOperations,
                 value: '${_operationHistory.length}',
                 icon: Icons.analytics_outlined,
                 color: const Color(0xFF6366F1),
@@ -416,7 +419,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Completed',
+                title: AppLocalizations.of(context)!.completedOps,
                 value: '$completedOps',
                 icon: Icons.check_circle_outline,
                 color: const Color(0xFF10B981),
@@ -427,7 +430,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Failed',
+                title: AppLocalizations.of(context)!.failedOps,
                 value: '$failedOps',
                 icon: Icons.error_outline,
                 color: const Color(0xFFEF4444),
@@ -438,7 +441,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             SizedBox(
               width: 160,
               child: _buildStatCard(
-                title: 'Success Rate',
+                title: AppLocalizations.of(context)!.successRate,
                 value: '$successRate%',
                 icon: Icons.trending_up,
                 color: const Color(0xFFF59E0B),
@@ -520,13 +523,25 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
   Widget _buildNavigationTabs() {
     final tabs = [
       {
-        'title': 'Import',
-        'subtitle': 'Data',
+        'title': AppLocalizations.of(context)!.tabImport,
+        'subtitle': AppLocalizations.of(context)!.tabDataSubtitle,
         'icon': Icons.upload_file_outlined
       },
-      {'title': 'Export', 'subtitle': 'Data', 'icon': Icons.download_outlined},
-      {'title': 'Bulk', 'subtitle': 'Updates', 'icon': Icons.edit_outlined},
-      {'title': 'History', 'subtitle': '', 'icon': Icons.history_outlined},
+      {
+        'title': AppLocalizations.of(context)!.tabExport,
+        'subtitle': AppLocalizations.of(context)!.tabDataSubtitle,
+        'icon': Icons.download_outlined
+      },
+      {
+        'title': AppLocalizations.of(context)!.tabBulk,
+        'subtitle': AppLocalizations.of(context)!.tabUpdatesSubtitle,
+        'icon': Icons.edit_outlined
+      },
+      {
+        'title': AppLocalizations.of(context)!.tabHistory,
+        'subtitle': '',
+        'icon': Icons.history_outlined
+      },
     ];
 
     return Container(
@@ -784,8 +799,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Import Data',
+            Text(
+              AppLocalizations.of(context)!.importDataTitle,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -793,8 +808,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              'Upload CSV or Excel files to import pricing data in bulk',
+            Text(
+              AppLocalizations.of(context)!.importDataDesc,
               style: TextStyle(
                 fontSize: 14,
                 color: Color(0xFF64748B),
@@ -810,37 +825,40 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               childAspectRatio: 1.15,
               children: [
                 _buildModernImportCard(
-                  title: 'NDIS Items',
-                  subtitle: 'item codes',
+                  title: AppLocalizations.of(context)!.ndisItemsCardTitle,
+                  subtitle: AppLocalizations.of(context)!.ndisItemsCardSubtitle,
                   value: '1,247',
-                  unit: 'items',
+                  unit: AppLocalizations.of(context)!.itemsUnit,
                   icon: Icons.list_alt,
                   color: const Color(0xFF6366F1),
                   onTap: () => _handleImport('ndis_items'),
                 ),
                 _buildModernImportCard(
-                  title: 'Service Rates',
-                  subtitle: 'rate structures',
+                  title: AppLocalizations.of(context)!.serviceRatesCardTitle,
+                  subtitle:
+                      AppLocalizations.of(context)!.serviceRatesCardSubtitle,
                   value: '89',
-                  unit: 'rates',
+                  unit: AppLocalizations.of(context)!.ratesUnit,
                   icon: Icons.rate_review,
                   color: const Color(0xFF10B981),
                   onTap: () => _handleImport('service_rates'),
                 ),
                 _buildModernImportCard(
-                  title: 'Price Updates',
-                  subtitle: 'bulk adjustments',
+                  title: AppLocalizations.of(context)!.priceUpdatesCardTitle,
+                  subtitle:
+                      AppLocalizations.of(context)!.priceUpdatesCardSubtitle,
                   value: '342',
-                  unit: 'updates',
+                  unit: AppLocalizations.of(context)!.updatesUnit,
                   icon: Icons.trending_up,
                   color: const Color(0xFFF59E0B),
                   onTap: () => _handleImport('price_updates'),
                 ),
                 _buildModernImportCard(
-                  title: 'Regional Rates',
-                  subtitle: 'pricing variations',
+                  title: AppLocalizations.of(context)!.regionalRatesCardTitle,
+                  subtitle:
+                      AppLocalizations.of(context)!.regionalRatesCardSubtitle,
                   value: '15',
-                  unit: 'regions',
+                  unit: AppLocalizations.of(context)!.regionsUnit,
                   icon: Icons.location_on,
                   color: const Color(0xFF8B5CF6),
                   onTap: () => _handleImport('regional_rates'),
@@ -1000,8 +1018,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Processing import...',
+                    Text(
+                      AppLocalizations.of(context)!.processingImportMsg,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -1010,7 +1028,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${(_uploadProgress * 100).toInt()}% complete',
+                      AppLocalizations.of(context)!
+                          .completeMsg((_uploadProgress * 100).toInt()),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF64748B),
@@ -1065,12 +1084,12 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Download Templates',
+                      AppLocalizations.of(context)!.downloadTemplatesTitle,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -1079,7 +1098,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'Get properly formatted CSV templates for seamless data import',
+                      AppLocalizations.of(context)!.downloadTemplatesDesc,
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0xFF64748B),
@@ -1103,8 +1122,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     width: cardWidth,
                     height: 120,
                     child: _buildModernTemplateCard(
-                      'NDIS Items',
-                      'Complete NDIS service items with codes and descriptions',
+                      AppLocalizations.of(context)!.ndisTemplateTitle,
+                      AppLocalizations.of(context)!.ndisTemplateDesc,
                       Icons.medical_services_outlined,
                       'ndis_template',
                       const Color(0xFF10B981),
@@ -1114,8 +1133,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     width: cardWidth,
                     height: 120,
                     child: _buildModernTemplateCard(
-                      'Service Rates',
-                      'Pricing rates for all service categories',
+                      AppLocalizations.of(context)!.ratesTemplateTitle,
+                      AppLocalizations.of(context)!.ratesTemplateDesc,
                       Icons.attach_money_outlined,
                       'rates_template',
                       const Color(0xFF6366F1),
@@ -1125,8 +1144,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     width: cardWidth,
                     height: 120,
                     child: _buildModernTemplateCard(
-                      'Price Updates',
-                      'Bulk price adjustments and modifications',
+                      AppLocalizations.of(context)!.updatesTemplateTitle,
+                      AppLocalizations.of(context)!.updatesTemplateDesc,
                       Icons.trending_up_outlined,
                       'updates_template',
                       const Color(0xFFF59E0B),
@@ -1136,8 +1155,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                     width: cardWidth,
                     height: 120,
                     child: _buildModernTemplateCard(
-                      'Regional Rates',
-                      'Location-based pricing variations',
+                      AppLocalizations.of(context)!.regionalTemplateTitle,
+                      AppLocalizations.of(context)!.regionalTemplateDesc,
                       Icons.location_on_outlined,
                       'regional_template',
                       const Color(0xFFEF4444),
@@ -1267,8 +1286,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Export Data',
+            Text(
+              AppLocalizations.of(context)!.exportDataTitle,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -1276,8 +1295,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              'Export your pricing data to various formats',
+            Text(
+              AppLocalizations.of(context)!.exportDataDesc,
               style: TextStyle(
                 fontSize: 14,
                 color: Color(0xFF64748B),
@@ -1293,37 +1312,39 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               childAspectRatio: 1.15,
               children: [
                 _buildModernImportCard(
-                  title: 'All Pricing Data',
-                  subtitle: 'complete database',
+                  title: AppLocalizations.of(context)!.allPricingDataTitle,
+                  subtitle:
+                      AppLocalizations.of(context)!.allPricingDataSubtitle,
                   value: '1,247',
-                  unit: 'records',
+                  unit: AppLocalizations.of(context)!.recordsUnit,
                   icon: Icons.storage,
                   color: const Color(0xFF6366F1),
                   onTap: () => _handleExport('all_data'),
                 ),
                 _buildModernImportCard(
-                  title: 'NDIS Items Only',
-                  subtitle: 'items and rates',
+                  title: AppLocalizations.of(context)!.ndisItemsOnlyTitle,
+                  subtitle: AppLocalizations.of(context)!.ndisItemsOnlySubtitle,
                   value: '89',
-                  unit: 'items',
+                  unit: AppLocalizations.of(context)!.itemsUnit,
                   icon: Icons.list_alt,
                   color: const Color(0xFF10B981),
                   onTap: () => _handleExport('ndis_only'),
                 ),
                 _buildModernImportCard(
-                  title: 'Service Rates',
-                  subtitle: 'rate structures',
+                  title: AppLocalizations.of(context)!.serviceRatesCardTitle,
+                  subtitle:
+                      AppLocalizations.of(context)!.serviceRatesCardSubtitle,
                   value: '342',
-                  unit: 'rates',
+                  unit: AppLocalizations.of(context)!.ratesUnit,
                   icon: Icons.rate_review,
                   color: const Color(0xFFF59E0B),
                   onTap: () => _handleExport('service_rates'),
                 ),
                 _buildModernImportCard(
-                  title: 'Regional Data',
-                  subtitle: 'pricing variations',
+                  title: AppLocalizations.of(context)!.regionalDataTitle,
+                  subtitle: AppLocalizations.of(context)!.regionalDataSubtitle,
                   value: '15',
-                  unit: 'regions',
+                  unit: AppLocalizations.of(context)!.regionsUnit,
                   icon: Icons.location_on,
                   color: const Color(0xFF8B5CF6),
                   onTap: () => _handleExport('regional_data'),
@@ -1342,8 +1363,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Bulk Updates',
+          Text(
+            AppLocalizations.of(context)!.bulkUpdatesTitle,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -1351,8 +1372,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Perform mass updates on your pricing data',
+          Text(
+            AppLocalizations.of(context)!.bulkUpdatesDesc,
             style: TextStyle(
               fontSize: 14,
               color: Color(0xFF64748B),
@@ -1373,37 +1394,41 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                 childAspectRatio: childAspectRatio,
                 children: [
                   _buildModernImportCard(
-                    title: 'Price Adjustment',
-                    subtitle: 'Apply percentage increases/decreases',
-                    value: 'Bulk',
-                    unit: 'Updates',
+                    title: AppLocalizations.of(context)!.priceAdjustmentTitle,
+                    subtitle:
+                        AppLocalizations.of(context)!.priceAdjustmentSubtitle,
+                    value: AppLocalizations.of(context)!.tabBulk,
+                    unit: AppLocalizations.of(context)!.updatesUnit,
                     icon: Icons.trending_up,
                     color: const Color(0xFF3B82F6),
                     onTap: () => _handleBulkUpdate('price_adjustment'),
                   ),
                   _buildModernImportCard(
-                    title: 'Regional Updates',
-                    subtitle: 'Update rates for specific regions',
+                    title: AppLocalizations.of(context)!.regionalUpdatesTitle,
+                    subtitle:
+                        AppLocalizations.of(context)!.regionalUpdatesSubtitle,
                     value: 'Region',
-                    unit: 'Based',
+                    unit: AppLocalizations.of(context)!.basedUnit,
                     icon: Icons.location_on,
                     color: const Color(0xFF10B981),
                     onTap: () => _handleBulkUpdate('regional_updates'),
                   ),
                   _buildModernImportCard(
-                    title: 'Category Updates',
-                    subtitle: 'Update entire service categories',
+                    title: AppLocalizations.of(context)!.categoryUpdatesTitle,
+                    subtitle:
+                        AppLocalizations.of(context)!.categoryUpdatesSubtitle,
                     value: 'Category',
-                    unit: 'Wide',
+                    unit: AppLocalizations.of(context)!.wideUnit,
                     icon: Icons.category,
                     color: const Color(0xFF8B5CF6),
                     onTap: () => _handleBulkUpdate('category_updates'),
                   ),
                   _buildModernImportCard(
-                    title: 'Status Changes',
-                    subtitle: 'Activate/deactivate multiple items',
+                    title: AppLocalizations.of(context)!.statusChangesTitle,
+                    subtitle:
+                        AppLocalizations.of(context)!.statusChangesSubtitle,
                     value: 'Status',
-                    unit: 'Toggle',
+                    unit: AppLocalizations.of(context)!.toggleUnit,
                     icon: Icons.toggle_on,
                     color: const Color(0xFFF59E0B),
                     onTap: () => _handleBulkUpdate('status_changes'),
@@ -1425,11 +1450,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Operation History',
+                    AppLocalizations.of(context)!.operationHistoryTitle,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -1438,7 +1463,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'View history of all bulk operations',
+                    AppLocalizations.of(context)!.operationHistoryDesc,
                     style: TextStyle(
                       fontSize: 14,
                       color: Color(0xFF64748B),
@@ -1476,8 +1501,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
                             color: const Color(0xFF6366F1),
                           ),
                           const SizedBox(width: 8),
-                          const Text(
-                            'Refresh',
+                          Text(
+                            AppLocalizations.of(context)!.refreshAction,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -1588,28 +1613,28 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             children: [
               Expanded(
                 child: _buildOperationStat(
-                  'Processed',
+                  AppLocalizations.of(context)!.processedLabel,
                   '${operation['recordsProcessed']}',
                   const Color(0xFF6366F1),
                 ),
               ),
               Expanded(
                 child: _buildOperationStat(
-                  'Successful',
+                  AppLocalizations.of(context)!.successfulLabel,
                   '${operation['recordsSuccessful']}',
                   const Color(0xFF10B981),
                 ),
               ),
               Expanded(
                 child: _buildOperationStat(
-                  'Failed',
+                  AppLocalizations.of(context)!.failedOps,
                   '${operation['recordsFailed']}',
                   const Color(0xFFEF4444),
                 ),
               ),
               Expanded(
                 child: _buildOperationStat(
-                  'Duration',
+                  AppLocalizations.of(context)!.durationLabel,
                   _calculateDuration(
                       operation['startTime'], operation['endTime']),
                   const Color(0xFFF59E0B),
@@ -1622,14 +1647,14 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Started: ${operation['startTime']}',
+                '${AppLocalizations.of(context)!.startedLabel}: ${operation['startTime']}',
                 style: const TextStyle(
                   fontSize: 12,
                   color: Color(0xFF94A3B8),
                 ),
               ),
               Text(
-                'By: ${operation['initiatedBy']}',
+                '${AppLocalizations.of(context)!.byLabel}: ${operation['initiatedBy']}',
                 style: const TextStyle(
                   fontSize: 12,
                   color: Color(0xFF94A3B8),
@@ -1708,38 +1733,39 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
           _isProcessing = false;
         });
 
-        _showSnackBar('Import completed successfully for $type');
+        _showSnackBar(AppLocalizations.of(context)!.importCompletedMsg(type));
       }
     } catch (e) {
       setState(() {
         _isProcessing = false;
       });
-      _showSnackBar('Import failed: ${e.toString()}');
+      _showSnackBar(
+          AppLocalizations.of(context)!.importFailedMsg(e.toString()));
     }
   }
 
   void _handleExport(String type) {
-    _showSnackBar('Exporting $type...');
+    _showSnackBar(AppLocalizations.of(context)!.exportingMsg(type));
   }
 
   void _handleBulkUpdate(String type) {
-    _showSnackBar('Initiating $type...');
+    _showSnackBar(AppLocalizations.of(context)!.initiatingMsg(type));
   }
 
   void _downloadTemplate(String template) {
-    _showSnackBar('Downloading $template...');
+    _showSnackBar(AppLocalizations.of(context)!.downloadingMsg(template));
   }
 
   void _refreshData() {
-    _showSnackBar('Data refreshed successfully');
+    _showSnackBar(AppLocalizations.of(context)!.dataRefreshedSuccess);
   }
 
   void _showHelp() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Bulk Operations Help'),
-        content: const SizedBox(
+        title: Text(AppLocalizations.of(context)!.bulkOperationsHelpTitle),
+        content: SizedBox(
           width: 400,
           height: 300,
           child: SingleChildScrollView(
@@ -1747,29 +1773,30 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Import Data:',
+                  '${AppLocalizations.of(context)!.importDataTitle}:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('• Upload CSV or Excel files to import pricing data'),
-                Text('• Download templates for proper formatting'),
+                Text('• ${AppLocalizations.of(context)!.importDataQuickDesc}'),
+                Text(
+                    '• ${AppLocalizations.of(context)!.downloadTemplatesDesc}'),
                 SizedBox(height: 16),
                 Text(
-                  'Export Data:',
+                  '${AppLocalizations.of(context)!.exportDataTitle}:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('• Export current pricing data to various formats'),
+                Text('• ${AppLocalizations.of(context)!.exportDataQuickDesc}'),
                 SizedBox(height: 16),
                 Text(
-                  'Bulk Updates:',
+                  '${AppLocalizations.of(context)!.bulkUpdatesTitle}:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('• Perform mass updates on pricing data'),
+                Text('• ${AppLocalizations.of(context)!.bulkUpdatesQuickDesc}'),
                 SizedBox(height: 16),
                 Text(
-                  'Operation History:',
+                  '${AppLocalizations.of(context)!.operationHistoryTitle}:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('• View history of all bulk operations'),
+                Text('• ${AppLocalizations.of(context)!.operationHistoryDesc}'),
               ],
             ),
           ),
@@ -1777,7 +1804,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.closeAction),
           ),
         ],
       ),
@@ -1788,7 +1815,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Quick Actions'),
+        title: Text(AppLocalizations.of(context)!.quickActionsTitle),
         content: SizedBox(
           width: 300,
           child: Column(
@@ -1797,8 +1824,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               ListTile(
                 leading:
                     const Icon(Icons.upload_file, color: Color(0xFF6366F1)),
-                title: const Text('Import Data'),
-                subtitle: const Text('Upload CSV or Excel files'),
+                title:
+                    Text(AppLocalizations.of(context)!.importDataQuickAction),
+                subtitle:
+                    Text(AppLocalizations.of(context)!.importDataQuickDesc),
                 onTap: () {
                   Navigator.pop(context);
                   setState(() => _selectedIndex = 0);
@@ -1806,8 +1835,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               ),
               ListTile(
                 leading: const Icon(Icons.download, color: Color(0xFF10B981)),
-                title: const Text('Export Data'),
-                subtitle: const Text('Download current data'),
+                title:
+                    Text(AppLocalizations.of(context)!.exportDataQuickAction),
+                subtitle:
+                    Text(AppLocalizations.of(context)!.exportDataQuickDesc),
                 onTap: () {
                   Navigator.pop(context);
                   setState(() => _selectedIndex = 1);
@@ -1815,8 +1846,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
               ),
               ListTile(
                 leading: const Icon(Icons.edit, color: Color(0xFFF59E0B)),
-                title: const Text('Bulk Updates'),
-                subtitle: const Text('Mass update pricing data'),
+                title:
+                    Text(AppLocalizations.of(context)!.bulkUpdatesQuickAction),
+                subtitle:
+                    Text(AppLocalizations.of(context)!.bulkUpdatesQuickDesc),
                 onTap: () {
                   Navigator.pop(context);
                   setState(() => _selectedIndex = 2);
@@ -1828,7 +1861,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.closeAction),
           ),
         ],
       ),

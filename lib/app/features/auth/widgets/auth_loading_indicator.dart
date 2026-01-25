@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 /// Enhanced loading indicator widget for authentication processes
 /// with smooth animations and user feedback
@@ -122,26 +122,21 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
         return Opacity(
           opacity: _fadeAnimation.value,
           child: Container(
-            color: Colors.black.withOpacity(0.1),
+            color: BauhausDesign.textDark.withOpacity(0.1),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.all(32),
                 margin: const EdgeInsets.symmetric(horizontal: 40),
                 decoration: BoxDecoration(
-                  color: AppColors.colorBackground,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
+                  color: BauhausDesign.surfaceWhite,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [BauhausDesign.shadowHard],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Animated loading indicator
+                    // Bauhaus geometric loading indicator - square with animation
                     AnimatedBuilder(
                       animation: _pulseAnimation,
                       builder: (context, child) {
@@ -156,19 +151,18 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                                   width: 60,
                                   height: 60,
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColors.colorPrimary,
-                                        AppColors.colorSecondary,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
+                                    color: BauhausDesign.primary,
+                                    border: Border.all(
+                                      color: BauhausDesign.neutral,
+                                      width: 2,
                                     ),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
+                                    boxShadow: const [
+                                      BauhausDesign.shadowHardSm
+                                    ],
+                                  ),
+                                  child: Icon(
                                     Icons.security_outlined,
-                                    color: Colors.white,
+                                    color: BauhausDesign.surfaceWhite,
                                     size: 30,
                                   ),
                                 ),
@@ -183,11 +177,12 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                     // Loading message
                     Text(
                       widget.message,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.colorFontPrimary,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: BauhausDesign.textDark,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
@@ -195,10 +190,11 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                     // Subtitle
                     Text(
                       'Please wait while we verify your credentials',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.colorFontSecondary,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                          ),
                       textAlign: TextAlign.center,
                     ),
 
@@ -208,18 +204,19 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                       TextButton(
                         onPressed: widget.onCancel,
                         style: TextButton.styleFrom(
-                          foregroundColor: AppColors.colorFontSecondary,
+                          foregroundColor: BauhausDesign.textMuted,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 12,
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Cancel',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: BauhausDesign.getTextTheme(context)
+                              .labelLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                       ),
                     ],
@@ -261,87 +258,6 @@ class AuthLoadingOverlay extends StatelessWidget {
             onCancel: onCancel,
           ),
       ],
-    );
-  }
-}
-
-/// Simple loading button with integrated loading state
-class AuthLoadingButton extends StatelessWidget {
-  final String text;
-  final String loadingText;
-  final bool isLoading;
-  final VoidCallback? onPressed;
-  final bool isPrimary;
-  final double? width;
-  final double height;
-
-  const AuthLoadingButton({
-    super.key,
-    required this.text,
-    this.loadingText = 'Please wait...',
-    this.isLoading = false,
-    this.onPressed,
-    this.isPrimary = true,
-    this.width,
-    this.height = 56,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-          foregroundColor: isPrimary ? Colors.white : AppColors.colorPrimary,
-          elevation: isPrimary ? 2 : 0,
-          side: isPrimary
-              ? null
-              : BorderSide(
-                  color: AppColors.colorPrimary.withOpacity(0.1)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          disabledBackgroundColor: isPrimary
-              ? AppColors.colorPrimary.withOpacity(0.1)
-              : AppColors.colorBackground.withOpacity(0.1),
-        ),
-        child: isLoading
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isPrimary ? Colors.white : AppColors.colorPrimary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    loadingText,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: isPrimary
-                          ? Colors.white.withOpacity(0.1)
-                          : AppColors.colorPrimary.withOpacity(0.1),
-                    ),
-                  ),
-                ],
-              )
-            : Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-      ),
     );
   }
 }

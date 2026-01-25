@@ -3,7 +3,8 @@ import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/features/invoice/services/download_service.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:open_file/open_file.dart';
 
 class PdfViewPage extends StatefulWidget {
@@ -88,7 +89,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
           SnackBar(
             content: const Text(
                 'Could not open receipt. Please check your internet connection or browser settings.'),
-            backgroundColor: ModernInvoiceDesign.error,
+            backgroundColor: BauhausDesign.error,
           ),
         );
       }
@@ -98,7 +99,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error launching URL: $e'),
-            backgroundColor: ModernInvoiceDesign.error,
+            backgroundColor: BauhausDesign.error,
           ),
         );
       }
@@ -124,7 +125,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
           children: [
             Text(
               'Attached Receipts',
-              style: ModernInvoiceDesign.headlineMedium,
+              style: BauhausDesign.getTextTheme(context).headlineSmall,
             ),
             const SizedBox(height: 20),
             Flexible(
@@ -140,17 +141,17 @@ class _PdfViewPageState extends State<PdfViewPage> {
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       leading: const Icon(Icons.description_outlined,
-                          size: 24, color: ModernInvoiceDesign.primary),
+                          size: 24, color: BauhausDesign.primary),
                       title: Text(
                         'Receipt ${index + 1}',
-                        style: ModernInvoiceDesign.bodyLarge,
+                        style: BauhausDesign.getTextTheme(context).bodyLarge,
                       ),
                       trailing: const Icon(Icons.open_in_new, size: 20),
                       onTap: () {
                         Navigator.pop(context);
                         _launchUrl(widget.receiptUrls[index]);
                       },
-                      tileColor: ModernInvoiceDesign.surface,
+                      tileColor: BauhausDesign.surfaceWhite,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -182,7 +183,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error sharing PDF: ${e.toString()}'),
-            backgroundColor: ModernInvoiceDesign.error,
+            backgroundColor: BauhausDesign.error,
           ),
         );
       }
@@ -204,7 +205,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('PDF saved successfully'),
-            backgroundColor: ModernInvoiceDesign.success,
+            backgroundColor: BauhausDesign.success,
           ),
         );
       }
@@ -213,7 +214,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error saving PDF: ${e.toString()}'),
-            backgroundColor: ModernInvoiceDesign.error,
+            backgroundColor: BauhausDesign.error,
           ),
         );
       }
@@ -234,7 +235,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result.message),
-            backgroundColor: ModernInvoiceDesign.error,
+            backgroundColor: BauhausDesign.error,
           ),
         );
       }
@@ -243,7 +244,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error opening PDF: ${e.toString()}'),
-            backgroundColor: ModernInvoiceDesign.error,
+            backgroundColor: BauhausDesign.error,
           ),
         );
       }
@@ -257,91 +258,70 @@ class _PdfViewPageState extends State<PdfViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ModernInvoiceDesign.background,
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: ModernInvoiceDesign.surface,
-        foregroundColor: ModernInvoiceDesign.textPrimary,
+        backgroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
-            color: ModernInvoiceDesign.textPrimary,
+            color: BauhausDesign.textDark,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Invoice PDF',
-          style: ModernInvoiceDesign.headlineMedium.copyWith(
-            color: ModernInvoiceDesign.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
         ),
         actions: <Widget>[
-          Container(
-            margin: EdgeInsets.only(right: ModernInvoiceDesign.space2),
-            decoration: BoxDecoration(
-              color: ModernInvoiceDesign.surfaceVariant,
-              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
-              border: Border.all(
-                color: ModernInvoiceDesign.border,
-                width: 1,
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isOpeningExternally
-                ? const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
+                ? const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
                       child: SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: ModernInvoiceDesign.primary,
+                          color: BauhausDesign.primary,
                         ),
                       ),
                     ),
                   )
-                : IconButton(
-                    icon: Icon(
-                      Icons.open_in_new,
-                      color: ModernInvoiceDesign.textPrimary,
-                    ),
-                    tooltip: 'Open PDF externally',
+                : BauhausIconButton(
+                    icon: Icons.open_in_new,
                     onPressed: _handleOpenExternally,
+                    variant: BauhausActionVariant.neutral,
+                    tooltip: 'Open PDF externally',
                   ),
           ),
           if (widget.receiptUrls.isNotEmpty)
-            Container(
-              margin: EdgeInsets.only(right: ModernInvoiceDesign.space2),
-              decoration: BoxDecoration(
-                color: ModernInvoiceDesign.surfaceVariant,
-                borderRadius:
-                    BorderRadius.circular(ModernInvoiceDesign.radiusMd),
-                border: Border.all(
-                  color: ModernInvoiceDesign.border,
-                  width: 1,
-                ),
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: _isOpeningReceipt
-                  ? const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(12.0),
+                  ? const SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Center(
                         child: SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: ModernInvoiceDesign.primary,
+                            color: BauhausDesign.primary,
                           ),
                         ),
                       ),
                     )
-                  : IconButton(
-                      icon: Icon(
-                        Icons.receipt_long,
-                        color: ModernInvoiceDesign.textPrimary,
-                      ),
-                      tooltip: 'Download Receipts',
+                  : BauhausIconButton(
+                      icon: Icons.receipt_long,
                       onPressed: () {
                         if (widget.receiptUrls.length == 1) {
                           _launchUrl(widget.receiptUrls.first);
@@ -349,98 +329,84 @@ class _PdfViewPageState extends State<PdfViewPage> {
                           _showReceiptsDialog(context);
                         }
                       },
+                      variant: BauhausActionVariant.neutral,
+                      tooltip: 'Download Receipts',
                     ),
             ),
-          Container(
-            margin: EdgeInsets.only(right: ModernInvoiceDesign.space2),
-            decoration: BoxDecoration(
-              color: ModernInvoiceDesign.surfaceVariant,
-              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
-              border: Border.all(
-                color: ModernInvoiceDesign.border,
-                width: 1,
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isSharing
-                ? const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
+                ? const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
                       child: SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: ModernInvoiceDesign.primary,
+                          color: BauhausDesign.primary,
                         ),
                       ),
                     ),
                   )
-                : IconButton(
-                    icon: Icon(
-                      Icons.share,
-                      color: ModernInvoiceDesign.textPrimary,
-                    ),
-                    tooltip: 'Share PDF',
+                : BauhausIconButton(
+                    icon: Icons.share,
                     onPressed: _handleShare,
+                    variant: BauhausActionVariant.neutral,
+                    tooltip: 'Share PDF',
                   ),
           ),
-          Container(
-            margin: EdgeInsets.only(right: ModernInvoiceDesign.space2),
-            decoration: BoxDecoration(
-              color: ModernInvoiceDesign.surfaceVariant,
-              borderRadius: BorderRadius.circular(ModernInvoiceDesign.radiusMd),
-              border: Border.all(
-                color: ModernInvoiceDesign.border,
-                width: 1,
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isDownloading
-                ? const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
+                ? const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
                       child: SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: ModernInvoiceDesign.primary,
+                          color: BauhausDesign.primary,
                         ),
                       ),
                     ),
                   )
-                : IconButton(
-                    icon: Icon(
-                      Icons.download,
-                      color: ModernInvoiceDesign.textPrimary,
-                    ),
-                    tooltip: 'Download PDF',
+                : BauhausIconButton(
+                    icon: Icons.download,
                     onPressed: _handleDownload,
+                    variant: BauhausActionVariant.neutral,
+                    tooltip: 'Download PDF',
                   ),
           ),
           PdfPageNumber(
             controller: _pdfController,
             builder: (_, loadingState, page, pagesCount) => Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.only(right: ModernInvoiceDesign.space3),
+              margin: EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space3,
+                vertical: 8, // Adjust vertical padding for app bar alignment
+              ),
               padding: EdgeInsets.symmetric(
-                horizontal: ModernInvoiceDesign.space3,
-                vertical: ModernInvoiceDesign.space2,
+                horizontal: BauhausDesign.space3,
+                vertical: BauhausDesign.space1,
               ),
               decoration: BoxDecoration(
-                color: ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-                borderRadius:
-                    BorderRadius.circular(ModernInvoiceDesign.radiusMd),
+                color: BauhausDesign.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(
-                  color: ModernInvoiceDesign.primary.withValues(alpha: 0.3),
+                  color: BauhausDesign.primary.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
               child: Text(
                 '$page/${pagesCount ?? 0}',
-                style: ModernInvoiceDesign.labelLarge.copyWith(
-                  color: ModernInvoiceDesign.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: BauhausDesign.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           )
@@ -453,7 +419,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error loading PDF: $error'),
-              backgroundColor: Colors.red,
+              backgroundColor: BauhausDesign.error,
               duration: const Duration(seconds: 5),
             ),
           );
@@ -463,48 +429,32 @@ class _PdfViewPageState extends State<PdfViewPage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              gradient: ModernInvoiceDesign.primaryGradient,
-              borderRadius:
-                  BorderRadius.circular(ModernInvoiceDesign.radiusFull),
-              boxShadow: ModernInvoiceDesign.shadowMd,
-            ),
-            child: FloatingActionButton(
-              heroTag: '-',
-              backgroundColor: Colors.transparent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              child: const Icon(Icons.keyboard_arrow_left, size: 28),
-              onPressed: () {
-                _pdfController.previousPage(
-                  curve: Curves.ease,
-                  duration: const Duration(milliseconds: 100),
-                );
-              },
-            ),
+          FloatingActionButton(
+            heroTag: '-',
+            backgroundColor: BauhausDesign.surfaceWhite,
+            foregroundColor: BauhausDesign.primary,
+            elevation: 2,
+            child: const Icon(Icons.keyboard_arrow_left, size: 28),
+            onPressed: () {
+              _pdfController.previousPage(
+                curve: Curves.ease,
+                duration: const Duration(milliseconds: 100),
+              );
+            },
           ),
-          SizedBox(width: ModernInvoiceDesign.space4),
-          Container(
-            decoration: BoxDecoration(
-              gradient: ModernInvoiceDesign.primaryGradient,
-              borderRadius:
-                  BorderRadius.circular(ModernInvoiceDesign.radiusFull),
-              boxShadow: ModernInvoiceDesign.shadowMd,
-            ),
-            child: FloatingActionButton(
-              heroTag: '+',
-              backgroundColor: Colors.transparent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              child: const Icon(Icons.keyboard_arrow_right, size: 28),
-              onPressed: () {
-                _pdfController.nextPage(
-                  curve: Curves.ease,
-                  duration: const Duration(milliseconds: 100),
-                );
-              },
-            ),
+          SizedBox(width: BauhausDesign.space4),
+          FloatingActionButton(
+            heroTag: '+',
+            backgroundColor: BauhausDesign.surfaceWhite,
+            foregroundColor: BauhausDesign.primary,
+            elevation: 2,
+            child: const Icon(Icons.keyboard_arrow_right, size: 28),
+            onPressed: () {
+              _pdfController.nextPage(
+                curve: Curves.ease,
+                duration: const Duration(milliseconds: 100),
+              );
+            },
           ),
         ],
       ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Enhanced Invoice ViewModel
 /// Task 5.6: Update invoice service with enhanced pricing integration
@@ -48,15 +49,17 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
     DateTime? startDate,
     DateTime? endDate,
     String? invoiceType,
+    Map<String, dynamic>? recurrence,
   }) async {
     try {
       // Update local state
       state = state.copyWith(isLoading: true, errorMessage: '');
       taxRate ??= 0.0;
+      final l10n = AppLocalizations.of(context)!;
       // Validate date range if provided
       if (startDate != null && endDate != null) {
         if (endDate.isBefore(startDate)) {
-          final msg = 'End date must be on or after start date';
+          final msg = l10n.endDateBeforeStartDateError;
           state = state.copyWith(isLoading: false, errorMessage: msg);
           ref.read(invoiceGenerationStateProvider.notifier).state =
               InvoiceGenerationState.error;
@@ -68,7 +71,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
         final diffDays = endDate.difference(startDate).inDays;
         if (diffDays > 93) {
           // ~3 months
-          final msg = 'Selected period cannot exceed 3 months';
+          final msg = l10n.periodExceedsLimitError;
           state = state.copyWith(isLoading: false, errorMessage: msg);
           ref.read(invoiceGenerationStateProvider.notifier).state =
               InvoiceGenerationState.error;
@@ -79,7 +82,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
         // Optional: warn on future end dates (business-friendly safeguard)
         final now = DateTime.now();
         if (endDate.isAfter(now)) {
-          final msg = 'End date cannot be in the future';
+          final msg = l10n.futureEndDateError;
           state = state.copyWith(isLoading: false, errorMessage: msg);
           ref.read(invoiceGenerationStateProvider.notifier).state =
               InvoiceGenerationState.error;
@@ -109,6 +112,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
         startDate: startDate,
         endDate: endDate,
         invoiceType: invoiceType,
+        recurrence: recurrence,
       );
 
       // Extract validation summary and items exceeding price cap from the invoices

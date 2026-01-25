@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/bauhaus_theme.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausContainer extends StatelessWidget {
   final Widget child;
@@ -24,10 +24,12 @@ class BauhausContainer extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      padding: padding ?? BauhausTheme.blockPadding,
+      padding: padding ?? const EdgeInsets.all(BauhausDesign.space4),
       margin: margin,
-      decoration: BauhausTheme.blockDecoration.copyWith(
-        color: color ?? BauhausTheme.white,
+      decoration: BoxDecoration(
+        color: color ?? BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        borderRadius: BorderRadius.zero,
       ),
       child: child,
     );

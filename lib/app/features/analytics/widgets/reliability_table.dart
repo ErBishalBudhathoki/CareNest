@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../models/analytics_models.dart';
-import '../theme/bauhaus_theme.dart';
 import 'bauhaus_container.dart';
 
 class ReliabilityTable extends StatelessWidget {
@@ -18,7 +18,12 @@ class ReliabilityTable extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('RELIABILITY METRICS', style: BauhausTheme.headerStyle),
+          Text('RELIABILITY METRICS',
+              style:
+                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: BauhausDesign.textDark,
+                      )),
           const SizedBox(height: 16),
           if (metrics.isEmpty)
             const Padding(
@@ -28,31 +33,33 @@ class ReliabilityTable extends StatelessWidget {
           else
             Table(
               columnWidths: const {
-                0: FlexColumnWidth(2),
-                1: FlexColumnWidth(1),
-                2: FlexColumnWidth(1),
-                3: FlexColumnWidth(1),
+                0: FlexColumnWidth(1.5),
+                1: FlexColumnWidth(0.8),
+                2: FlexColumnWidth(0.8),
+                3: FlexColumnWidth(0.9),
               },
               border: TableBorder(
                 horizontalInside:
-                    BorderSide(color: BauhausTheme.black, width: 1),
-                bottom: BorderSide(color: BauhausTheme.black, width: 2),
+                    BorderSide(color: BauhausDesign.neutral, width: 1),
+                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
               children: [
                 TableRow(
-                  decoration: const BoxDecoration(color: BauhausTheme.black),
+                  decoration: BoxDecoration(color: BauhausDesign.neutral),
                   children: [
-                    _HeaderCell('EMPLOYEE'),
-                    _HeaderCell('SCHEDULED'),
+                    _HeaderCell('EMPLOYEE', align: TextAlign.left),
+                    _HeaderCell('SCHED.'),
                     _HeaderCell('NO-SHOW'),
                     _HeaderCell('RATE'),
                   ],
                 ),
                 ...sortedMetrics.take(10).map((m) => TableRow(
                       children: [
-                        _DataCell(m.employeeEmail.contains('@') 
-                            ? m.employeeEmail.split('@')[0] 
-                            : m.employeeEmail), // Safe name extraction
+                        _DataCell(
+                            m.employeeEmail.contains('@')
+                                ? m.employeeEmail.split('@')[0]
+                                : m.employeeEmail,
+                            align: TextAlign.left), // Safe name extraction
                         _DataCell(m.totalScheduled.toString()),
                         _DataCell(m.noShows.toString(), isAlert: m.noShows > 0),
                         _DataCell('${m.noShowRate.toStringAsFixed(1)}%',
@@ -69,16 +76,21 @@ class ReliabilityTable extends StatelessWidget {
 
 class _HeaderCell extends StatelessWidget {
   final String text;
+  final TextAlign align;
 
-  const _HeaderCell(this.text);
+  const _HeaderCell(this.text, {this.align = TextAlign.center});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 12.0),
       child: Text(
         text,
-        style: BauhausTheme.labelStyle.copyWith(color: BauhausTheme.white),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: align,
+        style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: BauhausDesign.surfaceWhite, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -87,19 +99,22 @@ class _HeaderCell extends StatelessWidget {
 class _DataCell extends StatelessWidget {
   final String text;
   final bool isAlert;
+  final TextAlign align;
 
-  const _DataCell(this.text, {this.isAlert = false});
+  const _DataCell(this.text, {this.isAlert = false, this.align = TextAlign.center});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 12.0),
       child: Text(
         text,
-        style: BauhausTheme.bodyStyle.copyWith(
-          color: isAlert ? BauhausTheme.red : BauhausTheme.black,
-          fontWeight: isAlert ? FontWeight.bold : FontWeight.normal,
-        ),
+        maxLines: 1,
+        textAlign: align,
+        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: isAlert ? BauhausDesign.error : BauhausDesign.textDark,
+              fontWeight: isAlert ? FontWeight.bold : FontWeight.normal,
+            ),
       ),
     );
   }

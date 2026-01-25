@@ -1,0 +1,20 @@
+# Screengrabfile
+
+# The package name of the app under test
+app_package_name "com.bishal.invoice.dev"
+
+# The package name of the test app
+tests_package_name "com.bishal.invoice.dev.test"
+
+# The test instrumentation runner
+test_instrumentation_runner "androidx.test.runner.AndroidJUnitRunner"
+
+# Clear all previously generated screenshots
+clear_previous_screenshots true
+
+# Locales to test
+locales ["en-US"]
+
+# App APK path (optional if you pass it via command line, but good to have defaults if consistent)
+# app_apk_path "app/build/outputs/apk/development/debug/app-development-debug.apk"
+# tests_apk_path "app/build/outputs/apk/androidTest/development/debug/app-development-debug-androidTest.apk"

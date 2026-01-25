@@ -352,6 +352,9 @@ class InvoicePdfGenerator {
     double totalHours = 0.0;
     for (var item in items) {
       if (item is Map<String, dynamic>) {
+        // Skip items marked to be excluded from total hours (e.g. penalty loadings)
+        if (item['excludeFromTotalHours'] == true) continue;
+
         totalHours += _getSafeDouble(item['hours']);
       }
     }
@@ -520,15 +523,18 @@ class InvoicePdfGenerator {
         if (item['ndisItem'] != null &&
             item['ndisItem']['itemNumber'] != null &&
             item['ndisItem']['itemName'] != null) {
-          description =
-              '${_getSafeString(item['ndisItem']['itemNumber'])} ${_getSafeString(item['ndisItem']['itemName'])}';
+          final number = _getSafeString(item['ndisItem']['itemNumber']);
+          final name = _getSafeString(item['ndisItem']['itemName']);
+          description = number.isNotEmpty ? '$number $name' : name;
         } else if (item['ndisItemNumber'] != null &&
             item['ndisItemName'] != null) {
-          description =
-              '${_getSafeString(item['ndisItemNumber'])} ${_getSafeString(item['ndisItemName'])}';
+          final number = _getSafeString(item['ndisItemNumber']);
+          final name = _getSafeString(item['ndisItemName']);
+          description = number.isNotEmpty ? '$number $name' : name;
         } else if (item['itemCode'] != null) {
-          description =
-              '${_getSafeString(item['itemCode'])} ${_getSafeString(item['itemName'] ?? 'Assistance With Self-Care Activities')}';
+          final number = _getSafeString(item['itemCode']);
+          final name = _getSafeString(item['itemName'] ?? 'Assistance With Self-Care Activities');
+          description = number.isNotEmpty ? '$number $name' : name;
         }
 
         final String hoursText = HoursFormatting.formatDecimalHours(
@@ -627,6 +633,15 @@ class InvoicePdfGenerator {
               pw.Divider(color: PdfColors.black),
               _buildTotalRow('Total', _getSafeDouble(clientData['total']),
                   isBold: true),
+              
+              // Superannuation Display (SCHADS/Employee Invoices)
+              if (_getSafeDouble(clientData['superAmount']) > 0) ...[
+                 pw.SizedBox(height: 5),
+                 _buildTotalRow('Superannuation (${_formatPercentage(_getSafeDouble(clientData['superRate']) > 0 ? _getSafeDouble(clientData['superRate']) : 0.12)}%)', 
+                    _getSafeDouble(clientData['superAmount']), 
+                    isBold: false),
+                 pw.Text('(Paid to Super Fund)', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey700)),
+              ],
             ],
           ),
         ),

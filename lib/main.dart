@@ -19,7 +19,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:carenest/app/services/crashlytics/crashlytics_service.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
@@ -30,6 +30,7 @@ import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:carenest/app/shared/constants/values/strings/app_strings.dart';
 import 'package:carenest/app/shared/widgets/notification_handler_widget.dart';
 import 'package:carenest/config/environment.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 // Views
 import 'package:carenest/app/features/auth/views/login_view.dart';
@@ -37,6 +38,9 @@ import 'package:carenest/app/features/auth/views/signup_view.dart';
 import 'package:carenest/app/features/auth/views/forgot_password_view.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
+import 'package:carenest/app/features/admin/views/employee_invoice_generation_view.dart';
+
+import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/features/home/views/home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
@@ -48,6 +52,12 @@ import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
 import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.dart';
+
+// Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
+import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
+// No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
+// But we need to IMPORT it explicitly here to use it in MaterialApp.
 
 final mediaStorePlugin = MediaStore();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -99,8 +109,9 @@ void main() async {
   // Register the background message handler BEFORE Firebase initialization
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  await _requestPermissions();
+  // await _requestPermissions();
   await _initializeFirebase();
+  await CrashlyticsService.instance.initialize();
   await _initializeAppCheck();
   await _initializeDeepLinks();
   await _initializeTimerService();
@@ -112,18 +123,7 @@ void main() async {
   );
 }
 
-Future<void> _requestPermissions() async {
-  final notificationPermissionStatus = await Permission.notification.request();
-  debugPrint('Notification permission status: $notificationPermissionStatus');
-
-  final storagePermissionStatus = await Permission.storage.request();
-  if (storagePermissionStatus.isDenied) {
-    debugPrint('Storage permission is denied.');
-    await [Permission.storage, Permission.manageExternalStorage].request();
-  }
-
-  MediaStore.appFolder = "MediaStorePlugin";
-}
+// _requestPermissions removed - handled in app flow
 
 Future<void> _initializeFirebase() async {
   debugPrint('\n=== FIREBASE INITIALIZATION STARTED ===');
@@ -189,7 +189,9 @@ Future<void> _initializeFirebase() async {
 
 Future<void> _initializeAppCheck() async {
   await FirebaseAppCheck.instance.activate(
+    webProvider: ReCaptchaV3Provider(dotenv.env['RECAPTCHA_SITE_KEY'] ?? ''),
     androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.appAttest,
   );
 }
 
@@ -248,7 +250,7 @@ class MyApp extends ConsumerWidget {
     // Watches are kept to trigger rebuilds; values aren't directly used here
     ref.watch(sharedPreferencesProvider);
     ref.watch(userRoleProvider);
-    
+
     // Watch theme mode for dynamic switching
     final themeMode = ref.watch(themeModeProvider);
 
@@ -259,6 +261,8 @@ class MyApp extends ConsumerWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         debugShowCheckedModeBanner: false,
         initialRoute: '/splashScreen',
         routes: {
@@ -327,6 +331,7 @@ class MyApp extends ConsumerWidget {
           Routes.addClientDetails: (context) => const AddClientDetails(),
           Routes.addBusinessDetails: (context) => const AddBusinessDetails(),
           Routes.assignC2E: (context) => const AssignC2E(),
+          Routes.onboarding: (context) => const OnboardingWelcomeView(),
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
@@ -404,7 +409,7 @@ class MyApp extends ConsumerWidget {
               organizationId: organizationId,
             );
           },
-          '/shiftDetails': (context) {
+          Routes.shiftDetails: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
@@ -457,6 +462,22 @@ class MyApp extends ConsumerWidget {
               ),
             );
           },
+          Routes.employeeInvoice: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final String adminEmail = arguments['email'] as String? ?? '';
+            final String organizationId =
+                arguments['organizationId'] as String? ?? '';
+            final String? organizationName =
+                arguments['organizationName'] as String?;
+
+            return EmployeeInvoiceGenerationView(
+              adminEmail: adminEmail,
+              organizationId: organizationId,
+              organizationName: organizationName,
+            );
+          },
           Routes.enhancedInvoiceGeneration: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
@@ -476,6 +497,7 @@ class MyApp extends ConsumerWidget {
               selectedEmployeesAndClients: selectedEmployeesAndClients,
             );
           },
+
           Routes.automaticInvoiceGeneration: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
@@ -485,10 +507,15 @@ class MyApp extends ConsumerWidget {
             final String? organizationName =
                 arguments['organizationName'] as String?;
             final String? email = arguments['email'] as String?;
+            final bool autoMode = (arguments['autoMode'] as bool?) ?? false;
+            final String? invoiceType = arguments['invoiceType'] as String?;
+
             return AutomaticInvoiceGenerationView(
               organizationId: organizationId,
               organizationName: organizationName,
               email: email,
+              autoMode: autoMode,
+              invoiceType: invoiceType,
             );
           },
           Routes.invoiceList: (context) {
@@ -515,9 +542,11 @@ class MyApp extends ConsumerWidget {
               organizationId: organizationId,
             );
           },
+          Routes.bankDetails: (context) => const BankDetailsView(),
           Routes.adminRequests: (context) {
             return const AdminRequestsDashboardView();
           },
+          Routes.mileageTracker: (context) => const MileageTrackerView(),
         },
       ),
     );

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:carenest/app/features/training_compliance/models/training_module.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class TrainingModulesView extends ConsumerStatefulWidget {
   const TrainingModulesView({super.key});
 
   @override
-  ConsumerState<TrainingModulesView> createState() => _TrainingModulesViewState();
+  ConsumerState<TrainingModulesView> createState() =>
+      _TrainingModulesViewState();
 }
 
 class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
@@ -27,7 +29,8 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text('Training Modules', style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(AppLocalizations.of(context)!.trainingModulesTitle,
+            style: BauhausDesign.getTextTheme(context).headlineLarge),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -37,18 +40,20 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
         ),
       ),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator(color: BauhausDesign.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: BauhausDesign.primary))
           : state.modules.isEmpty
               ? Center(
                   child: Text(
-                    'No training modules available.',
+                    AppLocalizations.of(context)!.noTrainingModulesMessage,
                     style: BauhausDesign.getTextTheme(context).bodyLarge,
                   ),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: state.modules.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space3),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: BauhausDesign.space3),
                   itemBuilder: (context, index) {
                     final module = state.modules[index];
                     return _buildModuleCard(context, module);
@@ -58,7 +63,8 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
   }
 
   Widget _buildModuleCard(BuildContext context, TrainingModule module) {
-    final isCompleted = module.userProgress?.status == 'Completed';
+    final isCompleted = module.userProgress?.status ==
+        AppLocalizations.of(context)!.completedStatus;
     final progress = module.userProgress?.progressPercentage ?? 0;
 
     return Container(
@@ -77,7 +83,8 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
                 ),
               ),
               if (isCompleted)
-                const Icon(Icons.check_circle, color: BauhausDesign.success, size: 24),
+                const Icon(Icons.check_circle,
+                    color: BauhausDesign.success, size: 24),
             ],
           ),
           const SizedBox(height: BauhausDesign.space2),
@@ -90,7 +97,8 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
           const SizedBox(height: BauhausDesign.space3),
           Row(
             children: [
-              Icon(Icons.timer, size: 16, color: BauhausDesign.textDark.withOpacity(0.7)),
+              Icon(Icons.timer,
+                  size: 16, color: BauhausDesign.textDark.withOpacity(0.7)),
               const SizedBox(width: 4),
               Text(
                 '${module.durationMinutes} min',
@@ -100,7 +108,9 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
               if (module.userProgress != null && !isCompleted)
                 Text(
                   '$progress% Completed',
-                  style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(color: BauhausDesign.primary),
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelLarge
+                      ?.copyWith(color: BauhausDesign.primary),
                 ),
             ],
           ),
@@ -108,11 +118,19 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
           SizedBox(
             width: double.infinity,
             child: BauhausButton(
-              text: isCompleted ? 'Review' : (module.userProgress != null ? 'Continue' : 'Start'),
-              backgroundColor: isCompleted ? BauhausDesign.secondary : BauhausDesign.primary,
+              text: isCompleted
+                  ? AppLocalizations.of(context)!.reviewButton
+                  : (module.userProgress != null
+                      ? AppLocalizations.of(context)!.continueButton
+                      : AppLocalizations.of(context)!.startButton),
+              backgroundColor:
+                  isCompleted ? BauhausDesign.secondary : BauhausDesign.primary,
               onPressed: () {
                 // Navigate to detail/player view
-                Navigator.push(context, MaterialPageRoute(builder: (_) => TrainingDetailView(module: module)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => TrainingDetailView(module: module)));
               },
             ),
           ),
@@ -132,7 +150,8 @@ class TrainingDetailView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(module.title, style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(module.title,
+            style: BauhausDesign.getTextTheme(context).headlineLarge),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -162,30 +181,40 @@ class TrainingDetailView extends ConsumerWidget {
               ),
               child: Center(
                 child: Icon(
-                  module.contentType == 'Video' ? Icons.play_circle_fill : Icons.article,
+                  module.contentType == AppLocalizations.of(context)!.videoType
+                      ? Icons.play_circle_fill
+                      : Icons.article,
                   size: 64,
                   color: BauhausDesign.textDark.withOpacity(0.5),
                 ),
               ),
             ),
-             const SizedBox(height: BauhausDesign.space4),
-             Text('Content: ${module.contentType}', style: BauhausDesign.getTextTheme(context).headlineLarge),
-             if (module.contentText != null) ...[
-               const SizedBox(height: BauhausDesign.space2),
-               Text(module.contentText!, style: BauhausDesign.getTextTheme(context).bodyMedium),
-             ],
-             if (module.contentUrl != null) ...[
-               const SizedBox(height: BauhausDesign.space2),
-               Text('Link: ${module.contentUrl}', style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(color: Colors.blue)),
-             ],
+            const SizedBox(height: BauhausDesign.space4),
+            Text(AppLocalizations.of(context)!.contentLabel(module.contentType),
+                style: BauhausDesign.getTextTheme(context).headlineLarge),
+            if (module.contentText != null) ...[
+              const SizedBox(height: BauhausDesign.space2),
+              Text(module.contentText!,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium),
+            ],
+            if (module.contentUrl != null) ...[
+              const SizedBox(height: BauhausDesign.space2),
+              Text(AppLocalizations.of(context)!.linkLabel(module.contentUrl!),
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodyMedium
+                      ?.copyWith(color: Colors.blue)),
+            ],
 
             const SizedBox(height: BauhausDesign.space6),
             SizedBox(
               width: double.infinity,
               child: BauhausButton(
-                text: 'Mark as Completed',
+                text: AppLocalizations.of(context)!.markAsCompletedButton,
                 onPressed: () {
-                  ref.read(trainingViewModelProvider.notifier).updateProgress(module.id!, 'Completed', 100);
+                  ref.read(trainingViewModelProvider.notifier).updateProgress(
+                      module.id!,
+                      AppLocalizations.of(context)!.completedStatus,
+                      100);
                   Navigator.pop(context);
                 },
               ),
