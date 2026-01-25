@@ -413,3 +413,12 @@ next\ step.md
 .agent/skills/
 .agents/skills/remotion-best-practices/
 .opencode/skills/
+
+# GLOBAL SECURITY IGNORES - DO NOT REMOVE
+# Ensure these sensitive files are never tracked, regardless of location
+**/google-play-service-key.json
+**/firebase-admin-config.js
+**/google-services.json
+**/GoogleService-Info.plist
+**/.env
+**/.env.*
