@@ -409,7 +409,7 @@ next\ step.md
 # Generated PDFs at root
 *.pdf
 
-# Remotion Video Project Folders
-video-promo/
-video-promo-broken/
-video-promo-clean/
+# Agent and skills related
+.agent/skills/
+.agents/skills/remotion-best-practices/
+.opencode/skills/
