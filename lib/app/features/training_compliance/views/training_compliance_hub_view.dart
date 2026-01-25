@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/training_compliance/views/certifications_view.dart';
 import 'package:carenest/app/features/training_compliance/views/training_modules_view.dart';
 import 'package:carenest/app/features/training_compliance/views/compliance_checklist_view.dart';
-
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class TrainingComplianceHubView extends ConsumerWidget {
   const TrainingComplianceHubView({super.key});
@@ -24,30 +24,43 @@ class TrainingComplianceHubView extends ConsumerWidget {
                   children: [
                     _buildNavCard(
                       context,
-                      title: 'Certifications',
-                      subtitle: 'Upload and manage your certifications',
+                      title: AppLocalizations.of(context)!.certificationsTitle,
+                      subtitle:
+                          AppLocalizations.of(context)!.certificationsSubtitle,
                       icon: Icons.card_membership,
                       color: BauhausDesign.primary,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CertificationsView())),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const CertificationsView())),
                     ),
                     const SizedBox(height: BauhausDesign.space4),
                     _buildNavCard(
                       context,
-                      title: 'Training Modules',
-                      subtitle: 'Complete mandatory training',
+                      title: AppLocalizations.of(context)!.trainingModulesTitle,
+                      subtitle:
+                          AppLocalizations.of(context)!.trainingModulesSubtitle,
                       icon: Icons.school,
                       color: BauhausDesign.secondary,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TrainingModulesView())),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const TrainingModulesView())),
                     ),
                     const SizedBox(height: BauhausDesign.space4),
                     _buildNavCard(
                       context,
-                      title: 'Compliance Checklists',
-                      subtitle: 'Daily and weekly compliance checks',
+                      title: AppLocalizations.of(context)!
+                          .complianceChecklistsTitle,
+                      subtitle: AppLocalizations.of(context)!
+                          .complianceChecklistsSubtitle,
                       icon: Icons.checklist,
                       color: BauhausDesign.accent,
                       textColor: BauhausDesign.textDark,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ComplianceChecklistView())),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const ComplianceChecklistView())),
                     ),
                   ],
                 ),
@@ -64,7 +77,8 @@ class TrainingComplianceHubView extends ConsumerWidget {
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: const BoxDecoration(
         color: BauhausDesign.surfaceLight,
-        border: Border(bottom: BorderSide(color: BauhausDesign.neutral, width: 2)),
+        border:
+            Border(bottom: BorderSide(color: BauhausDesign.neutral, width: 2)),
       ),
       child: Row(
         children: [
@@ -74,7 +88,7 @@ class TrainingComplianceHubView extends ConsumerWidget {
           ),
           const SizedBox(width: BauhausDesign.space2),
           Text(
-            'Training & Compliance',
+            AppLocalizations.of(context)!.trainingComplianceTitle,
             style: BauhausDesign.getTextTheme(context).headlineLarge,
           ),
         ],
@@ -109,12 +123,16 @@ class TrainingComplianceHubView extends ConsumerWidget {
             const SizedBox(height: BauhausDesign.space4),
             Text(
               title,
-              style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(color: textColor),
+              style: BauhausDesign.getTextTheme(context)
+                  .displaySmall
+                  ?.copyWith(color: textColor),
             ),
             const SizedBox(height: BauhausDesign.space2),
             Text(
               subtitle,
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(color: textColor.withOpacity(0.9)),
+              style: BauhausDesign.getTextTheme(context)
+                  .bodyMedium
+                  ?.copyWith(color: textColor.withOpacity(0.9)),
             ),
           ],
         ),

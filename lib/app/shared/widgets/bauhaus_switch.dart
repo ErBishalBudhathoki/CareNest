@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausSwitch extends StatefulWidget {
   final bool value;
@@ -67,7 +67,7 @@ class _BauhausSwitchState extends State<BauhausSwitch> with SingleTickerProvider
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: Color.lerp(
-                BauhausDesign.surfaceLight,
+                BauhausDesign.surfaceWhite,
                 BauhausDesign.primary,
                 _animation.value,
               ),
@@ -87,7 +87,7 @@ class _BauhausSwitchState extends State<BauhausSwitch> with SingleTickerProvider
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceLight,
+                      color: BauhausDesign.surfaceWhite,
                       borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                       border: Border.all(
                         color: BauhausDesign.neutral,

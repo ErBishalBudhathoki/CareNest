@@ -1,2 +1,2 @@
-json_key_file("google-play-service-key.json")
+json_key_file("fastlane/google-play-service-key.json")
 # The package name is specified in each lane of the Fastfile to account for different flavors

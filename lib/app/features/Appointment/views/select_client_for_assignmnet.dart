@@ -1,4 +1,5 @@
 import 'package:carenest/app/features/Appointment/views/schedule_assignment.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
@@ -77,6 +78,7 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: _buildAppBar(context),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -121,27 +123,28 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
-      foregroundColor: Colors.white,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: BauhausDesign.surfaceWhite,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Select Client',
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: Colors.white,
-            ),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                  color: BauhausDesign.surfaceWhite,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           Text(
             'for ${widget.userName}',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Colors.white.withOpacity(0.1),
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.surfaceWhite.withOpacity(0.7),
+                ),
           ),
         ],
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios,
-            color: Colors.white),
+        icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.surfaceWhite),
         onPressed: () => Navigator.of(context).pop(),
       ),
     );
@@ -150,35 +153,31 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
   /// Build search bar
   Widget _buildSearchBar() {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(12),
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(
-          color: _isSearching
-              ? const Color(0xFF007AFF)
-              : const Color(0xFFEEEEEE),
+          color: BauhausDesign.neutral,
           width: 1.5,
         ),
+        boxShadow: const [BauhausDesign.shadowSoft],
       ),
       child: TextField(
         controller: _searchController,
         onChanged: _filterClients,
         decoration: InputDecoration(
           hintText: 'Search clients...',
-          hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: const Color(0xFFBDBDBD),
-          ),
+          hintStyle: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                color: BauhausDesign.textMuted,
+              ),
           prefixIcon: Icon(
             Icons.search,
-            color: _isSearching
-                ? const Color(0xFF007AFF)
-                : const Color(0xFFBDBDBD),
+            color: BauhausDesign.textMuted,
           ),
           suffixIcon: _isSearching
               ? IconButton(
-                  icon: Icon(Icons.clear,
-                      color: const Color(0xFFBDBDBD)),
+                  icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
                   onPressed: () {
                     _searchController.clear();
                     _filterClients('');
@@ -187,8 +186,8 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
               : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
+            horizontal: BauhausDesign.space4,
+            vertical: BauhausDesign.space4,
           ),
         ),
       ),
@@ -198,7 +197,7 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
   /// Build clients list
   Widget _buildClientsList(List<Patient> clients) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
       itemCount: clients.length,
       itemBuilder: (context, index) {
         Patient client = clients[index];
@@ -218,23 +217,23 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
           child: Opacity(
             opacity: value,
             child: Container(
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+                color: BauhausDesign.surfaceWhite,
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                boxShadow: const [BauhausDesign.shadowSoft],
                 border: Border.all(
-                  color: const Color(0xFFEEEEEE),
+                  color: BauhausDesign.neutral,
                   width: 1,
                 ),
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   onTap: () => _showConfirmationDialog(client),
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(BauhausDesign.space4),
                     child: Row(
                       children: [
                         // Avatar
@@ -242,20 +241,24 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF007AFF)
-                                .withOpacity(0.1),
+                            color: BauhausDesign.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(25),
+                            border: Border.all(
+                                color: BauhausDesign.primary, width: 1),
                           ),
                           child: Center(
                             child: Text(
                               client.displayName.substring(0, 1).toUpperCase(),
-                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                color: const Color(0xFF007AFF),
-                              ),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .headlineSmall
+                                  ?.copyWith(
+                                    color: BauhausDesign.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: BauhausDesign.space4),
                         // Client info
                         Expanded(
                           child: Column(
@@ -263,17 +266,21 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
                             children: [
                               Text(
                                 client.displayName,
-                                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF212121),
-                                ),
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: BauhausDesign.textDark,
+                                    ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: BauhausDesign.space1),
                               Text(
                                 client.clientEmail,
-                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: const Color(0xFF757575),
-                                ),
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: BauhausDesign.textMuted,
+                                    ),
                               ),
                             ],
                           ),
@@ -281,7 +288,7 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
                         // Arrow icon
                         Icon(
                           Icons.arrow_forward_ios,
-                          color: const Color(0xFFBDBDBD),
+                          color: BauhausDesign.neutral,
                           size: 16,
                         ),
                       ],
@@ -333,16 +340,15 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(
-            valueColor:
-                AlwaysStoppedAnimation<Color>(Color(0xFF007AFF)),
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           Text(
             'Loading clients...',
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              color: const Color(0xFF757575),
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
           ),
         ],
       ),
@@ -355,24 +361,24 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline,
             size: 64,
-            color: Color(0xFFFF3B30),
+            color: BauhausDesign.error,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           Text(
             'Error loading clients',
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: const Color(0xFF212121),
-            ),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: BauhausDesign.space2),
           Text(
             error,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: const Color(0xFF757575),
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -389,21 +395,21 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
           Icon(
             Icons.people_outline,
             size: 64,
-            color: const Color(0xFFBDBDBD),
+            color: BauhausDesign.neutral,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           Text(
             'No clients found',
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: const Color(0xFF212121),
-            ),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: BauhausDesign.space2),
           Text(
             'There are no clients available to assign.',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: const Color(0xFF757575),
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
           ),
         ],
       ),
@@ -419,32 +425,24 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
           Icon(
             Icons.search_off,
             size: 64,
-            color: const Color(0xFFBDBDBD),
+            color: BauhausDesign.neutral,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           Text(
             'No results found',
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: const Color(0xFF212121),
-            ),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: BauhausDesign.space2),
           Text(
             'Try adjusting your search terms.',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: const Color(0xFF757575),
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
           ),
         ],
       ),
     );
   }
-
-  // ApiMethod apiMethod = new ApiMethod();
-  // Future<dynamic> _AssignClientToUser(
-  //     String userEmail, String clientEmail) async {
-  //   var ins = await apiMethod.assignClientToUser(userEmail, clientEmail);
-  //   debugPrint("Response: " + ins.toString());
-  //   return ins;
-  // }
 }

@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/shared/widgets/button_widget.dart';
 
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'add_update_invoice_email_view.dart';
 
 class InvoicingEmailView extends StatefulWidget {
@@ -56,22 +56,46 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
     debugPrint('InvoicingEmailView key: ${widget.genKey}');
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: BauhausDesign.backgroundLight,
         elevation: 0,
-        foregroundColor: Theme.of(context).colorScheme.onSurface,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: const Color(0xFF007AFF),
-            size: 20,
+        foregroundColor: BauhausDesign.textDark,
+        leading: Center(
+          child: Container(
+            margin: const EdgeInsets.only(left: BauhausDesign.space2),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceLight,
+              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              boxShadow: const [BauhausDesign.shadowHardXs],
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              icon: const Icon(
+                Icons.arrow_back_ios_new,
+                color: BauhausDesign.textDark,
+                size: 18,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
-          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Invoicing Email Details',
-          style: Theme.of(context).textTheme.headlineMedium,
+          'INVOICING EMAIL',
+          style: BauhausDesign.getTextTheme(context).headlineLarge!.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: BauhausDesign.neutral,
+            height: 2.0, // Bold border at bottom of AppBar
+          ),
+        ),
       ),
+      backgroundColor: BauhausDesign.backgroundLight,
       body: Container(
         width: double.infinity,
         padding: EdgeInsets.all(24.0),
@@ -133,30 +157,20 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget _buildLoadingState() {
     return Center(
       child: Container(
-        padding: EdgeInsets.all(32.0),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(8.0), // iOS standard
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF007AFF).withOpacity(0.1),
-              blurRadius: 8.0,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        padding: const EdgeInsets.all(BauhausDesign.space8),
+        decoration: BauhausDesign.cardDecoration,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor:
-                  AlwaysStoppedAnimation<Color>(const Color(0xFF007AFF)),
-              strokeWidth: 3,
+                  AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+              strokeWidth: 4,
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: BauhausDesign.space4),
             Text(
-              'Loading email details...',
-              style: Theme.of(context).textTheme.bodyMedium,
+              'LOADING DETAILS...',
+              style: BauhausDesign.getTextTheme(context).labelLarge,
             ),
           ],
         ),
@@ -167,27 +181,17 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget _buildErrorState(String errorMessage, String organisationName) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(24.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF667EEA).withOpacity(0.1),
-              blurRadius: 8.0,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        padding: const EdgeInsets.all(BauhausDesign.space6),
+        decoration: BauhausDesign.cardDecoration,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius:
-                    BorderRadius.circular(999.0),
+                color: BauhausDesign.error,
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
               ),
               child: Image.asset(
                 'assets/icons/3D Icons/3dicons-flash-dynamic-color.png',
@@ -195,20 +199,20 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                 height: 48,
               ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: BauhausDesign.space4),
             Text(
-              'Error',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
-                color: Colors.red,
+              'ERROR',
+              style: BauhausDesign.getTextTheme(context).headlineLarge!.copyWith(
+                color: BauhausDesign.error,
               ),
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: BauhausDesign.space2),
             Text(
-              errorMessage,
-              style: const TextStyle(fontSize: 14),
+              errorMessage.toUpperCase(),
+              style: BauhausDesign.getTextTheme(context).bodyMedium,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: BauhausDesign.space6),
             _buildModernAddButton(organisationName),
           ],
         ),
@@ -219,27 +223,17 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget _buildNoDataState(String message, String organisationName) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(24.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF667EEA).withOpacity(0.1),
-              blurRadius: 8.0,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        padding: const EdgeInsets.all(BauhausDesign.space6),
+        decoration: BauhausDesign.cardDecoration,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                borderRadius:
-                    BorderRadius.circular(999.0),
+                color: BauhausDesign.backgroundLight,
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
               ),
               child: Image.asset(
                 'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
@@ -247,18 +241,18 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                 height: 48,
               ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: BauhausDesign.space4),
             Text(
-              'No Email Configuration',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              'NO CONFIGURATION',
+              style: BauhausDesign.getTextTheme(context).headlineLarge,
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: BauhausDesign.space2),
             Text(
               message,
-              style: const TextStyle(fontSize: 14),
+              style: BauhausDesign.getTextTheme(context).bodyMedium,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: BauhausDesign.space6),
             _buildModernAddButton(organisationName),
           ],
         ),
@@ -269,8 +263,8 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   Widget _buildAddInvoicingEmailButton(String organisationName) {
     return ButtonWidget(
       buttonText: 'Add Invoicing Email Detail',
-      buttonColor: AppColors.colorPrimary,
-      textColor: Colors.white,
+      buttonColor: BauhausDesign.secondary,
+      textColor: BauhausDesign.surfaceLight,
       onPressed: () {
         Navigator.push(
             context,
@@ -282,48 +276,21 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
   }
 
   Widget _buildModernAddButton(String organisationName) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddUpdateInvoicingEmailView(
-                widget.email,
-                widget.genKey,
-                organisationName,
-              ),
+    return BauhausButton(
+      text: 'ADD EMAIL DETAILS',
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddUpdateInvoicingEmailView(
+              widget.email,
+              widget.genKey,
+              organisationName,
             ),
-          );
-        },
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Image.asset(
-            //   'assets/icons/3D Icons/3dicons-pin-dynamic-color.png',
-            //   width: 20,
-            //   height: 20,
-            // ),
-            const SizedBox(width: 8.0),
-            Text(
-              'Add Invoicing Email Detail',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
+        );
+      },
+      // icon: Icons.add, // Optional if we want an icon
     );
   }
 
@@ -334,28 +301,16 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
         children: [
           // Header Section
           Container(
-            padding: const EdgeInsets.all(24.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF667EEA).withOpacity(0.1),
-                  blurRadius: 8.0,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
+            padding: const EdgeInsets.all(BauhausDesign.space6),
+            decoration: BauhausDesign.cardDecoration,
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFEE2E2).withValues(
-                        alpha:
-                            0.18), // Soft pink surface color like admin dashboard
-                    borderRadius:
-                        BorderRadius.circular(12.0),
+                    color: BauhausDesign.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+                    border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                   ),
                   child: Image.asset(
                     'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
@@ -363,20 +318,23 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                     height: 36,
                   ),
                 ),
-                const SizedBox(width: 16.0),
+                const SizedBox(width: BauhausDesign.space4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Invoicing Email Configuration',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        'CONFIGURATION',
+                        style: BauhausDesign.getTextTheme(context).labelLarge!.copyWith(
+                          color: BauhausDesign.neutral,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      const SizedBox(height: 4.0),
+                      const SizedBox(height: BauhausDesign.space1),
                       Text(
-                        'Your email settings are configured and ready',
-                        style: const TextStyle(fontSize: 12).copyWith(
-                          color: const Color(0xFF6B7280),
+                        'Email settings ready',
+                        style: BauhausDesign.getTextTheme(context).bodyMedium!.copyWith(
+                          color: BauhausDesign.textDark,
                         ),
                       ),
                     ],
@@ -384,94 +342,76 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 4.0,
+                    horizontal: BauhausDesign.space3,
+                    vertical: BauhausDesign.space1,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF764BA2),
-                    borderRadius:
-                        BorderRadius.circular(999.0),
+                    color: BauhausDesign.success, // Use success green for Active
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    boxShadow: const [BauhausDesign.shadowHardXs],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Image.asset(
-                      //   'assets/icons/3D Icons/3dicons-shield-dynamic-color.png',
-                      //   width: 16,
-                      //   height: 16,
-                      // ),
-                      const SizedBox(width: 4.0),
-                      Text(
-                        'Active',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'ACTIVE',
+                    style: BauhausDesign.getTextTheme(context).labelLarge!.copyWith(
+                      color: BauhausDesign.surfaceLight,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24.0),
+          const SizedBox(height: BauhausDesign.space6),
 
           // Email Details Section
           Container(
-            padding: const EdgeInsets.all(24.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF667EEA).withOpacity(0.1),
-                  blurRadius: 8.0,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
+            padding: const EdgeInsets.all(BauhausDesign.space6),
+            decoration: BauhausDesign.cardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Email Details',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  'DETAILS',
+                  style: BauhausDesign.getTextTheme(context).headlineLarge!.copyWith(
+                    color: BauhausDesign.textDark,
+                  ),
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: BauhausDesign.space4),
 
                 // Business Name
                 _buildDetailRow(
                   iconWidget: Image.asset(
                     'assets/icons/3D Icons/3dicons-setting-dynamic-color.png',
-                    width: 20,
-                    height: 20,
+                    width: 24,
+                    height: 24,
                   ),
-                  label: 'Business Name',
+                  label: 'BUSINESS NAME',
                   value:
                       data['data']?['invoicingBusinessName'] ?? 'No name found',
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: BauhausDesign.space4),
 
                 // Email Address
                 _buildDetailRow(
                   iconWidget: Image.asset(
                     'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
-                    width: 20,
-                    height: 20,
+                    width: 24,
+                    height: 24,
                   ),
-                  label: 'Email Address',
+                  label: 'EMAIL ADDRESS',
                   value: data['email'] ?? 'No email found',
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: BauhausDesign.space4),
 
                 // Password (masked)
                 _buildDetailRow(
                   iconWidget: Image.asset(
                     'assets/icons/3D Icons/3dicons-lock-dynamic-color.png',
-                    width: 20,
-                    height: 20,
+                    width: 24,
+                    height: 24,
                   ),
-                  label: 'Password',
+                  label: 'PASSWORD',
                   value: _maskPassword(
                       initialData['password'] ?? 'No password found'),
                   isPassword: true,
@@ -479,7 +419,7 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
               ],
             ),
           ),
-          const SizedBox(height: 24.0),
+          const SizedBox(height: BauhausDesign.space6),
 
           // Action Button
           _buildModernAddButton(
@@ -497,57 +437,58 @@ class _InvoicingEmailViewState extends State<InvoicingEmailView> {
     bool isPassword = false,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA),
-        borderRadius: BorderRadius.circular(8.0),
+        color: BauhausDesign.backgroundLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm), // Sharper corners
         border: Border.all(
-          color: const Color(0xFFE0E0E0),
-          width: 1,
+          color: BauhausDesign.neutral,
+          width: 1.5, // Thicker border
         ),
+        boxShadow: const [BauhausDesign.shadowHardXs], // Subtle depth
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4.0),
+              color: BauhausDesign.surfaceLight,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusXs), // Very sharp
+              border: Border.all(color: BauhausDesign.textDark, width: 1.5),
             ),
             child: iconWidget ??
                 Icon(
                   icon ?? Icons.help,
-                  color: const Color(0xFF667EEA),
+                  color: BauhausDesign.secondary,
                   size: 20,
                 ),
           ),
-          const SizedBox(width: 12.0),
+          const SizedBox(width: BauhausDesign.space4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500).copyWith(
-                    color: const Color(0xFF6B7280),
-                  ),
+                  label.toUpperCase(),
+                  style:
+                      BauhausDesign.getTextTheme(context).labelLarge!.copyWith(
+                            color: BauhausDesign.textDark, // Darker text
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                 ),
-                const SizedBox(height: 4.0),
+                const SizedBox(height: BauhausDesign.space1),
                 Text(
                   value,
-                  style: const TextStyle(fontSize: 14).copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: BauhausDesign.getTextTheme(context).bodyLarge!.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),
           ),
-          // if (isPassword)
-          //   Image.asset(
-          //     'assets/icons/3D Icons/3dicons-camera-dynamic-color.png',
-          //     width: 20,
-          //     height: 20,
-          //   ),
         ],
       ),
     );

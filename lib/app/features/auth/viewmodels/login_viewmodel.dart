@@ -13,6 +13,12 @@ import 'package:device_info_plus/device_info_plus.dart';
 
 import 'dart:math' as math;
 
+import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
+
+import 'package:carenest/app/features/auth/views/change_password_view.dart';
+
+
 class LoginViewModel extends ChangeNotifier {
   final LoginModel model = LoginModel();
   final ApiMethod _apiMethod;
@@ -297,20 +303,36 @@ class LoginViewModel extends ChangeNotifier {
           context,
           title: 'Welcome Back!',
           message: 'Login successful. Redirecting to your dashboard...',
-          onContinue: () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              Routes.bottomNavBar,
-              (Route<dynamic> route) => false,
-              arguments: {
-                'email': user.email,
-                'role': user.role,
-                'organizationId': user.organizationId,
-                'organizationName': organizationName,
-                'organizationCode': organizationCode,
-                'userEmail': user.email,
-              },
-            );
+          onContinue: () async {
+            // Check for forced password reset
+            if (response['user']['passwordResetRequired'] == true) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ChangePasswordView()),
+              );
+              return;
+            }
+
+            if (user.role == UserRole.client) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ClientDashboardView()),
+              );
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                Routes.bottomNavBar,
+                (Route<dynamic> route) => false,
+                arguments: {
+                  'email': user.email,
+                  'role': user.role,
+                  'organizationId': user.organizationId,
+                  'organizationName': organizationName,
+                  'organizationCode': organizationCode,
+                  'userEmail': user.email,
+                },
+              );
+            }
           },
         );
       }

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Animated header widget for the shift assignment success screen
 class AnimatedSuccessHeader extends StatefulWidget {
@@ -160,15 +161,15 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
       ]),
       builder: (context, child) {
         return Container(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(BauhausDesign.space6),
           child: Column(
             children: [
               _buildSuccessIcon(),
-              const SizedBox(height: 24.0),
+              const SizedBox(height: BauhausDesign.space6),
               _buildTitle(),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: BauhausDesign.space4),
               _buildDetails(),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: BauhausDesign.space2),
               _buildSummary(),
             ],
           ),
@@ -189,7 +190,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
             height: 120.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.colorSuccess.withOpacity(0.1),
+              color: BauhausDesign.success.withOpacity(0.1),
             ),
           ),
         ),
@@ -201,28 +202,15 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
             child: Container(
               width: 80.0,
               height: 80.0,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.colorSuccess,
-                    Color(0xFF059669),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.colorSuccess,
-                    blurRadius: 20.0,
-                    offset: Offset(0, 8.0),
-                    spreadRadius: -5.0,
-                  ),
-                ],
+                color: BauhausDesign.success,
+                border: Border.all(color: BauhausDesign.neutral, width: 3),
+                boxShadow: const [BauhausDesign.shadowHard],
               ),
               child: const Icon(
                 Icons.check_rounded,
-                color: AppColors.colorWhite,
+                color: BauhausDesign.surfaceWhite,
                 size: 40.0,
               ),
             ),
@@ -237,11 +225,11 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
   List<Widget> _buildConfettiParticles() {
     final particles = <Widget>[];
     const colors = [
-      AppColors.colorPrimary,
-      AppColors.colorSecondary,
-      AppColors.colorAccent,
-      AppColors.colorSuccess,
-      AppColors.colorInfo,
+      BauhausDesign.primary,
+      BauhausDesign.secondary,
+      BauhausDesign.accent,
+      BauhausDesign.success,
+      BauhausDesign.info,
     ];
 
     for (int i = 0; i < 8; i++) {
@@ -280,14 +268,12 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
       offset: Offset(0, _titleSlideAnimation.value),
       child: Opacity(
         opacity: _titleFadeAnimation.value.clamp(0.0, 1.0),
-        child: const Text(
-          'Assignment Successful!',
-          style: TextStyle(
-            fontSize: 28.0,
-            fontWeight: FontWeight.bold,
-            color: AppColors.colorPrimary,
-            letterSpacing: -0.5,
-          ),
+        child: Text(
+          AppLocalizations.of(context)!.assignmentSuccessful,
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.primary,
+              ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -303,16 +289,16 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
           children: [
             _buildDetailRow(
               icon: Icons.person_outline,
-              label: 'Employee',
+              label: AppLocalizations.of(context)!.employee,
               value: widget.employeeName,
-              color: AppColors.colorBlue,
+              color: BauhausDesign.info,
             ),
-            const SizedBox(height: 12.0),
+            const SizedBox(height: BauhausDesign.space3),
             _buildDetailRow(
               icon: Icons.business_outlined,
-              label: 'Client',
+              label: AppLocalizations.of(context)!.client,
               value: widget.clientName,
-              color: AppColors.colorSecondary,
+              color: BauhausDesign.secondary,
             ),
           ],
         ),
@@ -327,22 +313,24 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space4, vertical: BauhausDesign.space3),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(
-          color: color.withOpacity(0.1),
-          width: 1.0,
+          color: color,
+          width: 1.5,
         ),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: color),
             ),
             child: Icon(
               icon,
@@ -350,27 +338,27 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
               size: 20.0,
             ),
           ),
-          const SizedBox(width: 12.0),
+          const SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    color: AppColors.colorGrey600,
-                    fontSize: 13.0,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontWeight: FontWeight.w500,
+                          ),
                 ),
-                const SizedBox(height: 2.0),
+                const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
-                    color: AppColors.colorFontPrimary,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w600,
+                          ),
                 ),
               ],
             ),
@@ -386,18 +374,19 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
       child: Opacity(
         opacity: _detailsFadeAnimation.value.clamp(0.0, 1.0),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4, vertical: BauhausDesign.space2),
           decoration: BoxDecoration(
-            color: AppColors.colorSuccess.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20.0),
+            color: BauhausDesign.success.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+            border: Border.all(color: BauhausDesign.success),
           ),
           child: Text(
             widget.assignmentSummary,
-            style: const TextStyle(
-              color: AppColors.colorSuccess,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w600,
-            ),
+            style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                  color: BauhausDesign.success,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
       ),

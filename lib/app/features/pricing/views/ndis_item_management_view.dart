@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/modern_pricing_design_system.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class NdisItemManagementView extends ConsumerStatefulWidget {
@@ -35,12 +37,12 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   bool _showOnboarding = true;
   final Set<String> _selectedItemIds = {};
 
-  final List<String> _categories = [
-    'Core Supports',
-    'Capacity Building',
-    'Capital Supports',
-    'Support Coordination',
-  ];
+  List<String> _getCategories(BuildContext context) => [
+        AppLocalizations.of(context)!.coreSupport,
+        AppLocalizations.of(context)!.capacityBuilding,
+        AppLocalizations.of(context)!.capitalSupport,
+        'Support Coordination',
+      ];
 
   final List<String> _units = [
     'Hour',
@@ -149,7 +151,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ModernPricingDesign.surfacePrimary,
+      backgroundColor: BauhausDesign.backgroundLight,
       body: CustomScrollView(
         slivers: [
           _buildModernAppBar(),
@@ -167,26 +169,16 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       expandedHeight: 120,
       floating: false,
       pinned: true,
-      backgroundColor: ModernPricingDesign.primaryColor,
+      backgroundColor: BauhausDesign.primary,
       flexibleSpace: FlexibleSpaceBar(
-        title: const Text(
-          'NDIS Item Management',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Text(
+          AppLocalizations.of(context)!.ndisItemManagementTitle,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                color: BauhausDesign.surfaceWhite,
+              ),
         ),
         background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                ModernPricingDesign.primaryColor,
-                ModernPricingDesign.primaryColor.withValues(alpha: 0.8),
-              ],
-            ),
-          ),
+          color: BauhausDesign.primary,
         ),
       ),
       leading: IconButton(
@@ -197,13 +189,13 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
         IconButton(
           icon: const Icon(Icons.download, color: Colors.white),
           onPressed: () {
-            _showSnackBar('Export functionality coming soon...');
+            _showSnackBar(AppLocalizations.of(context)!.exportComingSoon);
           },
         ),
         IconButton(
-          icon: const Icon(Icons.upload, color: Colors.white),
+          icon: const Icon(Icons.upload, color: BauhausDesign.surfaceWhite),
           onPressed: () {
-            _showSnackBar('Import functionality coming soon...');
+            _showSnackBar(AppLocalizations.of(context)!.importComingSoon);
           },
         ),
       ],
@@ -225,7 +217,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                 height: 400,
                 child: Center(
                   child: CircularProgressIndicator(
-                    color: ModernPricingDesign.primaryColor,
+                    color: BauhausDesign.primary,
                     semanticsLabel: 'Loading NDIS items',
                   ),
                 ),
@@ -238,12 +230,13 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.inbox,
-                          size: 48, color: ModernPricingDesign.textSecondary),
+                          size: 48, color: BauhausDesign.textMuted),
                       const SizedBox(height: 12),
                       Text(
-                        'No NDIS items found.',
-                        style:
-                            TextStyle(color: ModernPricingDesign.textSecondary),
+                        AppLocalizations.of(context)!.noNdisItemsFound,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),
@@ -253,15 +246,19 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
               _buildItemsList(),
             if (_selectedItemIds.isNotEmpty)
               Container(
-                color: ModernPricingDesign.surfaceSecondary,
+                color: BauhausDesign.surfaceOffWhite,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
-                    Text('${_selectedItemIds.length} selected'),
+                    Text(
+                        AppLocalizations.of(context)!
+                            .selectedCount(_selectedItemIds.length.toString()),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium),
                     const Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
+                      icon:
+                          const Icon(Icons.delete, color: BauhausDesign.error),
                       tooltip: 'Delete selected',
                       onPressed: _deleteSelectedItems,
                     ),
@@ -275,33 +272,23 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
             top: 20,
             left: 24,
             right: 24,
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: ModernPricingDesign.surfaceCard,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: ModernPricingDesign.cardShadow,
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline,
-                        color: ModernPricingDesign.primaryColor),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'Tip: Use the checkboxes to select multiple items for bulk actions.',
-                        style: TextStyle(fontSize: 14),
-                      ),
+            child: BauhausCard(
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: BauhausDesign.primary),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.tipBulkActions,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      tooltip: 'Dismiss',
-                      onPressed: () => setState(() => _showOnboarding = false),
-                    ),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    tooltip: AppLocalizations.of(context)!.dismissAction,
+                    onPressed: () => setState(() => _showOnboarding = false),
+                  ),
+                ],
               ),
             ),
           ),
@@ -315,80 +302,37 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       child: Column(
         children: [
           // Search bar
-          Container(
-            decoration: BoxDecoration(
-              color: ModernPricingDesign.surfaceCard,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: ModernPricingDesign.cardShadow,
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Search by item name or code...',
-                hintStyle: TextStyle(color: ModernPricingDesign.textSecondary),
-                prefixIcon: Icon(Icons.search,
-                    color: ModernPricingDesign.textSecondary),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: Icon(Icons.clear,
-                            color: ModernPricingDesign.textSecondary),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchQuery = '';
-                          });
-                        },
-                      )
-                    : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-              ),
-            ),
+          BauhausSearchBar(
+            controller: _searchController,
+            hintText: AppLocalizations.of(context)!.searchItemsHint,
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            onClear: () {
+              setState(() {
+                _searchQuery = '';
+              });
+            },
           ),
           const SizedBox(height: 16),
           // Filter chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: _categories.map((category) {
+              children: _getCategories(context).map((category) {
                 final isSelected = _selectedCategory == category;
                 return Container(
                   margin: const EdgeInsets.only(right: 12),
-                  child: FilterChip(
-                    label: Text(category),
-                    selected: isSelected,
-                    onSelected: (selected) {
+                  child: BauhausChip(
+                    label: category,
+                    isSelected: isSelected,
+                    onTap: () {
                       setState(() {
-                        _selectedCategory = selected ? category : '';
+                        _selectedCategory = isSelected ? '' : category;
                       });
                     },
-                    backgroundColor: ModernPricingDesign.surfaceCard,
-                    selectedColor:
-                        ModernPricingDesign.primaryColor.withValues(alpha: 0.2),
-                    checkmarkColor: ModernPricingDesign.primaryColor,
-                    labelStyle: TextStyle(
-                      color: isSelected
-                          ? ModernPricingDesign.primaryColor
-                          : ModernPricingDesign.textSecondary,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w500,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: isSelected
-                            ? ModernPricingDesign.primaryColor
-                            : ModernPricingDesign.borderColor,
-                      ),
-                    ),
                   ),
                 );
               }).toList(),
@@ -409,24 +353,20 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: ModernPricingDesign.surfaceCard,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: ModernPricingDesign.cardShadow,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem('Total', _ndisItems.length.toString(),
-              ModernPricingDesign.accentBlue),
-          _buildStatItem('Active', activeItems.toString(),
-              ModernPricingDesign.accentGreen),
-          _buildStatItem('Inactive', inactiveItems.toString(),
-              ModernPricingDesign.accentRed),
-          _buildStatItem('Filtered', filteredCount.toString(),
-              ModernPricingDesign.primaryColor),
-        ],
+      child: BauhausCard(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildStatItem(AppLocalizations.of(context)!.statTotal,
+                _ndisItems.length.toString(), BauhausDesign.info),
+            _buildStatItem(AppLocalizations.of(context)!.statActive,
+                activeItems.toString(), BauhausDesign.success),
+            _buildStatItem(AppLocalizations.of(context)!.statInactive,
+                inactiveItems.toString(), BauhausDesign.error),
+            _buildStatItem(AppLocalizations.of(context)!.statFiltered,
+                filteredCount.toString(), BauhausDesign.primary),
+          ],
+        ),
       ),
     )
         .animate(delay: 300.ms)
@@ -439,20 +379,17 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       children: [
         Text(
           value,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                color: color,
+              ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: ModernPricingDesign.textSecondary,
-            fontWeight: FontWeight.w500,
-          ),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: BauhausDesign.textMuted,
+                fontSize: 12,
+              ),
         ),
       ],
     );
@@ -461,15 +398,9 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   Widget _buildItemsList() {
     return Container(
       margin: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: ModernPricingDesign.surfaceCard,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: ModernPricingDesign.cardShadow,
-      ),
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
         itemCount: _filteredItems.length,
         itemBuilder: (context, index) {
           final item = _filteredItems[index];
@@ -486,7 +417,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
               }),
               child: Row(
                 children: [
-                  Checkbox(
+                  BauhausCheckbox(
                     value: isSelected,
                     onChanged: (checked) => setState(() {
                       if (checked == true) {
@@ -495,7 +426,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                         _selectedItemIds.remove(item['id']);
                       }
                     }),
-                    activeColor: ModernPricingDesign.primaryColor,
+                    activeColor: BauhausDesign.primary,
                   ),
                   Expanded(child: _buildItemCard(item, index)),
                 ],
@@ -513,186 +444,182 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   Widget _buildItemCard(Map<String, dynamic> item, int index) {
     final isActive = item['isActive'] as bool;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isActive
-            ? ModernPricingDesign.surfaceCard
-            : ModernPricingDesign.surfaceSecondary,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isActive
-              ? ModernPricingDesign.primaryColor.withValues(alpha: 0.2)
-              : ModernPricingDesign.borderColor,
-          width: 1,
-        ),
-        boxShadow: isActive ? ModernPricingDesign.cardShadow : null,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: ModernPricingDesign.primaryColor
-                                .withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            item['code'],
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: ModernPricingDesign.primaryColor,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: BauhausCard(
+        backgroundColor: isActive
+            ? BauhausDesign.surfaceWhite
+            : BauhausDesign.surfaceOffWhite,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: BauhausDesign.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              item['code'],
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: BauhausDesign.primary,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: isActive
-                                ? ModernPricingDesign.accentGreen
-                                    .withValues(alpha: 0.1)
-                                : ModernPricingDesign.textSecondary
-                                    .withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            isActive ? 'Active' : 'Inactive',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
                               color: isActive
-                                  ? ModernPricingDesign.accentGreen
-                                  : ModernPricingDesign.textSecondary,
+                                  ? BauhausDesign.success.withOpacity(0.1)
+                                  : BauhausDesign.textMuted.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              isActive
+                                  ? AppLocalizations.of(context)!.statActive
+                                  : AppLocalizations.of(context)!.statInactive,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: isActive
+                                    ? BauhausDesign.success
+                                    : BauhausDesign.textMuted,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      item['name'],
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: isActive
-                            ? ModernPricingDesign.textPrimary
-                            : ModernPricingDesign.textSecondary,
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item['description'],
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: ModernPricingDesign.textSecondary,
-                        height: 1.3,
+                      const SizedBox(height: 8),
+                      Text(
+                        item['name'],
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              color: isActive
+                                  ? BauhausDesign.textDark
+                                  : BauhausDesign.textMuted,
+                            ),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        item['description'],
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                              fontSize: 13,
+                            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '\$${item['unitPrice'].toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isActive
-                          ? ModernPricingDesign.accentGreen
-                          : ModernPricingDesign.textSecondary,
-                    ),
-                  ),
-                  Text(
-                    'per ${item['unit']}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: ModernPricingDesign.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'Category: ${item['category']}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: ModernPricingDesign.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(
-                width: 90,
-                child: Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 2,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    GestureDetector(
-                      onTap: () => _editItem(item),
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        alignment: Alignment.center,
-                        child: Icon(Icons.edit,
-                            size: 14, color: ModernPricingDesign.primaryColor),
-                      ),
+                    Text(
+                      '\$${item['unitPrice'].toStringAsFixed(2)}',
+                      style: BauhausDesign.getTextTheme(context)
+                          .headlineMedium
+                          ?.copyWith(
+                            color: isActive
+                                ? BauhausDesign.success
+                                : BauhausDesign.textMuted,
+                          ),
                     ),
-                    GestureDetector(
-                      onTap: () => _toggleItemStatus(item),
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        alignment: Alignment.center,
-                        child: Icon(
-                          isActive ? Icons.visibility_off : Icons.visibility,
-                          size: 14,
-                          color: isActive
-                              ? ModernPricingDesign.accentOrange
-                              : ModernPricingDesign.accentGreen,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => _deleteItem(item),
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        alignment: Alignment.center,
-                        child: Icon(Icons.delete,
-                            size: 14, color: ModernPricingDesign.accentRed),
-                      ),
+                    Text(
+                      'per ${item['unit']}',
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontSize: 12,
+                          ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!
+                        .categoryValueLabel(item['category'].toString()),
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textMuted,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                SizedBox(
+                  width: 90,
+                  child: Wrap(
+                    alignment: WrapAlignment.end,
+                    spacing: 2,
+                    children: [
+                      GestureDetector(
+                        onTap: () => _editItem(item),
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          alignment: Alignment.center,
+                          child: Icon(Icons.edit,
+                              size: 14, color: BauhausDesign.primary),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => _toggleItemStatus(item),
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          alignment: Alignment.center,
+                          child: Icon(
+                            isActive ? Icons.visibility_off : Icons.visibility,
+                            size: 14,
+                            color: isActive
+                                ? BauhausDesign.accent
+                                : BauhausDesign.success,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => _deleteItem(item),
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          alignment: Alignment.center,
+                          child: Icon(Icons.delete,
+                              size: 14, color: BauhausDesign.error),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     )
         .animate(delay: (index * 100).ms)
@@ -704,11 +631,12 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     return FloatingActionButton.extended(
       heroTag: "fab_add_item",
       onPressed: () => _addNewItem(),
-      backgroundColor: ModernPricingDesign.primaryColor,
+      backgroundColor: BauhausDesign.primary,
       icon: const Icon(Icons.add, color: Colors.white),
-      label: const Text(
-        'Add Item',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      label: Text(
+        AppLocalizations.of(context)!.addItemAction,
+        style: const TextStyle(
+            color: BauhausDesign.surfaceWhite, fontWeight: FontWeight.w600),
       ),
     )
         .animate(delay: 600.ms)
@@ -748,12 +676,16 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: BauhausDesign.surfaceWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          ),
           title: Text(
-            isEdit ? 'Edit NDIS Item' : 'Add New NDIS Item',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
+            isEdit
+                ? AppLocalizations.of(context)!.editNdisItemTitle
+                : AppLocalizations.of(context)!.addNewNdisItemTitle,
+            style: BauhausDesign.getTextTheme(context).headlineMedium,
           ),
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
@@ -763,20 +695,20 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                 children: [
                   _buildTextField(
                     controller: _itemCodeController,
-                    label: 'Item Code',
-                    hint: 'e.g., 01_001_0103_1_1',
+                    label: AppLocalizations.of(context)!.itemCodeLabel,
+                    hint: AppLocalizations.of(context)!.itemCodeHint,
                   ),
                   const SizedBox(height: 16),
                   _buildTextField(
                     controller: _itemNameController,
-                    label: 'Item Name',
-                    hint: 'e.g., Assistance with personal activities',
+                    label: AppLocalizations.of(context)!.itemNameLabel,
+                    hint: AppLocalizations.of(context)!.itemNameHint,
                   ),
                   const SizedBox(height: 16),
                   _buildTextField(
                     controller: _descriptionController,
-                    label: 'Description',
-                    hint: 'Brief description of the service',
+                    label: AppLocalizations.of(context)!.detailsLabel,
+                    hint: AppLocalizations.of(context)!.itemDescriptionHint,
                     maxLines: 3,
                   ),
                   const SizedBox(height: 16),
@@ -785,8 +717,8 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                       Expanded(
                         child: _buildDropdown(
                           value: _selectedCategory,
-                          label: 'Category',
-                          items: _categories,
+                          label: AppLocalizations.of(context)!.categoryLabel,
+                          items: _getCategories(context),
                           onChanged: (value) {
                             setDialogState(() {
                               _selectedCategory = value!;
@@ -798,7 +730,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                       Expanded(
                         child: _buildDropdown(
                           value: _selectedUnit,
-                          label: 'Unit',
+                          label: AppLocalizations.of(context)!.unitLabel,
                           items: _units,
                           onChanged: (value) {
                             setDialogState(() {
@@ -812,25 +744,25 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                   const SizedBox(height: 16),
                   _buildTextField(
                     controller: _unitPriceController,
-                    label: 'Unit Price (\$)',
-                    hint: '0.00',
+                    label: AppLocalizations.of(context)!.unitPriceLabel,
+                    hint: AppLocalizations.of(context)!.unitPriceHint,
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Checkbox(
+                      BauhausCheckbox(
                         value: _isActive,
                         onChanged: (value) {
                           setDialogState(() {
                             _isActive = value!;
                           });
                         },
-                        activeColor: const Color(0xFF6C5CE7),
+                        activeColor: BauhausDesign.primary,
                       ),
-                      const Text(
-                        'Active',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.statActive,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -841,14 +773,16 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
             ),
           ),
           actions: [
-            TextButton(
+            BauhausActionButton(
+              text: AppLocalizations.of(context)!.cancelAction,
+              variant: BauhausActionVariant.ghost,
               onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.grey),
-              ),
             ),
-            ElevatedButton(
+            BauhausActionButton(
+              text: isEdit
+                  ? AppLocalizations.of(context)!.updateAction
+                  : AppLocalizations.of(context)!.createAction,
+              variant: BauhausActionVariant.primary,
               onPressed: () {
                 if (_validateForm()) {
                   if (isEdit) {
@@ -859,11 +793,6 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                   Navigator.pop(context);
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C5CE7),
-                foregroundColor: Colors.white,
-              ),
-              child: Text(isEdit ? 'Update' : 'Create'),
             ),
           ],
         ),
@@ -883,31 +812,14 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
-          ),
+          style: BauhausDesign.getTextTheme(context).labelLarge,
         ),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: hint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF6C5CE7)),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-          ),
+          decoration: BauhausDesign.inputDecoration(hint),
         ),
       ],
     );
@@ -924,29 +836,13 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
-          ),
+          style: BauhausDesign.getTextTheme(context).labelLarge,
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           initialValue: value,
           onChanged: onChanged,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF6C5CE7)),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-          ),
+          decoration: BauhausDesign.inputDecoration(''),
           items: items.map((item) {
             return DropdownMenuItem(
               value: item,
@@ -1038,14 +934,22 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: BauhausDesign.surfaceWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
         title: const Text('Delete Item'),
         content: Text('Are you sure you want to delete "${item['name']}"?'),
         actions: [
-          TextButton(
+          BauhausActionButton(
+            text: 'Cancel',
+            variant: BauhausActionVariant.ghost,
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
           ),
-          ElevatedButton(
+          BauhausActionButton(
+            text: 'Delete',
+            variant: BauhausActionVariant.danger,
             onPressed: () {
               setState(() {
                 _ndisItems.removeWhere((i) => i['id'] == item['id']);
@@ -1053,11 +957,6 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
               Navigator.pop(context);
               _showSnackBar('Item deleted successfully!');
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Delete'),
           ),
         ],
       ),
@@ -1068,7 +967,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : const Color(0xFF6C5CE7),
+        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -1081,15 +980,23 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: BauhausDesign.surfaceWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
         title: const Text('Delete Selected Items'),
         content: Text(
             'Are you sure you want to delete ${_selectedItemIds.length} selected items?'),
         actions: [
-          TextButton(
+          BauhausActionButton(
+            text: 'Cancel',
+            variant: BauhausActionVariant.ghost,
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
           ),
-          ElevatedButton(
+          BauhausActionButton(
+            text: 'Delete',
+            variant: BauhausActionVariant.danger,
             onPressed: () {
               setState(() {
                 _ndisItems.removeWhere(
@@ -1099,11 +1006,6 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
               Navigator.pop(context);
               _showSnackBar('Selected items deleted successfully!');
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Delete'),
           ),
         ],
       ),

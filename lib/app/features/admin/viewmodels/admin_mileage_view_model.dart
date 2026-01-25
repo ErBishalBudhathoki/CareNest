@@ -49,7 +49,7 @@ class AdminMileageViewModel extends ChangeNotifier {
         final List<dynamic> data = response['data'];
         _trips = data.map((json) => Trip.fromJson(json)).toList();
       } else {
-        _error = response?['message'] ?? 'Failed to fetch trips';
+        _error = response['message'] ?? 'Failed to fetch trips';
       }
     } catch (e) {
       _error = e.toString();

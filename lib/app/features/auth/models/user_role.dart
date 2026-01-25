@@ -2,4 +2,5 @@
 enum UserRole {
   normal,
   admin,
+  client,
 }

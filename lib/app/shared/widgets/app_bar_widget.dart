@@ -64,3 +64,52 @@ class CustomAppBar extends StatelessWidget {
     );
   }
 }
+
+class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final bool showBackButton;
+  final List<Widget>? actions;
+
+  const AppBarWidget({
+    super.key,
+    required this.title,
+    this.showBackButton = true,
+    this.actions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Basic implementation to satisfy the compiler and usage
+    // Using Bauhaus colors/style where possible
+    return AppBar(
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.black87,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: showBackButton
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          : null,
+      actions: actions,
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1.0),
+        child: Container(
+          color: Colors.grey.shade300,
+          height: 1.0,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1.0);
+}

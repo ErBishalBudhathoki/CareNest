@@ -54,6 +54,15 @@ class ClientNotifier extends StateNotifier<ClientState> {
     }
   }
 
+  // Activate client
+  Future<void> activateClient(String email) async {
+    try {
+      await _apiMethod.post('api/client/activate', body: {'email': email});
+    } catch (e) {
+      state = state.copyWith(error: 'Activation failed: ${e.toString()}');
+    }
+  }
+
   // Clear clients
   void clearClients() {
     state = ClientState(clients: [], isLoading: false);

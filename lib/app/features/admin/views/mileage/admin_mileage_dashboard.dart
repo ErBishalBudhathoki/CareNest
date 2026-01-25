@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/admin/viewmodels/admin_mileage_view_model.dart';
 import 'package:carenest/app/features/admin/widgets/bauhaus_filter_dropdown.dart';
 import 'package:carenest/app/features/admin/views/mileage/trip_review_screen.dart';
+
+import 'package:carenest/app/features/admin/views/mileage/mileage_settings_view.dart';
+import 'package:carenest/app/features/admin/viewmodels/mileage_settings_view_model.dart';
 
 class AdminMileageDashboard extends ConsumerWidget {
   const AdminMileageDashboard({super.key});
@@ -11,6 +14,7 @@ class AdminMileageDashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(adminMileageViewModelProvider);
+    final settingsState = ref.watch(mileageSettingsViewModelProvider);
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
@@ -27,6 +31,17 @@ class AdminMileageDashboard extends ConsumerWidget {
           child: Container(color: BauhausDesign.neutral, height: 2),
         ),
         iconTheme: const IconThemeData(color: BauhausDesign.neutral),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MileageSettingsView()),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -49,7 +64,7 @@ class AdminMileageDashboard extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: BauhausDesign.space4),
-                // Placeholder for Rate Edit Button or Display
+                // Rate Display
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,18 +77,33 @@ class AdminMileageDashboard extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.accent,
-                          border: Border.all(color: BauhausDesign.neutral, width: 2),
-                          boxShadow: const [BauhausDesign.shadowHardSm],
-                        ),
-                        child: Text(
-                          '\$0.58 / mi', // Mock value
-                          style: textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const MileageSettingsView()),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: BauhausDesign.accent,
+                            border: Border.all(color: BauhausDesign.neutral, width: 2),
+                            boxShadow: const [BauhausDesign.shadowHardSm],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '\$${settingsState.reimbursementRate.toStringAsFixed(2)} / mi',
+                                style: textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textDark,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(Icons.edit, size: 14, color: BauhausDesign.textDark),
+                            ],
                           ),
                         ),
                       ),

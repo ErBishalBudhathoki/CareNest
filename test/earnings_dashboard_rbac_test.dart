@@ -1,4 +1,5 @@
 import 'package:carenest/app/core/providers/core_providers.dart';
+import 'package:carenest/app/core/providers/auth_providers.dart';
 import 'package:carenest/app/features/admin/providers/business_stats_provider.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
@@ -12,11 +13,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+class _ImmediateUserRoleNotifier extends UserRoleNotifier {
+  _ImmediateUserRoleNotifier(super.prefs, UserRole role) {
+    state = role;
+  }
+}
+
 class _TestPrefs extends SharedPreferencesUtils {
   final UserRole role;
-  final String token;
 
-  _TestPrefs({required this.role, this.token = 'test-token'});
+  _TestPrefs({required this.role}) : super.forTesting();
 
   @override
   Future<void> init() async {}
@@ -25,11 +31,20 @@ class _TestPrefs extends SharedPreferencesUtils {
   UserRole? getRole() => role;
 
   @override
-  String? getAuthToken() => token;
+  String? getAuthToken() => 'test-token';
 }
 
 class _FakeEarningsRepository extends EarningsRepository {
   _FakeEarningsRepository() : super(ApiMethod());
+
+  @override
+  Future<Map<String, dynamic>> getTaxSettings() async {
+    return const {
+      'brackets': [
+        {'min': 0, 'max': null, 'rate': 0.0, 'base': 0.0},
+      ],
+    };
+  }
 
   @override
   Future<EarningsSummary> getEarningsSummary(
@@ -94,11 +109,13 @@ void main() {
       phone: '0',
       role: UserRole.admin,
     );
+    final prefs = _TestPrefs(role: UserRole.admin);
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          sharedPreferencesProvider.overrideWithValue(_TestPrefs(role: UserRole.admin)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          userRoleProvider.overrideWith((ref) => _ImmediateUserRoleNotifier(prefs, UserRole.admin)),
           currentUserProvider.overrideWith((ref) async => user),
           earningsRepositoryProvider.overrideWithValue(_FakeEarningsRepository()),
           businessStatsProvider.overrideWith((ref, orgId) async {
@@ -110,17 +127,24 @@ void main() {
             };
           }),
         ],
-        child: const MaterialApp(
-          home: EarningsDashboardView(
-            organizationId: 'org-1',
-            organizationName: 'Org',
+        child: MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: const MaterialApp(
+            home: EarningsDashboardView(
+              organizationId: 'org-1',
+              organizationName: 'Org',
+            ),
           ),
         ),
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Business Overview'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
   });
 
   testWidgets('employee does not see Business Overview in earnings dashboard',
@@ -133,24 +157,33 @@ void main() {
       phone: '0',
       role: UserRole.normal,
     );
+    final prefs = _TestPrefs(role: UserRole.normal);
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          sharedPreferencesProvider.overrideWithValue(_TestPrefs(role: UserRole.normal)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          userRoleProvider.overrideWith((ref) => _ImmediateUserRoleNotifier(prefs, UserRole.normal)),
           currentUserProvider.overrideWith((ref) async => user),
           earningsRepositoryProvider.overrideWithValue(_FakeEarningsRepository()),
         ],
-        child: const MaterialApp(
-          home: EarningsDashboardView(
-            organizationId: 'org-1',
-            organizationName: 'Org',
+        child: MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: const MaterialApp(
+            home: EarningsDashboardView(
+              organizationId: 'org-1',
+              organizationName: 'Org',
+            ),
           ),
         ),
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Business Overview'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
   });
 }

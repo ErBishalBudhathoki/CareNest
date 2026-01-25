@@ -4,8 +4,8 @@ import 'package:carenest/app/features/earnings/viewmodels/earnings_viewmodel.dar
 import 'package:carenest/app/features/earnings/models/earnings_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
 import 'package:carenest/app/features/earnings/services/employee_invoice_service.dart';
 import 'package:carenest/app/core/providers/auth_providers.dart';
@@ -13,6 +13,7 @@ import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/app/features/admin/providers/business_stats_provider.dart';
 import 'package:carenest/app/features/admin/widgets/business_overview_section.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class EarningsDashboardView extends ConsumerWidget {
   final String? organizationId;
@@ -44,39 +45,38 @@ class EarningsDashboardView extends ConsumerWidget {
           child: Container(color: BauhausDesign.textDark, height: 2),
         ),
         title: Text(
-          'EARNINGS DASHBOARD',
-          style: GoogleFonts.oswald(
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-            fontSize: 20,
-          ),
+          AppLocalizations.of(context)!.earningsDashboardTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
+              ),
         ),
         actions: [
-            IconButton(
-                icon: const Icon(Icons.download_rounded, color: BauhausDesign.textDark),
-                tooltip: 'Generate Payslip',
-                onPressed: () {
-                    final now = DateTime.now();
-                    final startOfMonth = DateTime(now.year, now.month, 1);
-                    final endOfMonth = DateTime(now.year, now.month + 1, 0);
-                    
-                    ref.read(employeeInvoiceServiceProvider).generateAndOpenInvoice(
-                        context, 
-                        ref.read(currentUserProvider).value?.email ?? '',
-                        startOfMonth,
-                        endOfMonth
-                    );
-                },
-            ),
+          IconButton(
+            icon: const Icon(Icons.download_rounded,
+                color: BauhausDesign.textDark),
+            tooltip: AppLocalizations.of(context)!.generatePayslip,
+            onPressed: () {
+              final now = DateTime.now();
+              final startOfMonth = DateTime(now.year, now.month, 1);
+              final endOfMonth = DateTime(now.year, now.month + 1, 0);
+
+              ref.read(employeeInvoiceServiceProvider).generateAndOpenInvoice(
+                  context,
+                  ref.read(currentUserProvider).value?.email ?? '',
+                  startOfMonth,
+                  endOfMonth);
+            },
+          ),
         ],
       ),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? BauhausLoadingState(
+              message: AppLocalizations.of(context)!.loadingEarnings)
           : state.error != null
               ? Center(child: Text('Error: ${state.error}'))
               : LayoutBuilder(
-                builder: (context, constraints) {
+                  builder: (context, constraints) {
                     final isWide = constraints.maxWidth >= 800;
 
                     return SingleChildScrollView(
@@ -111,8 +111,10 @@ class EarningsDashboardView extends ConsumerWidget {
                                           context,
                                           title: state.period ==
                                                   EarningsPeriod.weekly
-                                              ? 'Weekly Summary'
-                                              : 'Monthly Summary',
+                                              ? AppLocalizations.of(context)!
+                                                  .weeklySummary
+                                              : AppLocalizations.of(context)!
+                                                  .monthlySummary,
                                         )
                                       : const SizedBox.shrink(),
                                 ),
@@ -133,27 +135,51 @@ class EarningsDashboardView extends ConsumerWidget {
                                 state.summary!,
                                 context,
                                 title: state.period == EarningsPeriod.weekly
-                                    ? 'Weekly Summary'
-                                    : 'Monthly Summary',
+                                    ? AppLocalizations.of(context)!
+                                        .weeklySummary
+                                    : AppLocalizations.of(context)!
+                                        .monthlySummary,
                               ),
                             const SizedBox(height: 20),
                             if (state.projection != null)
-                              _buildProjectedPayCard(state.projection!, context),
+                              _buildProjectedPayCard(
+                                  state.projection!, context),
                           ],
                           const SizedBox(height: 20),
-                          _buildPayHistory(state.periodHistory),
+                          _buildPayHistory(state.periodHistory, context),
                           const SizedBox(height: 20),
-                          _buildPayHistory(state.periodHistory),
+                          _buildPayHistory(state.periodHistory, context),
                           const SizedBox(height: 20),
-                          _buildChartSection(
-                            context,
-                            state.summary?.history ?? [],
-                            state.period == EarningsPeriod.weekly
-                                ? 'EARNINGS HISTORY (THIS WEEK)'
-                                : 'EARNINGS HISTORY (THIS MONTH)',
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                  left: BorderSide(
+                                      color: BauhausDesign.textDark, width: 4)),
+                            ),
+                            child: Text(
+                              state.period == EarningsPeriod.weekly
+                                  ? AppLocalizations.of(context)!
+                                      .earningsHistoryThisWeek
+                                  : AppLocalizations.of(context)!
+                                      .earningsHistoryThisMonth,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .headlineMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 220,
+                            child: _buildChart(
+                                state.summary?.history ?? [], context),
                           ),
                           const SizedBox(height: 12),
-                          _buildHistoryList(state.summary?.history ?? const []),
+                          _buildHistoryList(
+                              state.summary?.history ?? const [], context),
                           const SizedBox(height: 20),
                           _buildTaxFrequencyControls(
                             context: context,
@@ -162,6 +188,7 @@ class EarningsDashboardView extends ConsumerWidget {
                           ),
                           const SizedBox(height: 12),
                           _buildTaxEstimator(
+                            context,
                             viewModel,
                             state.summary?.totalEarnings ?? 0,
                             state.taxFrequency,
@@ -186,7 +213,8 @@ class EarningsDashboardView extends ConsumerWidget {
     return _Range(start: start, end: end);
   }
 
-  String _formatRangeLabel(EarningsPeriod period, DateTime start, DateTime end) {
+  String _formatRangeLabel(
+      EarningsPeriod period, DateTime start, DateTime end) {
     final df = DateFormat('MMM d');
     if (period == EarningsPeriod.weekly) {
       return '${df.format(start)} – ${df.format(end)}';
@@ -215,27 +243,31 @@ class EarningsDashboardView extends ConsumerWidget {
               decoration: BoxDecoration(
                 border: Border.all(color: BauhausDesign.textDark, width: 2),
                 borderRadius: BorderRadius.circular(4),
-                boxShadow: const [BoxShadow(color: BauhausDesign.neutral, offset: Offset(2, 2))],
+                boxShadow: const [
+                  BoxShadow(color: BauhausDesign.neutral, offset: Offset(2, 2))
+                ],
                 color: BauhausDesign.surfaceLight,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildToggleItem(
-                    label: 'WEEKLY',
+                    context: context,
+                    label: AppLocalizations.of(context)!.weeklyToggle,
                     isSelected: period == EarningsPeriod.weekly,
                     onTap: () => onPeriodChanged(EarningsPeriod.weekly),
                   ),
-                  Container(width: 2, height: 40, color: BauhausDesign.textDark),
+                  Container(
+                      width: 2, height: 40, color: BauhausDesign.textDark),
                   _buildToggleItem(
-                    label: 'MONTHLY',
+                    context: context,
+                    label: AppLocalizations.of(context)!.monthlyToggle,
                     isSelected: period == EarningsPeriod.monthly,
                     onTap: () => onPeriodChanged(EarningsPeriod.monthly),
                   ),
                 ],
               ),
             ),
-            
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -243,11 +275,13 @@ class EarningsDashboardView extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   rangeLabel.toUpperCase(),
-                  style: GoogleFonts.oswald(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textDark,
-                  ),
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineMedium
+                      ?.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: BauhausDesign.textDark,
+                      ),
                 ),
                 const SizedBox(width: 8),
                 _buildNavButton(Icons.arrow_forward, onNext),
@@ -259,7 +293,11 @@ class EarningsDashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildToggleItem({required String label, required bool isSelected, required VoidCallback onTap}) {
+  Widget _buildToggleItem(
+      {required BuildContext context,
+      required String label,
+      required bool isSelected,
+      required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -267,10 +305,13 @@ class EarningsDashboardView extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Text(
           label,
-          style: GoogleFonts.oswald(
-            fontWeight: FontWeight.bold,
-            color: isSelected ? BauhausDesign.surfaceLight : BauhausDesign.textDark,
-          ),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: isSelected
+                    ? BauhausDesign.surfaceLight
+                    : BauhausDesign.textDark,
+              ),
         ),
       ),
     );
@@ -298,22 +339,24 @@ class EarningsDashboardView extends ConsumerWidget {
     String label(TaxFrequency f) {
       switch (f) {
         case TaxFrequency.weekly:
-          return 'Weekly';
+          return AppLocalizations.of(context)!.taxFreqWeekly;
         case TaxFrequency.fortnightly:
-          return 'Fortnightly';
+          return AppLocalizations.of(context)!.taxFreqFortnightly;
         case TaxFrequency.monthly:
-          return 'Monthly';
+          return AppLocalizations.of(context)!.taxFreqMonthly;
         case TaxFrequency.annually:
-          return 'Annually';
+          return AppLocalizations.of(context)!.taxFreqAnnually;
       }
     }
 
     return Row(
       children: [
         Text(
-          'TAX FREQUENCY:',
-          style: GoogleFonts.oswald(
-              fontSize: 16, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
+          AppLocalizations.of(context)!.taxFrequencyLabel,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.textDark),
         ),
         const SizedBox(width: 12),
         Container(
@@ -321,13 +364,16 @@ class EarningsDashboardView extends ConsumerWidget {
           decoration: BoxDecoration(
             border: Border.all(color: BauhausDesign.textDark, width: 2),
             borderRadius: BorderRadius.circular(0),
-             boxShadow: const [BoxShadow(color: BauhausDesign.neutral, offset: Offset(2, 2))],
-             color: BauhausDesign.surfaceLight,
+            boxShadow: const [
+              BoxShadow(color: BauhausDesign.neutral, offset: Offset(2, 2))
+            ],
+            color: BauhausDesign.surfaceLight,
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<TaxFrequency>(
               value: value,
-              icon: const Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
+              icon: const Icon(Icons.arrow_drop_down,
+                  color: BauhausDesign.textDark),
               dropdownColor: BauhausDesign.surfaceLight,
               onChanged: (v) {
                 if (v == null) return;
@@ -339,7 +385,11 @@ class EarningsDashboardView extends ConsumerWidget {
                       value: f,
                       child: Text(
                         label(f).toUpperCase(),
-                         style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: BauhausDesign.textDark),
                       ),
                     ),
                   )
@@ -360,16 +410,18 @@ class EarningsDashboardView extends ConsumerWidget {
     final statsAsync = ref.watch(businessStatsProvider(orgId));
     return statsAsync.when(
       data: (stats) => BusinessOverviewSection(businessStats: stats),
-      loading: () => const SizedBox(
+      loading: () => SizedBox(
         height: 150,
-        child: Center(child: CircularProgressIndicator()),
+        child: BauhausLoadingState(
+            message: AppLocalizations.of(context)!.loadingOverview),
       ),
       error: (e, _) => Card(
         elevation: 1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text('Failed to load business overview: $e'),
+          child: Text(AppLocalizations.of(context)!
+              .failedToLoadBusinessOverview(e.toString())),
         ),
       ),
     );
@@ -381,7 +433,7 @@ class EarningsDashboardView extends ConsumerWidget {
     required String title,
   }) {
     final currencyFormat = NumberFormat.simpleCurrency();
-    
+
     return Container(
       decoration: BauhausDesign.cardDecoration,
       padding: const EdgeInsets.all(24.0),
@@ -390,8 +442,10 @@ class EarningsDashboardView extends ConsumerWidget {
         children: [
           Text(
             title.toUpperCase(),
-             style: GoogleFonts.inter(
-                fontSize: 12, fontWeight: FontWeight.bold, color: BauhausDesign.neutral),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.neutral),
           ),
           const SizedBox(height: 16),
           Row(
@@ -405,19 +459,22 @@ class EarningsDashboardView extends ConsumerWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         currencyFormat.format(summary.totalEarnings),
-                        style: GoogleFonts.outfit(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.success,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .displayLarge
+                            ?.copyWith(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.success,
+                            ),
                       ),
                     ),
                     Text(
-                      'TOTAL EARNINGS',
-                      style: GoogleFonts.oswald(
-                        fontSize: 14,
-                        color: BauhausDesign.textDark,
-                      ),
+                      AppLocalizations.of(context)!.totalEarningsTitle,
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelLarge
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                     ),
                   ],
                 ),
@@ -431,37 +488,44 @@ class EarningsDashboardView extends ConsumerWidget {
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '${summary.totalHours.toStringAsFixed(1)} hrs',
-                        style: GoogleFonts.outfit(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
-                        ),
+                        '${summary.totalHours.toStringAsFixed(1)} ${AppLocalizations.of(context)!.hoursAbbrev}',
+                        style: BauhausDesign.getTextTheme(context)
+                            .displaySmall
+                            ?.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textDark,
+                            ),
                       ),
                     ),
                     Text(
-                      'TOTAL HOURS',
-                      style: GoogleFonts.oswald(
-                        fontSize: 14,
-                        color: BauhausDesign.textDark,
-                      ),
+                      AppLocalizations.of(context)!.totalHoursTitle,
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelLarge
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          const Divider(height: 32, color: BauhausDesign.textDark, thickness: 1),
+          const Divider(
+              height: 32, color: BauhausDesign.textDark, thickness: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
-                  'PAY RATE: ${currencyFormat.format(summary.payRate)}/${summary.payType == 'Hourly' ? 'HR' : 'YR'}',
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
-                  ),
+                  AppLocalizations.of(context)!.payRateTitle(
+                      currencyFormat.format(summary.payRate),
+                      summary.payType == 'Hourly' ? 'HR' : 'YR'),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: BauhausDesign.textDark,
+                          ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -471,11 +535,19 @@ class EarningsDashboardView extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: BauhausDesign.success,
                   border: Border.all(color: BauhausDesign.textDark),
-                  boxShadow: const [BoxShadow(color: BauhausDesign.textDark, offset: Offset(2, 2))],
+                  boxShadow: const [
+                    BoxShadow(
+                        color: BauhausDesign.textDark, offset: Offset(2, 2))
+                  ],
                 ),
                 child: Text(
-                  'ACTIVE',
-                   style: GoogleFonts.oswald(fontSize: 12, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
+                  AppLocalizations.of(context)!.activeCaps,
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelSmall
+                      ?.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark),
                 ),
               ),
             ],
@@ -485,9 +557,10 @@ class EarningsDashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildProjectedPayCard(ProjectedEarnings projection, BuildContext context) {
+  Widget _buildProjectedPayCard(
+      ProjectedEarnings projection, BuildContext context) {
     final currencyFormat = NumberFormat.simpleCurrency();
-    
+
     return Container(
       decoration: BauhausDesign.cardDecoration.copyWith(
         color: BauhausDesign.backgroundLight,
@@ -496,206 +569,167 @@ class EarningsDashboardView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-             Row(
-               children: [
-                 const Icon(Icons.trending_up, color: BauhausDesign.secondary),
-                 const SizedBox(width: 8),
-                 Expanded(
-                   child: Text(
-                     'PROJECTED PAY (UPCOMING)',
-                     style: GoogleFonts.oswald(
-                       fontSize: 16,
-                       fontWeight: FontWeight.bold,
-                       color: BauhausDesign.textDark,
-                     ),
-                     overflow: TextOverflow.ellipsis,
-                   ),
-                 ),
-               ],
-             ),
-             const SizedBox(height: 16),
-             Row(
-               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-               children: [
-                 Text(
-                   currencyFormat.format(projection.projectedEarnings),
-                   style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold, color: BauhausDesign.secondary),
-                 ),
-                 const SizedBox(width: 12),
-                 Flexible(
-                   child: Text(
-                     '${projection.projectedHours.toStringAsFixed(1)} hrs scheduled',
-                     style: GoogleFonts.inter(
-                       fontWeight: FontWeight.w500,
-                       color: BauhausDesign.textDark,
-                     ),
-                     overflow: TextOverflow.ellipsis,
-                     textAlign: TextAlign.end,
-                   ),
-                 ),
-               ],
-             ),
-             if (projection.breakdown.isNotEmpty) ...[
-               const SizedBox(height: 16),
-               Text('UPCOMING SHIFTS:', style: GoogleFonts.oswald(fontWeight: FontWeight.bold, color: BauhausDesign.textDark)),
-               const SizedBox(height: 8),
-               ...projection.breakdown.take(3).map((item) => Padding(
-                 padding: const EdgeInsets.only(top: 8),
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                   children: [
-                     Text(DateFormat('MMM dd').format(DateTime.parse(item.date)),
-                        style: GoogleFonts.inter(color: BauhausDesign.textDark)),
-                     Text('${item.hours} hrs', style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: BauhausDesign.textDark)),
-                   ],
-                 ),
-               )),
-             ]
-          ],
-        ),
-    );
-  }
-
-  Widget _buildChartSection(BuildContext context, List<EarningsHistoryItem> history, String title) {
-    if (history.isEmpty) return const SizedBox.shrink();
-
-    return Container(
-      decoration: BauhausDesign.cardDecoration,
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+          Row(
+            children: [
+              const Icon(Icons.trending_up, color: BauhausDesign.secondary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.projectedPayUpcoming,
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineMedium
+                      ?.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
-                style: GoogleFonts.oswald(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
+                currencyFormat.format(projection.projectedEarnings),
+                style: BauhausDesign.getTextTheme(context)
+                    .displayMedium
+                    ?.copyWith(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: BauhausDesign.secondary),
+              ),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  '${projection.projectedHours.toStringAsFixed(1)} ${AppLocalizations.of(context)!.hoursAbbrev} ${AppLocalizations.of(context)!.scheduledSuffix}',
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: BauhausDesign.textDark,
+                          ),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(border: Border.all(color: BauhausDesign.textDark)),
-                child: const Icon(Icons.bar_chart, size: 16, color: BauhausDesign.textDark),
-              )
             ],
           ),
-          const SizedBox(height: 24),
-          SizedBox(
-            height: 220,
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: history.map((e) => e.earnings).fold<double>(0.0, (p, c) => c > p ? c : p) * 1.2,
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 100, // Adjust based on scale if possible, dynamic would be better but fixed is ok
-                  getDrawingHorizontalLine: (value) => FlLine(
-                    color: BauhausDesign.neutral.withOpacity(0.1),
-                    strokeWidth: 1,
-                  ),
-                ),
-                barTouchData: BarTouchData(
-                  enabled: true,
-                  touchTooltipData: BarTouchTooltipData(
-                    getTooltipColor: (group) => BauhausDesign.neutral,
-                    tooltipPadding: const EdgeInsets.all(8),
-                    tooltipMargin: 8,
-                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      return BarTooltipItem(
-                        '\$${rod.toY.toStringAsFixed(0)}',
-                        GoogleFonts.outfit(
-                          color: BauhausDesign.surfaceLight,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: (double value, TitleMeta meta) {
-                        if (value.toInt() >= 0 && value.toInt() < history.length) {
-                          final date = DateTime.parse(history[value.toInt()].date);
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              DateFormat('dd').format(date),
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: BauhausDesign.textDark,
-                              ),
-                            ),
-                          );
-                        }
-                        return const Text('');
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      interval: 100, // Match grid
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          '\$${value.toInt()}',
-                          style: GoogleFonts.outfit(
-                            fontSize: 10,
-                            color: BauhausDesign.neutral.withOpacity(0.6),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                ),
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border(
-                    bottom: BorderSide(color: BauhausDesign.textDark),
-                    left: BorderSide(color: BauhausDesign.textDark),
-                  ),
-                ),
-                barGroups: history.asMap().entries.map((entry) {
-                  return BarChartGroupData(
-                    x: entry.key,
-                    barRods: [
-                      BarChartRodData(
-                        toY: entry.value.earnings,
-                        color: BauhausDesign.secondary,
-                        width: 16, // Wider bars
-                        borderRadius: BorderRadius.zero,
-                        backDrawRodData: BackgroundBarChartRodData(
-                          show: true,
-                          toY: history.map((e) => e.earnings).fold<double>(0.0, (p, c) => c > p ? c : p) * 1.2,
-                          color: BauhausDesign.neutral.withOpacity(0.05),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
+          if (projection.breakdown.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)!.upcomingShifts,
+              style: BauhausDesign.getTextTheme(context)
+                  .headlineMedium
+                  ?.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-          ),
+            const SizedBox(height: 8),
+            ...projection.breakdown.take(3).map((item) => Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                          DateFormat('MMM dd')
+                              .format(DateTime.parse(item.date)),
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(color: BauhausDesign.textDark)),
+                      Text(
+                          '${item.hours} ${AppLocalizations.of(context)!.hoursAbbrev}',
+                          style: BauhausDesign.getTextTheme(context)
+                              .labelLarge
+                              ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textDark)),
+                    ],
+                  ),
+                )),
+          ]
         ],
       ),
     );
   }
 
-  Widget _buildHistoryList(List<EarningsHistoryItem> history) {
+  Widget _buildChart(List<EarningsHistoryItem> history, BuildContext context) {
+    if (history.isEmpty)
+      return Center(
+          child: Text(AppLocalizations.of(context)!.noDataForChart,
+              style: BauhausDesign.getTextTheme(context)
+                  .bodyMedium
+                  ?.copyWith(color: BauhausDesign.neutral)));
+
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: history
+                .map((e) => e.earnings)
+                .fold<double>(0.0, (p, c) => c > p ? c : p) *
+            1.2,
+        gridData: FlGridData(show: false),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (group) => BauhausDesign.neutral,
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              return BarTooltipItem(
+                '\$${rod.toY.toStringAsFixed(0)}',
+                BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                        color: BauhausDesign.surfaceLight,
+                        fontWeight: FontWeight.bold) ??
+                    const TextStyle(),
+              );
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (double value, TitleMeta meta) {
+                if (value.toInt() >= 0 && value.toInt() < history.length) {
+                  final date = DateTime.parse(history[value.toInt()].date);
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(DateFormat('dd').format(date),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                                fontSize: 10, color: BauhausDesign.textDark)),
+                  );
+                }
+                return const Text('');
+              },
+            ),
+          ),
+          leftTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        borderData: FlBorderData(show: false),
+        barGroups: history.asMap().entries.map((entry) {
+          return BarChartGroupData(
+            x: entry.key,
+            barRods: [
+              BarChartRodData(
+                toY: entry.value.earnings,
+                color: BauhausDesign.secondary,
+                width: 12,
+                borderRadius: BorderRadius.zero, // Bauhaus: No radius
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildHistoryList(
+      List<EarningsHistoryItem> history, BuildContext context) {
     if (history.isEmpty) return const SizedBox.shrink();
     final currencyFormat = NumberFormat.simpleCurrency();
 
@@ -715,13 +749,24 @@ class EarningsDashboardView extends ConsumerWidget {
                         DateFormat('EEE, MMM d')
                             .format(DateTime.parse(item.date))
                             .toUpperCase(),
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                            ),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text('${item.hours.toStringAsFixed(1)}H', style: GoogleFonts.inter(color: BauhausDesign.textDark)),
+                    Text(
+                        '${item.hours.toStringAsFixed(1)}${AppLocalizations.of(context)!.hoursAbbrev.toUpperCase()}',
+                        style: BauhausDesign.getTextTheme(context).bodyMedium),
                     const SizedBox(width: 12),
-                    Text(currencyFormat.format(item.earnings), style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: BauhausDesign.success)),
+                    Text(currencyFormat.format(item.earnings),
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BauhausDesign.success)),
                   ],
                 ),
               ),
@@ -731,7 +776,8 @@ class EarningsDashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildPayHistory(EarningsPeriodHistory? history) {
+  Widget _buildPayHistory(
+      EarningsPeriodHistory? history, BuildContext context) {
     if (history == null || history.items.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -744,7 +790,8 @@ class EarningsDashboardView extends ConsumerWidget {
       if (start == null) return item.periodStart;
       if (!isWeekly) return DateFormat('MMM yyyy').format(start).toUpperCase();
       if (end == null) return DateFormat('MMM d').format(start).toUpperCase();
-      return '${DateFormat('MMM d').format(start)} – ${DateFormat('MMM d').format(end)}'.toUpperCase();
+      return '${DateFormat('MMM d').format(start)} – ${DateFormat('MMM d').format(end)}'
+          .toUpperCase();
     }
 
     return Container(
@@ -754,8 +801,11 @@ class EarningsDashboardView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'PAY HISTORY',
-            style: GoogleFonts.oswald(fontSize: 16, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
+            AppLocalizations.of(context)!.payHistoryTitle,
+            style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark),
           ),
           const SizedBox(height: 12),
           ...history.items.reversed.take(8).map(
@@ -764,11 +814,25 @@ class EarningsDashboardView extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(child: Text(labelForItem(item), style: GoogleFonts.inter(fontWeight: FontWeight.w500, color: BauhausDesign.textDark))),
+                      Expanded(
+                          child: Text(labelForItem(item),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium
+                                  ?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      color: BauhausDesign.textDark))),
                       const SizedBox(width: 12),
-                      Text('${item.hours.toStringAsFixed(1)}H', style: GoogleFonts.inter(color: BauhausDesign.textDark)),
+                      Text('${item.hours.toStringAsFixed(1)}H',
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(color: BauhausDesign.textDark)),
                       const SizedBox(width: 12),
-                      Text(currencyFormat.format(item.earnings), style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: BauhausDesign.textDark)),
+                      Text(currencyFormat.format(item.earnings),
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textDark)),
                     ],
                   ),
                 ),
@@ -779,6 +843,7 @@ class EarningsDashboardView extends ConsumerWidget {
   }
 
   Widget _buildTaxEstimator(
+    BuildContext context,
     EarningsViewModel viewModel,
     double periodEarnings,
     TaxFrequency frequency,
@@ -787,19 +852,19 @@ class EarningsDashboardView extends ConsumerWidget {
     String frequencyLabel;
     switch (frequency) {
       case TaxFrequency.weekly:
-        frequencyLabel = 'Weekly';
+        frequencyLabel = AppLocalizations.of(context)!.taxFreqWeekly;
         break;
       case TaxFrequency.fortnightly:
-        frequencyLabel = 'Fortnightly';
+        frequencyLabel = AppLocalizations.of(context)!.taxFreqFortnightly;
         break;
       case TaxFrequency.monthly:
-        frequencyLabel = 'Monthly';
+        frequencyLabel = AppLocalizations.of(context)!.taxFreqMonthly;
         break;
       case TaxFrequency.annually:
-        frequencyLabel = 'Annually';
+        frequencyLabel = AppLocalizations.of(context)!.taxFreqAnnually;
         break;
     }
-    final estimated = viewModel.calculateTax(periodEarnings, frequencyLabel);
+    final estimated = viewModel.calculateTax(periodEarnings, frequency);
 
     return Container(
       decoration: BauhausDesign.cardDecoration,
@@ -808,35 +873,51 @@ class EarningsDashboardView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'TAX ESTIMATOR (${frequencyLabel.toUpperCase()})',
-            style: GoogleFonts.oswald(fontSize: 16, fontWeight: FontWeight.bold, color: BauhausDesign.textDark),
+            AppLocalizations.of(context)!
+                .taxEstimatorTitle(frequencyLabel.toUpperCase()),
+            style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: 4),
-          Text('Based on ATO Resident Rates 2024-2025', style: GoogleFonts.inter(fontSize: 12, color: BauhausDesign.neutral)),
+          Text(AppLocalizations.of(context)!.taxEstimatorSubtitle,
+              style: BauhausDesign.getTextTheme(context)
+                  .bodyMedium
+                  ?.copyWith(fontSize: 12, color: BauhausDesign.neutral)),
           const SizedBox(height: 16),
-          _buildTaxRow('Gross Income', estimated['gross']!, currencyFormat, isBold: true),
+          _buildTaxRow(context, AppLocalizations.of(context)!.grossIncome,
+              estimated['gross']!, currencyFormat,
+              isBold: true),
           const Divider(color: BauhausDesign.textDark, thickness: 1),
-          _buildTaxRow('Estimated Tax', estimated['tax']!, currencyFormat, color: BauhausDesign.error),
+          _buildTaxRow(context, AppLocalizations.of(context)!.estimatedTax,
+              estimated['tax']!, currencyFormat,
+              color: BauhausDesign.error),
           const Divider(color: BauhausDesign.textDark, thickness: 1),
-          _buildTaxRow('Net Pay', estimated['net']!, currencyFormat, color: BauhausDesign.success, isBold: true),
+          _buildTaxRow(context, AppLocalizations.of(context)!.netPay,
+              estimated['net']!, currencyFormat,
+              color: BauhausDesign.success, isBold: true),
         ],
       ),
     );
   }
 
-  Widget _buildTaxRow(String label, double value, NumberFormat format, {Color? color, bool isBold = false}) {
+  Widget _buildTaxRow(
+      BuildContext context, String label, double value, NumberFormat format,
+      {Color? color, bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label.toUpperCase(), style: GoogleFonts.inter(fontWeight: isBold ? FontWeight.bold : FontWeight.w500, color: BauhausDesign.textDark)),
-          Text(format.format(value), 
-              style: GoogleFonts.outfit(
-                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                color: color ?? BauhausDesign.textDark,
-                fontSize: 16,
-              )),
+          Text(label.toUpperCase(),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.w500)),
+          Text(format.format(value),
+              style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                    color: color ?? BauhausDesign.textDark,
+                  )),
         ],
       ),
     );

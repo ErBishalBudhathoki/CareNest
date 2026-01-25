@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Animated card widget for displaying individual shift details
 class AnimatedShiftCard extends StatefulWidget {
@@ -107,35 +108,30 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          margin: const EdgeInsets.symmetric(
+              vertical: BauhausDesign.space2, horizontal: BauhausDesign.space1),
           decoration: BoxDecoration(
-            color: AppColors.colorCard,
-            borderRadius: BorderRadius.circular(16.0),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.colorGrey300
-                    .withOpacity(0.1),
-                blurRadius: _isHovered ? 12.0 : 8.0,
-                offset: Offset(0, _isHovered ? 6.0 : 4.0),
-                spreadRadius: _isHovered ? 2.0 : 0.0,
-              ),
-            ],
+            color: BauhausDesign.surfaceLight,
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            boxShadow: _isHovered
+                ? const [BauhausDesign.shadowHard]
+                : const [BauhausDesign.shadowHardSm],
             border: Border.all(
-              color: AppColors.colorGrey200,
-              width: 1.0,
+              color: BauhausDesign.neutral,
+              width: 1.5,
             ),
           ),
           transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(BauhausDesign.space4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: BauhausDesign.space4),
                 _buildShiftDetails(),
                 if (widget.shiftDetails.containsKey('timeWorked')) ...[
-                  const SizedBox(height: 12.0),
+                  const SizedBox(height: BauhausDesign.space3),
                   _buildTimeWorked(),
                 ],
               ],
@@ -150,24 +146,25 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space3, vertical: BauhausDesign.space1),
           decoration: BoxDecoration(
-            color: AppColors.colorPrimary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20.0),
+            color: BauhausDesign.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+            border: Border.all(color: BauhausDesign.primary),
           ),
           child: Text(
-            'Shift ${widget.index + 1}',
-            style: const TextStyle(
-              color: AppColors.colorPrimary,
-              fontWeight: FontWeight.w600,
-              fontSize: 12.0,
-            ),
+            AppLocalizations.of(context)!.shiftIndex(widget.index + 1),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
         const Spacer(),
-        Icon(
+        const Icon(
           Icons.schedule,
-          color: AppColors.colorGrey500,
+          color: BauhausDesign.neutral,
           size: 20.0,
         ),
       ],
@@ -179,40 +176,40 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
       children: [
         _buildDetailRow(
           icon: Icons.calendar_today,
-          label: 'Date',
+          label: AppLocalizations.of(context)!.dateLabel,
           value: widget.shiftDetails['date'] ?? 'N/A',
-          color: AppColors.colorBlue,
+          color: BauhausDesign.info,
         ),
-        const SizedBox(height: 12.0),
+        const SizedBox(height: BauhausDesign.space3),
         Row(
           children: [
             Expanded(
               child: _buildDetailRow(
                 icon: Icons.play_arrow,
-                label: 'Start',
+                label: AppLocalizations.of(context)!.startLabel,
                 value: widget.shiftDetails['startTime'] ?? 'N/A',
-                color: AppColors.colorSuccess,
+                color: BauhausDesign.success,
                 isCompact: true,
               ),
             ),
-            const SizedBox(width: 16.0),
+            const SizedBox(width: BauhausDesign.space4),
             Expanded(
               child: _buildDetailRow(
                 icon: Icons.stop,
-                label: 'End',
+                label: AppLocalizations.of(context)!.endLabel,
                 value: widget.shiftDetails['endTime'] ?? 'N/A',
-                color: AppColors.colorWarning,
+                color: BauhausDesign.warning,
                 isCompact: true,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12.0),
+        const SizedBox(height: BauhausDesign.space3),
         _buildDetailRow(
           icon: Icons.coffee,
-          label: 'Break',
+          label: AppLocalizations.of(context)!.breakLabel,
           value: widget.shiftDetails['break'] ?? 'N/A',
-          color: AppColors.colorInfo,
+          color: BauhausDesign.secondary,
         ),
       ],
     );
@@ -229,10 +226,11 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(BauhausDesign.space2),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+            border: Border.all(color: color),
           ),
           child: Icon(
             icon,
@@ -240,27 +238,25 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
             size: isCompact ? 16.0 : 18.0,
           ),
         ),
-        const SizedBox(width: 12.0),
+        const SizedBox(width: BauhausDesign.space3),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  color: AppColors.colorGrey600,
-                  fontSize: isCompact ? 12.0 : 13.0,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      color: BauhausDesign.textMuted,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
-              const SizedBox(height: 2.0),
+              const SizedBox(height: 2),
               Text(
                 value,
-                style: TextStyle(
-                  color: AppColors.colorFontPrimary,
-                  fontSize: isCompact ? 14.0 : 15.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ],
           ),
@@ -271,38 +267,36 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
 
   Widget _buildTimeWorked() {
     return Container(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: AppColors.colorSuccess.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8.0),
+        color: BauhausDesign.success.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(
-          color: AppColors.colorSuccess.withOpacity(0.1),
-          width: 1.0,
+          color: BauhausDesign.success.withOpacity(0.3),
+          width: 1.5,
         ),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.timer,
-            color: AppColors.colorSuccess,
+            color: BauhausDesign.success,
             size: 18.0,
           ),
-          const SizedBox(width: 8.0),
+          const SizedBox(width: BauhausDesign.space2),
           Text(
-            'Time Worked: ',
-            style: TextStyle(
-              color: AppColors.colorGrey600,
-              fontSize: 13.0,
-              fontWeight: FontWeight.w500,
-            ),
+            '${AppLocalizations.of(context)!.timeWorked}: ',
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
           Text(
             widget.shiftDetails['timeWorked'] ?? 'N/A',
-            style: const TextStyle(
-              color: AppColors.colorSuccess,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w600,
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.success,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ],
       ),

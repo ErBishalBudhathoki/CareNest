@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
-import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/foundation.dart';
-// CORRECTED: The import path for flutter_riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,11 +10,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/backend/api_method.dart';
 import '../../../services/system_ui_service.dart';
-
-// --- New Imports for Modern UI (Ensure you've run 'flutter pub get') ---
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:dotted_border/dotted_border.dart';
-import 'package:blur/blur.dart'; // For the glassmorphism effect
 
 class PhotoUploadScreen extends ConsumerStatefulWidget {
   final String email;
@@ -35,9 +30,29 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
   final ApiMethod _apiMethod = ApiMethod();
   final ImagePicker _picker = ImagePicker();
   final ImageCropper _imageCropper = ImageCropper();
-  final FlushBarWidget _flushBarWidget = FlushBarWidget();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
+
+  void _showSnackBar(
+      {required String message, required Color backgroundColor}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: BauhausDesign.getTextTheme(context)
+              .bodyMedium
+              ?.copyWith(color: BauhausDesign.surfaceWhite),
+        ),
+        backgroundColor: backgroundColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        ),
+        margin: const EdgeInsets.all(BauhausDesign.space4),
+      ),
+    );
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -57,17 +72,17 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Photo',
-            toolbarColor: ModernInvoiceDesign.primary,
-            toolbarWidgetColor: Colors.white,
+            toolbarColor: BauhausDesign.primary,
+            toolbarWidgetColor: BauhausDesign.surfaceWhite,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
-            statusBarColor: ModernInvoiceDesign.primary,
-            activeControlsWidgetColor: ModernInvoiceDesign.primary,
-            cropFrameColor: ModernInvoiceDesign.primary,
-            cropGridColor: ModernInvoiceDesign.primary.withValues(alpha: 0.5),
-            dimmedLayerColor: Colors.black.withValues(alpha: 0.8),
+            statusBarColor: BauhausDesign.primary,
+            activeControlsWidgetColor: BauhausDesign.primary,
+            cropFrameColor: BauhausDesign.primary,
+            cropGridColor: BauhausDesign.primary.withOpacity(0.5),
+            dimmedLayerColor: Colors.black.withOpacity(0.8),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
             cropFrameStrokeWidth: 3,
@@ -99,24 +114,18 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       // Ensure system UI is restored even if cropping fails
       await SystemUIService.showSystemUI();
       debugPrint('Error picking/cropping image: $e');
-      if (mounted) {
-        _flushBarWidget.flushBar(
-          context: context,
-          title: "Error",
-          message: "Could not select image. Please try again.",
-          backgroundColor: ModernInvoiceDesign.warning,
-        );
-      }
+      _showSnackBar(
+        message: "Could not select image. Please try again.",
+        backgroundColor: BauhausDesign.warning,
+      );
     }
   }
 
   Future<void> _uploadPhoto() async {
     if (_imageFile == null) {
-      _flushBarWidget.flushBar(
-        context: context,
-        title: "Error",
+      _showSnackBar(
         message: "Please select an image first",
-        backgroundColor: ModernInvoiceDesign.warning,
+        backgroundColor: BauhausDesign.warning,
       );
       return;
     }
@@ -131,14 +140,10 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
 
       if (response['statusCode'] == 200) {
         // Success
-        if (mounted) {
-          _flushBarWidget.flushBar(
-            context: context,
-            title: "Success",
-            message: "Photo uploaded successfully",
-            backgroundColor: ModernInvoiceDesign.success,
-          );
-        }
+        _showSnackBar(
+          message: "Photo uploaded successfully",
+          backgroundColor: BauhausDesign.success,
+        );
 
         // Force refresh the photo provider to update UI everywhere
         // This will trigger the network fetch in PhotoDataNotifier
@@ -152,24 +157,16 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         });
       } else {
         // Error
-        if (mounted) {
-          _flushBarWidget.flushBar(
-            context: context,
-            title: "Error",
-            message: response['message'] ?? "Upload failed",
-            backgroundColor: ModernInvoiceDesign.warning,
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        _flushBarWidget.flushBar(
-          context: context,
-          title: "Error",
-          message: "Error uploading photo: $e",
-          backgroundColor: ModernInvoiceDesign.warning,
+        _showSnackBar(
+          message: response['message'] ?? "Upload failed",
+          backgroundColor: BauhausDesign.warning,
         );
       }
+    } catch (e) {
+      _showSnackBar(
+        message: "Error uploading photo: $e",
+        backgroundColor: BauhausDesign.warning,
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -183,103 +180,52 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor:
-          ModernInvoiceDesign.background, // A soft, off-white background
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: ModernInvoiceDesign.surface, // Make AppBar transparent
-        foregroundColor: ModernInvoiceDesign.textPrimary,
-        title: const Text('Profile Photo'),
+        backgroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
+        title: Text(
+          'Profile Photo',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: BauhausDesign.textDark,
+              ),
+        ),
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
-        automaticallyImplyLeading:
-            true, // Ensure leading widget is always shown
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.textDark),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Stack(
-        children: [
-          // Animated decorative background shapes
-          _buildAnimatedBackground(),
-          // Main scrollable content
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: ModernInvoiceDesign.space6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: ModernInvoiceDesign.space5),
-                  _buildHeader(),
-                  const SizedBox(height: ModernInvoiceDesign.space10),
-                  _buildPhotoPreview(),
-                  const SizedBox(height: ModernInvoiceDesign.space8),
-                  _buildActionButtons(),
-                  const SizedBox(height: ModernInvoiceDesign.space10),
-                  _buildTipsCard(),
-                  const SizedBox(height: ModernInvoiceDesign.space10),
-                ]
-                    .animate(interval: 100.ms)
-                    .fadeIn(duration: 400.ms, curve: Curves.easeOut)
-                    .slideY(
-                        begin: 0.2, duration: 400.ms, curve: Curves.easeOut),
-              ),
-            ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: BauhausDesign.space5),
+              _buildHeader(),
+              const SizedBox(height: BauhausDesign.space10),
+              _buildPhotoPreview(),
+              const SizedBox(height: BauhausDesign.space8),
+              _buildActionButtons(),
+              const SizedBox(height: BauhausDesign.space10),
+              _buildTipsCard(),
+              const SizedBox(height: BauhausDesign.space10),
+            ]
+                .animate(interval: 100.ms)
+                .fadeIn(duration: 400.ms, curve: Curves.easeOut)
+                .slideY(begin: 0.2, duration: 400.ms, curve: Curves.easeOut),
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildAnimatedBackground() {
-    return Stack(
-      children: [
-        Positioned(
-          top: -100,
-          left: -100,
-          child: Container(
-            height: 300,
-            width: 300,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-                  ModernInvoiceDesign.primary.withValues(alpha: 0.0),
-                ],
-              ),
-            ),
-          ),
-        )
-            .animate(onPlay: (c) => c.repeat())
-            .shimmer(duration: 6000.ms, angle: 45, colors: [
-          ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-          ModernInvoiceDesign.secondary.withValues(alpha: 0.1),
-          ModernInvoiceDesign.primary.withValues(alpha: 0.1),
-        ]),
-        Positioned(
-          bottom: -150,
-          right: -150,
-          child: Container(
-            height: 400,
-            width: 400,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  ModernInvoiceDesign.secondary.withValues(alpha: 0.1),
-                  ModernInvoiceDesign.secondary.withValues(alpha: 0.0),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Animated background removed for cleaner Bauhaus look
 
   Widget _buildHeader() {
     return Column(
@@ -287,19 +233,19 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         Text(
           'Show Your Best Side',
           textAlign: TextAlign.center,
-          style: ModernInvoiceDesign.headlineMedium.copyWith(
-            fontWeight: FontWeight.bold,
-            color: ModernInvoiceDesign.neutral900,
-          ),
+          style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark,
+              ),
         ),
-        const SizedBox(height: ModernInvoiceDesign.space3),
+        const SizedBox(height: BauhausDesign.space3),
         Text(
           'A great photo builds trust and makes your profile stand out.',
           textAlign: TextAlign.center,
-          style: ModernInvoiceDesign.bodyLarge.copyWith(
-            color: ModernInvoiceDesign.neutral600,
-            height: 1.5,
-          ),
+          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                color: BauhausDesign.textMuted,
+                height: 1.5,
+              ),
         ),
       ],
     );
@@ -322,35 +268,35 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
   }
 
   Widget _buildPlaceholder() {
-    return DottedBorder(
-      borderType: BorderType.Circle,
-      color: ModernInvoiceDesign.primary.withValues(alpha: 0.5),
-      strokeWidth: 2,
-      dashPattern: const [12, 8],
-      child: Container(
-        height: 220,
-        width: 220,
-        decoration: BoxDecoration(
-          color: ModernInvoiceDesign.primary.withValues(alpha: 0.05),
-          shape: BoxShape.circle,
+    return Container(
+      height: 220,
+      width: 220,
+      decoration: BoxDecoration(
+        color: BauhausDesign.primary.withOpacity(0.05),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: BauhausDesign.primary.withOpacity(0.5),
+          width: 2,
+          style: BorderStyle.solid, // Replaced DottedBorder
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.camera_alt_outlined,
-              color: ModernInvoiceDesign.primary,
-              size: 48,
-            ),
-            const SizedBox(height: ModernInvoiceDesign.space2),
-            Text(
-              'Tap to Select',
-              style: ModernInvoiceDesign.bodyLarge.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.camera_alt_outlined,
+            color: BauhausDesign.primary,
+            size: 48,
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            'Tap to Select',
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: BauhausDesign.primary,
+                ),
+          ),
+        ],
       ),
     )
         .animate()
@@ -364,14 +310,8 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       width: 220,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: ModernInvoiceDesign.primary.withValues(alpha: 0.3),
-            blurRadius: 25,
-            spreadRadius: -5,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        boxShadow: const [BauhausDesign.shadowHard],
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
       ),
       child: ClipOval(
         child: Image.file(
@@ -385,25 +325,28 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
   Widget _buildActionButtons() {
     return Column(
       children: [
-        _buildButton(
+        BauhausActionButton(
           text: _imageFile == null ? 'Choose from Gallery' : 'Change Photo',
           icon: Icons.add_photo_alternate_outlined,
-          onTap: _pickImage,
-          isPrimary: true,
+          onPressed: _pickImage,
+          variant: _imageFile == null
+              ? BauhausActionVariant.primary
+              : BauhausActionVariant.secondary,
+          isFullWidth: true,
         ),
         AnimatedSize(
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
           child: _imageFile != null
               ? Padding(
-                  padding:
-                      const EdgeInsets.only(top: ModernInvoiceDesign.space4),
-                  child: _buildButton(
+                  padding: const EdgeInsets.only(top: BauhausDesign.space4),
+                  child: BauhausActionButton(
                     text: 'Upload & Save',
                     icon: Icons.cloud_upload_outlined,
-                    onTap: _uploadPhoto,
-                    isPrimary: false,
+                    onPressed: _isLoading ? null : _uploadPhoto,
+                    variant: BauhausActionVariant.primary,
                     isLoading: _isLoading,
+                    isFullWidth: true,
                   ),
                 )
               : const SizedBox.shrink(),
@@ -412,124 +355,37 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
     );
   }
 
-  Widget _buildButton({
-    required String text,
-    required IconData icon,
-    required VoidCallback onTap,
-    bool isPrimary = true,
-    bool isLoading = false,
-  }) {
-    final primaryColor =
-        isPrimary ? ModernInvoiceDesign.primary : ModernInvoiceDesign.secondary;
-    final onPrimaryColor = Colors.white;
-
-    return GestureDetector(
-      onTap: isLoading ? null : onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 56,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isLoading
-                ? [Colors.grey.shade400, Colors.grey.shade500]
-                : [primaryColor, primaryColor.withValues(alpha: 0.8)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            if (!isLoading)
-              BoxShadow(
-                color: primaryColor.withValues(alpha: 0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-          ],
-        ),
-        child: Center(
-          child: isLoading
-              ? const SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, color: onPrimaryColor, size: 20),
-                    const SizedBox(width: ModernInvoiceDesign.space3),
-                    Text(
-                      text,
-                      style: ModernInvoiceDesign.labelLarge.copyWith(
-                        color: onPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-        ),
-      ),
-    )
-        .animate(target: isLoading ? 0 : 1)
-        .scaleXY(end: 1.0, curve: Curves.elasticOut);
-  }
-
   Widget _buildTipsCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Stack(
+    return BauhausCard(
+      padding: const EdgeInsets.all(BauhausDesign.space6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // The glassmorphism effect
-          Positioned.fill(
-            child: Container(
-              color: Colors.white.withValues(alpha: 0.5),
-            ).frosted(
-              blur: 15,
-              frostColor: ModernInvoiceDesign.background,
-              frostOpacity: 0.4,
-            ),
+          Row(
+            children: [
+              const Icon(
+                Icons.lightbulb_outline_rounded,
+                color: BauhausDesign.warning,
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              Text(
+                'A Few Quick Tips',
+                style:
+                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                          color: BauhausDesign.textDark,
+                        ),
+              ),
+            ],
           ),
-          // The content
-          Container(
-            padding: const EdgeInsets.all(ModernInvoiceDesign.space6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.lightbulb_outline_rounded,
-                      color: ModernInvoiceDesign.primaryDark,
-                    ),
-                    const SizedBox(width: ModernInvoiceDesign.space3),
-                    Text(
-                      'A Few Quick Tips',
-                      style: ModernInvoiceDesign.headlineMedium.copyWith(
-                        color: ModernInvoiceDesign.neutral900,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: ModernInvoiceDesign.space4),
-                _buildTipRow(Icons.face_retouching_natural,
-                    'Use a clear, recent photo of your face.'),
-                const SizedBox(height: ModernInvoiceDesign.space3),
-                _buildTipRow(Icons.wb_sunny_outlined,
-                    'Find a spot with good, natural lighting.'),
-                const SizedBox(height: ModernInvoiceDesign.space3),
-                _buildTipRow(Icons.blur_off_outlined,
-                    'A simple, uncluttered background works best.'),
-              ],
-            ),
-          ),
+          const SizedBox(height: BauhausDesign.space4),
+          _buildTipRow(Icons.face_retouching_natural,
+              'Use a clear, recent photo of your face.'),
+          const SizedBox(height: BauhausDesign.space3),
+          _buildTipRow(Icons.wb_sunny_outlined,
+              'Find a spot with good, natural lighting.'),
+          const SizedBox(height: BauhausDesign.space3),
+          _buildTipRow(Icons.blur_off_outlined,
+              'A simple, uncluttered background works best.'),
         ],
       ),
     );
@@ -539,15 +395,15 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: ModernInvoiceDesign.primary, size: 20),
-        const SizedBox(width: ModernInvoiceDesign.space4),
+        Icon(icon, color: BauhausDesign.primary, size: 20),
+        const SizedBox(width: BauhausDesign.space4),
         Expanded(
           child: Text(
             text,
-            style: ModernInvoiceDesign.bodyLarge.copyWith(
-              color: ModernInvoiceDesign.neutral800,
-              height: 1.4,
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                  color: BauhausDesign.textDark,
+                  height: 1.4,
+                ),
           ),
         ),
       ],

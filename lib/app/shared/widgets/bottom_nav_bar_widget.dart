@@ -1,5 +1,7 @@
+import 'package:carenest/app/core/utils/permission_manager.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'dart:typed_data';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/home/views/home_view.dart';
@@ -40,16 +42,18 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   String _lastName = '';
 
   // Color constants
-  static const Color _primaryColor = Color(0xFF6366F1);
-  static const Color _gray100 = Color(0xFFF3F4F6);
-  static const Color _gray200 = Color(0xFFE5E7EB);
+  // Removed unused legacy colors
 
   @override
   void initState() {
     super.initState();
     _controller = PersistentTabController(initialIndex: 0);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _loadUserData();
+      // Request notification permission after the dashboard is loaded
+      if (mounted) {
+        await PermissionManager.requestNotificationPermission(context);
+      }
     });
   }
 
@@ -136,6 +140,26 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PersistentTabView(
+        tabs: _buildNavBarItems(),
+        controller: _controller,
+        navBarBuilder: (navBarConfig) => Style1BottomNavBar(
+          navBarConfig: navBarConfig,
+          navBarDecoration: NavBarDecoration(
+            color: BauhausDesign.surfaceLight,
+            border: null,
+            boxShadow: null,
+          ),
+        ),
+        navBarHeight: 70, // Accommodate content without overflow
+        navBarOverlap: const NavBarOverlap.none(),
+      ),
+    );
+  }
+
   PersistentTabConfig _buildHomeTab() {
     Widget homeScreen;
     if (widget.role == UserRole.admin) {
@@ -161,10 +185,16 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     return PersistentTabConfig(
       screen: homeScreen,
       item: ItemConfig(
-        icon: const Icon(Icons.home),
-        title: 'Home',
-        activeForegroundColor: _primaryColor,
-        inactiveBackgroundColor: _gray100,
+        icon: _buildActiveTabItem(
+          Icons.home,
+          'HOME',
+          BauhausDesign.primary,
+          BauhausDesign.textLight,
+        ),
+        inactiveIcon: _buildInactiveTabItem(Icons.home_outlined, 'HOME'),
+        title: '',
+        activeForegroundColor: BauhausDesign.primary,
+        inactiveForegroundColor: BauhausDesign.neutral,
       ),
     );
   }
@@ -173,10 +203,16 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     return PersistentTabConfig(
       screen: PhotoUploadScreen(email: widget.email),
       item: ItemConfig(
-        icon: const Icon(Icons.person),
-        title: 'Profile Photo',
-        activeForegroundColor: _primaryColor,
-        inactiveBackgroundColor: _gray100,
+        icon: _buildActiveTabItem(
+          Icons.person,
+          'PROFILE',
+          BauhausDesign.secondary,
+          BauhausDesign.textLight,
+        ),
+        inactiveIcon: _buildInactiveTabItem(Icons.person_outline, 'PROFILE'),
+        title: '',
+        activeForegroundColor: BauhausDesign.secondary,
+        inactiveForegroundColor: BauhausDesign.neutral,
       ),
     );
   }
@@ -185,10 +221,16 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     return PersistentTabConfig(
       screen: AssignC2E(),
       item: ItemConfig(
-        icon: const Icon(Icons.search),
-        title: 'Assign',
-        activeForegroundColor: _primaryColor,
-        inactiveBackgroundColor: _gray100,
+        icon: _buildActiveTabItem(
+          Icons.search,
+          'ASSIGN',
+          BauhausDesign.accent,
+          BauhausDesign.textDark,
+        ),
+        inactiveIcon: _buildInactiveTabItem(Icons.search_outlined, 'ASSIGN'),
+        title: '',
+        activeForegroundColor: BauhausDesign.neutral,
+        inactiveForegroundColor: BauhausDesign.neutral,
       ),
     );
   }
@@ -204,31 +246,88 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         photoData: _photoData,
       ),
       item: ItemConfig(
-        icon: const Icon(Icons.settings),
-        title: 'Settings',
-        activeForegroundColor: _primaryColor,
-        inactiveBackgroundColor: _gray100,
+        icon: _buildActiveTabItem(
+          Icons.settings,
+          'SETTINGS',
+          BauhausDesign.neutral,
+          BauhausDesign.textLight,
+        ),
+        inactiveIcon:
+            _buildInactiveTabItem(Icons.settings_outlined, 'SETTINGS'),
+        title: '',
+        activeForegroundColor: BauhausDesign.neutral,
+        inactiveForegroundColor: BauhausDesign.neutral,
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: PersistentTabView(
-        tabs: _buildNavBarItems(),
-        controller: _controller,
-        navBarBuilder: (navBarConfig) => Style1BottomNavBar(
-          navBarConfig: navBarConfig,
-          navBarDecoration: NavBarDecoration(
-            color: Colors.white,
-            border: Border(
-              top: BorderSide(color: _gray200, width: 0.3),
+  Widget _buildActiveTabItem(
+    IconData icon,
+    String label,
+    Color bgColor,
+    Color contentColor,
+  ) {
+    return Container(
+      width: 70, // Wider to accommodate text
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: BauhausDesign.neutral,
+            offset: Offset(2, 2),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: contentColor,
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              color: contentColor,
+              fontWeight: FontWeight.w900,
+              fontSize: 8,
+              fontFamily: 'Inter',
+              letterSpacing: 0.5,
             ),
           ),
-        ),
-        navBarOverlap: const NavBarOverlap.none(),
+        ],
       ),
+    );
+  }
+
+  Widget _buildInactiveTabItem(IconData icon, String label) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: BauhausDesign.neutral,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            color: BauhausDesign.neutral,
+            fontWeight: FontWeight.w900,
+            fontSize: 10,
+            fontFamily: 'Inter',
+            letterSpacing: 0.5,
+          ),
+        ),
+      ],
     );
   }
 }

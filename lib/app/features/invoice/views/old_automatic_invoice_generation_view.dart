@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/viewmodels/automatic_invoice_viewmodel.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
 import 'package:carenest/app/features/invoice/services/send_invoice_service.dart';
 import 'dart:io';

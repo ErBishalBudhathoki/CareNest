@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class TextFieldWidget extends ConsumerWidget {
   final TextEditingController controller;
@@ -35,8 +36,6 @@ class TextFieldWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    
     return ValueListenableBuilder<bool>(
       valueListenable: obscureTextNotifier,
       builder: (context, isObscure, child) {
@@ -46,39 +45,22 @@ class TextFieldWidget extends ConsumerWidget {
           onChanged: onChanged,
           onSaved: onSaved,
           validator: validator,
-          decoration: InputDecoration(
-            hintText: hintText,
-            prefixIcon: prefixIcon ?? (prefixIconData != null ? Icon(prefixIconData) : null),
+          style: BauhausDesign.getTextTheme(context).bodyLarge,
+          decoration: BauhausDesign.inputDecoration(hintText).copyWith(
+            prefixIcon: prefixIcon ?? (prefixIconData != null ? Icon(prefixIconData, color: BauhausDesign.textMuted) : null),
             suffixIcon: suffixIconClickable
                 ? IconButton(
                     icon: Icon(
                       getSuffixIcon != null 
                           ? getSuffixIcon!(isObscure) 
                           : (isObscure ? Icons.visibility_off : Icons.visibility),
+                      color: BauhausDesign.textMuted,
                     ),
                     onPressed: () {
                       obscureTextNotifier.value = !obscureTextNotifier.value;
                     },
                   )
-                : (suffixIcon ?? (suffixIconData != null ? Icon(suffixIconData) : null)),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: theme.colorScheme.primary),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: theme.colorScheme.error),
-            ),
-            filled: true,
-            fillColor: Colors.grey[50],
+                : (suffixIcon ?? (suffixIconData != null ? Icon(suffixIconData, color: BauhausDesign.textMuted) : null)),
           ),
         );
       },

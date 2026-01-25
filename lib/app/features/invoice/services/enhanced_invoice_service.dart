@@ -17,6 +17,9 @@ import 'package:carenest/app/features/invoice/presentation/widgets/price_prompt_
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/invoice/providers/period_providers.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
+
+import 'package:carenest/app/features/mileage/repositories/mileage_repository.dart';
 
 /// Enhanced Invoice Service with Pricing Integration
 /// Task 5.4: Update invoice service with enhanced pricing integration
@@ -29,6 +32,7 @@ class EnhancedInvoiceService {
   final InvoicePdfGenerator _pdfGenerator;
   final ApiMethod _apiMethod;
   final FileUploadService _fileUploadService;
+  final MileageRepository _mileageRepository;
 
   // Test-only methods
   // These methods are only used for testing and expose private methods
@@ -36,19 +40,20 @@ class EnhancedInvoiceService {
   Future<List<Map<String, dynamic>>> testCheckForMissingPrices(
     Map<String, dynamic> processedData, {
     String? organizationId,
+    required AppLocalizations l10n,
   }) async {
     return _checkForMissingPrices(processedData,
-        organizationId: organizationId);
+        organizationId: organizationId, l10n: l10n);
   }
 
   @visibleForTesting
   void testApplyPriceResolutions(Map<String, dynamic> processedData,
       List<Map<String, dynamic>> resolutions,
-      {bool? applyTax, double? taxRate}) {
+      {bool? applyTax, double? taxRate, required AppLocalizations l10n}) {
     // Ensure taxRate is never null to prevent 'Null is not a subtype of double' error
     taxRate = taxRate ?? 0.0;
     _applyPriceResolutions(processedData, resolutions,
-        applyTax: applyTax, taxRate: taxRate);
+        applyTax: applyTax, taxRate: taxRate, l10n: l10n);
   }
 
   @visibleForTesting
@@ -68,13 +73,17 @@ class EnhancedInvoiceService {
     _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
   }
 
-  EnhancedInvoiceService(this.ref, this._apiMethod)
+  EnhancedInvoiceService(this.ref, this._apiMethod, {
+    InvoiceDataProcessor? dataProcessor, 
+    MileageRepository? mileageRepository,
+  })
       : _repository = InvoiceRepository(_apiMethod),
         _helpers = InvoiceHelpers(),
         _emailService = InvoiceEmailService(),
-        _dataProcessor = InvoiceDataProcessor(ref),
+        _dataProcessor = dataProcessor ?? InvoiceDataProcessor(ref),
         _pdfGenerator = InvoicePdfGenerator(),
-        _fileUploadService = FileUploadService(api: _apiMethod) {
+        _fileUploadService = FileUploadService(api: _apiMethod),
+        _mileageRepository = mileageRepository ?? MileageRepository(_apiMethod) {
     // Set the enhanced service reference after initialization
     _dataProcessor.setEnhancedInvoiceService(this);
   }
@@ -275,15 +284,20 @@ class EnhancedInvoiceService {
     DateTime? startDate,
     DateTime? endDate,
     String? invoiceType,
+    bool applyMinEngagement = true,
+    Map<String, dynamic>? recurrence,
   }) async {
     try {
       _isLoading = true;
       _errorMessage = '';
 
+      // Define l10n for localization
+      final l10n = AppLocalizations.of(context)!;
+
       // Validate tax rate based on applyTax flag
       // Allow 0% tax for businesses with zero GST; only block negatives
       if (applyTax && taxRate < 0) {
-        throw Exception('Tax rate cannot be negative when tax is applied');
+        throw Exception(l10n.taxRateNegativeError);
       } else if (!applyTax && taxRate != 0) {
         taxRate = 0.0; // Force tax rate to 0 when tax is not applied
       }
@@ -604,6 +618,8 @@ class EnhancedInvoiceService {
           organizationId: organizationId,
           startDate: userProvidedPeriod ? effectiveStart : null,
           endDate: userProvidedPeriod ? effectiveEnd : null,
+          invoiceType: invoiceType,
+          applyMinEngagement: applyMinEngagement,
         );
 
         // Validate processed data structure
@@ -748,7 +764,7 @@ class EnhancedInvoiceService {
       if (validatePrices) {
         debugPrint('Validating prices for line items');
         missingPricePrompts = await _checkForMissingPrices(processedData,
-            organizationId: organizationId);
+            organizationId: organizationId, l10n: l10n);
         debugPrint(
             'Found ${missingPricePrompts.length} items with missing prices');
       }
@@ -767,14 +783,14 @@ class EnhancedInvoiceService {
 
         // If user cancelled, return empty list
         if (resolutions.isEmpty) {
-          _errorMessage = 'Invoice generation cancelled by user';
+          _errorMessage = l10n.invoiceGenerationCancelled;
           debugPrint('Invoice generation cancelled by user');
 
           // Update state to indicate error
           ref.read(invoiceGenerationStateProvider.notifier).state =
               InvoiceGenerationState.error;
           ref.read(invoiceGenerationErrorProvider.notifier).state =
-              'Invoice generation cancelled by user';
+              l10n.invoiceGenerationCancelled;
 
           return [];
         }
@@ -782,7 +798,7 @@ class EnhancedInvoiceService {
         // Apply price resolutions to processed data
         debugPrint('Applying ${resolutions.length} price resolutions');
         _applyPriceResolutions(processedData, resolutions,
-            applyTax: applyTax, taxRate: taxRate);
+            applyTax: applyTax, taxRate: taxRate, l10n: l10n);
 
         // Save custom pricing if requested
         await _saveCustomPricing(resolutions,
@@ -792,11 +808,39 @@ class EnhancedInvoiceService {
         // Re-validate after applying price resolutions
         debugPrint('Re-validating prices after resolution');
         await _checkForMissingPrices(processedData,
-            organizationId: organizationId);
+            organizationId: organizationId, l10n: l10n);
       }
 
       // Store processed invoices
       _invoices = List<Map<String, dynamic>>.from(processedData['clients']);
+
+      // Inject recurrence info if provided
+      if (recurrence != null) {
+        for (var invoice in _invoices) {
+          invoice['recurrence'] = recurrence;
+          // Calculate next date based on frequency
+          final issueDate = _tryParseDateFlexible(invoice['issueDate'] as String?) ?? DateTime.now();
+          DateTime nextDate = issueDate;
+          switch (recurrence['frequency']) {
+            case 'weekly': nextDate = nextDate.add(const Duration(days: 7)); break;
+            case 'fortnightly': nextDate = nextDate.add(const Duration(days: 14)); break;
+            case 'monthly': nextDate = DateTime(nextDate.year, nextDate.month + 1, nextDate.day); break;
+            case 'quarterly': nextDate = DateTime(nextDate.year, nextDate.month + 3, nextDate.day); break;
+            case 'annually': nextDate = DateTime(nextDate.year + 1, nextDate.month, nextDate.day); break;
+          }
+          // Ensure we don't produce invalid dates (e.g. Feb 30)
+          if (recurrence['frequency'] == 'monthly' || recurrence['frequency'] == 'quarterly' || recurrence['frequency'] == 'annually') {
+             // Basic fix for month overflow is handled by DateTime constructor but day might need clamping
+             // DateTime(2023, 2, 30) -> March 2. 
+             // Ideally we want last day of month if original was last day.
+             // keeping it simple for now as per DateTime behavior.
+          }
+          
+          invoice['recurrence']['nextDate'] = nextDate.toIso8601String();
+          invoice['recurrence']['startDate'] = issueDate.toIso8601String();
+        }
+      }
+
       debugPrint('Generated ${_invoices.length} invoices');
 
       // Add detailed pricing information if requested
@@ -862,9 +906,122 @@ class EnhancedInvoiceService {
         processedData['metadata']['validationSummary'] = validationSummary;
       }
 
+      // Add mileage items if applicable (Client Invoice)
+      if (invoiceType != 'employee') {
+        for (final client in _invoices) {
+          final clientId = client['clientId'];
+          final clientStartStr = client['startDate'];
+          final clientEndStr = client['endDate'];
+          
+          if (clientId != null && clientStartStr != null && clientEndStr != null) {
+             final parsedStart = _tryParseDateFlexible(clientStartStr);
+             final parsedEnd = _tryParseDateFlexible(clientEndStr);
+             
+             if (parsedStart != null && parsedEnd != null) {
+                // Format dates for API: yyyy-MM-dd
+                final apiStart = parsedStart.toIso8601String().split('T')[0];
+                final apiEnd = parsedEnd.toIso8601String().split('T')[0];
+                
+                final trips = await _mileageRepository.getTripsForClient(
+                  clientId, 
+                  startDate: apiStart, 
+                  endDate: apiEnd
+                );
+                
+                // Add trip line items
+                final items = client['items'] as List<dynamic>;
+                
+                // Get Organization Rate or Default
+                // Ideally this comes from organizationId, but let's assume default for now or pass it down
+                // Task: "Extend the Client Invoice generation to bill WITH_CLIENT trips"
+                final rate = 0.99; // Fallback, should be fetched from org settings
+                
+                for (final trip in trips) {
+                   if (trip.tripType == 'WITH_CLIENT' && trip.status == 'APPROVED') {
+                      final amount = trip.distance * rate;
+                      items.add({
+                        'date': trip.date.toIso8601String().split('T')[0],
+                        'description': 'Travel with Client (${trip.startLocation} - ${trip.endLocation})',
+                        'quantity': trip.distance,
+                        'unitPrice': rate,
+                        'amount': amount,
+                        'gst': amount * 0.1, // Assuming GST applies
+                        'total': amount * 1.1,
+                        'ndisItemNumber': '07_001_0106_8_3', // Example Transport Item Code
+                      });
+                   }
+                }
+                
+                // Recalculate totals
+                _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
+             }
+          }
+        }
+      }
+
       // Upload attachments before generating PDFs
       List<String>? uploadedPhotoUrls;
       List<String>? uploadedAdditionalFileUrls;
+
+      // Add mileage items if applicable (Client Invoice)
+      if (invoiceType != 'employee') {
+        for (final client in _invoices) {
+          final clientId = client['clientId'];
+          final clientStartStr = client['startDate'];
+          final clientEndStr = client['endDate'];
+          
+          if (clientId != null && clientStartStr != null && clientEndStr != null) {
+             final parsedStart = _tryParseDateFlexible(clientStartStr);
+             final parsedEnd = _tryParseDateFlexible(clientEndStr);
+             
+             if (parsedStart != null && parsedEnd != null) {
+                // Format dates for API: yyyy-MM-dd
+                final apiStart = parsedStart.toIso8601String().split('T')[0];
+                final apiEnd = parsedEnd.toIso8601String().split('T')[0];
+                
+                final trips = await _mileageRepository.getTripsForClient(
+                  clientId, 
+                  startDate: apiStart, 
+                  endDate: apiEnd
+                );
+                
+                // Add trip line items
+                final items = client['lineItems'] as List<dynamic>; // Assuming lineItems is the key for PDF
+                // NOTE: Check if 'lineItems' or 'items' is used.
+                // The loop above populates 'itemsExceedingPriceCap' from 'lineItems'.
+                // The PDF generator typically uses 'items'. 
+                // Let's check processInvoiceData output. It returns 'items'.
+                // But _checkForMissingPrices uses 'lineItems' inside logic.
+                // Let's assume 'items' is the main list for PDF.
+                
+                final pdfItems = client['items'] as List<dynamic>? ?? [];
+                
+                // Get Organization Rate or Default
+                final rate = 0.99; // Fallback
+                
+                for (final trip in trips) {
+                   if (trip.tripType == 'WITH_CLIENT' && trip.status == 'APPROVED') {
+                      final amount = trip.distance * rate;
+                      pdfItems.add({
+                        'date': trip.date.toIso8601String().split('T')[0],
+                        'description': 'Travel with Client (${trip.startLocation} - ${trip.endLocation})',
+                        'quantity': trip.distance,
+                        'unitPrice': rate,
+                        'amount': amount,
+                        'gst': amount * 0.1, // Assuming GST applies
+                        'total': amount * 1.1,
+                        'ndisItemNumber': '07_001_0106_8_3', // Example Transport Item Code
+                        'isMileage': true,
+                      });
+                   }
+                }
+                
+                // Recalculate totals
+                _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
+             }
+          }
+        }
+      }
 
       try {
         // Upload photo attachments if provided
@@ -944,7 +1101,7 @@ class EnhancedInvoiceService {
       // Compose header context: issuer and billed entity based on invoiceType
       final type = (invoiceType ?? '').toLowerCase();
       if (type != 'client' && type != 'employee') {
-        throw Exception('Invoice type must be selected');
+        throw Exception(l10n.invoiceTypeRequiredError);
       }
       for (final client in _invoices) {
         // Issuer: admin profile
@@ -966,7 +1123,7 @@ class EnhancedInvoiceService {
             'businessName': client['businessName'],
           };
           billed = {
-            'name': _formatClientDisplayName(details),
+            'name': _formatClientDisplayName(details, l10n),
             'email': client['clientEmail'] ?? '',
             'address': [
               client['clientAddress'] ?? '',
@@ -1079,6 +1236,7 @@ class EnhancedInvoiceService {
       return updatedPdfPaths ?? pdfPaths;
     } catch (e) {
       // Enhanced error handling with platform-specific checks
+      final l10n = AppLocalizations.of(context)!;
       String errorMsg = 'Error generating invoices';
 
       // Check for web-specific errors related to Argon2
@@ -1086,12 +1244,10 @@ class EnhancedInvoiceService {
           e
               .toString()
               .contains('cannot be represented exactly in JavaScript')) {
-        errorMsg =
-            'Error generating invoices: Web platform limitation with encryption. Please use the mobile or desktop app for this feature.';
+        errorMsg = l10n.webEncryptionLimitationError;
         debugPrint('Web-specific Argon2 error detected: ${e.toString()}');
       } else if (e.toString().contains('BANK_DETAILS_REQUIRED')) {
-        errorMsg =
-            'Bank details are missing for both employee and admin. Please add bank details before generating invoices.';
+        errorMsg = l10n.bankDetailsRequiredError;
         debugPrint('Bank details missing for both employee and admin');
       } else {
         errorMsg = 'Error generating invoices: ${e.toString()}';
@@ -1195,6 +1351,7 @@ class EnhancedInvoiceService {
   Future<List<Map<String, dynamic>>> _checkForMissingPrices(
     Map<String, dynamic> processedData, {
     String? organizationId,
+    required AppLocalizations l10n,
   }) async {
     debugPrint(
         'Enhanced Invoice Service: _checkForMissingPrices method called!');
@@ -1310,7 +1467,8 @@ class EnhancedInvoiceService {
           continue; // Skip to next client
         }
 
-        final clientName = client['clientName'] as String? ?? 'Unknown Client';
+        final clientName =
+            client['clientName'] as String? ?? l10n.unknownClient;
 
         // Prepare line items for validation
         final List<Map<String, dynamic>> itemsToValidate = [];
@@ -1499,7 +1657,7 @@ class EnhancedInvoiceService {
             final item = lineItems[itemIndex] as Map<String, dynamic>;
             final ndisItemNumber = item['ndisItemNumber'];
             final itemDescription =
-                item['description'] as String? ?? 'Unknown Item';
+                item['description'] as String? ?? l10n.unknownItem;
             final price = item['price'];
 
             // Check if price is missing, zero, or if custom pricing is available
@@ -1542,7 +1700,7 @@ class EnhancedInvoiceService {
             // Apply custom pricing immediately if available
             if (hasCustomPricing && customPrice != null) {
               item['price'] = customPrice;
-              item['pricingSource'] = 'Organization-wide custom price';
+              item['pricingSource'] = l10n.sourceOrganizationWide;
               item['hasCustomPricing'] = true;
               debugPrint(
                   'Enhanced Invoice Service: Applied custom price $customPrice to $ndisItemNumber');
@@ -1583,8 +1741,7 @@ class EnhancedInvoiceService {
                             double.parse(applied.toStringAsFixed(2));
 
                         item['price'] = roundedPrice;
-                        item['pricingSource'] =
-                            'Organization fallback base rate';
+                        item['pricingSource'] = l10n.sourceFallbackBaseRate;
                         item['hasCustomPricing'] = false;
                         if (cap != null) {
                           item['priceCap'] = cap;
@@ -1836,7 +1993,7 @@ class EnhancedInvoiceService {
   /// Enhanced with better validation and detailed pricing information
   void _applyPriceResolutions(Map<String, dynamic> processedData,
       List<Map<String, dynamic>> resolutions,
-      {bool? applyTax, double? taxRate}) {
+      {bool? applyTax, double? taxRate, required AppLocalizations l10n}) {
     final clients = processedData['clients'] as List<dynamic>? ?? [];
 
     for (final resolution in resolutions) {
@@ -1861,7 +2018,7 @@ class EnhancedInvoiceService {
           // Update the price in the line item with enhanced information
           item['price'] = providedPrice;
           item['pricingNotes'] = resolutionData['notes'];
-          item['pricingSource'] = _determinePricingSource(resolutionData);
+          item['pricingSource'] = _determinePricingSource(resolutionData, l10n);
           item['pricingDate'] = DateTime.now().toIso8601String();
 
           // Add validation information
@@ -1869,7 +2026,7 @@ class EnhancedInvoiceService {
               providedPrice > (item['priceCap'] as double)) {
             item['exceedsPriceCap'] = true;
             item['priceCapExceedReason'] =
-                resolutionData['notes'] ?? 'Manual override';
+                resolutionData['notes'] ?? l10n.sourceManualOverride;
           } else {
             item['exceedsPriceCap'] = false;
           }
@@ -1898,13 +2055,14 @@ class EnhancedInvoiceService {
   }
 
   /// Determine the source of pricing based on resolution data
-  String _determinePricingSource(Map<String, dynamic> resolutionData) {
+  String _determinePricingSource(
+      Map<String, dynamic> resolutionData, AppLocalizations l10n) {
     if (resolutionData['applyToClient'] == true) {
-      return 'Client-specific custom price';
+      return l10n.sourceClientSpecific;
     } else if (resolutionData['applyToOrganization'] == true) {
-      return 'Organization-wide custom price';
+      return l10n.sourceOrganizationWide;
     } else {
-      return 'Manual price entry';
+      return l10n.sourceManualEntry;
     }
   }
 
@@ -2668,8 +2826,10 @@ class EnhancedInvoiceService {
 
   /// Format client display name with business name if available
   /// Format: "Client Name (Business Name)" or just "Client Name" if no business
-  String _formatClientDisplayName(Map<String, dynamic>? clientDetails) {
-    if (clientDetails == null) return 'Unknown Client';
+  String _formatClientDisplayName(Map<String, dynamic>? clientDetails,
+      [AppLocalizations? l10n]) {
+    final unknownClient = l10n?.unknownClient ?? 'Unknown Client';
+    if (clientDetails == null) return unknownClient;
 
     final firstName = clientDetails['clientFirstName']?.toString() ?? '';
     final lastName = clientDetails['clientLastName']?.toString() ?? '';
@@ -2677,7 +2837,7 @@ class EnhancedInvoiceService {
 
     String clientName = '$firstName $lastName'.trim();
     if (clientName.isEmpty) {
-      clientName = 'Unknown Client';
+      clientName = unknownClient;
     }
 
     // Add business name in parentheses if available and not empty

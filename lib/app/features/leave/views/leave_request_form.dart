@@ -1,8 +1,9 @@
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/features/leave/viewmodels/leave_viewmodel.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:intl/intl.dart';
 
 class LeaveRequestForm extends ConsumerStatefulWidget {
@@ -15,15 +16,12 @@ class LeaveRequestForm extends ConsumerStatefulWidget {
 }
 
 class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
-  final ApiMethod apiMethod = ApiMethod();
   final _formKey = GlobalKey<FormState>();
-  
+
   String? _selectedLeaveType;
   DateTimeRange? _selectedDateRange;
   final TextEditingController _reasonController = TextEditingController();
   final TextEditingController _totalHoursController = TextEditingController();
-  
-  bool _isLoading = false;
 
   final List<String> _leaveTypes = [
     'Annual Leave',
@@ -43,18 +41,18 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
   Future<void> _submitRequest() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedLeaveType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a leave type')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a leave type')));
       return;
     }
     if (_selectedDateRange == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select dates')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Please select dates')));
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    final result = await apiMethod.submitLeaveRequest(
-      userEmail: widget.userEmail,
+    final viewModel = ref.read(leaveViewModelProvider(widget.userEmail));
+    final success = await viewModel.submitRequest(
       leaveType: _selectedLeaveType!,
       startDate: _selectedDateRange!.start,
       endDate: _selectedDateRange!.end,
@@ -62,89 +60,79 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
       totalHours: double.tryParse(_totalHoursController.text) ?? 0.0,
     );
 
-    setState(() => _isLoading = false);
-
     if (mounted) {
-      if (result['success'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Leave request submitted')));
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Leave request submitted')));
         Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'] ?? 'Failed to submit')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(viewModel.errorMessage ?? 'Failed to submit')));
       }
     }
   }
 
-  void _calculateHours() {
+  Future<void> _calculateHours() async {
     if (_selectedDateRange != null) {
-      final days = _selectedDateRange!.duration.inDays + 1;
-      // Simple assumption: 7.6 hours per day for full time
-      // This should ideally be smarter or user-editable
-      final hours = days * 7.6;
-      _totalHoursController.text = hours.toStringAsFixed(2);
+      final viewModel = ref.read(leaveViewModelProvider(widget.userEmail));
+      final hours = await viewModel.calculateLeaveHours(
+        _selectedDateRange!.start,
+        _selectedDateRange!.end,
+      );
+      if (mounted) {
+        _totalHoursController.text = hours.toStringAsFixed(2);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(leaveViewModelProvider(widget.userEmail));
+
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
         title: Text(
-          'NEW REQUEST',
-          style: GoogleFonts.oswald(
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-          ),
+          AppLocalizations.of(context)!.newRequestTitle,
+          style: BauhausDesign.getTextTheme(context).headlineMedium,
         ),
         backgroundColor: BauhausDesign.surfaceLight,
         centerTitle: true,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: BauhausDesign.textDark),
+        leading: BauhausIconButton(
+          icon: Icons.close,
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.textDark, height: 2),
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral, height: 1),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildLabel("LEAVE TYPE"),
-              const SizedBox(height: 8),
+              _buildLabel(AppLocalizations.of(context)!.leaveTypeLabel),
+              const SizedBox(height: BauhausDesign.space1),
               DropdownButtonFormField<String>(
                 value: _selectedLeaveType,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: BauhausDesign.surfaceLight,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: BauhausDesign.textDark, width: 2),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: BauhausDesign.primary, width: 2),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                ),
-                dropdownColor: BauhausDesign.surfaceLight,
+                decoration: BauhausDesign.inputDecoration(AppLocalizations.of(context)!.selectLeaveTypeHint),
+                dropdownColor: BauhausDesign.surfaceWhite,
                 items: _leaveTypes.map((type) {
                   return DropdownMenuItem(
                     value: type,
-                    child: Text(type, style: GoogleFonts.inter(color: BauhausDesign.textDark)),
+                    child: Text(type,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium),
                   );
                 }).toList(),
                 onChanged: (val) => setState(() => _selectedLeaveType = val),
               ),
-
-              const SizedBox(height: 24),
-              _buildLabel("DATES"),
-              const SizedBox(height: 8),
+              const SizedBox(height: BauhausDesign.space4),
+              _buildLabel(AppLocalizations.of(context)!.datesLabel),
+              const SizedBox(height: BauhausDesign.space1),
               InkWell(
                 onTap: () async {
                   final picked = await showDateRangePicker(
@@ -155,8 +143,8 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: const ColorScheme.light(
-                            primary: BauhausDesign.textDark,
-                            onPrimary: BauhausDesign.surfaceLight,
+                            primary: BauhausDesign.primary,
+                            onPrimary: BauhausDesign.surfaceWhite,
                             onSurface: BauhausDesign.textDark,
                           ),
                         ),
@@ -167,110 +155,71 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                   if (picked != null) {
                     setState(() {
                       _selectedDateRange = picked;
-                      _calculateHours();
                     });
+                    await _calculateHours();
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: BauhausDesign.textDark, width: 2),
-                    color: BauhausDesign.surfaceLight,
+                    color: BauhausDesign.surfaceWhite,
+                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         _selectedDateRange == null
-                            ? "Select Date Range"
+                            ? AppLocalizations.of(context)!.selectDateRangeLabel
                             : "${DateFormat('dd/MM/yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd/MM/yyyy').format(_selectedDateRange!.end)}",
-                        style: GoogleFonts.inter(
-                          color: _selectedDateRange == null ? BauhausDesign.neutral : BauhausDesign.textDark,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(
+                              color: _selectedDateRange == null
+                                  ? BauhausDesign.textMuted
+                                  : BauhausDesign.textDark,
+                            ),
                       ),
-                      const Icon(Icons.calendar_today, color: BauhausDesign.textDark),
+                      const Icon(Icons.calendar_today,
+                          color: BauhausDesign.textMuted),
                     ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 24),
-              _buildLabel("TOTAL HOURS (ESTIMATED)"),
-              const SizedBox(height: 8),
-              TextFormField(
+              const SizedBox(height: BauhausDesign.space4),
+              BauhausTextField(
                 controller: _totalHoursController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                style: GoogleFonts.inter(color: BauhausDesign.textDark),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: BauhausDesign.surfaceLight,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: BauhausDesign.textDark, width: 2),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: BauhausDesign.primary, width: 2),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                  hintText: "0.00",
-                ),
+                label: AppLocalizations.of(context)!.totalHoursEstimatedLabel,
+                hintText: "0.00",
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 validator: (val) {
-                  if (val == null || val.isEmpty) return 'Please enter total hours';
+                  if (val == null || val.isEmpty)
+                    return 'Please enter total hours';
                   return null;
                 },
               ),
-
-              const SizedBox(height: 24),
-              _buildLabel("REASON"),
-              const SizedBox(height: 8),
-              TextFormField(
+              const SizedBox(height: BauhausDesign.space4),
+              BauhausTextField(
                 controller: _reasonController,
+                label: AppLocalizations.of(context)!.reasonLabel,
+                hintText: AppLocalizations.of(context)!.reasonHint,
                 maxLines: 3,
-                style: GoogleFonts.inter(color: BauhausDesign.textDark),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: BauhausDesign.surfaceLight,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: BauhausDesign.textDark, width: 2),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: BauhausDesign.primary, width: 2),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                  hintText: "Reason for leave...",
-                ),
                 validator: (val) {
-                  if (val == null || val.isEmpty) return 'Please enter a reason';
+                  if (val == null || val.isEmpty)
+                    return 'Please enter a reason';
                   return null;
                 },
               ),
-
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: BauhausDesign.success,
-                    foregroundColor: BauhausDesign.textDark, // High contrast
-                    shape: const RoundedRectangleBorder(),
-                    side: const BorderSide(color: BauhausDesign.textDark, width: 2),
-                    elevation: 0,
-                  ),
-                  onPressed: _isLoading ? null : _submitRequest,
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: BauhausDesign.textDark)
-                      : Text(
-                          "SUBMIT REQUEST",
-                          style: GoogleFonts.oswald(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                ),
+              const SizedBox(height: BauhausDesign.space6),
+              BauhausActionButton(
+                text: AppLocalizations.of(context)!.submitRequestButton,
+                onPressed: viewModel.isLoading ? null : _submitRequest,
+                isLoading: viewModel.isLoading,
+                variant: BauhausActionVariant.success,
+                isFullWidth: true,
               ),
             ],
           ),
@@ -282,11 +231,9 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
   Widget _buildLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.oswald(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: BauhausDesign.textDark,
-      ),
+      style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
     );
   }
 }

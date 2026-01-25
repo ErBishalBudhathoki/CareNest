@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 /// Real-time validation widget for authentication forms
 /// Provides immediate feedback on input errors before submission
@@ -204,21 +204,21 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
               // Input field
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
                     color: _getBorderColor(),
-                    width: 2,
+                    width: 1,
                   ),
-                  color: AppColors.colorBackground,
+                  color: BauhausDesign.backgroundLight,
                 ),
                 child: TextField(
                   controller: widget.controller,
                   obscureText: widget.obscureText,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppColors.colorFontPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w500,
+                          ),
                   decoration: InputDecoration(
                     labelText: widget.label,
                     hintText: widget.hint,
@@ -235,12 +235,11 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                       vertical: 16,
                     ),
                     labelStyle: TextStyle(
-                      color: AppColors.colorFontSecondary,
+                      color: BauhausDesign.textMuted,
                       fontSize: 14,
                     ),
                     hintStyle: TextStyle(
-                      color:
-                          AppColors.colorFontSecondary.withOpacity(0.1),
+                      color: BauhausDesign.textMuted.withOpacity(0.5),
                       fontSize: 16,
                     ),
                   ),
@@ -264,7 +263,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                                   Icon(
                                     Icons.warning_amber_outlined,
                                     size: 16,
-                                    color: AppColors.error,
+                                    color: BauhausDesign.error,
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
@@ -272,7 +271,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                                       _errorMessage ?? '',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: AppColors.error,
+                                        color: BauhausDesign.error,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -299,8 +298,10 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
       return IconButton(
         onPressed: widget.onToggleObscure,
         icon: Icon(
-          widget.obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-          color: AppColors.colorFontSecondary,
+          widget.obscureText
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
+          color: BauhausDesign.textMuted,
         ),
       );
     }
@@ -311,7 +312,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
         builder: (context, child) {
           return Icon(
             _isValid ? Icons.check_circle_outline : Icons.cancel_outlined,
-            color: _isValid ? AppColors.colorSuccess : AppColors.error,
+            color: _isValid ? BauhausDesign.success : BauhausDesign.error,
           );
         },
       );
@@ -322,16 +323,16 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
 
   Color _getBorderColor() {
     if (!widget.showValidation || !_hasBeenTouched) {
-      return AppColors.colorBorder;
+      return BauhausDesign.neutral;
     }
-    return _isValid ? AppColors.colorSuccess : AppColors.error;
+    return _isValid ? BauhausDesign.success : BauhausDesign.error;
   }
 
   Color _getIconColor() {
     if (!widget.showValidation || !_hasBeenTouched) {
-      return AppColors.colorFontSecondary;
+      return BauhausDesign.textMuted;
     }
-    return _isValid ? AppColors.colorSuccess : AppColors.error;
+    return _isValid ? BauhausDesign.success : BauhausDesign.error;
   }
 
   Widget _buildPasswordStrengthIndicator() {
@@ -352,7 +353,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                 'Password strength: ',
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColors.colorFontSecondary,
+                  color: BauhausDesign.textMuted,
                 ),
               ),
               Text(
@@ -369,6 +370,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
           LinearProgressIndicator(
             value: strength / 4,
             valueColor: AlwaysStoppedAnimation<Color>(strengthColor),
+            backgroundColor: BauhausDesign.neutral.withOpacity(0.3),
             minHeight: 3,
           ),
         ],
@@ -410,16 +412,16 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
     switch (strength) {
       case 0:
       case 1:
-        return AppColors.error;
+        return BauhausDesign.error;
       case 2:
         return Colors.orange;
       case 3:
         return Colors.yellow.shade700;
       case 4:
       case 5:
-        return AppColors.colorSuccess;
+        return BauhausDesign.success;
       default:
-        return AppColors.error;
+        return BauhausDesign.error;
     }
   }
 }

@@ -1,465 +1,613 @@
+import 'package:carenest/app/features/pricing/widgets/bauhaus_dashboard_components.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
+import 'package:carenest/app/features/requests/views/add_shift_request_view.dart';
+import 'package:carenest/app/features/requests/views/add_time_off_request_view.dart';
+import 'package:carenest/app/features/requests/views/shift_exchange_view.dart';
 import 'package:intl/intl.dart';
-import 'add_shift_request_view.dart';
-import 'add_time_off_request_view.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/features/requests/viewmodels/requests_view_model.dart';
-import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class RequestsView extends ConsumerStatefulWidget {
-  final String email;
+  final String? email;
 
-  const RequestsView({super.key, required this.email});
+  const RequestsView({super.key, this.email});
 
   @override
   ConsumerState<RequestsView> createState() => _RequestsViewState();
 }
 
 class _RequestsViewState extends ConsumerState<RequestsView> {
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now().add(const Duration(days: 14));
+  DateTimeRange? _selectedDateRange;
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
-  void _showRequestOptions() {
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _showRequestOptions(BuildContext context, String email) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        decoration: const BoxDecoration(
+          color: BauhausDesign.surfaceWhite,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(BauhausDesign.radiusLg),
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListTile(
-              title: const Text(
-                'Add a shift request',
-                style: TextStyle(
-                  color: AppColors.colorBlue,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: BauhausDesign.neutral.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                textAlign: TextAlign.center,
               ),
+            ),
+            const SizedBox(height: BauhausDesign.space4),
+            Text(
+              AppLocalizations.of(context)!.createRequest,
+              style:
+                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+            ),
+            const SizedBox(height: BauhausDesign.space4),
+            Row(
+              children: [
+                Expanded(
+                  child: BauhausActionCard(
+                    title: AppLocalizations.of(context)!.requestTypeShift,
+                    subtitle:
+                        AppLocalizations.of(context)!.shiftRequestSubtitle,
+                    icon: Icons.calendar_month,
+                    color: BauhausDesign.primary,
+                    onTap: () {
+                      Navigator.pop(context);
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: AddShiftRequestView(email: email),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: BauhausDesign.space4),
+                Expanded(
+                  child: BauhausActionCard(
+                    title: AppLocalizations.of(context)!.requestTypeTimeOff,
+                    subtitle:
+                        AppLocalizations.of(context)!.timeOffRequestSubtitle,
+                    icon: Icons.beach_access,
+                    color: BauhausDesign.secondary,
+                    onTap: () {
+                      Navigator.pop(context);
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: AddTimeOffRequestView(email: email),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: BauhausDesign.space4),
+            BauhausActionCard(
+              title: AppLocalizations.of(context)!.requestTypeShiftExchange,
+              subtitle: AppLocalizations.of(context)!.shiftExchangeSubtitle,
+              icon: Icons.swap_horiz,
+              color: BauhausDesign.accent,
               onTap: () {
                 Navigator.pop(context);
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  builder: (context) => DraggableScrollableSheet(
-                    initialChildSize: 0.6,
-                    minChildSize: 0.5,
-                    maxChildSize: 0.75,
-                    expand: false,
-                    builder: (context, scrollController) =>
-                        SingleChildScrollView(
-                      controller: scrollController,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                        ),
-                        child: AddShiftRequestView(email: widget.email),
-                      ),
-                    ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ShiftExchangeView(),
                   ),
                 );
               },
+              isEnabled: true,
             ),
-            const Divider(),
-            ListTile(
-              title: const Text(
-                'Add a time off request',
-                style: TextStyle(
-                  color: AppColors.colorBlue,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  builder: (context) => DraggableScrollableSheet(
-                    initialChildSize: 0.6,
-                    minChildSize: 0.5,
-                    maxChildSize: 0.75,
-                    expand: false,
-                    builder: (context, scrollController) =>
-                        SingleChildScrollView(
-                      controller: scrollController,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                        ),
-                        child: AddTimeOffRequestView(email: widget.email),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            const Divider(),
-            ListTile(
-              title: const Text(
-                'Cancel',
-                style: TextStyle(
-                  color: AppColors.colorBlue,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              onTap: () => Navigator.pop(context),
-            ),
+            const SizedBox(height: BauhausDesign.space4),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _selectDateRange() async {
-    final DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
-      initialDateRange: DateTimeRange(start: startDate, end: endDate),
-    );
-    if (picked != null) {
-      setState(() {
-        startDate = picked.start;
-        endDate = picked.end;
-      });
-    }
-  }
-
-  Widget _buildEmptyState() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.description_outlined,
-          size: 64,
-          color: AppColors.colorGrey300,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'No requests to display',
-          style: TextStyle(
-            color: AppColors.colorGrey500,
-            fontSize: 16,
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Listen for new notifications
-    ref.listen(notificationProvider, (previous, next) {
-      debugPrint('DEBUG_REQUESTS: Notification state changed');
-      final NotificationState currentState = next as NotificationState;
-      final NotificationState? previousState = previous as NotificationState?;
-
-      debugPrint(
-          'DEBUG_REQUESTS: Previous count: ${previousState?.notifications.length ?? 0}, New count: ${currentState.notifications.length}');
-
-      if (previousState != null &&
-          currentState.notifications.length >
-              previousState.notifications.length) {
-        if (currentState.notifications.isNotEmpty) {
-          final latest = currentState.notifications.first;
-          debugPrint(
-              'DEBUG_REQUESTS: New notification received: ${latest.title}, Type: ${latest.data?['type']}');
-
-          if (latest.data != null && latest.data!['type'] == 'request_update') {
-            // Refresh the request list
-            debugPrint('DEBUG_REQUESTS: Refreshing requests list...');
-            ref.read(requestsViewModelProvider.notifier).fetchRequests();
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('${latest.title}: ${latest.body}'),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
-        }
-      }
-    });
-
     final requestsState = ref.watch(requestsViewModelProvider);
+    final prefs = SharedPreferencesUtils();
+    final userEmail = prefs.getUserEmail() ?? '';
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.colorBlue),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'My Requests',
-          style: TextStyle(
-            color: AppColors.colorBlack,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
+      backgroundColor: BauhausDesign.backgroundLight,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: true,
+            pinned: true,
+            backgroundColor: BauhausDesign.surfaceWhite,
+            elevation: 0,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(
+                left: BauhausDesign.space4,
+                bottom: 16,
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.requestsTitle,
+                style:
+                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark,
+                        ),
+              ),
+              background: Container(
+                color: BauhausDesign.surfaceWhite,
+              ),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: BauhausActionButton(
+                  onPressed: () => _showRequestOptions(context, userEmail),
+                  text: AppLocalizations.of(context)!.newRequest,
+                  icon: Icons.add,
+                  isSmall: true,
+                ),
+              ),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(
+                height: 1,
+                color: BauhausDesign.neutral.withOpacity(0.2),
+              ),
+            ),
           ),
-        ),
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          // Date Range Section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: GestureDetector(
-              onTap: _selectDateRange,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.colorGrey200,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      DateFormat('MM/dd/yyyy').format(startDate),
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                  _buildSummarySection(requestsState),
+                  const SizedBox(height: BauhausDesign.space4),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: BauhausSearchBar(
+                          controller: _searchController,
+                          hintText:
+                              AppLocalizations.of(context)!.searchRequestsHint,
+                          onChanged: (val) =>
+                              setState(() => _searchQuery = val),
+                          onClear: () => setState(() => _searchQuery = ''),
+                        ),
+                      ),
+                      const SizedBox(width: BauhausDesign.space3),
+                      _buildDateRangePicker(),
+                    ],
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('to', style: TextStyle(fontSize: 16)),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.colorGrey200,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      DateFormat('MM/dd/yyyy').format(endDate),
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
+                  const SizedBox(height: BauhausDesign.space4),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 20),
-
-          // Status Counts and List
-          Expanded(
-            child: requestsState.when(
-              data: (state) {
-                // Filter requests based on date range
-                // A request is in range if its 'starts' date is within [startDate, endDate]
-                // Or created date? Usually shift start date.
-                final filteredRequests = state.requests.where((r) {
-                  DateTime? reqDate;
-                  if (r.details['starts'] != null) {
-                    reqDate = DateTime.parse(r.details['starts']);
-                  } else if (r.createdAt != null) {
-                    reqDate = r.createdAt;
-                  }
-
-                  if (reqDate == null) return false;
-
-                  // Compare dates (ignore time for start/end boundaries)
-                  final s =
-                      DateTime(startDate.year, startDate.month, startDate.day);
-                  final e = DateTime(
-                      endDate.year, endDate.month, endDate.day, 23, 59, 59);
-                  return reqDate
-                          .isAfter(s.subtract(const Duration(seconds: 1))) &&
-                      reqDate.isBefore(e.add(const Duration(seconds: 1)));
-                }).toList();
-
-                final pending =
-                    filteredRequests.where((r) => r.status == RequestStatus.pending || r.status == RequestStatus.pendingLocal).length;
-                final declined = filteredRequests
-                    .where((r) => r.status == RequestStatus.rejected)
-                    .length;
-                final approved = filteredRequests
-                    .where((r) => r.status == RequestStatus.approved)
-                    .length;
-
-                return Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildStatusCount(pending.toString(), 'Pending',
-                            AppColors.colorGrey500),
-                        _buildStatusCount(declined.toString(), 'Declined',
-                            AppColors.colorGrey500),
-                        _buildStatusCount(approved.toString(), 'Approved',
-                            AppColors.colorGrey500),
-                      ],
-                    ),
-                    const Divider(height: 40),
-                    Expanded(
-                      child: filteredRequests.isEmpty
-                          ? _buildEmptyState()
-                          : RefreshIndicator(
-                              onRefresh: () async {
-                                await ref
-                                    .read(requestsViewModelProvider.notifier)
-                                    .fetchRequests();
-                              },
-                              child: ListView.builder(
-                                itemCount: filteredRequests.length,
-                                itemBuilder: (context, index) {
-                                  final request = filteredRequests[index];
-                                  return Card(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 4),
-                                    child: ListTile(
-                                      title: Text(request.type,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                _getStatusIcon(request.status),
-                                                color: _getStatusColor(
-                                                    request.status),
-                                                size: 16,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                request.status.label,
-                                                style: TextStyle(
-                                                  color: _getStatusColor(
-                                                      request.status),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          if (request.note != null &&
-                                              request.note!.isNotEmpty)
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 4),
-                                              child: Text(
-                                                  'Note: ${request.note}',
-                                                  style: const TextStyle(
-                                                      color: Colors.grey,
-                                                      fontStyle:
-                                                          FontStyle.italic)),
-                                            ),
-                                        ],
-                                      ),
-                                      trailing: request.details['starts'] !=
-                                              null
-                                          ? Text(DateFormat('MM/dd').format(
-                                              DateTime.parse(
-                                                  request.details['starts'])))
-                                          : null,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                    ),
-                  ],
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, s) => Center(child: Text('Error: $e')),
-            ),
-          ),
+          _buildRequestList(requestsState),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          onPressed: _showRequestOptions,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+    );
+  }
+
+  Widget _buildSummarySection(AsyncValue<List<RequestModel>> requestsState) {
+    return requestsState.when(
+      data: (requests) {
+        final pending = requests
+            .where((r) => r.status.name.toLowerCase() == 'pending')
+            .length;
+        final approved = requests
+            .where((r) => r.status.name.toLowerCase() == 'approved')
+            .length;
+        final rejected = requests
+            .where((r) => r.status.name.toLowerCase() == 'rejected')
+            .length;
+
+        return Row(
+          children: [
+            Expanded(
+              child: BauhausMetricCard(
+                title: AppLocalizations.of(context)!.statusPending,
+                value: pending.toString(),
+                icon: Icons.hourglass_empty,
+                iconColor: BauhausDesign.warning,
+                // No trend data available yet, skipping
+              ),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          child: const Text(
-            'Add a new request',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+            const SizedBox(width: BauhausDesign.space3),
+            Expanded(
+              child: BauhausMetricCard(
+                title: AppLocalizations.of(context)!.statusApproved,
+                value: approved.toString(),
+                icon: Icons.check_circle_outline,
+                iconColor: BauhausDesign.success,
+              ),
+            ),
+            const SizedBox(width: BauhausDesign.space3),
+            Expanded(
+              child: BauhausMetricCard(
+                title: AppLocalizations.of(context)!.statusRejected,
+                value: rejected.toString(),
+                icon: Icons.cancel_outlined,
+                iconColor: BauhausDesign.error,
+              ),
+            ),
+          ],
+        );
+      },
+      loading: () => const Row(
+        children: [
+          Expanded(
+              child:
+                  BauhausLoadingSkeleton(height: 120, width: double.infinity)),
+          SizedBox(width: BauhausDesign.space3),
+          Expanded(
+              child:
+                  BauhausLoadingSkeleton(height: 120, width: double.infinity)),
+          SizedBox(width: BauhausDesign.space3),
+          Expanded(
+              child:
+                  BauhausLoadingSkeleton(height: 120, width: double.infinity)),
+        ],
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildDateRangePicker() {
+    return BauhausIconButton(
+      onPressed: _selectDateRange,
+      icon: Icons.calendar_today,
+      variant: _selectedDateRange != null
+          ? BauhausActionVariant.primary
+          : BauhausActionVariant.neutral,
+      tooltip: AppLocalizations.of(context)!.selectDateRange,
+    );
+  }
+
+  Future<void> _selectDateRange() async {
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+      initialDateRange: _selectedDateRange,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: BauhausDesign.primary,
+              onPrimary: BauhausDesign.surfaceWhite,
+              onSurface: BauhausDesign.textDark,
             ),
           ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() => _selectedDateRange = picked);
+    }
+  }
+
+  Widget _buildRequestList(AsyncValue<List<RequestModel>> requestsState) {
+    return requestsState.when(
+      data: (requests) {
+        if (requests.isEmpty) {
+          return SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32.0),
+              child: BauhausEmptyState(
+                title: AppLocalizations.of(context)!.noRequestsFound,
+                message: AppLocalizations.of(context)!.noRequestsMessage,
+                icon: Icons.assignment_outlined,
+                actionLabel: AppLocalizations.of(context)!.createRequest,
+                onAction: () {
+                  final prefs = SharedPreferencesUtils();
+                  _showRequestOptions(context, prefs.getUserEmail() ?? '');
+                },
+              ),
+            ),
+          );
+        }
+
+        var filtered = requests;
+        // Search Filter
+        if (_searchQuery.isNotEmpty) {
+          filtered = filtered
+              .where((r) =>
+                  r.type.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                  (r.note?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+                      false))
+              .toList();
+        }
+
+        // Date Range Filter
+        if (_selectedDateRange != null) {
+          filtered = filtered.where((r) {
+            final startStr = r.details['starts'] ??
+                r.details['date'] ??
+                r.details['startDate'];
+            if (startStr == null) return false;
+            final start = DateTime.parse(startStr).toLocal();
+            return start.isAfter(_selectedDateRange!.start) &&
+                start.isBefore(
+                    _selectedDateRange!.end.add(const Duration(days: 1)));
+          }).toList();
+        }
+
+        if (filtered.isEmpty) {
+          return SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 32.0),
+              child: BauhausEmptyState(
+                title: AppLocalizations.of(context)!.noMatchingRequests,
+                message:
+                    AppLocalizations.of(context)!.noMatchingRequestsMessage,
+                icon: Icons.search_off,
+              ),
+            ),
+          );
+        }
+
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final request = filtered[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space4,
+                  vertical: BauhausDesign.space2,
+                ),
+                child: _buildRequestCard(request),
+              );
+            },
+            childCount: filtered.length,
+          ),
+        );
+      },
+      loading: () => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Column(
+            children: List.generate(
+              3,
+              (index) => const Padding(
+                padding: EdgeInsets.only(bottom: BauhausDesign.space3),
+                child:
+                    BauhausLoadingSkeleton(height: 100, width: double.infinity),
+              ),
+            ),
+          ),
+        ),
+      ),
+      error: (e, s) => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Text(AppLocalizations.of(context)!.requestError(e.toString())),
         ),
       ),
     );
   }
 
-  Widget _buildStatusCount(String count, String label, Color color) {
-    return Column(
-      children: [
-        Text(
-          count,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: color,
+  Widget _buildRequestCard(RequestModel request) {
+    Color statusColor;
+    Color statusBgColor;
+    IconData statusIcon;
+
+    switch (request.status.name.toLowerCase()) {
+      case 'approved':
+        statusColor = BauhausDesign.success;
+        statusBgColor = BauhausDesign.success.withOpacity(0.1);
+        statusIcon = Icons.check_circle;
+        break;
+      case 'rejected':
+      case 'declined':
+        statusColor = BauhausDesign.error;
+        statusBgColor = BauhausDesign.error.withOpacity(0.1);
+        statusIcon = Icons.cancel;
+        break;
+      default:
+        statusColor = BauhausDesign.warning;
+        statusBgColor = BauhausDesign.warning.withOpacity(0.1);
+        statusIcon = Icons.hourglass_empty;
+    }
+
+    final startStr = request.details['starts'] ??
+        request.details['date'] ??
+        request.details['startDate'] ??
+        DateTime.now().toIso8601String();
+    final endStr = request.details['ends'] ??
+        request.details['endDate'] ??
+        request
+            .details['endTime']; // endTime might just be time string, careful.
+
+    // Safe parsing
+    DateTime startDate;
+    try {
+      startDate = DateTime.parse(startStr).toLocal();
+    } catch (_) {
+      startDate = DateTime.now();
+    }
+
+    DateTime endDate;
+    if (endStr != null) {
+      try {
+        endDate = DateTime.parse(endStr).toLocal();
+      } catch (_) {
+        // fallback if string is just time "17:00" or similar, or null
+        endDate = startDate.add(const Duration(hours: 1));
+      }
+    } else {
+      endDate = startDate.add(const Duration(hours: 1));
+    }
+
+    // Determine icon based on request type
+    IconData typeIcon = Icons.assignment;
+    if (request.type.toLowerCase().contains('shift')) {
+      typeIcon = Icons.calendar_month;
+    } else if (request.type.toLowerCase().contains('time off')) {
+      typeIcon = Icons.beach_access;
+    }
+
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space2),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      typeIcon,
+                      color: BauhausDesign.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        request.type,
+                        style: BauhausDesign.getTextTheme(context)
+                            .titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      Text(
+                        DateFormat('MMM d, yyyy').format(startDate),
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodySmall
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space3,
+                  vertical: BauhausDesign.space1,
+                ),
+                decoration: BoxDecoration(
+                  color: statusBgColor,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+                  border: Border.all(color: statusColor.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(statusIcon, size: 14, color: statusColor),
+                    const SizedBox(width: BauhausDesign.space1),
+                    Text(
+                      request.status.name.toUpperCase(),
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(
+                            color: statusColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: color,
+          const SizedBox(height: BauhausDesign.space4),
+          Row(
+            children: [
+              Icon(
+                Icons.access_time,
+                size: 16,
+                color: BauhausDesign.textMuted,
+              ),
+              const SizedBox(width: BauhausDesign.space2),
+              Text(
+                '${DateFormat('h:mm a').format(startDate)} - ${DateFormat('h:mm a').format(endDate)}',
+                style: BauhausDesign.getTextTheme(context).bodyMedium,
+              ),
+              const Spacer(),
+              Icon(
+                Icons.timer,
+                size: 16,
+                color: BauhausDesign.textMuted,
+              ),
+              const SizedBox(width: BauhausDesign.space2),
+              Text(
+                '${endDate.difference(startDate).inHours}h ${endDate.difference(startDate).inMinutes.remainder(60)}m',
+                style: BauhausDesign.getTextTheme(context).bodyMedium,
+              ),
+            ],
           ),
-        ),
-      ],
+          if (request.note != null && request.note!.isNotEmpty) ...[
+            const SizedBox(height: BauhausDesign.space3),
+            Container(
+              padding: const EdgeInsets.all(BauhausDesign.space2),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: BauhausDesign.neutral.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              ),
+              child: Text(
+                request.note!,
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: BauhausDesign.textMuted,
+                    ),
+              ),
+            )
+          ],
+        ],
+      ),
     );
-  }
-
-  IconData _getStatusIcon(RequestStatus status) {
-    switch (status) {
-      case RequestStatus.approved:
-        return Icons.check_circle;
-      case RequestStatus.rejected:
-      case RequestStatus.cancelled:
-        return Icons.cancel;
-      case RequestStatus.pending:
-      case RequestStatus.pendingLocal:
-      default:
-        return Icons.access_time;
-    }
-  }
-
-  Color _getStatusColor(RequestStatus status) {
-    switch (status) {
-      case RequestStatus.approved:
-        return Colors.green;
-      case RequestStatus.rejected:
-      case RequestStatus.cancelled:
-        return Colors.red;
-      case RequestStatus.pending:
-      case RequestStatus.pendingLocal:
-      default:
-        return Colors.orange;
-    }
   }
 }

@@ -9,6 +9,9 @@ class Patient {
   final String? clientState;
   final String? clientZip;
   final String? clientName; // Added for cases where only clientName is provided
+  final String? careNotes;
+  final Map<String, dynamic>? preferences;
+  final bool isActivated;
 
   Patient({
     this.id,
@@ -21,6 +24,9 @@ class Patient {
     this.clientState,
     this.clientZip,
     this.clientName,
+    this.careNotes,
+    this.preferences,
+    this.isActivated = false,
   });
 
   factory Patient.fromJson(Map<String, dynamic> json) {
@@ -35,6 +41,9 @@ class Patient {
       clientState: json['clientState'] as String?,
       clientZip: json['clientZip'] as String?,
       clientName: json['clientName'] as String?,
+      careNotes: json['careNotes'] as String?,
+      preferences: json['preferences'] as Map<String, dynamic>?,
+      isActivated: (json['isActivated'] as bool?) ?? (json['isActive'] as bool?) ?? false,
     );
   }
 

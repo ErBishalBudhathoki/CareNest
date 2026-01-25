@@ -1,7 +1,7 @@
 name: carenest
 description: Conversion of invoice desktop app to mobile
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 2025.08.30+23
+version: 2026.01.25+36
 
 environment:
   sdk: ">=2.17.6 <4.9.9"
@@ -63,9 +63,10 @@ dependencies:
 
   firebase_messaging: ^15.2.0
   firebase_storage: ^12.2.0
-  firebase_app_check: ^0.3.1
+  firebase_app_check: ^0.3.2+10
   firebase_core: ^3.4.0
   firebase_auth: ^5.2.0
+  firebase_crashlytics: ^4.0.1
 
   image_cropper: ^8.0.1
   auto_size_text: ^3.0.0
@@ -120,6 +121,8 @@ dev_dependencies:
   flutter_accessibility_service: ^0.2.0
   # Performance testing
   integration_test:
+    sdk: flutter
+  flutter_driver:
     sdk: flutter
   # Screenshot comparison
   screenshot: ^2.3.0

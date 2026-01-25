@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import '../../../shared/widgets/flushbar_widget.dart';
 import '../../../shared/widgets/confirmation_alert_dialog_widget.dart';
 import '../viewmodels/bank_details_viewmodel.dart';
@@ -13,71 +15,74 @@ class BankDetailsView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => BankDetailsViewModel(),
       child: Scaffold(
+        backgroundColor: BauhausDesign.backgroundLight,
         appBar: AppBar(
-          title: const Text('Bank Details'),
+          title: Text(
+            'Bank Details',
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.textDark,
+                ),
+          ),
           elevation: 0,
-          foregroundColor: Colors.black87,
+          backgroundColor: BauhausDesign.surfaceWhite,
+          foregroundColor: BauhausDesign.textDark,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(color: BauhausDesign.neutral, height: 1),
+          ),
         ),
         body: Consumer<BankDetailsViewModel>(
           builder: (context, viewModel, child) {
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(BauhausDesign.space6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header Section
                     Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(BauhausDesign.space6),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blue[700]!, Colors.blue[500]!],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+                        color: BauhausDesign.primary,
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+                        boxShadow: const [BauhausDesign.shadowHard],
                       ),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(BauhausDesign.space3),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              color: BauhausDesign.surfaceWhite.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                              border: Border.all(
+                                color: BauhausDesign.surfaceWhite.withOpacity(0.3),
+                              ),
                             ),
                             child: const Icon(
                               Icons.account_balance,
-                              color: Colors.white,
+                              color: BauhausDesign.surfaceWhite,
                               size: 32,
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          const Expanded(
+                          const SizedBox(width: BauhausDesign.space4),
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Banking Information',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                                        color: BauhausDesign.surfaceWhite,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: BauhausDesign.space1),
                                 Text(
                                   'Securely store your account details',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 14,
-                                  ),
+                                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                                        color: BauhausDesign.surfaceWhite.withOpacity(0.9),
+                                      ),
                                 ),
                               ],
                             ),
@@ -86,44 +91,36 @@ class BankDetailsView extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: BauhausDesign.space6),
 
                     // Form Card
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
+                    BauhausCard(
+                      padding: const EdgeInsets.all(BauhausDesign.space6),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildModernTextField(
+                          _buildBauhausTextField(
+                            context: context,
                             controller: viewModel.bankNameController,
                             label: 'Bank Name',
-                            icon: Icons.account_balance,
+                            icon: Icons.account_balance_outlined,
                             hint: 'e.g., Commonwealth Bank',
                           ),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: BauhausDesign.space4),
 
-                          _buildModernTextField(
+                          _buildBauhausTextField(
+                            context: context,
                             controller: viewModel.accountNameController,
                             label: 'Account Name',
                             icon: Icons.person_outline,
                             hint: 'Full name as shown on account',
                           ),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: BauhausDesign.space4),
 
-                          _buildModernTextField(
+                          _buildBauhausTextField(
+                            context: context,
                             controller: viewModel.bsbController,
                             label: 'BSB',
                             icon: Icons.tag,
@@ -136,9 +133,10 @@ class BankDetailsView extends StatelessWidget {
                             ],
                           ),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: BauhausDesign.space4),
 
-                          _buildModernTextField(
+                          _buildBauhausTextField(
+                            context: context,
                             controller: viewModel.accountNumberController,
                             label: 'Account Number',
                             icon: Icons.numbers,
@@ -150,53 +148,34 @@ class BankDetailsView extends StatelessWidget {
                             ],
                           ),
 
-                          const SizedBox(height: 32),
+                          const SizedBox(height: BauhausDesign.space8),
 
                           // Save Button
                           SizedBox(
                             width: double.infinity,
-                            height: 56,
-                            child: ElevatedButton(
+                            child: BauhausActionButton(
                               onPressed: viewModel.isLoading
                                   ? null
                                   : () {
                                       _showSaveConfirmation(context, viewModel);
                                     },
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                elevation: 2,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.save_outlined, size: 22),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Save Bank Details',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              text: 'Save Bank Details',
+                              icon: Icons.save_outlined,
+                              variant: BauhausActionVariant.primary,
+                              isLoading: viewModel.isLoading,
                             ),
                           ),
 
-                          const SizedBox(height: 16),
+                          const SizedBox(height: BauhausDesign.space4),
 
                           // Security Notice
                           Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(BauhausDesign.space3),
                             decoration: BoxDecoration(
-                              color: Colors.blue[50],
-                              borderRadius: BorderRadius.circular(8),
+                              color: BauhausDesign.secondary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                               border: Border.all(
-                                color: Colors.blue[100]!,
+                                color: BauhausDesign.secondary.withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
@@ -204,17 +183,17 @@ class BankDetailsView extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.lock_outline,
-                                  color: Colors.blue[700],
+                                  color: BauhausDesign.secondary,
                                   size: 20,
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: BauhausDesign.space3),
                                 Expanded(
                                   child: Text(
                                     'Your information is encrypted and securely stored',
-                                    style: TextStyle(
-                                      color: Colors.blue[900],
-                                      fontSize: 12,
-                                    ),
+                                    style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                                          color: BauhausDesign.textDark,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                   ),
                                 ),
                               ],
@@ -233,7 +212,8 @@ class BankDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildModernTextField({
+  Widget _buildBauhausTextField({
+    required BuildContext context,
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -246,42 +226,40 @@ class BankDetailsView extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-            letterSpacing: 0.3,
-          ),
+          style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: BauhausDesign.textDark,
+              ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: BauhausDesign.space2),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
+          style: BauhausDesign.getTextTheme(context).bodyMedium,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 15,
-            ),
-            prefixIcon: Icon(icon, color: Colors.blue[600], size: 22),
+            hintStyle: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
+            prefixIcon: Icon(icon, color: BauhausDesign.neutral, size: 20),
             filled: true,
-            fillColor: Colors.grey[50],
+            fillColor: BauhausDesign.backgroundLight,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              borderSide: const BorderSide(color: BauhausDesign.neutral),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              borderSide: const BorderSide(color: BauhausDesign.neutral),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.blue[600]!, width: 2),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              borderSide: const BorderSide(color: BauhausDesign.primary, width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
+              horizontal: BauhausDesign.space4,
+              vertical: BauhausDesign.space3,
             ),
           ),
         ),
@@ -313,9 +291,6 @@ class _BSBFormatter extends TextInputFormatter {
 }
 
 /// Masks the account number for display.
-///
-/// Keeps only the last 4 digits and prefixes with bullets (••••).
-/// Non-digit characters are stripped; returns '—' if empty.
 String _maskAccountNumber(String input) {
   final digits = input.replaceAll(RegExp(r'\D'), '');
   if (digits.isEmpty) return '—';
@@ -325,7 +300,6 @@ String _maskAccountNumber(String input) {
 }
 
 /// Shows a modal confirmation before saving bank details.
-/// Builds a summary with bank name, masked account number, and BSB.
 void _showSaveConfirmation(
   BuildContext context,
   BankDetailsViewModel viewModel,
@@ -350,7 +324,7 @@ void _showSaveConfirmation(
             '$displayBank\nAccount: $maskedAcc\nBSB: $displayBsb\n\nProceed to save these details?',
         confirmText: 'Save',
         cancelText: 'Cancel',
-        confirmColor: Colors.blue[700],
+        confirmColor: BauhausDesign.primary,
         confirmAction: () {
           Navigator.of(dialogContext).pop();
           _handleSaveWithAlerts(context, viewModel);
@@ -373,7 +347,7 @@ Future<void> _handleSaveWithAlerts(
       context: context,
       title: 'Save failed',
       message: '${viewModel.errorMessage}\nYour changes are saved locally.',
-      backgroundColor: Colors.redAccent,
+      backgroundColor: BauhausDesign.error,
     );
   } else {
     final maskedAcc =
@@ -388,7 +362,7 @@ Future<void> _handleSaveWithAlerts(
       context: context,
       title: 'Bank details saved',
       message: '$displayBank • Account $maskedAcc • BSB $displayBsb',
-      backgroundColor: Colors.greenAccent,
+      backgroundColor: BauhausDesign.success,
     );
   }
 }

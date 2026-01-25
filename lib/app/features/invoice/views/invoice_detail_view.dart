@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/viewmodels/invoice_detail_viewmodel.dart';
 import 'package:carenest/app/features/invoice/services/invoice_share_service.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/widgets/loading_indicator.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
+import 'package:carenest/app/features/invoice/models/invoice_model.dart';
+import 'package:carenest/app/features/invoice/views/widgets/payment_actions_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class InvoiceDetailView extends ConsumerStatefulWidget {
   final String invoiceId;
@@ -88,48 +91,41 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(invoiceDetailViewModelProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
+      backgroundColor: BauhausDesign.surfaceWhite,
       appBar: AppBar(
-        title: const Text(
-          'Invoice Details',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+        title: Text(
+          l10n.invoiceDetailsTitle,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: BauhausDesign.textDark,
+              ),
         ),
-        backgroundColor: AppColors.colorPrimary,
+        backgroundColor: BauhausDesign.surfaceWhite,
+        surfaceTintColor: Colors.transparent, // Disable surface tint
+        foregroundColor: BauhausDesign.textDark,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        shape: const Border(
+          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
         actions: [
           if (state.invoice != null) ...[
-            IconButton(
-              icon: const Icon(Icons.share),
+            BauhausIconButton(
+              icon: Icons.share_outlined,
               onPressed: () => _shareInvoice(state.invoice!),
+              variant: BauhausActionVariant.ghost,
             ),
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                switch (value) {
-                  case 'delete':
-                    _deleteInvoice(state.invoice!);
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Delete Invoice'),
-                    ],
-                  ),
-                ),
-              ],
+            const SizedBox(width: 8),
+            BauhausIconButton(
+              icon: Icons.delete_outline,
+              onPressed: () => _deleteInvoice(state.invoice!),
+              variant: BauhausActionVariant.danger,
+              isSmall: true,
             ),
+            const SizedBox(width: 16),
           ],
         ],
       ),
@@ -144,96 +140,70 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
   }
 
   Widget _buildBody(InvoiceDetailState state) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading) {
-      return const Center(
-        child: LoadingIndicator(
-          message: 'Loading invoice details...',
+      return Center(
+        child: BauhausLoadingState(
+          message: l10n.loadingInvoiceDetails,
         ),
       );
     }
 
     if (state.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Error loading invoice',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              state.error!,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                ref
-                    .read(invoiceDetailViewModelProvider.notifier)
-                    .loadInvoiceDetails(
-                        widget.invoiceId, widget.organizationId);
-              },
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
+      return BauhausErrorState(
+        title: l10n.errorLoadingInvoice,
+        description: state.error!,
+        onRetry: () {
+          ref
+              .read(invoiceDetailViewModelProvider.notifier)
+              .loadInvoiceDetails(widget.invoiceId, widget.organizationId);
+        },
       );
     }
 
     if (state.invoice == null) {
-      return const Center(
-        child: Text('Invoice not found'),
+      return BauhausEmptyState(
+        title: l10n.invoiceNotFound,
+        message: l10n.requestedInvoiceNotFound,
+        icon: Icons.receipt_long_outlined,
       );
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildInvoiceHeader(state.invoice!),
-          const SizedBox(height: 24),
+          const SizedBox(height: BauhausDesign.space4),
           _buildClientInformation(state.invoice!),
-          const SizedBox(height: 24),
+          const SizedBox(height: BauhausDesign.space4),
           _buildInvoiceDetails(state.invoice!),
-          const SizedBox(height: 24),
+          const SizedBox(height: BauhausDesign.space4),
           _buildFinancialSummary(state.invoice!),
-          const SizedBox(height: 24),
+          const SizedBox(height: BauhausDesign.space4),
           _buildStatusInformation(state.invoice!),
-          const SizedBox(height: 24),
+          const SizedBox(height: BauhausDesign.space4),
+          _buildPaymentActions(state.invoice!),
+          const SizedBox(height: BauhausDesign.space4),
           _buildActionButtons(state.invoice!),
+          // Add extra padding at bottom
+          const SizedBox(height: BauhausDesign.space12),
         ],
       ),
     );
   }
 
   Widget _buildInvoiceHeader(InvoiceListModel invoice) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    final l10n = AppLocalizations.of(context)!;
+    return BauhausCard(
+      padding: EdgeInsets.zero,
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            colors: [
-              AppColors.colorPrimary,
-              AppColors.colorPrimary.withValues(alpha: 0.8)
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          color: BauhausDesign.primary, // Use solid color instead of gradient for Bauhaus style
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,33 +214,38 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
                 Expanded(
                   child: Text(
                     invoice.invoiceNumber,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .headlineMedium
+                        ?.copyWith(
+                          color: BauhausDesign.surfaceWhite,
+                          fontWeight: FontWeight.w800,
+                        ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: BauhausDesign.space2),
                 _buildStatusChip(invoice.status),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: BauhausDesign.space3),
             Text(
-              'Total Amount',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.8),
-              ),
+              l10n.totalAmountLabel,
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.surfaceWhite.withOpacity(0.9),
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
             Text(
-              '\$${invoice.totalAmount.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+              l10n.priceDisplay(
+                l10n.currencySymbol,
+                invoice.totalAmount.toStringAsFixed(2),
               ),
+              style:
+                  BauhausDesign.getTextTheme(context).displayMedium?.copyWith(
+                        color: BauhausDesign.surfaceWhite,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1,
+                      ),
             ),
           ],
         ),
@@ -279,284 +254,216 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
   }
 
   Widget _buildStatusChip(String status) {
-    Color chipColor;
+    final l10n = AppLocalizations.of(context)!;
+    BauhausChipVariant variant;
+    String label;
+    IconData icon;
+
     switch (status.toLowerCase()) {
       case 'paid':
-        chipColor = Colors.green;
+        variant = BauhausChipVariant.success;
+        label = l10n.paid;
+        icon = Icons.check_circle_outline;
         break;
       case 'pending':
-        chipColor = Colors.orange;
+        variant = BauhausChipVariant.warning;
+        label = l10n.pending;
+        icon = Icons.pending_outlined;
         break;
       case 'overdue':
-        chipColor = Colors.red;
+        variant = BauhausChipVariant.error;
+        label = l10n.overdue;
+        icon = Icons.warning_amber_rounded;
         break;
       case 'sent':
-        chipColor = Colors.blue;
+        variant = BauhausChipVariant.secondary;
+        label = l10n.sent;
+        icon = Icons.send_outlined;
         break;
       default:
-        chipColor = Colors.grey;
+        variant = BauhausChipVariant.outlined;
+        label = status.toUpperCase();
+        icon = Icons.info_outline;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: chipColor,
-        borderRadius: BorderRadius.circular(20),
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusPill),
+        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        boxShadow: const [BauhausDesign.shadowHardSm],
       ),
-      child: Text(
-        status.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-        ),
+      child: BauhausChip(
+        label: label,
+        variant: variant,
+        icon: icon,
       ),
     );
   }
 
   Widget _buildClientInformation(InvoiceListModel invoice) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.person,
-                  color: AppColors.colorPrimary,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Client Information',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.colorPrimary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow('Name', invoice.clientName),
-            _buildInfoRow('Email', invoice.clientEmail),
-          ],
-        ),
+    final l10n = AppLocalizations.of(context)!;
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BauhausSectionHeader(
+            title: l10n.clientInformationTitle,
+            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          ),
+          _buildInfoRow(l10n.nameLabel, invoice.clientName),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(l10n.emailLabel, invoice.clientEmail),
+        ],
       ),
     );
   }
 
   Widget _buildInvoiceDetails(InvoiceListModel invoice) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.description,
-                  color: AppColors.colorPrimary,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Invoice Details',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.colorPrimary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow('Invoice Number', invoice.invoiceNumber),
-            _buildInfoRow('Invoice Type', invoice.invoiceType),
-            _buildInfoRow('Issue Date',
-                DateFormat('MMM dd, yyyy').format(invoice.issueDate)),
-            _buildInfoRow(
-                'Due Date', DateFormat('MMM dd, yyyy').format(invoice.dueDate)),
-            _buildInfoRow('Created',
-                DateFormat('MMM dd, yyyy HH:mm').format(invoice.createdAt)),
-            _buildInfoRow('Last Updated',
-                DateFormat('MMM dd, yyyy HH:mm').format(invoice.updatedAt)),
-          ],
-        ),
+    final l10n = AppLocalizations.of(context)!;
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BauhausSectionHeader(
+            title: l10n.invoiceDetailsTitle,
+            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          ),
+          _buildInfoRow(l10n.invoiceNumberLabel, invoice.invoiceNumber),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(l10n.invoiceTypeLabel, invoice.invoiceType),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(l10n.issueDateLabel,
+              DateFormat.yMMMd(l10n.localeName).format(invoice.issueDate)),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(l10n.dueDateLabel,
+              DateFormat.yMMMd(l10n.localeName).format(invoice.dueDate)),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(
+              l10n.createdLabel,
+              DateFormat.yMMMd(l10n.localeName)
+                  .add_jm()
+                  .format(invoice.createdAt)),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(
+              l10n.lastUpdatedLabel,
+              DateFormat.yMMMd(l10n.localeName)
+                  .add_jm()
+                  .format(invoice.updatedAt)),
+        ],
       ),
     );
   }
 
   Widget _buildFinancialSummary(InvoiceListModel invoice) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.attach_money,
-                  color: AppColors.colorPrimary,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Financial Summary',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.colorPrimary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildFinancialRow('Subtotal', invoice.subtotalAmount),
-            _buildFinancialRow('Tax Amount', invoice.taxAmount),
-            const Divider(),
-            _buildFinancialRow('Total Amount', invoice.totalAmount,
-                isTotal: true),
-          ],
-        ),
+    final l10n = AppLocalizations.of(context)!;
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BauhausSectionHeader(
+            title: l10n.financialSummaryTitle,
+            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          ),
+          _buildFinancialRow(l10n.subtotalLabel, invoice.subtotalAmount),
+          _buildFinancialRow(l10n.taxAmountLabel, invoice.taxAmount),
+          const Divider(height: 24, thickness: 1),
+          _buildFinancialRow(l10n.totalAmountLabel, invoice.totalAmount,
+              isTotal: true),
+        ],
       ),
     );
   }
 
   Widget _buildStatusInformation(InvoiceListModel invoice) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.info,
-                  color: AppColors.colorPrimary,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Status Information',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.colorPrimary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow('Invoice Status', invoice.status),
-            _buildInfoRow('Payment Status', invoice.paymentStatus),
-            _buildInfoRow('Delivery Status', invoice.deliveryStatus),
-            if (invoice.shareableLink != null)
-              _buildInfoRow('Shareable Link', 'Available'),
-            if (invoice.pdfPath != null)
-              _buildInfoRow('PDF Document', 'Available'),
+    final l10n = AppLocalizations.of(context)!;
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BauhausSectionHeader(
+            title: l10n.statusInformationTitle,
+            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          ),
+          _buildInfoRow(l10n.invoiceStatusLabel, invoice.status),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(l10n.paymentStatusLabel, invoice.paymentStatus),
+          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          _buildInfoRow(l10n.deliveryStatusLabel, invoice.deliveryStatus),
+          if (invoice.shareableLink != null) ...[
+            const Divider(color: BauhausDesign.neutral, thickness: 1),
+            _buildInfoRow(l10n.shareableLinkLabel, l10n.availableLabel),
           ],
-        ),
+          if (invoice.pdfPath != null) ...[
+            const Divider(color: BauhausDesign.neutral, thickness: 1),
+            _buildInfoRow(l10n.pdfDocumentLabel, l10n.availableLabel),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentActions(InvoiceListModel invoice) {
+    // Map InvoiceListModel to InvoiceModel for the widget (or update widget to accept ListModel)
+    // For now, we construct a temporary model or adapt the widget. 
+    // Adapting is cleaner, but let's wrap it here.
+    final invoiceModel = InvoiceModel.empty().copyWith(
+      invoiceNumber: invoice.invoiceNumber,
+      totalAmount: invoice.totalAmount,
+      payment: invoice.payment,
+    );
+
+    return BauhausCard(
+      padding: EdgeInsets.zero, // Widget has its own padding/decoration
+      child: PaymentActionsWidget(
+        invoice: invoiceModel,
+        invoiceId: invoice.id,
       ),
     );
   }
 
   Widget _buildActionButtons(InvoiceListModel invoice) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Actions',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.colorPrimary,
-              ),
+    final l10n = AppLocalizations.of(context)!;
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BauhausSectionHeader(
+            title: l10n.actionsTitle,
+            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: BauhausActionButton(
+              onPressed: () => _viewInvoice(invoice),
+              icon: Icons.visibility_outlined,
+              text: l10n.viewInvoiceButton,
+              isFullWidth: true,
             ),
-            const SizedBox(height: 16),
-            // View Invoice Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _viewInvoice(invoice),
-                icon: const Icon(Icons.visibility),
-                label: const Text('View Invoice'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.colorPrimary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          Row(
+            children: [
+              Expanded(
+                child: BauhausActionButton(
+                  onPressed: () => _shareInvoice(invoice),
+                  icon: Icons.share_outlined,
+                  text: l10n.share,
+                  variant: BauhausActionVariant.secondary,
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _shareInvoice(invoice),
-                    icon: const Icon(Icons.share),
-                    label: const Text('Share'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.colorPrimary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
+              const SizedBox(width: BauhausDesign.space3),
+              Expanded(
+                child: BauhausActionButton(
+                  onPressed: () => _deleteInvoice(invoice),
+                  icon: Icons.delete_outline,
+                  text: l10n.delete,
+                  variant: BauhausActionVariant.danger,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _deleteInvoice(invoice),
-                    icon: const Icon(Icons.delete),
-                    label: const Text('Delete'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -571,18 +478,16 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             width: 120,
             child: Text(
               label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: BauhausDesign.textMuted,
+                  ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w400,
-              ),
+              style: BauhausDesign.getTextTheme(context).bodyMedium,
             ),
           ),
         ],
@@ -592,6 +497,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
   Widget _buildFinancialRow(String label, double amount,
       {bool isTotal = false}) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -599,19 +505,21 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              fontSize: isTotal ? 16 : 14,
-              color: isTotal ? AppColors.colorPrimary : Colors.grey,
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
+                  fontSize: isTotal ? 16 : 14,
+                  color:
+                      isTotal ? BauhausDesign.primary : BauhausDesign.textMuted,
+                ),
           ),
           Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.w400,
-              fontSize: isTotal ? 16 : 14,
-              color: isTotal ? AppColors.colorPrimary : Colors.black,
-            ),
+            l10n.priceDisplay(l10n.currencySymbol, amount.toStringAsFixed(2)),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  fontWeight: isTotal ? FontWeight.bold : FontWeight.w400,
+                  fontSize: isTotal ? 16 : 14,
+                  color:
+                      isTotal ? BauhausDesign.primary : BauhausDesign.textDark,
+                ),
           ),
         ],
       ),
@@ -626,11 +534,12 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       final invoiceService = ref.read(invoiceManagementServiceProvider);
       final shareService = InvoiceShareService(invoiceService);
 
+      final l10n = AppLocalizations.of(context)!;
       // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Sharing invoice ${invoice.invoiceNumber}...'),
-          backgroundColor: AppColors.colorPrimary,
+          content: Text(l10n.sharingInvoiceMessage(invoice.invoiceNumber)),
+          backgroundColor: BauhausDesign.primary,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -641,14 +550,15 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         method: ShareMethod.pdf,
       );
 
-      // Hide loading and show result
+      // Show loading and show result
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result['message'] ?? 'Invoice shared'),
-          backgroundColor:
-              result['success'] == true ? Colors.green : Colors.red,
+          content: Text(result['message'] ?? l10n.invoiceSharedSuccess),
+          backgroundColor: result['success'] == true
+              ? BauhausDesign.success
+              : BauhausDesign.error,
           duration: const Duration(seconds: 3),
         ),
       );
@@ -656,25 +566,39 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
   }
 
   void _deleteInvoice(InvoiceListModel invoice) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Invoice'),
+          backgroundColor: BauhausDesign.surfaceWhite,
+          title: Text(
+            l10n.deleteInvoiceConfirmTitle,
+            style: BauhausDesign.getTextTheme(context).titleLarge,
+          ),
           content: Text(
-            'Are you sure you want to delete invoice ${invoice.invoiceNumber}? This action cannot be undone.',
+            l10n.deleteInvoiceConfirmMessage(invoice.invoiceNumber),
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(
+                l10n.cancel,
+                style: BauhausDesign.getTextTheme(context).labelLarge,
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
+                foregroundColor: BauhausDesign.error,
               ),
-              child: const Text('Delete'),
+              child: Text(
+                l10n.delete,
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: BauhausDesign.error,
+                    ),
+              ),
             ),
           ],
         );
@@ -685,8 +609,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Deleting invoice ${invoice.invoiceNumber}...'),
-          backgroundColor: Colors.red,
+          content: Text(l10n.deletingInvoiceMessage),
+          backgroundColor: BauhausDesign.error,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -700,10 +624,10 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invoice deleted successfully'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(l10n.invoiceDeletedSuccess),
+            backgroundColor: BauhausDesign.success,
+            duration: const Duration(seconds: 2),
           ),
         );
 
@@ -715,8 +639,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to delete invoice: $e'),
-            backgroundColor: Colors.red,
+            content: Text(l10n.invoiceDeleteError(e.toString())),
+            backgroundColor: BauhausDesign.error,
             duration: const Duration(seconds: 3),
           ),
         );
@@ -725,12 +649,13 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
   }
 
   void _viewInvoice(InvoiceListModel invoice) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Loading invoice ${invoice.invoiceNumber}...'),
-          backgroundColor: AppColors.colorPrimary,
+          content: Text(l10n.loadingInvoiceMessage(invoice.invoiceNumber)),
+          backgroundColor: BauhausDesign.primary,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -754,9 +679,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         if (wasRegenerated) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content:
-                  Text('PDF regenerated for invoice ${invoice.invoiceNumber}'),
-              backgroundColor: Colors.orange,
+              content: Text(l10n.pdfRegeneratedMessage(invoice.invoiceNumber)),
+              backgroundColor: BauhausDesign.warning,
               duration: const Duration(seconds: 2),
             ),
           );
@@ -781,8 +705,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message'] ?? 'Failed to load invoice PDF'),
-            backgroundColor: Colors.red,
+            content: Text(result['message'] ?? l10n.pdfLoadError),
+            backgroundColor: BauhausDesign.error,
             duration: const Duration(seconds: 3),
           ),
         );
@@ -793,8 +717,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error viewing invoice: $e'),
-          backgroundColor: Colors.red,
+          content: Text(l10n.pdfViewError(e.toString())),
+          backgroundColor: BauhausDesign.error,
           duration: const Duration(seconds: 3),
         ),
       );

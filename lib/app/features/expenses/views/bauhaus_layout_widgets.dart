@@ -1,6 +1,5 @@
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// A Constructivist-inspired stats grid.
 /// Displays key metrics in massive, asymmetrical color blocks.
@@ -39,22 +38,21 @@ class MondrianGrid extends StatelessWidget {
             children: [
               Text(
                 'TOTAL SPEND',
-                style: GoogleFonts.oswald(
-                  color: BauhausDesign.surfaceLight,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                ),
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: BauhausDesign.surfaceLight,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                    ),
               ),
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 totalAmount,
-                style: GoogleFonts.oswald(
-                  color: BauhausDesign.surfaceLight,
-                  fontSize: 48, // MASSIVE
-                  fontWeight: FontWeight.bold,
-                  height: 1.0,
-                ),
+                style:
+                    BauhausDesign.getTextTheme(context).displayLarge?.copyWith(
+                          color: BauhausDesign.surfaceLight,
+                          fontWeight: FontWeight.bold,
+                          height: 1.0,
+                        ),
               ),
             ],
           ),
@@ -87,19 +85,21 @@ class MondrianGrid extends StatelessWidget {
                     const SizedBox(height: BauhausDesign.space4),
                     Text(
                       pendingAmount,
-                      style: GoogleFonts.oswald(
-                        color: BauhausDesign.textDark,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .headlineMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Text(
                       'PENDING',
-                      style: GoogleFonts.inter(
-                        color: BauhausDesign.textDark,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                   ],
                 ),
@@ -129,19 +129,21 @@ class MondrianGrid extends StatelessWidget {
                     const SizedBox(height: BauhausDesign.space4),
                     Text(
                       approvedAmount,
-                      style: GoogleFonts.oswald(
-                        color: BauhausDesign.surfaceLight,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .headlineMedium
+                          ?.copyWith(
+                            color: BauhausDesign.surfaceLight,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Text(
                       'APPROVED',
-                      style: GoogleFonts.inter(
-                        color: BauhausDesign.surfaceLight,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(
+                            color: BauhausDesign.surfaceLight,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                   ],
                 ),
@@ -200,22 +202,24 @@ class DataStrip extends StatelessWidget {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.oswald(
-                        color: BauhausDesign.textDark,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w600,
+                          ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: GoogleFonts.robotoMono(
-                        color: BauhausDesign.neutral,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.neutral,
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
                   ],
                 ),
@@ -225,11 +229,12 @@ class DataStrip extends StatelessWidget {
                 children: [
                   Text(
                     rightValue,
-                    style: GoogleFonts.robotoMono(
-                      color: BauhausDesign.textDark,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   if (status != null) ...[
                     const SizedBox(height: 4),
@@ -239,11 +244,13 @@ class DataStrip extends StatelessWidget {
                       color: BauhausDesign.neutral,
                       child: Text(
                         status!.toUpperCase(),
-                        style: GoogleFonts.inter(
-                          color: BauhausDesign.surfaceLight,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w900,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.surfaceLight,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w900,
+                            ),
                       ),
                     )
                   ]
@@ -299,14 +306,13 @@ class BlockTabSelector extends StatelessWidget {
                   : Matrix4.identity(),
               child: Text(
                 tabs[index].toUpperCase(),
-                style: GoogleFonts.oswald(
-                  color: isSelected
-                      ? BauhausDesign.surfaceLight
-                      : BauhausDesign.textDark,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  letterSpacing: 1.0,
-                ),
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: isSelected
+                          ? BauhausDesign.surfaceLight
+                          : BauhausDesign.textDark,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                    ),
               ),
             ),
           );

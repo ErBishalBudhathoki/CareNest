@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +8,9 @@ import '../../client/models/client_model.dart';
 import '../../client/providers/client_provider.dart';
 import '../presentation/widgets/enhanced_file_attachment_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class AddExpenseView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -37,6 +38,8 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
+
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   String _selectedCategory = 'Office';
   DateTime _selectedDate = DateTime.now();
@@ -140,9 +143,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: const Color(0xFF667EEA),
-              onPrimary: Colors.white,
-              onSurface: const Color(0xFF1F2937),
+              primary: BauhausDesign.primary,
+              onPrimary: BauhausDesign.surfaceWhite,
+              onSurface: BauhausDesign.textDark,
             ),
           ),
           child: child!,
@@ -181,13 +184,14 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white),
+                            BauhausDesign.surfaceWhite),
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Text('Uploading ${_receiptFiles.length} file(s)...'),
+                    Text(l10n.expenseUploadProgress(_receiptFiles.length)),
                   ],
                 ),
+                backgroundColor: BauhausDesign.info,
                 duration:
                     const Duration(seconds: 30), // Longer duration for uploads
               ),
@@ -240,13 +244,18 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle, color: Colors.white),
+                    Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
                     SizedBox(width: 8),
-                    Text('Expense updated successfully'),
+                    Text(l10n.expenseUpdateSuccess),
                   ],
+                ),
+                backgroundColor: BauhausDesign.success,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
               ),
             );
@@ -258,13 +267,18 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
           if (mounted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle, color: Colors.white),
+                    Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
                     SizedBox(width: 8),
-                    Text('Expense submitted successfully'),
+                    Text(l10n.expenseSubmitSuccess),
                   ],
+                ),
+                backgroundColor: BauhausDesign.success,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
               ),
             );
@@ -276,31 +290,33 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
           // Show detailed error message
-          String errorMessage = 'Failed to submit expense';
+          String errorMessage = l10n.expenseSubmitGenericError;
           if (e.toString().contains('upload')) {
-            errorMessage =
-                'File upload failed. Please check your internet connection and try again.';
+            errorMessage = l10n.expenseUploadError;
           } else if (e.toString().contains('network')) {
-            errorMessage =
-                'Network error. Please check your connection and try again.';
+            errorMessage = l10n.expenseNetworkError;
           } else if (e.toString().contains('size')) {
-            errorMessage =
-                'One or more files are too large. Please reduce file size and try again.';
+            errorMessage = l10n.expenseSizeError;
           }
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.error, color: Colors.white),
-                  const SizedBox(width: 8),
+                  Icon(Icons.error, color: BauhausDesign.surfaceWhite),
+                  SizedBox(width: 8),
                   Expanded(child: Text(errorMessage)),
                 ],
               ),
+              backgroundColor: BauhausDesign.error,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              ),
               duration: const Duration(seconds: 5),
               action: SnackBarAction(
-                label: 'Retry',
-                textColor: Colors.white,
+                label: l10n.expenseRetryButton,
+                textColor: BauhausDesign.surfaceWhite,
                 onPressed: () => _submitExpense(),
               ),
             ),
@@ -319,310 +335,281 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         title: Text(
-          widget.expenseToEdit != null ? 'Edit Expense' : 'Add New Expense',
-          style: const TextStyle(color: Colors.white),
+          widget.expenseToEdit != null
+              ? l10n.editExpenseTitle
+              : l10n.addExpenseTitle,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                color: BauhausDesign.surfaceWhite,
+              ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: BauhausDesign.primary,
+        iconTheme: IconThemeData(color: BauhausDesign.surfaceWhite),
         elevation: 0,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF667EEA),
-              Colors.white,
-              Colors.white,
-            ],
-            stops: [0.0, 0.1, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: ModernCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Expense Details',
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600).copyWith(
-                          color: const Color(0xFF667EEA),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: BauhausCard(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.expenseDetailsTitle,
+                    style: BauhausDesign.getTextTheme(context)
+                        .headlineMedium
+                        ?.copyWith(
+                          color: BauhausDesign.primary,
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      TextFormField(
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          labelText: 'Title',
-                          hintText: 'Enter expense title',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                12.0),
+                  ),
+                  const SizedBox(height: 24.0),
+                  BauhausTextField(
+                    controller: _titleController,
+                    label: l10n.expenseTitleLabel,
+                    hintText: l10n.expenseTitleHint,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return l10n.expenseTitleError;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  BauhausTextField(
+                    controller: _amountController,
+                    label: l10n.expenseAmountLabel,
+                    hintText: l10n.expenseAmountHint,
+                    keyboardType: TextInputType.number,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text('\$ ',
+                          style:
+                              BauhausDesign.getTextTheme(context).bodyMedium),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return l10n.expenseAmountError;
+                      }
+                      if (double.tryParse(value) == null) {
+                        return l10n.expenseAmountInvalid;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedCategory,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium,
+                    dropdownColor: BauhausDesign.surfaceWhite,
+                    decoration:
+                        BauhausDesign.inputDecoration(l10n.expenseCategoryLabel)
+                            .copyWith(
+                      labelText: l10n.expenseCategoryLabel,
+                      prefixIcon: const Icon(Icons.category,
+                          color: BauhausDesign.textMuted),
+                    ),
+                    items: _categories.map((category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value!;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final clients = ref.watch(clientsListProvider);
+                      final isLoading = ref.watch(clientsLoadingProvider);
+                      final error = ref.watch(clientErrorProvider);
+
+                      if (error != null) {
+                        return Container(
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: BauhausDesign.error.withOpacity(0.1),
+                            borderRadius:
+                                BorderRadius.circular(BauhausDesign.radiusMd),
+                            border: Border.all(
+                                color: BauhausDesign.error.withOpacity(0.2)),
                           ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a title';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16.0),
-                      TextFormField(
-                        controller: _amountController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: 'Amount',
-                          hintText: 'Enter amount',
-                          prefixText: '\$',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                12.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.error, color: BauhausDesign.error),
+                              const SizedBox(width: 8.0),
+                              Expanded(
+                                child: Text(
+                                  l10n.expenseClientError(error.toString()),
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: BauhausDesign.error,
+                                      ),
+                                ),
+                              ),
+                            ],
                           ),
+                        );
+                      }
+
+                      return DropdownButtonFormField<Patient>(
+                        initialValue: _selectedClient,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium,
+                        dropdownColor: BauhausDesign.surfaceWhite,
+                        decoration: BauhausDesign.inputDecoration(
+                                l10n.expenseClientLabel)
+                            .copyWith(
+                          labelText: l10n.expenseClientLabel,
+                          prefixIcon: const Icon(Icons.person,
+                              color: BauhausDesign.textMuted),
+                          suffixIcon: isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: BauhausDesign.primary,
+                                  ),
+                                )
+                              : null,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter an amount';
-                          }
-                          if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16.0),
-                      DropdownButtonFormField<String>(
-                        initialValue: _selectedCategory,
-                        style: TextStyle(color: const Color(0xFF1F2937)),
-                        dropdownColor: Colors.white,
-                        decoration: InputDecoration(
-                          labelText: 'Category',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                12.0),
-                          ),
-                          prefixIcon: const Icon(Icons.category),
+                        hint: Text(
+                          l10n.expenseClientHint,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(
+                                color: BauhausDesign.textMuted,
+                              ),
                         ),
-                        items: _categories.map((category) {
-                          return DropdownMenuItem<String>(
-                            value: category,
-                            child: Text(category),
+                        items: clients.map((client) {
+                          return DropdownMenuItem<Patient>(
+                            value: client,
+                            child: Text(
+                              client.displayName,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           );
                         }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedCategory = value!;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16.0),
-                      Consumer(
-                        builder: (context, ref, child) {
-                          final clients = ref.watch(clientsListProvider);
-                          final isLoading = ref.watch(clientsLoadingProvider);
-                          final error = ref.watch(clientErrorProvider);
-
-                          if (error != null) {
-                            return Container(
-                              padding:
-                                  const EdgeInsets.all(12.0),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(
-                                    12.0),
-                                border: Border.all(
-                                    color: Colors.red
-                                        .withOpacity(0.1)),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.error,
-                                      color: Colors.red),
-                                  const SizedBox(
-                                      width: 8.0),
-                                  Expanded(
-                                    child: Text(
-                                      'Error loading clients: $error',
-                                      style:
-                                          const TextStyle(fontSize: 14).copyWith(
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-
-                          return DropdownButtonFormField<Patient>(
-                            initialValue: _selectedClient,
-                            style: const TextStyle(
-                                color: Color(0xFF1F2937)),
-                            dropdownColor: Colors.white,
-                            decoration: InputDecoration(
-                              labelText: 'Client (Optional)',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    12.0),
-                              ),
-                              prefixIcon: const Icon(Icons.person),
-                              suffixIcon: isLoading
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                            hint: const Text(
-                              'Select a client',
-                              style: TextStyle(
-                                  color: Color(0xFF9CA3AF)),
-                            ),
-                            items: clients.map((client) {
-                              return DropdownMenuItem<Patient>(
-                                value: client,
-                                child: Text(
-                                  client.displayName,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: isLoading
-                                ? null
-                                : (Patient? value) {
-                                    setState(() {
-                                      _selectedClient = value;
-                                    });
-                                  },
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16.0),
-                      GestureDetector(
-                        onTap: () => _selectDate(context),
-                        child: AbsorbPointer(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Date',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    12.0),
-                              ),
-                              prefixIcon: const Icon(Icons.calendar_today),
-                            ),
-                            controller: TextEditingController(
-                              text: DateFormat('MMM dd, yyyy')
-                                  .format(_selectedDate),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      TextFormField(
-                        controller: _descriptionController,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          labelText: 'Description',
-                          hintText: 'Enter expense description',
-                          prefixIcon: const Icon(Icons.description),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                12.0),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      SwitchListTile(
-                        title: Text(
-                          'Recurring Expense',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        value: _isRecurring,
-                        activeThumbColor: const Color(0xFF667EEA),
-                        onChanged: (value) {
-                          setState(() {
-                            _isRecurring = value;
-                          });
-                        },
-                        subtitle: Text(
-                          'Enable for regularly occurring expenses',
-                          style: const TextStyle(fontSize: 12).copyWith(
-                            color: const Color(0xFF6B7280),
-                          ),
-                        ),
-                      ),
-                      if (_isRecurring) ...[
-                        const SizedBox(height: 8.0),
-                        DropdownButtonFormField<String>(
-                          initialValue: _recurringFrequency,
-                          decoration: InputDecoration(
-                            labelText: 'Frequency',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                  12.0),
-                            ),
-                            prefixIcon: const Icon(Icons.repeat),
-                          ),
-                          items: _frequencies.map((frequency) {
-                            return DropdownMenuItem<String>(
-                              value: frequency,
-                              child: Text(
-                                frequency[0].toUpperCase() +
-                                    frequency.substring(1),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _recurringFrequency = value!;
-                            });
-                          },
-                        ),
-                      ],
-                      const SizedBox(height: 16),
-                      EnhancedFileAttachmentWidget(
-                        initialFiles: _receiptFiles,
-                        onFilesSelected: (List<File> files) {
-                          setState(() {
-                            _receiptFiles = files;
-                          });
-                        },
-                        description: _fileDescription,
-                        onDescriptionChanged: (String description) {
-                          setState(() {
-                            _fileDescription = description;
-                          });
-                        },
-                        maxFiles: 5,
-                      ),
-                      const SizedBox(height: 24.0),
-                      ModernButton(
-                        onPressed: _isSubmitting ? null : _submitExpense,
-                        text: _isSubmitting
-                            ? (_receiptFiles.isNotEmpty
-                                ? 'Uploading files...'
-                                : 'Submitting...')
-                            : (widget.expenseToEdit != null
-                                ? 'Update Expense'
-                                : 'Submit Expense'),
-                        isLoading: _isSubmitting,
-                        width: double.infinity,
-                      ),
-                    ],
+                        onChanged: isLoading
+                            ? null
+                            : (Patient? value) {
+                                setState(() {
+                                  _selectedClient = value;
+                                });
+                              },
+                      );
+                    },
                   ),
-                ),
+                  const SizedBox(height: 16.0),
+                  GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: AbsorbPointer(
+                      child: BauhausTextField(
+                        controller: TextEditingController(
+                          text:
+                              DateFormat('MMM dd, yyyy').format(_selectedDate),
+                        ),
+                        label: l10n.expenseDateLabel,
+                        prefixIcon: const Icon(Icons.calendar_today,
+                            color: BauhausDesign.textMuted),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  BauhausTextField(
+                    controller: _descriptionController,
+                    label: l10n.expenseDescriptionLabel,
+                    hintText: l10n.expenseDescriptionHint,
+                    prefixIcon: const Icon(Icons.description,
+                        color: BauhausDesign.textMuted),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 16.0),
+                  SwitchListTile(
+                    title: Text(
+                      l10n.expenseRecurringLabel,
+                      style: BauhausDesign.getTextTheme(context).labelLarge,
+                    ),
+                    value: _isRecurring,
+                    activeColor: BauhausDesign.primary,
+                    onChanged: (value) {
+                      setState(() {
+                        _isRecurring = value;
+                      });
+                    },
+                    subtitle: Text(
+                      l10n.expenseRecurringSubtitle,
+                      style: BauhausDesign.getTextTheme(context).bodySmall,
+                    ),
+                  ),
+                  if (_isRecurring) ...[
+                    const SizedBox(height: 8.0),
+                    DropdownButtonFormField<String>(
+                      initialValue: _recurringFrequency,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
+                      dropdownColor: BauhausDesign.surfaceWhite,
+                      decoration: BauhausDesign.inputDecoration(
+                              l10n.expenseFrequencyLabel)
+                          .copyWith(
+                        labelText: l10n.expenseFrequencyLabel,
+                        prefixIcon: const Icon(Icons.repeat,
+                            color: BauhausDesign.textMuted),
+                      ),
+                      items: _frequencies.map((frequency) {
+                        return DropdownMenuItem<String>(
+                          value: frequency,
+                          child: Text(
+                            frequency[0].toUpperCase() + frequency.substring(1),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _recurringFrequency = value!;
+                        });
+                      },
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  EnhancedFileAttachmentWidget(
+                    initialFiles: _receiptFiles,
+                    onFilesSelected: (List<File> files) {
+                      setState(() {
+                        _receiptFiles = files;
+                      });
+                    },
+                    description: _fileDescription,
+                    onDescriptionChanged: (String description) {
+                      setState(() {
+                        _fileDescription = description;
+                      });
+                    },
+                    maxFiles: 5,
+                  ),
+                  const SizedBox(height: 24.0),
+                  BauhausActionButton(
+                    onPressed: _isSubmitting ? null : _submitExpense,
+                    text: _isSubmitting
+                        ? (_receiptFiles.isNotEmpty
+                            ? l10n.expenseButtonUploading
+                            : l10n.expenseButtonSubmitting)
+                        : (widget.expenseToEdit != null
+                            ? l10n.expenseButtonUpdate
+                            : l10n.expenseButtonSubmit),
+                    variant: BauhausActionVariant.primary,
+                    icon: _isSubmitting ? null : Icons.save,
+                  ),
+                ],
               ),
             ),
           ),

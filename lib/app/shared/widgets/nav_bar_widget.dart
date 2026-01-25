@@ -5,9 +5,11 @@ import 'dart:typed_data';
 import 'package:carenest/app/shared/widgets/line_items_view.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/auth/views/login_view.dart';
+import 'package:carenest/app/features/training_compliance/views/training_compliance_hub_view.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -84,7 +86,7 @@ class NavBarWidget extends ConsumerWidget {
                       if (organizationName != null)
                         Text(
                           'Org: $organizationName',
-                          style: const TextStyle(
+                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                             fontSize: 12,
                             fontStyle: FontStyle.italic,
                           ),
@@ -92,10 +94,10 @@ class NavBarWidget extends ConsumerWidget {
                       if (organizationCode != null)
                         Text(
                           'Code: $organizationCode',
-                          style: const TextStyle(
+                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                             fontSize: 12,
                             fontStyle: FontStyle.italic,
-                            color: Colors.white70,
+                            color: Colors.white70, // Keep specific visual
                           ),
                         ),
                     ],
@@ -206,6 +208,22 @@ class NavBarWidget extends ConsumerWidget {
                       ),
                     ),
                   ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.school),
+                  title: Text('Training & Compliance',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontFamily: "ShadowsIntoLightTwo",
+                      )),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TrainingComplianceHubView(),
+                      ),
+                    );
+                  },
                 ),
                 const Divider(),
                 ListTile(

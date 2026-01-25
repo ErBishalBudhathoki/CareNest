@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/app/core/providers/core_providers.dart';
 import 'package:carenest/app/features/holiday/models/holiday_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;

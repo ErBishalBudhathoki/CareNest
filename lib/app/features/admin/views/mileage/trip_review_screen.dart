@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/admin/viewmodels/admin_mileage_view_model.dart';
 
 class TripReviewScreen extends ConsumerStatefulWidget {
@@ -35,7 +35,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
   Widget build(BuildContext context) {
     final viewModel = ref.watch(adminMileageViewModelProvider);
     final textTheme = BauhausDesign.getTextTheme(context);
-    
+
     // Find trip in list (assuming it's loaded)
     final trip = viewModel.trips.firstWhere(
       (t) => t.id == widget.tripId,
@@ -44,8 +44,10 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
 
     // Initialize controllers if not editing and values differ (simple sync)
     if (!_isEditing) {
-      if (_distanceController.text.isEmpty) _distanceController.text = trip.distance.toString();
-      if (_clientIdController.text.isEmpty) _clientIdController.text = trip.clientId ?? '';
+      if (_distanceController.text.isEmpty)
+        _distanceController.text = trip.distance.toString();
+      if (_clientIdController.text.isEmpty)
+        _clientIdController.text = trip.clientId ?? '';
     }
 
     return Scaffold(
@@ -53,7 +55,8 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       appBar: AppBar(
         title: Text(
           'REVIEW TRIP',
-          style: textTheme.displaySmall?.copyWith(color: BauhausDesign.textDark),
+          style:
+              textTheme.displaySmall?.copyWith(color: BauhausDesign.textDark),
         ),
         backgroundColor: BauhausDesign.surfaceLight,
         elevation: 0,
@@ -70,8 +73,8 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                 _isEditing = !_isEditing;
                 // Reset values on cancel
                 if (!_isEditing) {
-                   _distanceController.text = trip.distance.toString();
-                   _clientIdController.text = trip.clientId ?? '';
+                  _distanceController.text = trip.distance.toString();
+                  _clientIdController.text = trip.clientId ?? '';
                 }
               });
             },
@@ -100,7 +103,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
               ),
             ),
             const SizedBox(height: BauhausDesign.space6),
-            
+
             // Details Form
             _buildLabel(context, 'EMPLOYEE'),
             Text(
@@ -120,27 +123,27 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
             if (_isEditing)
               TextField(
                 controller: _distanceController,
-                decoration: BauhausDesign.inputDecoration,
+                decoration: BauhausDesign.inputDecoration(''),
                 keyboardType: TextInputType.number,
                 style: textTheme.bodyLarge,
               )
             else
               Text('${trip.distance} mi', style: textTheme.headlineLarge),
-            
+
             const SizedBox(height: BauhausDesign.space4),
 
             _buildLabel(context, 'CLIENT ID'),
             if (_isEditing)
               TextField(
                 controller: _clientIdController,
-                decoration: BauhausDesign.inputDecoration,
+                decoration: BauhausDesign.inputDecoration(''),
                 style: textTheme.bodyLarge,
               )
             else
               Text(trip.clientId ?? 'N/A', style: textTheme.headlineLarge),
 
             const SizedBox(height: BauhausDesign.space6),
-            
+
             // Actions
             if (_isEditing)
               BauhausButton(
@@ -148,14 +151,19 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                 backgroundColor: BauhausDesign.accent,
                 textColor: BauhausDesign.textDark,
                 onPressed: () async {
-                   final success = await ref.read(adminMileageViewModelProvider).updateTripDetails(
-                     trip.id,
-                     double.tryParse(_distanceController.text) ?? trip.distance,
-                     _clientIdController.text.isEmpty ? null : _clientIdController.text,
-                   );
-                   if (success) {
-                     setState(() => _isEditing = false);
-                   }
+                  final success = await ref
+                      .read(adminMileageViewModelProvider)
+                      .updateTripDetails(
+                        trip.id,
+                        double.tryParse(_distanceController.text) ??
+                            trip.distance,
+                        _clientIdController.text.isEmpty
+                            ? null
+                            : _clientIdController.text,
+                      );
+                  if (success) {
+                    setState(() => _isEditing = false);
+                  }
                 },
               )
             else
@@ -166,8 +174,10 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                       text: 'REJECT',
                       backgroundColor: BauhausDesign.primary, // Red
                       onPressed: () {
-                         ref.read(adminMileageViewModelProvider).updateTripStatus(trip.id, 'REJECTED');
-                         Navigator.pop(context);
+                        ref
+                            .read(adminMileageViewModelProvider)
+                            .updateTripStatus(trip.id, 'REJECTED');
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -177,8 +187,10 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                       text: 'APPROVE',
                       backgroundColor: BauhausDesign.secondary, // Blue
                       onPressed: () {
-                         ref.read(adminMileageViewModelProvider).updateTripStatus(trip.id, 'APPROVED');
-                         Navigator.pop(context);
+                        ref
+                            .read(adminMileageViewModelProvider)
+                            .updateTripStatus(trip.id, 'APPROVED');
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -196,9 +208,9 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-          color: BauhausDesign.neutral.withOpacity(0.6),
-          letterSpacing: 1.2,
-        ),
+              color: BauhausDesign.neutral.withOpacity(0.6),
+              letterSpacing: 1.2,
+            ),
       ),
     );
   }

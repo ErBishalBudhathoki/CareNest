@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
 class NdisItemSelectionView extends ConsumerStatefulWidget {
   const NdisItemSelectionView({super.key});
@@ -65,19 +67,29 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BauhausDesign.background,
       appBar: AppBar(
-        title: const Text('Select NDIS Item'),
+        backgroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
+        elevation: 0,
+        title: Text(
+          'Select NDIS Item',
+          style: BauhausDesign.getTextTheme(context).titleLarge,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral),
+        ),
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(BauhausDesign.space4),
             child: TextField(
               onChanged: _filterNdisItems,
-              decoration: const InputDecoration(
+              decoration: BauhausDesign.defaultInputDecoration.copyWith(
                 labelText: 'Search by Item Number or Description',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search),
               ),
             ),
           ),
@@ -86,19 +98,66 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
                   child: Center(child: CircularProgressIndicator()))
               : Expanded(
                   child: _filteredNdisItems.isEmpty && _searchQuery.isNotEmpty
-                      ? const Center(
-                          child: Text('No matching NDIS items found.'))
+                      ? Center(
+                          child: Text(
+                            'No matching NDIS items found.',
+                            style:
+                                BauhausDesign.getTextTheme(context).bodyMedium,
+                          ),
+                        )
                       : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: BauhausDesign.space4),
                           itemCount: _filteredNdisItems.length,
                           itemBuilder: (context, index) {
                             final item = _filteredNdisItems[index];
-                            return ListTile(
-                              title: Text(item.itemName),
-                              subtitle: Text(item.itemNumber),
-                              onTap: () {
-                                Navigator.of(context)
-                                    .pop(item); // Return selected item
-                              },
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: BauhausDesign.space2),
+                              child: BauhausCard(
+                                padding:
+                                    const EdgeInsets.all(BauhausDesign.space4),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pop(item); // Return selected item
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.itemName,
+                                      style: BauhausDesign.getTextTheme(context)
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                    const SizedBox(
+                                        height: BauhausDesign.space1),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: BauhausDesign.space2,
+                                          vertical: BauhausDesign.space1),
+                                      decoration: BoxDecoration(
+                                        color: BauhausDesign.primary
+                                            .withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(
+                                            BauhausDesign.radiusXs),
+                                      ),
+                                      child: Text(
+                                        item.itemNumber,
+                                        style:
+                                            BauhausDesign.getTextTheme(context)
+                                                .labelSmall
+                                                ?.copyWith(
+                                                  color: BauhausDesign.primary,
+                                                ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
                           },
                         ),

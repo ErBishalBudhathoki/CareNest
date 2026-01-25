@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/analytics_models.dart';
-import '../theme/bauhaus_theme.dart';
-import 'bauhaus_container.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/features/analytics/models/analytics_models.dart';
+import 'package:carenest/app/features/analytics/widgets/bauhaus_container.dart';
+import 'package:carenest/app/features/analytics/widgets/bauhaus_empty_state.dart';
 
 class UtilizationGauge extends StatelessWidget {
   final List<UtilizationMetric> metrics;
@@ -10,53 +11,150 @@ class UtilizationGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate average utilization
-    double avgUtilization = 0;
-    List<UtilizationMetric> sortedMetrics = [];
-    
-    if (metrics.isNotEmpty) {
-      avgUtilization =
-          metrics.map((e) => e.utilizationRate).reduce((a, b) => a + b) /
-              metrics.length;
-              
-      // Sort by utilization descending for top performers
-      sortedMetrics = List.from(metrics)
-        ..sort((a, b) => b.utilizationRate.compareTo(a.utilizationRate));
+    if (metrics.isEmpty) {
+      return const BauhausEmptyState(message: 'No Utilization Data');
     }
 
+    // Calculate Average
+    final avgUtilization = metrics.fold<double>(
+            0, (sum, item) => sum + item.utilizationRate) /
+        metrics.length;
+        
+    // Identify status
+    final isOverutilized = avgUtilization > 90;
+    final isUnderutilized = avgUtilization < 60;
+    final statusColor = isOverutilized 
+        ? BauhausDesign.error 
+        : (isUnderutilized ? BauhausDesign.secondary : BauhausDesign.success);
+    final statusText = isOverutilized 
+        ? 'OVERLOADED' 
+        : (isUnderutilized ? 'UNDERUTILIZED' : 'HEALTHY');
+
     return BauhausContainer(
-      height: 300,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('UTILIZATION', style: BauhausTheme.headerStyle),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '${avgUtilization.toStringAsFixed(1)}%',
-                  style: BauhausTheme.headerStyle.copyWith(fontSize: 48),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('RESOURCE UTILIZATION',
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineSmall
+                      ?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: BauhausDesign.textDark,
+                      )),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                Text('AVG UTILIZATION', style: BauhausTheme.labelStyle),
-                const SizedBox(height: 24),
-                _LinearGauge(
-                  value: avgUtilization / 100,
-                  label: 'Overall',
-                ),
-                const SizedBox(height: 16),
-                // Show top 3 employees
-                ...sortedMetrics.take(3).map((m) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: _LinearGauge(
-                        value: m.utilizationRate / 100,
-                        label: m.employeeName,
-                        height: 12,
-                        showLabel: true,
-                      ),
+                child: Text(statusText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     )),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          
+          // Main Gauge / Indicator
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('${avgUtilization.toStringAsFixed(1)}%',
+                  style: BauhausDesign.getTextTheme(context)
+                      .displayMedium
+                      ?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: BauhausDesign.textDark,
+                        fontSize: 48,
+                      )),
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text('AVG. RATE',
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(color: BauhausDesign.textMuted)),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 8),
+          LinearProgressIndicator(
+            value: (avgUtilization / 100).clamp(0.0, 1.0),
+            backgroundColor: BauhausDesign.neutral.withOpacity(0.1),
+            color: statusColor,
+            minHeight: 12,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          
+          const SizedBox(height: 24),
+          Text('TEAM BREAKDOWN',
+              style: BauhausDesign.getTextTheme(context)
+                  .labelSmall
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          
+          Expanded(
+            child: ListView.builder(
+              itemCount: metrics.take(5).length, // Show top 5
+              itemBuilder: (context, index) {
+                final m = metrics[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Text(m.employeeName,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.w600)),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: BauhausDesign.neutral.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            FractionallySizedBox(
+                              widthFactor: (m.utilizationRate / 100).clamp(0.0, 1.0),
+                              child: Container(
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: m.utilizationRate > 90 
+                                      ? BauhausDesign.error 
+                                      : (m.utilizationRate < 50 ? BauhausDesign.secondary : BauhausDesign.success),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        width: 50,
+                        child: Text('${m.utilizationRate.toStringAsFixed(0)}%',
+                            textAlign: TextAlign.right,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -65,55 +163,3 @@ class UtilizationGauge extends StatelessWidget {
   }
 }
 
-class _LinearGauge extends StatelessWidget {
-  final double value;
-  final String label;
-  final double height;
-  final bool showLabel;
-
-  const _LinearGauge({
-    required this.value,
-    required this.label,
-    this.height = 24,
-    this.showLabel = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final clampedValue = value.clamp(0.0, 1.0);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (showLabel)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(label,
-                    style: BauhausTheme.labelStyle.copyWith(fontSize: 10)),
-                Text('${(value * 100).toInt()}%',
-                    style: BauhausTheme.labelStyle.copyWith(fontSize: 10)),
-              ],
-            ),
-          ),
-        Container(
-          height: height,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: BauhausTheme.white,
-            border: Border.all(color: BauhausTheme.black, width: 2),
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: clampedValue,
-            child: Container(
-              color: BauhausTheme.blue,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}

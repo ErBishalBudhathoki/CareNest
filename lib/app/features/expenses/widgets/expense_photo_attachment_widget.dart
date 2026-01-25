@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import '../../../services/system_ui_service.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class ExpensePhotoAttachmentWidget extends StatefulWidget {
   final List<File>? initialPhotos;
@@ -51,7 +51,10 @@ class _ExpensePhotoAttachmentWidgetState
     if (_selectedPhotos.length >= widget.maxPhotos) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Maximum ${widget.maxPhotos} photos allowed')),
+          SnackBar(
+            content: Text('Maximum ${widget.maxPhotos} photos allowed'),
+            backgroundColor: BauhausDesign.warning,
+          ),
         );
       }
       return;
@@ -70,7 +73,10 @@ class _ExpensePhotoAttachmentWidgetState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error picking image: $e')),
+          SnackBar(
+            content: Text('Error picking image: $e'),
+            backgroundColor: BauhausDesign.error,
+          ),
         );
       }
     } finally {
@@ -110,8 +116,10 @@ class _ExpensePhotoAttachmentWidgetState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text(
-                    'Only $remainingSlots photos could be added due to limit')),
+              content: Text(
+                  'Only $remainingSlots photos could be added due to limit'),
+              backgroundColor: BauhausDesign.warning,
+            ),
           );
         }
       }
@@ -129,16 +137,16 @@ class _ExpensePhotoAttachmentWidgetState
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Receipt',
-            toolbarColor: const Color(0xFF667EEA),
-            toolbarWidgetColor: Colors.white,
+            toolbarColor: BauhausDesign.primary,
+            toolbarWidgetColor: BauhausDesign.surfaceWhite,
             initAspectRatio: CropAspectRatioPreset.ratio4x3,
             lockAspectRatio: false,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
-            statusBarColor: const Color(0xFF667EEA),
-            activeControlsWidgetColor: const Color(0xFF667EEA),
-            cropFrameColor: const Color(0xFF667EEA),
-            cropGridColor: const Color(0xFF667EEA).withOpacity(0.1),
+            statusBarColor: BauhausDesign.primary,
+            activeControlsWidgetColor: BauhausDesign.primary,
+            cropFrameColor: BauhausDesign.primary,
+            cropGridColor: BauhausDesign.primary.withOpacity(0.1),
             dimmedLayerColor: Colors.black.withOpacity(0.1),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
@@ -170,7 +178,10 @@ class _ExpensePhotoAttachmentWidgetState
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error cropping image: $e')),
+          SnackBar(
+            content: Text('Error cropping image: $e'),
+            backgroundColor: BauhausDesign.error,
+          ),
         );
       }
     }
@@ -195,7 +206,7 @@ class _ExpensePhotoAttachmentWidgetState
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(16.0)),
+            top: Radius.circular(BauhausDesign.radiusLg)),
       ),
       builder: (BuildContext context) {
         return Container(
@@ -205,7 +216,7 @@ class _ExpensePhotoAttachmentWidgetState
             children: [
               Text(
                 'Select Photo Source',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                style: BauhausDesign.getTextTheme(context).headlineSmall,
               ),
               SizedBox(height: 20.0),
               Row(
@@ -247,10 +258,10 @@ class _ExpensePhotoAttachmentWidgetState
       child: Container(
         padding: EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          color: const Color(0xFF667EEA).withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8.0),
+          color: BauhausDesign.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(
-            color: const Color(0xFF667EEA).withOpacity(0.1),
+            color: BauhausDesign.primary.withOpacity(0.1),
           ),
         ),
         child: Column(
@@ -258,13 +269,13 @@ class _ExpensePhotoAttachmentWidgetState
             Icon(
               icon,
               size: 40,
-              color: const Color(0xFF667EEA),
+              color: BauhausDesign.primary,
             ),
             SizedBox(height: 8.0),
             Text(
               label,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
-                color: const Color(0xFF667EEA),
+              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                color: BauhausDesign.primary,
               ),
             ),
           ],
@@ -275,60 +286,55 @@ class _ExpensePhotoAttachmentWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return ModernCard(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.receipt,
-                  color: const Color(0xFF667EEA),
-                ),
-                SizedBox(width: 8.0),
-                Text(
-                  _selectedPhotos.isEmpty
-                      ? 'Receipt Photos'
-                      : 'Receipt Photos (${_selectedPhotos.length}/${widget.maxPhotos})',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
-                    color: const Color(0xFF667EEA),
-                  ),
-                ),
-                const Spacer(),
-                if (_selectedPhotos.isNotEmpty)
-                  IconButton(
-                    onPressed: _removeAllPhotos,
-                    icon: Icon(
-                      Icons.delete_sweep,
-                      color: Colors.red,
-                    ),
-                    tooltip: 'Remove all photos',
-                  ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            if (_selectedPhotos.isNotEmpty) ..._buildPhotosPreview(),
-            if (_selectedPhotos.length < widget.maxPhotos)
-              ..._buildAddPhotoButton(),
-            SizedBox(height: 16.0),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: 'Photo Description (Optional)',
-                hintText: 'Describe what this receipt is for...',
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(8.0),
-                ),
-                prefixIcon: const Icon(Icons.description),
+    return BauhausCard(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.receipt,
+                color: BauhausDesign.primary,
               ),
-              maxLines: 2,
-              onChanged: widget.onDescriptionChanged,
+              SizedBox(width: 8.0),
+              Text(
+                _selectedPhotos.isEmpty
+                    ? 'Receipt Photos'
+                    : 'Receipt Photos (${_selectedPhotos.length}/${widget.maxPhotos})',
+                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              if (_selectedPhotos.isNotEmpty)
+                IconButton(
+                  onPressed: _removeAllPhotos,
+                  icon: Icon(
+                    Icons.delete_sweep,
+                    color: BauhausDesign.error,
+                  ),
+                  tooltip: 'Remove all photos',
+                ),
+            ],
+          ),
+          SizedBox(height: 12.0),
+          if (_selectedPhotos.isNotEmpty) ..._buildPhotosPreview(),
+          if (_selectedPhotos.length < widget.maxPhotos)
+            ..._buildAddPhotoButton(),
+          SizedBox(height: 16.0),
+          TextFormField(
+            controller: _descriptionController,
+            decoration: BauhausDesign.inputDecoration('Photo Description (Optional)').copyWith(
+              labelText: 'Photo Description (Optional)',
+              hintText: 'Describe what this receipt is for...',
+              prefixIcon: const Icon(Icons.description, color: BauhausDesign.textMuted),
             ),
-          ],
-        ),
+            maxLines: 2,
+            onChanged: widget.onDescriptionChanged,
+          ),
+        ],
       ),
     );
   }
@@ -345,16 +351,15 @@ class _ExpensePhotoAttachmentWidgetState
               margin: EdgeInsets.only(right: 12.0),
               width: 120,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(
-                  color: const Color(0xFF667EEA).withOpacity(0.1),
+                  color: BauhausDesign.primary.withOpacity(0.1),
                 ),
               ),
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     child: Image.file(
                       _selectedPhotos[index],
                       fit: BoxFit.cover,
@@ -370,12 +375,12 @@ class _ExpensePhotoAttachmentWidgetState
                       child: Container(
                         padding: EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: BauhausDesign.error,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.close,
-                          color: Colors.white,
+                          color: BauhausDesign.surfaceWhite,
                           size: 16,
                         ),
                       ),
@@ -397,33 +402,33 @@ class _ExpensePhotoAttachmentWidgetState
         width: double.infinity,
         height: 120,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(
-            color: const Color(0xFF667EEA).withOpacity(0.1),
+            color: BauhausDesign.primary.withOpacity(0.1),
             style: BorderStyle.solid,
           ),
-          color: const Color(0xFF667EEA).withOpacity(0.1),
+          color: BauhausDesign.primary.withOpacity(0.1),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: _showImageSourceDialog,
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.add_a_photo,
                   size: 40,
-                  color: const Color(0xFF667EEA),
+                  color: BauhausDesign.primary,
                 ),
                 SizedBox(height: 8.0),
                 Text(
                   _selectedPhotos.isEmpty
                       ? 'Add Receipt Photos'
                       : 'Add More Photos',
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
-                    color: const Color(0xFF667EEA),
+                  style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                    color: BauhausDesign.primary,
                   ),
                 ),
                 SizedBox(height: 4.0),
@@ -431,8 +436,8 @@ class _ExpensePhotoAttachmentWidgetState
                   _selectedPhotos.isEmpty
                       ? 'Tap to take photo or select from gallery'
                       : 'Add up to ${widget.maxPhotos - _selectedPhotos.length} more photos',
-                  style: const TextStyle(fontSize: 12).copyWith(
-                    color: const Color(0xFF6B7280),
+                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                    color: BauhausDesign.textMuted,
                   ),
                   textAlign: TextAlign.center,
                 ),

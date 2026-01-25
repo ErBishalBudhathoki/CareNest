@@ -1,9 +1,9 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 /// Debug helper widget for login screen
 /// Only visible in debug mode to help with testing
@@ -21,77 +21,54 @@ class DebugLoginHelper extends ConsumerWidget {
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.neutral.withOpacity(0.1),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        color: BauhausDesign.info.withOpacity(0.1),
+        border: Border.all(color: BauhausDesign.info, width: 1),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '🐛 DEBUG MODE',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: BauhausDesign.neutral,
-              fontSize: 12,
-            ),
+          Row(
+            children: [
+              Icon(Icons.bug_report, size: 16, color: BauhausDesign.info),
+              const SizedBox(width: 8),
+              Text(
+                'DEBUG MODE',
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.info,
+                    ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
+                child: BauhausActionButton(
+                  text: 'Fill Test Creds',
                   onPressed: () {
                     final loginViewModel = ref.read(loginViewModelProvider);
                     loginViewModel.setDebugCredentials();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Debug credentials filled!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                    _showSnackBar(context, 'Debug credentials filled!');
                   },
-                  icon: const Icon(Icons.bug_report, size: 16),
-                  label: const Text(
-                    'Fill Test Creds',
-                    style: TextStyle(fontSize: 11),
-                  ),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                    foregroundColor: BauhausDesign.surfaceLight,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    minimumSize: const Size(0, 32),
-                  ),
+                  icon: Icons.copy,
+                  variant: BauhausActionVariant.info,
+                  isSmall: true,
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: ElevatedButton.icon(
+                child: BauhausActionButton(
+                  text: 'Clear',
                   onPressed: () {
                     final loginViewModel = ref.read(loginViewModelProvider);
                     loginViewModel.clearCredentials();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Credentials cleared!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                    _showSnackBar(context, 'Credentials cleared!');
                   },
-                  icon: const Icon(Icons.clear, size: 16),
-                  label: const Text(
-                    'Clear',
-                    style: TextStyle(fontSize: 11),
-                  ),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                    foregroundColor: BauhausDesign.surfaceLight,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    minimumSize: const Size(0, 32),
-                  ),
+                  icon: Icons.clear,
+                  variant: BauhausActionVariant.secondary,
+                  isSmall: true,
                 ),
               ),
             ],
@@ -100,51 +77,63 @@ class DebugLoginHelper extends ConsumerWidget {
           // Debug login test button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: BauhausActionButton(
+              text: 'Test Login Flow',
               onPressed: () async {
                 final loginViewModel = ref.read(loginViewModelProvider);
                 try {
                   await loginViewModel.debugClearTokenAndLogin(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Debug login test triggered!'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                  if (context.mounted) {
+                    _showSnackBar(context, 'Debug login test triggered!');
+                  }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Debug login failed: $e'),
-                      duration: const Duration(seconds: 3),
-                    ),
-                  );
+                  if (context.mounted) {
+                    _showSnackBar(context, 'Debug login failed: $e',
+                        isError: true);
+                  }
                 }
               },
-              icon: const Icon(Icons.login, size: 16),
-              label: const Text(
-                'Test Login Flow',
-                style: TextStyle(fontSize: 11),
-              ),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                foregroundColor: BauhausDesign.surfaceLight,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                minimumSize: const Size(0, 32),
-              ),
+              icon: Icons.login,
+              variant: BauhausActionVariant.primary,
+              isSmall: true,
             ),
           ),
-          const SizedBox(height: 4),
-          const Text(
-            'Test Email: logintest@example.com\nTest Password: password123',
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey,
-              fontFamily: 'monospace',
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: BauhausDesign.neutral.withOpacity(0.2)),
+            ),
+            child: Text(
+              'Test Email: logintest@example.com\nTest Password: password123',
+              style: TextStyle(
+                fontSize: 10,
+                color: BauhausDesign.textMuted,
+                fontFamily: 'monospace',
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSnackBar(BuildContext context, String message,
+      {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: BauhausDesign.surfaceWhite),
+        ),
+        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.neutral,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        ),
       ),
     );
   }

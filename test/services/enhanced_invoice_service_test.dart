@@ -11,6 +11,8 @@ import 'package:carenest/app/core/providers/invoice_providers.dart';
 // Removed unused: import 'package:carenest/app/core/providers/invoice_providers.dart';
 // Removed unused: import 'package:carenest/app/features/invoice/repositories/invoice_repository.dart';
 
+import 'package:carenest/generated/l10n/app_localizations.dart';
+
 // Mock classes
 class MockApiMethod extends Mock implements ApiMethod {}
 
@@ -19,6 +21,15 @@ class MockInvoicePdfGenerator extends Mock implements InvoicePdfGenerator {}
 class MockInvoiceEmailService extends Mock implements InvoiceEmailService {}
 
 class MockInvoiceDataProcessor extends Mock implements InvoiceDataProcessor {}
+
+class MockAppLocalizations extends Mock implements AppLocalizations {
+  @override
+  String get unknownClient => 'Unknown Client';
+  @override
+  String get unknownItem => 'Unknown Item';
+  @override
+  String get organizationFallbackBaseRate => 'Organization fallback base rate';
+}
 
 /// Simple stubbed API method to avoid typed argument matcher issues.
 /// Allows setting canned responses used by EnhancedInvoiceService tests.
@@ -117,7 +128,8 @@ void main() {
         // Call the private method using reflection or a test-only public method
         // This is a simplified version that just tests our fix
         final processedData = {'clients': null};
-        return invoiceService.testCheckForMissingPrices(processedData);
+        return invoiceService.testCheckForMissingPrices(processedData,
+            l10n: MockAppLocalizations());
       }
 
       // The test should not throw an error
@@ -131,7 +143,8 @@ void main() {
         // This is a simplified version that just tests our fix
         final processedData = {'clients': null};
         final resolutions = <Map<String, dynamic>>[];
-        invoiceService.testApplyPriceResolutions(processedData, resolutions);
+        invoiceService.testApplyPriceResolutions(processedData, resolutions,
+            l10n: MockAppLocalizations());
       }
 
       // The test should not throw an error
@@ -360,10 +373,8 @@ void main() {
       );
 
       expect(result, isEmpty);
-      final stateCtrl = fakeRef
-          .read(invoiceGenerationStateProvider.notifier);
-      final errorCtrl = fakeRef
-          .read(invoiceGenerationErrorProvider.notifier);
+      final stateCtrl = fakeRef.read(invoiceGenerationStateProvider.notifier);
+      final errorCtrl = fakeRef.read(invoiceGenerationErrorProvider.notifier);
       expect(stateCtrl.state, InvoiceGenerationState.error);
       expect(errorCtrl.state, contains('Tax rate cannot be negative'));
     });
@@ -373,7 +384,8 @@ void main() {
     /// Verifies that when bulk pricing provides a fallback base rate above a cap,
     /// the service clamps to the cap and rounds price and total to 2 decimals,
     /// and does not generate a missing-price prompt for that item.
-    test('Applies bulk fallback base rate with cap clamping and rounding', () async {
+    test('Applies bulk fallback base rate with cap clamping and rounding',
+        () async {
       // Stub bulk pricing to include price above cap for one item,
       // and standard price info for another (to trigger prompt).
       final stubApi = StubApiMethod()
@@ -430,10 +442,12 @@ void main() {
       final prompts = await invoiceService.testCheckForMissingPrices(
         processedData,
         organizationId: 'ORG-TEST',
+        l10n: MockAppLocalizations(),
       );
 
       // Item 1 should have price applied from bulk, clamped and rounded.
-      final li0 = (processedData['clients'] as List).first['lineItems'][0] as Map<String, dynamic>;
+      final li0 = (processedData['clients'] as List).first['lineItems'][0]
+          as Map<String, dynamic>;
       expect(li0['price'], 65.17);
       expect(li0['pricingSource'], 'Organization fallback base rate');
       expect(li0['exceedsPriceCap'], isFalse);
@@ -488,12 +502,14 @@ void main() {
       final prompts = await invoiceService.testCheckForMissingPrices(
         processedData,
         organizationId: 'ORG-TEST',
+        l10n: MockAppLocalizations(),
       );
 
       // No prompt expected; custom pricing applied.
       expect(prompts, isEmpty);
 
-      final li0 = (processedData['clients'] as List).first['lineItems'][0] as Map<String, dynamic>;
+      final li0 = (processedData['clients'] as List).first['lineItems'][0]
+          as Map<String, dynamic>;
       expect(li0['price'], 45.0);
       expect(li0['pricingSource'], 'Organization-wide custom price');
       expect(li0['total'], 90.0);

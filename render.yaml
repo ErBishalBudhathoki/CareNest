@@ -10,3 +10,9 @@ services:
         value: production
       - key: NPM_CONFIG_PRODUCTION
         value: false
+      - key: GCP_PROJECT_ID
+        sync: false
+      - key: GCP_LOCATION
+        value: us-central1
+      # Note: For Vertex AI on Render, you must upload a Service Account JSON key
+      # and set it as GOOGLE_APPLICATION_CREDENTIALS env var.

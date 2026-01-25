@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Automatic Invoice Generation ViewModel
 /// Handles automatic invoice generation for all employees and clients in an organization
@@ -30,55 +31,60 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
     List<String>? selectedEmployeeEmails,
   }) async {
     try {
+      final l10n = AppLocalizations.of(context)!;
       // Update state to loading
       state = state.copyWith(
         isLoading: true,
         errorMessage: '',
-        currentStep: 'Fetching organization data...',
+        currentStep: l10n.fetchingOrgDataStep,
         progress: 0.0,
       );
 
       // Step 1: Fetch all employees for the organization
       state = state.copyWith(
-        currentStep: 'Fetching employees...',
+        currentStep: l10n.fetchingEmployeesStep,
         progress: 0.1,
       );
 
       final employeesResponse =
           await _apiMethod.getOrganizationEmployees(organizationId);
       if (employeesResponse['success'] != true) {
-        throw Exception(
-            'Failed to fetch employees: ${employeesResponse['message']}');
+        throw Exception(l10n.failedToFetchEmployeesError(
+            employeesResponse['message']?.toString() ?? ''));
       }
 
       final List<dynamic> employeesData = employeesResponse['employees'] ?? [];
       if (employeesData.isEmpty) {
-        throw Exception('No employees found for this organization');
+        throw Exception(l10n.noEmployeesFoundError);
       }
 
       // Optionally filter employees to selected ones
-      final List<dynamic> filteredEmployeesData = (selectedEmployeeEmails == null || selectedEmployeeEmails.isEmpty)
-          ? employeesData
-          : employeesData.where((e) => selectedEmployeeEmails.contains((e['email'] ?? '') as String)).toList();
+      final List<dynamic> filteredEmployeesData =
+          (selectedEmployeeEmails == null || selectedEmployeeEmails.isEmpty)
+              ? employeesData
+              : employeesData
+                  .where((e) => selectedEmployeeEmails
+                      .contains((e['email'] ?? '') as String))
+                  .toList();
       if (filteredEmployeesData.isEmpty) {
-        throw Exception('No selected employees found to generate invoices');
+        throw Exception(l10n.noSelectedEmployeesError);
       }
 
       // Step 2: Fetch all clients for the organization
       state = state.copyWith(
-        currentStep: 'Fetching clients...',
+        currentStep: l10n.fetchingClientsStep,
         progress: 0.2,
       );
 
       final List<Map<String, dynamic>> clientsData =
           await _apiMethod.getClientsByOrganizationId(organizationId);
       if (clientsData.isEmpty) {
-        throw Exception('No clients found for this organization');
+        throw Exception(l10n.noClientsFoundError);
       }
 
       // Step 3: Build employee-client relationships
       state = state.copyWith(
-        currentStep: 'Building employee-client relationships...',
+        currentStep: l10n.buildingRelationshipsStep,
         progress: 0.3,
       );
 
@@ -94,8 +100,8 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         final progressStep =
             0.3 + (0.4 * processedEmployees / filteredEmployeesData.length);
         state = state.copyWith(
-          currentStep:
-              'Processing employee: ${employeeData['firstName']} ${employeeData['lastName']}',
+          currentStep: l10n.processingEmployeeStep(
+              '${employeeData['firstName'] ?? ''} ${employeeData['lastName'] ?? ''}'),
           progress: progressStep,
         );
 
@@ -103,15 +109,15 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         final assignmentsResponse =
             await _apiMethod.getUserAssignments(employeeEmail);
         if (assignmentsResponse['success'] != true) {
-          debugPrint(
-              'Failed to get assignments for $employeeEmail: ${assignmentsResponse['message']}');
+          debugPrint(l10n.failedToGetAssignmentsLog(
+              employeeEmail, assignmentsResponse['message']?.toString() ?? ''));
           continue;
         }
 
         final List<dynamic> assignments =
             assignmentsResponse['assignments'] ?? [];
         if (assignments.isEmpty) {
-          debugPrint('No assignments found for employee: $employeeEmail');
+          debugPrint(l10n.noAssignmentsFoundLog(employeeEmail));
           continue;
         }
 
@@ -157,7 +163,7 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
       }
 
       if (selectedEmployeesAndClients.isEmpty) {
-        throw Exception('No valid employee-client relationships found');
+        throw Exception(l10n.noValidRelationshipsError);
       }
 
       // Update state with found relationships
@@ -170,7 +176,7 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
 
       // Step 4: Generate invoices
       state = state.copyWith(
-        currentStep: 'Generating invoices...',
+        currentStep: l10n.generatingInvoicesStep,
         progress: 0.7,
       );
 
@@ -192,7 +198,7 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
       // Step 5: Complete
       state = state.copyWith(
         isLoading: false,
-        currentStep: 'Invoice generation completed',
+        currentStep: l10n.generationCompletedStep,
         progress: 1.0,
         generatedPdfPaths: pdfPaths,
         invoices: _invoiceService.invoices,
@@ -207,11 +213,12 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
 
       return pdfPaths;
     } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
       final errorMessage = e.toString();
       state = state.copyWith(
         isLoading: false,
         errorMessage: errorMessage,
-        currentStep: 'Error occurred',
+        currentStep: l10n.errorOccurredStep,
         progress: 0.0,
       );
 

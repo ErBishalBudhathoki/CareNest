@@ -8,12 +8,23 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(':app')
+    
+    // Fix for "source value 8 is obsolete" warnings
+    project.plugins.withId("com.android.base") {
+        android {
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_17
+                targetCompatibility JavaVersion.VERSION_17
+            }
+        }
+    }
 }
+
 subprojects {
     project.configurations.all {
         resolutionStrategy.force 'com.android.tools.build:gradle:8.11.1'
     }
-    project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {

@@ -72,6 +72,7 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
       final newRequest = RequestModel(
         organizationId: _user!.organizationId,
         userId: _user!.id.isNotEmpty ? _user!.id : _user!.email,
+        createdBy: _user!.email,
         type: type,
         status: RequestStatus.pending,
         details: details,
@@ -127,7 +128,7 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
       if (id == null || id.isEmpty) continue;
 
       final previous = previousStatuses[id];
-      if (previous == null || previous == request.status) continue;
+      if (previous == null || previous == request.status.name) continue;
 
       final statusLower = request.status.name.toLowerCase();
       final title = 'Request ${request.status}';

@@ -1,5 +1,5 @@
 import 'package:carenest/app/features/Appointment/views/select_client_for_assignmnet.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
@@ -77,15 +77,15 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                    BorderRadius.circular(16.0),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+                color: BauhausDesign.surfaceWhite,
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                boxShadow: const [BauhausDesign.shadowHard],
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -111,7 +111,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(BauhausDesign.space5),
                     child: Row(
                       children: [
                         // Avatar
@@ -119,24 +119,27 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF007AFF),
-                            borderRadius: BorderRadius.circular(
-                                16.0),
+                            color: BauhausDesign.primary,
+                            borderRadius:
+                                BorderRadius.circular(BauhausDesign.radiusMd),
+                            border: Border.all(
+                                color: BauhausDesign.neutral, width: 1.5),
                           ),
                           child: Center(
                             child: Text(
                               user.name.isNotEmpty
                                   ? user.name[0].toUpperCase()
                                   : 'U',
-                              style:
-                                  Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .headlineMedium
+                                  ?.copyWith(
+                                    color: BauhausDesign.surfaceWhite,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: BauhausDesign.space4),
                         // User Info
                         Expanded(
                           child: Column(
@@ -144,22 +147,20 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                             children: [
                               Text(
                                 user.name,
-                                style: Theme.of(context)
-                                    .textTheme
+                                style: BauhausDesign.getTextTheme(context)
                                     .titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF212121),
+                                      color: BauhausDesign.textDark,
                                     ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: BauhausDesign.space1),
                               Text(
                                 user.email,
-                                style: Theme.of(context)
-                                    .textTheme
+                                style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: const Color(0xFF757575),
+                                      color: BauhausDesign.textMuted,
                                     ),
                               ),
                             ],
@@ -167,16 +168,18 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                         ),
                         // Arrow Icon
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(BauhausDesign.space2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF5F5F5),
-                            borderRadius: BorderRadius.circular(
-                                8.0),
+                            color: BauhausDesign.backgroundLight,
+                            borderRadius:
+                                BorderRadius.circular(BauhausDesign.radiusSm),
+                            border: Border.all(
+                                color: BauhausDesign.neutral, width: 1),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
-                            color: Color(0xFF757575),
+                            color: BauhausDesign.textMuted,
                           ),
                         ),
                       ],
@@ -194,11 +197,12 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
   /// Build search bar widget
   Widget _buildSearchBar() {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        boxShadow: const [BauhausDesign.shadowSoft],
       ),
       child: TextField(
         controller: _searchController,
@@ -206,17 +210,17 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
         decoration: InputDecoration(
           hintText: 'Search employees...',
           hintStyle: TextStyle(
-            color: const Color(0xFF757575).withOpacity(0.1),
+            color: BauhausDesign.textMuted.withOpacity(0.5),
           ),
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.search,
-            color: Color(0xFF757575),
+            color: BauhausDesign.textMuted,
           ),
           suffixIcon: _isSearching
               ? IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.clear,
-                    color: Color(0xFF757575),
+                    color: BauhausDesign.textMuted,
                   ),
                   onPressed: () {
                     _searchController.clear();
@@ -226,8 +230,8 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
               : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
+            horizontal: BauhausDesign.space4,
+            vertical: BauhausDesign.space4,
           ),
         ),
       ),
@@ -243,23 +247,23 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           Icon(
             _isSearching ? Icons.search_off : Icons.people_outline,
             size: 64,
-            color: const Color(0xFFBDBDBD),
+            color: BauhausDesign.neutral,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           Text(
             _isSearching ? 'No employees found' : 'No employees available',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: const Color(0xFF757575),
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: BauhausDesign.space2),
           Text(
             _isSearching
                 ? 'Try adjusting your search terms'
                 : 'Add employees to get started',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFFBDBDBD),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.neutral,
                 ),
           ),
         ],
@@ -273,48 +277,36 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline,
             size: 64,
-            color: Color(0xFFFF3B30),
+            color: BauhausDesign.error,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           Text(
             'Something went wrong',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: const Color(0xFF212121),
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                  color: BauhausDesign.textDark,
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: BauhausDesign.space2),
           Text(
             error,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF757575),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
                 ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
+          const SizedBox(height: BauhausDesign.space6),
+          BauhausButton(
+            text: 'Try Again',
+            icon: Icons.refresh,
             onPressed: () {
               setState(() {
                 futureUserData = _apiMethod.fetchUserData();
               });
             },
-            icon: const Icon(Icons.refresh),
-            label: const Text('Try Again'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(8.0),
-              ),
-            ),
           ),
         ],
       ),
@@ -324,17 +316,23 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         elevation: 0,
-        foregroundColor: const Color(0xFF212121),
+        backgroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
         title: Text(
           'Employee List',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF212121),
+                color: BauhausDesign.textDark,
               ),
         ),
         centerTitle: false,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral, height: 1.5),
+        ),
       ),
       body: Column(
         children: [
@@ -344,10 +342,10 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
               future: futureUserData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
+                  return Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xFF007AFF),
+                        BauhausDesign.primary,
                       ),
                     ),
                   );
@@ -376,7 +374,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.only(bottom: BauhausDesign.space4),
                   itemCount: usersToShow.length,
                   itemBuilder: (context, index) {
                     return _buildEmployeeCard(usersToShow[index], index);

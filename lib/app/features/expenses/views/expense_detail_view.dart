@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
@@ -6,7 +5,9 @@ import 'package:carenest/app/features/expenses/providers/expense_provider.dart';
 import 'package:carenest/app/features/expenses/views/add_expense_view.dart';
 import '../presentation/widgets/enhanced_file_viewer_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:carenest/app/shared/design_system/modern_saas_design_system.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ExpenseDetailView extends ConsumerWidget {
   final ExpenseModel expense;
@@ -26,16 +27,19 @@ class ExpenseDetailView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currencyFormat = NumberFormat.currency(symbol: '\$');
     final dateFormat = DateFormat('MMMM dd, yyyy');
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         title: Text(
-          'Expense Details',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
-            color: Colors.white,
-          ),
+          l10n.expensesDetailsTitle,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                color: BauhausDesign.surfaceWhite,
+              ),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: BauhausDesign.primary,
+        iconTheme: IconThemeData(color: BauhausDesign.surfaceWhite),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -68,7 +72,15 @@ class ExpenseDetailView extends ConsumerWidget {
                     .approveExpense(expense.id, adminEmail);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Expense approved')),
+                    SnackBar(
+                      content: Text(l10n.expenseApprovedSnack),
+                      backgroundColor: BauhausDesign.success,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusMd),
+                      ),
+                    ),
                   );
                   Navigator.pop(
                       context, true); // Return to list with refresh flag
@@ -79,7 +91,15 @@ class ExpenseDetailView extends ConsumerWidget {
                     .rejectExpense(expense.id, adminEmail);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Expense rejected')),
+                    SnackBar(
+                      content: Text(l10n.expenseRejectedSnack),
+                      backgroundColor: BauhausDesign.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusMd),
+                      ),
+                    ),
                   );
                   Navigator.pop(
                       context, true); // Return to list with refresh flag
@@ -88,34 +108,34 @@ class ExpenseDetailView extends ConsumerWidget {
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               if (expense.status == 'pending')
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'approve',
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle, color: Color(0xFF4CAF50)),
+                      Icon(Icons.check_circle, color: BauhausDesign.success),
                       SizedBox(width: 8),
-                      Text('Approve'),
+                      Text(l10n.approveAction),
                     ],
                   ),
                 ),
               if (expense.status == 'pending')
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'reject',
                   child: Row(
                     children: [
-                      Icon(Icons.cancel, color: Colors.red),
+                      Icon(Icons.cancel, color: BauhausDesign.error),
                       SizedBox(width: 8),
-                      Text('Reject'),
+                      Text(l10n.rejectAction),
                     ],
                   ),
                 ),
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete, color: Colors.red),
+                    Icon(Icons.delete, color: BauhausDesign.error),
                     SizedBox(width: 8),
-                    Text('Delete'),
+                    Text(l10n.deleteAction),
                   ],
                 ),
               ),
@@ -123,170 +143,136 @@ class ExpenseDetailView extends ConsumerWidget {
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF667EEA),
-              Colors.white,
-              Colors.white,
-            ],
-            stops: [0.0, 0.1, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Status Badge
-                _buildStatusBadge(expense.status),
-                SizedBox(height: 16.0),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Status Badge
+              _buildStatusBadge(context, expense.status),
+              SizedBox(height: 16.0),
 
-                // Main Card
-                ModernCard(
-                  padding: EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title and Amount
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            expense.title,
-                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+              // Main Card
+              BauhausCard(
+                padding: EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title and Amount
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          expense.title,
+                          style: BauhausDesign.getTextTheme(context)
+                              .headlineMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 12.0),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            currencyFormat.format(expense.amount ?? 0.0),
+                            style: BauhausDesign.getTextTheme(context)
+                                .headlineMedium
+                                ?.copyWith(
+                                  color: BauhausDesign.primary,
+                                ),
                           ),
-                          SizedBox(height: 12.0),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              currencyFormat.format(expense.amount ?? 0.0),
-                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600).copyWith(
-                                color: const Color(0xFF667EEA),
-                              ),
-                            ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Category and Date
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        BauhausChip(
+                          label: expense.category,
+                          icon: Icons.category,
+                          variant: BauhausChipVariant.outlined,
+                        ),
+                        BauhausChip(
+                          label: dateFormat.format(expense.date),
+                          icon: Icons.calendar_today,
+                          variant: BauhausChipVariant.outlined,
+                        ),
+                        if (expense.isRecurring)
+                          BauhausChip(
+                            label: expense.recurringFrequency != null
+                                ? expense.recurringFrequency![0].toUpperCase() +
+                                    expense.recurringFrequency!.substring(1)
+                                : 'Recurring',
+                            icon: Icons.repeat,
+                            variant: BauhausChipVariant.info,
                           ),
-                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Description
+                    if (expense.description != null &&
+                        expense.description!.isNotEmpty) ...[
+                      Text(
+                        l10n.expenseDescriptionLabel,
+                        style: BauhausDesign.getTextTheme(context).labelLarge,
                       ),
                       const SizedBox(height: 8),
-
-                      // Category and Date
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          Chip(
-                            label: Text(
-                              expense.category,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            avatar: const Icon(
-                              Icons.category,
-                              size: 16,
-                              color: Color(0xFF4CAF50),
-                            ),
-                          ),
-                          Chip(
-                            label: Text(
-                              dateFormat.format(expense.date),
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            avatar: const Icon(
-                              Icons.calendar_today,
-                              size: 16,
-                              color: Color(0xFF4CAF50),
-                            ),
-                          ),
-                          if (expense.isRecurring)
-                            Chip(
-                              label: Text(
-                                expense.recurringFrequency != null
-                                    ? expense.recurringFrequency![0]
-                                            .toUpperCase() +
-                                        expense.recurringFrequency!.substring(1)
-                                    : 'Recurring',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              avatar: const Icon(
-                                Icons.repeat,
-                                size: 16,
-                                color: Color(0xFF4CAF50),
-                              ),
-                            ),
-                        ],
+                      Text(
+                        expense.description!,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium,
                       ),
                       const SizedBox(height: 16),
-
-                      // Description
-                      if (expense.description != null &&
-                          expense.description!.isNotEmpty) ...[
-                        const Text(
-                          'Description',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF6B7280),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          expense.description!,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Receipt Files
-                      if (_hasReceiptFiles()) ...[
-                        const Text(
-                          'Attached Files',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF6B7280),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        EnhancedFileViewerWidget(
-                          filePaths: _getReceiptFiles(),
-                          description: _getFileDescription(),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Divider
-                      const Divider(),
-                      const SizedBox(height: 8),
-
-                      // Metadata
-                      _buildInfoRow('Submitted by', expense.submittedBy),
-                      const SizedBox(height: 8),
-                      if (expense.approvedBy != null) ...[
-                        _buildInfoRow('Reviewed by', expense.approvedBy!),
-                        const SizedBox(height: 8),
-                      ],
-                      _buildInfoRow(
-                        'Created',
-                        dateFormat.format(expense.createdAt),
-                      ),
-                      if (expense.updatedAt != null) ...[
-                        const SizedBox(height: 8),
-                        _buildInfoRow(
-                          'Last updated',
-                          dateFormat.format(expense.updatedAt!),
-                        ),
-                      ],
                     ],
-                  ),
+
+                    // Receipt Files
+                    if (_hasReceiptFiles()) ...[
+                      Text(
+                        l10n.attachedFilesLabel,
+                        style: BauhausDesign.getTextTheme(context).labelLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      EnhancedFileViewerWidget(
+                        filePaths: _getReceiptFiles(),
+                        description: _getFileDescription(),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    // Divider
+                    const Divider(color: BauhausDesign.neutral),
+                    const SizedBox(height: 8),
+
+                    // Metadata
+                    _buildInfoRow(
+                        context, l10n.submittedByLabel, expense.submittedBy),
+                    const SizedBox(height: 8),
+                    if (expense.approvedBy != null) ...[
+                      _buildInfoRow(
+                          context, l10n.reviewedByLabel, expense.approvedBy!),
+                      const SizedBox(height: 8),
+                    ],
+                    _buildInfoRow(
+                      context,
+                      l10n.createdLabel,
+                      dateFormat.format(expense.createdAt),
+                    ),
+                    if (expense.updatedAt != null) ...[
+                      const SizedBox(height: 8),
+                      _buildInfoRow(
+                        context,
+                        l10n.lastUpdatedLabel,
+                        dateFormat.format(expense.updatedAt!),
+                      ),
+                    ],
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -316,67 +302,54 @@ class ExpenseDetailView extends ConsumerWidget {
     return expense.fileDescription ?? expense.photoDescription;
   }
 
-  Widget _buildStatusBadge(String status) {
-    Color color;
-    IconData icon;
+  Widget _buildStatusBadge(BuildContext context, String status) {
+    print(status); // Debug print to ensure status is being read
+    final l10n = AppLocalizations.of(context)!;
+    BauhausChipVariant variant;
     String text;
+    IconData icon;
 
     switch (status) {
       case 'approved':
-        color = Colors.green;
+        variant = BauhausChipVariant.success;
         icon = Icons.check_circle;
-        text = 'Approved';
+        text = l10n.approved;
         break;
       case 'rejected':
-        color = Colors.red;
+        variant = BauhausChipVariant.error;
         icon = Icons.cancel;
-        text = 'Rejected';
+        text = l10n.statusRejected;
         break;
       case 'pending':
       default:
-        color = Colors.orange;
+        variant = BauhausChipVariant.warning;
         icon = Icons.pending;
-        text = 'Pending Approval';
+        text = l10n.statsPendingApproval;
         break;
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color, width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 18),
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(color: color, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
+    return BauhausChip(
+      label: text,
+      icon: icon,
+      variant: variant,
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '$label: ',
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFF6B7280),
-            fontWeight: FontWeight.bold,
-          ),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textMuted,
+              ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(fontSize: 14),
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
           ),
         ),
       ],
@@ -387,17 +360,22 @@ class ExpenseDetailView extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('Delete Expense'),
-          content: const Text(
-            'Are you sure you want to delete this expense? This action cannot be undone.',
+          backgroundColor: BauhausDesign.surfaceWhite,
+          title: Text(l10n.deleteExpenseTitle,
+              style: BauhausDesign.getTextTheme(context).headlineMedium),
+          content: Text(
+            l10n.deleteExpenseMessage,
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
           ),
           actions: [
-            TextButton(
+            BauhausActionButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              text: l10n.cancelButton,
+              variant: BauhausActionVariant.ghost,
             ),
-            TextButton(
+            BauhausActionButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await ref
@@ -405,15 +383,22 @@ class ExpenseDetailView extends ConsumerWidget {
                     .deleteExpense(expense.id);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Expense deleted')),
+                    SnackBar(
+                      content: Text(l10n.expenseDeletedSnack),
+                      backgroundColor: BauhausDesign.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusMd),
+                      ),
+                    ),
                   );
                   Navigator.pop(
                       context, true); // Return to list with refresh flag
                 }
               },
-              style:
-                  TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Delete'),
+              text: l10n.deleteButton,
+              variant: BauhausActionVariant.danger,
             ),
           ],
         );

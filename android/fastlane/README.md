@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Increment version code
 
+### android capture_screenshots
+
+```sh
+[bundle exec] fastlane android capture_screenshots
+```
+
+Capture screenshots for the store
+
 ### android deploy_development
 
 ```sh

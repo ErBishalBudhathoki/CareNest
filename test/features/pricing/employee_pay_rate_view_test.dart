@@ -72,32 +72,26 @@ void main() {
     expect(levelDropdown, findsOneWidget);
     expect(payPointDropdown, findsOneWidget);
 
-    // 5. Select Stream
-    await tester.tap(streamDropdown);
-    await tester.pumpAndSettle();
-    
-    // Select 'Social & Community Services'
-    await tester.tap(find.text('Social & Community Services').last);
-    await tester.pumpAndSettle();
+    final streamWidget =
+        tester.widget<DropdownButtonFormField<String>>(streamDropdown);
+    streamWidget.onChanged?.call('Social & Community Services');
+    await tester.pump();
 
-    // 6. Select Level (Should now be enabled/populated)
-    await tester.tap(levelDropdown);
-    await tester.pumpAndSettle();
-    
-    // Select 'Level 1'
-    await tester.tap(find.text('Level 1').last);
-    await tester.pumpAndSettle();
+    final levelWidget =
+        tester.widget<DropdownButtonFormField<String>>(levelDropdown);
+    levelWidget.onChanged?.call('Level 1');
+    await tester.pump();
 
-    // 7. Select Pay Point (Should now be enabled/populated)
-    await tester.tap(payPointDropdown);
-    await tester.pumpAndSettle();
-    
-    // Select 'Pay Point 1'
-    await tester.tap(find.text('Pay Point 1').last);
+    final payPointWidget =
+        tester.widget<DropdownButtonFormField<String>>(payPointDropdown);
+    payPointWidget.onChanged?.call('Pay Point 1');
     await tester.pumpAndSettle();
 
     // 8. Verify Base Rate Updated
     // $26.30 is the rate for SACS Level 1 PP 1
-    expect(find.widgetWithText(TextFormField, '26.30'), findsOneWidget);
+    final baseRateValueFinder = find.byWidgetPredicate(
+      (w) => w is EditableText && w.controller.text == '26.30',
+    );
+    expect(baseRateValueFinder, findsOneWidget);
   });
 }

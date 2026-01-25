@@ -53,7 +53,8 @@ class EarningsState {
   }
 }
 
-final earningsViewModelProvider = StateNotifierProvider<EarningsViewModel, EarningsState>((ref) {
+final earningsViewModelProvider =
+    StateNotifierProvider<EarningsViewModel, EarningsState>((ref) {
   final repository = ref.watch(earningsRepositoryProvider);
   final userAsync = ref.watch(currentUserProvider);
   final userEmail = userAsync.value?.email ?? '';
@@ -193,50 +194,52 @@ class EarningsViewModel extends StateNotifier<EarningsState> {
       "${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}";
 
   // Tax Estimator Logic
-  Map<String, double> calculateTax(double grossIncome, String frequency) {
+  Map<String, double> calculateTax(double grossIncome, TaxFrequency frequency) {
     double annualized = 0;
-    if (frequency == 'Weekly') annualized = grossIncome * 52;
-    if (frequency == 'Fortnightly') annualized = grossIncome * 26;
-    if (frequency == 'Monthly') annualized = grossIncome * 12;
-    if (frequency == 'Annually') annualized = grossIncome;
+    if (frequency == TaxFrequency.weekly) annualized = grossIncome * 52;
+    if (frequency == TaxFrequency.fortnightly) annualized = grossIncome * 26;
+    if (frequency == TaxFrequency.monthly) annualized = grossIncome * 12;
+    if (frequency == TaxFrequency.annually) annualized = grossIncome;
 
     double tax = 0;
 
     // Use dynamic config if available
     if (_taxConfig != null && _taxConfig!['brackets'] != null) {
-      final brackets = (_taxConfig!['brackets'] as List).cast<Map<String, dynamic>>();
+      final brackets =
+          (_taxConfig!['brackets'] as List).cast<Map<String, dynamic>>();
       for (final bracket in brackets) {
-         final double? max = bracket['max'] != null ? (bracket['max'] as num).toDouble() : null;
-         final double rate = (bracket['rate'] as num).toDouble();
-         final double base = (bracket['base'] as num).toDouble();
-         final double min = (bracket['min'] as num).toDouble();
-         
-         if (max == null || annualized <= max) {
-            double threshold = min > 0 ? min - 1 : 0;
-            tax = base + (annualized - threshold) * rate;
-            break;
-         }
+        final double? max =
+            bracket['max'] != null ? (bracket['max'] as num).toDouble() : null;
+        final double rate = (bracket['rate'] as num).toDouble();
+        final double base = (bracket['base'] as num).toDouble();
+        final double min = (bracket['min'] as num).toDouble();
+
+        if (max == null || annualized <= max) {
+          double threshold = min > 0 ? min - 1 : 0;
+          tax = base + (annualized - threshold) * rate;
+          break;
+        }
       }
     } else {
-        // Fallback to hardcoded (ATO 2024-2025)
-        if (annualized <= 18200) {
-          tax = 0;
-        } else if (annualized <= 45000) {
-          tax = (annualized - 18200) * 0.19;
-        } else if (annualized <= 120000) {
-          tax = 5092 + (annualized - 45000) * 0.325;
-        } else if (annualized <= 180000) {
-          tax = 29467 + (annualized - 120000) * 0.37;
-        } else {
-          tax = 51667 + (annualized - 180000) * 0.45;
-        }
+      // Fallback to hardcoded (ATO 2024-2025)
+      if (annualized <= 18200) {
+        tax = 0;
+      } else if (annualized <= 45000) {
+        tax = (annualized - 18200) * 0.19;
+      } else if (annualized <= 120000) {
+        tax = 5092 + (annualized - 45000) * 0.325;
+      } else if (annualized <= 180000) {
+        tax = 29467 + (annualized - 120000) * 0.37;
+      } else {
+        tax = 51667 + (annualized - 180000) * 0.45;
+      }
     }
 
     double periodTax = 0;
-    if (frequency == 'Weekly') periodTax = tax / 52;
-    if (frequency == 'Fortnightly') periodTax = tax / 26;
-    if (frequency == 'Monthly') periodTax = tax / 12;
-    if (frequency == 'Annually') periodTax = tax;
+    if (frequency == TaxFrequency.weekly) periodTax = tax / 52;
+    if (frequency == TaxFrequency.fortnightly) periodTax = tax / 26;
+    if (frequency == TaxFrequency.monthly) periodTax = tax / 12;
+    if (frequency == TaxFrequency.annually) periodTax = tax;
 
     return {
       'gross': grossIncome,

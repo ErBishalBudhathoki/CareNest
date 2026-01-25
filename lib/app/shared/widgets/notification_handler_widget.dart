@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
 import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
@@ -172,56 +171,28 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
 
       // Step 1: Initialize local notification service
       _localNotificationService = LocalNotificationService();
-      await _localNotificationService.initialize();
+      // Disable auto-requesting permissions here to comply with new flow
+      await _localNotificationService.initialize(requestPermissions: false);
       debugPrint('DEBUG_NOTIF_HANDLER: Local notification service initialized');
 
-      // Step 2: Request Firebase permissions
-      final settings = await FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-        announcement: false,
-        carPlay: false,
-        criticalAlert: false,
-      );
+      // Step 2: Check Firebase permissions (do not request yet)
+      final settings = await FirebaseMessaging.instance.getNotificationSettings();
 
       debugPrint(
-          'DEBUG_NOTIF_HANDLER: Firebase permission status: ${settings.authorizationStatus}');
+          'DEBUG_NOTIF_HANDLER: Current Firebase permission status: ${settings.authorizationStatus}');
 
       // Step 3: Check Android-specific permissions for API 33+
-      if (Platform.isAndroid) {
-        try {
-          final androidPlugin = FlutterLocalNotificationsPlugin()
-              .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin>();
-
-          if (androidPlugin != null) {
-            final bool? granted =
-                await androidPlugin.requestNotificationsPermission();
-            debugPrint(
-                'DEBUG_NOTIF_HANDLER: Android notification permission: $granted');
-
-            if (granted != true) {
-              debugPrint(
-                  'DEBUG_NOTIF_HANDLER: ❌ Android notification permission denied');
-            }
-          }
-        } catch (e) {
-          debugPrint(
-              'DEBUG_NOTIF_HANDLER: Error checking Android permissions: $e');
-        }
-      }
-
+      // We skip manual request here to comply with new flow
+      
       // Step 4: Only proceed if Firebase permissions are granted
       if (settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional) {
         debugPrint(
-            'DEBUG_NOTIF_HANDLER: ✅ Permissions granted, initializing services');
+            'DEBUG_NOTIF_HANDLER: ✅ Permissions already granted, initializing services');
         await _initializeServices();
       } else {
         debugPrint(
-            'DEBUG_NOTIF_HANDLER: ❌ Firebase notification permissions not granted: ${settings.authorizationStatus}');
+            'DEBUG_NOTIF_HANDLER: ℹ️ Permissions not yet granted. Waiting for user login/action.');
       }
     } catch (e) {
       debugPrint(

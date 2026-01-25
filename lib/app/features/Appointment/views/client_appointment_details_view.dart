@@ -1,15 +1,14 @@
-import 'dart:io';
-
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/shared/constants/values/themes/app_theme_config.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
-import 'package:carenest/app/core/utils/Services/launch_map_status.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:carenest/app/core/services/navigation_service.dart';
+import 'package:carenest/app/shared/utils/navigation_helper.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import '../../notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_selection_dialog.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
@@ -292,6 +291,9 @@ class _ClientAndAppointmentDetailsState
             'User: ${activeUserEmail ?? 'Unknown'}\n'
             'Client: ${activeClientEmail ?? 'Unknown'}\n\n'
             'Please stop the current timer before starting a new one.',
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
           ),
           actions: [
             TextButton(
@@ -395,6 +397,174 @@ class _ClientAndAppointmentDetailsState
     }
   }
 
+  Future<void> _showSwapOfferDialog(Map<String, dynamic> shift) async {
+    final reasonController = TextEditingController();
+    String urgency = 'Medium';
+    String? error;
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'OFFER SHIFT SWAP',
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                Text(
+                  '${shift['date']} (${shift['startTime']} - ${shift['endTime']})',
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                DropdownButtonFormField<String>(
+                  value: urgency,
+                  decoration: InputDecoration(
+                    labelText: 'Urgency',
+                    border: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
+                    ),
+                  ),
+                  items: ['Low', 'Medium', 'High']
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  onChanged: (v) => setState(() => urgency = v!),
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                TextField(
+                  controller: reasonController,
+                  decoration: InputDecoration(
+                    labelText: 'Reason',
+                    border: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
+                    ),
+                  ),
+                  maxLines: 2,
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: BauhausDesign.space2),
+                  Text(error!, style: TextStyle(color: BauhausDesign.error)),
+                ],
+                const SizedBox(height: BauhausDesign.space4),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text('CANCEL',
+                            style: TextStyle(color: BauhausDesign.textMuted)),
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space3),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: BauhausDesign.primary,
+                          foregroundColor: BauhausDesign.surfaceWhite,
+                        ),
+                        onPressed: () async {
+                          final sharedPrefs = SharedPreferencesUtils();
+                          await sharedPrefs.init();
+                          final organizationId =
+                              sharedPrefs.getString('organizationId');
+                          final userId = sharedPrefs.getString('userId') ??
+                              widget.userEmail;
+
+                          if (organizationId == null) {
+                            setState(() => error = 'Organization ID not found');
+                            return;
+                          }
+
+                          final details = {
+                            'date': shift['date'],
+                            'startTime': shift['startTime'],
+                            'endTime': shift['endTime'],
+                            'break': shift['break'],
+                            'clientName':
+                                '${clientDetails?['clientFirstName'] ?? ''} ${clientDetails?['clientLastName'] ?? ''}'
+                                    .trim(),
+                            'clientEmail': widget.clientEmail,
+                            'reason': reasonController.text,
+                            'urgency': urgency,
+                          };
+
+                          if (shift['ndisItem'] != null) {
+                            details['ndisItem'] = shift['ndisItem'];
+                          }
+
+                          Navigator.pop(context);
+
+                          try {
+                            final response = await apiMethod.createSwapOffer(
+                              organizationId: organizationId,
+                              userId: userId,
+                              userEmail: widget.userEmail,
+                              details: details,
+                            );
+
+                            if (response['success'] == true) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Swap offer created!')),
+                                );
+                              }
+                            } else {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Failed: ${response['message']}')),
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            debugPrint('Error creating swap: $e');
+                          }
+                        },
+                        child: const Text('OFFER'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionCell(Map<String, dynamic> shift) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          vertical: BauhausDesign.space2, horizontal: BauhausDesign.space1),
+      alignment: Alignment.center,
+      child: IconButton(
+        icon: Icon(Icons.swap_horiz, color: BauhausDesign.primary, size: 20),
+        onPressed: () => _showSwapOfferDialog(shift),
+        tooltip: 'Offer Swap',
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+      ),
+    );
+  }
+
   String _formatTime(int seconds) {
     final hours = seconds ~/ 3600;
     final minutes = (seconds % 3600) ~/ 60;
@@ -410,15 +580,15 @@ class _ClientAndAppointmentDetailsState
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF007AFF)),
+            valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
             strokeWidth: 3,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           Text(
             'Loading appointment details...',
-            style: AppThemeConfig.bodyStyle.copyWith(
-              color: const Color(0xFF757575),
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
           ),
         ],
       ),
@@ -434,17 +604,18 @@ class _ClientAndAppointmentDetailsState
     rows.add(
       TableRow(
         decoration: BoxDecoration(
-          color: const Color(0xFF007AFF).withValues(alpha: 0.1),
+          color: BauhausDesign.primary.withOpacity(0.1),
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
+            topLeft: Radius.circular(BauhausDesign.radiusSm),
+            topRight: Radius.circular(BauhausDesign.radiusSm),
           ),
         ),
         children: [
-          _buildTableHeader("Appointment Date"),
-          _buildTableHeader("Start Time"),
-          _buildTableHeader("End Time"),
+          _buildTableHeader("Date"),
+          _buildTableHeader("Start"),
+          _buildTableHeader("End"),
           _buildTableHeader("Break"),
+          _buildTableHeader("Swap"),
         ],
       ),
     );
@@ -467,6 +638,9 @@ class _ClientAndAppointmentDetailsState
             schedule['endTime'] ?? 'N/A',
             schedule['break'] ?? 'N/A',
             i,
+            schedule is Map<String, dynamic>
+                ? schedule
+                : Map<String, dynamic>.from(schedule),
           ));
         }
       } else {
@@ -484,12 +658,21 @@ class _ClientAndAppointmentDetailsState
         ].reduce((a, b) => a > b ? a : b);
 
         for (int i = 0; i < maxLength; i++) {
+          final scheduleMap = {
+            'date': i < dateList.length ? dateList[i].toString() : 'N/A',
+            'startTime':
+                i < startTimeList.length ? startTimeList[i].toString() : 'N/A',
+            'endTime':
+                i < endTimeList.length ? endTimeList[i].toString() : 'N/A',
+            'break': i < breakList.length ? breakList[i].toString() : 'N/A',
+          };
           rows.add(_buildTableRow(
-            i < dateList.length ? dateList[i].toString() : 'N/A',
-            i < startTimeList.length ? startTimeList[i].toString() : 'N/A',
-            i < endTimeList.length ? endTimeList[i].toString() : 'N/A',
-            i < breakList.length ? breakList[i].toString() : 'N/A',
+            scheduleMap['date']!,
+            scheduleMap['startTime']!,
+            scheduleMap['endTime']!,
+            scheduleMap['break']!,
             i,
+            scheduleMap,
           ));
         }
       }
@@ -500,44 +683,49 @@ class _ClientAndAppointmentDetailsState
 
   Widget _buildTableHeader(String title) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      padding: const EdgeInsets.symmetric(
+          vertical: BauhausDesign.space4, horizontal: BauhausDesign.space1),
       child: Text(
         title,
         textAlign: TextAlign.center,
-        style: AppThemeConfig.bodyStyle.copyWith(
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF007AFF),
-          fontSize: 14,
-        ),
+        style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.primary,
+              fontSize: 12,
+            ),
       ),
     );
   }
 
   TableRow _buildTableRow(String date, String startTime, String endTime,
-      String breakTime, int index) {
+      String breakTime, int index, Map<String, dynamic> schedule) {
     return TableRow(
       decoration: BoxDecoration(
-        color: index.isEven ? const Color(0xFFFAFAFA) : Colors.white,
+        color: index.isEven
+            ? BauhausDesign.backgroundLight
+            : BauhausDesign.surfaceWhite,
       ),
       children: [
         _buildTableCell(date),
         _buildTableCell(startTime),
         _buildTableCell(endTime),
         _buildTableCell(breakTime),
+        _buildActionCell(schedule),
       ],
     );
   }
 
   Widget _buildTableCell(String content) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: const EdgeInsets.symmetric(
+          vertical: BauhausDesign.space3, horizontal: BauhausDesign.space2),
       child: Text(
         content,
         textAlign: TextAlign.center,
-        style: AppThemeConfig.bodyStyle.copyWith(
-          fontSize: 13,
-          color: const Color(0xFF424242),
-        ),
+        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              fontSize: 13,
+              color: BauhausDesign.textDark,
+            ),
       ),
     );
   }
@@ -551,14 +739,14 @@ class _ClientAndAppointmentDetailsState
             Icon(
               Icons.error_outline,
               size: 64,
-              color: const Color(0xFFBDBDBD),
+              color: BauhausDesign.neutral,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: BauhausDesign.space4),
             Text(
               'No client data found',
-              style: AppThemeConfig.titleStyle.copyWith(
-                color: const Color(0xFF757575),
-              ),
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                    color: BauhausDesign.textMuted,
+                  ),
             ),
           ],
         ),
@@ -580,14 +768,14 @@ class _ClientAndAppointmentDetailsState
             Icon(
               Icons.error_outline,
               size: 64,
-              color: const Color(0xFFBDBDBD),
+              color: BauhausDesign.neutral,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: BauhausDesign.space4),
             Text(
               'No client details found',
-              style: AppThemeConfig.titleStyle.copyWith(
-                color: const Color(0xFF757575),
-              ),
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                    color: BauhausDesign.textMuted,
+                  ),
             ),
           ],
         ),
@@ -601,21 +789,29 @@ class _ClientAndAppointmentDetailsState
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(BauhausDesign.space4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Client Info Card
                 _buildClientInfoCard(clientData),
-                const SizedBox(height: 24),
+                const SizedBox(height: BauhausDesign.space6),
+
+                // Preferences & Care Notes
+                _buildPreferencesCard(clientData),
+                const SizedBox(height: BauhausDesign.space6),
 
                 // Schedule Table Card
                 _buildScheduleCard(),
-                const SizedBox(height: 24),
+                const SizedBox(height: BauhausDesign.space6),
+
+                // Visit History
+                _buildHistoryCard(),
+                const SizedBox(height: BauhausDesign.space6),
 
                 // Timer Section
                 _buildTimerSection(timerService),
-                const SizedBox(height: 24),
+                const SizedBox(height: BauhausDesign.space6),
 
                 // Action Buttons
                 _buildActionButtons(),
@@ -627,76 +823,238 @@ class _ClientAndAppointmentDetailsState
     );
   }
 
-  Widget _buildClientInfoCard(Map<String, dynamic> clientData) {
+  Widget _buildPreferencesCard(Map<String, dynamic> clientData) {
+    final preferences =
+        clientData['preferences'] as Map<String, dynamic>? ?? {};
+    final careNotes = clientData['careNotes'] as String? ?? '';
+
+    if (preferences.isEmpty && careNotes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF007AFF).withValues(alpha: 0.1),
-              const Color(0xFF34C759).withValues(alpha: 0.1),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20),
+          color: BauhausDesign.surfaceWhite,
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(
-            color: const Color(0xFF007AFF).withValues(alpha: 0.1),
-            width: 1,
+            color: BauhausDesign.neutral,
+            width: 2,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF007AFF).withValues(alpha: 0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          boxShadow: const [BauhausDesign.shadowHard],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(BauhausDesign.space5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF007AFF),
-                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.purple.shade100,
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
                     ),
-                    child: const Icon(
-                      Icons.person,
-                      color: Colors.white,
+                    child: Icon(
+                      Icons.favorite,
+                      color: Colors.purple,
                       size: 24,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: BauhausDesign.space4),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Client Information',
-                          style: AppThemeConfig.titleStyle.copyWith(
-                            color: const Color(0xFF007AFF),
-                            fontSize: 18,
-                          ),
+                          'Preferences & Care',
+                          style: BauhausDesign.getTextTheme(context)
+                              .titleLarge
+                              ?.copyWith(
+                                color: Colors.purple,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: BauhausDesign.space1),
                         Text(
-                          'Personal details and contact information',
-                          style: AppThemeConfig.captionStyle.copyWith(
-                            color: const Color(0xFF757575),
-                          ),
+                          'Important client needs',
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(
+                                color: BauhausDesign.textMuted,
+                              ),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: BauhausDesign.space5),
+              if (careNotes.isNotEmpty)
+                _buildInfoRow(Icons.medical_services, 'Care Notes', careNotes),
+              ...preferences.entries.map((e) => _buildInfoRow(
+                  Icons.star_outline, e.key.toUpperCase(), e.value.toString())),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryCard() {
+    if (clientAndAppointmentData['data'] == null ||
+        clientAndAppointmentData['data']['assignedClient'] == null) {
+      return const SizedBox.shrink();
+    }
+    final assignedClient = clientAndAppointmentData['data']['assignedClient'];
+    final scheduleList = (assignedClient['schedule'] as List?) ?? [];
+
+    // Filter for past visits (completed)
+    final now = DateTime.now();
+    final pastVisits = scheduleList.where((s) {
+      try {
+        final date = DateTime.parse(s['date']);
+        return date.isBefore(now);
+      } catch (e) {
+        return false;
+      }
+    }).toList();
+
+    // Sort by date descending
+    pastVisits.sort((a, b) {
+      return b['date'].compareTo(a['date']);
+    });
+
+    final recentVisits = pastVisits.take(3).toList();
+
+    if (recentVisits.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        border: Border.all(
+          color: BauhausDesign.neutral,
+          width: 2,
+        ),
+        boxShadow: const [BauhausDesign.shadowHard],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space5),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    color: Colors.teal.shade100,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  ),
+                  child: Icon(
+                    Icons.history,
+                    color: Colors.teal,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: BauhausDesign.space4),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Recent Visits',
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleLarge
+                          ?.copyWith(
+                            color: Colors.teal,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          ...recentVisits.map((visit) => ListTile(
+                leading: Icon(Icons.check_circle_outline,
+                    color: BauhausDesign.success),
+                title: Text(visit['date'] ?? 'Unknown Date'),
+                subtitle: Text('${visit['startTime']} - ${visit['endTime']}'),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildClientInfoCard(Map<String, dynamic> clientData) {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Container(
+        decoration: BoxDecoration(
+          color: BauhausDesign.surfaceWhite,
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          border: Border.all(
+            color: BauhausDesign.neutral,
+            width: 2,
+          ),
+          boxShadow: const [BauhausDesign.shadowHard],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(BauhausDesign.space5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space3),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.primary,
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      color: BauhausDesign.surfaceWhite,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space4),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Client Information',
+                          style: BauhausDesign.getTextTheme(context)
+                              .titleLarge
+                              ?.copyWith(
+                                color: BauhausDesign.primary,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: BauhausDesign.space1),
+                        Text(
+                          'Personal details and contact information',
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(
+                                color: BauhausDesign.textMuted,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space5),
               _buildInfoRow(Icons.badge, 'Full Name',
                   '${clientData['clientFirstName'] ?? "No"} ${clientData['clientLastName'] ?? "Name"}'),
               _buildInfoRow(Icons.email, 'Email',
@@ -709,6 +1067,73 @@ class _ClientAndAppointmentDetailsState
                   '${clientData['clientAddress'] ?? "No address data found"}, '
                       '${clientData['clientCity'] ?? ""}${clientData['clientCity'] != null && clientData['clientState'] != null ? ', ' : ''}'
                       '${clientData['clientState'] ?? ""} ${clientData['clientZip'] ?? ""}'),
+              const SizedBox(height: BauhausDesign.space4),
+              // Navigation Button
+              _buildNavigationButton(clientData),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Navigation button to open maps with client address
+  Widget _buildNavigationButton(Map<String, dynamic> clientData) {
+    final address = clientData['clientAddress'] ?? '';
+    final city = clientData['clientCity'] ?? '';
+    final state = clientData['clientState'] ?? '';
+    final zip = clientData['clientZip'] ?? '';
+    final fullAddress = '$address, $city, $state $zip'.trim();
+
+    // Don't show button if no address data
+    if (address.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      width: double.infinity,
+      height: 48,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        border: Border.all(
+          color: BauhausDesign.accent,
+          width: 2,
+        ),
+      ),
+      child: Material(
+        color: BauhausDesign.accent.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        child: InkWell(
+          onTap: () async {
+            final success =
+                await NavigationHelper.openDirectionsToAddress(fullAddress);
+            if (!success && mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Could not open maps application'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          },
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.directions,
+                color: BauhausDesign.accent,
+                size: 22,
+              ),
+              const SizedBox(width: BauhausDesign.space2),
+              Text(
+                AppLocalizations.of(context)?.appointmentDetailsOpenMaps ??
+                    'Get Directions',
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: BauhausDesign.accent,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
             ],
           ),
         ),
@@ -718,40 +1143,42 @@ class _ClientAndAppointmentDetailsState
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: BauhausDesign.space4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(8),
+              color: BauhausDesign.backgroundLight,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Icon(
               icon,
               size: 16,
-              color: const Color(0xFF757575),
+              color: BauhausDesign.textMuted,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: AppThemeConfig.captionStyle.copyWith(
-                    color: const Color(0xFF757575),
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontWeight: FontWeight.w500,
+                          ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: BauhausDesign.space1),
                 Text(
                   value,
-                  style: AppThemeConfig.bodyStyle.copyWith(
-                    color: const Color(0xFF212121),
-                  ),
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                 ),
               ],
             ),
@@ -764,52 +1191,55 @@ class _ClientAndAppointmentDetailsState
   Widget _buildScheduleCard() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFE0E0E0).withValues(alpha: 0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        border: Border.all(
+          color: BauhausDesign.neutral,
+          width: 2,
+        ),
+        boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(BauhausDesign.space5),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF5AC8FA),
-                    borderRadius: BorderRadius.circular(12),
+                    color: BauhausDesign.accent,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.schedule,
-                    color: Colors.white,
+                    color: BauhausDesign.surfaceWhite,
                     size: 24,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: BauhausDesign.space4),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Schedule Details',
-                      style: AppThemeConfig.titleStyle.copyWith(
-                        color: const Color(0xFF5AC8FA),
-                        fontSize: 18,
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleLarge
+                          ?.copyWith(
+                            color: BauhausDesign.accent,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Appointment dates and times',
-                      style: AppThemeConfig.captionStyle.copyWith(
-                        color: const Color(0xFF757575),
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                          ),
                     ),
                   ],
                 ),
@@ -817,28 +1247,31 @@ class _ClientAndAppointmentDetailsState
             ),
           ),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space5,
+                vertical: BauhausDesign.space2),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(
-                color: const Color(0xFFEEEEEE),
+                color: BauhausDesign.neutral,
                 width: 1,
               ),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               child: Table(
                 columnWidths: const {
-                  0: FlexColumnWidth(3.0),
-                  1: IntrinsicColumnWidth(),
-                  2: IntrinsicColumnWidth(),
-                  3: IntrinsicColumnWidth(),
+                  0: FlexColumnWidth(2.5),
+                  1: FlexColumnWidth(1.5),
+                  2: FlexColumnWidth(1.5),
+                  3: FlexColumnWidth(1.2),
+                  4: FlexColumnWidth(1.0),
                 },
                 children: _buildTableRows(),
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: BauhausDesign.space5),
         ],
       ),
     );
@@ -850,29 +1283,17 @@ class _ClientAndAppointmentDetailsState
 
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isRunning
-              ? [
-                  const Color(0xFFFF9500).withValues(alpha: 0.1),
-                  const Color(0xFFFF9500).withValues(alpha: 0.1)
-                ]
-              : [
-                  const Color(0xFF007AFF).withValues(alpha: 0.1),
-                  const Color(0xFF34C759).withValues(alpha: 0.1)
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
+        color: isRunning
+            ? BauhausDesign.warning.withOpacity(0.05)
+            : BauhausDesign.primary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(
-          color: isRunning
-              ? const Color(0xFFFF9500).withValues(alpha: 0.1)
-              : const Color(0xFF007AFF).withValues(alpha: 0.1),
-          width: 1,
+          color: isRunning ? BauhausDesign.warning : BauhausDesign.primary,
+          width: 2,
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(BauhausDesign.space6),
         child: Column(
           children: [
             // Timer Display
@@ -883,19 +1304,19 @@ class _ClientAndAppointmentDetailsState
                   scale: isRunning ? _timerPulseAnimation.value : 1.0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 32),
+                        vertical: BauhausDesign.space5,
+                        horizontal: BauhausDesign.space6),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: isRunning
-                              ? const Color(0xFFFF9500).withValues(alpha: 0.1)
-                              : const Color(0xFF007AFF).withValues(alpha: 0.1),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
+                      color: BauhausDesign.surfaceWhite,
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusMd),
+                      border: Border.all(
+                        color: isRunning
+                            ? BauhausDesign.warning
+                            : BauhausDesign.primary,
+                        width: 1.5,
+                      ),
+                      boxShadow: const [BauhausDesign.shadowSoft],
                     ),
                     child: Text(
                       (timerService.isRunning &&
@@ -912,8 +1333,8 @@ class _ClientAndAppointmentDetailsState
                         fontSize: 42,
                         fontWeight: FontWeight.w300,
                         color: isRunning
-                            ? const Color(0xFFFF9500)
-                            : const Color(0xFF007AFF),
+                            ? BauhausDesign.warning
+                            : BauhausDesign.primary,
                         letterSpacing: 2,
                       ),
                     ),
@@ -921,7 +1342,7 @@ class _ClientAndAppointmentDetailsState
                 );
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: BauhausDesign.space6),
 
             // Timer Button
             SizedBox(
@@ -962,16 +1383,17 @@ class _ClientAndAppointmentDetailsState
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isRunning
-                      ? const Color(0xFFFF9500)
-                      : const Color(0xFF007AFF),
-                  foregroundColor: Colors.white,
-                  elevation: isRunning ? 8 : 4,
-                  shadowColor: isRunning
-                      ? const Color(0xFFFF9500).withValues(alpha: 0.1)
-                      : const Color(0xFF007AFF).withValues(alpha: 0.1),
+                  backgroundColor:
+                      isRunning ? BauhausDesign.warning : BauhausDesign.primary,
+                  foregroundColor: BauhausDesign.surfaceWhite,
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                    side: BorderSide(
+                      color: BauhausDesign.neutral,
+                      width: 2,
+                    ),
                   ),
                 ),
                 child: Row(
@@ -980,8 +1402,9 @@ class _ClientAndAppointmentDetailsState
                     Icon(
                       isRunning ? Icons.stop : Icons.play_arrow,
                       size: 24,
+                      color: BauhausDesign.surfaceWhite,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: BauhausDesign.space2),
                     Text(
                       isRunning ? 'End Shift' : 'Start Shift',
                       style: const TextStyle(
@@ -1007,7 +1430,7 @@ class _ClientAndAppointmentDetailsState
         Container(
           width: double.infinity,
           height: 56,
-          margin: const EdgeInsets.only(bottom: 16),
+          margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
           child: ElevatedButton(
             onPressed: () {
               if (clientDetails != null) {
@@ -1016,16 +1439,20 @@ class _ClientAndAppointmentDetailsState
                 final state = clientDetails?['clientState'] ?? '';
                 final zipCode = clientDetails?['clientZipCode'] ?? '';
                 final fullAddress = '$address, $city, $state, $zipCode';
-                launchMap(fullAddress);
+                navigationService.openMapWithAddress(fullAddress);
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF5AC8FA),
-              foregroundColor: Colors.white,
+              backgroundColor: BauhausDesign.accent,
+              foregroundColor: BauhausDesign.surfaceWhite,
               elevation: 4,
-              shadowColor: const Color(0xFF5AC8FA).withValues(alpha: 0.1),
+              shadowColor: BauhausDesign.shadowHard.color,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                side: BorderSide(
+                  color: BauhausDesign.neutral,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -1062,12 +1489,16 @@ class _ClientAndAppointmentDetailsState
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF5AC8FA),
-              foregroundColor: Colors.white,
+              backgroundColor: BauhausDesign.primary,
+              foregroundColor: BauhausDesign.surfaceWhite,
               elevation: 4,
-              shadowColor: const Color(0xFF34C759).withValues(alpha: 0.1),
+              shadowColor: BauhausDesign.shadowHard.color,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                side: BorderSide(
+                  color: BauhausDesign.neutral,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -1102,19 +1533,26 @@ class _ClientAndAppointmentDetailsState
         }
 
         return Scaffold(
+          backgroundColor: BauhausDesign.backgroundLight,
           appBar: AppBar(
             title: Text(
               'Client Details',
-              style: AppThemeConfig.titleStyle.copyWith(
-                color: const Color(0xFF007AFF),
-                fontSize: 20,
-              ),
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                    color: BauhausDesign.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
             ),
+            backgroundColor: BauhausDesign.surfaceWhite,
             elevation: 0,
             centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF007AFF)),
+              icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
               onPressed: () => Navigator.of(context).pop(),
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(color: BauhausDesign.neutral, height: 1.5),
             ),
           ),
           body: isInitCompleted
@@ -1124,60 +1562,4 @@ class _ClientAndAppointmentDetailsState
       },
     );
   }
-}
-
-Future<LaunchMapStatus> launchMap(String address) async {
-  String query = Uri.encodeComponent(address);
-  String appleMapsUrl = 'maps://?q=$query';
-  String googleMapsUrl = 'geo:0,0?q=$query';
-
-  if (Platform.isIOS) {
-    if (await canLaunchUrl(Uri.parse(appleMapsUrl))) {
-      await launchUrl(Uri.parse(appleMapsUrl));
-      return LaunchMapStatus(
-        success: true,
-        title: 'Success',
-        message: 'Launched Apple Maps',
-        surfaceColor: Colors.green,
-      );
-    } else if (await canLaunchUrl(Uri.parse('comgooglemaps://?q=$query'))) {
-      await launchUrl(Uri.parse('comgooglemaps://?q=$query'));
-      return LaunchMapStatus(
-        success: true,
-        title: 'Success',
-        message: 'Launched Google Maps',
-        surfaceColor: Colors.green,
-      );
-    } else {
-      return LaunchMapStatus(
-        success: false,
-        title: 'Error',
-        message: 'Could not launch any map application',
-        surfaceColor: Colors.red,
-      );
-    }
-  } else if (Platform.isAndroid) {
-    if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
-      await launchUrl(Uri.parse(googleMapsUrl));
-      return LaunchMapStatus(
-        success: true,
-        title: 'Success',
-        message: 'Launched Google Maps',
-        surfaceColor: Colors.green,
-      );
-    } else {
-      return LaunchMapStatus(
-        success: false,
-        title: 'Error',
-        message: 'Could not launch Google Maps',
-        surfaceColor: Colors.red,
-      );
-    }
-  }
-  return LaunchMapStatus(
-    success: false,
-    title: 'Error',
-    message: 'Unsupported platform',
-    surfaceColor: Colors.red,
-  );
 }

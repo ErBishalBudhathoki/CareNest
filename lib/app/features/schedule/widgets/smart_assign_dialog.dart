@@ -3,12 +3,13 @@
 //
 // @file lib/app/features/schedule/widgets/smart_assign_dialog.dart
 
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
-import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/schedule/models/recommendation_model.dart';
+import 'package:carenest/app/features/schedule/models/shift_model.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/backend/api_method.dart';
+import 'package:flutter/material.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Dialog showing AI-powered employee recommendations
 class SmartAssignDialog extends StatefulWidget {
@@ -29,7 +30,7 @@ class SmartAssignDialog extends StatefulWidget {
 
 class _SmartAssignDialogState extends State<SmartAssignDialog> {
   final ApiMethod _api = ApiMethod();
-  
+
   List<RecommendationModel> _recommendations = [];
   bool _isLoading = true;
   String? _error;
@@ -62,19 +63,22 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
         final recsData = response['recommendations'] as List<dynamic>? ?? [];
         setState(() {
           _recommendations = recsData
-              .map((e) => RecommendationModel.fromJson(e as Map<String, dynamic>))
+              .map((e) =>
+                  RecommendationModel.fromJson(e as Map<String, dynamic>))
               .toList();
           _isLoading = false;
         });
       } else {
         setState(() {
-          _error = response['error']?.toString() ?? 'Failed to load recommendations';
+          _error = response['error']?.toString() ??
+              AppLocalizations.of(context)!.failedToLoadRecommendations;
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Error loading recommendations: $e';
+        _error = AppLocalizations.of(context)!
+            .errorLoadingRecommendations(e.toString());
         _isLoading = false;
       });
     }
@@ -103,7 +107,8 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
                   ? const Center(
                       child: Padding(
                         padding: EdgeInsets.all(BauhausDesign.space8),
-                        child: CircularProgressIndicator(color: BauhausDesign.primary),
+                        child: CircularProgressIndicator(
+                            color: BauhausDesign.primary),
                       ),
                     )
                   : _error != null
@@ -136,7 +141,7 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
               color: BauhausDesign.accent.withOpacity(0.15),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(color: BauhausDesign.accent, width: 1.5),
-              boxShadow: [BauhausDesign.shadowHardXs],
+              boxShadow: const [BauhausDesign.shadowHardXs],
             ),
             child: const Icon(
               Icons.auto_awesome,
@@ -150,33 +155,20 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Smart Assign',
-                  style: GoogleFonts.oswald(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
-                  ),
+                  AppLocalizations.of(context)!.smartAssign,
+                  style: BauhausDesign.getTextTheme(context).titleLarge,
                 ),
                 Text(
                   'AI-powered employee recommendations',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: BauhausDesign.neutral,
-                  ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall,
                 ),
               ],
             ),
           ),
-          IconButton(
+          BauhausIconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.close, color: BauhausDesign.neutral),
-            style: IconButton.styleFrom(
-              backgroundColor: BauhausDesign.backgroundLight,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                side: const BorderSide(color: BauhausDesign.neutral),
-              ),
-            ),
+            icon: Icons.close,
+            variant: BauhausActionVariant.ghost,
           ),
         ],
       ),
@@ -204,19 +196,17 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
           ),
           const SizedBox(height: BauhausDesign.space3),
           Text(
-            _error ?? 'Unknown error',
+            _error ?? AppLocalizations.of(context)!.unknownError,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: BauhausDesign.textDark,
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyLarge,
           ),
           const SizedBox(height: BauhausDesign.space4),
-          TextButton.icon(
+          BauhausActionButton(
             onPressed: _loadRecommendations,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
-            style: TextButton.styleFrom(foregroundColor: BauhausDesign.primary),
+            icon: Icons.refresh,
+            text: AppLocalizations.of(context)!.retryButton,
+            variant: BauhausActionVariant.primary,
+            isSmall: true,
           ),
         ],
       ),
@@ -244,21 +234,14 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
           ),
           const SizedBox(height: BauhausDesign.space3),
           Text(
-            'No Available Employees',
-            style: GoogleFonts.oswald(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: BauhausDesign.textDark,
-            ),
+            AppLocalizations.of(context)!.noAvailableEmployees,
+            style: BauhausDesign.getTextTheme(context).titleMedium,
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
-            'All employees have conflicts during this time slot',
+            AppLocalizations.of(context)!.allEmployeesConflict,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              color: BauhausDesign.neutral,
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
           ),
         ],
       ),
@@ -273,7 +256,7 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
       itemBuilder: (context, index) {
         final rec = _recommendations[index];
         final isSelected = _selectedEmployeeEmail == rec.employeeEmail;
-        
+
         return Padding(
           padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
           child: _buildRecommendationCard(rec, isSelected, index),
@@ -282,7 +265,8 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
     );
   }
 
-  Widget _buildRecommendationCard(RecommendationModel rec, bool isSelected, int rank) {
+  Widget _buildRecommendationCard(
+      RecommendationModel rec, bool isSelected, int rank) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -318,24 +302,29 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
                           : BauhausDesign.backgroundLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: rank == 0 ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.5),
+                    color: rank == 0
+                        ? BauhausDesign.neutral
+                        : BauhausDesign.neutral.withOpacity(0.5),
                     width: 1,
                   ),
                 ),
                 child: Center(
                   child: Text(
                     '#${rank + 1}',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: rank == 0 ? BauhausDesign.textDark : BauhausDesign.neutral,
-                    ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(
+                          color: rank == 0
+                              ? BauhausDesign.textDark
+                              : BauhausDesign.neutral,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: BauhausDesign.space3),
-              
+
               // Avatar
               Container(
                 width: 40,
@@ -343,22 +332,23 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
                 decoration: BoxDecoration(
                   color: _getScoreColor(rec.matchScore).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: _getScoreColor(rec.matchScore), width: 1.5),
+                  border: Border.all(
+                      color: _getScoreColor(rec.matchScore), width: 1.5),
                 ),
                 child: Center(
                   child: Text(
                     rec.initials,
-                    style: GoogleFonts.oswald(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: _getScoreColor(rec.matchScore),
-                    ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .titleMedium
+                        ?.copyWith(
+                          color: _getScoreColor(rec.matchScore),
+                        ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: BauhausDesign.space3),
-              
+
               // Info
               Expanded(
                 child: Column(
@@ -366,11 +356,7 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
                   children: [
                     Text(
                       rec.displayName,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textDark,
-                      ),
+                      style: BauhausDesign.getTextTheme(context).titleSmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -386,10 +372,8 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
                           const SizedBox(width: 2),
                           Text(
                             rec.formattedDistance,
-                            style: GoogleFonts.inter(
-                              fontSize: 11,
-                              color: BauhausDesign.neutral,
-                            ),
+                            style:
+                                BauhausDesign.getTextTheme(context).bodySmall,
                           ),
                           const SizedBox(width: BauhausDesign.space2),
                         ],
@@ -397,25 +381,55 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
                           Flexible(
                             child: Text(
                               rec.skills.take(2).join(', '),
-                              style: GoogleFonts.inter(
-                                fontSize: 11,
-                                color: BauhausDesign.neutral,
-                              ),
+                              style:
+                                  BauhausDesign.getTextTheme(context).bodySmall,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                       ],
                     ),
+                    if (rec.reasoning != null) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.accent.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.auto_awesome,
+                                size: 10, color: BauhausDesign.accent),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                rec.reasoning!,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodySmall
+                                    ?.copyWith(
+                                      fontSize: 10,
+                                      fontStyle: FontStyle.italic,
+                                      color: BauhausDesign.textDark,
+                                    ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
-              
+
               const SizedBox(width: BauhausDesign.space2),
-              
+
               // Score
-              _buildScoreWidget(rec.matchScore),
-              
+              _buildScoreWidget(rec.aiScore ?? rec.matchScore),
+
               if (isSelected)
                 const Padding(
                   padding: EdgeInsets.only(left: BauhausDesign.space2),
@@ -434,17 +448,16 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
 
   Widget _buildScoreWidget(int score) {
     final color = _getScoreColor(score);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
           '$score%',
-          style: GoogleFonts.oswald(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 2),
         SizedBox(
@@ -482,22 +495,19 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton(
+            child: BauhausActionButton(
               onPressed: () => Navigator.of(context).pop(),
-              style: BauhausDesign.secondaryButtonStyle,
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.secondary,
-                ),
-              ),
+              text: AppLocalizations.of(context)!.cancelButton,
+              variant: BauhausActionVariant.secondary,
+              isOutlined: true,
             ),
           ),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
-            child: BauhausButton(
-              text: _isAssigning ? 'Assigning...' : 'Assign',
+            child: BauhausActionButton(
+              text: _isAssigning
+                  ? AppLocalizations.of(context)!.assigning
+                  : AppLocalizations.of(context)!.assignButton,
               onPressed: _selectedEmployeeEmail != null && !_isAssigning
                   ? () {
                       setState(() => _isAssigning = true);
@@ -505,6 +515,7 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
                     }
                   : null,
               icon: Icons.check,
+              variant: BauhausActionVariant.primary,
             ),
           ),
         ],

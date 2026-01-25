@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
 import '../../../services/system_ui_service.dart';
@@ -133,16 +134,16 @@ class _InvoicePhotoAttachmentWidgetState
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Invoice Photo',
-            toolbarColor: AppColors.colorPrimary,
-            toolbarWidgetColor: Colors.white,
+            toolbarColor: BauhausDesign.primary,
+            toolbarWidgetColor: BauhausDesign.surfaceWhite,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
-            statusBarColor: AppColors.colorPrimary,
-            activeControlsWidgetColor: AppColors.colorPrimary,
-            cropFrameColor: AppColors.colorPrimary,
-            cropGridColor: AppColors.colorPrimary.withOpacity(0.1),
+            statusBarColor: BauhausDesign.primary,
+            activeControlsWidgetColor: BauhausDesign.primary,
+            cropFrameColor: BauhausDesign.primary,
+            cropGridColor: BauhausDesign.primary.withOpacity(0.1),
             dimmedLayerColor: Colors.black.withOpacity(0.1),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
@@ -198,16 +199,17 @@ class _InvoicePhotoAttachmentWidgetState
       title: isError ? 'Error' : 'Success',
       message: message,
       context: context,
-      backgroundColor: isError ? Colors.redAccent : Colors.greenAccent,
+      backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
     );
   }
 
   void _showPhotoSourceDialog() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: BauhausDesign.surfaceWhite,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: SafeArea(
@@ -219,21 +221,20 @@ class _InvoicePhotoAttachmentWidgetState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: BauhausDesign.neutral,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Add Invoice Photo',
-                style: TextStyle(
-                  fontSize: 18,
+                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 20),
               _buildSourceOption(
-                icon: Icons.camera_alt,
+                icon: Icons.camera_alt_outlined,
                 title: 'Take Photo',
                 subtitle: 'Use device camera for high quality',
                 onTap: () {
@@ -242,7 +243,7 @@ class _InvoicePhotoAttachmentWidgetState
                 },
               ),
               _buildSourceOption(
-                icon: Icons.photo_library,
+                icon: Icons.photo_library_outlined,
                 title: 'Choose from Gallery',
                 subtitle: 'Select from existing photos',
                 onTap: () {
@@ -268,27 +269,25 @@ class _InvoicePhotoAttachmentWidgetState
       leading: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.colorPrimary.withOpacity(0.1),
+          color: BauhausDesign.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
           icon,
-          color: AppColors.colorPrimary,
+          color: BauhausDesign.primary,
           size: 24,
         ),
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: 16,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          color: Colors.grey[600],
-          fontSize: 14,
+        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+          color: BauhausDesign.textMuted,
         ),
       ),
       onTap: onTap,
@@ -297,162 +296,148 @@ class _InvoicePhotoAttachmentWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.attach_file,
-                  color: AppColors.colorPrimary,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Invoice Attachments',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${_selectedPhotos.length}/${widget.maxPhotos}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Photo grid
-            if (_selectedPhotos.isNotEmpty)
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 1,
-                ),
-                itemCount: _selectedPhotos.length,
-                itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.grey[300]!,
-                            width: 1,
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _selectedPhotos[index],
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: GestureDetector(
-                          onTap: () => _removePhoto(index),
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
+    return BauhausCard(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.attach_file,
+                color: BauhausDesign.primary,
+                size: 20,
               ),
+              const SizedBox(width: BauhausDesign.space2),
+              Text(
+                'Invoice Attachments',
+                style: BauhausDesign.getTextTheme(context).titleMedium,
+              ),
+              const Spacer(),
+              Text(
+                '${_selectedPhotos.length}/${widget.maxPhotos}',
+                style: BauhausDesign.getTextTheme(context).bodySmall,
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space4),
 
-            if (_selectedPhotos.isNotEmpty) const SizedBox(height: 16),
-
-            // Add photo button
-            if (_selectedPhotos.length < widget.maxPhotos)
-              GestureDetector(
-                onTap: _isLoading ? null : _showPhotoSourceDialog,
-                child: DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(8),
-                  color: AppColors.colorPrimary.withOpacity(0.1),
-                  strokeWidth: 2,
-                  dashPattern: const [8, 4],
-                  child: Container(
-                    height: 80,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.colorPrimary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+          // Photo grid
+          if (_selectedPhotos.isNotEmpty)
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 1,
+              ),
+              itemCount: _selectedPhotos.length,
+              itemBuilder: (context, index) {
+                return Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 1,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          _selectedPhotos[index],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                      ),
                     ),
-                    child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate,
-                                color: AppColors.colorPrimary,
-                                size: 32,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Add Photo',
-                                style: TextStyle(
-                                  color: AppColors.colorPrimary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: GestureDetector(
+                        onTap: () => _removePhoto(index),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: BauhausDesign.error,
+                            shape: BoxShape.circle,
                           ),
-                  ),
-                ),
-              ),
-
-            const SizedBox(height: 16),
-
-            // Description field
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: 'Photo Description (Optional)',
-                hintText: 'Describe the attached photos...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.description),
-              ),
-              maxLines: 2,
-              onChanged: widget.onDescriptionChanged,
+                          child: const Icon(
+                            Icons.close,
+                            color: BauhausDesign.surfaceWhite,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
-          ],
-        ),
+
+          if (_selectedPhotos.isNotEmpty) const SizedBox(height: BauhausDesign.space4),
+
+          // Add photo button
+          if (_selectedPhotos.length < widget.maxPhotos)
+            GestureDetector(
+              onTap: _isLoading ? null : _showPhotoSourceDialog,
+              child: DottedBorder(
+                borderType: BorderType.RRect,
+                radius: const Radius.circular(8),
+                color: BauhausDesign.primary.withOpacity(0.3),
+                strokeWidth: 2,
+                dashPattern: const [8, 4],
+                child: Container(
+                  height: 80,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.primary.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: BauhausDesign.primary,
+                          ),
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.add_photo_alternate_outlined,
+                              color: BauhausDesign.primary,
+                              size: 32,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Add Photo',
+                              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                                color: BauhausDesign.primary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ),
+
+          const SizedBox(height: BauhausDesign.space4),
+
+          // Description field
+          BauhausTextField(
+            controller: _descriptionController,
+            label: 'Photo Description (Optional)',
+            hintText: 'Describe the attached photos...',
+            prefixIcon: const Icon(Icons.description_outlined, color: BauhausDesign.textMuted),
+            maxLines: 2,
+            onChanged: widget.onDescriptionChanged,
+          ),
+        ],
       ),
     );
   }

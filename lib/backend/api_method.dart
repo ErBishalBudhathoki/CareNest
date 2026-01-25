@@ -22,6 +22,98 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/utils/debug_log.dart';
 
 class ApiMethod extends ChangeNotifier {
+  /// Get Quarterly OTE for a user (for Superannuation Cap calculation)
+  Future<Map<String, dynamic>> getQuarterlyOTE(String userEmail, {String? date}) async {
+    try {
+      final endpoint = 'api/earnings/quarterly-ote/$userEmail${date != null ? '?date=$date' : ''}';
+      final response = await get(endpoint);
+      return response;
+    } catch (e) {
+      debugPrint('Error getting quarterly OTE: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getLeaveForecast(String userEmail, DateTime targetDate) async {
+    final dateStr = targetDate.toIso8601String().split('T')[0];
+    final endpoint = 'api/requests/forecast/$userEmail?targetDate=$dateStr'; // Adjusted to match backend route
+    return await get(endpoint);
+  }
+
+  Future<Map<String, dynamic>> getLeaveBalances(String userEmail) async {
+    final endpoint = 'api/leave/balances/$userEmail';
+    return await get(endpoint);
+  }
+
+  Future<Map<String, dynamic>> getUserLeaveRequests(String userEmail) async {
+    final endpoint = 'api/requests/user/$userEmail?type=TimeOff';
+    return await get(endpoint);
+  }
+
+  Future<Map<String, dynamic>> submitLeaveRequest({
+    required String userEmail,
+    required String leaveType,
+    required DateTime startDate,
+    required DateTime endDate,
+    required String reason,
+    required double totalHours,
+  }) async {
+    final endpoint = 'api/requests';
+    final body = {
+      'userEmail': userEmail,
+      'type': 'TimeOff',
+      'details': {
+        'leaveType': leaveType,
+        'startDate': startDate.toIso8601String(),
+        'endDate': endDate.toIso8601String(),
+        'reason': reason,
+        'totalHours': totalHours,
+      }
+    };
+    return await post(endpoint, body: body);
+  }
+
+  Future<Map<String, dynamic>> updateLeaveRequestStatus({
+    required String requestId,
+    required String status,
+    String? adminNotes,
+  }) async {
+    final endpoint = 'api/requests/$requestId/status';
+    final body = {
+      'status': status,
+      if (adminNotes != null) 'adminNotes': adminNotes,
+    };
+    return await put(endpoint, body: body);
+  }
+
+  Future<Map<String, dynamic>> calculateLeaveHours({
+    required String startDate,
+    required String endDate,
+    String? organizationId,
+    double dailyHours = 7.6,
+  }) async {
+    final endpoint = 'api/requests/calculate-hours';
+    final body = {
+      'startDate': startDate,
+      'endDate': endDate,
+      if (organizationId != null) 'organizationId': organizationId,
+      'dailyHours': dailyHours,
+    };
+    return await post(endpoint, body: body);
+  }
+
+  Future<Map<String, dynamic>> getLeaveRequestsForOrg(String userEmail) async {
+    final sharedUtils = SharedPreferencesUtils();
+    await sharedUtils.init();
+    final organizationId = sharedUtils.getOrganizationId();
+    if (organizationId == null || organizationId.isEmpty) {
+      return {'success': false, 'message': 'Organization ID not found'};
+    }
+    final endpoint =
+        'api/requests/organization/$organizationId?userId=$userEmail&type=TimeOff';
+    return await get(endpoint);
+  }
+
   // HTTP Methods for RESTful API calls
   Future<Map<String, dynamic>> get(String endpoint) async {
     try {
@@ -225,6 +317,52 @@ class ApiMethod extends ChangeNotifier {
     } catch (e) {
       debugPrint('=== API METHOD DEBUG: Exception occurred: $e ===');
       debugPrint('=== API METHOD DEBUG: Exception type: ${e.runtimeType} ===');
+      return {'success': false, 'message': 'Error: $e'};
+    }
+  }
+
+  Future<Map<String, dynamic>> postMultipart(
+    String endpoint, {
+    Map<String, String>? fields,
+    List<http.MultipartFile>? files,
+  }) async {
+    try {
+      final cleanEndpoint =
+          endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+      final baseNoTrailing = _baseUrl.replaceAll(RegExp(r'/+$'), '');
+      final fullUrl = '$baseNoTrailing/$cleanEndpoint';
+      
+      debugPrint('=== API METHOD DEBUG: POST MULTIPART request to: $fullUrl ===');
+
+      final sharedUtils = SharedPreferencesUtils();
+      await sharedUtils.init();
+      final token = sharedUtils.getAuthToken();
+      final String? authValue = (token != null && token.isNotEmpty)
+          ? (token.toLowerCase().startsWith('bearer ') ? token : 'Bearer $token')
+          : null;
+
+      final request = http.MultipartRequest('POST', Uri.parse(fullUrl));
+      
+      if (authValue != null) {
+        request.headers['Authorization'] = authValue;
+      }
+      
+      if (fields != null) {
+        request.fields.addAll(fields);
+      }
+      
+      if (files != null) {
+        request.files.addAll(files);
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      
+      debugPrint('=== API METHOD DEBUG: Response status code: ${response.statusCode} ===');
+      
+      return _handleResponse(response);
+    } catch (e) {
+      debugPrint('=== API METHOD DEBUG: Exception occurred: $e ===');
       return {'success': false, 'message': 'Error: $e'};
     }
   }
@@ -511,6 +649,54 @@ class ApiMethod extends ChangeNotifier {
     return client.send(req);
   }
 
+  Future<String> uploadFile(String endpoint, File file, {String fieldName = 'file'}) async {
+    final uri = _buildUri(endpoint);
+    final request = http.MultipartRequest('POST', uri);
+    final authValue = await _getAuthorizationHeaderValue();
+    if (authValue != null) {
+      request.headers['Authorization'] = authValue;
+    }
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        fieldName,
+        file.path,
+      ),
+    );
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    final decoded = response.body.isNotEmpty ? json.decode(response.body) : {};
+    
+    if (response.statusCode != 200) {
+      final msg = decoded is Map
+          ? (decoded['message'] ?? 'Upload failed').toString()
+          : 'Upload failed';
+      throw Exception(msg);
+    }
+    
+    if (decoded is! Map) {
+      throw Exception('Upload failed');
+    }
+    
+    // Try to find the URL in various common locations
+    final dynamic fileUrlValue = decoded['data']?['url'] ?? 
+                               decoded['url'] ?? 
+                               decoded['fileUrl'] ??
+                               decoded['data']?['fileUrl'];
+                               
+    if (fileUrlValue == null || fileUrlValue.toString().isEmpty) {
+      throw Exception((decoded['message'] ?? 'Upload failed: No URL returned').toString());
+    }
+    
+    final String fileUrl = fileUrlValue.toString();
+    if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+      return fileUrl;
+    }
+    
+    final baseNoTrailing = _baseUrl.replaceAll(RegExp(r'/+$'), '');
+    final cleanPath = fileUrl.startsWith('/') ? fileUrl.substring(1) : fileUrl;
+    return '$baseNoTrailing/$cleanPath';
+  }
+
   Future<String> uploadReceiptFile(File file) async {
     final uri = _buildUri('api/upload/receipt');
     final request = http.MultipartRequest('POST', uri);
@@ -637,29 +823,45 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  /// Fetches all employees belonging to a specific organization.
+  /// Fetches employees for an organization
+  /// Used by EmployeeSelectionViewModel
   Future<Map<String, dynamic>> getOrganizationEmployees(
       String organizationId) async {
     try {
-      final response = await http.get(
-        Uri.parse('${_baseUrl}organization/$organizationId/employees'),
-        headers: {'Content-Type': 'application/json'},
-      );
+      // Use the members endpoint which is known to work
+      final response = await getOrganizationMembers(organizationId);
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
+      if (response.containsKey('error')) {
         return {
           'success': false,
-          'message': 'Failed to load employees: ${response.body}',
-          'employees': []
+          'message': response['error'],
         };
       }
+
+      // Handle backend response format variations
+      List<dynamic> members = [];
+      
+      if (response.containsKey('members')) {
+        members = response['members'];
+      } else if (response.containsKey('data')) {
+         if (response['data'] is Map && response['data'].containsKey('members')) {
+            members = response['data']['members'];
+         } else if (response['data'] is List) {
+            members = response['data'];
+         }
+      } else if (response.containsKey('users')) {
+        members = response['users'];
+      }
+
+      return {
+        'success': true,
+        'employees': members,
+      };
     } catch (e) {
+      debugPrint("Error fetching organization employees: $e");
       return {
         'success': false,
-        'message': 'Error loading employees: $e',
-        'employees': []
+        'message': 'Network error: $e',
       };
     }
   }
@@ -1637,7 +1839,7 @@ class ApiMethod extends ChangeNotifier {
       if (organizationId != null) {
         url += '?organizationId=$organizationId';
       }
-      
+
       final response = await http.get(Uri.parse(url));
       switch (response.statusCode) {
         case 200:
@@ -2059,7 +2261,7 @@ class ApiMethod extends ChangeNotifier {
     String? organizationId,
   }) async {
     try {
-      debugPrint('${_baseUrl}addClient/ $Email');
+      debugPrint('${_baseUrl}addClient $Email');
 
       // Prepare request body
       final requestBody = {
@@ -2083,7 +2285,7 @@ class ApiMethod extends ChangeNotifier {
       }
 
       final response = await http.post(
-        Uri.parse('${_baseUrl}addClient/'),
+        Uri.parse('${_baseUrl}addClient'),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
@@ -2139,7 +2341,7 @@ class ApiMethod extends ChangeNotifier {
       }
 
       final response = await http.post(
-        Uri.parse('${_baseUrl}addBusiness/'),
+        Uri.parse('${_baseUrl}addBusiness'),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
@@ -2160,6 +2362,27 @@ class ApiMethod extends ChangeNotifier {
       debugPrint(e.toString());
     }
     return data;
+  }
+
+  /// Get businesses for organization
+  Future<List<dynamic>> getBusinesses(String organizationId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${_baseUrl}businesses/$organizationId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> body = jsonDecode(response.body);
+        if (body['statusCode'] == 200 && body['businesses'] != null) {
+          return body['businesses'];
+        }
+      }
+      return [];
+    } catch (e) {
+      debugPrint('Error getting businesses: $e');
+      return [];
+    }
   }
 
   // Organization Management Methods
@@ -4538,6 +4761,7 @@ class ApiMethod extends ChangeNotifier {
       return {'success': false, 'message': 'Error: $e'};
     }
   }
+
   /// Create a shift swap offer
   Future<Map<String, dynamic>> createSwapOffer({
     required String organizationId,
@@ -4546,7 +4770,8 @@ class ApiMethod extends ChangeNotifier {
     required Map<String, dynamic> details,
   }) async {
     try {
-      final url = 'api/requests/create'; // Endpoint handling in post method handles base url
+      final url =
+          'api/requests/create'; // Endpoint handling in post method handles base url
       final payload = {
         'organizationId': organizationId,
         'userId': userId,
@@ -4589,7 +4814,8 @@ class ApiMethod extends ChangeNotifier {
   /// Get open shift offers for an organization
   Future<Map<String, dynamic>> getOpenShifts(String organizationId) async {
     try {
-      final url = 'api/requests/organization/$organizationId?type=SHIFT_SWAP_OFFER&status=Pending';
+      final url =
+          'api/requests/organization/$organizationId?type=SHIFT_SWAP_OFFER&status=Pending';
       final response = await get(url);
       return response;
     } catch (e) {
@@ -4598,76 +4824,18 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> getMyShiftSwapRequests(String organizationId, String userEmail) async {
+  Future<Map<String, dynamic>> getMyShiftSwapRequests(
+      String organizationId, String userEmail) async {
     try {
       // Fetch all swap offers related to this user (created by or claiming)
       // Backend RequestService.getRequests handles userId filter matching userId OR createdBy
-      final url = 'api/requests/organization/$organizationId?type=SHIFT_SWAP_OFFER&userId=$userEmail';
+      final url =
+          'api/requests/organization/$organizationId?type=SHIFT_SWAP_OFFER&userId=$userEmail';
       final response = await get(url);
       return response;
     } catch (e) {
       debugPrint('Error fetching my shifts: $e');
       return {'success': false, 'message': 'Error fetching my shifts: $e'};
-    }
-  }
-
-  // Leave Management Methods
-  Future<Map<String, dynamic>> getLeaveBalances(String userEmail) async {
-    try {
-      final response = await http.get(
-        Uri.parse('${_baseUrl}leave/balances/$userEmail'),
-        headers: {'Content-Type': 'application/json'},
-      );
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        return {'success': false, 'message': 'Failed to fetch balances'};
-      }
-    } catch (e) {
-      return {'success': false, 'message': 'Error: $e'};
-    }
-  }
-
-  Future<Map<String, dynamic>> submitLeaveRequest({
-    required String userEmail,
-    required String leaveType,
-    required DateTime startDate,
-    required DateTime endDate,
-    required String reason,
-    required double totalHours,
-  }) async {
-    try {
-      final response = await http.post(
-        Uri.parse('${_baseUrl}leave/request'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'userEmail': userEmail,
-          'leaveType': leaveType,
-          'startDate': startDate.toIso8601String(),
-          'endDate': endDate.toIso8601String(),
-          'reason': reason,
-          'totalHours': totalHours,
-        }),
-      );
-      return jsonDecode(response.body);
-    } catch (e) {
-      return {'success': false, 'message': 'Error: $e'};
-    }
-  }
-
-  Future<Map<String, dynamic>> getLeaveRequests(String userEmail) async {
-    try {
-      final response = await http.get(
-        Uri.parse('${_baseUrl}leave/requests/$userEmail'),
-        headers: {'Content-Type': 'application/json'},
-      );
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        return {'success': false, 'message': 'Failed to fetch requests'};
-      }
-    } catch (e) {
-      return {'success': false, 'message': 'Error: $e'};
     }
   }
 
@@ -4696,9 +4864,9 @@ class ApiMethod extends ChangeNotifier {
         'Content-Type': 'application/json',
         if (authValue != null) 'Authorization': authValue,
       };
-      
+
       final response = await http.get(uri, headers: headers);
-      
+
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
@@ -4706,7 +4874,7 @@ class ApiMethod extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error fetching tax settings: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -4721,7 +4889,8 @@ class ApiMethod extends ChangeNotifier {
   ///   employeeEmail, startTime, endTime, supportItems, notes)
   ///
   /// Returns success response with created shift data or error with conflicts
-  Future<Map<String, dynamic>> createShift(Map<String, dynamic> shiftData) async {
+  Future<Map<String, dynamic>> createShift(
+      Map<String, dynamic> shiftData) async {
     try {
       final url = '${_baseUrl}api/schedule/shift';
       final authValue = await _getAuthorizationHeaderValue();
@@ -4769,7 +4938,8 @@ class ApiMethod extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Exception creating shift: $e');
-      DebugLog.error('Exception creating shift', details: {'error': e.toString()});
+      DebugLog.error('Exception creating shift',
+          details: {'error': e.toString()});
       return {
         'success': false,
         'error': 'Error creating shift: $e',
@@ -4935,7 +5105,8 @@ class ApiMethod extends ChangeNotifier {
       };
 
       final uri = Uri.parse('${_baseUrl}api/schedule/shifts/$organizationId')
-          .replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
+          .replace(
+              queryParameters: queryParams.isNotEmpty ? queryParams : null);
 
       final authValue = await _getAuthorizationHeaderValue();
       final headers = {
@@ -5104,6 +5275,76 @@ class ApiMethod extends ChangeNotifier {
         'hasConflict': false,
         'conflicts': [],
       };
+    }
+  }
+
+  /// Get list of invoices for an organization
+  Future<Map<String, dynamic>> getInvoicesList(
+    String organizationId, {
+    int page = 1,
+    int limit = 20,
+    String? status,
+    String? paymentStatus,
+    String? invoiceType,
+    String? searchTerm,
+  }) async {
+    try {
+      String queryString =
+          'organizationId=$organizationId&page=$page&limit=$limit';
+      if (status != null) queryString += '&status=$status';
+      if (paymentStatus != null) queryString += '&paymentStatus=$paymentStatus';
+      if (invoiceType != null) queryString += '&invoiceType=$invoiceType';
+      if (searchTerm != null) queryString += '&searchTerm=$searchTerm';
+
+      final url = '${_baseUrl}api/invoices?$queryString';
+      final authValue = await _getAuthorizationHeaderValue();
+      final headers = {
+        'Content-Type': 'application/json',
+        if (authValue != null) 'Authorization': authValue,
+      };
+
+      final response = await http.get(Uri.parse(url), headers: headers);
+      return json.decode(response.body);
+    } catch (e) {
+      debugPrint('Error getting invoices list: $e');
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
+  /// Update invoice payment status
+  Future<Map<String, dynamic>> updateInvoicePaymentStatus(
+    String invoiceId,
+    String organizationId,
+    String status, {
+    String? notes,
+    double? paidAmount,
+    String? updatedBy,
+  }) async {
+    try {
+      final url = '${_baseUrl}api/invoices/$invoiceId/payment-status';
+      final authValue = await _getAuthorizationHeaderValue();
+      final headers = {
+        'Content-Type': 'application/json',
+        if (authValue != null) 'Authorization': authValue,
+      };
+
+      final body = {
+        'organizationId': organizationId,
+        'status': status,
+        if (notes != null) 'notes': notes,
+        if (paidAmount != null) 'paidAmount': paidAmount,
+        if (updatedBy != null) 'updatedBy': updatedBy,
+      };
+
+      final response = await http.patch(
+        Uri.parse(url),
+        headers: headers,
+        body: json.encode(body),
+      );
+      return json.decode(response.body);
+    } catch (e) {
+      debugPrint('Error updating invoice payment status: $e');
+      return {'success': false, 'error': e.toString()};
     }
   }
 }

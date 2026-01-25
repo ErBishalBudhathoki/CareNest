@@ -1,8 +1,7 @@
 import 'dart:ui';
-import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'dart:typed_data';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/holiday/views/holiday_list_view.dart';
@@ -10,7 +9,7 @@ import 'package:carenest/app/shared/constants/values/strings/asset_strings.dart'
 import 'package:carenest/app/features/invoice/views/add_update_invoice_email_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_email_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:carenest/app/shared/widgets/home_detail_card_widget.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -20,14 +19,29 @@ import 'package:carenest/app/features/notifications/providers/notification_provi
 import 'package:carenest/app/features/notifications/views/notification_list_view.dart';
 import 'package:carenest/app/features/pricing/views/pricing_management_view.dart';
 import 'package:carenest/app/features/pricing/views/client_pricing_review_view.dart';
+import 'package:carenest/app/features/pricing/views/employee_pay_rate_view.dart';
 import 'package:carenest/app/features/expenses/views/expense_management_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
+import 'package:carenest/app/features/earnings/views/earnings_dashboard_view.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/features/settings/views/settings_view.dart';
 import 'package:carenest/app/features/security/views/api_usage_dashboard_view.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/admin/widgets/bauhaus_invoice_grid.dart';
+import 'package:carenest/app/features/admin/widgets/business_overview_sliver.dart';
+import 'package:carenest/app/features/training_compliance/views/admin_certification_audit_view.dart';
+import 'package:carenest/app/features/training_compliance/views/admin_training_management_view.dart';
+import 'package:carenest/app/features/training_compliance/views/admin_compliance_management_view.dart';
+import 'package:carenest/app/features/analytics/views/analytics_dashboard_view.dart';
+import 'package:carenest/app/features/admin/views/mileage/admin_mileage_dashboard.dart';
+import 'package:carenest/app/features/schedule/views/schedule_dashboard_screen.dart';
+import 'package:carenest/app/features/onboarding/views/admin/admin_onboarding_list_view.dart';
+
+import 'package:carenest/app/features/timesheet/views/admin_payroll_export_view.dart';
 
 class AdminDashboardView extends ConsumerStatefulWidget {
   final String email;
@@ -68,15 +82,6 @@ class _AdminDashboardViewControllerState
   void initState() {
     super.initState();
 
-    // Debug prints to track organizationId in AdminDashboardView
-    debugPrint('=== ADMIN DASHBOARD DEBUG: email = ${widget.email} ===');
-    debugPrint(
-        '=== ADMIN DASHBOARD DEBUG: organizationId = ${widget.organizationId} ===');
-    debugPrint(
-        '=== ADMIN DASHBOARD DEBUG: organizationName = ${widget.organizationName} ===');
-    debugPrint(
-        '=== ADMIN DASHBOARD DEBUG: organizationCode = ${widget.organizationCode} ===');
-
     _initializeAnimations();
     _fetchInitialData();
   }
@@ -84,7 +89,6 @@ class _AdminDashboardViewControllerState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Initialize notifications after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(notificationProvider.notifier).refresh();
     });
@@ -123,7 +127,6 @@ class _AdminDashboardViewControllerState
       final data = await _apiMethod.getInitData(widget.email);
       final emailKey = await _checkEmailKey(widget.email);
 
-      // Fetch business statistics if organizationId is available
       Map<String, dynamic> stats = {};
       String? statsError;
 
@@ -131,10 +134,7 @@ class _AdminDashboardViewControllerState
         try {
           final response =
               await _apiMethod.getInvoiceStats(widget.organizationId!);
-          debugPrint(
-              '=== ADMIN DASHBOARD DEBUG: Business stats response: $response ===');
 
-          // Extract data from the nested response structure
           if (response['success'] == true && response['data'] != null) {
             stats = response['data'];
           } else {
@@ -145,12 +145,8 @@ class _AdminDashboardViewControllerState
               'totalRevenue': '\$0.00'
             };
           }
-          debugPrint('=== ADMIN DASHBOARD DEBUG: Extracted stats: $stats ===');
         } catch (e) {
-          debugPrint(
-              '=== ADMIN DASHBOARD DEBUG: Error fetching business stats: $e ===');
-          statsError = 'Failed to load business statistics';
-          // Use default values if API call fails
+          statsError = AppLocalizations.of(context)!.failedToLoadStats;
           stats = {
             'activeBusinesses': 0,
             'totalClients': 0,
@@ -159,8 +155,7 @@ class _AdminDashboardViewControllerState
           };
         }
       } else {
-        // No organization ID available
-        statsError = 'Organization ID not available';
+        statsError = AppLocalizations.of(context)!.orgIdNotAvailable;
         stats = {
           'activeBusinesses': 0,
           'totalClients': 0,
@@ -180,7 +175,6 @@ class _AdminDashboardViewControllerState
         });
         ref.read(photoDataProvider.notifier).fetchPhotoData(widget.email);
 
-// Start animations after data is loaded
         _headerAnimationController.forward();
         Future.delayed(const Duration(milliseconds: 300), () {
           _statsAnimationController.forward();
@@ -216,15 +210,16 @@ class _AdminDashboardViewControllerState
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 15,
-          ),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: BauhausDesign.surfaceWhite,
+              ),
         ),
-        backgroundColor: isError ? Colors.red : const Color(0xFF059669),
+        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        margin: const EdgeInsets.all(20),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg)),
+        margin: const EdgeInsets.all(BauhausDesign.space6),
         elevation: 8,
         duration: const Duration(seconds: 3),
       ),
@@ -235,59 +230,26 @@ class _AdminDashboardViewControllerState
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
+        backgroundColor: BauhausDesign.backgroundLight,
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF667EEA),
-                      Color(0xFF764BA2),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF667EEA).withOpacity(0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    strokeWidth: 3,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Loading Dashboard...',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
+          child: BauhausLoadingState(
+            message: AppLocalizations.of(context)!.loadingDashboard,
           ),
         ),
       );
     }
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       body: Stack(
         children: [
           CustomScrollView(
             controller: _scrollController,
             slivers: [
               _buildEnhancedHeaderSliver(),
-              _buildStatsOverviewSliver(),
+              BusinessOverviewSliver(
+                animation: _statsAnimationController,
+                businessStats: businessStats,
+              ),
               _buildFeaturedActionsSliver(),
               _buildQuickActionsSliver(),
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -305,457 +267,399 @@ class _AdminDashboardViewControllerState
     final photoDataState = ref.watch(photoDataProvider);
     final displayPhoto = photoDataState.photoData ?? widget.photoData;
 
+    // Detect small screen to adjust layout
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenHeight < 700;
+
     return SliverAppBar(
-      expandedHeight: 240.0, // Reduced from 320 to 240
+      expandedHeight: isSmallScreen ? 260.0 : 240.0,
       pinned: false,
       floating: false,
       elevation: 0,
+      backgroundColor: BauhausDesign.primary,
       automaticallyImplyLeading: false,
       flexibleSpace: FlexibleSpaceBar(
-        background: AnimatedBuilder(
-          animation: _headerAnimationController,
-          builder: (context, child) {
-            return Stack(
-              children: [
-                // Modern gradient surface with better colors
-                Transform.translate(
-                  offset: Offset(
-                    0,
-                    20 * (1 - _headerAnimationController.value),
-                  ),
-                  child: Opacity(
-                    opacity: _headerAnimationController.value,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xFF1E293B), // Slate 800
-                            const Color(0xFF334155), // Slate 700
-                            const Color(0xFF475569), // Slate 600
+        background: Container(
+          decoration: const BoxDecoration(
+            color: BauhausDesign.primary,
+            border: Border(
+              bottom: BorderSide(
+                color: BauhausDesign.neutral,
+                width: 2,
+              ),
+            ),
+          ),
+          child: Stack(
+            children: [
+              AnimatedBuilder(
+                animation: _headerAnimationController,
+                builder: (context, child) {
+                  return Positioned(
+                    top: isSmallScreen ? 50 : 60, // Pushed up slightly for small screens
+                    right: 24,
+                    child: Transform.scale(
+                      scale: _headerAnimationController.value,
+                      child: Opacity(
+                        opacity: _headerAnimationController.value,
+                        child: Row(
+                          children: [
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final unreadCount =
+                                    ref.watch(unreadNotificationCountProvider);
+                                final hasUnread = unreadCount > 0;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const NotificationListView(),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: BauhausDesign.surfaceWhite,
+                                      borderRadius: BorderRadius.circular(
+                                          BauhausDesign.radiusMd),
+                                      border: Border.all(
+                                        color: BauhausDesign.neutral,
+                                        width: 2,
+                                      ),
+                                      boxShadow: const [
+                                        BauhausDesign.shadowHardSm,
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Icon(
+                                          hasUnread
+                                              ? Icons.notifications_active
+                                              : Icons.notifications_outlined,
+                                          color: BauhausDesign.neutral,
+                                          size: 20,
+                                        ),
+                                        if (hasUnread)
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              width: 10,
+                                              height: 10,
+                                              decoration: BoxDecoration(
+                                                color: BauhausDesign.error,
+                                                shape: BoxShape.rectangle,
+                                                border: Border.all(
+                                                  color: BauhausDesign.neutral,
+                                                  width: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(width: BauhausDesign.space4),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SettingsView(
+                                      userEmail: widget.email,
+                                      userName: '$firstName $lastName',
+                                      photoData: photoDataState.photoData,
+                                      organizationId: widget.organizationId,
+                                      organizationName: widget.organizationName,
+                                      organizationCode: widget.organizationCode,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: BauhausDesign.surfaceWhite,
+                                  borderRadius: BorderRadius.circular(
+                                      BauhausDesign.radiusMd),
+                                  border: Border.all(
+                                    color: BauhausDesign.neutral,
+                                    width: 2,
+                                  ),
+                                  boxShadow: const [
+                                    BauhausDesign.shadowHardSm,
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.settings_outlined,
+                                  color: BauhausDesign.neutral,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
                           ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              const Color(0xFF3B82F6)
-                                  .withOpacity(0.1), // Blue accent
-                              Colors.transparent,
-                              const Color(0xFF06B6D4)
-                                  .withOpacity(0.1), // Cyan accent
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-
-                // Functional animated elements - notification indicators
-                AnimatedBuilder(
-                  animation: _headerAnimationController,
-                  builder: (context, child) {
-                    return Positioned(
-                      top: 60,
-                      right: 24,
-                      child: Transform.scale(
-                        scale: _headerAnimationController.value,
-                        child: Opacity(
-                          opacity: _headerAnimationController.value,
-                          child: Row(
-                            children: [
-                              // Notification bell with dynamic indicator
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  final unreadCount = ref
-                                      .watch(unreadNotificationCountProvider);
-                                  final hasUnread = unreadCount > 0;
-
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const NotificationListView(),
-                                        ),
-                                      );
-                                    },
+                  );
+                },
+              ),
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(24, isSmallScreen ? 10 : 20, 24, 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AnimatedBuilder(
+                        animation: _headerAnimationController,
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: Offset(
+                              0,
+                              15 * (1 - _headerAnimationController.value),
+                            ),
+                            child: Opacity(
+                              opacity: _headerAnimationController.value,
+                              child: Row(
+                                children: [
+                                  Hero(
+                                    tag: 'profile_photo',
                                     child: Container(
-                                      padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: hasUnread
-                                            ? const Color(0xFFEF4444)
-                                                .withOpacity(0.1)
-                                            : AppColors.colorWhite
-                                                .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
+                                        shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: hasUnread
-                                              ? const Color(0xFFEF4444)
-                                                  .withOpacity(0.1)
-                                              : AppColors.colorWhite
-                                                  .withOpacity(0.1),
-                                          width: hasUnread ? 1.5 : 1,
+                                          color: BauhausDesign.neutral,
+                                          width: 2,
                                         ),
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          Icon(
-                                            hasUnread
-                                                ? Icons.notifications_active
-                                                : Icons.notifications_outlined,
-                                            color: hasUnread
-                                                ? const Color(0xFFEF4444)
-                                                : const Color(0xFF10B981),
-                                            size: 20,
-                                          ),
-                                          if (hasUnread)
-                                            Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: Container(
-                                                width: 8,
-                                                height: 8,
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFFEF4444),
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: AppColors.colorWhite,
-                                                    width: 1,
-                                                  ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: const Color(
-                                                              0xFFEF4444)
-                                                          .withValues(
-                                                              alpha: 0.5),
-                                                      blurRadius: 4,
-                                                      spreadRadius: 1,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            )
-                                          else
-                                            Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: Container(
-                                                width: 6,
-                                                height: 6,
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFF10B981),
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: AppColors.colorWhite,
-                                                    width: 1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                        boxShadow: const [
+                                          BauhausDesign.shadowHard,
                                         ],
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 12),
-                              // Settings gear
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SettingsView(
-                                        userEmail: widget.email,
-                                        userName: '$firstName $lastName',
-                                        photoData: photoDataState.photoData,
-                                        organizationId: widget.organizationId,
-                                        organizationName:
-                                            widget.organizationName,
-                                        organizationCode:
-                                            widget.organizationCode,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        AppColors.colorWhite.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color:
-                                          AppColors.colorWhite.withOpacity(0.1),
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.settings_outlined,
-                                    color: AppColors.colorWhite,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-                // Main content with improved layout
-                SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                        24, 20, 24, 40), // Reduced padding
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Top section with profile and welcome
-                        AnimatedBuilder(
-                          animation: _headerAnimationController,
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(
-                                0,
-                                15 * (1 - _headerAnimationController.value),
-                              ),
-                              child: Opacity(
-                                opacity: _headerAnimationController.value,
-                                child: Row(
-                                  children: [
-                                    // Enhanced profile photo with modern styling
-                                    Hero(
-                                      tag: 'profile_photo',
                                       child: Container(
-                                        decoration: BoxDecoration(
+                                        padding: const EdgeInsets.all(0),
+                                        decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(0xFF3B82F6)
-                                                  .withOpacity(0.1),
-                                              blurRadius: 20,
-                                              spreadRadius: 2,
-                                            ),
-                                          ],
+                                          color: BauhausDesign.surfaceWhite,
                                         ),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(3),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                const Color(0xFF3B82F6)
-                                                    .withOpacity(0.1),
-                                                const Color(0xFF06B6D4)
-                                                    .withOpacity(0.1),
-                                              ],
-                                            ),
-                                          ),
-                                          child: AdminProfileImage(
-                                            email: widget.email,
-                                            photoData: displayPhoto,
-                                            size: 70,
-                                          ),
+                                        child: AdminProfileImage(
+                                          email: widget.email,
+                                          photoData: displayPhoto,
+                                          size: 70,
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 20),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // Current time/date
-                                          TweenAnimationBuilder<double>(
-                                            duration: const Duration(
-                                                milliseconds: 600),
-                                            tween: Tween(begin: 0.0, end: 1.0),
-                                            builder: (context, value, child) {
-                                              return Transform.translate(
-                                                offset:
-                                                    Offset(0, 8 * (1 - value)),
-                                                child: Opacity(
-                                                  opacity: value,
-                                                  child: Text(
-                                                    _getCurrentGreeting(),
-                                                    style: TextStyle(
-                                                      color: AppColors
-                                                          .colorWhite
-                                                          .withValues(
-                                                              alpha: 0.8),
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
+                                  ),
+                                  const SizedBox(width: BauhausDesign.space6),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        TweenAnimationBuilder<double>(
+                                          duration:
+                                              const Duration(milliseconds: 600),
+                                          tween: Tween(begin: 0.0, end: 1.0),
+                                          builder: (context, value, child) {
+                                            return Transform.translate(
+                                              offset:
+                                                  Offset(0, 8 * (1 - value)),
+                                              child: Opacity(
+                                                opacity: value,
+                                                child: Text(
+                                                  _getCurrentGreeting(),
+                                                  style: BauhausDesign
+                                                          .getTextTheme(context)
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                        color: BauhausDesign
+                                                            .surfaceWhite,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
                                                 ),
-                                              );
-                                            },
-                                          ),
-                                          const SizedBox(height: 4),
-                                          // User name with clean styling
-                                          TweenAnimationBuilder<double>(
-                                            duration: const Duration(
-                                                milliseconds: 800),
-                                            tween: Tween(begin: 0.0, end: 1.0),
-                                            builder: (context, value, child) {
-                                              return Transform.translate(
-                                                offset:
-                                                    Offset(0, 12 * (1 - value)),
-                                                child: Opacity(
-                                                  opacity: value,
-                                                  child: Text(
-                                                    '$firstName $lastName',
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.colorWhite,
-                                                      fontSize: 28,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        const SizedBox(
+                                          height: BauhausDesign.space1),
+                                      TweenAnimationBuilder<double>(
+                                        duration:
+                                            const Duration(milliseconds: 800),
+                                        tween: Tween(begin: 0.0, end: 1.0),
+                                        builder: (context, value, child) {
+                                          return Transform.translate(
+                                            offset:
+                                                Offset(0, 12 * (1 - value)),
+                                            child: Opacity(
+                                              opacity: value,
+                                              child: Text(
+                                                '$firstName $lastName',
+                                                style: BauhausDesign
+                                                        .getTextTheme(context)
+                                                    .headlineMedium
+                                                    ?.copyWith(
+                                                      color: BauhausDesign
+                                                          .surfaceWhite,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       letterSpacing: -0.5,
                                                       height: 1.1,
+                                                      fontSize: isSmallScreen ? 24 : 32, // Smaller font for small screens
                                                     ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          const SizedBox(height: 8),
-                                          // Quick stats row
-                                          TweenAnimationBuilder<double>(
-                                            duration: const Duration(
-                                                milliseconds: 1000),
-                                            tween: Tween(begin: 0.0, end: 1.0),
-                                            builder: (context, value, child) {
-                                              return Transform.translate(
-                                                offset:
-                                                    Offset(0, 15 * (1 - value)),
-                                                child: Opacity(
-                                                  opacity: value,
-                                                  child: Row(
-                                                    children: [
-                                                      _buildQuickStat(
-                                                          'Active',
-                                                          '12',
-                                                          Icons.trending_up),
-                                                      const SizedBox(width: 16),
-                                                      _buildQuickStat('Pending',
-                                                          '3', Icons.schedule),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const Spacer(),
-
-                        // Modern admin badge with better functionality
-                        AnimatedBuilder(
-                          animation: _headerAnimationController,
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(
-                                0,
-                                20 * (1 - _headerAnimationController.value),
-                              ),
-                              child: Opacity(
-                                opacity: _headerAnimationController.value,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // Admin status badge
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF10B981)
-                                            .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: const Color(0xFF10B981)
-                                              .withOpacity(0.1),
+                                      const SizedBox(
+                                          height: BauhausDesign.space2),
+                                        TweenAnimationBuilder<double>(
+                                          duration: const Duration(
+                                              milliseconds: 1000),
+                                          tween: Tween(begin: 0.0, end: 1.0),
+                                          builder: (context, value, child) {
+                                            return Transform.translate(
+                                              offset:
+                                                  Offset(0, 15 * (1 - value)),
+                                              child: Opacity(
+                                                opacity: value,
+                                                child: Row(
+                                                  children: [
+                                                    _buildQuickStat(
+                                                        context,
+                                                        'Active',
+                                                        (businessStats[
+                                                                    'activeInvoices'] ??
+                                                                0)
+                                                            .toString(),
+                                                        Icons.trending_up),
+                                                    const SizedBox(
+                                                        width: BauhausDesign
+                                                            .space4),
+                                                    _buildQuickStat(
+                                                        context,
+                                                        'Pending',
+                                                        (businessStats[
+                                                                    'pendingInvoices'] ??
+                                                                0)
+                                                            .toString(),
+                                                        Icons.schedule),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            width: 8,
-                                            height: 8,
-                                            decoration: const BoxDecoration(
-                                              color: Color(0xFF10B981),
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          const Text(
-                                            'Admin Active',
-                                            style: TextStyle(
-                                              color: Color(0xFF10B981),
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      ],
                                     ),
-                                    // Quick action button
-                                    Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF3B82F6),
-                                        borderRadius: BorderRadius.circular(16),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: const Color(0xFF3B82F6)
-                                                .withOpacity(0.1),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: const Icon(
-                                        Icons.add_rounded,
-                                        color: AppColors.colorWhite,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                            ),
+                          );
+                        },
+                      ),
+                      const Spacer(),
+                      AnimatedBuilder(
+                        animation: _headerAnimationController,
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: Offset(
+                              0,
+                              (isSmallScreen ? 10 : 20) * (1 - _headerAnimationController.value),
+                            ),
+                            child: Opacity(
+                              opacity: _headerAnimationController.value,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: BauhausDesign.surfaceWhite,
+                                      borderRadius: BorderRadius.circular(
+                                          BauhausDesign.radiusLg),
+                                      border: Border.all(
+                                        color: BauhausDesign.neutral,
+                                        width: 1.5,
+                                      ),
+                                      boxShadow: const [
+                                        BauhausDesign.shadowHardSm,
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 10,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                            color: BauhausDesign.success,
+                                            shape:
+                                                BoxShape.rectangle, // Geometric
+                                            border: Border.all(
+                                                color: BauhausDesign.neutral,
+                                                width: 1),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: BauhausDesign.space2),
+                                        Text(
+                                          AppLocalizations.of(context)!
+                                              .adminActive,
+                                          style: BauhausDesign.getTextTheme(
+                                                  context)
+                                              .labelSmall
+                                              ?.copyWith(
+                                                color: BauhausDesign.neutral,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: BauhausDesign.accent,
+                                      borderRadius: BorderRadius.circular(
+                                          BauhausDesign.radiusMd),
+                                      border: Border.all(
+                                        color: BauhausDesign.neutral,
+                                        width: 2,
+                                      ),
+                                      boxShadow: const [
+                                        BauhausDesign.shadowHard,
+                                      ],
+                                    ),
+                                    child: const Icon(
+                                      Icons.add_rounded,
+                                      color: BauhausDesign.neutral,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -774,92 +678,81 @@ class _AdminDashboardViewControllerState
             child: Opacity(
               opacity: _statsAnimationController.value,
               child: Transform.translate(
-                offset: const Offset(0, -40), // Move up to connect with header
-                child: ClipPath(
-                  clipper: _StatsOverviewClipper(),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF667EEA).withOpacity(0.1),
-                          const Color(0xFF764BA2).withOpacity(0.1),
-                          Colors.white,
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: const [0.0, 0.3, 1.0],
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                          32, 60, 32, 10), // Increased top padding for curve
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Business Overview',
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E293B),
-                              letterSpacing: -0.5,
-                            ),
+                offset: const Offset(0, -20), // Reduced negative offset
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: BauhausDesign.backgroundLight,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 10), // Reduced top padding
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.businessOverview,
+                          style: BauhausDesign.getTextTheme(context)
+                              .titleMedium
+                              ?.copyWith(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: BauhausDesign.neutral,
+                                letterSpacing: -0.5,
+                              ),
+                        ),
+                        const SizedBox(height: BauhausDesign.space1),
+                        Text(
+                          AppLocalizations.of(context)!.businessOverviewDesc,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(
+                                color: BauhausDesign.neutral,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                        const SizedBox(height: BauhausDesign.space6),
+                        SizedBox(
+                          height: 150,
+                          child: ListView(
+                            clipBehavior: Clip.none,
+                            scrollDirection: Axis.horizontal,
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              _buildEnhancedStatsCard(
+                                Icons.business_center_rounded,
+                                businessStats['activeBusinesses']?.toString() ??
+                                    '0',
+                                AppLocalizations.of(context)!.activeBusinesses,
+                                BauhausDesign.primary,
+                                0,
+                              ),
+                              _buildEnhancedStatsCard(
+                                Icons.people_rounded,
+                                businessStats['totalClients']?.toString() ??
+                                    '0',
+                                AppLocalizations.of(context)!.totalClients,
+                                BauhausDesign.success,
+                                1,
+                              ),
+                              _buildEnhancedStatsCard(
+                                Icons.receipt_long_rounded,
+                                businessStats['totalInvoices']?.toString() ??
+                                    '0',
+                                AppLocalizations.of(context)!.invoicesGenerated,
+                                BauhausDesign.secondary,
+                                2,
+                              ),
+                              _buildEnhancedStatsCard(
+                                Icons.trending_up_rounded,
+                                businessStats['totalRevenue']?.toString() ??
+                                    '\$0.00',
+                                AppLocalizations.of(context)!.totalRevenue,
+                                BauhausDesign.warning,
+                                3,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Track your business performance at a glance',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          SizedBox(
-                            height: 120,
-                            child: ListView(
-                              clipBehavior: Clip.none,
-                              scrollDirection: Axis.horizontal,
-                              physics: const BouncingScrollPhysics(),
-                              children: [
-                                _buildEnhancedStatsCard(
-                                  Icons.business_center_rounded,
-                                  businessStats['activeBusinesses']
-                                          ?.toString() ??
-                                      '0',
-                                  'Active Businesses',
-                                  const Color(0xFF3B82F6),
-                                  0,
-                                ),
-                                _buildEnhancedStatsCard(
-                                  Icons.people_rounded,
-                                  businessStats['totalClients']?.toString() ??
-                                      '0',
-                                  'Total Clients',
-                                  const Color(0xFF10B981),
-                                  1,
-                                ),
-                                _buildEnhancedStatsCard(
-                                  Icons.receipt_long_rounded,
-                                  businessStats['totalInvoices']?.toString() ??
-                                      '0',
-                                  'Invoices Generated',
-                                  const Color(0xFF8B5CF6),
-                                  2,
-                                ),
-                                _buildEnhancedStatsCard(
-                                  Icons.trending_up_rounded,
-                                  businessStats['totalRevenue']?.toString() ??
-                                      '\$0.00',
-                                  'Total Revenue',
-                                  const Color(0xFFF59E0B),
-                                  3,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -882,24 +775,16 @@ class _AdminDashboardViewControllerState
       width: 140,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: color.withOpacity(0.1), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
+        color: BauhausDesign.surfaceLight,
+        borderRadius: BorderRadius.circular(
+            BauhausDesign.radiusMd), // Less rounded for Bauhaus
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [
+          BauhausDesign.shadowHard,
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -907,37 +792,52 @@ class _AdminDashboardViewControllerState
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+                color: color, // Solid color
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                boxShadow: const [
+                  BauhausDesign.shadowHardSm,
+                ],
               ),
-              child: Icon(icon, color: color, size: 18),
+              child: Icon(icon,
+                  color: BauhausDesign.surfaceLight, size: 18), // White icon
             ),
-            const SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
-                    letterSpacing: -0.5,
+            const SizedBox(height: BauhausDesign.space2),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      value,
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.neutral, // High contrast
+                            letterSpacing: -0.5,
+                          ),
+                      maxLines: 1,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 1),
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    height: 1.1,
+                  const SizedBox(height: 4),
+                  Text(
+                    title,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(
+                          color: BauhausDesign.neutral,
+                          height: 1.1,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -965,38 +865,43 @@ class _AdminDashboardViewControllerState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-// const SizedBox(height: 24),
-                    const Text(
-                      'Get Started',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
                     Text(
-                      'Set up your business and client information',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
+                      AppLocalizations.of(context)!.getStarted,
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleMedium
+                          ?.copyWith(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.textDark,
+                            letterSpacing: -0.5,
+                          ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: BauhausDesign.space1),
+                    Text(
+                      AppLocalizations.of(context)!.getStartedDesc,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.neutral,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    const SizedBox(height: BauhausDesign.space8),
                     Row(
                       children: [
                         Expanded(
                           child: HomeDetailCard(
-                            buttonLabel: 'Add Client',
-                            cardLabel: 'Know Your\nClient!',
+                            buttonLabel:
+                                AppLocalizations.of(context)!.addClientButton,
+                            cardLabel:
+                                AppLocalizations.of(context)!.knowYourClient,
                             image: Image.asset(
                               AssetsStrings.cardImageGirl,
                               fit: BoxFit.contain,
                             ),
-                            gradientStartColor: const Color(0xFF667EEA),
-                            gradientEndColor: const Color(0xFF764BA2),
+                            gradientStartColor: BauhausDesign
+                                .secondary, // Solid color by matching start/end
+                            gradientEndColor: BauhausDesign.secondary,
                             onPressed: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -1012,17 +917,19 @@ class _AdminDashboardViewControllerState
                               )
                               .fadeIn(duration: 600.ms),
                         ),
-                        const SizedBox(width: 24),
+                        const SizedBox(width: BauhausDesign.space6),
                         Expanded(
                           child: HomeDetailCard(
-                            buttonLabel: 'Add Business',
-                            cardLabel: 'Know Your\nBusiness!',
+                            buttonLabel:
+                                AppLocalizations.of(context)!.addBusinessButton,
+                            cardLabel:
+                                AppLocalizations.of(context)!.knowYourBusiness,
                             image: Image.asset(
                               AssetsStrings.cardImageBoy,
                               fit: BoxFit.contain,
                             ),
-                            gradientStartColor: const Color(0xFF4FACFE),
-                            gradientEndColor: const Color(0xFF00F2FE),
+                            gradientStartColor: BauhausDesign.primary,
+                            gradientEndColor: BauhausDesign.primary,
                             onPressed: () => Navigator.pushNamed(
                               context,
                               Routes.addBusinessDetails,
@@ -1065,161 +972,260 @@ class _AdminDashboardViewControllerState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Quick Actions',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
-                        letterSpacing: -0.5,
-                      ),
+                    BauhausSectionHeader(
+                      title: AppLocalizations.of(context)!.quickActions,
+                      subtitle: AppLocalizations.of(context)!.quickActionsDesc,
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Manage your invoices and settings efficiently',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: BauhausDesign.space6),
 
-                    // Invoice Management Section
+                    // Invoice Management Section - Bauhaus Grid
+                    BauhausInvoiceGrid(
+                      onGenerateInvoice: _navigateToEmployeeSelection,
+                      onEmployeeInvoice: _navigateToEmployeeInvoice,
+                      onAllInvoices: _navigateToAutomaticInvoiceGeneration,
+                      onEnhancedInvoice: _navigateToEnhancedInvoice,
+                      onInvoiceList: _navigateToInvoiceList,
+                    ),
+
+                    const SizedBox(height: BauhausDesign.space6),
+
+                    // Training & Compliance Section
                     _buildActionCategorySection(
-                      'Invoice Management',
+                      AppLocalizations.of(context)!.trainingCompliance,
                       [
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-file-text-dynamic-color.png',
-                          title: 'Generate Invoice',
-                          subtitle: 'Create new invoice for clients',
-                          color: const Color(0xFFF59E0B),
-                          onTap: () => _navigateToEmployeeSelection(),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.verified_user),
+                          title:
+                              AppLocalizations.of(context)!.auditCertifications,
+                          subtitle: AppLocalizations.of(context)!
+                              .auditCertificationsDesc,
+                          color: BauhausDesign.warning,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const AdminCertificationAuditView()),
+                          ),
                         ),
-                        _buildImageActionTile(
-                          asset: 'assets/icons/fav-folder-dynamic-premium.png',
-                          title: 'All Invoices',
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-mail-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!.manageTraining,
                           subtitle:
-                              'Generate invoices for all users automatically',
-                          color: const Color(0xFF10B981),
-                          onTap: () => _navigateToAutomaticInvoiceGeneration(),
+                              AppLocalizations.of(context)!.manageTrainingDesc,
+                          color: BauhausDesign.secondary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const AdminTrainingManagementView()),
+                          ),
                         ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-fire-dynamic-color.png',
-                          title: 'Enhanced Invoice',
-                          subtitle:
-                              'Generate invoices with pricing integration',
-                          color: const Color(0xFF3F51B5),
-                          onTap: () => _navigateToEnhancedInvoice(),
-                        ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-locker-dynamic-premium.png',
-                          title: 'Invoice List',
-                          subtitle: 'View and manage generated invoices',
-                          color: const Color(0xFF2563EB),
-                          onTap: () => _navigateToInvoiceList(),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!
+                              .complianceChecklists,
+                          subtitle: AppLocalizations.of(context)!
+                              .complianceChecklistsDesc,
+                          color: BauhausDesign.primary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const AdminComplianceManagementView()),
+                          ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: BauhausDesign.space6),
 
                     // Organization Management Section
                     _buildActionCategorySection(
-                      'Organization Management',
+                      AppLocalizations.of(context)!.organizationManagement,
                       [
-                        _buildActionCard(
-                          icon: Icons.assignment_ind_rounded,
-                          title: 'Requests Dashboard',
-                          subtitle: 'Manage time-off and shift requests',
-                          color: const Color(0xFFFF5722),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.calendar_month_rounded),
+                          title: AppLocalizations.of(context)!.scheduleTitle,
+                          subtitle: 'Manage shifts and assignments',
+                          color: BauhausDesign.secondary,
+                          onTap: _navigateToScheduleDashboard,
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.assignment_ind_rounded),
+                          title:
+                              AppLocalizations.of(context)!.requestsDashboard,
+                          subtitle: AppLocalizations.of(context)!
+                              .requestsDashboardDesc,
+                          color: BauhausDesign.warning,
                           onTap: () =>
                               Navigator.of(context, rootNavigator: true)
                                   .pushNamed(Routes.adminRequests),
                         ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png',
-                          title: 'Holiday List',
-                          subtitle: 'Manage company holidays',
-                          color: const Color(0xFFEC4899),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!.holidayList,
+                          subtitle:
+                              AppLocalizations.of(context)!.holidayListDesc,
+                          color: BauhausDesign.secondary,
                           onTap: () => _navigateToHolidayList(),
                         ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-tools-dynamic-color.png',
-                          title: 'View Assignments',
-                          subtitle: 'View all employee assignments',
-                          color: const Color(0xFF8B5CF6),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-tools-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!.viewAssignments,
+                          subtitle:
+                              AppLocalizations.of(context)!.viewAssignmentsDesc,
+                          color: BauhausDesign.primary,
                           onTap: () => _navigateToAssignments(),
                         ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-clock-dynamic-color.png',
-                          title: 'Employee Tracking',
-                          subtitle: 'Track employee work status & shifts',
-                          color: const Color(0xFF06B6D4),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-clock-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!.employeeTracking,
+                          subtitle: AppLocalizations.of(context)!
+                              .employeeTrackingDesc,
+                          color: BauhausDesign.primary,
                           onTap: () => _navigateToEmployeeTracking(),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.directions_car_filled_rounded),
+                          title: AppLocalizations.of(context)!.mileageAdmin,
+                          subtitle:
+                              AppLocalizations.of(context)!.mileageAdminDesc,
+                          color: BauhausDesign.secondary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AdminMileageDashboard(),
+                            ),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.person_add_alt_1_rounded),
+                          title: 'Onboarding', 
+                          subtitle: 'Review pending onboardings',
+                          color: BauhausDesign.primary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AdminOnboardingListView(),
+                            ),
+                          ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: BauhausDesign.space6),
 
                     // Configuration & Finance Section
                     _buildActionCategorySection(
-                      'Configuration & Finance',
+                      AppLocalizations.of(context)!.configFinance,
                       [
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
-                          title: 'Email Settings',
-                          subtitle: 'Configure invoice email settings',
-                          color: const Color(0xFFEF4444),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.bar_chart_rounded),
+                          title:
+                              AppLocalizations.of(context)!.workforceAnalytics,
+                          subtitle: AppLocalizations.of(context)!
+                              .workforceAnalyticsDesc,
+                          color: BauhausDesign.accent,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const AnalyticsDashboardView()),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-mail-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!.emailSettings,
+                          subtitle:
+                              AppLocalizations.of(context)!.emailSettingsDesc,
+                          color: BauhausDesign.error,
                           onTap: () => _navigateToEmailSettings(),
                         ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png',
-                          title: 'Pricing Management',
-                          subtitle: 'Manage NDIS pricing & service rates',
-                          color: const Color(0xFF9C27B0),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
+                          title:
+                              AppLocalizations.of(context)!.pricingManagement,
+                          subtitle: AppLocalizations.of(context)!
+                              .pricingManagementDesc,
+                          color: BauhausDesign.primary,
                           onTap: () => _navigateToPricingManagement(),
                         ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-credit-card-dynamic-premium.png',
-                          title: 'Expense Management',
-                          subtitle: 'Track and manage organization expenses',
-                          color: const Color(0xFF4CAF50),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!.employeePayRates,
+                          subtitle: AppLocalizations.of(context)!
+                              .employeePayRatesDesc,
+                          color: BauhausDesign.secondary,
+                          onTap: () => _navigateToEmployeePayRates(),
+                        ),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
+                          title:
+                              AppLocalizations.of(context)!.earningsDashboard,
+                          subtitle: AppLocalizations.of(context)!
+                              .earningsDashboardDesc,
+                          color: BauhausDesign.success,
+                          onTap: () => _navigateToEarningsDashboard(),
+                        ),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-credit-card-dynamic-premium.png'),
+                          title:
+                              AppLocalizations.of(context)!.expenseManagement,
+                          subtitle: AppLocalizations.of(context)!
+                              .expenseManagementDesc,
+                          color: BauhausDesign.success,
                           onTap: () => _navigateToExpenseManagement(),
                         ),
-                        _buildImageActionTile(
-                          asset:
-                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png',
-                          title: 'Bank Details',
-                          subtitle: 'Manage bank account details',
-                          color: const Color(0xFF795548),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
+                          title: AppLocalizations.of(context)!.bankDetails,
+                          subtitle:
+                              AppLocalizations.of(context)!.bankDetailsDesc,
+                          color: BauhausDesign.neutral,
                           onTap: () => _navigateToBankDetails(),
                         ),
-                        _buildImageActionTile(
-                          asset: 'assets/icons/profile_placeholder.png',
-                          title: 'Client Pricing Review',
-                          subtitle:
-                              'Review and manage client pricing before invoicing',
-                          color: const Color(0xFF14B8A6),
+                        BauhausActionTile(
+                          icon: Image.asset(
+                              'assets/icons/profile_placeholder.png'),
+                          title:
+                              AppLocalizations.of(context)!.clientPricingReview,
+                          subtitle: AppLocalizations.of(context)!
+                              .clientPricingReviewDesc,
+                          color: BauhausDesign.success,
                           onTap: () => _navigateToClientPricingReview(),
                         ),
-                        _buildActionCard(
-                          icon: Icons.security_rounded,
-                          title: 'API Usage Dashboard',
-                          subtitle:
-                              'Monitor API traffic and errors in real-time',
-                          color: const Color(0xFF667EEA),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.security_rounded),
+                          title:
+                              AppLocalizations.of(context)!.apiUsageDashboard,
+                          subtitle: AppLocalizations.of(context)!
+                              .apiUsageDashboardDesc,
+                          color: BauhausDesign.primary,
                           onTap: _navigateToApiUsageDashboard,
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.download_rounded),
+                          title: 'Payroll Export',
+                          subtitle: 'Export timesheets for payroll',
+                          color: BauhausDesign.accent,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => AdminPayrollExportView(
+                                organizationId: widget.organizationId ?? '',
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -1234,7 +1240,6 @@ class _AdminDashboardViewControllerState
   }
 
   Future<void> _navigateToBankDetails() async {
-    // Ensure SharedPreferences is initialized before reading the role.
     await _sharedPrefs.init();
     final userRole = _sharedPrefs.getRole();
     if (userRole == UserRole.admin) {
@@ -1243,17 +1248,30 @@ class _AdminDashboardViewControllerState
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text("Admin Access Required"),
-          content: const Text("Only admins can access this feature."),
+          title: Text(AppLocalizations.of(context)!.adminAccessRequiredTitle),
+          content:
+              Text(AppLocalizations.of(context)!.adminAccessRequiredMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         ),
       );
     }
+  }
+
+  void _navigateToEarningsDashboard() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EarningsDashboardView(
+          organizationId: widget.organizationId,
+          organizationName: widget.organizationName,
+        ),
+      ),
+    );
   }
 
   Widget _buildActionCategorySection(String title, List<Widget> actions) {
@@ -1262,13 +1280,12 @@ class _AdminDashboardViewControllerState
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
-          ),
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark,
+              ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: BauhausDesign.space4),
         ...actions,
       ],
     );
@@ -1281,72 +1298,106 @@ class _AdminDashboardViewControllerState
     required Color color,
     required VoidCallback onTap,
   }) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double scale = (screenWidth / 375.0).clamp(0.95, 1.25);
+    final double tileRadius = (16.0 * scale).clamp(14.0, 20.0);
+    // Use slightly larger container size for Material Icons vs Image Assets to maintain visual balance
+    final double iconContainerSize = (64.0 * scale).clamp(56.0, 84.0);
+    final double iconSize = (32.0 * scale).clamp(24.0, 40.0);
+    final double chevronContainerSize = (32.0 * scale).clamp(28.0, 40.0);
+    final double chevronIconSize = (20.0 * scale).clamp(18.0, 24.0);
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(tileRadius),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
+              color: BauhausDesign.surfaceLight,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              boxShadow: const [
+                BauhausDesign.shadowHard,
               ],
               border: Border.all(
-                color: color.withOpacity(0.1),
-                width: 1,
+                color: BauhausDesign.neutral,
+                width: 2,
               ),
             ),
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.symmetric(
+                horizontal: 16 * scale, vertical: 14 * scale),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  width: iconContainerSize,
+                  height: iconContainerSize,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: color,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                    boxShadow: const [
+                      BauhausDesign.shadowHardSm,
+                    ],
                   ),
                   child: Icon(
                     icon,
-                    color: color,
-                    size: 24,
+                    color: BauhausDesign.surfaceLight,
+                    size: iconSize,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: BauhausDesign.space4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F2937),
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: BauhausDesign.textDark,
+                              letterSpacing: -0.5,
+                            ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodySmall
+                            ?.copyWith(
+                              color: BauhausDesign.neutral,
+                              fontWeight: FontWeight.w500,
+                              height: 1.25,
+                            ),
                       ),
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: color,
-                  size: 20,
+                const SizedBox(width: BauhausDesign.space2),
+                Container(
+                  width: chevronContainerSize,
+                  height: chevronContainerSize,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.backgroundLight,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    color: BauhausDesign.neutral,
+                    size: chevronIconSize,
+                  ),
                 ),
               ],
             ),
@@ -1363,7 +1414,6 @@ class _AdminDashboardViewControllerState
     required Color color,
     required VoidCallback onTap,
   }) {
-    // Responsive sizing based on device width
     final double screenWidth = MediaQuery.of(context).size.width;
     final double scale = (screenWidth / 375.0).clamp(0.95, 1.25);
     final double tileRadius = (16.0 * scale).clamp(14.0, 20.0);
@@ -1373,7 +1423,7 @@ class _AdminDashboardViewControllerState
     final double chevronIconSize = (20.0 * scale).clamp(18.0, 24.0);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -1381,18 +1431,14 @@ class _AdminDashboardViewControllerState
           borderRadius: BorderRadius.circular(tileRadius),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(tileRadius),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
+              color: BauhausDesign.surfaceLight,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              boxShadow: const [
+                BauhausDesign.shadowHard,
               ],
               border: Border.all(
-                color: color.withOpacity(0.1),
-                width: 1,
+                color: BauhausDesign.neutral,
+                width: 2,
               ),
             ),
             padding: EdgeInsets.symmetric(
@@ -1404,8 +1450,15 @@ class _AdminDashboardViewControllerState
                   width: iconContainerSize,
                   height: iconContainerSize,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(tileRadius),
+                    color: BauhausDesign.surfaceLight,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                    boxShadow: const [
+                      BauhausDesign.shadowHardSm,
+                    ],
                   ),
                   alignment: Alignment.center,
                   child: Image.asset(
@@ -1417,48 +1470,56 @@ class _AdminDashboardViewControllerState
                       return Icon(
                         Icons.image_not_supported_outlined,
                         size: iconSize,
-                        color: color,
+                        color: BauhausDesign.neutral,
                       );
                     },
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: BauhausDesign.space4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF111827),
-                          letterSpacing: -0.1,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: BauhausDesign.textDark,
+                              letterSpacing: -0.5,
+                            ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          color: Colors.grey[600],
-                          height: 1.25,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodySmall
+                            ?.copyWith(
+                              color: BauhausDesign.neutral,
+                              fontWeight: FontWeight.w500,
+                              height: 1.25,
+                            ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: BauhausDesign.space2),
                 Container(
                   width: chevronContainerSize,
                   height: chevronContainerSize,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    shape: BoxShape.circle,
+                    color: BauhausDesign.backgroundLight,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   child: Icon(
                     Icons.chevron_right_rounded,
-                    color: color,
+                    color: BauhausDesign.neutral,
                     size: chevronIconSize,
                   ),
                 )
@@ -1470,11 +1531,43 @@ class _AdminDashboardViewControllerState
     );
   }
 
+  void _navigateToScheduleDashboard() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScheduleDashboardScreen(
+          organizationId: widget.organizationId ?? '',
+          userEmail: widget.email,
+          isAdmin: true,
+        ),
+      ),
+    );
+  }
+
   void _navigateToEmployeeSelection() {
     if (key != null && key != 'add' && key != 'error') {
       debugPrint("in employee selection");
-      Navigator.of(context).pushNamed(
+      Navigator.of(context, rootNavigator: true).pushNamed(
         Routes.employeeSelection,
+        arguments: {
+          'email': widget.email,
+          'organizationId': widget.organizationId!,
+          'organizationName': widget.organizationName ?? '',
+        },
+      );
+    } else {
+      _showSnackBar(
+        AppLocalizations.of(context)!.configureEmailSettingsFirst,
+        isError: true,
+      );
+    }
+  }
+
+  void _navigateToEmployeeInvoice() {
+    if (key != null && key != 'add' && key != 'error') {
+      debugPrint("in employee invoice");
+      Navigator.of(context, rootNavigator: true).pushNamed(
+        Routes.employeeInvoice,
         arguments: {
           'email': widget.email,
           'organizationId': widget.organizationId!,
@@ -1492,12 +1585,14 @@ class _AdminDashboardViewControllerState
   void _navigateToAutomaticInvoiceGeneration() {
     if (key != null && key != 'add' && key != 'error') {
       debugPrint("in automatic invoice generation");
-      Navigator.of(context).pushNamed(
+      Navigator.of(context, rootNavigator: true).pushNamed(
         Routes.automaticInvoiceGeneration,
         arguments: {
           'email': widget.email,
           'organizationId': widget.organizationId!,
           'organizationName': widget.organizationName ?? '',
+          'autoMode': true,
+          'invoiceType': 'both',
         },
       );
     } else {
@@ -1542,27 +1637,14 @@ class _AdminDashboardViewControllerState
 
   Future<void> _navigateToHolidayList() async {
     debugPrint("in holiday list");
-    try {
-      List<dynamic>? holidays = await _apiMethod.getHolidays();
-      if (holidays != null && holidays.isNotEmpty) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (c) => HolidayListView(holidays: holidays),
-          ),
-        );
-      } else {
-        _showSnackBar(
-          'No holiday data available.',
-          isError: true,
-        );
-      }
-    } catch (e) {
-      _showSnackBar(
-        'Failed to get holidays: $e',
-        isError: true,
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (c) => const HolidayListView(
+          holidays: [],
+        ),
+      ),
+    );
   }
 
   void _navigateToAssignments() {
@@ -1642,6 +1724,18 @@ class _AdminDashboardViewControllerState
     );
   }
 
+  void _navigateToEmployeePayRates() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EmployeePayRateView(
+          adminEmail: widget.email,
+          organizationId: widget.organizationId ?? '',
+        ),
+      ),
+    );
+  }
+
   void _navigateToExpenseManagement() {
     debugPrint(
         '=== EXPENSE NAVIGATION DEBUG: adminEmail = ${widget.email} ===');
@@ -1687,162 +1781,6 @@ class _AdminDashboardViewControllerState
     );
   }
 
-  Widget _build3DActionCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color primaryColor,
-    required Color secondaryColor,
-    required int index,
-    required VoidCallback onTap,
-  }) {
-    return AnimatedBuilder(
-      animation: _contentAnimationController,
-      builder: (context, child) {
-        final animationValue = _contentAnimationController.value;
-        final staggeredDelay = (index * 0.1).clamp(0.0, 1.0);
-        final cardAnimation =
-            ((animationValue - staggeredDelay) / (1.0 - staggeredDelay))
-                .clamp(0.0, 1.0);
-
-        return Transform.translate(
-          offset: Offset(0, 20 * (1 - cardAnimation)),
-          child: Opacity(
-            opacity: cardAnimation,
-            child: GestureDetector(
-              onTap: onTap,
-              child: Container(
-                height: MediaQuery.of(context).size.height *
-                    0.20, // Increased height for better proportion
-                constraints: BoxConstraints(
-                  minHeight: 140, // Increased minimum height
-                  maxHeight: MediaQuery.of(context).size.height *
-                      0.22, // Reasonable maximum height
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: primaryColor.withOpacity(0.1),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withOpacity(0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                      spreadRadius: 0,
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(MediaQuery.of(context).size.width *
-                      0.035), // Reduced padding
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // Top section with icon and indicator
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width *
-                                0.11, // Slightly smaller icon container
-                            height: MediaQuery.of(context).size.width * 0.11,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  primaryColor.withOpacity(0.1),
-                                  primaryColor.withOpacity(0.1),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: primaryColor.withOpacity(0.1),
-                                width: 1,
-                              ),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                icon,
-                                color: primaryColor,
-                                size: MediaQuery.of(context).size.width *
-                                    0.055, // Proportional icon size
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: 7,
-                            height: 7,
-                            decoration: BoxDecoration(
-                              color: primaryColor.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // Flexible spacer
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-
-                      // Text section at bottom
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            title,
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width *
-                                  0.037, // Optimized font size
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF111827),
-                              height: 1.1,
-                              letterSpacing: -0.2,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.004), // Reduced spacing
-                          Text(
-                            subtitle,
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width *
-                                  0.028, // Optimized subtitle size
-                              color: const Color(0xFF6B7280),
-                              height: 1.2,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.1,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildStickyAdminLabel() {
     return Positioned(
       top: MediaQuery.of(context).padding.top + 10,
@@ -1852,14 +1790,13 @@ class _AdminDashboardViewControllerState
         builder: (context, child) {
           double opacity = 0.0;
           if (_scrollController.hasClients) {
-// Show sticky label when scrolled past the header
             opacity = (_scrollController.offset > 200) ? 1.0 : 0.0;
           }
           return AnimatedOpacity(
             duration: const Duration(milliseconds: 300),
             opacity: opacity,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(25),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
               child: BackdropFilter(
                 filter: ImageFilter.blur(
                   sigmaX: 10,
@@ -1871,19 +1808,13 @@ class _AdminDashboardViewControllerState
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6C5CE7).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(25),
+                    color: BauhausDesign.secondary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.1),
+                      color: BauhausDesign.surfaceWhite.withOpacity(0.1),
                       width: 1,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    boxShadow: const [...BauhausDesign.shadowSm],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -1891,24 +1822,26 @@ class _AdminDashboardViewControllerState
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          color: BauhausDesign.surfaceWhite.withOpacity(0.1),
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusMd),
                         ),
                         child: const Icon(
                           Icons.dashboard_rounded,
-                          color: Colors.white,
+                          color: BauhausDesign.surfaceWhite,
                           size: 12,
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Text(
+                      Text(
                         'Admin Dashboard',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 11,
-                          letterSpacing: 0.1,
-                        ),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.surfaceWhite,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.1,
+                            ),
                       ),
                     ],
                   ),
@@ -1922,183 +1855,6 @@ class _AdminDashboardViewControllerState
   }
 }
 
-// You would add this class to the bottom of your AdminDashboardView.dart file
-class _HeaderBottomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-// A 'Path' is like drawing with a pen on a canvas.
-    final path = Path();
-// 1. Start at the top-left corner (0, 0) - this is the default start point.
-
-// 2. Draw a line down the left side, but stop a bit above the bottom edge.
-// This creates the "shoulder" of the curve.
-    path.lineTo(0, size.height - 60);
-
-// 3. THIS IS THE KEY LINE FOR THE "SQUIRCLE" EFFECT.
-// Instead of a sharp corner, we draw a quadratic Bézier curve.
-    path.quadraticBezierTo(
-      // The "control point" pulls the curve.
-      // We place it at the horizontal center and vertical bottom of the widget.
-      // This pulls the middle of the line downwards, creating a smooth arc.
-      size.width / 2, // x-coordinate of control point (center)
-      size.height, // y-coordinate of control point (very bottom)
-
-      // The "end point" of the curve.
-      // We end on the right side at the same height we started the curve.
-      size.width, // x-coordinate of end point (far right)
-      size.height - 40, // y-coordinate of end point (same as start of curve)
-    );
-
-// 4. Draw a line from the end of the curve up to the top-right corner.
-    path.lineTo(size.width, 0);
-
-// 5. Close the path, which automatically draws a line from the
-// current point (top-right) back to the starting point (top-left).
-    path.close();
-
-    return path;
-  }
-
-// This should be false to prevent unnecessary re-clipping, which improves performance.
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-class _ModernFluidClipper extends CustomClipper<Path> {
-  final double animationValue;
-  _ModernFluidClipper({required this.animationValue});
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    final width = size.width;
-    final height = size.height;
-// Create a more dynamic, fluid shape that changes with animation
-    final waveHeight = 40 + (20 * animationValue);
-    final waveFrequency = 1.5 + (0.5 * animationValue);
-
-    path.lineTo(0, height - waveHeight);
-
-// Create multiple fluid waves
-    for (double i = 0; i <= width; i += width / 4) {
-      final progress = i / width;
-      final waveOffset =
-          sin(progress * pi * waveFrequency + animationValue * pi) *
-              waveHeight *
-              0.3;
-
-      if (i == 0) {
-        path.quadraticBezierTo(
-          width * 0.25,
-          height - waveHeight + waveOffset,
-          width * 0.5,
-          height - waveHeight * 0.7,
-        );
-      } else if (i == width / 2) {
-        path.quadraticBezierTo(
-          width * 0.75,
-          height - waveHeight * 0.3 + waveOffset,
-          width,
-          height - waveHeight * 0.8,
-        );
-      }
-    }
-
-    path.lineTo(width, 0);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return oldClipper is _ModernFluidClipper &&
-        oldClipper.animationValue != animationValue;
-  }
-}
-
-// Enhanced Custom Clipper with more sophisticated curve
-class _ModernHeaderClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-// Start from top-left
-    path.lineTo(0, size.height - 60);
-
-// Create a smooth wavy curve at the bottom
-    path.quadraticBezierTo(
-      size.width * 0.2,
-      size.height - 10,
-      size.width * 0.4,
-      size.height - 30,
-    );
-
-    path.quadraticBezierTo(
-      size.width * 0.6,
-      size.height - 50,
-      size.width * 0.8,
-      size.height - 30,
-    );
-
-    path.quadraticBezierTo(
-      size.width * 0.9,
-      size.height - 20,
-      size.width,
-      size.height - 40,
-    );
-
-// Complete the path
-    path.lineTo(size.width, 0);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-// Custom Clipper for the stats overview section to match header curve
-class _StatsOverviewClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-// Start from top with matching curve
-    path.moveTo(0, 40);
-
-    path.quadraticBezierTo(
-      size.width * 0.1,
-      20,
-      size.width * 0.2,
-      30,
-    );
-
-    path.quadraticBezierTo(
-      size.width * 0.4,
-      50,
-      size.width * 0.6,
-      30,
-    );
-
-    path.quadraticBezierTo(
-      size.width * 0.8,
-      10,
-      size.width,
-      40,
-    );
-
-// Complete the rectangle
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-// Helper method for greeting based on time
 String _getCurrentGreeting() {
   final hour = DateTime.now().hour;
   if (hour < 12) {
@@ -2110,15 +1866,15 @@ String _getCurrentGreeting() {
   }
 }
 
-// Helper widget for quick stats
-Widget _buildQuickStat(String label, String value, IconData icon) {
+Widget _buildQuickStat(
+    BuildContext context, String label, String value, IconData icon) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(12),
+      color: BauhausDesign.surfaceWhite.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       border: Border.all(
-        color: Colors.white.withOpacity(0.1),
+        color: BauhausDesign.surfaceWhite.withOpacity(0.1),
       ),
     ),
     child: Row(
@@ -2126,26 +1882,26 @@ Widget _buildQuickStat(String label, String value, IconData icon) {
       children: [
         Icon(
           icon,
-          color: Colors.white,
+          color: BauhausDesign.surfaceWhite,
           size: 14,
         ),
         const SizedBox(width: 6),
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 14,
-          ),
+          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
         ),
         const SizedBox(width: 4),
         Text(
           label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.1),
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
+          style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: BauhausDesign.surfaceWhite.withOpacity(0.8),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
         ),
       ],
     ),

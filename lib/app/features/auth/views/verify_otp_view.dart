@@ -1,11 +1,14 @@
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
 import 'package:flutter/material.dart';
-
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pinput/pinput.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class VerifyOTPView extends ConsumerWidget {
   final String otpGenerated;
@@ -20,205 +23,157 @@ class VerifyOTPView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(verifyOTPViewModelProvider);
-    final size = MediaQuery.of(context).size;
 
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.white,
+        systemNavigationBarColor: BauhausDesign.backgroundLight,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
 
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.arrow_back,
-              color: AppColors.colorBlack87,
-              size: 20,
-            ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: BauhausIconButton(
+            icon: Iconsax.arrow_left,
+            onPressed: () => Navigator.of(context).pop(),
+            variant: BauhausActionVariant.neutral,
+            isSmall: true,
           ),
         ),
       ),
       body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.grey[50]!,
-                Colors.white,
-              ],
-            ),
-          ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                _buildHeader(),
-                const SizedBox(height: 60),
-                _buildOTPSection(viewModel),
-                const SizedBox(height: 40),
-                _buildVerifyButton(context, viewModel),
-                const SizedBox(height: 24),
-                _buildResendSection(),
-              ],
-            ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              _buildHeader(context),
+              const SizedBox(height: 60),
+              _buildOTPSection(context, viewModel),
+              const SizedBox(height: 40),
+              _buildVerifyButton(context, viewModel),
+              const SizedBox(height: 24),
+              _buildResendSection(context),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Column(
       children: [
         Container(
           width: 120,
           height: 120,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.colorPrimary.withOpacity(0.1),
-                AppColors.colorPrimary,
-              ],
+            color: BauhausDesign.accent.withOpacity(0.1),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: BauhausDesign.accent.withOpacity(0.3),
+              width: 2,
             ),
-            borderRadius: BorderRadius.circular(60),
             boxShadow: [
               BoxShadow(
-                color: AppColors.colorPrimary.withOpacity(0.1),
+                color: BauhausDesign.accent.withOpacity(0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: const Icon(
-            Icons.verified_user_outlined,
+          child: Icon(
+            Iconsax.shield_tick,
             size: 60,
-            color: Colors.white,
+            color: BauhausDesign.accent,
           ),
         ),
         const SizedBox(height: 32),
-        const Text(
-          'Verify OTP',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: AppColors.colorBlack87,
-          ),
+        Text(
+          AppLocalizations.of(context)!.verifyOtpTitle,
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 12),
         Text(
-          'Enter the 6-digit code sent to your email',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
+          AppLocalizations.of(context)!.weSentCode,
+          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                color: BauhausDesign.textMuted,
+              ),
           textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildOTPSection(dynamic viewModel) {
-    return Container(
-      padding: const EdgeInsets.all(24),
+  Widget _buildOTPSection(BuildContext context, dynamic viewModel) {
+    final defaultPinTheme = PinTheme(
+      width: 50,
+      height: 60,
+      textStyle: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
+          ),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: BauhausDesign.backgroundLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        border: Border.all(
+          color: BauhausDesign.neutral,
+          width: 1,
+        ),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration!.copyWith(
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(
+          color: BauhausDesign.primary,
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 5),
+            color: BauhausDesign.primary.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
+    );
+
+    final submittedPinTheme = defaultPinTheme.copyWith(
+      textStyle: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.surfaceWhite,
+          ),
+      decoration: defaultPinTheme.decoration!.copyWith(
+        color: BauhausDesign.primary,
+        border: Border.all(
+          color: BauhausDesign.primary,
+          width: 2,
+        ),
+      ),
+    );
+
+    return BauhausCard(
       child: Column(
         children: [
           Pinput(
             length: 6,
             controller: viewModel.pinController,
-            defaultPinTheme: PinTheme(
-              width: 50,
-              height: 60,
-              textStyle: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.colorBlack87,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.grey[300]!,
-                  width: 1,
-                ),
-              ),
-            ),
-            focusedPinTheme: PinTheme(
-              width: 50,
-              height: 60,
-              textStyle: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.colorBlack87,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.colorPrimary,
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.colorPrimary.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-            ),
-            submittedPinTheme: PinTheme(
-              width: 50,
-              height: 60,
-              textStyle: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.colorPrimary,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.colorPrimary,
-                  width: 2,
-                ),
-              ),
-            ),
+            defaultPinTheme: defaultPinTheme,
+            focusedPinTheme: focusedPinTheme,
+            submittedPinTheme: submittedPinTheme,
           ),
         ],
       ),
@@ -226,85 +181,46 @@ class VerifyOTPView extends ConsumerWidget {
   }
 
   Widget _buildVerifyButton(BuildContext context, dynamic viewModel) {
-    return Container(
-      width: double.infinity,
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            AppColors.colorPrimary,
-            AppColors.colorPrimary.withOpacity(0.1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.colorPrimary.withOpacity(0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+    return BauhausActionButton(
+      text: AppLocalizations.of(context)!.verifyCode,
+      icon: Iconsax.tick_circle,
+      isLoading: viewModel.isLoading,
+      isFullWidth: true,
+      onPressed: () async {
+        debugPrint('Verify button pressed');
+        await viewModel.verifyOTP(
+          viewModel.pinController.text,
+          otpGenerated,
+          encryptVerificationKey,
+          context,
+          (message) => EnhancedAuthDialog.showErrorDialog(
+            context,
+            title: AppLocalizations.of(context)!.warning,
+            message: message,
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () async {
-            debugPrint('Verify button pressed');
-            await viewModel.verifyOTP(
-              viewModel.pinController.text,
-              otpGenerated,
-              encryptVerificationKey,
-              context,
-              (message) => showWarningDialog(context, message),
-            );
+        );
 
-            if (viewModel.response?['statusCode'] == 200) {
-              viewModel.dispose();
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (newContext) => const ChangePasswordView(),
-                ),
-                (route) => false,
-              );
-            }
-          },
-          child: Container(
-            alignment: Alignment.center,
-            child: viewModel.isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Text(
-                    'Verify Code',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-          ),
-        ),
-      ),
+        if (viewModel.response?['statusCode'] == 200) {
+          viewModel.dispose();
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (newContext) => const ChangePasswordView(),
+            ),
+            (route) => false,
+          );
+        }
+      },
     );
   }
 
-  Widget _buildResendSection() {
+  Widget _buildResendSection(BuildContext context) {
     return Column(
       children: [
         Text(
-          "Didn't receive the code?",
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          AppLocalizations.of(context)!.didntReceiveCode,
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: BauhausDesign.textMuted,
+              ),
         ),
         const SizedBox(height: 8),
         TextButton(
@@ -315,49 +231,14 @@ class VerifyOTPView extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           child: Text(
-            'Resend Code',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.colorPrimary,
-            ),
+            AppLocalizations.of(context)!.resend,
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: BauhausDesign.primary,
+                ),
           ),
         ),
       ],
-    );
-  }
-
-  void showWarningDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Warning',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                message,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(
-                'OK',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }

@@ -57,6 +57,20 @@ platform :android do
     UI.message "Version code incremented from #{current_version_code} to #{new_version_code}"
   end
 
+  desc "Capture screenshots for the store"
+  lane :capture_screenshots do
+    # Build APKs for testing (using development flavor)
+    sh "cd .. && ./gradlew assembleDevelopmentDebug assembleDevelopmentDebugAndroidTest"
+    
+    screengrab(
+      app_apk_path: "../build/app/outputs/apk/development/debug/app-development-debug.apk",
+      tests_apk_path: "../build/app/outputs/apk/androidTest/development/debug/app-development-debug-androidTest.apk",
+      app_package_name: "com.bishal.invoice.dev",
+      locales: ["en-US"],
+      clear_previous_screenshots: true
+    )
+  end
+
   desc "Deploy development build to internal testing"
   lane :deploy_development do
     # Build the production AAB (development track uses production flavor)
@@ -76,8 +90,15 @@ platform :android do
     version_name = properties['flutter.versionName'] || '1.0'
     version_code = properties['flutter.versionCode'] || '1'
     
-    # Generate release notes
-    release_notes = "Development build #{version_name} (#{version_code})\n\nAutomated build for internal testing."
+    # Generate release notes from file if exists
+    release_notes_file = "../release_notes_#{version_name}.txt"
+    if File.exist?(release_notes_file)
+      UI.message "Found release notes file: #{release_notes_file}"
+      release_notes = File.read(release_notes_file)
+    else
+      UI.message "Release notes file not found at #{release_notes_file}, using default."
+      release_notes = "Development build #{version_name} (#{version_code})\n\nAutomated build for internal testing."
+    end
     
     # Create metadata directory if it doesn't exist
     metadata_dir = "metadata/android/en-US"
@@ -115,8 +136,15 @@ platform :android do
     version_name = properties['flutter.versionName'] || '1.0'
     version_code = properties['flutter.versionCode'] || '1'
     
-    # Generate release notes
-    release_notes = "Production release #{version_name} (#{version_code})\n\nStable release for production."
+    # Generate release notes from file if exists
+    release_notes_file = "../release_notes_#{version_name}.txt"
+    if File.exist?(release_notes_file)
+      UI.message "Found release notes file: #{release_notes_file}"
+      release_notes = File.read(release_notes_file)
+    else
+      UI.message "Release notes file not found at #{release_notes_file}, using default."
+      release_notes = "Production release #{version_name} (#{version_code})\n\nStable release for production."
+    end
     
     # Create metadata directory if it doesn't exist
     metadata_dir = "metadata/android/en-US"
@@ -155,8 +183,15 @@ platform :android do
     version_name = properties['flutter.versionName'] || '1.0'
     version_code = properties['flutter.versionCode'] || '1'
     
-    # Generate release notes
-    release_notes = "Internal build #{version_name} (#{version_code})\n\nInternal testing build."
+    # Generate release notes from file if exists
+    release_notes_file = "../release_notes_#{version_name}.txt"
+    if File.exist?(release_notes_file)
+      UI.message "Found release notes file: #{release_notes_file}"
+      release_notes = File.read(release_notes_file)
+    else
+      UI.message "Release notes file not found at #{release_notes_file}, using default."
+      release_notes = "Internal build #{version_name} (#{version_code})\n\nInternal testing build."
+    end
     
     # Create metadata directory if it doesn't exist
     metadata_dir = "metadata/android/en-US"

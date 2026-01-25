@@ -52,12 +52,14 @@ class OvertimeMetric {
   final String employeeEmail;
   final double totalHours;
   final double overtimeHours;
+  final List<DailyOvertime> dailyBreakdown;
 
   OvertimeMetric({
     required this.employeeName,
     required this.employeeEmail,
     required this.totalHours,
     required this.overtimeHours,
+    this.dailyBreakdown = const [],
   });
 
   factory OvertimeMetric.fromJson(Map<String, dynamic> json) {
@@ -66,6 +68,24 @@ class OvertimeMetric {
       employeeEmail: json['employeeEmail'] ?? '',
       totalHours: (json['totalHours'] as num?)?.toDouble() ?? 0.0,
       overtimeHours: (json['overtimeHours'] as num?)?.toDouble() ?? 0.0,
+      dailyBreakdown: (json['dailyBreakdown'] as List?)
+              ?.map((e) => DailyOvertime.fromJson(e))
+              .toList() ??
+          [],
+    );
+  }
+}
+
+class DailyOvertime {
+  final String date;
+  final double hours;
+
+  DailyOvertime({required this.date, required this.hours});
+
+  factory DailyOvertime.fromJson(Map<String, dynamic> json) {
+    return DailyOvertime(
+      date: json['date'] ?? '',
+      hours: (json['hours'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

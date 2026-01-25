@@ -1,4 +1,6 @@
 enum RequestStatus {
+  claimed,
+  declined,
   pending,
   approved,
   rejected,
@@ -7,6 +9,10 @@ enum RequestStatus {
 
   String get label {
     switch (this) {
+      case RequestStatus.claimed:
+        return 'Claimed';
+      case RequestStatus.declined:
+        return 'Declined';
       case RequestStatus.pending:
         return 'Pending';
       case RequestStatus.approved:
@@ -22,12 +28,15 @@ enum RequestStatus {
 
   static RequestStatus fromString(String status) {
     switch (status.toLowerCase()) {
+      case 'claimed':
+        return RequestStatus.claimed;
       case 'pending':
         return RequestStatus.pending;
       case 'approved':
         return RequestStatus.approved;
-      case 'rejected':
       case 'declined':
+        return RequestStatus.declined;
+      case 'rejected':
         return RequestStatus.rejected;
       case 'cancelled':
         return RequestStatus.cancelled;
@@ -44,6 +53,7 @@ class RequestModel {
   final String? id;
   final String organizationId;
   final String userId;
+  final String? createdBy;
   final String type;
   final RequestStatus status;
   final Map<String, dynamic> details;
@@ -55,6 +65,7 @@ class RequestModel {
     this.id,
     required this.organizationId,
     required this.userId,
+    this.createdBy,
     required this.type,
     required this.status,
     required this.details,
@@ -68,6 +79,7 @@ class RequestModel {
       id: json['_id'],
       organizationId: json['organizationId'] ?? '',
       userId: json['userId'] ?? '',
+      createdBy: json['createdBy']?.toString(),
       type: json['type'] ?? '',
       status: RequestStatus.fromString(json['status'] ?? 'Pending'),
       details: json['details'] != null
@@ -86,6 +98,7 @@ class RequestModel {
       if (id != null) '_id': id,
       'organizationId': organizationId,
       'userId': userId,
+      if (createdBy != null) 'createdBy': createdBy,
       'type': type,
       'status': status.label,
       'details': details,
@@ -99,6 +112,7 @@ class RequestModel {
     String? id,
     String? organizationId,
     String? userId,
+    String? createdBy,
     String? type,
     RequestStatus? status,
     Map<String, dynamic>? details,
@@ -110,6 +124,7 @@ class RequestModel {
       id: id ?? this.id,
       organizationId: organizationId ?? this.organizationId,
       userId: userId ?? this.userId,
+      createdBy: createdBy ?? this.createdBy,
       type: type ?? this.type,
       status: status ?? this.status,
       details: details ?? this.details,

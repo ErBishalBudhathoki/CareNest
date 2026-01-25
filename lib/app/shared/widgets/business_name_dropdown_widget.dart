@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BusinessNameDropdown extends ConsumerStatefulWidget {
   final Function(String) onChanged;
@@ -38,47 +39,56 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(
-          color: const Color(0xFFD4D4D4),
-          width: 1,
+          color: BauhausDesign.neutral,
+          width: BauhausDesign.borderThin,
         ),
+        boxShadow: BauhausDesign.shadowSm,
       ),
+      padding: EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
       child: Center(
-        child: DropdownButton<String>(
-          dropdownColor: const Color(0xFFD4D4D4),
-          value: _selectedBusinessName,
-          icon: const Icon(Icons.arrow_drop_down),
-          iconSize: 24,
-          elevation: 16,
-          style: const TextStyle(fontSize: 16).copyWith(
-            color: const Color(0xFF1F2937),
-          ),
-          underline: Container(
-            height: 2,
-            color: Colors.transparent,
-          ),
-          onChanged: (String? selectedValue) {
-            if (selectedValue != null) {
-              setState(() {
-                _selectedBusinessName = selectedValue;
-              });
-              widget.onChanged(selectedValue);
-            }
-          },
-          items: _businessNameList
-              .map<DropdownMenuItem<String>>(
-                (dynamic businessName) => DropdownMenuItem<String>(
-                  value: businessName['businessName'],
-                  child: Text(
-                    businessName['businessName'],
-                    style: const TextStyle(fontSize: 16).copyWith(
-                      color: const Color(0xFF1F2937),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            dropdownColor: BauhausDesign.surfaceWhite,
+            value: _businessNameList
+                    .any((e) => e['businessName'] == _selectedBusinessName)
+                ? _selectedBusinessName
+                : _businessNameList.isNotEmpty
+                    ? _businessNameList[0]['businessName']
+                    : null,
+            isExpanded: true,
+            icon: Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
+            iconSize: 24,
+            elevation: 4,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
+            onChanged: (String? selectedValue) {
+              if (selectedValue != null) {
+                setState(() {
+                  _selectedBusinessName = selectedValue;
+                });
+                widget.onChanged(selectedValue);
+              }
+            },
+            items: _businessNameList
+                .map<DropdownMenuItem<String>>(
+                  (dynamic businessName) => DropdownMenuItem<String>(
+                    value: businessName['businessName'],
+                    child: Text(
+                      businessName['businessName'],
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                     ),
                   ),
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
+          ),
         ),
       ),
     );

@@ -11,6 +11,8 @@ abstract class Routes {
   static const forgotPassword = '/forgotPassword';
   static const addClientDetails = '/home/addClientDetails';
   static const addBusinessDetails = '/home/addBusinessDetails';
+  static const businessList = '/businessList';
+  static const clientList = '/clientList';
   static const assignClients = '/admin/assignClients';
   static const assignC2E = '/assignC2E';
   static const navBar = '/home/navBar';
@@ -32,4 +34,10 @@ abstract class Routes {
   static const String invoiceDetails = '/invoiceDetails';
   static const bankDetails = '/bank-details';
   static const adminRequests = '/admin/requests';
+  static const trainingCompliance = '/trainingCompliance';
+  static const String mileageTracker = '/mileageTracker';
+  static const String shiftDetails = '/shiftDetails';
+  static const String employeeInvoice = '/employeeInvoice';
+  static const String onboarding = '/onboarding';
+  static const String clientDashboard = '/clientDashboard';
 }

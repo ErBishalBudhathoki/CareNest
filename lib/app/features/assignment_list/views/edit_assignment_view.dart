@@ -4,6 +4,9 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/features/assignment/views/enhanced_ndis_item_selection_view.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+
 import '../viewmodels/assignment_list_viewmodel.dart';
 
 class EditAssignmentView extends ConsumerStatefulWidget {
@@ -221,32 +224,38 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BauhausDesign.background,
       appBar: AppBar(
         elevation: 0,
+        backgroundColor: BauhausDesign.surfaceWhite,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: Icon(
             Icons.arrow_back,
-            color: const Color(0xFF1F2937),
+            color: BauhausDesign.textDark,
           ),
         ),
         title: Text(
           'Edit Assignment',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF1F2937),
-          ),
+          style: BauhausDesign.getTextTheme(context).titleLarge,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral, height: 1),
         ),
         actions: [
           if (isLoading)
             Container(
-              margin: const EdgeInsets.only(right: 16),
-              child: const Center(
+              margin: const EdgeInsets.only(right: BauhausDesign.space4),
+              child: Center(
                 child: SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+                  ),
                 ),
               ),
             ),
@@ -261,16 +270,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Assignment Info Card
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF667EEA).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF667EEA).withOpacity(0.1),
-                      ),
-                    ),
+                  BauhausCard(
+                    padding: const EdgeInsets.all(BauhausDesign.space4),
+                    backgroundColor: BauhausDesign.primary.withOpacity(0.05),
+                    borderColor: BauhausDesign.primary.withOpacity(0.1),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -278,56 +281,60 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                           children: [
                             Icon(
                               Icons.person,
-                              color: const Color(0xFF667EEA),
+                              color: BauhausDesign.primary,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: BauhausDesign.space2),
                             Text(
                               'Employee',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF6B7280),
-                              ),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .labelMedium
+                                  ?.copyWith(
+                                    color: BauhausDesign.textMuted,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: BauhausDesign.space1),
                         Text(
                           editedAssignment['userEmail'] ?? 'Unknown',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1F2937),
-                          ),
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: BauhausDesign.textDark,
+                              ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: BauhausDesign.space3),
                         Row(
                           children: [
                             Icon(
                               Icons.groups_outlined,
-                              color: const Color(0xFF667EEA),
+                              color: BauhausDesign.primary,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: BauhausDesign.space2),
                             Text(
                               'Client',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF6B7280),
-                              ),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .labelMedium
+                                  ?.copyWith(
+                                    color: BauhausDesign.textMuted,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: BauhausDesign.space1),
                         Text(
                           editedAssignment['clientEmail'] ?? 'Unknown',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1F2937),
-                          ),
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: BauhausDesign.textDark,
+                              ),
                         ),
                       ],
                     ),
@@ -337,32 +344,19 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   // NDIS Item Selection
                   Text(
                     'NDIS Item Assignment',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1F2937),
-                    ),
+                    style: BauhausDesign.getTextTheme(context).titleMedium,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: BauhausDesign.space3),
                   GestureDetector(
                     onTap: _selectNdisItem,
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFFD4D4D4),
-                        ),
-                      ),
+                    child: BauhausCard(
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.description_outlined,
-                            color: const Color(0xFF6B7280),
+                            color: BauhausDesign.textMuted,
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: BauhausDesign.space3),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -370,22 +364,24 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                                 Text(
                                   _selectedNdisItem?.itemName ??
                                       'Select NDIS Item',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: _selectedNdisItem != null
-                                        ? const Color(0xFF1F2937)
-                                        : const Color(0xFF6B7280),
-                                  ),
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        color: _selectedNdisItem != null
+                                            ? BauhausDesign.textDark
+                                            : BauhausDesign.textMuted,
+                                      ),
                                 ),
                                 if (_selectedNdisItem != null) ...[
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: BauhausDesign.space1),
                                   Text(
                                     _selectedNdisItem!.itemNumber,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: const Color(0xFF6B7280),
-                                    ),
+                                    style: BauhausDesign.getTextTheme(context)
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: BauhausDesign.textMuted,
+                                        ),
                                   ),
                                 ],
                               ],
@@ -401,19 +397,19 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                               },
                               icon: Icon(
                                 Icons.cancel,
-                                color: Colors.red,
+                                color: BauhausDesign.error,
                               ),
                             )
                           else
-                            Icon(
+                            const Icon(
                               Icons.chevron_right,
-                              color: const Color(0xFF6B7280),
+                              color: BauhausDesign.textMuted,
                             ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: BauhausDesign.space6),
 
                   // Shifts Section
                   Row(
@@ -421,13 +417,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     children: [
                       Text(
                         'Shifts (${dateList.length})',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF1F2937),
-                        ),
+                        style: BauhausDesign.getTextTheme(context).titleMedium,
                       ),
-                      OutlinedButton.icon(
+                      BauhausActionButton(
                         onPressed: () {
                           setState(() {
                             dateList.add('');
@@ -439,28 +431,15 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                             scheduleCustomPricing.add(null);
                           });
                         },
-                        icon: Icon(
-                          Icons.add,
-                          size: 16,
-                          color: const Color(0xFF667EEA),
-                        ),
-                        label: Text(
-                          'Add Shift',
-                          style: TextStyle(
-                            color: const Color(0xFF667EEA),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: const Color(0xFF667EEA)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
+                        text: 'Add Shift',
+                        icon: Icons.add,
+                        variant: BauhausActionVariant.primary,
+                        isOutlined: true,
+                        isSmall: true,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: BauhausDesign.space4),
 
                   // Shifts List
                   ListView.builder(
@@ -485,12 +464,12 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
 
           // Bottom Action Bar
           Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            decoration: const BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
               border: Border(
                 top: BorderSide(
-                  color: const Color(0xFFE5E5E5),
+                  color: BauhausDesign.neutral,
                   width: 1,
                 ),
               ),
@@ -498,62 +477,21 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
             child: Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: BauhausActionButton(
+                    text: 'Cancel',
                     onPressed: () => Navigator.of(context).pop(),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: const Color(0xFFD4D4D4)),
-                      foregroundColor: const Color(0xFF6B7280),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 16,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
+                    variant: BauhausActionVariant.secondary,
+                    isOutlined: true,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: BauhausDesign.space4),
                 Expanded(
                   flex: 2,
-                  child: ElevatedButton(
+                  child: BauhausActionButton(
+                    text: 'Save Changes',
                     onPressed: isLoading ? null : _saveChanges,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 16,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                      shadowColor: Colors.transparent,
-                    ),
-                    child: isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : const Text(
-                            'Save Changes',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
+                    isLoading: isLoading,
+                    variant: BauhausActionVariant.primary,
                   ),
                 ),
               ],
@@ -572,16 +510,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
     List<dynamic> breakList,
     List<bool> highIntensityList,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFE5E5E5),
-        ),
-      ),
+    return BauhausCard(
+      margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -590,11 +521,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
             children: [
               Text(
                 'Shift ${index + 1}',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1F2937),
-                ),
+                style: BauhausDesign.getTextTheme(context).titleMedium,
               ),
               IconButton(
                 onPressed: () {
@@ -616,32 +543,26 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     }
                   });
                 },
-                icon: Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                  size: 20,
-                ),
+                icon: const Icon(Icons.delete),
+                color: BauhausDesign.error,
                 style: IconButton.styleFrom(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
 
           // Date Field
           TextFormField(
             initialValue: dateList.length > index ? dateList[index] : '',
-            decoration: InputDecoration(
+            decoration: BauhausDesign.defaultInputDecoration.copyWith(
               labelText: 'Date',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              prefixIcon: Icon(
+              prefixIcon: const Icon(
                 Icons.calendar_today,
-                color: const Color(0xFF6B7280),
+                color: BauhausDesign.textMuted,
               ),
             ),
             onChanged: (value) {
@@ -650,7 +571,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
               }
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: BauhausDesign.space3),
 
           // Time Fields Row
           Row(
@@ -659,14 +580,11 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                 child: TextFormField(
                   initialValue:
                       startTimeList.length > index ? startTimeList[index] : '',
-                  decoration: InputDecoration(
+                  decoration: BauhausDesign.defaultInputDecoration.copyWith(
                     labelText: 'Start Time',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.access_time,
-                      color: const Color(0xFF6B7280),
+                      color: BauhausDesign.textMuted,
                     ),
                   ),
                   onChanged: (value) {
@@ -676,19 +594,16 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   },
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: BauhausDesign.space3),
               Expanded(
                 child: TextFormField(
                   initialValue:
                       endTimeList.length > index ? endTimeList[index] : '',
-                  decoration: InputDecoration(
+                  decoration: BauhausDesign.defaultInputDecoration.copyWith(
                     labelText: 'End Time',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.access_time,
-                      color: const Color(0xFF6B7280),
+                      color: BauhausDesign.textMuted,
                     ),
                   ),
                   onChanged: (value) {
@@ -700,19 +615,16 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: BauhausDesign.space3),
 
           // Break Field
           TextFormField(
             initialValue: breakList.length > index ? breakList[index] : '',
-            decoration: InputDecoration(
+            decoration: BauhausDesign.defaultInputDecoration.copyWith(
               labelText: 'Break Duration',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              prefixIcon: Icon(
+              prefixIcon: const Icon(
                 Icons.pause,
-                color: const Color(0xFF6B7280),
+                color: BauhausDesign.textMuted,
               ),
             ),
             onChanged: (value) {
@@ -721,24 +633,23 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
               }
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: BauhausDesign.space3),
 
           // High Intensity Toggle
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.flash_on,
-                color: const Color(0xFF6B7280),
+                color: BauhausDesign.textMuted,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: BauhausDesign.space2),
               Text(
                 'High Intensity Support',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF1F2937),
-                ),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: BauhausDesign.textDark,
+                    ),
               ),
               const Spacer(),
               Switch(
@@ -752,46 +663,40 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     }
                   });
                 },
-                activeThumbColor: const Color(0xFF667EEA),
+                activeColor: BauhausDesign.primary,
               ),
             ],
           ),
 
           // NDIS Item for this shift
-          const SizedBox(height: 16),
+          const SizedBox(height: BauhausDesign.space4),
           GestureDetector(
             onTap: () => _selectScheduleNdisItem(index),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFAFAFA),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: const Color(0xFFE5E5E5),
-                ),
-              ),
+            child: BauhausCard(
+              padding: const EdgeInsets.all(BauhausDesign.space3),
+              backgroundColor: BauhausDesign.backgroundLight,
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.description_outlined,
-                    color: const Color(0xFF6B7280),
+                    color: BauhausDesign.textMuted,
                     size: 16,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: BauhausDesign.space2),
                   Expanded(
                     child: Text(
                       scheduleNdisItems.length > index &&
                               scheduleNdisItems[index] != null
                           ? scheduleNdisItems[index]!.itemName
                           : 'Select NDIS Item for this shift',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: scheduleNdisItems.length > index &&
-                                scheduleNdisItems[index] != null
-                            ? const Color(0xFF1F2937)
-                            : const Color(0xFF6B7280),
-                      ),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: scheduleNdisItems.length > index &&
+                                    scheduleNdisItems[index] != null
+                                ? BauhausDesign.textDark
+                                : BauhausDesign.textMuted,
+                          ),
                     ),
                   ),
                   if (scheduleNdisItems.length > index &&
@@ -802,16 +707,18 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                           scheduleNdisItems[index] = null;
                         });
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.cancel,
-                        color: Colors.red,
                         size: 16,
                       ),
+                      color: BauhausDesign.error,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     )
                   else
-                    Icon(
+                    const Icon(
                       Icons.chevron_right,
-                      color: const Color(0xFF6B7280),
+                      color: BauhausDesign.textMuted,
                       size: 16,
                     ),
                 ],

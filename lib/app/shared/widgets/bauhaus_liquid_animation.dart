@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausLiquidAnimation extends StatefulWidget {
   final double height;
@@ -80,7 +80,7 @@ class _BauhausLiquidPainter extends CustomPainter {
     final paintFillFront = Paint()
       ..color = secondaryColor
       ..style = PaintingStyle.fill;
-      
+
     final paintStroke = Paint()
       ..color = BauhausDesign.neutral
       ..style = PaintingStyle.stroke
@@ -92,7 +92,7 @@ class _BauhausLiquidPainter extends CustomPainter {
     // waveHeight = 15.0
     // waveSpeed = time * 15
     final double waveWidth = math.pi / 240;
-    final double waveHeight = 15.0;
+    final double waveHeight = 12.0;
     final double waveSpeed = time * 15;
 
     // --- Back Wave (Secondary) ---
@@ -107,14 +107,14 @@ class _BauhausLiquidPainter extends CustomPainter {
     // Path 1 (Back Wave): Matches the "lower" one (yOffset 40)
     // We'll give it a slightly different phase or speed to distinguish it.
     // Or just replicate the stacking logic by drawing two paths with offsets.
-    
+
     // Wave 1 Param
     final pathBack = _createWavePath(
       size,
       waveWidth,
       waveHeight,
       waveSpeed,
-      yOffset + 10, // Slightly lower
+      yOffset + 5, // Reduced offset to keep waves closer together
     );
     canvas.drawPath(pathBack, paintFillBack);
     canvas.drawPath(pathBack, paintStroke);
@@ -126,7 +126,7 @@ class _BauhausLiquidPainter extends CustomPainter {
       waveWidth,
       waveHeight,
       waveSpeed + 1.5, // Phase shift
-      yOffset, 
+      yOffset,
     );
     canvas.drawPath(pathFront, paintFillFront);
     canvas.drawPath(pathFront, paintStroke);
@@ -146,16 +146,17 @@ class _BauhausLiquidPainter extends CustomPainter {
     // Points were: (i, combinedWave * waveHeight + yOffset)
     // So y=0 is top. As y increases, we go down.
     // If yOffset is small (30), the wave is near the top of the container.
-    
+
     // We need to generate points exactly like the loop.
     final List<Offset> points = [];
     for (double i = 0; i <= size.width; i += 2) {
       // Primary sine
       double primary = math.sin((i * waveWidth) + waveSpeed);
       // Secondary sine
-      double secondary = math.sin((i * waveWidth * 1.3) + (waveSpeed * 0.7)) * 0.3;
+      double secondary =
+          math.sin((i * waveWidth * 1.3) + (waveSpeed * 0.7)) * 0.3;
       double combined = primary + secondary;
-      
+
       points.add(Offset(i, combined * waveHeight + verticalShift));
     }
 
@@ -163,7 +164,8 @@ class _BauhausLiquidPainter extends CustomPainter {
     // Recalculate for size.width to match the wave function perfectly
     double i = size.width;
     double primary = math.sin((i * waveWidth) + waveSpeed);
-    double secondary = math.sin((i * waveWidth * 1.3) + (waveSpeed * 0.7)) * 0.3;
+    double secondary =
+        math.sin((i * waveWidth * 1.3) + (waveSpeed * 0.7)) * 0.3;
     double combined = primary + secondary;
     points.add(Offset(i, combined * waveHeight + verticalShift));
 
@@ -171,7 +173,7 @@ class _BauhausLiquidPainter extends CustomPainter {
     path.lineTo(size.width, 0); // Top Right
     path.lineTo(0, 0); // Top Left
     path.close();
-    
+
     return path;
   }
 

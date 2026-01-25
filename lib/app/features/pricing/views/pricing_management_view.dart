@@ -6,6 +6,9 @@ import 'package:carenest/app/features/pricing/views/service_rate_management_view
 import 'package:carenest/app/features/pricing/views/bulk_operations_view.dart';
 import 'package:carenest/app/features/pricing/views/price_history_view.dart';
 import 'package:carenest/app/features/pricing/views/pricing_configuration_view.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class PricingManagementView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -29,64 +32,64 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
   late AnimationController _animationController;
   final bool _isLoadingNdisItems = false;
   final bool _ndisItemsEmpty = false;
-  final bool _showOnboarding = true; // For onboarding tooltip
+  final bool _showOnboarding = true;
 
-  final List<Map<String, dynamic>> _pricingModules = [
-    {
-      'title': 'Dashboard Overview',
-      'subtitle': 'View pricing analytics and insights',
-      'icon': Icons.dashboard_rounded,
-      'color': const Color(0xFF6366F1),
-      'gradient': [const Color(0xFF6366F1), const Color(0xFF8B5CF6)],
-      'route': 'dashboard',
-      'stats': '12 active metrics'
-    },
-    {
-      'title': 'NDIS Pricing',
-      'subtitle': 'Manage NDIS rates and compliance',
-      'icon': Icons.medical_services_rounded,
-      'color': const Color(0xFF10B981),
-      'gradient': [const Color(0xFF10B981), const Color(0xFF059669)],
-      'route': 'ndis',
-      'stats': '156 NDIS items'
-    },
-    {
-      'title': 'Service Rates',
-      'subtitle': 'Configure service pricing structures',
-      'icon': Icons.rate_review_rounded,
-      'color': const Color(0xFFF59E0B),
-      'gradient': [const Color(0xFFF59E0B), const Color(0xFFD97706)],
-      'route': 'service_rates',
-      'stats': '42 service types'
-    },
-    {
-      'title': 'Bulk Operations',
-      'subtitle': 'Import/export and batch updates',
-      'icon': Icons.batch_prediction_rounded,
-      'color': const Color(0xFF3B82F6),
-      'gradient': [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
-      'route': 'bulk_operations',
-      'stats': '3 pending operations'
-    },
-    {
-      'title': 'Price History',
-      'subtitle': 'Track pricing changes over time',
-      'icon': Icons.history_rounded,
-      'color': const Color(0xFF8B5CF6),
-      'gradient': [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
-      'route': 'price_history',
-      'stats': '248 historical records'
-    },
-    {
-      'title': 'Quick Actions',
-      'subtitle': 'Frequently used pricing tools',
-      'icon': Icons.flash_on_rounded,
-      'color': const Color(0xFFEF4444),
-      'gradient': [const Color(0xFFEF4444), const Color(0xFFDC2626)],
-      'route': 'quick_actions',
-      'stats': '5 shortcuts available'
-    },
-  ];
+  List<Map<String, dynamic>> _getPricingModules(BuildContext context) => [
+        {
+          'title': AppLocalizations.of(context)!.dashboardOverviewTitle,
+          'subtitle': AppLocalizations.of(context)!.dashboardOverviewSubtitle,
+          'icon': Icons.dashboard_rounded,
+          'color': const Color(0xFF6366F1),
+          'gradient': [const Color(0xFF6366F1), const Color(0xFF8B5CF6)],
+          'route': 'dashboard',
+          'stats': AppLocalizations.of(context)!.activeMetricsTitle('12')
+        },
+        {
+          'title': AppLocalizations.of(context)!.ndisPricingTitle,
+          'subtitle': AppLocalizations.of(context)!.ndisPricingSubtitle,
+          'icon': Icons.medical_services_rounded,
+          'color': const Color(0xFF10B981),
+          'gradient': [const Color(0xFF10B981), const Color(0xFF059669)],
+          'route': 'ndis',
+          'stats': AppLocalizations.of(context)!.ndisItemsStat('156')
+        },
+        {
+          'title': AppLocalizations.of(context)!.serviceRatesTitle,
+          'subtitle': AppLocalizations.of(context)!.serviceRatesSubtitle,
+          'icon': Icons.rate_review_rounded,
+          'color': const Color(0xFFF59E0B),
+          'gradient': [const Color(0xFFF59E0B), const Color(0xFFD97706)],
+          'route': 'service_rates',
+          'stats': AppLocalizations.of(context)!.serviceTypesStat('42')
+        },
+        {
+          'title': AppLocalizations.of(context)!.bulkOperationsTitle,
+          'subtitle': AppLocalizations.of(context)!.bulkOperationsSubtitle,
+          'icon': Icons.batch_prediction_rounded,
+          'color': const Color(0xFF3B82F6),
+          'gradient': [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
+          'route': 'bulk_operations',
+          'stats': AppLocalizations.of(context)!.pendingOpsStat('3')
+        },
+        {
+          'title': AppLocalizations.of(context)!.priceHistoryTitle,
+          'subtitle': AppLocalizations.of(context)!.priceHistorySubtitle,
+          'icon': Icons.history_rounded,
+          'color': const Color(0xFF8B5CF6),
+          'gradient': [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
+          'route': 'price_history',
+          'stats': AppLocalizations.of(context)!.historicalRecordsStat('248')
+        },
+        {
+          'title': AppLocalizations.of(context)!.quickActionsTitle,
+          'subtitle': AppLocalizations.of(context)!.quickActionsSubtitle,
+          'icon': Icons.flash_on_rounded,
+          'color': const Color(0xFFEF4444),
+          'gradient': [const Color(0xFFEF4444), const Color(0xFFDC2626)],
+          'route': 'quick_actions',
+          'stats': AppLocalizations.of(context)!.shortcutsAvailableStat('5')
+        },
+      ];
 
   @override
   void initState() {
@@ -107,11 +110,12 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            _buildModernHeader(),
+            _buildBauhausHeader(),
             _buildHorizontalStats(),
             _buildPricingModulesGrid(),
           ],
@@ -120,23 +124,26 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     );
   }
 
-  Widget _buildModernHeader() {
+  Widget _buildBauhausHeader() {
     return Container(
-      color: Colors.white,
+      color: BauhausDesign.surfaceWhite,
       child: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isSmallScreen = constraints.maxWidth < 600;
             return Padding(
-              padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
+              padding: EdgeInsets.all(
+                  isSmallScreen ? BauhausDesign.space4 : BauhausDesign.space6),
               child: Column(
                 children: [
                   Row(
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(12),
+                          color: BauhausDesign.backgroundLight,
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusMd),
+                          border: Border.all(color: BauhausDesign.neutral),
                         ),
                         child: IconButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -144,32 +151,37 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             Icons.arrow_back_ios_new,
                             size: 20,
                           ),
-                          color: const Color(0xFF475569),
+                          color: BauhausDesign.textDark,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: BauhausDesign.space4),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Pricing Management',
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 24 : 28,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF0F172A),
-                              ),
+                              AppLocalizations.of(context)!
+                                  .pricingManagementTitle,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .displaySmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: isSmallScreen ? 24 : 28,
+                                    color: BauhausDesign.textDark,
+                                  ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             if (!isSmallScreen) ...[
-                              const SizedBox(height: 8),
+                              const SizedBox(height: BauhausDesign.space2),
                               Text(
-                                'Manage and optimize your service pricing across different regions and categories',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                ),
+                                AppLocalizations.of(context)!
+                                    .pricingManagementDesc,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: BauhausDesign.textMuted,
+                                    ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -178,42 +190,19 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                         ),
                       ),
                       if (!isSmallScreen)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF10B981),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              const Text(
-                                'System Active',
-                                style: TextStyle(
-                                  color: Color(0xFF10B981),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
+                        BauhausChip(
+                          text: AppLocalizations.of(context)!.systemActive,
+                          color: BauhausDesign.success,
+                          icon: Icons.circle,
                         ),
-                      const SizedBox(width: 12),
-                      // Settings shortcut button (visible on all screen sizes)
+                      const SizedBox(width: BauhausDesign.space3),
+                      // Settings shortcut button
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(12),
+                          color: BauhausDesign.backgroundLight,
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusMd),
+                          border: Border.all(color: BauhausDesign.neutral),
                         ),
                         child: IconButton(
                           onPressed: _openPricingSettings,
@@ -221,57 +210,34 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             Icons.settings,
                             size: 20,
                           ),
-                          tooltip: 'Pricing Settings',
-                          color: const Color(0xFF475569),
+                          tooltip: AppLocalizations.of(context)!
+                              .pricingSettingsTooltip,
+                          color: BauhausDesign.textDark,
                         ),
                       ),
                     ],
                   ),
                   if (isSmallScreen) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: BauhausDesign.space3),
                     Row(
                       children: [
                         Expanded(
                           child: Text(
-                            'Manage and optimize your service pricing',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
+                            AppLocalizations.of(context)!.manageAndOptimizeDesc,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF10B981),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              const Text(
-                                'Active',
-                                style: TextStyle(
-                                  color: Color(0xFF10B981),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
+                        const SizedBox(width: BauhausDesign.space3),
+                        BauhausChip(
+                          text: AppLocalizations.of(context)!.activeLabel,
+                          color: BauhausDesign.success,
+                          icon: Icons.circle,
                         ),
                       ],
                     ),
@@ -285,15 +251,13 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     );
   }
 
-  /// Opens PricingConfigurationView to manage organization-wide pricing settings.
   void _openPricingSettings() {
     final orgId = widget.organizationId;
     final admin = widget.adminEmail;
     final orgName = widget.organizationName;
 
     if (orgId == null || orgId.isEmpty || orgName == null || orgName.isEmpty) {
-      _showSnackBar(
-          'Organization context missing. Cannot open Pricing Settings.',
+      _showSnackBar(AppLocalizations.of(context)!.orgContextMissingError,
           isError: true);
       return;
     }
@@ -313,59 +277,59 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
-        final cardWidth =
-            (screenWidth - 64) / 2; // 2 cards per row on small screens
         final isWideScreen = screenWidth > 600;
 
         if (isWideScreen) {
-          // Horizontal scrollable layout for wide screens
           return Container(
-            height: 145,
-            margin: const EdgeInsets.symmetric(vertical: 16),
+            height: 155,
+            margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
               child: Row(
                 children: [
                   SizedBox(
-                    width: 160,
+                    width: 180,
                     child: _buildStatCard(
-                      title: 'Total Services',
+                      title: AppLocalizations.of(context)!.totalServicesLabel,
                       value: '156',
-                      subtitle: '+12 this month',
+                      subtitle:
+                          AppLocalizations.of(context)!.thisMonthStat('12'),
                       icon: Icons.business_center,
                       color: const Color(0xFF6366F1),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: BauhausDesign.space3),
                   SizedBox(
-                    width: 160,
+                    width: 180,
                     child: _buildStatCard(
-                      title: 'Active Rates',
+                      title: AppLocalizations.of(context)!.activeRatesLabel,
                       value: '142',
-                      subtitle: '3 urgent',
+                      subtitle: AppLocalizations.of(context)!.urgentStat('3'),
                       icon: Icons.check_circle,
                       color: const Color(0xFF10B981),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: BauhausDesign.space3),
                   SizedBox(
-                    width: 160,
+                    width: 180,
                     child: _buildStatCard(
-                      title: 'Pending Updates',
+                      title: AppLocalizations.of(context)!.pendingUpdatesLabel,
                       value: '14',
-                      subtitle: 'vs last quarter',
+                      subtitle: AppLocalizations.of(context)!.vsLastQuarterStat,
                       icon: Icons.pending,
                       color: const Color(0xFFF59E0B),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: BauhausDesign.space3),
                   SizedBox(
-                    width: 160,
+                    width: 180,
                     child: _buildStatCard(
-                      title: 'Avg Rate',
+                      title: AppLocalizations.of(context)!.avgRateLabel,
                       value: '\$85.50',
-                      subtitle: 'projected monthly',
+                      subtitle:
+                          AppLocalizations.of(context)!.projectedMonthlyStat,
                       icon: Icons.attach_money,
                       color: const Color(0xFF3B82F6),
                     ),
@@ -375,53 +339,57 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
             ),
           );
         } else {
-          // Grid layout for smaller screens
           return Container(
-            margin: const EdgeInsets.symmetric(vertical: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
+            padding:
+                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
             child: Column(
               children: [
                 Row(
                   children: [
                     Expanded(
                       child: _buildStatCard(
-                        title: 'Total Services',
+                        title: AppLocalizations.of(context)!.totalServicesLabel,
                         value: '156',
-                        subtitle: '+12 this month',
+                        subtitle:
+                            AppLocalizations.of(context)!.thisMonthStat('12'),
                         icon: Icons.business_center,
                         color: const Color(0xFF6366F1),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: _buildStatCard(
-                        title: 'Active Rates',
+                        title: AppLocalizations.of(context)!.activeRatesLabel,
                         value: '142',
-                        subtitle: '3 urgent',
+                        subtitle: AppLocalizations.of(context)!.urgentStat('3'),
                         icon: Icons.check_circle,
                         color: const Color(0xFF10B981),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: BauhausDesign.space3),
                 Row(
                   children: [
                     Expanded(
                       child: _buildStatCard(
-                        title: 'Pending Updates',
+                        title:
+                            AppLocalizations.of(context)!.pendingUpdatesLabel,
                         value: '14',
-                        subtitle: 'vs last quarter',
+                        subtitle:
+                            AppLocalizations.of(context)!.vsLastQuarterStat,
                         icon: Icons.pending,
                         color: const Color(0xFFF59E0B),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: _buildStatCard(
-                        title: 'Avg Rate',
+                        title: AppLocalizations.of(context)!.avgRateLabel,
                         value: '\$85.50',
-                        subtitle: 'projected monthly',
+                        subtitle:
+                            AppLocalizations.of(context)!.projectedMonthlyStat,
                         icon: Icons.attach_money,
                         color: const Color(0xFF3B82F6),
                       ),
@@ -443,21 +411,8 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     required IconData icon,
     required Color color,
   }) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return BauhausCard(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -465,10 +420,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 ),
                 child: Icon(
                   icon,
@@ -479,40 +434,37 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               const Spacer(),
               Icon(
                 Icons.more_vert,
-                color: Colors.grey[400],
+                color: BauhausDesign.textMuted,
                 size: 16,
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: BauhausDesign.space3),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0F172A),
-            ),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.textDark,
+                ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: BauhausDesign.space1),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
+            style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w600,
+                ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: BauhausDesign.space1),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[500],
-            ),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -524,53 +476,57 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
   Widget _buildPricingModulesGrid() {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: BauhausDesign.surfaceWhite,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(BauhausDesign.radiusLg),
+          topRight: Radius.circular(BauhausDesign.radiusLg),
         ),
+        boxShadow: [BauhausDesign.shadowHard],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(BauhausDesign.space6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF6366F1).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        color: BauhausDesign.primary.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusMd),
                       ),
                       child: const Icon(
                         Icons.apps_rounded,
-                        color: Color(0xFF6366F1),
+                        color: BauhausDesign.primary,
                         size: 24,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Expanded(
+                    const SizedBox(width: BauhausDesign.space4),
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pricing Modules',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0F172A),
-                            ),
+                            AppLocalizations.of(context)!.pricingModulesTitle,
+                            style: BauhausDesign.getTextTheme(context)
+                                .titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textDark,
+                                ),
                           ),
                           Text(
-                            'Choose a module to manage your pricing',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF64748B),
-                            ),
+                            AppLocalizations.of(context)!.chooseModuleDesc,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                ),
                           ),
                         ],
                       ),
@@ -586,16 +542,21 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               return GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                padding: const EdgeInsets.fromLTRB(
+                  BauhausDesign.space6,
+                  0,
+                  BauhausDesign.space6,
+                  BauhausDesign.space6,
+                ),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+                  crossAxisSpacing: BauhausDesign.space4,
+                  mainAxisSpacing: BauhausDesign.space4,
                   childAspectRatio: 1.1,
                 ),
-                itemCount: _pricingModules.length,
+                itemCount: _getPricingModules(context).length,
                 itemBuilder: (context, index) {
-                  final module = _pricingModules[index];
+                  final module = _getPricingModules(context)[index];
                   return _buildPricingModuleCard(module, index);
                 },
               );
@@ -613,7 +574,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         duration: Duration(milliseconds: 600 + (index * 100)),
         curve: Curves.easeOutCubic,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -628,9 +589,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           ],
         ),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -649,10 +610,11 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 children: [
                   Flexible(
                     child: Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusMd),
                       ),
                       child: Icon(
                         module['icon'],
@@ -661,21 +623,24 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: BauhausDesign.space2),
                   Flexible(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 3),
+                        horizontal: BauhausDesign.space2,
+                        vertical: BauhausDesign.space1,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusMd),
                       ),
                       child: Text(
                         module['stats'],
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -684,49 +649,31 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: BauhausDesign.space3),
               Flexible(
                 child: Text(
                   module['title'],
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: BauhausDesign.space1),
               Flexible(
                 child: Text(
                   module['subtitle'],
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.8),
-                    fontSize: 11,
+                    fontSize: 12,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 8),
-              // Row(
-              //   children: [
-              //     const Spacer(),
-              //     Container(
-              //       padding: const EdgeInsets.all(6),
-              //       decoration: BoxDecoration(
-              //         color: Colors.white.withOpacity(0.1),
-              //         borderRadius: BorderRadius.circular(8),
-              //       ),
-              //       child: const Icon(
-              //         Icons.arrow_forward_rounded,
-              //         color: Colors.white,
-              //         size: 14,
-              //       ),
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ),
@@ -777,7 +724,8 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         _showQuickActionsBottomSheet();
         return;
       default:
-        _showSnackBar('Module not available yet', isError: true);
+        _showSnackBar(AppLocalizations.of(context)!.errorOccurred,
+            isError: true);
         return;
     }
 
@@ -808,65 +756,67 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.6,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: BauhausDesign.surfaceWhite,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(BauhausDesign.radiusLg),
+            topRight: Radius.circular(BauhausDesign.radiusLg),
           ),
         ),
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 12),
+              margin: const EdgeInsets.only(top: BauhausDesign.space3),
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: BauhausDesign.neutral,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(24),
+            Padding(
+              padding: const EdgeInsets.all(BauhausDesign.space6),
               child: Text(
-                'Quick Actions',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0F172A),
-                ),
+                AppLocalizations.of(context)!.quickActionsTitle,
+                style:
+                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark,
+                        ),
               ),
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space6),
                 children: [
                   _buildQuickActionTile(
-                    'Bulk Price Update',
-                    'Update multiple prices at once',
+                    AppLocalizations.of(context)!.bulkPriceUpdateTitle,
+                    AppLocalizations.of(context)!.bulkPriceUpdateSubtitle,
                     Icons.update_rounded,
                     const Color(0xFF6366F1),
                     () => _navigateToModule('bulk_operations'),
                   ),
                   _buildQuickActionTile(
-                    'Export Pricing Data',
-                    'Download current pricing information',
+                    AppLocalizations.of(context)!.exportPricingDataTitle,
+                    AppLocalizations.of(context)!.exportPricingDataSubtitle,
                     Icons.download_rounded,
                     const Color(0xFF10B981),
                     () => _navigateToModule('bulk_operations'),
                   ),
                   _buildQuickActionTile(
-                    'Price Analytics',
-                    'View pricing trends and insights',
+                    AppLocalizations.of(context)!.priceAnalyticsTitle,
+                    AppLocalizations.of(context)!.priceAnalyticsSubtitle,
                     Icons.analytics_rounded,
                     const Color(0xFF3B82F6),
                     () => _navigateToModule('dashboard'),
                   ),
                   _buildQuickActionTile(
-                    'NDIS Compliance Check',
-                    'Verify NDIS pricing compliance',
+                    AppLocalizations.of(context)!.ndisComplianceCheckTitle,
+                    AppLocalizations.of(context)!.ndisComplianceCheckSubtitle,
                     Icons.verified_rounded,
                     const Color(0xFFF59E0B),
                     () => _navigateToModule('ndis'),
@@ -888,14 +838,14 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     VoidCallback onTap,
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
       child: ListTile(
         onTap: onTap,
         leading: Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           ),
           child: Icon(
             icon,
@@ -905,27 +855,27 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         ),
         title: Text(
           title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF0F172A),
-          ),
+          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark,
+              ),
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
+          style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: BauhausDesign.textMuted,
+              ),
         ),
         trailing: Icon(
           Icons.arrow_forward_ios_rounded,
-          color: Colors.grey[400],
+          color: BauhausDesign.neutral,
           size: 16,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral),
         ),
-        tileColor: Colors.grey[50],
+        tileColor: BauhausDesign.backgroundLight,
       ),
     );
   }
@@ -933,12 +883,16 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
   void _showSnackBar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+        content: Text(
+          message,
+          style: const TextStyle(color: BauhausDesign.surfaceWhite),
         ),
-        margin: const EdgeInsets.all(16),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.textDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        ),
+        margin: const EdgeInsets.all(BauhausDesign.space4),
       ),
     );
   }

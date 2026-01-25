@@ -1,10 +1,14 @@
 import 'package:carenest/app/features/auth/views/verify_otp_view.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:iconsax/iconsax.dart';
 
 import 'package:carenest/app/features/auth/viewmodels/forgot_password_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ForgotPasswordView extends ConsumerStatefulWidget {
   const ForgotPasswordView({super.key});
@@ -16,8 +20,6 @@ class ForgotPasswordView extends ConsumerStatefulWidget {
 class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _isEmailFocused = false;
-  bool _isEmailValid = false;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -30,8 +32,8 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
       vsync: this,
     );
     _pulseAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.2,
+      begin: 0.95,
+      end: 1.05,
     ).animate(CurvedAnimation(
       parent: _pulseController,
       curve: Curves.easeInOut,
@@ -50,29 +52,25 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 400;
 
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: BauhausDesign.backgroundLight,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+
     return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.arrow_back,
-              color: AppColors.colorBlack87,
-              size: 20,
-            ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: BauhausIconButton(
+            icon: Iconsax.arrow_left,
+            onPressed: () => Navigator.of(context).pop(),
+            variant: BauhausActionVariant.neutral,
+            isSmall: true,
           ),
         ),
       ),
@@ -88,7 +86,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header Section
-                    _buildHeader(),
+                    _buildHeader(context),
 
                     const SizedBox(height: 48),
 
@@ -104,300 +102,134 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Animated Icon - Centered and Bigger
-        AnimatedBuilder(
-          animation: _pulseAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _pulseAnimation.value,
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: AppColors.colorSecondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.colorPrimary.withOpacity(0.1),
-                      blurRadius: 20,
-                      spreadRadius: 2,
+  Widget _buildHeader(BuildContext context) {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Animated Icon - Centered and Bigger
+          AnimatedBuilder(
+            animation: _pulseAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _pulseAnimation.value,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.secondary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: BauhausDesign.secondary.withOpacity(0.3),
+                      width: 2,
                     ),
-                  ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: BauhausDesign.secondary.withOpacity(0.15),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Iconsax.key,
+                    color: BauhausDesign.secondary,
+                    size: 48,
+                  ),
                 ),
-                child: Icon(
-                  Icons.key,
-                  color: AppColors.colorPrimary,
-                  size: 48,
+              );
+            },
+          ),
+          const SizedBox(height: 32),
+
+          // Title
+          Text(
+            AppLocalizations.of(context)!.forgotPasswordHeader,
+            textAlign: TextAlign.center,
+            style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.bold,
                 ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 32),
-
-        // Title
-        Text(
-          'Forgot Password?',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: AppColors.colorBlack87,
-            height: 1.2,
           ),
-        ),
-        const SizedBox(height: 12),
+          const SizedBox(height: 12),
 
-        // Subtitle
-        Text(
-          'Don\'t worry! Enter your email address and we\'ll send you a verification code to reset your password.',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
-            height: 1.5,
+          // Subtitle
+          Text(
+            AppLocalizations.of(context)!.forgotPasswordSubtitle,
+            textAlign: TextAlign.center,
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  height: 1.5,
+                ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildForm(BuildContext context, ForgotPasswordViewModel viewModel,
       bool isSmallScreen) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Email Field
-        _buildEmailField(viewModel),
-        const SizedBox(height: 32),
-
-        // Send Button
-        _buildSendButton(context, viewModel, isSmallScreen),
-        const SizedBox(height: 24),
-
-        // Back to Login
-        _buildBackToLogin(),
-      ],
-    );
-  }
-
-  Widget _buildEmailField(ForgotPasswordViewModel viewModel) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Email Address',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorBlack87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: TextFormField(
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Email Field
+          BauhausTextField(
             controller: viewModel.model.emailController,
+            label: AppLocalizations.of(context)!.emailAddressLabel,
+            hintText: AppLocalizations.of(context)!.enterEmailHint,
             keyboardType: TextInputType.emailAddress,
-            onChanged: (value) {
-              setState(() {
-                _isEmailValid = value.contains('@') && value.contains('.');
-              });
-            },
-            onTap: () {
-              setState(() {
-                _isEmailFocused = true;
-              });
-            },
-            onFieldSubmitted: (value) {
-              setState(() {
-                _isEmailFocused = false;
-              });
-            },
+            prefixIcon: Icon(Iconsax.sms, color: BauhausDesign.textMuted),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email address';
+                return AppLocalizations.of(context)!.emailRequired;
               }
               if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                   .hasMatch(value)) {
-                return 'Please enter a valid email address';
+                return AppLocalizations.of(context)!.emailInvalid;
               }
               return null;
             },
-            decoration: InputDecoration(
-              hintText: 'Enter your email address',
-              hintStyle: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 16,
-              ),
-              prefixIcon: Icon(
-                Icons.email_outlined,
-                color:
-                    _isEmailFocused ? AppColors.colorPrimary : Colors.grey[400],
-                size: 20,
-              ),
-              suffixIcon: _isEmailValid
-                  ? Icon(
-                      Icons.check_circle,
-                      color: AppColors.colorGreen,
-                      size: 20,
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: AppColors.colorPrimary,
-                  width: 2,
-                ),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(
-                  color: AppColors.colorRed,
-                  width: 2,
-                ),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(
-                  color: AppColors.colorRed,
-                  width: 2,
-                ),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 16,
-              ),
-            ),
           ),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildSendButton(BuildContext context,
-      ForgotPasswordViewModel viewModel, bool isSmallScreen) {
-    return Container(
-      height: isSmallScreen ? 56 : 64,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.colorPrimary,
-            AppColors.colorSecondary,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.colorPrimary.withOpacity(0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+          const SizedBox(height: 32),
+
+          // Send Button
+          BauhausActionButton(
+            text: AppLocalizations.of(context)!.sendVerificationCode,
+            icon: Iconsax.send_1,
+            isLoading: viewModel.isLoading,
+            onPressed: () => _sendVerificationCode(context, viewModel),
+            variant: BauhausActionVariant.primary,
+            isFullWidth: true,
           ),
+
+          const SizedBox(height: 24),
+
+          // Back to Login
+          _buildBackToLogin(context),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: viewModel.isLoading
-              ? null
-              : () => _sendVerificationCode(context, viewModel),
-          child: Container(
-            alignment: Alignment.center,
-            child: viewModel.isLoading
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Sending...',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isSmallScreen ? 16 : 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Send Verification Code',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isSmallScreen ? 16 : 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
-        ),
-      ),
     );
   }
 
-  Widget _buildBackToLogin() {
+  Widget _buildBackToLogin(BuildContext context) {
     return Center(
       child: TextButton(
         onPressed: () => Navigator.of(context).pop(),
         child: RichText(
           text: TextSpan(
-            text: 'Remember your password? ',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 16,
-            ),
+            text: '${AppLocalizations.of(context)!.rememberPassword} ',
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
             children: [
               TextSpan(
-                text: 'Back to Login',
-                style: TextStyle(
-                  color: AppColors.colorPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
+                text: AppLocalizations.of(context)!.loginLink,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ],
           ),
@@ -412,35 +244,20 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
       return;
     }
 
-    if (viewModel.model.emailController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'Please enter your email address',
-            style: TextStyle(color: Colors.white),
-          ),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
-      return;
-    }
-
     try {
       await viewModel.resetPassword(
         context,
         (response) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                'Verification code sent successfully!',
-                style: TextStyle(color: Colors.white),
+              content: Text(
+                AppLocalizations.of(context)!.verificationCodeSent,
+                style: TextStyle(color: BauhausDesign.surfaceWhite),
               ),
+              backgroundColor: BauhausDesign.success,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
             ),
           );
@@ -461,13 +278,14 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
-              'Failed to send verification code. Please try again.',
-              style: TextStyle(color: Colors.white),
+            content: Text(
+              AppLocalizations.of(context)!.failedToSendCode,
+              style: TextStyle(color: BauhausDesign.surfaceWhite),
             ),
+            backgroundColor: BauhausDesign.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
           ),
         );

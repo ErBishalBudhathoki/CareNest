@@ -1,12 +1,13 @@
-import 'package:carenest/app/features/invoice/widgets/modern_invoice_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/viewmodels/invoice_list_viewmodel.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/widgets/loading_indicator.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class InvoiceListView extends ConsumerStatefulWidget {
   final String organizationId;
@@ -22,140 +23,216 @@ class InvoiceListView extends ConsumerStatefulWidget {
   ConsumerState<InvoiceListView> createState() => _InvoiceListViewState();
 }
 
-class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
+class _InvoiceListViewState extends ConsumerState<InvoiceListView> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _statusFilter = 'all';
 
   @override
   void initState() {
     super.initState();
-    // Load invoices when the view initializes
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(invoiceListViewModelProvider.notifier)
-          .loadInvoices(widget.organizationId);
+      _loadInvoices();
     });
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      _loadInvoices();
+    }
+  }
+
+  void _loadInvoices() {
+    final invoiceType = _tabController.index == 0 ? 'client' : 'employee';
+    ref.read(invoiceListViewModelProvider.notifier).loadInvoices(
+      widget.organizationId,
+      invoiceType: invoiceType,
+    );
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabSelection);
+    _tabController.dispose();
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final invoiceListState = ref.watch(invoiceListViewModelProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
+      backgroundColor: BauhausDesign.surfaceWhite,
       appBar: AppBar(
         title: Text(
-          'Invoices',
-          style: ModernInvoiceDesign.headlineMedium.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+          l10n.allInvoices,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w800,
+              ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.surfaceWhite,
+        surfaceTintColor: Colors.transparent, // Disable surface tint
+        elevation: 0,
+        shape: const Border(
+          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Column(
+            children: [
+              TabBar(
+                controller: _tabController,
+                labelColor: BauhausDesign.textDark,
+                unselectedLabelColor: BauhausDesign.textMuted,
+                indicatorColor: BauhausDesign.primary,
+                indicatorWeight: 4,
+                labelStyle: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                unselectedLabelStyle:
+                    BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                tabs: const [
+                  Tab(text: 'Client Invoices'),
+                  Tab(text: 'Employee Invoices'),
+                ],
+              ),
+            ],
           ),
         ),
-        backgroundColor: AppColors.colorPrimary,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              ref
-                  .read(invoiceListViewModelProvider.notifier)
-                  .loadInvoices(widget.organizationId);
-            },
+            icon: const Icon(Icons.refresh, color: BauhausDesign.textDark),
+            onPressed: _loadInvoices,
           ),
         ],
       ),
       body: Column(
         children: [
-          _buildSearchAndFilter(),
+          _buildSearchAndFilter(l10n),
           Expanded(
-            child: _buildInvoiceList(invoiceListState),
+            child: _buildInvoiceList(invoiceListState, l10n),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to invoice generation
-          Navigator.pushNamed(
-            context,
-            '/enhancedInvoiceGeneration',
-            arguments: {
-              'userEmail': widget.userEmail,
-              'organizationId': widget.organizationId,
+      floatingActionButton: Container(
+        height: 56,
+        width: 56,
+        decoration: BoxDecoration(
+          color: BauhausDesign.primary,
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          boxShadow: const [BauhausDesign.shadowHard],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/enhancedInvoiceGeneration',
+                arguments: {
+                  'userEmail': widget.userEmail,
+                  'organizationId': widget.organizationId,
+                },
+              );
             },
-          );
-        },
-        backgroundColor: AppColors.colorPrimary,
-        child: const Icon(Icons.add, color: Colors.white),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            child: const Icon(Icons.add, color: BauhausDesign.surfaceWhite),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildSearchAndFilter() {
+  Widget _buildSearchAndFilter(AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      color: Colors.white,
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      color: BauhausDesign.surfaceWhite,
       child: Column(
         children: [
-          // Search bar
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search invoices...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: AppColors.colorPrimary),
-              ),
-            ),
+          BauhausSearchBar(
+            controller: _searchController,
+            hintText: l10n.searchInvoices,
             onChanged: (value) {
               setState(() {
                 _searchQuery = value;
               });
               _filterInvoices();
             },
+            onClear: () {
+              setState(() {
+                _searchQuery = '';
+                _searchController.clear();
+              });
+              _filterInvoices();
+            },
           ),
-          const SizedBox(height: 12),
-          // Status filter
+          const SizedBox(height: BauhausDesign.space4),
           Row(
             children: [
-              const Text(
-                'Status: ',
+              Text(
+                l10n.statusLabel,
                 style:
-                    TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
+                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w700,
+                        ),
               ),
+              const SizedBox(width: BauhausDesign.space2),
               Expanded(
-                child: DropdownButton<String>(
-                  value: _statusFilter,
-                  isExpanded: true,
-                  items: const [
-                    DropdownMenuItem(value: 'all', child: Text('All')),
-                    DropdownMenuItem(value: 'draft', child: Text('Draft')),
-                    DropdownMenuItem(value: 'sent', child: Text('Sent')),
-                    DropdownMenuItem(value: 'paid', child: Text('Paid')),
-                    DropdownMenuItem(value: 'overdue', child: Text('Overdue')),
-                  ],
-                  style: ModernInvoiceDesign.bodyMedium.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.surfaceWhite,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    boxShadow: const [BauhausDesign.shadowHardSm],
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      _statusFilter = value ?? 'all';
-                    });
-                    _filterInvoices();
-                  },
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _statusFilter,
+                      isExpanded: true,
+                      dropdownColor: BauhausDesign.surfaceWhite,
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: BauhausDesign.textDark),
+                      items: [
+                        DropdownMenuItem(
+                            value: 'all', child: Text(l10n.statusAll)),
+                        DropdownMenuItem(
+                            value: 'draft', child: Text(l10n.statusDraft)),
+                        DropdownMenuItem(
+                            value: 'sent', child: Text(l10n.statusSent)),
+                        DropdownMenuItem(
+                            value: 'paid', child: Text(l10n.statusPaid)),
+                        DropdownMenuItem(
+                            value: 'overdue', child: Text(l10n.statusOverdue)),
+                      ],
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w600,
+                          ),
+                      onChanged: (value) {
+                        setState(() {
+                          _statusFilter = value ?? 'all';
+                        });
+                        _filterInvoices();
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -165,230 +242,181 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
     );
   }
 
-  Widget _buildInvoiceList(InvoiceListState state) {
+  Widget _buildInvoiceList(InvoiceListState state, AppLocalizations l10n) {
     if (state.isLoading) {
-      return const Center(child: LoadingIndicator());
+      return Center(
+        child: BauhausLoadingState(
+          message: l10n.loadingInvoices,
+        ),
+      );
     }
 
     if (state.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.grey.shade400,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Error loading invoices',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              state.error!,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                ref
-                    .read(invoiceListViewModelProvider.notifier)
-                    .loadInvoices(widget.organizationId);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.colorPrimary,
-              ),
-              child: const Text('Retry', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        ),
+      return BauhausErrorState(
+        title: l10n.errorLoadingInvoices,
+        message: state.error!,
+        onRetry: () {
+          ref
+              .read(invoiceListViewModelProvider.notifier)
+              .loadInvoices(widget.organizationId);
+        },
       );
     }
 
     final filteredInvoices = _getFilteredInvoices(state.invoices);
 
     if (filteredInvoices.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.receipt_long,
-              size: 64,
-              color: Colors.grey.shade400,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _searchQuery.isNotEmpty || _statusFilter != 'all'
-                  ? 'No invoices match your filters'
-                  : 'No invoices found',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _searchQuery.isNotEmpty || _statusFilter != 'all'
-                  ? 'Try adjusting your search or filters'
-                  : 'Create your first invoice to get started',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-              ),
-            ),
-          ],
-        ),
+      return BauhausEmptyState(
+        title: l10n.noInvoicesFound,
+        message: l10n.createFirstInvoice,
+        icon: Icons.receipt_long,
       );
     }
 
-    return ListView.builder(
+    return ListView.separated(
       controller: _scrollController,
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
       itemCount: filteredInvoices.length,
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: BauhausDesign.space3),
       itemBuilder: (context, index) {
         final invoice = filteredInvoices[index];
-        return _buildInvoiceCard(invoice);
+        return _buildInvoiceCard(invoice, l10n);
       },
     );
   }
 
-  Widget _buildInvoiceCard(InvoiceListModel invoice) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12.0),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: InkWell(
-        onTap: () {
-          _viewInvoiceDetails(invoice);
-        },
-        borderRadius: BorderRadius.circular(8.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildInvoiceCard(InvoiceListModel invoice, AppLocalizations l10n) {
+    return BauhausCard(
+      onTap: () => _viewInvoiceDetails(invoice),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      invoice.invoiceNumber,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.colorPrimary,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildStatusChip(invoice.status),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                invoice.clientName,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  invoice.invoiceNumber,
+                  style:
+                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.textDark,
+                          ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Due: ${DateFormat('MMM dd, yyyy').format(invoice.dueDate)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
+              const SizedBox(width: BauhausDesign.space3),
+              _buildStatusChip(invoice.status, l10n),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            invoice.clientName,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
                 ),
+          ),
+          const SizedBox(height: BauhausDesign.space1),
+          Text(
+            '${l10n.dueLabel}: ${DateFormat.yMMMd(l10n.localeName).format(invoice.dueDate)}',
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.priceDisplay(l10n.currencySymbol,
+                    invoice.totalAmount.toStringAsFixed(2)),
+                style:
+                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.primary,
+                        ),
               ),
-              const SizedBox(height: 8),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    '\$${invoice.totalAmount.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  if (invoice.status.toLowerCase() != 'paid') ...[
+                    BauhausActionButton(
+                      onPressed: () => _markAsPaid(invoice),
+                      icon: Icons.check_circle,
+                      variant: BauhausActionVariant.ghost,
+                      textColor: BauhausDesign.success,
+                      isSmall: true,
                     ),
+                    const SizedBox(width: BauhausDesign.space2),
+                  ],
+                  BauhausActionButton(
+                    onPressed: () => _shareInvoice(invoice),
+                    icon: Icons.share,
+                    variant: BauhausActionVariant.ghost,
+                    isSmall: true,
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.share, size: 20),
-                        onPressed: () => _shareInvoice(invoice),
-                        tooltip: 'Share',
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete,
-                            size: 20, color: Colors.red),
-                        onPressed: () => _deleteInvoice(invoice),
-                        tooltip: 'Delete',
-                      ),
-                    ],
+                  const SizedBox(width: BauhausDesign.space2),
+                  BauhausActionButton(
+                    onPressed: () => _deleteInvoice(invoice, l10n),
+                    icon: Icons.delete_outline,
+                    variant: BauhausActionVariant.ghost,
+                    textColor: BauhausDesign.error,
+                    isSmall: true,
                   ),
                 ],
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildStatusChip(String status) {
-    Color backgroundColor;
-    Color textColor;
+  void _markAsPaid(InvoiceListModel invoice) {
+    ref.read(invoiceListViewModelProvider.notifier).markAsPaid(
+          invoice.id,
+          widget.organizationId,
+          invoice.totalAmount,
+          updatedBy: widget.userEmail,
+        );
+  }
+
+  Widget _buildStatusChip(String status, AppLocalizations l10n) {
+    BauhausChipVariant variant;
+    IconData icon;
+    String label;
 
     switch (status.toLowerCase()) {
       case 'paid':
-        backgroundColor = Colors.green.shade100;
-        textColor = Colors.green.shade800;
+        variant = BauhausChipVariant.success;
+        icon = Icons.check_circle_outline;
+        label = l10n.statusPaid;
         break;
       case 'sent':
-        backgroundColor = Colors.blue.shade100;
-        textColor = Colors.blue.shade800;
+        variant = BauhausChipVariant.secondary;
+        icon = Icons.send_outlined;
+        label = l10n.statusSent;
         break;
       case 'overdue':
-        backgroundColor = Colors.red.shade100;
-        textColor = Colors.red.shade800;
+        variant = BauhausChipVariant.error;
+        icon = Icons.warning_amber_rounded;
+        label = l10n.statusOverdue;
         break;
       case 'draft':
       default:
-        backgroundColor = Colors.grey.shade100;
-        textColor = Colors.grey.shade800;
+        variant = BauhausChipVariant.neutral;
+        icon = Icons.edit_note;
+        label = l10n.statusDraft;
         break;
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        status.toUpperCase(),
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          color: textColor,
-        ),
-      ),
+    return BauhausChip(
+      label: label,
+      icon: icon,
+      variant: variant,
+      isSmall: true,
     );
   }
 
@@ -408,12 +436,10 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
   }
 
   void _filterInvoices() {
-    // Trigger rebuild to apply filters
     setState(() {});
   }
 
   void _viewInvoiceDetails(InvoiceListModel invoice) {
-    // Navigate to invoice details view
     Navigator.pushNamed(
       context,
       Routes.invoiceDetails,
@@ -430,19 +456,33 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
         .shareInvoice(invoice.id, widget.organizationId);
   }
 
-  void _deleteInvoice(InvoiceListModel invoice) {
+  void _deleteInvoice(InvoiceListModel invoice, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Invoice'),
+          backgroundColor: BauhausDesign.surfaceWhite,
+          title: Text(
+            l10n.deleteInvoice,
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
+          ),
           content: Text(
-            'Are you sure you want to delete invoice ${invoice.invoiceNumber}? This action cannot be undone.',
+            l10n.deleteInvoiceConfirm(invoice.invoiceNumber),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(
+                l10n.cancel,
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: BauhausDesign.textMuted,
+                    ),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -451,10 +491,13 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> {
                     .read(invoiceListViewModelProvider.notifier)
                     .deleteInvoice(invoice.id, widget.organizationId);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
+              child: Text(
+                l10n.delete,
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: BauhausDesign.error,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-              child: const Text('Delete'),
             ),
           ],
         );

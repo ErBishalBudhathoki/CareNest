@@ -1,12 +1,15 @@
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/admin/utils/employee_invoice_payload.dart';
 import 'package:carenest/app/features/admin/utils/employee_invoice_validation.dart';
-import 'package:carenest/app/shared/design_system/bauhaus_design_system.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_date_range_picker.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer_io.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/config/environment.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class EmployeeInvoiceGenerationView extends ConsumerStatefulWidget {
@@ -117,6 +120,7 @@ class _EmployeeInvoiceGenerationViewState
 
   bool _includeExpenses = false;
   bool _includeTax = false;
+  bool _applyMinEngagement = true; // Default to true (SCHADS standard)
   double _taxRate = 0.10;
 
   DateTimeRange? _dateRange;
@@ -354,24 +358,14 @@ class _EmployeeInvoiceGenerationViewState
           end: DateTime.now(),
         );
 
-    final picked = await showDateRangePicker(
+    final picked = await showDialog<DateTimeRange>(
       context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(DateTime.now().year + 1),
-      initialDateRange: initial,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: BauhausDesign.textDark,
-              surface: BauhausDesign.surfaceLight,
-              onSurface: BauhausDesign.textDark,
-            ),
-          ),
-          child: child ?? const SizedBox.shrink(),
-        );
-      },
+      builder: (context) => BauhausDateRangePicker(
+        initialStartDate: initial.start,
+        initialEndDate: initial.end,
+        firstDate: DateTime(2020),
+        lastDate: DateTime(DateTime.now().year + 1),
+      ),
     );
 
     if (picked != null) {
@@ -461,6 +455,7 @@ class _EmployeeInvoiceGenerationViewState
         startDate: start,
         endDate: end,
         invoiceType: 'employee',
+        applyMinEngagement: _applyMinEngagement,
       );
 
       final invoices = service.invoices;
@@ -678,10 +673,19 @@ class _EmployeeInvoiceGenerationViewState
       padding: const EdgeInsets.all(BauhausDesign.space4),
       child: isWide
           ? Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _buildSelectionPanel()),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: _buildSelectionPanel(),
+                  ),
+                ),
                 const SizedBox(width: BauhausDesign.space4),
-                Expanded(child: _buildConfigurationPanel()),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: _buildConfigurationPanel(),
+                  ),
+                ),
               ],
             )
           : ListView(
@@ -694,49 +698,112 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
+  // Neo-Brutalist Color Palette
+  static const Color _neoBlue = Color(0xFF1A237E);
+  static const Color _neoRed = Color(0xFFD50000);
+  static const Color _neoGreen = Color(0xFF00C853);
+  static const Color _neoBlack = Color(0xFF000000);
+  static const Color _neoWhite = Color(0xFFFFFFFF);
+  static const double _neoBorderWidth = 2.5;
+
   Widget _buildSelectionPanel() {
-    return _bauhausPanel(
-      title: '1) Select Employees & Clients',
-      color: BauhausDesign.secondary,
+    // Determine height based on content or fixed height if needed. 
+    // The design looks like a full-height card.
+    return Container(
+      margin: const EdgeInsets.only(right: 8, bottom: 8),
+      decoration: BoxDecoration(
+        color: _neoBlue,
+        borderRadius: BorderRadius.circular(0), // Sharp corners
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        boxShadow: const [
+          BoxShadow(
+            color: _neoBlack,
+            offset: Offset(8, 8),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Employees',
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
+          // 1) Header
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: const BoxDecoration(
+              color: _neoBlack,
+              boxShadow: [
+                 BoxShadow(
+                  color: _neoWhite,
+                  offset: Offset(4, 4),
+                  blurRadius: 0,
                 ),
+              ],
+            ),
+            child: Text(
+              '1) SELECT EMPLOYEES & CLIENTS',
+              style: GoogleFonts.oswald(
+                color: _neoWhite,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.0,
+              ),
+            ),
           ),
-          const SizedBox(height: BauhausDesign.space3),
+          const SizedBox(height: 32),
+
+          // 2) Employees Section
+          _buildSectionHeader('EMPLOYEES'),
+          const SizedBox(height: 16),
           _buildEmployeesList(),
-          const SizedBox(height: BauhausDesign.space4),
-          Text(
-            'Selected Employees',
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: BauhausDesign.space3),
+          
+          const SizedBox(height: 32),
+
+          // 3) Selected Employees Section
+          _buildSectionHeader('SELECTED EMPLOYEES'),
+          const SizedBox(height: 16),
           _buildSelectedEmployeesConfig(),
         ],
       ),
     );
   }
 
+  Widget _buildSectionHeader(String title) {
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 24,
+          color: _neoRed,
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: GoogleFonts.oswald(
+            color: _neoWhite,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildEmployeesList() {
     return Container(
-      height: 260,
+      // Fixed height or flexible? Design implies a list. 
+      // Keeping height constraint but updating style.
+      height: 260, 
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
       ),
       child: ListView.separated(
         itemCount: _employees.length,
         separatorBuilder: (_, __) =>
-            const Divider(height: 1, color: BauhausDesign.neutral),
+            const Divider(height: 1, thickness: 1.5, color: _neoBlack),
         itemBuilder: (context, index) {
           final e = _employees[index];
           final email = e['email']?.toString() ?? '';
@@ -748,32 +815,66 @@ class _EmployeeInvoiceGenerationViewState
           final isSelected = email.isNotEmpty &&
               _selectedEmployeesByEmail.containsKey(email);
 
-          return ListTile(
-            dense: true,
-            title: Text(
-              name.isNotEmpty ? name : 'Unknown',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  ),
-            ),
-            subtitle: Text(
-              email,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            trailing: Checkbox(
-              value: isSelected,
-              activeColor: BauhausDesign.primary,
-              checkColor: BauhausDesign.textDark,
-              onChanged: (_) => _toggleEmployee(e),
-            ),
+          return InkWell(
             onTap: () => _toggleEmployee(e),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          (name.isNotEmpty ? name : 'UNKNOWN').toUpperCase(),
+                          style: GoogleFonts.oswald(
+                            color: _neoBlack,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          email,
+                          style: GoogleFonts.robotoMono(
+                            color: _neoBlack.withOpacity(0.6),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildNeoCheckbox(isSelected),
+                ],
+              ),
+            ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildNeoCheckbox(bool isSelected) {
+    return Container(
+      width: 24,
+      height: 24,
+      decoration: BoxDecoration(
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: 2),
+      ),
+      padding: const EdgeInsets.all(2), // Gap between border and fill
+      child: isSelected
+          ? Container(
+              color: _neoRed,
+              child: const Icon(
+                Icons.check,
+                size: 14,
+                color: _neoWhite,
+              ),
+            )
+          : null,
     );
   }
 
@@ -794,79 +895,115 @@ class _EmployeeInvoiceGenerationViewState
     final hasClientSelectionError =
         !employee.allClientsMode && employee.selectedClientEmail.isEmpty;
     final hasBankError = employee.bankDetailsError.isNotEmpty;
+    final isValid = !hasClientSelectionError && !hasBankError;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        boxShadow: const [
+          BoxShadow(
+            color: _neoBlack,
+            offset: Offset(4, 4),
+            blurRadius: 0,
+          ),
+        ],
       ),
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(
-          horizontal: BauhausDesign.space4,
-          vertical: BauhausDesign.space2,
-        ),
-        collapsedIconColor: BauhausDesign.textDark,
-        iconColor: BauhausDesign.textDark,
-        title: Text(
-          employee.name.isNotEmpty ? employee.name : employee.email,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w900,
-              ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          employee.email,
-          style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.neutral,
-                fontWeight: FontWeight.w600,
-              ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (employee.isLoadingClients || employee.isLoadingBankDetails)
-              const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else if (hasClientSelectionError || hasBankError)
-              const Icon(Icons.error_outline_rounded,
-                  color: BauhausDesign.error, size: 18)
-            else
-              const Icon(Icons.check_circle_rounded,
-                  color: BauhausDesign.success, size: 18),
-          ],
-        ),
+      child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-                BauhausDesign.space4,
-                0,
-                BauhausDesign.space4,
-                BauhausDesign.space4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildEmployeeClientModeToggle(employee),
-                const SizedBox(height: BauhausDesign.space3),
-                _buildEmployeeClientsList(employee),
-                if (hasClientSelectionError) ...[
-                  const SizedBox(height: BauhausDesign.space3),
-                  _errorInlineBox(
-                      'Select a client for ${employee.name} (specific-client mode).'),
-                ],
-                if (hasBankError) ...[
-                  const SizedBox(height: BauhausDesign.space3),
-                  _errorInlineBox(employee.bankDetailsError),
-                ],
-              ],
+            padding: const EdgeInsets.only(left: 6),
+            child: Theme(
+              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                  tilePadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  collapsedIconColor: _neoBlack,
+                  iconColor: _neoBlack,
+                  title: Text(
+                    (employee.name.isNotEmpty ? employee.name : employee.email).toUpperCase(),
+                    style: GoogleFonts.oswald(
+                      color: _neoBlack,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: Text(
+                    employee.email,
+                    style: GoogleFonts.robotoMono(
+                      color: _neoBlack.withOpacity(0.6),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (employee.isLoadingClients || employee.isLoadingBankDetails)
+                        const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: _neoBlack,
+                          ),
+                        )
+                      else if (!isValid)
+                        const Icon(Icons.error_outline_rounded,
+                            color: _neoRed, size: 24)
+                      else
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: _neoGreen,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: _neoBlack, width: 1.5),
+                          ),
+                          child: const Icon(Icons.check,
+                              color: _neoWhite, size: 16),
+                        ),
+                      const SizedBox(width: 12),
+                      const Icon(Icons.expand_more, color: _neoBlack),
+                    ],
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Divider(color: _neoBlack, thickness: 1),
+                          const SizedBox(height: 16),
+                          _buildEmployeeClientModeToggle(employee),
+                          const SizedBox(height: 16),
+                          _buildEmployeeClientsList(employee),
+                          if (hasClientSelectionError) ...[
+                            const SizedBox(height: 16),
+                            _buildNeoErrorBox(
+                                'Select a client for ${employee.name} (specific-client mode).'),
+                          ],
+                          if (hasBankError) ...[
+                            const SizedBox(height: 16),
+                            _buildNeoErrorBox(employee.bankDetailsError),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 6,
+            child: Container(
+              color: _neoRed,
             ),
           ),
         ],
@@ -876,43 +1013,29 @@ class _EmployeeInvoiceGenerationViewState
 
   Widget _buildEmployeeClientModeToggle(_EmployeeInvoiceEmployeeState employee) {
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space3),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
       ),
       child: Column(
         children: [
-          RadioListTile<bool>(
+          _buildNeoRadioTile(
+            title: 'ALL CLIENTS',
+            subtitle: 'Include all clients for this employee',
             value: true,
             groupValue: employee.allClientsMode,
-            dense: true,
-            activeColor: BauhausDesign.primary,
-            title: Text(
-              'All clients for this employee',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
             onChanged: (v) => _updateSelectedEmployee(
               employee.email,
               (e) => e.copyWith(allClientsMode: true, selectedClientEmail: ''),
             ),
           ),
-          RadioListTile<bool>(
+          const SizedBox(height: 8),
+          _buildNeoRadioTile(
+            title: 'SPECIFIC CLIENT',
+            subtitle: 'Select one client to invoice',
             value: false,
             groupValue: employee.allClientsMode,
-            dense: true,
-            activeColor: BauhausDesign.primary,
-            title: Text(
-              'Specific client for this employee',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
             onChanged: (v) => _updateSelectedEmployee(
               employee.email,
               (e) => e.copyWith(allClientsMode: false),
@@ -923,247 +1046,434 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
+  Widget _buildNeoRadioTile({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required bool groupValue,
+    required ValueChanged<bool?> onChanged,
+  }) {
+    final isSelected = value == groupValue;
+    return InkWell(
+      onTap: () => onChanged(value),
+      child: Row(
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: _neoBlack, width: 2),
+              color: isSelected ? _neoBlack : _neoWhite,
+            ),
+            child: isSelected
+                ? Center(
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _neoWhite,
+                      ),
+                    ),
+                  )
+                : null,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.oswald(
+                    color: _neoBlack,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.robotoMono(
+                    color: _neoBlack.withOpacity(0.6),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEmployeeClientsList(_EmployeeInvoiceEmployeeState employee) {
-    if (employee.isLoadingClients) return _hintBox('Loading clients...');
+    if (employee.isLoadingClients) return _buildNeoHintBox('LOADING CLIENTS...');
     if (employee.clients.isEmpty) {
-      return _hintBox('No clients found for this employee.');
+      return _buildNeoHintBox('NO CLIENTS FOUND.');
     }
 
     return Container(
       height: 220,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
       ),
       child: ListView.separated(
         itemCount: employee.clients.length,
         separatorBuilder: (_, __) =>
-            const Divider(height: 1, color: BauhausDesign.neutral),
+            const Divider(height: 1, thickness: 1.5, color: _neoBlack),
         itemBuilder: (context, index) {
           final c = employee.clients[index];
           final email = c['clientEmail']?.toString() ?? '';
           final name = c['clientName']?.toString() ?? email;
           final isSelected =
               !employee.allClientsMode && email == employee.selectedClientEmail;
+          final isDisabled = employee.allClientsMode;
 
-          return ListTile(
-            dense: true,
-            enabled: !employee.allClientsMode,
-            title: Text(
-              name.isNotEmpty ? name : 'Unknown Client',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  ),
-            ),
-            subtitle: Text(
-              email,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            trailing: isSelected
-                ? Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: BauhausDesign.success,
-                      borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
-                      border: Border.all(
-                          color: BauhausDesign.neutral, width: 1.5),
-                    ),
-                    child: const Icon(Icons.check_rounded,
-                        color: BauhausDesign.textDark, size: 16),
-                  )
-                : null,
-            onTap: employee.allClientsMode
+          return InkWell(
+            onTap: isDisabled
                 ? null
                 : () => _updateSelectedEmployee(
                       employee.email,
                       (e) => e.copyWith(selectedClientEmail: email),
                     ),
+            child: Container(
+              color: isSelected ? _neoBlack.withOpacity(0.05) : null,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          (name.isNotEmpty ? name : 'UNKNOWN').toUpperCase(),
+                          style: GoogleFonts.oswald(
+                            color: isDisabled ? _neoBlack.withOpacity(0.4) : _neoBlack,
+                            fontSize: 14,
+                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          email,
+                          style: GoogleFonts.robotoMono(
+                            color: isDisabled ? _neoBlack.withOpacity(0.3) : _neoBlack.withOpacity(0.6),
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isSelected)
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: _neoGreen,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: _neoBlack, width: 1.5),
+                      ),
+                      child: const Icon(Icons.check, color: _neoWhite, size: 12),
+                    ),
+                ],
+              ),
+            ),
           );
         },
       ),
     );
   }
 
-  Widget _buildConfigurationPanel() {
-    return _bauhausPanel(
-      title: '2) Configure & Generate',
-      color: BauhausDesign.accent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildNeoHintBox(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.robotoMono(
+          color: _neoBlack.withOpacity(0.7),
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildNeoErrorBox(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: _neoRed,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+      ),
+      child: Row(
         children: [
-          _buildSelectionSummary(),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildOptionsSection(),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildBankDetailsSection(),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildGenerateSection(),
-          if ((_generateError ?? '').isNotEmpty) ...[
-            const SizedBox(height: BauhausDesign.space3),
-            _errorInlineBox(_generateError!),
-          ],
-          if (_generatedResults.isNotEmpty) ...[
-            const SizedBox(height: BauhausDesign.space4),
-            _buildGeneratedPdfsSection(),
-          ],
+          const Icon(Icons.error_outline, color: _neoWhite, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text.toUpperCase(),
+              style: GoogleFonts.oswald(
+                color: _neoWhite,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSelectionSummary() {
+  static const Color _neoYellow = Color(0xFFFFC107);
+  static const Color _neoBeige = Color(0xFFF0F0E8);
+
+  Widget _buildConfigurationPanel() {
+    return Container(
+      margin: const EdgeInsets.only(right: 8, bottom: 8),
+      decoration: BoxDecoration(
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        boxShadow: const [
+          BoxShadow(
+            color: _neoBlack,
+            offset: Offset(8, 8),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            color: _neoYellow,
+            child: Text(
+              '2) CONFIGURE & GENERATE',
+              style: GoogleFonts.oswald(
+                color: _neoBlack,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Container(height: _neoBorderWidth, color: _neoBlack),
+          
+          // Selection Summary
+          _buildNeoSelectionSummary(),
+          
+          // Invoice Options Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            color: _neoBlack,
+            child: Text(
+              'INVOICE OPTIONS',
+              style: GoogleFonts.oswald(
+                color: _neoWhite,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.0,
+              ),
+            ),
+          ),
+          
+          // Options List
+          _buildNeoOptionsList(),
+          
+          // Date Range (Red Box)
+          _buildNeoDateRange(),
+          
+          // Bank Details
+          _buildNeoBankDetails(),
+          
+          Container(height: _neoBorderWidth, color: _neoBlack),
+
+          // Generate Section
+          Container(
+            color: _neoBeige,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildNeoGenerateSection(),
+                if ((_generateError ?? '').isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  _buildNeoErrorBox(_generateError!),
+                ],
+                if (_generatedResults.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  _buildGeneratedPdfsSection(),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNeoSelectionSummary() {
     final selected = _selectedEmployeesByEmail.values.toList()
       ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    final employeeLine =
-        selected.isEmpty ? 'No employees selected' : '${selected.length} selected';
-
+    
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-      ),
+      color: _neoWhite,
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Selection Summary',
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: BauhausDesign.space2),
-          Text(
-            'Employees: $employeeLine',
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'SELECTION SUMMARY',
+                style: GoogleFonts.oswald(
+                  color: _neoBlack,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                color: _neoBlack,
+                child: Text(
+                  '${selected.length} Selected',
+                  style: GoogleFonts.robotoMono(
+                    color: _neoWhite,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
           ),
-          if (selected.isNotEmpty) ...[
-            const SizedBox(height: BauhausDesign.space3),
-            ...selected.map((e) {
+          const SizedBox(height: 16),
+          if (selected.isEmpty)
+            Text(
+              'No employees selected',
+              style: GoogleFonts.robotoMono(color: _neoBlack.withOpacity(0.6)),
+            )
+          else
+            ...selected.asMap().entries.map((entry) {
+              final index = entry.key;
+              final e = entry.value;
               final clientLabel = e.allClientsMode
                   ? 'All clients'
                   : (e.selectedClientEmail.isNotEmpty
                       ? e.selectedClientEmail
-                      : 'Select a client');
+                      : 'No client selected');
+              
+              final bulletColor = index % 2 == 0 ? _neoBlue : _neoRed;
+              
               return Padding(
-                padding: const EdgeInsets.only(bottom: BauhausDesign.space1),
-                child: Text(
-                  '${e.name}: $clientLabel',
-                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                        color: BauhausDesign.textDark,
-                        fontWeight: FontWeight.w600,
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Container(width: 8, height: 8, color: bulletColor),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          style: GoogleFonts.robotoMono(
+                            color: _neoBlack,
+                            fontSize: 12,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: e.name,
+                              style: const TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                            TextSpan(
+                              text: ': $clientLabel',
+                              style: TextStyle(color: _neoBlack.withOpacity(0.7)),
+                            ),
+                          ],
+                        ),
                       ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               );
             }),
-          ],
         ],
       ),
     );
   }
 
-  Widget _buildOptionsSection() {
-    final df = DateFormat('dd/MM/yyyy');
-    final range = _dateRange;
-    final rangeText = range == null
-        ? 'Select a date range'
-        : '${df.format(range.start)} - ${df.format(range.end)}';
-
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Invoice Options',
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: BauhausDesign.space3),
-          SwitchListTile(
-            value: _includeExpenses,
-            onChanged: _selectedEmployeesByEmail.isEmpty
-                ? null
-                : (v) => setState(() => _includeExpenses = v),
-            title: Text(
-              'Include Approved Expenses',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
-            activeColor: BauhausDesign.primary,
-          ),
-          SwitchListTile(
-            value: _includeTax,
-            onChanged: _selectedEmployeesByEmail.isEmpty
-                ? null
-                : (v) => setState(() => _includeTax = v),
-            title: Text(
-              'Include Tax',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
-            activeColor: BauhausDesign.primary,
-          ),
-          if (_includeTax) ...[
-            const SizedBox(height: BauhausDesign.space2),
-            Row(
+  Widget _buildNeoOptionsList() {
+    return Column(
+      children: [
+        _buildNeoSwitchTile(
+          title: 'Apply Minimum Engagement (2h)',
+          subtitle: 'Automatically adjust short shifts (< 2h) to 2 hours',
+          value: _applyMinEngagement,
+          onChanged: _selectedEmployeesByEmail.isEmpty
+              ? null
+              : (v) => setState(() => _applyMinEngagement = v),
+        ),
+        Container(height: 1, color: _neoBlack),
+        _buildNeoSwitchTile(
+          title: 'Include Approved Expenses',
+          value: _includeExpenses,
+          onChanged: _selectedEmployeesByEmail.isEmpty
+              ? null
+              : (v) => setState(() => _includeExpenses = v),
+        ),
+        Container(height: 1, color: _neoBlack),
+        _buildNeoSwitchTile(
+          title: 'Include Tax',
+          value: _includeTax,
+          onChanged: _selectedEmployeesByEmail.isEmpty
+              ? null
+              : (v) => setState(() => _includeTax = v),
+        ),
+        if (_includeTax) ...[
+           Container(height: 1, color: _neoBlack),
+           Container(
+             color: _neoBeige,
+             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+             child: Row(
               children: [
                 Expanded(
                   child: Text(
                     'Tax Rate',
-                    style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                          color: BauhausDesign.neutral,
-                          fontWeight: FontWeight.w700,
-                        ),
+                    style: GoogleFonts.oswald(
+                      color: _neoBlack,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 SizedBox(
-                  width: 120,
+                  width: 100,
                   child: TextFormField(
                     initialValue: (_taxRate * 100).toStringAsFixed(1),
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    style: GoogleFonts.robotoMono(fontSize: 14, fontWeight: FontWeight.w700),
                     decoration: InputDecoration(
                       suffixText: '%',
                       filled: true,
-                      fillColor: BauhausDesign.backgroundLight,
+                      fillColor: _neoWhite,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                        borderSide:
-                            const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+                        borderRadius: BorderRadius.zero,
+                        borderSide: const BorderSide(color: _neoBlack, width: 1.5),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                        borderSide:
-                            const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+                        borderRadius: BorderRadius.zero,
+                        borderSide: const BorderSide(color: _neoBlack, width: 1.5),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                        borderSide:
-                            const BorderSide(color: BauhausDesign.primary, width: 2),
+                        borderRadius: BorderRadius.zero,
+                        borderSide: const BorderSide(color: _neoBlue, width: 2),
                       ),
                     ),
                     onChanged: (v) {
@@ -1175,168 +1485,73 @@ class _EmployeeInvoiceGenerationViewState
                 ),
               ],
             ),
-          ],
-          const SizedBox(height: BauhausDesign.space3),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              'Date Range',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
-            subtitle: Text(
-              rangeText,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            trailing: Container(
-              padding: const EdgeInsets.all(BauhausDesign.space2),
-              decoration: BoxDecoration(
-                color: BauhausDesign.backgroundLight,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-              ),
-              child: const Icon(Icons.date_range_rounded,
-                  size: 18, color: BauhausDesign.textDark),
-            ),
-            onTap: _selectedEmployeesByEmail.isEmpty ? null : _pickDateRange,
-          ),
+           ),
         ],
-      ),
+      ],
     );
   }
 
-  Widget _buildBankDetailsSection() {
-    final selected = _selectedEmployeesByEmail.values.toList()
-      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-
-    if (selected.isEmpty) {
-      return _hintBox('Select employees to load bank details.');
-    }
-
+  Widget _buildNeoSwitchTile({
+    required String title,
+    String? subtitle,
+    required bool value,
+    required ValueChanged<bool>? onChanged,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Employee Bank Details',
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: BauhausDesign.space1),
-          Text(
-            'Admin bank details will not be used.',
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.neutral,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: BauhausDesign.space3),
-          ...selected.map((e) {
-            final data = e.bankDetails ?? const <String, dynamic>{};
-            final bankName = data['bankName']?.toString() ?? '';
-            final accountName = data['accountName']?.toString() ?? '';
-            final bsb = data['bsb']?.toString() ?? '';
-            final accountNumber = data['accountNumber']?.toString() ?? '';
-
-            return Container(
-              margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
-              padding: const EdgeInsets.all(BauhausDesign.space3),
-              decoration: BoxDecoration(
-                color: BauhausDesign.backgroundLight,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    e.name.isNotEmpty ? e.name : e.email,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w900,
-                        ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: BauhausDesign.space1),
-                  Text(
-                    e.email,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.neutral,
-                              fontWeight: FontWeight.w600,
-                            ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: BauhausDesign.space3),
-                  if (e.isLoadingBankDetails)
-                    _hintBox('Loading bank details...')
-                  else if (e.bankDetailsError.isNotEmpty)
-                    _errorInlineBox(e.bankDetailsError)
-                  else ...[
-                    _bankRow('Bank Name', bankName),
-                    _bankRow('Account Name', accountName),
-                    _bankRow('BSB', bsb),
-                    _bankRow('Account Number', accountNumber),
-                  ],
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _bankRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
+      color: _neoBeige,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
           Expanded(
-            flex: 4,
-            child: Text(
-              label,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.oswald(
+                    color: _neoBlack,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.robotoMono(
+                      color: _neoBlack.withOpacity(0.6),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-          Expanded(
-            flex: 6,
+          const SizedBox(width: 16),
+          InkWell(
+            onTap: onChanged != null ? () => onChanged(!value) : null,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space3,
-                vertical: BauhausDesign.space2,
-              ),
+              width: 48,
+              height: 24,
               decoration: BoxDecoration(
-                color: BauhausDesign.backgroundLight,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                color: _neoWhite,
+                border: Border.all(color: _neoBlack, width: 1.5),
               ),
-              child: Text(
-                value.isNotEmpty ? value : '—',
-                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w700,
+              child: Stack(
+                children: [
+                  AnimatedAlign(
+                    duration: const Duration(milliseconds: 200),
+                    alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: value ? _neoBlue : Colors.grey[300],
+                        border: Border.all(color: _neoBlack, width: 1.5),
+                      ),
                     ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -1345,136 +1560,381 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  Widget _buildGenerateSection() {
-    final validation = _validationResult;
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Generate',
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
+  Widget _buildNeoDateRange() {
+    final df = DateFormat('dd/MM/yyyy');
+    final range = _dateRange;
+    final startText = range != null ? df.format(range.start) : '--/--/----';
+    final endText = range != null ? df.format(range.end) : '--/--/----';
+
+    return InkWell(
+      onTap: _selectedEmployeesByEmail.isEmpty ? null : _pickDateRange,
+      child: Container(
+        width: double.infinity,
+        color: _neoRed,
+        padding: const EdgeInsets.all(20),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'DATE RANGE',
+                  style: GoogleFonts.oswald(
+                    color: _neoWhite.withOpacity(0.8),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                  ),
                 ),
-          ),
-          const SizedBox(height: BauhausDesign.space3),
-          if (!validation.isValid) _errorInlineBox(validation.message),
-          const SizedBox(height: BauhausDesign.space2),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _isGenerating ? null : (_canGenerate ? _generate : null),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: BauhausDesign.primary,
-                foregroundColor: BauhausDesign.textDark,
-                padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  side: const BorderSide(color: BauhausDesign.neutral, width: 2.5),
+                const SizedBox(height: 8),
+                Text(
+                  startText,
+                  style: GoogleFonts.oswald(
+                    color: _neoWhite,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  'to $endText',
+                  style: GoogleFonts.oswald(
+                    color: _neoWhite.withOpacity(0.9),
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: _neoWhite, width: 2),
+                ),
+                child: const Icon(
+                  Icons.calendar_today_outlined,
+                  color: _neoWhite,
+                  size: 20,
                 ),
               ),
-              child: _isGenerating
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            color: BauhausDesign.textDark,
-                          ),
-                        ),
-                        const SizedBox(width: BauhausDesign.space3),
-                        Text(
-                          'Generating...',
-                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: BauhausDesign.textDark,
-                              ),
-                        ),
-                      ],
-                    )
-                  : Text(
-                      'Generate Employee Invoice PDF',
-                      style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: BauhausDesign.textDark,
-                          ),
-                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNeoBankDetails() {
+    return Container(
+      color: _neoWhite,
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          iconColor: _neoBlack,
+          collapsedIconColor: _neoBlack,
+          title: Text(
+            'Employee Bank Details',
+            style: GoogleFonts.oswald(
+              color: _neoBlack,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
             ),
           ),
-        ],
+          subtitle: Text(
+            'ADMIN BANK DETAILS WILL NOT BE USED.',
+            style: GoogleFonts.robotoMono(
+              color: _neoBlack.withOpacity(0.5),
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          children: [
+            Container(height: 1, color: _neoBlack),
+            // Re-use existing bank details list logic but simplified/styled if needed
+            // For now, using the logic from original code but wrapping in padding
+             _buildBankDetailsList(),
+          ],
+        ),
       ),
+    );
+  }
+  
+  Widget _buildBankDetailsList() {
+      final selected = _selectedEmployeesByEmail.values.toList();
+      return Column(
+        children: selected.asMap().entries.map((entry) {
+          final index = entry.key;
+          final e = entry.value;
+          final bank = e.bankDetails;
+          final isLast = index == selected.length - 1;
+
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            decoration: isLast 
+                ? null 
+                : const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: _neoBlack, width: 1.5),
+                    ),
+                  ),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    e.name.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.oswald(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: _neoBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (bank == null)
+                     Text(
+                       'No bank details found',
+                       textAlign: TextAlign.center,
+                       style: GoogleFonts.robotoMono(color: _neoRed, fontWeight: FontWeight.w500),
+                     )
+                  else ...[
+                     Text(
+                       'Bank: ${bank['bankName']}',
+                       textAlign: TextAlign.center,
+                       style: GoogleFonts.robotoMono(
+                         fontSize: 12,
+                         color: _neoBlack,
+                         fontWeight: FontWeight.w500,
+                       ),
+                     ),
+                     const SizedBox(height: 4),
+                     Text(
+                       'BSB: ${bank['bsb']}',
+                       textAlign: TextAlign.center,
+                       style: GoogleFonts.robotoMono(
+                         fontSize: 12,
+                         color: _neoBlack,
+                         fontWeight: FontWeight.w500,
+                       ),
+                     ),
+                     const SizedBox(height: 4),
+                     Text(
+                       'ACC: ${bank['accountNumber']}',
+                       textAlign: TextAlign.center,
+                       style: GoogleFonts.robotoMono(
+                         fontSize: 12,
+                         color: _neoBlack,
+                         fontWeight: FontWeight.w500,
+                       ),
+                     ),
+                  ],
+                  if (!isLast) ...[
+                    const SizedBox(height: 24),
+                    Container(
+                      width: 100, // Short divider line
+                      height: 1.5,
+                      color: _neoBlack,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      );
+  }
+
+  Widget _buildNeoGenerateSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'GENERATE',
+          style: GoogleFonts.oswald(
+            color: _neoBlack,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 12),
+        InkWell(
+          onTap: _selectedEmployeesByEmail.isEmpty ? null : _generate,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            decoration: BoxDecoration(
+              color: _neoRed,
+              border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+              boxShadow: const [
+                BoxShadow(
+                  color: _neoBlack,
+                  offset: Offset(4, 4),
+                  blurRadius: 0,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'GENERATE PDF',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.oswald(
+                    color: _neoWhite,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Icon(Icons.arrow_forward, color: _neoWhite),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildGeneratedPdfsSection() {
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: _neoWhite,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        boxShadow: const [
+          BoxShadow(
+            color: _neoBlack,
+            offset: Offset(8, 8),
+            blurRadius: 0,
+          ),
+        ],
       ),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Generated PDFs',
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
+          // Red underline header
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'GENERATED PDFS',
+                style: GoogleFonts.oswald(
+                  color: _neoBlack,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
                 ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: 60,
+                height: 4,
+                color: _neoRed,
+              ),
+            ],
           ),
-          const SizedBox(height: BauhausDesign.space3),
+          const SizedBox(height: 32),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _generatedResults.length,
             separatorBuilder: (_, __) =>
-                const Divider(height: 1, color: BauhausDesign.neutral),
+                const Divider(height: 1, color: _neoBlack, thickness: 1.5),
             itemBuilder: (context, index) {
               final item = _generatedResults[index];
               final path = item.pdfPath;
               final name = path.split('/').last;
-              return ListTile(
-                dense: true,
-                title: Text(
-                  name,
-                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                        color: BauhausDesign.textDark,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-                trailing: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-                  ),
-                  child: const Icon(Icons.picture_as_pdf_rounded,
-                      size: 18, color: BauhausDesign.textDark),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PdfViewPage(
-                        pdfPath: path,
-                        receiptUrls: item.receiptUrls,
+              
+              String sizeStr = '0.0 KB';
+              try {
+                final file = File(path);
+                if (file.existsSync()) {
+                  final bytes = file.lengthSync();
+                  if (bytes >= 1024 * 1024) {
+                     sizeStr = '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+                  } else {
+                     sizeStr = '${(bytes / 1024).toStringAsFixed(1)} KB';
+                  }
+                }
+              } catch (_) {}
+              
+              final size = sizeStr; 
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: GoogleFonts.robotoMono(
+                              color: _neoBlack,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            size,
+                            style: GoogleFonts.robotoMono(
+                              color: _neoBlack.withOpacity(0.5),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
+                    const SizedBox(width: 16),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PdfViewPage(
+                              pdfPath: path,
+                              receiptUrls: item.receiptUrls,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _neoRed,
+                          border: Border.all(color: _neoBlack, width: 1.5),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: _neoBlack,
+                              offset: Offset(2, 2),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'PDF',
+                          style: GoogleFonts.oswald(
+                            color: _neoWhite,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),

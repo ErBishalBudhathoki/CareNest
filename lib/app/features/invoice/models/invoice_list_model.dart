@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:carenest/config/environment.dart';
+import 'package:carenest/app/features/invoice/models/payment_info.dart';
+import 'package:carenest/app/features/invoice/models/recurrence_info.dart';
 
 class InvoiceListModel {
   final String id;
@@ -22,6 +24,8 @@ class InvoiceListModel {
   final String? shareableLink;
   final bool isDeleted;
   final List<String> receiptUrls;
+  final PaymentInfo? payment;
+  final RecurrenceInfo? recurrence;
 
   InvoiceListModel({
     required this.id,
@@ -44,6 +48,8 @@ class InvoiceListModel {
     this.shareableLink,
     this.isDeleted = false,
     this.receiptUrls = const [],
+    this.payment,
+    this.recurrence,
   });
 
   factory InvoiceListModel.fromJson(Map<String, dynamic> json) {
@@ -151,6 +157,8 @@ class InvoiceListModel {
       shareableLink: json['sharing']?['shareableLink'],
       isDeleted: json['deletion']?['isDeleted'] ?? false,
       receiptUrls: extractedReceiptUrls,
+      payment: json['payment'] != null ? PaymentInfo.fromJson(json['payment']) : null,
+      recurrence: json['recurrence'] != null ? RecurrenceInfo.fromJson(json['recurrence']) : null,
     );
   }
 
@@ -188,6 +196,8 @@ class InvoiceListModel {
         'isDeleted': isDeleted,
       },
       'extractedReceiptUrls': receiptUrls,
+      'payment': payment?.toJson(),
+      'recurrence': recurrence?.toJson(),
     };
   }
 
@@ -212,6 +222,8 @@ class InvoiceListModel {
     String? shareableLink,
     bool? isDeleted,
     List<String>? receiptUrls,
+    PaymentInfo? payment,
+    RecurrenceInfo? recurrence,
   }) {
     return InvoiceListModel(
       id: id ?? this.id,
@@ -234,6 +246,8 @@ class InvoiceListModel {
       shareableLink: shareableLink ?? this.shareableLink,
       isDeleted: isDeleted ?? this.isDeleted,
       receiptUrls: receiptUrls ?? this.receiptUrls,
+      payment: payment ?? this.payment,
+      recurrence: recurrence ?? this.recurrence,
     );
   }
 }

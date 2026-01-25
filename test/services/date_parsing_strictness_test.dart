@@ -9,6 +9,9 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 class _FakePrefs extends SharedPreferencesUtils {
   final Map<String, String> _store = {};
   bool _inited = false;
+
+  _FakePrefs() : super.forTesting();
+
   @override
   Future<void> init() async {
     _inited = true;

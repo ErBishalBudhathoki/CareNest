@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/design_system/modern_pricing_design_system.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class SourceBadge extends StatelessWidget {
   final String source;
@@ -15,52 +16,51 @@ class SourceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ModernChipVariant variant;
+    final l10n = AppLocalizations.of(context)!;
+    BauhausChipVariant variant;
     String label;
     IconData? icon;
 
     switch (source.toLowerCase()) {
       case 'organization':
       case 'org_base_rate':
-        variant = ModernChipVariant.primary;
-        label = 'Organization';
+        variant = BauhausChipVariant.primary;
+        label = l10n.sourceOrganization;
         icon = Icons.business;
         break;
       case 'client_specific':
-        variant = ModernChipVariant.secondary;
-        label = 'Client Specific';
+        variant = BauhausChipVariant.secondary;
+        label = l10n.sourceClientSpecific;
         icon = Icons.person;
         break;
       case 'ndis_cap':
       case 'price_cap':
-        variant = ModernChipVariant.warning;
-        label = 'NDIS Cap';
+        variant = BauhausChipVariant.warning;
+        label = l10n.sourceNdisCap;
         icon = Icons.warning_amber_rounded;
         break;
       case 'manual':
       case 'override':
-        variant = ModernChipVariant.info;
-        label = 'Manual Override';
+        variant = BauhausChipVariant.info;
+        label = l10n.sourceManualOverride;
         icon = Icons.edit;
         break;
       case 'fallback':
       case 'ndis_default':
       default:
-        variant = ModernChipVariant.error;
-        label = 'Fallback';
+        variant = BauhausChipVariant.error;
+        label = l10n.sourceFallback;
         icon = Icons.flag;
         break;
     }
 
-    Widget badge = ModernChip(
+    Widget badge = BauhausChip(
       label: label,
       variant: variant,
       icon: isSmall ? null : icon,
     );
 
     if (isSmall) {
-      // Scale down for small variant if needed, or just rely on ModernChip
-      // ModernChip doesn't support size, but we can wrap in Transform or just accept it
       badge = Transform.scale(
         scale: 0.8,
         child: badge,

@@ -43,6 +43,7 @@ class InvoiceListViewModel extends StateNotifier<InvoiceListState> {
     int page = 1,
     int limit = 20,
     String? status,
+    String? invoiceType,
     String? search,
   }) async {
     debugPrint(
@@ -55,6 +56,7 @@ class InvoiceListViewModel extends StateNotifier<InvoiceListState> {
         page: page,
         limit: limit,
         status: status,
+        invoiceType: invoiceType,
         search: search,
       );
 
@@ -90,6 +92,48 @@ class InvoiceListViewModel extends StateNotifier<InvoiceListState> {
       state = state.copyWith(
         isLoading: false,
         error: 'Error loading invoices: $e',
+      );
+    }
+  }
+
+  Future<void> markAsPaid(
+    String invoiceId,
+    String organizationId,
+    double amount, {
+    String? updatedBy,
+  }) async {
+    try {
+      final result = await _invoiceService.updatePaymentStatus(
+        invoiceId: invoiceId,
+        organizationId: organizationId,
+        status: 'paid',
+        paidAmount: amount,
+        updatedBy: updatedBy,
+      );
+
+      if (result['success'] == true) {
+        // Update local state
+        final updatedInvoices = state.invoices.map((invoice) {
+          if (invoice.id == invoiceId) {
+            // We need to create a copy with new status. 
+            // Assuming InvoiceListModel has copyWith or we re-fetch.
+            // Since InvoiceListModel is likely immutable and might not have copyWith exposed cleanly,
+            // we will reload the list for simplicity and data consistency.
+            return invoice; 
+          }
+          return invoice;
+        }).toList();
+        
+        // Actually, let's just reload to get fresh data
+        loadInvoices(organizationId); 
+      } else {
+        state = state.copyWith(
+          error: result['message'] ?? 'Failed to update payment status',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(
+        error: 'Error updating payment status: $e',
       );
     }
   }
