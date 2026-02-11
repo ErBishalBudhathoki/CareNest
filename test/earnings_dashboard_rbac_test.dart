@@ -12,6 +12,7 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class _ImmediateUserRoleNotifier extends UserRoleNotifier {
   _ImmediateUserRoleNotifier(super.prefs, UserRole role) {
@@ -129,7 +130,10 @@ void main() {
         ],
         child: MediaQuery(
           data: const MediaQueryData(disableAnimations: true),
-          child: const MaterialApp(
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('en'),
             home: EarningsDashboardView(
               organizationId: 'org-1',
               organizationName: 'Org',
@@ -169,7 +173,10 @@ void main() {
         ],
         child: MediaQuery(
           data: const MediaQueryData(disableAnimations: true),
-          child: const MaterialApp(
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('en'),
             home: EarningsDashboardView(
               organizationId: 'org-1',
               organizationName: 'Org',
