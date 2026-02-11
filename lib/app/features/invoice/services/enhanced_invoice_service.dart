@@ -1236,7 +1236,7 @@ class EnhancedInvoiceService {
       return updatedPdfPaths ?? pdfPaths;
     } catch (e) {
       // Enhanced error handling with platform-specific checks
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       String errorMsg = 'Error generating invoices';
 
       // Check for web-specific errors related to Argon2
@@ -1244,10 +1244,10 @@ class EnhancedInvoiceService {
           e
               .toString()
               .contains('cannot be represented exactly in JavaScript')) {
-        errorMsg = l10n.webEncryptionLimitationError;
+        errorMsg = l10n?.webEncryptionLimitationError ?? errorMsg;
         debugPrint('Web-specific Argon2 error detected: ${e.toString()}');
       } else if (e.toString().contains('BANK_DETAILS_REQUIRED')) {
-        errorMsg = l10n.bankDetailsRequiredError;
+        errorMsg = l10n?.bankDetailsRequiredError ?? errorMsg;
         debugPrint('Bank details missing for both employee and admin');
       } else {
         errorMsg = 'Error generating invoices: ${e.toString()}';

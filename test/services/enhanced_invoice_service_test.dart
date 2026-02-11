@@ -29,6 +29,12 @@ class MockAppLocalizations extends Mock implements AppLocalizations {
   String get unknownItem => 'Unknown Item';
   @override
   String get organizationFallbackBaseRate => 'Organization fallback base rate';
+
+  @override
+  String get sourceOrganizationWide => 'Organization-wide custom price';
+
+  @override
+  String get sourceFallbackBaseRate => 'Organization fallback base rate';
 }
 
 /// Simple stubbed API method to avoid typed argument matcher issues.
@@ -352,6 +358,9 @@ void main() {
       BuildContext? capturedContext;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
           home: Builder(
             builder: (context) {
               capturedContext = context;

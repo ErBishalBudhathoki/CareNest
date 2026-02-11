@@ -5,6 +5,7 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:carenest/app/features/auth/models/user_role.dart';
 
@@ -46,7 +47,10 @@ void main() {
             (ref, orgId) => mockViewModel,
           ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
           home: EmployeePayRateView(
             organizationId: 'org1',
             adminEmail: 'admin@example.com',
@@ -61,7 +65,7 @@ void main() {
     await tester.tap(find.text('TEST USER'));
     await tester.pumpAndSettle();
 
-    expect(find.text('SET PAY RATES: TEST USER'), findsOneWidget);
+    expect(find.text('Set Pay Rates: TEST USER'), findsOneWidget);
 
     // 4. Find Dropdowns
     final streamDropdown = find.widgetWithText(DropdownButtonFormField<String>, 'Stream');
