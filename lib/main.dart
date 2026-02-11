@@ -72,7 +72,9 @@ bool isDeepLinkHandled() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (_) {}
 
   // Dynamically detect flavor based on package name
   // Development flavor typically has a suffix like '.dev'
