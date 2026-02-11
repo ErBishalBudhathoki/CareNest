@@ -6512,4 +6512,104 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currentBalances => 'Current Balances';
+
+  @override
+  String get quickCaptureTitle => 'QUICK CAPTURE';
+
+  @override
+  String get receiptScanned => 'Receipt Scanned!';
+
+  @override
+  String receiptDetected(String amount, String category) {
+    return 'We detected: \$$amount - $category';
+  }
+
+  @override
+  String get confirmAndEdit => 'CONFIRM & EDIT';
+
+  @override
+  String get retake => 'RETAKE';
+
+  @override
+  String get capturedReceipt => 'Captured Receipt';
+
+  @override
+  String get offlineSyncTitle => 'OFFLINE SYNC';
+
+  @override
+  String get offlineStatus => 'STATUS: OFFLINE';
+
+  @override
+  String lastSyncedTimeAgo(String timeAgo) {
+    return 'Last synced: $timeAgo';
+  }
+
+  @override
+  String get pendingUploads => 'PENDING UPLOADS';
+
+  @override
+  String get synced => 'Synced';
+
+  @override
+  String get complianceAuditTitle => 'COMPLIANCE AUDIT';
+
+  @override
+  String get overallScore => 'OVERALL SCORE';
+
+  @override
+  String get attentionRequired => 'ATTENTION REQUIRED';
+
+  @override
+  String get allDocumentsUpToDate => 'All documents are up to date.';
+
+  @override
+  String get expiredCaps => 'EXPIRED';
+
+  @override
+  String get multiOrgRollupTitle => 'MULTI-ORG ROLLUP';
+
+  @override
+  String get unknownOrg => 'Unknown Org';
+
+  @override
+  String get clientsCaps => 'CLIENTS';
+
+  @override
+  String get invoicesCaps => 'INVOICES';
+
+  @override
+  String get revenueCaps => 'REVENUE';
+
+  @override
+  String get roleManagementTitle => 'ROLE MANAGEMENT';
+
+  @override
+  String get accessGranted => 'Access Granted';
+
+  @override
+  String get accessDenied => 'Access Denied';
+
+  @override
+  String get saveChangesCaps => 'SAVE CHANGES';
+
+  @override
+  String get permissionsUpdated => 'Permissions Updated Successfully';
+
+  @override
+  String get workerDashboardTitle => 'WORKER DASHBOARD';
+
+  @override
+  String get nextShiftCaps => 'NEXT SHIFT';
+
+  @override
+  String get actionsCaps => 'ACTIONS';
+
+  @override
+  String get recentExpensesCaps => 'RECENT EXPENSES';
+
+  @override
+  String get noRecentExpenses => 'No recent expenses';
+
+  @override
+  String get noUpcomingShifts => 'No upcoming shifts';
 }

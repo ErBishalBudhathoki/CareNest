@@ -3116,5 +3116,48 @@
   "leaveTracker": "Leave Tracker",
   "publicHoliday": "Public Holiday",
   "requestsLabel": "Requests",
-  "currentBalances": "Current Balances"
+  "currentBalances": "Current Balances",
+  "quickCaptureTitle": "QUICK CAPTURE",
+  "receiptScanned": "Receipt Scanned!",
+  "receiptDetected": "We detected: ${amount} - {category}",
+  "@receiptDetected": {
+    "placeholders": {
+      "amount": { "type": "String" },
+      "category": { "type": "String" }
+    }
+  },
+  "confirmAndEdit": "CONFIRM & EDIT",
+  "retake": "RETAKE",
+  "capturedReceipt": "Captured Receipt",
+  "offlineSyncTitle": "OFFLINE SYNC",
+  "offlineStatus": "STATUS: OFFLINE",
+  "lastSyncedTimeAgo": "Last synced: {timeAgo}",
+  "@lastSyncedTimeAgo": {
+    "placeholders": {
+      "timeAgo": { "type": "String" }
+    }
+  },
+  "pendingUploads": "PENDING UPLOADS",
+  "synced": "Synced",
+  "complianceAuditTitle": "COMPLIANCE AUDIT",
+  "overallScore": "OVERALL SCORE",
+  "attentionRequired": "ATTENTION REQUIRED",
+  "allDocumentsUpToDate": "All documents are up to date.",
+  "expiredCaps": "EXPIRED",
+  "multiOrgRollupTitle": "MULTI-ORG ROLLUP",
+  "unknownOrg": "Unknown Org",
+  "clientsCaps": "CLIENTS",
+  "invoicesCaps": "INVOICES",
+  "revenueCaps": "REVENUE",
+  "roleManagementTitle": "ROLE MANAGEMENT",
+  "accessGranted": "Access Granted",
+  "accessDenied": "Access Denied",
+  "saveChangesCaps": "SAVE CHANGES",
+  "permissionsUpdated": "Permissions Updated Successfully",
+  "workerDashboardTitle": "WORKER DASHBOARD",
+  "nextShiftCaps": "NEXT SHIFT",
+  "actionsCaps": "ACTIONS",
+  "recentExpensesCaps": "RECENT EXPENSES",
+  "noRecentExpenses": "No recent expenses",
+  "noUpcomingShifts": "No upcoming shifts"
 }
