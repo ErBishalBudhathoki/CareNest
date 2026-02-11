@@ -12094,6 +12094,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current Balances'**
   String get currentBalances;
+
+  /// No description provided for @quickCaptureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QUICK CAPTURE'**
+  String get quickCaptureTitle;
+
+  /// No description provided for @receiptScanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Scanned!'**
+  String get receiptScanned;
+
+  /// No description provided for @receiptDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'We detected: \${amount} - {category}'**
+  String receiptDetected(String amount, String category);
+
+  /// No description provided for @confirmAndEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIRM & EDIT'**
+  String get confirmAndEdit;
+
+  /// No description provided for @retake.
+  ///
+  /// In en, this message translates to:
+  /// **'RETAKE'**
+  String get retake;
+
+  /// No description provided for @capturedReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Captured Receipt'**
+  String get capturedReceipt;
+
+  /// No description provided for @offlineSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OFFLINE SYNC'**
+  String get offlineSyncTitle;
+
+  /// No description provided for @offlineStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'STATUS: OFFLINE'**
+  String get offlineStatus;
+
+  /// No description provided for @lastSyncedTimeAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synced: {timeAgo}'**
+  String lastSyncedTimeAgo(String timeAgo);
+
+  /// No description provided for @pendingUploads.
+  ///
+  /// In en, this message translates to:
+  /// **'PENDING UPLOADS'**
+  String get pendingUploads;
+
+  /// No description provided for @synced.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced'**
+  String get synced;
+
+  /// No description provided for @complianceAuditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLIANCE AUDIT'**
+  String get complianceAuditTitle;
+
+  /// No description provided for @overallScore.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERALL SCORE'**
+  String get overallScore;
+
+  /// No description provided for @attentionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'ATTENTION REQUIRED'**
+  String get attentionRequired;
+
+  /// No description provided for @allDocumentsUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'All documents are up to date.'**
+  String get allDocumentsUpToDate;
+
+  /// No description provided for @expiredCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPIRED'**
+  String get expiredCaps;
+
+  /// No description provided for @multiOrgRollupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MULTI-ORG ROLLUP'**
+  String get multiOrgRollupTitle;
+
+  /// No description provided for @unknownOrg.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Org'**
+  String get unknownOrg;
+
+  /// No description provided for @clientsCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'CLIENTS'**
+  String get clientsCaps;
+
+  /// No description provided for @invoicesCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'INVOICES'**
+  String get invoicesCaps;
+
+  /// No description provided for @revenueCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'REVENUE'**
+  String get revenueCaps;
+
+  /// No description provided for @roleManagementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ROLE MANAGEMENT'**
+  String get roleManagementTitle;
+
+  /// No description provided for @accessGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Granted'**
+  String get accessGranted;
+
+  /// No description provided for @accessDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Denied'**
+  String get accessDenied;
+
+  /// No description provided for @saveChangesCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE CHANGES'**
+  String get saveChangesCaps;
+
+  /// No description provided for @permissionsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions Updated Successfully'**
+  String get permissionsUpdated;
+
+  /// No description provided for @workerDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'WORKER DASHBOARD'**
+  String get workerDashboardTitle;
+
+  /// No description provided for @nextShiftCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT SHIFT'**
+  String get nextShiftCaps;
+
+  /// No description provided for @actionsCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIONS'**
+  String get actionsCaps;
+
+  /// No description provided for @recentExpensesCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'RECENT EXPENSES'**
+  String get recentExpensesCaps;
+
+  /// No description provided for @noRecentExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent expenses'**
+  String get noRecentExpenses;
+
+  /// No description provided for @noUpcomingShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming shifts'**
+  String get noUpcomingShifts;
 }
 
 class _AppLocalizationsDelegate
