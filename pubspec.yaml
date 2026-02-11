@@ -130,18 +130,14 @@ dev_dependencies:
 flutter:
   generate: true
   assets:
-    - .env
     - assets/images/client-profile.png
     - assets/images/placeholder_product.png
-    - assets/images/she_with_phone.png
-    - assets/images/he_sitting_with_notebook.png
     - assets/images/invoice_banner.png
     - assets/images/Invo.gif
     - assets/images/splash_gif.gif
     - assets/images/ud.gif
     - assets/images/splash_screen.png
     - assets/images/splash_screen.gif
-    - assets/icons/fav-folder-dynamic-color.png
     - assets/icons/profile_placeholder.png
     - assets/icons/3D Icons/
     - assets/icons/PNG with shadow/
