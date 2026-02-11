@@ -72,7 +72,9 @@ bool isDeepLinkHandled() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (_) {}
 
   // Set the app flavor to development
   AppConfig.appFlavor = Flavor.development;
