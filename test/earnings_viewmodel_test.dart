@@ -55,6 +55,11 @@ class _RecordingEarningsRepository extends EarningsRepository {
     historyBucket = bucket;
     return EarningsPeriodHistory(bucket: bucket, payRate: 0, items: const []);
   }
+
+  @override
+  Future<Map<String, dynamic>> getTaxSettings() async {
+    return {};
+  }
 }
 
 void main() {

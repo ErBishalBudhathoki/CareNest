@@ -27,6 +27,7 @@ class EarningsDashboardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(earningsViewModelProvider);
     final viewModel = ref.read(earningsViewModelProvider.notifier);
     final role = ref.watch(userRoleProvider);
@@ -45,7 +46,7 @@ class EarningsDashboardView extends ConsumerWidget {
           child: Container(color: BauhausDesign.textDark, height: 2),
         ),
         title: Text(
-          AppLocalizations.of(context)!.earningsDashboardTitle,
+          l10n?.earningsDashboardTitle ?? 'Earnings Dashboard',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.0,
@@ -55,7 +56,7 @@ class EarningsDashboardView extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.download_rounded,
                 color: BauhausDesign.textDark),
-            tooltip: AppLocalizations.of(context)!.generatePayslip,
+            tooltip: l10n?.generatePayslip ?? 'Generate payslip',
             onPressed: () {
               final now = DateTime.now();
               final startOfMonth = DateTime(now.year, now.month, 1);
@@ -72,7 +73,7 @@ class EarningsDashboardView extends ConsumerWidget {
       ),
       body: state.isLoading
           ? BauhausLoadingState(
-              message: AppLocalizations.of(context)!.loadingEarnings)
+              message: l10n?.loadingEarnings ?? 'Loading earnings')
           : state.error != null
               ? Center(child: Text('Error: ${state.error}'))
               : LayoutBuilder(
@@ -111,10 +112,8 @@ class EarningsDashboardView extends ConsumerWidget {
                                           context,
                                           title: state.period ==
                                                   EarningsPeriod.weekly
-                                              ? AppLocalizations.of(context)!
-                                                  .weeklySummary
-                                              : AppLocalizations.of(context)!
-                                                  .monthlySummary,
+                                              ? (l10n?.weeklySummary ?? 'Weekly summary')
+                                              : (l10n?.monthlySummary ?? 'Monthly summary'),
                                         )
                                       : const SizedBox.shrink(),
                                 ),
@@ -135,10 +134,8 @@ class EarningsDashboardView extends ConsumerWidget {
                                 state.summary!,
                                 context,
                                 title: state.period == EarningsPeriod.weekly
-                                    ? AppLocalizations.of(context)!
-                                        .weeklySummary
-                                    : AppLocalizations.of(context)!
-                                        .monthlySummary,
+                                    ? (l10n?.weeklySummary ?? 'Weekly summary')
+                                    : (l10n?.monthlySummary ?? 'Monthly summary'),
                               ),
                             const SizedBox(height: 20),
                             if (state.projection != null)
@@ -160,10 +157,8 @@ class EarningsDashboardView extends ConsumerWidget {
                             ),
                             child: Text(
                               state.period == EarningsPeriod.weekly
-                                  ? AppLocalizations.of(context)!
-                                      .earningsHistoryThisWeek
-                                  : AppLocalizations.of(context)!
-                                      .earningsHistoryThisMonth,
+                                  ? (l10n?.earningsHistoryThisWeek ?? 'This week')
+                                  : (l10n?.earningsHistoryThisMonth ?? 'This month'),
                               style: BauhausDesign.getTextTheme(context)
                                   .headlineMedium
                                   ?.copyWith(

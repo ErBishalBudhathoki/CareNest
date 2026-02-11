@@ -135,32 +135,6 @@ class SharedPreferencesUtils {
     await _sharedPreferences?.setString(_kUserEmailKey, email);
   }
 
-  // Future<void> setPhoto(Uint8List photo) async {
-  //   debugPrint("Photo data: $photo");
-  //
-  //   // Convert Uint8List to base64-encoded string
-  //   String photoString = base64Encode(photo);
-  //   debugPrint("Photo data in savePhoto: $photoString");
-  //   // Store the base64-encoded string in SharedPreferences
-  //   await _sharedPreferences?.setString('photoKey', photoString);
-  // }
-  //
-  // Uint8List? getPhoto() {
-  //   // Retrieve the base64-encoded string from SharedPreferences
-  //   String? photoString = _sharedPreferences?.getString('photoKey');
-  //   debugPrint("Photo string in getPhoto: $photoString");
-  //   // Convert the base64-encoded string back to Uint8List
-  //   Uint8List? photo = photoString != null ? base64Decode(photoString) : null;
-  //
-  //   if (photo != null) {
-  //     debugPrint("Successfully retrieved photo data from SharedPreferences.");
-  //   } else {
-  //     debugPrint("No photo data found in SharedPreferences.");
-  //   }
-  //
-  //   return photo;
-  // }
-
   Future<void> setPhoto(Uint8List photo, String userEmail) async {
     debugPrint(" Shared pref Photo data: $photo");
     String photoString = base64Encode(photo);
@@ -266,6 +240,13 @@ class SharedPreferencesUtils {
   /// Retrieves the user's organization ID.
   String? getOrganizationId() {
     return _sharedPreferences?.getString(_kOrganizationIdKey);
+  }
+
+  /// Updates the stored Organization ID.
+  Future<void> setOrganizationId(String organizationId) async {
+    if (_sharedPreferences == null) await init();
+    await _sharedPreferences!.setString(_kOrganizationIdKey, organizationId);
+    debugPrint("✅ Organization ID updated to: $organizationId");
   }
 
   /// Retrieves the user's organization code.

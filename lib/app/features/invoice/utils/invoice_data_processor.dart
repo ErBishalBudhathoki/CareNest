@@ -1065,6 +1065,7 @@ class InvoiceDataProcessor {
         }
 
         items.add({
+          'date': dateList[i],
           'startTime': startTimeList[i],
           'endTime': endTimeList[i],
           'hours': totalHours[i],
