@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class EmployeePayRateState {
   final bool isLoading;
@@ -26,14 +28,16 @@ class EmployeePayRateViewModel extends StateNotifier<EmployeePayRateState> {
   Future<void> fetchEmployees() async {
     state = EmployeePayRateState(isLoading: true);
     try {
-      final response = await _apiMethod.getOrganizationEmployees(organizationId);
+      final response =
+          await _apiMethod.getOrganizationEmployees(organizationId);
       if (response['success'] == true) {
         final List<dynamic> data = response['employees'];
         final employees = data.map((e) => User.fromJson(e)).toList();
         state = EmployeePayRateState(employees: employees, isLoading: false);
       } else {
         state = EmployeePayRateState(
-            isLoading: false, error: response['message'] ?? 'Failed to load employees');
+            isLoading: false,
+            error: response['message'] ?? 'Failed to load employees');
       }
     } catch (e) {
       state = EmployeePayRateState(isLoading: false, error: e.toString());
@@ -42,6 +46,11 @@ class EmployeePayRateViewModel extends StateNotifier<EmployeePayRateState> {
 }
 
 final employeePayRateViewModelProvider = StateNotifierProvider.family<
-    EmployeePayRateViewModel, EmployeePayRateState, String>((ref, organizationId) {
-  return EmployeePayRateViewModel(ApiMethod(), organizationId);
+    EmployeePayRateViewModel,
+    EmployeePayRateState,
+    String>((ref, organizationId) {
+  return EmployeePayRateViewModel(
+    ref.read(app_providers.apiMethodProvider),
+    organizationId,
+  );
 });

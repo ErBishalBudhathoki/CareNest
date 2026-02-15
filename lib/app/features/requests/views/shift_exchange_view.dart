@@ -1,6 +1,8 @@
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +21,7 @@ class ShiftExchangeView extends ConsumerStatefulWidget {
 class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final ApiMethod _apiMethod = ApiMethod();
+  late final ApiMethod _apiMethod;
   bool _isLoading = true;
   List<dynamic> _openShifts = [];
   List<dynamic> _myOffers = [];
@@ -29,6 +31,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     _tabController = TabController(length: 2, vsync: this);
     _loadData();
   }
@@ -107,6 +110,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                 clientName: clientName,
                 creatorEmail: shift['userEmail']?.toString() ??
                     shift['createdBy']?.toString(),
+                apiMethod: _apiMethod,
               ),
               const SizedBox(height: BauhausDesign.space4),
               Row(
@@ -445,11 +449,13 @@ class _ShiftDetailsDialogContent extends StatefulWidget {
   final Map<String, dynamic> details;
   final String clientName;
   final String? creatorEmail;
+  final ApiMethod apiMethod;
 
   const _ShiftDetailsDialogContent({
     required this.details,
     required this.clientName,
     this.creatorEmail,
+    required this.apiMethod,
   });
 
   @override
@@ -499,9 +505,8 @@ class _ShiftDetailsDialogContentState
 
       if (lookupEmail == null) return;
 
-      final api = ApiMethod();
-      final response =
-          await api.getClientAndAppointmentData(lookupEmail, clientEmail);
+      final response = await widget.apiMethod
+          .getClientAndAppointmentData(lookupEmail, clientEmail);
 
       if (response != null && response is Map && response['data'] != null) {
         final data = response['data'];

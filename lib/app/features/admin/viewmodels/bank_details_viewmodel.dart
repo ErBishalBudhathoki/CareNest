@@ -12,7 +12,7 @@ class BankDetailsViewModel extends ChangeNotifier {
   final TextEditingController bsbController = TextEditingController();
   final TextEditingController accountNumberController = TextEditingController();
 
-  final ApiMethod _apiMethod = ApiMethod();
+  final ApiMethod _apiMethod;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -28,7 +28,7 @@ class BankDetailsViewModel extends ChangeNotifier {
   static const String bsbKey = 'bsb';
   static const String accountNumberKey = 'accountNumber';
 
-  BankDetailsViewModel() {
+  BankDetailsViewModel({required ApiMethod apiMethod}) : _apiMethod = apiMethod {
     loadBankDetails();
   }
 

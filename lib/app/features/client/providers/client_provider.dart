@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // State class for client management
 class ClientState {
@@ -70,7 +72,9 @@ class ClientNotifier extends StateNotifier<ClientState> {
 }
 
 // Provider for ApiMethod
-final apiMethodProvider = Provider<ApiMethod>((ref) => ApiMethod());
+final apiMethodProvider = Provider<ApiMethod>(
+  (ref) => ref.read(app_providers.apiMethodProvider),
+);
 
 // Provider for ClientNotifier
 final clientProvider =

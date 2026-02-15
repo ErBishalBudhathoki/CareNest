@@ -1,3 +1,4 @@
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -40,8 +41,8 @@ class NdisPricingManagementView extends ConsumerStatefulWidget {
 
 class _NdisPricingManagementViewState
     extends ConsumerState<NdisPricingManagementView> {
-  final NDISMatcher _ndisMatcher = NDISMatcher();
-  final ApiMethod _apiMethod = ApiMethod();
+  late final NDISMatcher _ndisMatcher;
+  late final ApiMethod _apiMethod;
   final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
   final TextEditingController _searchController = TextEditingController();
 
@@ -65,6 +66,8 @@ class _NdisPricingManagementViewState
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
+    _ndisMatcher = NDISMatcher(apiMethod: _apiMethod);
     _initializeUserState();
     _loadNdisItems();
   }

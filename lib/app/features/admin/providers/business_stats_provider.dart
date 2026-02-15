@@ -1,9 +1,11 @@
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final businessStatsProvider =
-    FutureProvider.family<Map<String, dynamic>, String>((ref, organizationId) async {
-  final api = ApiMethod();
+    FutureProvider.family<Map<String, dynamic>, String>(
+        (ref, organizationId) async {
+  final api = ref.read(app_providers.apiMethodProvider);
   final response = await api.getInvoiceStats(organizationId);
 
   if (response['success'] == true && response['data'] != null) {
@@ -19,4 +21,3 @@ final businessStatsProvider =
     'activeInvoices': 0,
   };
 });
-

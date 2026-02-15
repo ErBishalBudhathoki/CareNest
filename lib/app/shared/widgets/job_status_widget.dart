@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 
-class JobStatusWidget extends StatefulWidget {
+class JobStatusWidget extends ConsumerStatefulWidget {
   final String jobId;
   final VoidCallback? onComplete;
 
@@ -14,11 +16,11 @@ class JobStatusWidget extends StatefulWidget {
   });
 
   @override
-  State<JobStatusWidget> createState() => _JobStatusWidgetState();
+  ConsumerState<JobStatusWidget> createState() => _JobStatusWidgetState();
 }
 
-class _JobStatusWidgetState extends State<JobStatusWidget> {
-  final ApiMethod _api = ApiMethod();
+class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
+  late final ApiMethod _api;
   Timer? _timer;
   double _progress = 0.0;
   String _status = 'waiting';
@@ -28,6 +30,7 @@ class _JobStatusWidgetState extends State<JobStatusWidget> {
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     _startPolling();
   }
 

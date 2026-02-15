@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class FinancialAnalyticsState {
@@ -38,10 +39,12 @@ class FinancialAnalyticsState {
   }
 }
 
-class FinancialAnalyticsViewModel extends StateNotifier<FinancialAnalyticsState> {
+class FinancialAnalyticsViewModel
+    extends StateNotifier<FinancialAnalyticsState> {
   final FinancialIntelligenceRepository _repository;
 
-  FinancialAnalyticsViewModel(this._repository) : super(FinancialAnalyticsState());
+  FinancialAnalyticsViewModel(this._repository)
+      : super(FinancialAnalyticsState());
 
   Future<void> getDashboard({
     required String organizationId,
@@ -53,9 +56,10 @@ class FinancialAnalyticsViewModel extends StateNotifier<FinancialAnalyticsState>
         organizationId: organizationId,
         period: period,
       );
-      
+
       if (result['success'] == true) {
-        state = state.copyWith(isLoading: false, dashboard: result['dashboard']);
+        state =
+            state.copyWith(isLoading: false, dashboard: result['dashboard']);
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -74,9 +78,10 @@ class FinancialAnalyticsViewModel extends StateNotifier<FinancialAnalyticsState>
         organizationId: organizationId,
         dimensions: dimensions,
       );
-      
+
       if (result['success'] == true) {
-        state = state.copyWith(isLoading: false, profitability: result['analysis']);
+        state =
+            state.copyWith(isLoading: false, profitability: result['analysis']);
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -88,7 +93,8 @@ class FinancialAnalyticsViewModel extends StateNotifier<FinancialAnalyticsState>
   Future<void> getKPIs(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _repository.getFinancialKPIs(organizationId: organizationId);
+      final result =
+          await _repository.getFinancialKPIs(organizationId: organizationId);
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, kpis: result['kpis']);
       } else {
@@ -111,7 +117,7 @@ class FinancialAnalyticsViewModel extends StateNotifier<FinancialAnalyticsState>
         metrics: metrics,
         period: period,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, trends: result['trends']);
       } else {
@@ -128,8 +134,9 @@ class FinancialAnalyticsViewModel extends StateNotifier<FinancialAnalyticsState>
 }
 
 final financialAnalyticsViewModelProvider =
-    StateNotifierProvider<FinancialAnalyticsViewModel, FinancialAnalyticsState>((ref) {
-  final apiMethod = ApiMethod();
+    StateNotifierProvider<FinancialAnalyticsViewModel, FinancialAnalyticsState>(
+        (ref) {
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   final repository = FinancialIntelligenceRepository(apiMethod);
   return FinancialAnalyticsViewModel(repository);
 });

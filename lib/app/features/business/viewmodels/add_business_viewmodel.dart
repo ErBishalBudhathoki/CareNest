@@ -10,10 +10,10 @@ enum AddBusinessStatus { idle, processing, success, error }
 /// ViewModel for handling business addition logic
 /// Follows MVVM pattern by keeping only business logic and state management
 class AddBusinessViewModel extends ChangeNotifier {
-  final ApiMethod _apiMethod = ApiMethod();
+  final ApiMethod _apiMethod;
   final Ref _ref;
 
-  AddBusinessViewModel(this._ref);
+  AddBusinessViewModel(this._ref) : _apiMethod = _ref.read(apiMethodProvider);
 
   // Status notifier for UI to react to state changes
   final ValueNotifier<AddBusinessStatus> addBusinessStatus =

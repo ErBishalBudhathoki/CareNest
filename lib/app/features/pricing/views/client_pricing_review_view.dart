@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/invoice/views/price_override_view.dart';
@@ -10,7 +12,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 ///
 /// Displays clients with assigned employees and their support item pricing.
 /// Allows reviewing and editing rates before invoice generation.
-class ClientPricingReviewView extends StatefulWidget {
+class ClientPricingReviewView extends ConsumerStatefulWidget {
   final String organizationId;
   final String userEmail;
 
@@ -21,12 +23,12 @@ class ClientPricingReviewView extends StatefulWidget {
   });
 
   @override
-  State<ClientPricingReviewView> createState() =>
+  ConsumerState<ClientPricingReviewView> createState() =>
       _ClientPricingReviewViewState();
 }
 
-class _ClientPricingReviewViewState extends State<ClientPricingReviewView> {
-  final ApiMethod _apiMethod = ApiMethod();
+class _ClientPricingReviewViewState extends ConsumerState<ClientPricingReviewView> {
+  late final ApiMethod _apiMethod;
 
   // Loading and error states
   bool _isLoading = true;
@@ -52,6 +54,7 @@ class _ClientPricingReviewViewState extends State<ClientPricingReviewView> {
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     _loadClientsWithAssignments();
   }
 
@@ -986,7 +989,7 @@ class _ClientPricingReviewViewState extends State<ClientPricingReviewView> {
 // ==================== MOBILE DETAIL PAGE ====================
 
 /// Separate page for mobile to show client pricing details.
-class _ClientPricingDetailPage extends StatefulWidget {
+class _ClientPricingDetailPage extends ConsumerStatefulWidget {
   final Map<String, dynamic> clientData;
   final String organizationId;
   final String Function(String) getPriceSourceLabel;
@@ -1000,18 +1003,19 @@ class _ClientPricingDetailPage extends StatefulWidget {
   });
 
   @override
-  State<_ClientPricingDetailPage> createState() =>
+  ConsumerState<_ClientPricingDetailPage> createState() =>
       _ClientPricingDetailPageState();
 }
 
-class _ClientPricingDetailPageState extends State<_ClientPricingDetailPage> {
-  final ApiMethod _apiMethod = ApiMethod();
+class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPage> {
+  late final ApiMethod _apiMethod;
   List<Map<String, dynamic>> _items = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     _loadItems();
   }
 

@@ -1,3 +1,4 @@
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -47,8 +48,8 @@ class EnhancedNdisItemSelectionView extends ConsumerStatefulWidget {
 
 class _EnhancedNdisItemSelectionViewState
     extends ConsumerState<EnhancedNdisItemSelectionView> {
-  final NDISMatcher _ndisMatcher = NDISMatcher();
-  final ApiMethod _apiMethod = ApiMethod();
+  late final NDISMatcher _ndisMatcher;
+  late final ApiMethod _apiMethod;
   final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
 
   List<NDISItem> _allNdisItems = [];
@@ -69,6 +70,8 @@ class _EnhancedNdisItemSelectionViewState
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
+    _ndisMatcher = NDISMatcher(apiMethod: _apiMethod);
     _initializeUserState();
     _loadNdisItems();
   }

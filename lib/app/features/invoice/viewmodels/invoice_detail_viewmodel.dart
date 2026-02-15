@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/services/invoice_management_service.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 
 // State class for invoice detail
 class InvoiceDetailState {
@@ -137,5 +138,5 @@ final invoiceDetailViewModelProvider =
 
 // Provider for invoice service
 final invoiceManagementServiceProvider = Provider<InvoiceManagementService>(
-  (ref) => InvoiceManagementService(),
+  (ref) => InvoiceManagementService(apiMethod: ref.read(app_providers.apiMethodProvider)),
 );

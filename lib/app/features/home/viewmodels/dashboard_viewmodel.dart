@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../models/dashboard_models.dart';
 
 class DashboardViewModel extends StateNotifier<DashboardState> {
@@ -143,5 +145,8 @@ final dashboardViewModelProvider =
     StateNotifierProvider<DashboardViewModel, DashboardState>((ref) {
   // In production, get organizationId from auth provider
   const organizationId = 'current-org-id'; // TODO: Get from auth
-  return DashboardViewModel(ApiMethod(), organizationId);
+  return DashboardViewModel(
+    ref.read(app_providers.apiMethodProvider),
+    organizationId,
+  );
 });

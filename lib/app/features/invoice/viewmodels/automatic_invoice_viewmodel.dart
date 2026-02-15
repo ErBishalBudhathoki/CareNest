@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Automatic Invoice Generation ViewModel
@@ -314,6 +316,6 @@ final automaticInvoiceViewModelProvider =
     StateNotifierProvider<AutomaticInvoiceViewModel, AutomaticInvoiceState>(
         (ref) {
   final invoiceService = ref.watch(enhancedInvoiceServiceProvider);
-  final apiMethod = ApiMethod();
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   return AutomaticInvoiceViewModel(ref, invoiceService, apiMethod);
 });

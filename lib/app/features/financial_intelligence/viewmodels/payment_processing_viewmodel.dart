@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class PaymentProcessingState {
@@ -37,7 +38,8 @@ class PaymentProcessingState {
 class PaymentProcessingViewModel extends StateNotifier<PaymentProcessingState> {
   final FinancialIntelligenceRepository _repository;
 
-  PaymentProcessingViewModel(this._repository) : super(PaymentProcessingState());
+  PaymentProcessingViewModel(this._repository)
+      : super(PaymentProcessingState());
 
   Future<void> processPayment(Map<String, dynamic> paymentData) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -63,9 +65,10 @@ class PaymentProcessingViewModel extends StateNotifier<PaymentProcessingState> {
         organizationId: organizationId,
         period: period,
       );
-      
+
       if (result['success'] == true) {
-        state = state.copyWith(isLoading: false, analytics: result['analytics']);
+        state =
+            state.copyWith(isLoading: false, analytics: result['analytics']);
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -77,7 +80,8 @@ class PaymentProcessingViewModel extends StateNotifier<PaymentProcessingState> {
   Future<void> checkFraud(Map<String, dynamic> paymentData) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _repository.checkPaymentFraud(paymentData: paymentData);
+      final result =
+          await _repository.checkPaymentFraud(paymentData: paymentData);
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, fraudCheck: result['check']);
       } else {
@@ -94,8 +98,9 @@ class PaymentProcessingViewModel extends StateNotifier<PaymentProcessingState> {
 }
 
 final paymentProcessingViewModelProvider =
-    StateNotifierProvider<PaymentProcessingViewModel, PaymentProcessingState>((ref) {
-  final apiMethod = ApiMethod();
+    StateNotifierProvider<PaymentProcessingViewModel, PaymentProcessingState>(
+        (ref) {
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   final repository = FinancialIntelligenceRepository(apiMethod);
   return PaymentProcessingViewModel(repository);
 });

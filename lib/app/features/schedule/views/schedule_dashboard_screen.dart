@@ -9,11 +9,13 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:intl/intl.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Schedule Dashboard Screen with Bauhaus styling
-class ScheduleDashboardScreen extends StatefulWidget {
+class ScheduleDashboardScreen extends ConsumerStatefulWidget {
   final String organizationId;
   final String? userEmail;
   final bool isAdmin;
@@ -26,12 +28,12 @@ class ScheduleDashboardScreen extends StatefulWidget {
   });
 
   @override
-  State<ScheduleDashboardScreen> createState() =>
+  ConsumerState<ScheduleDashboardScreen> createState() =>
       _ScheduleDashboardScreenState();
 }
 
-class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
-  final ApiMethod _api = ApiMethod();
+class _ScheduleDashboardScreenState extends ConsumerState<ScheduleDashboardScreen> {
+  late final ApiMethod _api;
 
   List<ShiftModel> _shifts = [];
   bool _isLoading = true;
@@ -42,6 +44,7 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     _loadShifts();
   }
 
@@ -574,7 +577,7 @@ class _ScheduleDashboardScreenState extends State<ScheduleDashboardScreen> {
 }
 
 /// Create Shift Dialog with Bauhaus styling
-class _CreateShiftDialog extends StatefulWidget {
+class _CreateShiftDialog extends ConsumerStatefulWidget {
   final String organizationId;
   final VoidCallback onCreated;
 
@@ -584,10 +587,10 @@ class _CreateShiftDialog extends StatefulWidget {
   });
 
   @override
-  State<_CreateShiftDialog> createState() => _CreateShiftDialogState();
+  ConsumerState<_CreateShiftDialog> createState() => _CreateShiftDialogState();
 }
 
-class _CreateShiftDialogState extends State<_CreateShiftDialog> {
+class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
   final _formKey = GlobalKey<FormState>();
   final _notesController = TextEditingController();
 
@@ -612,8 +615,9 @@ class _CreateShiftDialogState extends State<_CreateShiftDialog> {
     try {
       debugPrint('Fetching data for Organization ID: ${widget.organizationId}');
       
-      final clientsFuture = ApiMethod().getClientsByOrganizationId(widget.organizationId);
-      final employeesFuture = ApiMethod().getOrganizationEmployees(widget.organizationId);
+      final api = ref.read(app_providers.apiMethodProvider);
+      final clientsFuture = api.getClientsByOrganizationId(widget.organizationId);
+      final employeesFuture = api.getOrganizationEmployees(widget.organizationId);
 
       final results = await Future.wait([clientsFuture, employeesFuture]);
       
@@ -651,7 +655,8 @@ class _CreateShiftDialogState extends State<_CreateShiftDialog> {
       debugPrint('Error fetching data: $e');
       // If direct fetch fails, try alternative method to get all clients
       try {
-        final allClients = await ApiMethod().fetchClientData();
+        final api = ref.read(app_providers.apiMethodProvider);
+        final allClients = await api.fetchClientData();
         if (mounted) {
            setState(() {
              _clients = allClients.map((c) => {
@@ -714,7 +719,8 @@ class _CreateShiftDialogState extends State<_CreateShiftDialog> {
       shiftData['employeeEmail'] = _selectedEmployeeEmail;
     }
 
-    final result = await ApiMethod().createShift(shiftData);
+    final api = ref.read(app_providers.apiMethodProvider);
+    final result = await api.createShift(shiftData);
 
     if (mounted) {
       setState(() => _isLoading = false);

@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../models/trip_model.dart';
 
 final mileageRepositoryProvider = Provider<MileageRepository>((ref) {
-  return MileageRepository(ApiMethod());
+  return MileageRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 class MileageRepository {
@@ -15,7 +17,8 @@ class MileageRepository {
   /// [userId] The ID of the employee.
   /// [startDate] Start date string (YYYY-MM-DD).
   /// [endDate] End date string (YYYY-MM-DD).
-  Future<List<Trip>> getTrips(String userId, {String? startDate, String? endDate}) async {
+  Future<List<Trip>> getTrips(String userId,
+      {String? startDate, String? endDate}) async {
     try {
       String query = '';
       if (startDate != null && endDate != null) {
@@ -38,9 +41,11 @@ class MileageRepository {
   }
 
   /// Fetches billable trips for a client within a date range.
-  Future<List<Trip>> getTripsForClient(String clientId, {required String startDate, required String endDate}) async {
+  Future<List<Trip>> getTripsForClient(String clientId,
+      {required String startDate, required String endDate}) async {
     try {
-      final response = await _apiMethod.get('api/trips/client/$clientId?startDate=$startDate&endDate=$endDate');
+      final response = await _apiMethod.get(
+          'api/trips/client/$clientId?startDate=$startDate&endDate=$endDate');
 
       if (response != null && response['success'] == true) {
         final List<dynamic> data = response['data'];
@@ -58,7 +63,8 @@ class MileageRepository {
   Future<bool> saveTrip(Map<String, dynamic> tripData) async {
     try {
       final response = await _apiMethod.post('api/trips', body: tripData);
-      return response != null && (response['success'] == true || response['status'] == 201);
+      return response != null &&
+          (response['success'] == true || response['status'] == 201);
     } catch (e) {
       print('Error saving trip: $e');
       return false;

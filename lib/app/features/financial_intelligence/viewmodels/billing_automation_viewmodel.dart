@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class BillingAutomationState {
@@ -41,7 +42,8 @@ class BillingAutomationState {
 class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
   final FinancialIntelligenceRepository _repository;
 
-  BillingAutomationViewModel(this._repository) : super(BillingAutomationState());
+  BillingAutomationViewModel(this._repository)
+      : super(BillingAutomationState());
 
   Future<void> generateInvoices({
     required String organizationId,
@@ -55,7 +57,7 @@ class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
         billingPeriod: billingPeriod,
         options: options,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, invoices: result);
       } else {
@@ -69,9 +71,11 @@ class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
   Future<void> validateBilling(Map<String, dynamic> billingData) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _repository.validateBilling(billingData: billingData);
+      final result =
+          await _repository.validateBilling(billingData: billingData);
       if (result['success'] == true) {
-        state = state.copyWith(isLoading: false, validation: result['validation']);
+        state =
+            state.copyWith(isLoading: false, validation: result['validation']);
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -83,7 +87,8 @@ class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
   Future<void> detectAnomalies(Map<String, dynamic> invoiceData) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _repository.detectBillingAnomalies(invoiceData: invoiceData);
+      final result =
+          await _repository.detectBillingAnomalies(invoiceData: invoiceData);
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, anomalies: result);
       } else {
@@ -97,9 +102,11 @@ class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
   Future<void> getPendingInvoices(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _repository.getPendingInvoices(organizationId: organizationId);
+      final result =
+          await _repository.getPendingInvoices(organizationId: organizationId);
       if (result['success'] == true) {
-        state = state.copyWith(isLoading: false, pendingInvoices: result['pending']);
+        state = state.copyWith(
+            isLoading: false, pendingInvoices: result['pending']);
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -114,8 +121,9 @@ class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
 }
 
 final billingAutomationViewModelProvider =
-    StateNotifierProvider<BillingAutomationViewModel, BillingAutomationState>((ref) {
-  final apiMethod = ApiMethod();
+    StateNotifierProvider<BillingAutomationViewModel, BillingAutomationState>(
+        (ref) {
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   final repository = FinancialIntelligenceRepository(apiMethod);
   return BillingAutomationViewModel(repository);
 });

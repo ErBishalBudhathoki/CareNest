@@ -17,6 +17,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 
+import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
+
+import 'package:carenest/app/features/admin/viewmodels/bank_details_viewmodel.dart';
+
 // Global providers
 final sharedPreferencesProvider = Provider<SharedPreferencesUtils>((ref) {
   final prefs = SharedPreferencesUtils();
@@ -35,6 +39,10 @@ final navigationKeyProvider = Provider(
 // API Service
 final apiMethodProvider = Provider<ApiMethod>((ref) => ApiMethod());
 
+final fcmTokenManagerProvider = Provider<FcmTokenManager>((ref) {
+  return FcmTokenManager(apiMethod: ref.read(apiMethodProvider));
+});
+
 final userPhotoProvider = FutureProvider.autoDispose<Uint8List?>((ref) async {
   final email = ref.watch(authProvider.select((state) => state.email));
   if (email == null) return null;
@@ -44,7 +52,9 @@ final userPhotoProvider = FutureProvider.autoDispose<Uint8List?>((ref) async {
 
 class UserPhotoService {
   final Map<String, Uint8List> _photoCache = {};
-  final ApiMethod _api = ApiMethod();
+  final ApiMethod _api;
+
+  UserPhotoService({required ApiMethod api}) : _api = api;
 
   Future<Uint8List?> getUserPhoto(String email) async {
     if (_photoCache.containsKey(email)) {
@@ -361,23 +371,30 @@ class UserRoleNotifier extends StateNotifier<UserRole> {
   }
 }
 
+final bankDetailsViewModelProvider =
+    ChangeNotifierProvider.autoDispose<BankDetailsViewModel>((ref) {
+  return BankDetailsViewModel(apiMethod: ref.read(apiMethodProvider));
+});
+
 final loginViewModelProvider =
     ChangeNotifierProvider.autoDispose<LoginViewModel>((ref) {
   return LoginViewModel(
     ref.read(apiMethodProvider),
     ref.read(sharedPreferencesProvider),
+    ref.read(fcmTokenManagerProvider),
   );
 });
 
 final signupViewModelProvider =
     ChangeNotifierProvider.autoDispose<SignupViewModel>((ref) {
-  return SignupViewModel();
+  return SignupViewModel(ref.read(apiMethodProvider));
 });
 
 final forgotPasswordViewModelProvider =
     ChangeNotifierProvider.autoDispose<ForgotPasswordViewModel>((ref) {
   return ForgotPasswordViewModel(
     ref.read(sharedPreferencesProvider),
+    ref.read(apiMethodProvider),
   );
 });
 
@@ -388,7 +405,7 @@ final changePasswordViewModelProvider =
 
 final verifyOTPViewModelProvider =
     ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
-  return VerifyOTPViewModel();
+  return VerifyOTPViewModel(ref.read(apiMethodProvider));
 });
 
 final addBusinessViewModelProvider =
