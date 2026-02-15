@@ -1,86 +1,225 @@
-class ClientUser {
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String role;
-  final String clientId;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  ClientUser({
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.role,
-    required this.clientId,
-  });
+part 'client_portal_models.freezed.dart';
+part 'client_portal_models.g.dart';
 
-  factory ClientUser.fromJson(Map<String, dynamic> json) {
-    return ClientUser(
-      email: json['email'] ?? '',
-      firstName: json['firstName'] ?? '',
-      lastName: json['lastName'] ?? '',
-      role: json['role'] ?? '',
-      clientId: json['clientId'] ?? '',
-    );
-  }
+@freezed
+class ClientDashboard with _$ClientDashboard {
+  const factory ClientDashboard({
+    required String clientId,
+    required String clientName,
+    required List<TodayAppointment> todayAppointments,
+    required List<UpcomingAppointment> upcomingAppointments,
+    required List<RecentActivity> recentActivity,
+    required List<ClientNotification> notifications,
+  }) = _ClientDashboard;
+
+  factory ClientDashboard.fromJson(Map<String, dynamic> json) =>
+      _$ClientDashboardFromJson(json);
 }
 
-class ClientInvoice {
-  final String id;
-  final String invoiceNumber;
-  final String organizationId;
-  final Map<String, dynamic> financialSummary;
-  final Map<String, dynamic> workflow;
-  final Map<String, dynamic> payment;
-  final List<Map<String, dynamic>> lineItems;
-  final DateTime createdAt;
+@freezed
+class TodayAppointment with _$TodayAppointment {
+  const factory TodayAppointment({
+    required String appointmentId,
+    required String workerName,
+    required String serviceName,
+    required String startTime,
+    required String endTime,
+    required String status,
+    String? eta,
+    String? workerPhoto,
+  }) = _TodayAppointment;
 
-  ClientInvoice({
-    required this.id,
-    required this.invoiceNumber,
-    required this.organizationId,
-    required this.financialSummary,
-    required this.workflow,
-    required this.payment,
-    required this.lineItems,
-    required this.createdAt,
-  });
-
-  factory ClientInvoice.fromJson(Map<String, dynamic> json) {
-    return ClientInvoice(
-      id: json['_id'] ?? '',
-      invoiceNumber: json['invoiceNumber'] ?? '',
-      organizationId: json['organizationId'] ?? '',
-      financialSummary: Map<String, dynamic>.from(json['financialSummary'] ?? {}),
-      workflow: Map<String, dynamic>.from(json['workflow'] ?? {}),
-      payment: Map<String, dynamic>.from(json['payment'] ?? {}),
-      lineItems: List<Map<String, dynamic>>.from(json['lineItems'] ?? []),
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-    );
-  }
+  factory TodayAppointment.fromJson(Map<String, dynamic> json) =>
+      _$TodayAppointmentFromJson(json);
 }
 
-class ClientAppointment {
-  final String assignmentId;
-  final String date;
-  final String startTime;
-  final String endTime;
-  final String? userEmail;
+@freezed
+class UpcomingAppointment with _$UpcomingAppointment {
+  const factory UpcomingAppointment({
+    required String appointmentId,
+    required String workerName,
+    required String serviceName,
+    required String date,
+    required String startTime,
+    required String endTime,
+    required String status,
+  }) = _UpcomingAppointment;
 
-  ClientAppointment({
-    required this.assignmentId,
-    required this.date,
-    required this.startTime,
-    required this.endTime,
-    this.userEmail,
-  });
+  factory UpcomingAppointment.fromJson(Map<String, dynamic> json) =>
+      _$UpcomingAppointmentFromJson(json);
+}
 
-  factory ClientAppointment.fromJson(Map<String, dynamic> json) {
-    return ClientAppointment(
-      assignmentId: json['assignmentId'] ?? '',
-      date: json['date'] ?? '',
-      startTime: json['startTime'] ?? '',
-      endTime: json['endTime'] ?? '',
-      userEmail: json['userEmail'],
-    );
-  }
+@freezed
+class RecentActivity with _$RecentActivity {
+  const factory RecentActivity({
+    required String type,
+    required String message,
+    required String timestamp,
+  }) = _RecentActivity;
+
+  factory RecentActivity.fromJson(Map<String, dynamic> json) =>
+      _$RecentActivityFromJson(json);
+}
+
+@freezed
+class ClientNotification with _$ClientNotification {
+  const factory ClientNotification({
+    required String id,
+    required String type,
+    required String message,
+    required String timestamp,
+    required bool read,
+  }) = _ClientNotification;
+
+  factory ClientNotification.fromJson(Map<String, dynamic> json) =>
+      _$ClientNotificationFromJson(json);
+}
+
+@freezed
+class WorkerLocation with _$WorkerLocation {
+  const factory WorkerLocation({
+    required String appointmentId,
+    required String workerName,
+    required double latitude,
+    required double longitude,
+    required double accuracy,
+    required String timestamp,
+    required bool isEnRoute,
+    String? eta,
+    double? distanceRemaining,
+    String? lastUpdated,
+  }) = _WorkerLocation;
+
+  factory WorkerLocation.fromJson(Map<String, dynamic> json) =>
+      _$WorkerLocationFromJson(json);
+}
+
+@freezed
+class AppointmentStatus with _$AppointmentStatus {
+  const factory AppointmentStatus({
+    required String appointmentId,
+    required String status,
+    required String workerName,
+    required String serviceName,
+    required String startTime,
+    required String endTime,
+    String? actualStartTime,
+    String? actualEndTime,
+    String? eta,
+    required List<String> notes,
+    required List<String> photos,
+    required List<ChecklistItem> checklistItems,
+    required String lastUpdated,
+  }) = _AppointmentStatus;
+
+  factory AppointmentStatus.fromJson(Map<String, dynamic> json) =>
+      _$AppointmentStatusFromJson(json);
+}
+
+@freezed
+class ChecklistItem with _$ChecklistItem {
+  const factory ChecklistItem({
+    required String item,
+    required bool completed,
+  }) = _ChecklistItem;
+
+  factory ChecklistItem.fromJson(Map<String, dynamic> json) =>
+      _$ChecklistItemFromJson(json);
+}
+
+@freezed
+class ServiceHistory with _$ServiceHistory {
+  const factory ServiceHistory({
+    required String serviceId,
+    required String workerName,
+    required String serviceName,
+    required String date,
+    required String startTime,
+    required String endTime,
+    required int rating,
+    String? feedback,
+  }) = _ServiceHistory;
+
+  factory ServiceHistory.fromJson(Map<String, dynamic> json) =>
+      _$ServiceHistoryFromJson(json);
+}
+
+
+// Additional models for existing client portal views
+@freezed
+class ClientAppointment with _$ClientAppointment {
+  const factory ClientAppointment({
+    required String id,
+    required String date,
+    required String startTime,
+    required String endTime,
+    String? userEmail,
+    String? assignmentId,
+    String? scheduleId,
+  }) = _ClientAppointment;
+
+  factory ClientAppointment.fromJson(Map<String, dynamic> json) =>
+      _$ClientAppointmentFromJson(json);
+}
+
+@freezed
+class ClientAppointmentDetail with _$ClientAppointmentDetail {
+  const factory ClientAppointmentDetail({
+    required String id,
+    required String date,
+    required String startTime,
+    required String endTime,
+    required String status,
+    String? notes,
+    ClientEmployee? employee,
+    List<String>? services,
+    String? serviceName,
+    String? location,
+    String? assignmentId,
+    String? scheduleId,
+  }) = _ClientAppointmentDetail;
+
+  factory ClientAppointmentDetail.fromJson(Map<String, dynamic> json) =>
+      _$ClientAppointmentDetailFromJson(json);
+}
+
+@freezed
+class ClientEmployee with _$ClientEmployee {
+  const factory ClientEmployee({
+    required String email,
+    required String firstName,
+    required String lastName,
+    String? phone,
+    String? photo,
+  }) = _ClientEmployee;
+
+  factory ClientEmployee.fromJson(Map<String, dynamic> json) =>
+      _$ClientEmployeeFromJson(json);
+}
+
+@freezed
+class ClientInvoice with _$ClientInvoice {
+  const factory ClientInvoice({
+    required String id,
+    required String invoiceNumber,
+    required Map<String, dynamic> workflow,
+    required Map<String, dynamic> financialSummary,
+    List<dynamic>? lineItems,
+  }) = _ClientInvoice;
+
+  factory ClientInvoice.fromJson(Map<String, dynamic> json) =>
+      _$ClientInvoiceFromJson(json);
+}
+
+@freezed
+class AppointmentParams with _$AppointmentParams {
+  const factory AppointmentParams({
+    required String assignmentId,
+    required String scheduleId,
+  }) = _AppointmentParams;
+
+  factory AppointmentParams.fromJson(Map<String, dynamic> json) =>
+      _$AppointmentParamsFromJson(json);
 }

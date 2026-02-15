@@ -1,6 +1,5 @@
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
-import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,18 +9,23 @@ import 'package:pinput/pinput.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
-class VerifyOTPView extends ConsumerWidget {
-  final String otpGenerated;
-  final String encryptVerificationKey;
+class VerifyOTPView extends ConsumerStatefulWidget {
+  final String email;
 
   const VerifyOTPView({
     super.key,
-    required this.otpGenerated,
-    required this.encryptVerificationKey,
+    required this.email,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VerifyOTPView> createState() => _VerifyOTPViewState();
+}
+
+class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
+  bool _isResending = false;
+
+  @override
+  Widget build(BuildContext context) {
     final viewModel = ref.watch(verifyOTPViewModelProvider);
 
     SystemChrome.setSystemUIOverlayStyle(
@@ -184,31 +188,30 @@ class VerifyOTPView extends ConsumerWidget {
     return BauhausActionButton(
       text: AppLocalizations.of(context)!.verifyCode,
       icon: Iconsax.tick_circle,
-      isLoading: viewModel.isLoading,
+      isLoading: false,
       isFullWidth: true,
       onPressed: () async {
-        debugPrint('Verify button pressed');
-        await viewModel.verifyOTP(
-          viewModel.pinController.text,
-          otpGenerated,
-          encryptVerificationKey,
-          context,
-          (message) => EnhancedAuthDialog.showErrorDialog(
-            context,
-            title: AppLocalizations.of(context)!.warning,
-            message: message,
+        final enteredOtp = viewModel.pinController.text.trim();
+        if (enteredOtp.length != 6) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Please enter the 6-digit code.'),
+              backgroundColor: BauhausDesign.error,
+            ),
+          );
+          return;
+        }
+
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (newContext) => ChangePasswordView(
+              resetEmail: widget.email,
+              resetOtp: enteredOtp,
+            ),
           ),
         );
-
-        if (viewModel.response?['statusCode'] == 200) {
-          viewModel.dispose();
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (newContext) => const ChangePasswordView(),
-            ),
-            (route) => false,
-          );
-        }
       },
     );
   }
@@ -224,9 +227,35 @@ class VerifyOTPView extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         TextButton(
-          onPressed: () {
-            // Add resend logic here
-          },
+          onPressed: _isResending
+              ? null
+              : () async {
+                  setState(() => _isResending = true);
+                  try {
+                    final response =
+                        await ref.read(apiMethodProvider).sendOTP(widget.email);
+                    if (!mounted) return;
+
+                    final success = response['success'] == true ||
+                        response['statusCode'] == 200;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          success
+                              ? AppLocalizations.of(context)!.verificationCodeSent
+                              : (response['message']?.toString() ??
+                                  AppLocalizations.of(context)!.somethingWentWrong),
+                        ),
+                        backgroundColor:
+                            success ? BauhausDesign.success : BauhausDesign.error,
+                      ),
+                    );
+                  } finally {
+                    if (mounted) {
+                      setState(() => _isResending = false);
+                    }
+                  }
+                },
           style: TextButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),

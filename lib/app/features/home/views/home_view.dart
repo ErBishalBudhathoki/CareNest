@@ -26,6 +26,10 @@ import 'package:carenest/app/features/leave/views/leave_tracker_view.dart';
 import 'package:carenest/app/features/training_compliance/views/training_compliance_hub_view.dart';
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
 
+// Employee Features
+import 'package:carenest/app/features/notifications/views/notification_settings_view.dart';
+import 'package:carenest/app/features/offline/views/offline_sync_dashboard.dart';
+
 class HomeView extends ConsumerStatefulWidget {
   final String email;
   final Uint8List? photoData;
@@ -728,6 +732,52 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                 builder: (context) => EarningsDashboardView(
                                   organizationId: widget.organizationId,
                                   organizationName: widget.organizationName,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 48),
+
+                        // --- PERSONAL SETTINGS ---
+                        BauhausSectionHeader(
+                            title: 'Personal Settings'),
+                        const SizedBox(height: 16),
+
+                        // Notification Settings
+                        BauhausActionCard(
+                          title: 'Smart Notifications',
+                          description: 'Configure geofence alerts, quiet hours, and notification preferences',
+                          icon: Icons.notifications_active_outlined,
+                          baseColor: BauhausDesign.warning,
+                          actionLabel: 'Settings',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const NotificationSettingsView(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Offline Mode
+                        BauhausActionCard(
+                          title: 'Offline Mode',
+                          description: 'Work offline and sync your personal data when online',
+                          icon: Icons.cloud_off_outlined,
+                          baseColor: BauhausDesign.secondary,
+                          actionLabel: 'Open',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OfflineSyncDashboard(
+                                  userId: widget.email,
                                 ),
                               ),
                             );

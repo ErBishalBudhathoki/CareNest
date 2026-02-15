@@ -267,8 +267,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
             context,
             MaterialPageRoute(
               builder: (context) => VerifyOTPView(
-                otpGenerated: viewModel.otp!,
-                encryptVerificationKey: viewModel.verificationKey!,
+                email: viewModel.model.emailController.text.trim(),
               ),
             ),
           );

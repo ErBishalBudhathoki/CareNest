@@ -54,6 +54,7 @@ class User {
   late final String? payPoint;
   late final String? employmentType;
   late final DateTime? dob; // Added Date of Birth
+  late final List<String> permissions;
 
   User({
     required this.id,
@@ -73,6 +74,7 @@ class User {
     this.payPoint,
     this.employmentType,
     this.dob,
+    this.permissions = const [],
   });
 
   static UserRole _parseRole(dynamic role) {
@@ -118,6 +120,7 @@ class User {
         payPoint: json['payPoint']?.toString(),
         employmentType: json['employmentType']?.toString(),
         dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
+        permissions: (json['permissions'] as List?)?.map((e) => e.toString()).toList() ?? [],
       );
     } catch (e) {
       debugPrint('Error parsing user data: $e');

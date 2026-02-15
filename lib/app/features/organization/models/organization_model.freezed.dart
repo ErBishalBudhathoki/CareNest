@@ -773,6 +773,14 @@ mixin _$Organization {
   ContactDetails? get contactDetails => throw _privateConstructorUsedError;
   BankDetails? get bankDetails => throw _privateConstructorUsedError;
   NdisRegistration? get ndisRegistration => throw _privateConstructorUsedError;
+  String? get stripeAccountId => throw _privateConstructorUsedError;
+  String? get logoUrl => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
+  OrganizationBrandingConfig? get branding =>
+      throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+  OrganizationIntegrations? get integrations =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -794,12 +802,20 @@ abstract class $OrganizationCopyWith<$Res> {
       Address? address,
       ContactDetails? contactDetails,
       BankDetails? bankDetails,
-      NdisRegistration? ndisRegistration});
+      NdisRegistration? ndisRegistration,
+      String? stripeAccountId,
+      String? logoUrl,
+      @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
+      OrganizationBrandingConfig? branding,
+      @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+      OrganizationIntegrations? integrations});
 
   $AddressCopyWith<$Res>? get address;
   $ContactDetailsCopyWith<$Res>? get contactDetails;
   $BankDetailsCopyWith<$Res>? get bankDetails;
   $NdisRegistrationCopyWith<$Res>? get ndisRegistration;
+  $OrganizationBrandingConfigCopyWith<$Res>? get branding;
+  $OrganizationIntegrationsCopyWith<$Res>? get integrations;
 }
 
 /// @nodoc
@@ -823,6 +839,10 @@ class _$OrganizationCopyWithImpl<$Res, $Val extends Organization>
     Object? contactDetails = freezed,
     Object? bankDetails = freezed,
     Object? ndisRegistration = freezed,
+    Object? stripeAccountId = freezed,
+    Object? logoUrl = freezed,
+    Object? branding = freezed,
+    Object? integrations = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -857,6 +877,22 @@ class _$OrganizationCopyWithImpl<$Res, $Val extends Organization>
           ? _value.ndisRegistration
           : ndisRegistration // ignore: cast_nullable_to_non_nullable
               as NdisRegistration?,
+      stripeAccountId: freezed == stripeAccountId
+          ? _value.stripeAccountId
+          : stripeAccountId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logoUrl: freezed == logoUrl
+          ? _value.logoUrl
+          : logoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      branding: freezed == branding
+          ? _value.branding
+          : branding // ignore: cast_nullable_to_non_nullable
+              as OrganizationBrandingConfig?,
+      integrations: freezed == integrations
+          ? _value.integrations
+          : integrations // ignore: cast_nullable_to_non_nullable
+              as OrganizationIntegrations?,
     ) as $Val);
   }
 
@@ -907,6 +943,31 @@ class _$OrganizationCopyWithImpl<$Res, $Val extends Organization>
       return _then(_value.copyWith(ndisRegistration: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $OrganizationBrandingConfigCopyWith<$Res>? get branding {
+    if (_value.branding == null) {
+      return null;
+    }
+
+    return $OrganizationBrandingConfigCopyWith<$Res>(_value.branding!, (value) {
+      return _then(_value.copyWith(branding: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $OrganizationIntegrationsCopyWith<$Res>? get integrations {
+    if (_value.integrations == null) {
+      return null;
+    }
+
+    return $OrganizationIntegrationsCopyWith<$Res>(_value.integrations!,
+        (value) {
+      return _then(_value.copyWith(integrations: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -925,7 +986,13 @@ abstract class _$$OrganizationImplCopyWith<$Res>
       Address? address,
       ContactDetails? contactDetails,
       BankDetails? bankDetails,
-      NdisRegistration? ndisRegistration});
+      NdisRegistration? ndisRegistration,
+      String? stripeAccountId,
+      String? logoUrl,
+      @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
+      OrganizationBrandingConfig? branding,
+      @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+      OrganizationIntegrations? integrations});
 
   @override
   $AddressCopyWith<$Res>? get address;
@@ -935,6 +1002,10 @@ abstract class _$$OrganizationImplCopyWith<$Res>
   $BankDetailsCopyWith<$Res>? get bankDetails;
   @override
   $NdisRegistrationCopyWith<$Res>? get ndisRegistration;
+  @override
+  $OrganizationBrandingConfigCopyWith<$Res>? get branding;
+  @override
+  $OrganizationIntegrationsCopyWith<$Res>? get integrations;
 }
 
 /// @nodoc
@@ -956,6 +1027,10 @@ class __$$OrganizationImplCopyWithImpl<$Res>
     Object? contactDetails = freezed,
     Object? bankDetails = freezed,
     Object? ndisRegistration = freezed,
+    Object? stripeAccountId = freezed,
+    Object? logoUrl = freezed,
+    Object? branding = freezed,
+    Object? integrations = freezed,
   }) {
     return _then(_$OrganizationImpl(
       id: null == id
@@ -990,6 +1065,22 @@ class __$$OrganizationImplCopyWithImpl<$Res>
           ? _value.ndisRegistration
           : ndisRegistration // ignore: cast_nullable_to_non_nullable
               as NdisRegistration?,
+      stripeAccountId: freezed == stripeAccountId
+          ? _value.stripeAccountId
+          : stripeAccountId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logoUrl: freezed == logoUrl
+          ? _value.logoUrl
+          : logoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      branding: freezed == branding
+          ? _value.branding
+          : branding // ignore: cast_nullable_to_non_nullable
+              as OrganizationBrandingConfig?,
+      integrations: freezed == integrations
+          ? _value.integrations
+          : integrations // ignore: cast_nullable_to_non_nullable
+              as OrganizationIntegrations?,
     ));
   }
 }
@@ -1005,7 +1096,13 @@ class _$OrganizationImpl implements _Organization {
       this.address,
       this.contactDetails,
       this.bankDetails,
-      this.ndisRegistration});
+      this.ndisRegistration,
+      this.stripeAccountId,
+      this.logoUrl,
+      @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
+      this.branding,
+      @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+      this.integrations});
 
   factory _$OrganizationImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrganizationImplFromJson(json);
@@ -1026,10 +1123,20 @@ class _$OrganizationImpl implements _Organization {
   final BankDetails? bankDetails;
   @override
   final NdisRegistration? ndisRegistration;
+  @override
+  final String? stripeAccountId;
+  @override
+  final String? logoUrl;
+  @override
+  @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
+  final OrganizationBrandingConfig? branding;
+  @override
+  @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+  final OrganizationIntegrations? integrations;
 
   @override
   String toString() {
-    return 'Organization(id: $id, name: $name, code: $code, abn: $abn, address: $address, contactDetails: $contactDetails, bankDetails: $bankDetails, ndisRegistration: $ndisRegistration)';
+    return 'Organization(id: $id, name: $name, code: $code, abn: $abn, address: $address, contactDetails: $contactDetails, bankDetails: $bankDetails, ndisRegistration: $ndisRegistration, stripeAccountId: $stripeAccountId, logoUrl: $logoUrl, branding: $branding, integrations: $integrations)';
   }
 
   @override
@@ -1047,13 +1154,32 @@ class _$OrganizationImpl implements _Organization {
             (identical(other.bankDetails, bankDetails) ||
                 other.bankDetails == bankDetails) &&
             (identical(other.ndisRegistration, ndisRegistration) ||
-                other.ndisRegistration == ndisRegistration));
+                other.ndisRegistration == ndisRegistration) &&
+            (identical(other.stripeAccountId, stripeAccountId) ||
+                other.stripeAccountId == stripeAccountId) &&
+            (identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl) &&
+            (identical(other.branding, branding) ||
+                other.branding == branding) &&
+            (identical(other.integrations, integrations) ||
+                other.integrations == integrations));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, code, abn, address,
-      contactDetails, bankDetails, ndisRegistration);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      code,
+      abn,
+      address,
+      contactDetails,
+      bankDetails,
+      ndisRegistration,
+      stripeAccountId,
+      logoUrl,
+      branding,
+      integrations);
 
   @JsonKey(ignore: true)
   @override
@@ -1078,7 +1204,13 @@ abstract class _Organization implements Organization {
       final Address? address,
       final ContactDetails? contactDetails,
       final BankDetails? bankDetails,
-      final NdisRegistration? ndisRegistration}) = _$OrganizationImpl;
+      final NdisRegistration? ndisRegistration,
+      final String? stripeAccountId,
+      final String? logoUrl,
+      @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
+      final OrganizationBrandingConfig? branding,
+      @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+      final OrganizationIntegrations? integrations}) = _$OrganizationImpl;
 
   factory _Organization.fromJson(Map<String, dynamic> json) =
       _$OrganizationImpl.fromJson;
@@ -1099,6 +1231,16 @@ abstract class _Organization implements Organization {
   BankDetails? get bankDetails;
   @override
   NdisRegistration? get ndisRegistration;
+  @override
+  String? get stripeAccountId;
+  @override
+  String? get logoUrl;
+  @override
+  @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
+  OrganizationBrandingConfig? get branding;
+  @override
+  @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+  OrganizationIntegrations? get integrations;
   @override
   @JsonKey(ignore: true)
   _$$OrganizationImplCopyWith<_$OrganizationImpl> get copyWith =>
