@@ -8,6 +8,7 @@ import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/shared/utils/encryption/encrypt_decrypt.dart';
 import 'package:carenest/app/shared/utils/encryption/encryption_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:flutter/material.dart';
@@ -23,9 +24,11 @@ import 'package:carenest/app/shared/utils/debug_log.dart';
 
 class ApiMethod extends ChangeNotifier {
   /// Get Quarterly OTE for a user (for Superannuation Cap calculation)
-  Future<Map<String, dynamic>> getQuarterlyOTE(String userEmail, {String? date}) async {
+  Future<Map<String, dynamic>> getQuarterlyOTE(String userEmail,
+      {String? date}) async {
     try {
-      final endpoint = 'api/earnings/quarterly-ote/$userEmail${date != null ? '?date=$date' : ''}';
+      final endpoint =
+          'api/earnings/quarterly-ote/$userEmail${date != null ? '?date=$date' : ''}';
       final response = await get(endpoint);
       return response;
     } catch (e) {
@@ -34,9 +37,11 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> getLeaveForecast(String userEmail, DateTime targetDate) async {
+  Future<Map<String, dynamic>> getLeaveForecast(
+      String userEmail, DateTime targetDate) async {
     final dateStr = targetDate.toIso8601String().split('T')[0];
-    final endpoint = 'api/requests/forecast/$userEmail?targetDate=$dateStr'; // Adjusted to match backend route
+    final endpoint =
+        'api/requests/forecast/$userEmail?targetDate=$dateStr'; // Adjusted to match backend route
     return await get(endpoint);
   }
 
@@ -128,24 +133,16 @@ class ApiMethod extends ChangeNotifier {
       debugPrint('=== API METHOD DEBUG: Base URL is: $_baseUrl ===');
       debugPrint('=== API METHOD DEBUG: Endpoint is: $endpoint ===');
 
-      // Attach Authorization header if token exists
-      final sharedUtils = SharedPreferencesUtils();
-      await sharedUtils.init();
-      final token = sharedUtils.getAuthToken();
-      final hasToken = token != null && token.isNotEmpty;
+      final authValue = await _getAuthorizationHeaderValue();
+      final hasToken = authValue != null;
       final tokenHasBearerPrefix =
-          hasToken && token.toLowerCase().startsWith('bearer ');
+          hasToken && authValue.toLowerCase().startsWith('bearer ');
       debugPrint(
           '=== API METHOD DEBUG: Auth header present: $hasToken, tokenHasBearerPrefix: $tokenHasBearerPrefix ===');
-      final String? authValue = hasToken
-          ? (token.toLowerCase().startsWith('bearer ')
-              ? token
-              : 'Bearer $token')
-          : null;
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final response = await http.get(
         Uri.parse(fullUrl),
@@ -280,22 +277,13 @@ class ApiMethod extends ChangeNotifier {
       debugPrint('🚀🚀🚀 CRITICAL DEBUG: Base URL is: $_baseUrl 🚀🚀🚀');
       debugPrint('🚀🚀🚀 CRITICAL DEBUG: Endpoint is: $endpoint 🚀🚀🚀');
 
-      // Attach Authorization header if token exists
-      final sharedUtils = SharedPreferencesUtils();
-      await sharedUtils.init();
-      final token = sharedUtils.getAuthToken();
-      final String? authValue = (token != null && token.isNotEmpty)
-          ? (token.toLowerCase().startsWith('bearer ')
-              ? token
-              : 'Bearer $token')
-          : null;
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       debugPrint(
-          '=== API METHOD DEBUG: Request headers set (Authorization present: ${authValue != null}) ===');
+          '=== API METHOD DEBUG: Request headers set (Authorization present: ${headers.containsKey('Authorization')}) ===');
       if (body != null) {
         debugPrint(
             '=== API METHOD DEBUG: Request body: ${json.encode(body)} ===');
@@ -331,35 +319,38 @@ class ApiMethod extends ChangeNotifier {
           endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
       final baseNoTrailing = _baseUrl.replaceAll(RegExp(r'/+$'), '');
       final fullUrl = '$baseNoTrailing/$cleanEndpoint';
-      
-      debugPrint('=== API METHOD DEBUG: POST MULTIPART request to: $fullUrl ===');
+
+      debugPrint(
+          '=== API METHOD DEBUG: POST MULTIPART request to: $fullUrl ===');
 
       final sharedUtils = SharedPreferencesUtils();
       await sharedUtils.init();
-      final token = sharedUtils.getAuthToken();
-      final String? authValue = (token != null && token.isNotEmpty)
-          ? (token.toLowerCase().startsWith('bearer ') ? token : 'Bearer $token')
-          : null;
+      final authValue = await _getAuthorizationHeaderValue();
+      final appCheckToken = await _getAppCheckToken();
 
       final request = http.MultipartRequest('POST', Uri.parse(fullUrl));
-      
+
       if (authValue != null) {
         request.headers['Authorization'] = authValue;
       }
-      
+      if (appCheckToken != null && appCheckToken.isNotEmpty) {
+        request.headers['X-Firebase-AppCheck'] = appCheckToken;
+      }
+
       if (fields != null) {
         request.fields.addAll(fields);
       }
-      
+
       if (files != null) {
         request.files.addAll(files);
       }
 
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-      
-      debugPrint('=== API METHOD DEBUG: Response status code: ${response.statusCode} ===');
-      
+
+      debugPrint(
+          '=== API METHOD DEBUG: Response status code: ${response.statusCode} ===');
+
       return _handleResponse(response);
     } catch (e) {
       debugPrint('=== API METHOD DEBUG: Exception occurred: $e ===');
@@ -469,19 +460,10 @@ class ApiMethod extends ChangeNotifier {
           endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
       final baseNoTrailing = _baseUrl.replaceAll(RegExp(r'/+$'), '');
       final fullUrl = '$baseNoTrailing/$cleanEndpoint';
-      // Attach Authorization header if token exists
-      final sharedUtils = SharedPreferencesUtils();
-      await sharedUtils.init();
-      final token = sharedUtils.getAuthToken();
-      final String? authValue = (token != null && token.isNotEmpty)
-          ? (token.toLowerCase().startsWith('bearer ')
-              ? token
-              : 'Bearer $token')
-          : null;
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final response = await http.put(
         Uri.parse(fullUrl),
@@ -502,19 +484,10 @@ class ApiMethod extends ChangeNotifier {
           endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
       final baseNoTrailing = _baseUrl.replaceAll(RegExp(r'/+$'), '');
       final fullUrl = '$baseNoTrailing/$cleanEndpoint';
-      // Attach Authorization header if token exists
-      final sharedUtils = SharedPreferencesUtils();
-      await sharedUtils.init();
-      final token = sharedUtils.getAuthToken();
-      final String? authValue = (token != null && token.isNotEmpty)
-          ? (token.toLowerCase().startsWith('bearer ')
-              ? token
-              : 'Bearer $token')
-          : null;
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final response = await http.delete(
         Uri.parse(fullUrl),
@@ -577,6 +550,46 @@ class ApiMethod extends ChangeNotifier {
     return 'Bearer $token';
   }
 
+  Future<String?> _getAppCheckToken() async {
+    try {
+      final token = await FirebaseAppCheck.instance.getToken();
+      if (token == null || token.isEmpty) {
+        return null;
+      }
+      return token;
+    } catch (e) {
+      debugPrint('App Check token fetch failed: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, String>> _buildJsonHeaders({
+    bool includeAuth = false,
+    bool includeAppCheck = false,
+    Map<String, String>? extra,
+  }) async {
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      if (extra != null) ...extra,
+    };
+
+    if (includeAuth && !headers.containsKey('Authorization')) {
+      final authValue = await _getAuthorizationHeaderValue();
+      if (authValue != null) {
+        headers['Authorization'] = authValue;
+      }
+    }
+
+    if (includeAppCheck && !headers.containsKey('X-Firebase-AppCheck')) {
+      final appCheckToken = await _getAppCheckToken();
+      if (appCheckToken != null && appCheckToken.isNotEmpty) {
+        headers['X-Firebase-AppCheck'] = appCheckToken;
+      }
+    }
+
+    return headers;
+  }
+
   Future<http.Response> getRawUrl(
     String url, {
     Map<String, String>? headers,
@@ -594,6 +607,12 @@ class ApiMethod extends ChangeNotifier {
       final authValue = await _getAuthorizationHeaderValue();
       if (authValue != null && !combinedHeaders.containsKey('Authorization')) {
         combinedHeaders['Authorization'] = authValue;
+      }
+      final appCheckToken = await _getAppCheckToken();
+      if (appCheckToken != null &&
+          appCheckToken.isNotEmpty &&
+          !combinedHeaders.containsKey('X-Firebase-AppCheck')) {
+        combinedHeaders['X-Firebase-AppCheck'] = appCheckToken;
       }
     }
 
@@ -622,6 +641,12 @@ class ApiMethod extends ChangeNotifier {
       if (authValue != null && !combinedHeaders.containsKey('Authorization')) {
         combinedHeaders['Authorization'] = authValue;
       }
+      final appCheckToken = await _getAppCheckToken();
+      if (appCheckToken != null &&
+          appCheckToken.isNotEmpty &&
+          !combinedHeaders.containsKey('X-Firebase-AppCheck')) {
+        combinedHeaders['X-Firebase-AppCheck'] = appCheckToken;
+      }
     }
 
     Future<http.Response> f = http.head(targetUri, headers: combinedHeaders);
@@ -644,17 +669,28 @@ class ApiMethod extends ChangeNotifier {
     if (authValue != null && !combinedHeaders.containsKey('Authorization')) {
       combinedHeaders['Authorization'] = authValue;
     }
+    final appCheckToken = await _getAppCheckToken();
+    if (appCheckToken != null &&
+        appCheckToken.isNotEmpty &&
+        !combinedHeaders.containsKey('X-Firebase-AppCheck')) {
+      combinedHeaders['X-Firebase-AppCheck'] = appCheckToken;
+    }
     final req = http.Request('GET', uri);
     req.headers.addAll(combinedHeaders);
     return client.send(req);
   }
 
-  Future<String> uploadFile(String endpoint, File file, {String fieldName = 'file'}) async {
+  Future<String> uploadFile(String endpoint, File file,
+      {String fieldName = 'file'}) async {
     final uri = _buildUri(endpoint);
     final request = http.MultipartRequest('POST', uri);
     final authValue = await _getAuthorizationHeaderValue();
     if (authValue != null) {
       request.headers['Authorization'] = authValue;
+    }
+    final appCheckToken = await _getAppCheckToken();
+    if (appCheckToken != null && appCheckToken.isNotEmpty) {
+      request.headers['X-Firebase-AppCheck'] = appCheckToken;
     }
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -665,33 +701,34 @@ class ApiMethod extends ChangeNotifier {
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
     final decoded = response.body.isNotEmpty ? json.decode(response.body) : {};
-    
+
     if (response.statusCode != 200) {
       final msg = decoded is Map
           ? (decoded['message'] ?? 'Upload failed').toString()
           : 'Upload failed';
       throw Exception(msg);
     }
-    
+
     if (decoded is! Map) {
       throw Exception('Upload failed');
     }
-    
+
     // Try to find the URL in various common locations
-    final dynamic fileUrlValue = decoded['data']?['url'] ?? 
-                               decoded['url'] ?? 
-                               decoded['fileUrl'] ??
-                               decoded['data']?['fileUrl'];
-                               
+    final dynamic fileUrlValue = decoded['data']?['url'] ??
+        decoded['url'] ??
+        decoded['fileUrl'] ??
+        decoded['data']?['fileUrl'];
+
     if (fileUrlValue == null || fileUrlValue.toString().isEmpty) {
-      throw Exception((decoded['message'] ?? 'Upload failed: No URL returned').toString());
+      throw Exception(
+          (decoded['message'] ?? 'Upload failed: No URL returned').toString());
     }
-    
+
     final String fileUrl = fileUrlValue.toString();
     if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
       return fileUrl;
     }
-    
+
     final baseNoTrailing = _baseUrl.replaceAll(RegExp(r'/+$'), '');
     final cleanPath = fileUrl.startsWith('/') ? fileUrl.substring(1) : fileUrl;
     return '$baseNoTrailing/$cleanPath';
@@ -703,6 +740,10 @@ class ApiMethod extends ChangeNotifier {
     final authValue = await _getAuthorizationHeaderValue();
     if (authValue != null) {
       request.headers['Authorization'] = authValue;
+    }
+    final appCheckToken = await _getAppCheckToken();
+    if (appCheckToken != null && appCheckToken.isNotEmpty) {
+      request.headers['X-Firebase-AppCheck'] = appCheckToken;
     }
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -742,6 +783,10 @@ class ApiMethod extends ChangeNotifier {
     final authValue = await _getAuthorizationHeaderValue();
     if (authValue != null) {
       request.headers['Authorization'] = authValue;
+    }
+    final appCheckToken = await _getAppCheckToken();
+    if (appCheckToken != null && appCheckToken.isNotEmpty) {
+      request.headers['X-Firebase-AppCheck'] = appCheckToken;
     }
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -840,15 +885,16 @@ class ApiMethod extends ChangeNotifier {
 
       // Handle backend response format variations
       List<dynamic> members = [];
-      
+
       if (response.containsKey('members')) {
         members = response['members'];
       } else if (response.containsKey('data')) {
-         if (response['data'] is Map && response['data'].containsKey('members')) {
-            members = response['data']['members'];
-         } else if (response['data'] is List) {
-            members = response['data'];
-         }
+        if (response['data'] is Map &&
+            response['data'].containsKey('members')) {
+          members = response['data']['members'];
+        } else if (response['data'] is List) {
+          members = response['data'];
+        }
       } else if (response.containsKey('users')) {
         members = response['users'];
       }
@@ -913,19 +959,42 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> sendOTP(
-      String email, String encryptionKey) async {
+  Future<Map<String, dynamic>> sendOTP(String email) async {
+    final uri = Uri.parse('${_baseUrl}auth/forgot-password');
+    debugPrint('sendOTP request URL: $uri');
+
+    final headers = await _buildJsonHeaders(
+      includeAppCheck: true,
+    );
     final response = await http.post(
-      Uri.parse('${_baseUrl}sendOTP'),
-      body: jsonEncode({'email': email, 'clientEncryptionKey': encryptionKey}),
-      headers: {'Content-Type': 'application/json'},
+      uri,
+      body: jsonEncode({'email': email}),
+      headers: headers,
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to send OTP');
+    Map<String, dynamic> payload = {};
+    if (response.body.isNotEmpty) {
+      try {
+        payload = Map<String, dynamic>.from(jsonDecode(response.body));
+      } catch (_) {
+        payload = {};
+      }
     }
+
+    if (response.statusCode == 200) {
+      return {
+        'success': true,
+        'statusCode': 200,
+        ...payload,
+      };
+    }
+
+    return {
+      'success': false,
+      'statusCode': response.statusCode,
+      'message': payload['message'] ?? 'Failed to send verification code',
+      ...payload,
+    };
 
     // switch (response.statusCode) {
     //   case 200:
@@ -956,6 +1025,31 @@ class ApiMethod extends ChangeNotifier {
     //       'message': responseData['message']
     //     }; // Handle other status codes as needed
     // }
+  }
+
+  Future<Map<String, dynamic>> resetForgotPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final uri = Uri.parse('${_baseUrl}auth/reset-password');
+    final headers = await _buildJsonHeaders(
+      includeAppCheck: true,
+    );
+
+    final response = await http.post(
+      uri,
+      headers: headers,
+      body: jsonEncode({
+        'email': email,
+        'otp': otp,
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+      }),
+    );
+
+    return _handleResponse(response);
   }
 
   Future<Map<String, dynamic>> verifyOTP(
@@ -1642,145 +1736,21 @@ class ApiMethod extends ChangeNotifier {
   }
 
   Future<dynamic> login(String email, String password) async {
-    // debugPrint('${_baseUrl}login/$email/$password');
+    final response = await secureLogin({
+      'email': email,
+      'password': password,
+    });
 
-    try {
-      EncryptionUtils encryptionUtils = EncryptionUtils();
-      final getSaltResponse = await getSalt(email);
-      debugPrint("inside login: $getSaltResponse");
-      debugPrint("getSaltResponse: $getSaltResponse.body");
-
-      // Check if there's an error in getSalt response
-      if (getSaltResponse.containsKey('error')) {
-        debugPrint("Error getting salt: ${getSaltResponse['error']}");
-        return {
-          'message': getSaltResponse['error'],
-          'errorCode': getSaltResponse['errorCode'] ?? 'UNKNOWN_ERROR',
-          'statusCode': getSaltResponse['statusCode'] ?? 500,
-        };
-      }
-
-      final salt = getSaltResponse['salt'];
-
-      // Check if salt is null or empty
-      if (salt == null || salt.toString().isEmpty) {
-        debugPrint(
-            "Error: Salt is null or empty. User may not exist or there's a backend issue.");
-        return {
-          'message': 'User not found',
-          'errorCode': 'USER_NOT_FOUND',
-          'statusCode': 404,
-        };
-      }
-
-      final Uint8List originalSalt = encryptionUtils.hexStringToUint8List(salt);
-      debugPrint("Salty: $salt");
-
-      var hashedPasswordWithSalt = encryptionUtils
-          .encryptPasswordWithArgon2andSalt(password, originalSalt);
-      debugPrint("Hashed password with salt: $hashedPasswordWithSalt");
-      final response = await http.post(
-        Uri.parse('${_baseUrl}login'),
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: {'email': email, 'password': hashedPasswordWithSalt},
-      );
-
-      debugPrint("Resp: ${response.statusCode}");
-
-      Map<String, dynamic> data = {};
-
-      switch (response.statusCode) {
-        case 200:
-          data = Map<String, dynamic>.from(json.decode(response.body));
-          if (kDebugMode) {
-            debugPrint("200" + data['message']);
-          }
-          // Retrieve the user's role from the response and assign it to a variable
-          // The role is inside the 'user' object in the response
-          String role = data['user']['role'];
-          UserRole roleEnum;
-          // Convert the string role to the UserRole enum
-          if (role == 'admin') {
-            roleEnum = UserRole.admin;
-          } else {
-            roleEnum = UserRole.normal;
-          }
-          debugPrint("Role enum: $roleEnum $role");
-          // Save user email and organization ID to SharedPreferences
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('userEmail', email);
-          if (data['user']['organizationId'] != null) {
-            await prefs.setString(
-                'organizationId', data['user']['organizationId']);
-          }
-          return {
-            'message': 'user found',
-            'role': role,
-            'user': data['user'], // Include full user data
-          };
-
-        case 400:
-          data = Map<String, dynamic>.from(json.decode(response.body));
-          if (kDebugMode) {
-            debugPrint("400" + data['message']);
-          }
-          return {
-            'message': data['message'] ?? 'Invalid credentials',
-            'errorCode': data['errorCode'],
-            'statusCode': 400,
-          };
-
-        case 401:
-          data = Map<String, dynamic>.from(json.decode(response.body));
-          debugPrint("401: Unauthorized - ${data['message']}");
-          return {
-            'message': data['message'] ?? 'Invalid credentials',
-            'errorCode': data['errorCode'],
-            'statusCode': 401,
-          };
-
-        case 423:
-          data = Map<String, dynamic>.from(json.decode(response.body));
-          debugPrint("423: Account locked - ${data['message']}");
-          return {
-            'message': data['message'] ?? 'Account temporarily locked',
-            'errorCode': data['errorCode'] ?? 'ACCOUNT_LOCKED',
-            'statusCode': 423,
-          };
-
-        case 429:
-          data = Map<String, dynamic>.from(json.decode(response.body));
-          debugPrint("429: Rate limit exceeded - ${data['message']}");
-          return {
-            'message': data['message'] ?? 'Too many login attempts',
-            'errorCode': data['errorCode'] ?? 'RATE_LIMIT_EXCEEDED',
-            'statusCode': 429,
-          };
-
-        case 500:
-          data = Map<String, dynamic>.from(json.decode(response.body));
-          debugPrint("500: Server error - ${data['message']}");
-          return {
-            'message': data['message'] ?? 'Server error occurred',
-            'errorCode': data['errorCode'] ?? 'SERVER_ERROR',
-            'statusCode': 500,
-          };
-
-        default:
-          debugPrint("Unexpected status code: ${response.statusCode}");
-          return {
-            'message': 'Unknown error occurred',
-            'errorCode': 'UNKNOWN_ERROR',
-            'statusCode': response.statusCode,
-          };
-      }
-    } catch (e) {
-      // Handle any exception that occurs during the login process
-      debugPrint("Exception api method: $e");
-      return {
-        'message': 'An error occurred during login',
-      };
+    if (response['success'] == true) {
+      return response;
     }
+
+    return {
+      'success': false,
+      'message': response['message'] ?? 'Login failed',
+      'errorCode': response['errorCode'] ?? 'UNKNOWN_ERROR',
+      'statusCode': response['statusCode'] ?? 500,
+    };
   }
 
   Future<dynamic> uploadCSV() async {
@@ -4340,63 +4310,21 @@ class ApiMethod extends ChangeNotifier {
       Map<String, dynamic> loginData) async {
     try {
       final String email = loginData['email'];
-      final String password = loginData['password'];
+      final requestBody = Map<String, dynamic>.from(loginData);
 
-      // Step 1: Get salt for the user (critical step from original login)
-      EncryptionUtils encryptionUtils = EncryptionUtils();
-      final getSaltResponse = await getSalt(email);
-      debugPrint("secureLogin getSalt response: $getSaltResponse");
-
-      // Check if there's an error in getSalt response
-      if (getSaltResponse.containsKey('error')) {
-        debugPrint(
-            "Error getting salt in secureLogin: ${getSaltResponse['error']}");
-        return {
-          'success': false,
-          'message': getSaltResponse['error'],
-          'errorCode': getSaltResponse['errorCode'] ?? 'UNKNOWN_ERROR',
-          'statusCode': getSaltResponse['statusCode'] ?? 500,
-        };
-      }
-
-      final salt = getSaltResponse['salt'];
-
-      // Check if salt is null or empty
-      if (salt == null || salt.toString().isEmpty) {
-        debugPrint(
-            "Error: Salt is null or empty in secureLogin. User may not exist.");
-        return {
-          'success': false,
-          'message': 'User not found',
-          'errorCode': 'USER_NOT_FOUND',
-          'statusCode': 404,
-        };
-      }
-
-      // Step 2: Hash password with salt using Argon2 (critical step from original login)
-      final Uint8List originalSalt = encryptionUtils.hexStringToUint8List(salt);
-      debugPrint("secureLogin salt: $salt");
-
-      var hashedPasswordWithSalt = encryptionUtils
-          .encryptPasswordWithArgon2andSalt(password, originalSalt);
-      debugPrint(
-          "secureLogin hashed password with salt: $hashedPasswordWithSalt");
-
-      // Step 3: Prepare enhanced login data with hashed password
-      final enhancedLoginData = Map<String, dynamic>.from(loginData);
-      enhancedLoginData['password'] =
-          hashedPasswordWithSalt; // Replace plain password with hashed
-
-      // Step 4: Make secure login request
+      // Modern auth flow: backend expects plain password at /api/auth/login.
+      final headers = await _buildJsonHeaders(
+        includeAppCheck: true,
+      );
       final response = await http.post(
-        Uri.parse('${_baseUrl}login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(enhancedLoginData),
+        Uri.parse('${_baseUrl}auth/login'),
+        headers: headers,
+        body: json.encode(requestBody),
       );
 
       debugPrint("secureLogin response status: ${response.statusCode}");
 
-      // Step 5: Handle response with proper status code mapping (from original login)
+      // Handle response with proper status code mapping.
       Map<String, dynamic> data = {};
 
       switch (response.statusCode) {
@@ -4483,6 +4411,26 @@ class ApiMethod extends ChangeNotifier {
             'statusCode': 401,
           };
 
+        case 403:
+          try {
+            data = Map<String, dynamic>.from(json.decode(response.body));
+            debugPrint("secureLogin 403: Forbidden - ${data['message']}");
+            return {
+              'success': false,
+              'message': data['message'] ?? 'Access denied',
+              'errorCode': data['errorCode'] ?? 'FORBIDDEN',
+              'statusCode': 403,
+            };
+          } catch (_) {
+            return {
+              'success': false,
+              'message':
+                  'Backend access forbidden (403). Check Cloud Run unauthenticated access and IAM.',
+              'errorCode': 'FORBIDDEN',
+              'statusCode': 403,
+            };
+          }
+
         case 423:
           data = Map<String, dynamic>.from(json.decode(response.body));
           debugPrint("secureLogin 423: Account locked - ${data['message']}");
@@ -4502,6 +4450,15 @@ class ApiMethod extends ChangeNotifier {
             'message': data['message'] ?? 'Too many login attempts',
             'errorCode': data['errorCode'] ?? 'RATE_LIMIT_EXCEEDED',
             'statusCode': 429,
+          };
+
+        case 404:
+          return {
+            'success': false,
+            'message':
+                'Authentication endpoint not found: /api/auth/login on backend.',
+            'errorCode': 'ENDPOINT_NOT_FOUND',
+            'statusCode': 404,
           };
 
         case 500:
@@ -4540,7 +4497,7 @@ class ApiMethod extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse('${_baseUrl}auth/security-log'),
-        headers: {'Content-Type': 'application/json'},
+        headers: await _buildJsonHeaders(includeAppCheck: true),
         body: json.encode(logEntry),
       );
 
@@ -5346,5 +5303,2142 @@ class ApiMethod extends ChangeNotifier {
       debugPrint('Error updating invoice payment status: $e');
       return {'success': false, 'error': e.toString()};
     }
+  }
+
+  Future<Map<String, dynamic>> parseReceiptText(String rawText,
+      {String source = 'google_mlkit'}) async {
+    try {
+      final endpoint = 'api/expenses/parse-receipt';
+      final body = {
+        'rawText': rawText,
+        'source': source,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error parsing receipt text: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // ==================== INTEGRATION METHODS ====================
+
+  /// Get all integrations for an organization
+  Future<Map<String, dynamic>> getOrganizationIntegrations(
+      String organizationId) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting organization integrations: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Connect an integration (OAuth or API key based)
+  Future<Map<String, dynamic>> connectIntegration({
+    required String organizationId,
+    required String integrationType, // 'xero', 'slack', etc.
+    String? apiKey,
+    String? accessToken,
+    String? refreshToken,
+    Map<String, dynamic>? metadata,
+  }) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId/connect';
+      final body = {
+        'integrationType': integrationType,
+        if (apiKey != null) 'apiKey': apiKey,
+        if (accessToken != null) 'accessToken': accessToken,
+        if (refreshToken != null) 'refreshToken': refreshToken,
+        if (metadata != null) 'metadata': metadata,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error connecting integration: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Disconnect an integration
+  Future<Map<String, dynamic>> disconnectIntegration({
+    required String organizationId,
+    required String integrationType,
+  }) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId/disconnect';
+      final body = {
+        'integrationType': integrationType,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error disconnecting integration: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get OAuth authorization URL for an integration
+  Future<Map<String, dynamic>> getIntegrationAuthUrl({
+    required String organizationId,
+    required String integrationType,
+    String? redirectUri,
+  }) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId/auth-url';
+      final body = {
+        'integrationType': integrationType,
+        if (redirectUri != null) 'redirectUri': redirectUri,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error getting integration auth URL: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Handle OAuth callback
+  Future<Map<String, dynamic>> handleIntegrationCallback({
+    required String organizationId,
+    required String integrationType,
+    required String code,
+    String? state,
+  }) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId/callback';
+      final body = {
+        'integrationType': integrationType,
+        'code': code,
+        if (state != null) 'state': state,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error handling integration callback: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Sync data with an integration
+  Future<Map<String, dynamic>> syncIntegration({
+    required String organizationId,
+    required String integrationType,
+    Map<String, dynamic>? options,
+  }) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId/sync';
+      final body = {
+        'integrationType': integrationType,
+        if (options != null) 'options': options,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error syncing integration: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Test integration connection
+  Future<Map<String, dynamic>> testIntegration({
+    required String organizationId,
+    required String integrationType,
+  }) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId/test';
+      final body = {
+        'integrationType': integrationType,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error testing integration: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get integration sync history
+  Future<Map<String, dynamic>> getIntegrationSyncHistory({
+    required String organizationId,
+    required String integrationType,
+    int? limit,
+  }) async {
+    try {
+      final endpoint =
+          'api/integrations/$organizationId/sync-history/$integrationType${limit != null ? '?limit=$limit' : ''}';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting integration sync history: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Update integration settings
+  Future<Map<String, dynamic>> updateIntegrationSettings({
+    required String organizationId,
+    required String integrationType,
+    required Map<String, dynamic> settings,
+  }) async {
+    try {
+      final endpoint = 'api/integrations/$organizationId/settings';
+      final body = {
+        'integrationType': integrationType,
+        'settings': settings,
+      };
+      return await put(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error updating integration settings: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // ============================================================================
+  // Bulk Actions API Methods
+  // ============================================================================
+
+  /// Bulk approve timesheets
+  Future<Map<String, dynamic>> bulkApproveTimesheets({
+    required List<String> timesheetIds,
+    required String organizationId,
+    required String approvedBy,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/approve-timesheets';
+      final body = {
+        'timesheetIds': timesheetIds,
+        'organizationId': organizationId,
+        'approvedBy': approvedBy,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error bulk approving timesheets: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Bulk reject timesheets
+  Future<Map<String, dynamic>> bulkRejectTimesheets({
+    required List<String> timesheetIds,
+    required String organizationId,
+    required String rejectedBy,
+    required String reason,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/reject-timesheets';
+      final body = {
+        'timesheetIds': timesheetIds,
+        'organizationId': organizationId,
+        'rejectedBy': rejectedBy,
+        'reason': reason,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error bulk rejecting timesheets: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Preview invoices before generation
+  Future<Map<String, dynamic>> previewInvoices({
+    required List<String> appointmentIds,
+    required String organizationId,
+    required bool groupByClient,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/preview-invoices';
+      final body = {
+        'appointmentIds': appointmentIds,
+        'organizationId': organizationId,
+        'groupByClient': groupByClient,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error previewing invoices: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Generate invoices in bulk
+  Future<Map<String, dynamic>> bulkGenerateInvoices({
+    required List<String> appointmentIds,
+    required String organizationId,
+    required bool groupByClient,
+    DateTime? dueDate,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/generate-invoices';
+      final body = {
+        'appointmentIds': appointmentIds,
+        'organizationId': organizationId,
+        'groupByClient': groupByClient,
+        if (dueDate != null) 'dueDate': dueDate.toIso8601String(),
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error bulk generating invoices: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get worker assignment suggestions for shifts
+  Future<Map<String, dynamic>> suggestWorkerAssignments({
+    required List<String> shiftIds,
+    required String organizationId,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/suggest-assignments';
+      final body = {
+        'shiftIds': shiftIds,
+        'organizationId': organizationId,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error getting assignment suggestions: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Assign workers to shifts in bulk
+  Future<Map<String, dynamic>> bulkAssignShifts({
+    required List<Map<String, String>> assignments,
+    required String organizationId,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/assign-shifts';
+      final body = {
+        'assignments': assignments,
+        'organizationId': organizationId,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error bulk assigning shifts: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Send messages to multiple recipients
+  Future<Map<String, dynamic>> bulkSendMessages({
+    required List<String> recipientIds,
+    required String organizationId,
+    required String subject,
+    required String message,
+    required List<String> channels,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/send-messages';
+      final body = {
+        'recipientIds': recipientIds,
+        'organizationId': organizationId,
+        'subject': subject,
+        'message': message,
+        'channels': channels,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error bulk sending messages: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Schedule messages for later delivery
+  Future<Map<String, dynamic>> bulkScheduleMessages({
+    required List<String> recipientIds,
+    required String organizationId,
+    required String subject,
+    required String message,
+    required List<String> channels,
+    required DateTime scheduledFor,
+  }) async {
+    try {
+      final endpoint = 'api/bulk/schedule-messages';
+      final body = {
+        'recipientIds': recipientIds,
+        'organizationId': organizationId,
+        'subject': subject,
+        'message': message,
+        'channels': channels,
+        'scheduledFor': scheduledFor.toIso8601String(),
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error bulk scheduling messages: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // ============================================================================
+  // Phase 2: Shift Matching & Auto-Scheduling API Methods
+  // ============================================================================
+
+  /// Match workers to a shift
+  Future<Map<String, dynamic>> matchWorkers({
+    required String shiftId,
+    required String organizationId,
+    Map<String, dynamic>? criteria,
+  }) async {
+    try {
+      final endpoint = 'api/scheduling/match-workers';
+      final body = {
+        'shiftId': shiftId,
+        'organizationId': organizationId,
+        if (criteria != null) 'criteria': criteria,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error matching workers: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Auto-fill multiple shifts with optimal workers
+  Future<Map<String, dynamic>> autoFillShifts({
+    required List<String> shiftIds,
+    required String organizationId,
+    Map<String, dynamic>? criteria,
+  }) async {
+    try {
+      final endpoint = 'api/scheduling/auto-fill';
+      final body = {
+        'shiftIds': shiftIds,
+        'organizationId': organizationId,
+        if (criteria != null) 'criteria': criteria,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error auto-filling shifts: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Optimize route for a worker's shifts
+  Future<Map<String, dynamic>> optimizeRoute({
+    required String workerId,
+    required String date,
+    required String organizationId,
+  }) async {
+    try {
+      final endpoint = 'api/scheduling/optimize-route';
+      final body = {
+        'workerId': workerId,
+        'date': date,
+        'organizationId': organizationId,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error optimizing route: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get shift recommendations for a specific shift
+  Future<Map<String, dynamic>> getShiftRecommendations({
+    required String shiftId,
+    required String organizationId,
+  }) async {
+    try {
+      final endpoint =
+          'api/scheduling/recommendations/$shiftId?organizationId=$organizationId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting shift recommendations: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // ============================================================================
+  // Phase 2: Invoice AI API Methods
+  // ============================================================================
+
+  /// Validate an invoice
+  Future<Map<String, dynamic>> validateInvoice({
+    required Map<String, dynamic> invoice,
+  }) async {
+    try {
+      final endpoint = 'api/invoice-ai/validate';
+      final body = {'invoice': invoice};
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error validating invoice: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Detect anomalies in an invoice
+  Future<Map<String, dynamic>> detectInvoiceAnomalies({
+    required Map<String, dynamic> invoice,
+  }) async {
+    try {
+      final endpoint = 'api/invoice-ai/detect-anomalies';
+      final body = {'invoice': invoice};
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error detecting invoice anomalies: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Predict payment date for an invoice
+  Future<Map<String, dynamic>> predictPaymentDate({
+    required String invoiceId,
+  }) async {
+    try {
+      final endpoint = 'api/invoice-ai/payment-prediction/$invoiceId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error predicting payment date: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Auto-generate invoices for a period
+  Future<Map<String, dynamic>> autoGenerateInvoices({
+    required String organizationId,
+    required DateTime startDate,
+    required DateTime endDate,
+    bool validateBeforeGeneration = true,
+    bool groupByClient = false,
+  }) async {
+    try {
+      final endpoint = 'api/invoice-ai/auto-generate';
+      final body = {
+        'organizationId': organizationId,
+        'startDate': startDate.toIso8601String(),
+        'endDate': endDate.toIso8601String(),
+        'validateBeforeGeneration': validateBeforeGeneration,
+        'groupByClient': groupByClient,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error auto-generating invoices: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get smart reminders for an invoice
+  Future<Map<String, dynamic>> getSmartReminders({
+    required String invoiceId,
+  }) async {
+    try {
+      final endpoint = 'api/invoice-ai/smart-reminders/$invoiceId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting smart reminders: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // ==================== PHASE 3 API METHODS ====================
+
+  // --- Compliance Automation ---
+
+  /// Run compliance scan for organization
+  Future<Map<String, dynamic>> runComplianceScan({
+    required String organizationId,
+  }) async {
+    try {
+      final endpoint = 'api/compliance/scan/$organizationId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error running compliance scan: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get compliance score for worker
+  Future<Map<String, dynamic>> getComplianceScore({
+    required String workerId,
+  }) async {
+    try {
+      final endpoint = 'api/compliance/score/$workerId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting compliance score: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get expiring documents
+  Future<Map<String, dynamic>> getExpiringDocuments({
+    required String organizationId,
+    int? daysAhead,
+  }) async {
+    try {
+      final endpoint =
+          'api/compliance/expiring/$organizationId${daysAhead != null ? '?daysAhead=$daysAhead' : ''}';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting expiring documents: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Generate compliance report
+  Future<Map<String, dynamic>> generateComplianceReport({
+    required String organizationId,
+    required String reportType,
+  }) async {
+    try {
+      final endpoint = 'api/compliance/report';
+      final body = {
+        'organizationId': organizationId,
+        'reportType': reportType,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error generating compliance report: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get compliance trends
+  Future<Map<String, dynamic>> getComplianceTrends({
+    required String organizationId,
+    int? months,
+  }) async {
+    try {
+      final endpoint =
+          'api/compliance/trends/$organizationId${months != null ? '?months=$months' : ''}';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting compliance trends: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // --- Smart Expenses ---
+
+  /// Scan receipt using OCR
+  Future<Map<String, dynamic>> scanReceipt({
+    required String imageBase64,
+  }) async {
+    try {
+      final endpoint = 'api/expenses/scan-receipt';
+      final body = {'imageBase64': imageBase64};
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error scanning receipt: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Categorize expense using AI
+  Future<Map<String, dynamic>> categorizeExpense({
+    required Map<String, dynamic> expenseData,
+  }) async {
+    try {
+      final endpoint = 'api/expenses/categorize';
+      return await post(endpoint, body: expenseData);
+    } catch (e) {
+      debugPrint('Error categorizing expense: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Validate expense against policy
+  Future<Map<String, dynamic>> validateExpensePolicy({
+    required Map<String, dynamic> expenseData,
+  }) async {
+    try {
+      final endpoint = 'api/expenses/validate-policy';
+      return await post(endpoint, body: expenseData);
+    } catch (e) {
+      debugPrint('Error validating expense policy: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Check for duplicate receipt
+  Future<Map<String, dynamic>> checkDuplicateReceipt({
+    required String receiptHash,
+  }) async {
+    try {
+      final endpoint = 'api/expenses/detect-duplicate';
+      final body = {'receiptHash': receiptHash};
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error checking duplicate receipt: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Calculate mileage from GPS locations
+  Future<Map<String, dynamic>> calculateMileage({
+    required List<Map<String, dynamic>> locations,
+  }) async {
+    try {
+      final endpoint = 'api/expenses/calculate-mileage';
+      final body = {'locations': locations};
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error calculating mileage: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // --- Offline Sync ---
+
+  /// Queue offline data for later sync
+  Future<Map<String, dynamic>> queueOfflineData({
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final endpoint = 'api/offline/queue';
+      return await post(endpoint, body: data);
+    } catch (e) {
+      debugPrint('Error queueing offline data: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Sync offline data to server
+  Future<Map<String, dynamic>> syncOfflineData({
+    required String userId,
+    required List<Map<String, dynamic>> queueItems,
+  }) async {
+    try {
+      final endpoint = 'api/offline/sync';
+      final body = {
+        'userId': userId,
+        'queueItems': queueItems,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error syncing offline data: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get offline-capable data for user
+  Future<Map<String, dynamic>> getOfflineCapableData({
+    required String userId,
+  }) async {
+    try {
+      final endpoint = 'api/offline/data/$userId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting offline data: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Resolve sync conflict
+  Future<Map<String, dynamic>> resolveConflict({
+    required String conflictId,
+    required String resolution,
+    Map<String, dynamic>? mergedData,
+  }) async {
+    try {
+      final endpoint = 'api/offline/resolve-conflict';
+      final body = {
+        'conflictId': conflictId,
+        'resolution': resolution,
+        if (mergedData != null) 'mergedData': mergedData,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error resolving conflict: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // ============================================================================
+  // PHASE 4: CLIENT PORTAL, PAYROLL & COMMUNICATION
+  // ============================================================================
+
+  // --- Client Portal (6 methods) ---
+
+  /// Get client dashboard data
+  Future<Map<String, dynamic>> getClientDashboard({
+    required String clientId,
+  }) async {
+    try {
+      final endpoint = 'api/client-portal/dashboard/$clientId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting client dashboard: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get real-time worker location
+  Future<Map<String, dynamic>> getWorkerLocation({
+    required String appointmentId,
+  }) async {
+    try {
+      final endpoint = 'api/client-portal/worker-location/$appointmentId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting worker location: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get appointment status with ETA
+  Future<Map<String, dynamic>> getAppointmentStatus({
+    required String appointmentId,
+  }) async {
+    try {
+      final endpoint = 'api/client-portal/appointment-status/$appointmentId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting appointment status: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Send message to worker
+  Future<Map<String, dynamic>> sendClientMessage({
+    required Map<String, dynamic> messageData,
+  }) async {
+    try {
+      final endpoint = 'api/client-portal/message';
+      return await post(endpoint, body: messageData);
+    } catch (e) {
+      debugPrint('Error sending client message: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Submit service feedback
+  Future<Map<String, dynamic>> submitServiceFeedback({
+    required Map<String, dynamic> feedbackData,
+  }) async {
+    try {
+      final endpoint = 'api/client-portal/feedback';
+      return await post(endpoint, body: feedbackData);
+    } catch (e) {
+      debugPrint('Error submitting feedback: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get service history for client
+  Future<Map<String, dynamic>> getServiceHistory({
+    required String clientId,
+  }) async {
+    try {
+      final endpoint = 'api/client-portal/service-history/$clientId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting service history: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // --- Advanced Payroll (5 methods) ---
+
+  /// Calculate payroll with award rates and penalties
+  Future<Map<String, dynamic>> calculatePayroll({
+    required Map<String, dynamic> payrollData,
+  }) async {
+    try {
+      final endpoint = 'api/payroll/calculate';
+      return await post(endpoint, body: payrollData);
+    } catch (e) {
+      debugPrint('Error calculating payroll: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get payslip for user and period
+  Future<Map<String, dynamic>> getPayslip({
+    required String userId,
+    required String period,
+  }) async {
+    try {
+      final endpoint = 'api/payroll/payslip/$userId/$period';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting payslip: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Generate payslips for all employees
+  Future<Map<String, dynamic>> generatePayslips({
+    required String organizationId,
+    required String period,
+  }) async {
+    try {
+      final endpoint = 'api/payroll/generate-payslips';
+      final body = {
+        'organizationId': organizationId,
+        'period': period,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error generating payslips: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get payroll summary for organization
+  Future<Map<String, dynamic>> getPayrollSummary({
+    required String organizationId,
+    required String period,
+  }) async {
+    try {
+      final endpoint = 'api/payroll/summary/$organizationId/$period';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting payroll summary: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Export payroll data to Xero/MYOB
+  Future<Map<String, dynamic>> exportPayrollData({
+    required Map<String, dynamic> exportData,
+  }) async {
+    try {
+      final endpoint = 'api/payroll/export';
+      return await post(endpoint, body: exportData);
+    } catch (e) {
+      debugPrint('Error exporting payroll data: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // --- Communication Hub (7 methods) ---
+
+  /// Send message via specified channel
+  Future<Map<String, dynamic>> sendMessage({
+    required Map<String, dynamic> messageData,
+  }) async {
+    try {
+      final endpoint = 'api/communication/send';
+      return await post(endpoint, body: messageData);
+    } catch (e) {
+      debugPrint('Error sending message: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get all conversations for user
+  Future<Map<String, dynamic>> getConversations({
+    required String userId,
+  }) async {
+    try {
+      final endpoint = 'api/communication/conversations/$userId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting conversations: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get messages for a conversation
+  Future<Map<String, dynamic>> getMessages({
+    required String conversationId,
+  }) async {
+    try {
+      final endpoint = 'api/communication/messages/$conversationId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting messages: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Broadcast message to group
+  Future<Map<String, dynamic>> broadcastMessage({
+    required Map<String, dynamic> broadcastData,
+  }) async {
+    try {
+      final endpoint = 'api/communication/broadcast';
+      return await post(endpoint, body: broadcastData);
+    } catch (e) {
+      debugPrint('Error broadcasting message: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Schedule message for later delivery
+  Future<Map<String, dynamic>> scheduleMessage({
+    required Map<String, dynamic> scheduleData,
+  }) async {
+    try {
+      final endpoint = 'api/communication/schedule';
+      return await post(endpoint, body: scheduleData);
+    } catch (e) {
+      debugPrint('Error scheduling message: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get available message templates
+  Future<Map<String, dynamic>> getMessageTemplates() async {
+    try {
+      final endpoint = 'api/communication/templates';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting message templates: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get message delivery status
+  Future<Map<String, dynamic>> getMessageStatus({
+    required String messageId,
+  }) async {
+    try {
+      final endpoint = 'api/communication/status/$messageId';
+      return await get(endpoint);
+    } catch (e) {
+      debugPrint('Error getting message status: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // ============================================================================
+  // Real-Time Portal API Methods (Phase 7)
+  // ============================================================================
+
+  /// Start real-time tracking
+  Future<Map<String, dynamic>> startRealtimeTracking({
+    required String appointmentId,
+    required String workerId,
+    required Map<String, dynamic> clientLocation,
+  }) async {
+    return await post(
+      '/api/realtime-portal/tracking/start',
+      body: {
+        'appointmentId': appointmentId,
+        'workerId': workerId,
+        'clientLocation': clientLocation,
+      },
+    );
+  }
+
+  /// Update real-time location
+  Future<Map<String, dynamic>> updateRealtimeLocation({
+    required String appointmentId,
+    required String workerId,
+    required double latitude,
+    required double longitude,
+    double? accuracy,
+  }) async {
+    return await post(
+      '/api/realtime-portal/tracking/update',
+      body: {
+        'appointmentId': appointmentId,
+        'workerId': workerId,
+        'latitude': latitude,
+        'longitude': longitude,
+        'accuracy': accuracy ?? 10.0,
+      },
+    );
+  }
+
+  /// Stop real-time tracking
+  Future<Map<String, dynamic>> stopRealtimeTracking({
+    required String appointmentId,
+  }) async {
+    return await post(
+      '/api/realtime-portal/tracking/stop',
+      body: {
+        'appointmentId': appointmentId,
+      },
+    );
+  }
+
+  /// Get live tracking data
+  Future<Map<String, dynamic>> getLiveTracking({
+    required String appointmentId,
+  }) async {
+    return await get(
+      '/api/realtime-portal/tracking/live/$appointmentId',
+    );
+  }
+
+  /// Send real-time message
+  Future<Map<String, dynamic>> sendRealtimeMessage({
+    required String conversationId,
+    required String senderId,
+    required String senderType,
+    required String recipientId,
+    required String message,
+    List<Map<String, dynamic>>? attachments,
+  }) async {
+    return await post(
+      '/api/realtime-portal/messages/send',
+      body: {
+        'conversationId': conversationId,
+        'senderId': senderId,
+        'senderType': senderType,
+        'recipientId': recipientId,
+        'message': message,
+        'attachments': attachments,
+      },
+    );
+  }
+
+  /// Get real-time messages
+  Future<Map<String, dynamic>> getRealtimeMessages({
+    required String conversationId,
+    int? limit,
+    String? before,
+  }) async {
+    final queryParams = <String, String>{};
+    if (limit != null) queryParams['limit'] = limit.toString();
+    if (before != null) queryParams['before'] = before;
+
+    final query = queryParams.isEmpty
+        ? ''
+        : '?${queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')}';
+
+    return await get(
+      '/api/realtime-portal/messages/$conversationId$query',
+    );
+  }
+
+  /// Create real-time conversation
+  Future<Map<String, dynamic>> createRealtimeConversation({
+    required String appointmentId,
+    required String clientId,
+    required String workerId,
+    required String organizationId,
+  }) async {
+    return await post(
+      '/api/realtime-portal/conversations/create',
+      body: {
+        'appointmentId': appointmentId,
+        'clientId': clientId,
+        'workerId': workerId,
+        'organizationId': organizationId,
+      },
+    );
+  }
+
+  /// Get user conversations
+  Future<Map<String, dynamic>> getUserConversations({
+    required String userId,
+  }) async {
+    return await get(
+      '/api/realtime-portal/conversations/user/$userId',
+    );
+  }
+
+  /// Save digital signature
+  Future<Map<String, dynamic>> saveDigitalSignature({
+    required String appointmentId,
+    required String clientId,
+    required String signatureData,
+  }) async {
+    return await post(
+      '/api/realtime-portal/signature/save',
+      body: {
+        'appointmentId': appointmentId,
+        'clientId': clientId,
+        'signatureData': signatureData,
+      },
+    );
+  }
+
+  /// Submit service confirmation
+  Future<Map<String, dynamic>> submitServiceConfirmation({
+    required String appointmentId,
+    required String clientId,
+    required String workerId,
+    required String signatureId,
+    int? rating,
+    String? feedback,
+    List<Map<String, dynamic>>? checklist,
+    List<String>? photos,
+    List<Map<String, dynamic>>? incidents,
+  }) async {
+    return await post(
+      '/api/realtime-portal/service-confirmation/submit',
+      body: {
+        'appointmentId': appointmentId,
+        'clientId': clientId,
+        'workerId': workerId,
+        'signatureId': signatureId,
+        'rating': rating,
+        'feedback': feedback,
+        'checklist': checklist,
+        'photos': photos,
+        'incidents': incidents,
+      },
+    );
+  }
+
+  /// Get service confirmation
+  Future<Map<String, dynamic>> getServiceConfirmation({
+    required String appointmentId,
+  }) async {
+    return await get(
+      '/api/realtime-portal/service-confirmation/$appointmentId',
+    );
+  }
+
+  /// Get checklist template
+  Future<Map<String, dynamic>> getChecklistTemplate({
+    required String serviceType,
+  }) async {
+    return await get(
+      '/api/realtime-portal/checklist/$serviceType',
+    );
+  }
+
+  /// Invite family member
+  Future<Map<String, dynamic>> inviteFamilyMember({
+    required String clientId,
+    required String invitedBy,
+    required String email,
+    required String name,
+    required String relationship,
+    String? role,
+    Map<String, dynamic>? permissions,
+  }) async {
+    return await post(
+      '/api/realtime-portal/family/invite',
+      body: {
+        'clientId': clientId,
+        'invitedBy': invitedBy,
+        'email': email,
+        'name': name,
+        'relationship': relationship,
+        'role': role,
+        'permissions': permissions,
+      },
+    );
+  }
+
+  /// Get family members
+  Future<Map<String, dynamic>> getFamilyMembers({
+    required String clientId,
+  }) async {
+    return await get(
+      '/api/realtime-portal/family/members/$clientId',
+    );
+  }
+
+  /// Update family permissions
+  Future<Map<String, dynamic>> updateFamilyPermissions({
+    required String clientId,
+    required String memberId,
+    required Map<String, dynamic> permissions,
+    required String updatedBy,
+  }) async {
+    return await put(
+      '/api/realtime-portal/family/permissions',
+      body: {
+        'clientId': clientId,
+        'memberId': memberId,
+        'permissions': permissions,
+        'updatedBy': updatedBy,
+      },
+    );
+  }
+
+  /// Get access log
+  Future<Map<String, dynamic>> getAccessLog({
+    required String clientId,
+    int? limit,
+    String? startDate,
+    String? endDate,
+  }) async {
+    final queryParams = <String, String>{};
+    if (limit != null) queryParams['limit'] = limit.toString();
+    if (startDate != null) queryParams['startDate'] = startDate;
+    if (endDate != null) queryParams['endDate'] = endDate;
+
+    final query = queryParams.isEmpty
+        ? ''
+        : '?${queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')}';
+
+    return await get(
+      '/api/realtime-portal/family/access-log/$clientId$query',
+    );
+  }
+
+  // ============================================================================
+  // Workforce Optimization API Methods
+  // ============================================================================
+
+  // Workforce Planning
+  Future<Map<String, dynamic>> forecastDemand(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/planning/forecast', body: params);
+  }
+
+  Future<Map<String, dynamic>> optimizeStaffing(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/planning/optimize', body: params);
+  }
+
+  Future<Map<String, dynamic>> predictTurnover(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/planning/turnover', body: params);
+  }
+
+  Future<Map<String, dynamic>> analyzeScenarios(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/planning/scenarios', body: params);
+  }
+
+  // Resource Allocation
+  Future<Map<String, dynamic>> optimizeAllocation(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/allocation/optimize', body: params);
+  }
+
+  Future<Map<String, dynamic>> reallocateResources(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/allocation/reallocate', body: params);
+  }
+
+  Future<Map<String, dynamic>> getAllocationRecommendations({
+    required String appointmentId,
+    required String organizationId,
+  }) async {
+    return await get(
+        '/api/workforce/allocation/recommendations/$appointmentId?organizationId=$organizationId');
+  }
+
+  Future<Map<String, dynamic>> analyzeWorkloadBalance({
+    required String organizationId,
+    required String startDate,
+    required String endDate,
+  }) async {
+    return await get(
+        '/api/workforce/allocation/workload-balance?organizationId=$organizationId&startDate=$startDate&endDate=$endDate');
+  }
+
+  // Performance Analytics
+  Future<Map<String, dynamic>> getPerformanceAnalytics({
+    required String organizationId,
+    String? employeeId,
+    required String startDate,
+    required String endDate,
+  }) async {
+    String query =
+        'organizationId=$organizationId&startDate=$startDate&endDate=$endDate';
+    if (employeeId != null) query += '&employeeId=$employeeId';
+    return await get('/api/workforce/performance/analytics?$query');
+  }
+
+  Future<Map<String, dynamic>> analyzePerformanceTrends({
+    required String employeeId,
+    required String organizationId,
+    String? period,
+  }) async {
+    String query = 'organizationId=$organizationId';
+    if (period != null) query += '&period=$period';
+    return await get('/api/workforce/performance/trends/$employeeId?$query');
+  }
+
+  Future<Map<String, dynamic>> predictPerformance(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/performance/predict', body: params);
+  }
+
+  Future<Map<String, dynamic>> trackSkillProficiency({
+    required String employeeId,
+    required String organizationId,
+  }) async {
+    return await get(
+        '/api/workforce/performance/skills/$employeeId?organizationId=$organizationId');
+  }
+
+  // Quality Assurance
+  Future<Map<String, dynamic>> scoreServiceQuality(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/quality/score', body: params);
+  }
+
+  Future<Map<String, dynamic>> performComplianceCheck(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/quality/compliance-check', body: params);
+  }
+
+  Future<Map<String, dynamic>> analyzeFeedbackSentiment(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/quality/sentiment', body: params);
+  }
+
+  Future<Map<String, dynamic>> assessRisk(Map<String, dynamic> params) async {
+    return await post('/api/workforce/quality/risk-assessment', body: params);
+  }
+
+  Future<Map<String, dynamic>> detectIncidentPatterns({
+    required String organizationId,
+    required String startDate,
+    required String endDate,
+  }) async {
+    return await get(
+        '/api/workforce/quality/incident-patterns?organizationId=$organizationId&startDate=$startDate&endDate=$endDate');
+  }
+
+  Future<Map<String, dynamic>> generateAuditTrail({
+    required String organizationId,
+    required String entityType,
+    required String entityId,
+    String? startDate,
+    String? endDate,
+  }) async {
+    String query =
+        'organizationId=$organizationId&entityType=$entityType&entityId=$entityId';
+    if (startDate != null) query += '&startDate=$startDate';
+    if (endDate != null) query += '&endDate=$endDate';
+    return await get('/api/workforce/quality/audit-trail?$query');
+  }
+
+  // Business Intelligence
+  Future<Map<String, dynamic>> getExecutiveDashboard({
+    required String organizationId,
+    String? period,
+  }) async {
+    String query = 'organizationId=$organizationId';
+    if (period != null) query += '&period=$period';
+    return await get('/api/workforce/bi/dashboard?$query');
+  }
+
+  Future<Map<String, dynamic>> forecastRevenue(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/bi/forecast-revenue', body: params);
+  }
+
+  Future<Map<String, dynamic>> predictChurn(Map<String, dynamic> params) async {
+    return await post('/api/workforce/bi/predict-churn', body: params);
+  }
+
+  Future<Map<String, dynamic>> analyzeProfitability({
+    required String organizationId,
+    required String dimension,
+    required String startDate,
+    required String endDate,
+  }) async {
+    return await get(
+        '/api/workforce/bi/profitability?organizationId=$organizationId&dimension=$dimension&startDate=$startDate&endDate=$endDate');
+  }
+
+  Future<Map<String, dynamic>> analyzeWhatIfScenario(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/bi/what-if', body: params);
+  }
+
+  Future<Map<String, dynamic>> calculateCustomerLifetimeValue({
+    required String organizationId,
+    String? clientId,
+  }) async {
+    String query = 'organizationId=$organizationId';
+    if (clientId != null) query += '&clientId=$clientId';
+    return await get('/api/workforce/bi/customer-lifetime-value?$query');
+  }
+
+  // ML Models
+  Future<Map<String, dynamic>> trainModel(Map<String, dynamic> params) async {
+    return await post('/api/workforce/ml/train', body: params);
+  }
+
+  Future<Map<String, dynamic>> evaluateModel(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/ml/evaluate', body: params);
+  }
+
+  Future<Map<String, dynamic>> mlPredict(Map<String, dynamic> params) async {
+    return await post('/api/workforce/ml/predict', body: params);
+  }
+
+  Future<Map<String, dynamic>> batchPredict(Map<String, dynamic> params) async {
+    return await post('/api/workforce/ml/batch-predict', body: params);
+  }
+
+  Future<Map<String, dynamic>> listMLModels({
+    required String organizationId,
+  }) async {
+    return await get('/api/workforce/ml/models?organizationId=$organizationId');
+  }
+
+  Future<Map<String, dynamic>> getMLModelInfo({
+    required String modelId,
+  }) async {
+    return await get('/api/workforce/ml/models/$modelId');
+  }
+
+  Future<Map<String, dynamic>> updateMLModel({
+    required String modelId,
+    required Map<String, dynamic> updates,
+  }) async {
+    return await put('/api/workforce/ml/models/$modelId', body: updates);
+  }
+
+  Future<Map<String, dynamic>> deleteMLModel({
+    required String modelId,
+  }) async {
+    return await delete('/api/workforce/ml/models/$modelId');
+  }
+
+  Future<Map<String, dynamic>> engineerFeatures(
+      Map<String, dynamic> params) async {
+    return await post('/api/workforce/ml/feature-engineering', body: params);
+  }
+
+  Future<Map<String, dynamic>> abTestModels(Map<String, dynamic> params) async {
+    return await post('/api/workforce/ml/ab-test', body: params);
+  }
+
+  Future<Map<String, dynamic>> monitorMLPerformance({
+    required String modelId,
+    String? timeRange,
+  }) async {
+    String query = '';
+    if (timeRange != null) query = '?timeRange=$timeRange';
+    return await get('/api/workforce/ml/monitor/$modelId$query');
+  }
+
+  Future<Map<String, dynamic>> exportMLModel({
+    required String modelId,
+    required String format,
+  }) async {
+    return await post('/api/workforce/ml/export/$modelId',
+        body: {'format': format});
+  }
+
+  // ============================================================================
+  // Care Intelligence API Methods
+  // ============================================================================
+
+  // Care Intelligence
+  Future<Map<String, dynamic>> generateIntelligenceReport({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/intelligence/report/$clientId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> analyzeCarePatterns({
+    required String clientId,
+    required String organizationId,
+    String? startDate,
+    String? endDate,
+  }) async {
+    return await post('/api/care-intelligence/intelligence/patterns/$clientId',
+        body: {
+          'organizationId': organizationId,
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
+        });
+  }
+
+  Future<Map<String, dynamic>> predictCareNeeds({
+    required String clientId,
+    required String organizationId,
+    int horizon = 30,
+  }) async {
+    return await post(
+        '/api/care-intelligence/intelligence/predict-needs/$clientId',
+        body: {
+          'organizationId': organizationId,
+          'horizon': horizon,
+        });
+  }
+
+  Future<Map<String, dynamic>> optimizeCareDelivery({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/intelligence/optimize/$clientId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> generatePersonalizedInsights({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await get(
+        '/api/care-intelligence/intelligence/insights/$clientId?organizationId=$organizationId');
+  }
+
+  // Risk Prediction
+  Future<Map<String, dynamic>> predictAllRisks({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/risk/predict-all/$clientId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> predictFallsRisk({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/risk/falls/$clientId', body: {
+      'organizationId': organizationId,
+    });
+  }
+
+  Future<Map<String, dynamic>> predictBehaviorEscalation({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/risk/behavior/$clientId', body: {
+      'organizationId': organizationId,
+    });
+  }
+
+  Future<Map<String, dynamic>> predictHealthDeterioration({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/risk/health/$clientId', body: {
+      'organizationId': organizationId,
+    });
+  }
+
+  Future<Map<String, dynamic>> predictMedicationRisk({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/risk/medication/$clientId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> analyzeRiskTrends({
+    required String clientId,
+    required String organizationId,
+    String? startDate,
+    String? endDate,
+  }) async {
+    return await post('/api/care-intelligence/risk/trends/$clientId', body: {
+      'organizationId': organizationId,
+      if (startDate != null) 'startDate': startDate,
+      if (endDate != null) 'endDate': endDate,
+    });
+  }
+
+  // Care Planning
+  Future<Map<String, dynamic>> generateCarePlan({
+    required String clientId,
+    required String organizationId,
+    Map<String, dynamic>? preferences,
+  }) async {
+    return await post('/api/care-intelligence/care-plan/generate', body: {
+      'clientId': clientId,
+      'organizationId': organizationId,
+      if (preferences != null) 'preferences': preferences,
+    });
+  }
+
+  Future<Map<String, dynamic>> generateSmartGoals({
+    required String clientId,
+    required String organizationId,
+    List<String>? outcomeAreas,
+  }) async {
+    return await post('/api/care-intelligence/care-plan/goals/$clientId',
+        body: {
+          'organizationId': organizationId,
+          if (outcomeAreas != null) 'outcomeAreas': outcomeAreas,
+        });
+  }
+
+  Future<Map<String, dynamic>> recommendServices({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/care-plan/services/$clientId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> adaptCarePlan({
+    required String planId,
+    required String organizationId,
+    required Map<String, dynamic> progressData,
+  }) async {
+    return await put('/api/care-intelligence/care-plan/adapt/$planId', body: {
+      'organizationId': organizationId,
+      'progressData': progressData,
+    });
+  }
+
+  Future<Map<String, dynamic>> trackGoalProgress({
+    required String goalId,
+    required String organizationId,
+    required Map<String, dynamic> progressUpdate,
+  }) async {
+    return await post('/api/care-intelligence/care-plan/progress/$goalId',
+        body: {
+          'organizationId': organizationId,
+          'progressUpdate': progressUpdate,
+        });
+  }
+
+  Future<Map<String, dynamic>> generateEvidenceBasedRecommendations({
+    required String clientId,
+    required String organizationId,
+    String? condition,
+  }) async {
+    return await post('/api/care-intelligence/care-plan/evidence-based', body: {
+      'clientId': clientId,
+      'organizationId': organizationId,
+      if (condition != null) 'condition': condition,
+    });
+  }
+
+  // Incident Management
+  Future<Map<String, dynamic>> reportIncident({
+    required String clientId,
+    required String organizationId,
+    required Map<String, dynamic> incidentData,
+  }) async {
+    return await post('/api/care-intelligence/incident/report', body: {
+      'clientId': clientId,
+      'organizationId': organizationId,
+      ...incidentData,
+    });
+  }
+
+  Future<Map<String, dynamic>> analyzeRootCause({
+    required String incidentId,
+    required String organizationId,
+  }) async {
+    return await post('/api/care-intelligence/incident/root-cause/$incidentId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> detectCareIncidentPatterns({
+    required String organizationId,
+    String? startDate,
+    String? endDate,
+  }) async {
+    return await post(
+        '/api/care-intelligence/incident/patterns/$organizationId',
+        body: {
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
+        });
+  }
+
+  Future<Map<String, dynamic>> predictIncidentRecurrence({
+    required String incidentId,
+    required String organizationId,
+  }) async {
+    return await post(
+        '/api/care-intelligence/incident/predict-recurrence/$incidentId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> generateCorrectiveActions({
+    required String incidentId,
+    required String organizationId,
+  }) async {
+    return await post(
+        '/api/care-intelligence/incident/corrective-actions/$incidentId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  // Medication Management
+  Future<Map<String, dynamic>> checkMedicationInteractions({
+    required String clientId,
+    required String organizationId,
+    required List<String> medications,
+  }) async {
+    return await post('/api/care-intelligence/medication/check-interactions',
+        body: {
+          'clientId': clientId,
+          'organizationId': organizationId,
+          'medications': medications,
+        });
+  }
+
+  Future<Map<String, dynamic>> trackMedicationCompliance({
+    required String clientId,
+    required String organizationId,
+    String? startDate,
+    String? endDate,
+  }) async {
+    return await post('/api/care-intelligence/medication/compliance/$clientId',
+        body: {
+          'organizationId': organizationId,
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
+        });
+  }
+
+  Future<Map<String, dynamic>> getMedicationAlerts({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await get(
+        '/api/care-intelligence/medication/alerts/$clientId?organizationId=$organizationId');
+  }
+
+  Future<Map<String, dynamic>> optimizeMedicationSchedule({
+    required String clientId,
+    required String organizationId,
+  }) async {
+    return await post(
+        '/api/care-intelligence/medication/optimize-schedule/$clientId',
+        body: {
+          'organizationId': organizationId,
+        });
+  }
+
+  Future<Map<String, dynamic>> monitorMedicationSideEffects({
+    required String clientId,
+    required String organizationId,
+    required Map<String, dynamic> sideEffectData,
+  }) async {
+    return await post(
+        '/api/care-intelligence/medication/side-effects/$clientId',
+        body: {
+          'organizationId': organizationId,
+          ...sideEffectData,
+        });
+  }
+
+  // ============================================================================
+  // Phase 10 - Advanced Financial Intelligence & Predictive Revenue System
+  // API Methods (50+ endpoints)
+  // ============================================================================
+
+  // Revenue Forecasting (7 methods)
+  Future<Map<String, dynamic>> generateRevenueForecast(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/revenue/forecast',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> analyzeRevenueDrivers(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/revenue/drivers',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> generateRevenueScenarios(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/revenue/scenarios',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> performWhatIfAnalysis(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/revenue/what-if',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getRevenueTrends(String organizationId,
+      {int? period}) async {
+    final query = period != null ? '?period=$period' : '';
+    return await get(
+        '/api/financial-intelligence/revenue/trends/$organizationId$query');
+  }
+
+  Future<Map<String, dynamic>> getForecastAccuracy(String forecastId) async {
+    return await get(
+        '/api/financial-intelligence/revenue/confidence/$forecastId');
+  }
+
+  Future<Map<String, dynamic>> updateRevenueModels(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/revenue/update-model',
+        body: data);
+  }
+
+  // Pricing Optimization (7 methods)
+  Future<Map<String, dynamic>> optimizePrices(Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/pricing/optimize',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> setupPricingABTest(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/pricing/test', body: data);
+  }
+
+  Future<Map<String, dynamic>> getPricingRecommendations(
+      String serviceId, Map<String, dynamic> data) async {
+    return await post(
+        '/api/financial-intelligence/pricing/recommendations/$serviceId',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> analyzeMargins(Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/pricing/margin-analysis',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> analyzeCompetitorPricing(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/pricing/competitor-analysis',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> calculatePriceElasticity(
+      String serviceId, Map<String, dynamic> data) async {
+    return await post(
+        '/api/financial-intelligence/pricing/elasticity/$serviceId',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> optimizeBundlePricing(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/pricing/bundle-optimization',
+        body: data);
+  }
+
+  // Billing Automation (8 methods)
+  Future<Map<String, dynamic>> generateInvoices(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/billing/generate',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> validateBilling(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/billing/validate',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> detectBillingAnomalies(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/billing/anomaly-detection',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> approveInvoices(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/billing/approve',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> generateCreditNote(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/billing/credit-note',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getPendingInvoices(String organizationId,
+      {Map<String, dynamic>? filters}) async {
+    String query = '';
+    if (filters != null && filters.isNotEmpty) {
+      query = '?' + filters.entries.map((e) => '${e.key}=${e.value}').join('&');
+    }
+    return await get(
+        '/api/financial-intelligence/billing/pending/$organizationId$query');
+  }
+
+  Future<Map<String, dynamic>> batchProcessInvoices(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/billing/batch-process',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> reconcileInvoices(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/billing/reconcile',
+        body: data);
+  }
+
+  // Cash Flow Management (7 methods)
+  Future<Map<String, dynamic>> forecastCashFlow(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/cashflow/forecast',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> predictPayments(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/cashflow/payment-prediction',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> optimizeCash(Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/cashflow/optimize',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getCurrentCashPosition(
+      String organizationId) async {
+    return await get(
+        '/api/financial-intelligence/cashflow/position/$organizationId');
+  }
+
+  Future<Map<String, dynamic>> generateCashFlowScenario(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/cashflow/scenario',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getCashFlowAlerts(String organizationId) async {
+    return await get(
+        '/api/financial-intelligence/cashflow/alerts/$organizationId');
+  }
+
+  Future<Map<String, dynamic>> getCashFlowRecommendations(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/cashflow/recommendations',
+        body: data);
+  }
+
+  // Financial Analytics (6 methods)
+  Future<Map<String, dynamic>> getFinancialDashboard(String organizationId,
+      {String? period}) async {
+    final query = period != null ? '?period=$period' : '';
+    return await get(
+        '/api/financial-intelligence/analytics/dashboard/$organizationId$query');
+  }
+
+  Future<Map<String, dynamic>> analyzeFinancialProfitability(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/analytics/profitability',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> analyzeFinancialVariance(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/analytics/variance',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getFinancialKPIs(String organizationId) async {
+    return await get(
+        '/api/financial-intelligence/analytics/kpis/$organizationId');
+  }
+
+  Future<Map<String, dynamic>> analyzeFinancialTrends(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/analytics/trends',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> drillDownAnalysis(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/analytics/drill-down',
+        body: data);
+  }
+
+  // Budget Management (6 methods)
+  Future<Map<String, dynamic>> createBudget(Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/budget/create', body: data);
+  }
+
+  Future<Map<String, dynamic>> monitorBudget(Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/budget/monitor', body: data);
+  }
+
+  Future<Map<String, dynamic>> analyzeBudgetVariance(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/budget/variance',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> generateRollingForecast(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/budget/forecast',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> optimizeBudgetAllocation(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/budget/optimize',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getBudgetStatus(String organizationId) async {
+    return await get(
+        '/api/financial-intelligence/budget/status/$organizationId');
+  }
+
+  // Payment Processing (5 methods)
+  Future<Map<String, dynamic>> processPayment(Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/payment/process',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> reconcilePayments(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/payment/reconcile',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> optimizePaymentRouting(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/payment/optimize-routing',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getPaymentAnalytics(String organizationId,
+      {String? period}) async {
+    final query = period != null ? '?period=$period' : '';
+    return await get(
+        '/api/financial-intelligence/payment/analytics/$organizationId$query');
+  }
+
+  Future<Map<String, dynamic>> checkPaymentFraud(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/payment/fraud-check',
+        body: data);
+  }
+
+  // Compliance & Audit (3 methods)
+  Future<Map<String, dynamic>> checkFinancialCompliance(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/compliance/check',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> generateFinancialAuditTrail(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/compliance/audit-trail',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> getComplianceStatus(
+      String organizationId) async {
+    return await get(
+        '/api/financial-intelligence/compliance/status/$organizationId');
+  }
+
+  // Client Financial Management (3 methods)
+  Future<Map<String, dynamic>> manageCreditLimit(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/client/credit-limit',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> calculateLifetimeValue(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/client/lifetime-value',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> assessFinancialHealth(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/client/financial-health',
+        body: data);
+  }
+
+  // Financial Reporting (3 methods)
+  Future<Map<String, dynamic>> generateExecutiveReport(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/reporting/executive',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> buildCustomReport(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/reporting/custom',
+        body: data);
+  }
+
+  Future<Map<String, dynamic>> generateRegulatoryReport(
+      Map<String, dynamic> data) async {
+    return await post('/api/financial-intelligence/reporting/regulatory',
+        body: data);
   }
 }

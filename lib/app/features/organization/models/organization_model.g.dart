@@ -89,6 +89,10 @@ _$OrganizationImpl _$$OrganizationImplFromJson(Map<String, dynamic> json) =>
           ? null
           : NdisRegistration.fromJson(
               json['ndisRegistration'] as Map<String, dynamic>),
+      stripeAccountId: json['stripeAccountId'] as String?,
+      logoUrl: json['logoUrl'] as String?,
+      branding: _brandingFromJson(json['branding']),
+      integrations: _integrationsFromJson(json['integrations']),
     );
 
 Map<String, dynamic> _$$OrganizationImplToJson(_$OrganizationImpl instance) =>
@@ -101,4 +105,8 @@ Map<String, dynamic> _$$OrganizationImplToJson(_$OrganizationImpl instance) =>
       'contactDetails': instance.contactDetails,
       'bankDetails': instance.bankDetails,
       'ndisRegistration': instance.ndisRegistration,
+      'stripeAccountId': instance.stripeAccountId,
+      'logoUrl': instance.logoUrl,
+      'branding': _brandingToJson(instance.branding),
+      'integrations': _integrationsToJson(instance.integrations),
     };

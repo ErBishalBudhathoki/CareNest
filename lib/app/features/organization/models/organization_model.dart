@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'organization_integrations.dart';
 
 part 'organization_model.freezed.dart';
 part 'organization_model.g.dart';
@@ -64,8 +65,43 @@ class Organization with _$Organization {
     ContactDetails? contactDetails,
     BankDetails? bankDetails,
     NdisRegistration? ndisRegistration,
+    String? stripeAccountId,
+    String? logoUrl,
+    @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson) 
+    OrganizationBrandingConfig? branding,
+    @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
+    OrganizationIntegrations? integrations,
   }) = _Organization;
 
   factory Organization.fromJson(Map<String, dynamic> json) =>
       _$OrganizationFromJson(json);
+  
+  static Organization fromBackend(Map<String, dynamic> json) {
+    return Organization.fromJson(json);
+  }
+}
+
+// Helper functions for backward compatibility with Map-based storage
+OrganizationBrandingConfig? _brandingFromJson(dynamic json) {
+  if (json == null) return null;
+  if (json is Map<String, dynamic>) {
+    return OrganizationBrandingConfig.fromMap(json);
+  }
+  return null;
+}
+
+Map<String, dynamic>? _brandingToJson(OrganizationBrandingConfig? branding) {
+  return branding?.toJson();
+}
+
+OrganizationIntegrations? _integrationsFromJson(dynamic json) {
+  if (json == null) return null;
+  if (json is Map<String, dynamic>) {
+    return OrganizationIntegrations.fromMap(json);
+  }
+  return null;
+}
+
+Map<String, dynamic>? _integrationsToJson(OrganizationIntegrations? integrations) {
+  return integrations?.toJson();
 }

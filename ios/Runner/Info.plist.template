@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>CareNest</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>carenest</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	
+	<!-- Location Permissions -->
+	<!-- These descriptions will be shown to users when requesting location access -->
+	
+	<!-- When In Use: Shown when app is in foreground -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>CareNest needs access to your location to show nearby workers on the map and provide location-based services.</string>
+	
+	<!-- Always: Shown when requesting background location -->
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>CareNest needs access to your location even when the app is in the background to track worker locations and send geofence notifications.</string>
+	
+	<!-- Always and When In Use: Required for iOS 11+ -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>CareNest needs access to your location to provide real-time worker tracking and location-based notifications.</string>
+	
+	<!-- Temporary Precision Reduction: iOS 14+ -->
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>WorkerTracking</key>
+		<string>CareNest needs precise location to accurately track worker positions on the map.</string>
+	</dict>
+	
+	<!-- Camera Permission (for profile photos, document scanning) -->
+	<key>NSCameraUsageDescription</key>
+	<string>CareNest needs access to your camera to take photos for profiles and scan documents.</string>
+	
+	<!-- Photo Library Permission -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>CareNest needs access to your photo library to select images for profiles and documents.</string>
+	
+	<!-- Microphone Permission (for video calls, voice notes) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>CareNest needs access to your microphone for voice calls and voice notes.</string>
+	
+	<!-- Contacts Permission (for emergency contacts) -->
+	<key>NSContactsUsageDescription</key>
+	<string>CareNest needs access to your contacts to add emergency contacts.</string>
+	
+	<!-- Calendar Permission (for shift scheduling) -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>CareNest needs access to your calendar to sync shift schedules.</string>
+	
+	<!-- Notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>location</string>
+	</array>
+	
+</dict>
+</plist>
