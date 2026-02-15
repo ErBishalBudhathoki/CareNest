@@ -5,7 +5,8 @@ import 'package:carenest/app/shared/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:get/get_utils/get_utils.dart';
 import 'package:pinput/pinput.dart';
 
@@ -158,12 +159,12 @@ class _VerifyOTPState extends ConsumerState<VerifyOTPView> {
     );
   }
 
-  ApiMethod apiMethod = ApiMethod();
   Future<Map<String, dynamic>> _verifyOTP(
       //check line 259 onwards in server side code
       String enteredOTP,
       otpGenerated) async {
     try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
       debugPrint("Before+++Entered otp: $enteredOTP,\n "
           "flutter user encryption key: ${EncryptionUtils.encryptionKey!},\n"
           "otp generated: ${widget.otpGenerated},\n"

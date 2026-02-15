@@ -3,7 +3,9 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/encryption/encryption_utils.dart';
 
 class VerifyOTPModel {
-  final ApiMethod apiMethod = ApiMethod();
+  final ApiMethod apiMethod;
+
+  VerifyOTPModel(this.apiMethod);
 
   Future<Map<String, dynamic>> verifyOTP(String enteredOTP, String otpGenerated,
       String encryptVerificationKey, BuildContext context) async {

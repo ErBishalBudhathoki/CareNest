@@ -5,6 +5,8 @@ import 'package:carenest/app/features/organization/models/organization_model.dar
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/backend/api_method.dart';
 
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
 class BauhausIntegrationsSection extends ConsumerStatefulWidget {
   final models.Organization organization;
   final Function(String, Map<String, dynamic>) onSave;
@@ -31,11 +33,12 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
   bool _isLoading = false;
   String? _errorMessage;
   
-  final ApiMethod _apiMethod = ApiMethod();
+  late final ApiMethod _apiMethod;
 
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     final integrations = widget.organization.integrations;
     _xeroConnected = integrations?.xero?.isConnected ?? false;
     _myobConnected = integrations?.myob?.isConnected ?? false;

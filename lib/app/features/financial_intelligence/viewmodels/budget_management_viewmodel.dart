@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class BudgetManagementState {
@@ -49,7 +50,7 @@ class BudgetManagementViewModel extends StateNotifier<BudgetManagementState> {
         organizationId: organizationId,
         budgetData: budgetData,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, budget: result['budget']);
       } else {
@@ -70,9 +71,10 @@ class BudgetManagementViewModel extends StateNotifier<BudgetManagementState> {
         organizationId: organizationId,
         budgetId: budgetId,
       );
-      
+
       if (result['success'] == true) {
-        state = state.copyWith(isLoading: false, monitoring: result['monitoring']);
+        state =
+            state.copyWith(isLoading: false, monitoring: result['monitoring']);
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -84,7 +86,8 @@ class BudgetManagementViewModel extends StateNotifier<BudgetManagementState> {
   Future<void> getStatus(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _repository.getBudgetStatus(organizationId: organizationId);
+      final result =
+          await _repository.getBudgetStatus(organizationId: organizationId);
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, status: result['status']);
       } else {
@@ -101,8 +104,9 @@ class BudgetManagementViewModel extends StateNotifier<BudgetManagementState> {
 }
 
 final budgetManagementViewModelProvider =
-    StateNotifierProvider<BudgetManagementViewModel, BudgetManagementState>((ref) {
-  final apiMethod = ApiMethod();
+    StateNotifierProvider<BudgetManagementViewModel, BudgetManagementState>(
+        (ref) {
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   final repository = FinancialIntelligenceRepository(apiMethod);
   return BudgetManagementViewModel(repository);
 });

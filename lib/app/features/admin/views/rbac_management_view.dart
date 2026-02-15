@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/backend/api_method.dart';
 
-class RBACManagementView extends StatefulWidget {
+class RBACManagementView extends ConsumerStatefulWidget {
   const RBACManagementView({super.key});
 
   @override
-  State<RBACManagementView> createState() => _RBACManagementViewState();
+  ConsumerState<RBACManagementView> createState() => _RBACManagementViewState();
 }
 
-class _RBACManagementViewState extends State<RBACManagementView> {
-  final ApiMethod _api = ApiMethod();
+class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
+  late final ApiMethod _api;
   bool _isLoading = true;
   List<String> _permissions = [];
   Map<String, List<String>> _rolePermissions = {}; // Map Role ID to Permissions
@@ -22,6 +24,7 @@ class _RBACManagementViewState extends State<RBACManagementView> {
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     _fetchRoles();
   }
 

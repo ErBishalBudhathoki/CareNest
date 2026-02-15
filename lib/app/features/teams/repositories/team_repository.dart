@@ -1,10 +1,11 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../models/team_models.dart';
 
 final teamRepositoryProvider = Provider<TeamRepository>((ref) {
-  return TeamRepository(ApiMethod());
+  return TeamRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 class TeamRepository {
@@ -51,7 +52,8 @@ class TeamRepository {
 
   // --- Emergency Broadcasts ---
 
-  Future<EmergencyBroadcast> sendEmergencyBroadcast(String teamId, String message, String type) async {
+  Future<EmergencyBroadcast> sendEmergencyBroadcast(
+      String teamId, String message, String type) async {
     final response = await _apiMethod.post(
       'api/emergency/broadcast',
       body: {'teamId': teamId, 'message': message, 'type': type},
@@ -60,7 +62,8 @@ class TeamRepository {
     if (response['success'] == true) {
       return EmergencyBroadcast.fromJson(response['data']);
     } else {
-      throw Exception(response['message'] ?? 'Failed to send emergency broadcast');
+      throw Exception(
+          response['message'] ?? 'Failed to send emergency broadcast');
     }
   }
 
@@ -71,12 +74,14 @@ class TeamRepository {
       final List<dynamic> list = response['data'];
       return list.map((e) => EmergencyBroadcast.fromJson(e)).toList();
     } else {
-      throw Exception(response['message'] ?? 'Failed to fetch active broadcasts');
+      throw Exception(
+          response['message'] ?? 'Failed to fetch active broadcasts');
     }
   }
 
   Future<void> acknowledgeBroadcast(String broadcastId) async {
-    final response = await _apiMethod.post('api/emergency/acknowledge/$broadcastId');
+    final response =
+        await _apiMethod.post('api/emergency/acknowledge/$broadcastId');
 
     if (response['success'] != true) {
       throw Exception(response['message'] ?? 'Failed to acknowledge broadcast');

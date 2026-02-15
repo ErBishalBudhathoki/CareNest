@@ -9,7 +9,9 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/utils/image_utils.dart';
 
 class EmployeeTrackingRepository {
-  final ApiMethod _apiMethod = ApiMethod();
+  final ApiMethod _apiMethod;
+
+  EmployeeTrackingRepository({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
 
   /// Fetches employee tracking data from the backend
   Future<EmployeeTrackingData> getEmployeeTrackingData() async {

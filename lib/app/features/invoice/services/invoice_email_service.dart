@@ -8,9 +8,13 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
 class InvoiceEmailService {
+  final ApiMethod _apiMethod;
+
+  InvoiceEmailService({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
+
   Future<dynamic> sendInvoiceEmail(String pdfPath, List<String> invoiceName,
       String endDate, String invoiceNumber, String email, String genKey) async {
-    ApiMethod apiMethod = ApiMethod();
+    final apiMethod = _apiMethod;
     final sendingEmailDetail = await apiMethod.getEmailDetailToSendEmail(email);
 
     final emailAddress =

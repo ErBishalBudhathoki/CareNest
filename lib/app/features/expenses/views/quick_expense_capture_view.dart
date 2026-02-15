@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
@@ -9,7 +11,7 @@ import 'package:carenest/app/features/ocr/services/ocr_service.dart';
 import 'package:carenest/app/features/ocr/models/ocr_result.dart';
 import 'package:carenest/backend/api_method.dart';
 
-class QuickExpenseCaptureView extends StatefulWidget {
+class QuickExpenseCaptureView extends ConsumerStatefulWidget {
   final String adminEmail;
   final String organizationId;
 
@@ -20,16 +22,22 @@ class QuickExpenseCaptureView extends StatefulWidget {
   });
 
   @override
-  State<QuickExpenseCaptureView> createState() => _QuickExpenseCaptureViewState();
+  ConsumerState<QuickExpenseCaptureView> createState() => _QuickExpenseCaptureViewState();
 }
 
-class _QuickExpenseCaptureViewState extends State<QuickExpenseCaptureView> {
+class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureView> {
   bool _isCapturing = true;
   bool _isProcessing = false;
   XFile? _capturedImage;
   OcrResult? _ocrResult;
   final OcrService _ocrService = OcrService();
-  final ApiMethod _api = ApiMethod();
+  late final ApiMethod _api;
+
+  @override
+  void initState() {
+    super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
+  }
 
   @override
   Widget build(BuildContext context) {

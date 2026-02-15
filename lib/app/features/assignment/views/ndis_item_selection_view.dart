@@ -6,6 +6,8 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
 class NdisItemSelectionView extends ConsumerStatefulWidget {
   const NdisItemSelectionView({super.key});
 
@@ -15,7 +17,7 @@ class NdisItemSelectionView extends ConsumerStatefulWidget {
 }
 
 class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
-  final NDISMatcher _ndisMatcher = NDISMatcher();
+  late final NDISMatcher _ndisMatcher;
   List<NDISItem> _allNdisItems = [];
   List<NDISItem> _filteredNdisItems = [];
   bool _isLoading = true;
@@ -24,6 +26,7 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
   @override
   void initState() {
     super.initState();
+    _ndisMatcher = NDISMatcher(apiMethod: ref.read(app_providers.apiMethodProvider));
     _loadNdisItems();
   }
 
