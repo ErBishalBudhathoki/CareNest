@@ -1,12 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:share_plus/share_plus.dart';
 
 final payrollExportViewModelProvider =
     StateNotifierProvider<PayrollExportViewModel, AsyncValue<void>>((ref) {
-  return PayrollExportViewModel(ApiMethod());
+  return PayrollExportViewModel(ref.read(app_providers.apiMethodProvider));
 });
 
 class PayrollExportViewModel extends StateNotifier<AsyncValue<void>> {
@@ -38,7 +40,8 @@ class PayrollExportViewModel extends StateNotifier<AsyncValue<void>> {
           await _saveAndShareFile(csvContent, filename);
           state = const AsyncValue.data(null);
         } else {
-          state = AsyncValue.error('No CSV content received', StackTrace.current);
+          state =
+              AsyncValue.error('No CSV content received', StackTrace.current);
         }
       } else {
         state = AsyncValue.error(
@@ -54,7 +57,7 @@ class PayrollExportViewModel extends StateNotifier<AsyncValue<void>> {
       final directory = await getTemporaryDirectory();
       final file = File('${directory.path}/$filename');
       await file.writeAsString(content);
-      
+
       // Share the file (which opens the share sheet or allows opening in compatible apps)
       // This is better than open_file for CSVs on mobile as it gives more options
       await Share.shareXFiles([XFile(file.path)], text: 'Payroll Export');

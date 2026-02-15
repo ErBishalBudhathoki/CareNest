@@ -3,6 +3,8 @@
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -10,7 +12,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../shared/constants/bauhaus_design.dart';
 // import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
-class AddNotesView extends StatefulWidget {
+class AddNotesView extends ConsumerStatefulWidget {
   final String userEmail;
   final String clientEmail;
   final Map<String, dynamic>? clientDetails;
@@ -21,14 +23,14 @@ class AddNotesView extends StatefulWidget {
       this.clientDetails});
 
   @override
-  _AddNotesViewState createState() => _AddNotesViewState();
+  ConsumerState<AddNotesView> createState() => _AddNotesViewState();
 }
 
-class _AddNotesViewState extends State<AddNotesView> {
+class _AddNotesViewState extends ConsumerState<AddNotesView> {
   late final TextEditingController _notesController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'add_notes_scaffold_key');
-  ApiMethod apiMethod = ApiMethod();
+  late final ApiMethod apiMethod;
 
   late stt.SpeechToText _speechToText;
   bool _speechEnabled = false;
@@ -40,6 +42,7 @@ class _AddNotesViewState extends State<AddNotesView> {
   @override
   void initState() {
     super.initState();
+    apiMethod = ref.read(app_providers.apiMethodProvider);
     _speechToText = stt.SpeechToText();
     _initializeServices();
     _notesController.addListener(() {

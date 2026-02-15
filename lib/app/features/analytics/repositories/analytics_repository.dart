@@ -1,5 +1,7 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../models/analytics_models.dart';
 
 class AnalyticsRepository {
@@ -11,10 +13,12 @@ class AnalyticsRepository {
   Future<dynamic> _get(String endpoint, Map<String, String> params) async {
     // Construct query string manually as ApiMethod.get() takes a single string endpoint
     final queryString = params.entries
-        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map((e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
         .join('&');
-    
-    final fullEndpoint = queryString.isNotEmpty ? '$endpoint?$queryString' : endpoint;
+
+    final fullEndpoint =
+        queryString.isNotEmpty ? '$endpoint?$queryString' : endpoint;
 
     final response = await _apiMethod.get(fullEndpoint);
 
@@ -35,7 +39,7 @@ class AnalyticsRepository {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
     });
-    
+
     return (data as List).map((e) => FinancialMetric.fromJson(e)).toList();
   }
 
@@ -49,7 +53,7 @@ class AnalyticsRepository {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
     });
-    
+
     return (data as List).map((e) => UtilizationMetric.fromJson(e)).toList();
   }
 
@@ -61,7 +65,7 @@ class AnalyticsRepository {
       'organizationId': organizationId,
       'weekStart': weekStart.toIso8601String().split('T')[0], // YYYY-MM-DD
     });
-    
+
     return (data as List).map((e) => OvertimeMetric.fromJson(e)).toList();
   }
 
@@ -75,7 +79,7 @@ class AnalyticsRepository {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
     });
-    
+
     return (data as List).map((e) => ReliabilityMetric.fromJson(e)).toList();
   }
 
@@ -87,7 +91,7 @@ class AnalyticsRepository {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
     });
-    
+
     return (data as List).map((e) => CrossOrgMetric.fromJson(e)).toList();
   }
 
@@ -101,7 +105,7 @@ class AnalyticsRepository {
       'metric': metric,
       'daysAhead': daysAhead.toString(),
     });
-    
+
     return (data as List).map((e) => ForecastMetric.fromJson(e)).toList();
   }
 
@@ -112,7 +116,7 @@ class AnalyticsRepository {
     final data = await _get('api/analytics/churn-prediction', {
       'organizationId': organizationId,
     });
-    
+
     return (data as List).map((e) => ChurnPrediction.fromJson(e)).toList();
   }
 
@@ -125,7 +129,7 @@ class AnalyticsRepository {
       'organizationId': organizationId,
       'daysAhead': daysAhead.toString(),
     });
-    
+
     return (data as List).map((e) => DemandForecast.fromJson(e)).toList();
   }
 
@@ -136,7 +140,7 @@ class AnalyticsRepository {
     final data = await _get('api/analytics/compliance-risk', {
       'organizationId': organizationId,
     });
-    
+
     return ComplianceRisk.fromJson(data);
   }
 
@@ -147,7 +151,7 @@ class AnalyticsRepository {
     final data = await _get('api/analytics/client-risk', {
       'organizationId': organizationId,
     });
-    
+
     return (data as List).map((e) => ClientRisk.fromJson(e)).toList();
   }
 
@@ -160,7 +164,7 @@ class AnalyticsRepository {
       'organizationId': organizationId,
       'daysAhead': daysAhead.toString(),
     });
-    
+
     return ServiceDemandResult.fromJson(data);
   }
 
@@ -191,11 +195,11 @@ class AnalyticsRepository {
     final data = await _get('api/analytics/recommendations', {
       'organizationId': organizationId,
     });
-    
+
     return (data as List).map((e) => AIRecommendation.fromJson(e)).toList();
   }
 }
 
 final analyticsRepositoryProvider = Provider<AnalyticsRepository>((ref) {
-  return AnalyticsRepository(ApiMethod()); 
+  return AnalyticsRepository(ref.read(app_providers.apiMethodProvider));
 });

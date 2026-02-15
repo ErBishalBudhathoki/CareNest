@@ -2,7 +2,9 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/foundation.dart';
 
 class InvoiceManagementService {
-  final ApiMethod _apiMethod = ApiMethod();
+  final ApiMethod _apiMethod;
+
+  InvoiceManagementService({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
 
   /// Get list of invoices for an organization
   Future<Map<String, dynamic>> getInvoicesList({

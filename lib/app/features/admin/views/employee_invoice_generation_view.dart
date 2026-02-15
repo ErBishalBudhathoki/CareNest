@@ -1,3 +1,4 @@
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/admin/utils/employee_invoice_payload.dart';
 import 'package:carenest/app/features/admin/utils/employee_invoice_validation.dart';
@@ -106,7 +107,7 @@ class _GeneratedPdfResult {
 
 class _EmployeeInvoiceGenerationViewState
     extends ConsumerState<EmployeeInvoiceGenerationView> {
-  final ApiMethod _api = ApiMethod();
+  late final ApiMethod _api;
 
   Map<String, _EmployeeInvoiceEmployeeState> _selectedEmployeesByEmail = {};
 
@@ -130,6 +131,7 @@ class _EmployeeInvoiceGenerationViewState
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     final now = DateTime.now();
     _dateRange = DateTimeRange(
       start: DateTime(now.year, now.month, now.day)

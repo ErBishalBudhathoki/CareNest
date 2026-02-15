@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
-  return PaymentRepository(ApiMethod());
+  return PaymentRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 class PaymentRepository {
@@ -44,12 +46,14 @@ class PaymentRepository {
     return response;
   }
 
-  Future<Map<String, dynamic>> createCreditNote(Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> createCreditNote(
+      Map<String, dynamic> data) async {
     final response = await _api.post('api/payments/credit-note', body: data);
     return response;
   }
 
-  Future<Map<String, dynamic>> createStripeOnboardingLink(String organizationId) async {
+  Future<Map<String, dynamic>> createStripeOnboardingLink(
+      String organizationId) async {
     final response = await _api.post('api/payments/stripe/onboarding', body: {
       'organizationId': organizationId,
     });

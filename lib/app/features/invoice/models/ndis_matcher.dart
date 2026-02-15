@@ -13,7 +13,9 @@ class MatchResult {
 class NDISMatcher {
   List<NDISItem> items = [];
   bool _isLoaded = false;
-  final ApiMethod _apiMethod = ApiMethod();
+  final ApiMethod _apiMethod;
+
+  NDISMatcher({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
 
   Future<void> loadItems({bool forceReload = false}) async {
     if (_isLoaded && !forceReload) return;

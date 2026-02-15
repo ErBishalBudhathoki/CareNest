@@ -103,7 +103,9 @@ final userPhotoProvider = FutureProvider.autoDispose<Uint8List?>((ref) async {
 // Service for user photo operations with in-memory caching
 class UserPhotoService {
   final Map<String, Uint8List> _photoCache = {};
-  final ApiMethod _api = ApiMethod();
+  final ApiMethod _api;
+
+  UserPhotoService({required ApiMethod api}) : _api = api;
 
   Future<Uint8List?> getUserPhoto(String email) async {
     if (_photoCache.containsKey(email)) {

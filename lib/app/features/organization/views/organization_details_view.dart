@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/organization/views/organization_edit_view.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:share_plus/share_plus.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -17,7 +20,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
-class OrganizationDetailsView extends StatefulWidget {
+class OrganizationDetailsView extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? organizationName;
   final String? organizationCode;
@@ -32,12 +35,13 @@ class OrganizationDetailsView extends StatefulWidget {
   });
 
   @override
-  State<OrganizationDetailsView> createState() =>
+  ConsumerState<OrganizationDetailsView> createState() =>
       _OrganizationDetailsViewState();
 }
 
-class _OrganizationDetailsViewState extends State<OrganizationDetailsView> {
-  final _api = ApiMethod();
+class _OrganizationDetailsViewState
+    extends ConsumerState<OrganizationDetailsView> {
+  late final ApiMethod _api;
   bool _loading = false;
   Map<String, dynamic>? _organization;
   String _selectedTab = 'General';
@@ -65,6 +69,7 @@ class _OrganizationDetailsViewState extends State<OrganizationDetailsView> {
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     if ((widget.organizationId ?? '').isNotEmpty) {
       _loadOrganization();
     }
@@ -884,7 +889,8 @@ ${_generateShareableLink()}
                                                   CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  AppLocalizations.of(context)!.expires,
+                                                  AppLocalizations.of(context)!
+                                                      .expires,
                                                   style: BauhausDesign
                                                           .getTextTheme(context)
                                                       .labelSmall

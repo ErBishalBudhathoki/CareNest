@@ -7,6 +7,7 @@ import 'package:carenest/app/features/holiday/services/holiday_service.dart';
 import 'package:open_file/open_file.dart';
 import 'package:carenest/app/features/pricing/constants/schads_rate_constants.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import '../../mileage/repositories/mileage_repository.dart';
 import '../../mileage/models/trip_model.dart';
 
@@ -339,7 +340,7 @@ class EmployeeInvoiceService {
       };
 
       // 3. Generate PDF
-      final generator = InvoicePdfGenerator();
+      final generator = InvoicePdfGenerator(api: _ref.read(app_providers.apiMethodProvider));
       final paths = await generator.generatePdfs(
         {
           'clients': [invoiceData]

@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/app/core/services/file_upload_service.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -9,7 +12,7 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Organization Edit View
 /// Allows users to edit organization details with the Bauhaus Design System
-class OrganizationEditView extends StatefulWidget {
+class OrganizationEditView extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? organizationName;
   final String? organizationCode;
@@ -24,10 +27,11 @@ class OrganizationEditView extends StatefulWidget {
   });
 
   @override
-  State<OrganizationEditView> createState() => _OrganizationEditViewState();
+  ConsumerState<OrganizationEditView> createState() =>
+      _OrganizationEditViewState();
 }
 
-class _OrganizationEditViewState extends State<OrganizationEditView> {
+class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
   // Controllers
   final _nameController = TextEditingController();
   final _tradingNameController = TextEditingController();
@@ -55,8 +59,8 @@ class _OrganizationEditViewState extends State<OrganizationEditView> {
   bool _isRegistered = false;
   bool _loading = false;
   Map<String, dynamic>? _organization;
-  final _api = ApiMethod();
-  final _fileUploadService = FileUploadService();
+  late final ApiMethod _api;
+  late final FileUploadService _fileUploadService;
 
   File? _logoFile;
   String? _logoUrl;
@@ -64,6 +68,8 @@ class _OrganizationEditViewState extends State<OrganizationEditView> {
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
+    _fileUploadService = FileUploadService(api: _api);
     _nameController.text = widget.organizationName ?? '';
     if ((widget.organizationId ?? '').isNotEmpty) {
       _loadOrganization();

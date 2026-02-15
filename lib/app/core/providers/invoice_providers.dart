@@ -3,11 +3,12 @@ import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.
 import 'package:carenest/app/features/invoice/utils/invoice_data_processor.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_helpers.dart';
 import 'package:carenest/app/features/invoice/repositories/invoice_repository.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 /// Provider for ApiMethod
 final apiMethodProvider = Provider((ref) {
-  return ApiMethod();
+  return ref.read(app_providers.apiMethodProvider);
 });
 
 /// Provider for InvoiceRepository

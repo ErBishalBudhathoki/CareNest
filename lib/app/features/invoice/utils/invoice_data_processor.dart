@@ -6,7 +6,6 @@ import 'package:carenest/app/features/invoice/utils/invoice_helpers.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 
-import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/features/holiday/services/holiday_service.dart';
 import 'package:carenest/app/features/invoice/utils/employee_rate_calculator.dart';
@@ -15,10 +14,11 @@ class InvoiceDataProcessor {
   final Ref ref; // Accept ref to access providers
   final InvoiceHelpers helpers = InvoiceHelpers();
   EnhancedInvoiceService? enhancedInvoiceService;
-  final NDISMatcher _ndisMatcher = NDISMatcher();
+  final NDISMatcher _ndisMatcher;
   bool _matcherLoaded = false;
 
-  InvoiceDataProcessor(this.ref, {this.enhancedInvoiceService});
+  InvoiceDataProcessor(this.ref, {this.enhancedInvoiceService})
+      : _ndisMatcher = NDISMatcher(apiMethod: ref.read(apiMethodProvider));
 
   void setEnhancedInvoiceService(EnhancedInvoiceService service) {
     enhancedInvoiceService = service;
@@ -47,12 +47,7 @@ class InvoiceDataProcessor {
       debugPrint(
           'InvoiceDataProcessor: No enhanced service available, using standard price fallback');
       try {
-        ApiMethod api;
-        try {
-          api = ref.read(apiMethodProvider);
-        } catch (_) {
-          api = ApiMethod();
-        }
+        final api = ref.read(apiMethodProvider);
         final std = await api.getStandardPrice(ndisItemNumber);
         return {
           'price': std > 0 ? std : 0.0,
@@ -115,12 +110,7 @@ class InvoiceDataProcessor {
         try {
           debugPrint(
               'InvoiceDataProcessor: Performing client-specific pricing lookup for $ndisItemNumber (clientId: $clientId)');
-          ApiMethod api;
-          try {
-            api = ref.read(apiMethodProvider);
-          } catch (_) {
-            api = ApiMethod();
-          }
+          final api = ref.read(apiMethodProvider);
 
           final pricingData = await api.getPricingLookup(
             organizationId,
@@ -290,7 +280,6 @@ class InvoiceDataProcessor {
     return inRange;
   }
 
-
   /// Process invoice data (assignments, line items, expenses) into
   /// a structure suitable for PDF generation and sharing.
   ///
@@ -336,7 +325,8 @@ class InvoiceDataProcessor {
     Set<String> holidaySet = {};
     if (invoiceType == 'employee') {
       try {
-        debugPrint('Fetching holidays for employee invoice rate calculation...');
+        debugPrint(
+            'Fetching holidays for employee invoice rate calculation...');
         final holidayService = ref.read(holidayServiceProvider);
         final holidays = await holidayService.getAllHolidays();
         holidaySet =
@@ -352,7 +342,7 @@ class InvoiceDataProcessor {
 
     Map<String, String> itemMap = _createItemMap(supportItems);
     List<Map<String, dynamic>> processedClients = [];
-    
+
     // Track processed expenses to handle orphans later
     Set<String> processedExpenseIds = {};
 
@@ -482,10 +472,12 @@ class InvoiceDataProcessor {
     if (invoiceType == 'employee' && expenses != null && expenses.isNotEmpty) {
       final orphanExpenses = expenses.where((expense) {
         // Check date range
-        if (!_isExpenseDateInRange(expense['expenseDate'], startDate, endDate)) return false;
-        
+        if (!_isExpenseDateInRange(expense['expenseDate'], startDate, endDate))
+          return false;
+
         // Check approval status
-        final status = (expense['approvalStatus'] ?? '').toString().toLowerCase();
+        final status =
+            (expense['approvalStatus'] ?? '').toString().toLowerCase();
         if (status != 'approved') return false;
 
         // Check if already processed
@@ -494,21 +486,23 @@ class InvoiceDataProcessor {
       }).toList();
 
       if (orphanExpenses.isNotEmpty) {
-        debugPrint('InvoiceDataProcessor: Found ${orphanExpenses.length} orphan expenses for employee invoice');
-        
+        debugPrint(
+            'InvoiceDataProcessor: Found ${orphanExpenses.length} orphan expenses for employee invoice');
+
         final transformedOrphans = orphanExpenses.map((expense) {
           return _transformExpense(expense, invoiceType: invoiceType);
         }).toList();
 
         // Calculate totals
-        double expensesTotal = transformedOrphans.fold(0.0, (sum, e) => sum + _getSafeDouble(e['totalAmount']));
-        
+        double expensesTotal = transformedOrphans.fold(
+            0.0, (sum, e) => sum + _getSafeDouble(e['totalAmount']));
+
         // Get employee details from first processed client if available
         String employeeName = 'Employee';
         String employeeEmail = '';
         String providerABN = '';
         Map<String, dynamic>? empDetails;
-        
+
         if (processedClients.isNotEmpty) {
           employeeName = processedClients.first['employeeName'] ?? 'Employee';
           employeeEmail = processedClients.first['employeeEmail'] ?? '';
@@ -518,34 +512,37 @@ class InvoiceDataProcessor {
 
         // Create a dedicated block for these expenses
         Map<String, dynamic> orphanBlock = {
-           'clientName': 'Additional Expenses / Reimbursements',
-           'clientEmail': '', 
-           'clientFirstName': 'Additional',
-           'clientLastName': 'Expenses',
-           'businessName': 'Reimbursements',
-           'clientAddress': '',
-           'clientCity': '',
-           'clientState': '',
-           'clientZip': '',
-           'clientPhone': '',
-           'billingAddress': '',
-           'shippingAddress': '',
-           'employeeName': employeeName,
-           'employeeEmail': employeeEmail,
-           'providerABN': providerABN,
-           'employeeDetails': empDetails,
-           'items': <Map<String, dynamic>>[], // Empty items
-           'expenses': transformedOrphans,
-           'subtotal': expensesTotal,
-           'itemsSubtotal': 0.0,
-           'expensesTotal': expensesTotal,
-           'taxAmount': 0.0,
-           'taxRate': 0.0,
-           'total': expensesTotal,
-           'startDate': startDate != null ? DateFormat('dd/MM/yyyy').format(startDate) : '',
-           'endDate': endDate != null ? DateFormat('dd/MM/yyyy').format(endDate) : '',
+          'clientName': 'Additional Expenses / Reimbursements',
+          'clientEmail': '',
+          'clientFirstName': 'Additional',
+          'clientLastName': 'Expenses',
+          'businessName': 'Reimbursements',
+          'clientAddress': '',
+          'clientCity': '',
+          'clientState': '',
+          'clientZip': '',
+          'clientPhone': '',
+          'billingAddress': '',
+          'shippingAddress': '',
+          'employeeName': employeeName,
+          'employeeEmail': employeeEmail,
+          'providerABN': providerABN,
+          'employeeDetails': empDetails,
+          'items': <Map<String, dynamic>>[], // Empty items
+          'expenses': transformedOrphans,
+          'subtotal': expensesTotal,
+          'itemsSubtotal': 0.0,
+          'expensesTotal': expensesTotal,
+          'taxAmount': 0.0,
+          'taxRate': 0.0,
+          'total': expensesTotal,
+          'startDate': startDate != null
+              ? DateFormat('dd/MM/yyyy').format(startDate)
+              : '',
+          'endDate':
+              endDate != null ? DateFormat('dd/MM/yyyy').format(endDate) : '',
         };
-        
+
         processedClients.add(orphanBlock);
       }
     }
@@ -630,12 +627,7 @@ class InvoiceDataProcessor {
       try {
         debugPrint(
             'InvoiceDataProcessor: Fetching employee profile for $userEmail');
-        ApiMethod api;
-        try {
-          api = ref.read(apiMethodProvider);
-        } catch (_) {
-          api = ApiMethod();
-        }
+        final api = ref.read(apiMethodProvider);
         final resp = await api.getUserPayDetails(userEmail);
         if (resp['success'] == true && resp['data'] is Map<String, dynamic>) {
           employeeUser = User.fromJson(resp['data'] as Map<String, dynamic>);
@@ -891,7 +883,7 @@ class InvoiceDataProcessor {
                 // Use organization fallback base rate when item number is missing
                 try {
                   if (organizationId != null) {
-                    final api = ApiMethod();
+                    final api = ref.read(apiMethodProvider);
                     final fb = await api.getFallbackBaseRate(organizationId);
                     rate = fb != null && fb > 0
                         ? double.parse(fb.toStringAsFixed(2))
@@ -1019,14 +1011,15 @@ class InvoiceDataProcessor {
         }
 
         if (invoiceType == 'employee' && !rateCalculated) {
-             // If we are here, it means employeeUser was null or something failed above.
-             // We should explicitly handle this to avoid NDIS fallback.
-             debugPrint('InvoiceDataProcessor: Employee rate calculation skipped (User null?). Using fallback 0.00 rate.');
-             rate = 0.0;
-             rateCalculated = true; // Prevent NDIS logic
-             resolvedRateSource = 'EMP_MISSING_PROFILE';
-             itemName = 'Rate Error: Employee Profile Not Found';
-             itemNumber = '';
+          // If we are here, it means employeeUser was null or something failed above.
+          // We should explicitly handle this to avoid NDIS fallback.
+          debugPrint(
+              'InvoiceDataProcessor: Employee rate calculation skipped (User null?). Using fallback 0.00 rate.');
+          rate = 0.0;
+          rateCalculated = true; // Prevent NDIS logic
+          resolvedRateSource = 'EMP_MISSING_PROFILE';
+          itemName = 'Rate Error: Employee Profile Not Found';
+          itemNumber = '';
         }
 
         // 2. NDIS Item Matching & Pricing (Only if not already calculated AND not an employee invoice)
@@ -1040,7 +1033,7 @@ class InvoiceDataProcessor {
           } else {
             try {
               if (organizationId != null) {
-                final api = ApiMethod();
+                final api = ref.read(apiMethodProvider);
                 final fb = await api.getFallbackBaseRate(organizationId);
                 rate = fb != null && fb > 0
                     ? double.parse(fb.toStringAsFixed(2))
@@ -1166,22 +1159,24 @@ class InvoiceDataProcessor {
         'Data Processor: Processing expenses - received ${expenses?.length ?? 0} expenses');
     if (expenses != null && expenses.isNotEmpty) {
       debugPrint('Data Processor: First raw expense: ${expenses.first}');
-      
+
       final clientEmail = clientData['clientEmail'] as String;
-      
+
       // Filter expenses for this specific client
       final clientExpensesRaw = expenses.where((expense) {
         // Check date range first
-        if (!_isExpenseDateInRange(expense['expenseDate'], startDate, endDate)) {
+        if (!_isExpenseDateInRange(
+            expense['expenseDate'], startDate, endDate)) {
           return false;
         }
 
         // Check approval status
-        final status = (expense['approvalStatus'] ?? '').toString().toLowerCase();
+        final status =
+            (expense['approvalStatus'] ?? '').toString().toLowerCase();
         if (status != 'approved') return false;
 
         bool shouldInclude = false;
-        
+
         // If expense has clientEmail field, filter by it
         if (expense.containsKey('clientEmail')) {
           if (expense['clientEmail'] == clientEmail) {
@@ -1195,14 +1190,14 @@ class InvoiceDataProcessor {
         }
 
         if (shouldInclude && processedExpenseIds != null) {
-           final id = expense['_id']?.toString() ?? expense.hashCode.toString();
-           // For employee invoices, avoid duplicates (e.g. expenses with no clientEmail)
-           if (invoiceType == 'employee' && processedExpenseIds.contains(id)) {
-              shouldInclude = false;
-           } else {
-              processedExpenseIds.add(id);
-           }
-         }
+          final id = expense['_id']?.toString() ?? expense.hashCode.toString();
+          // For employee invoices, avoid duplicates (e.g. expenses with no clientEmail)
+          if (invoiceType == 'employee' && processedExpenseIds.contains(id)) {
+            shouldInclude = false;
+          } else {
+            processedExpenseIds.add(id);
+          }
+        }
 
         return shouldInclude;
       }).toList();
@@ -1255,10 +1250,12 @@ class InvoiceDataProcessor {
       // 1. Under 18 Rule: SG applies if > 30 hours in a week
       bool isUnder18 = false;
       if (employeeUser?.dob != null) {
-        final age = DateTime.now().difference(employeeUser!.dob!).inDays / 365.25;
+        final age =
+            DateTime.now().difference(employeeUser!.dob!).inDays / 365.25;
         if (age < 18) {
           isUnder18 = true;
-          debugPrint('InvoiceDataProcessor: Employee is under 18 (Age: ${age.toStringAsFixed(1)})');
+          debugPrint(
+              'InvoiceDataProcessor: Employee is under 18 (Age: ${age.toStringAsFixed(1)})');
         }
       }
 
@@ -1275,13 +1272,15 @@ class InvoiceDataProcessor {
         final date = _tryParseDateFlexible(dateStr);
         if (date != null) {
           // Get week number (or unique week ID)
-          // Simple week ID: Year * 53 + WeekOfYear. 
+          // Simple week ID: Year * 53 + WeekOfYear.
           // Or just find Monday of the week.
-          final monday = date.subtract(Duration(days: date.weekday - 1)); // Mon = 1
-          final weekId = monday.millisecondsSinceEpoch; // Unique ID for the week
-          
+          final monday =
+              date.subtract(Duration(days: date.weekday - 1)); // Mon = 1
+          final weekId =
+              monday.millisecondsSinceEpoch; // Unique ID for the week
+
           weeklyHours[weekId] = (weeklyHours[weekId] ?? 0.0) + hours;
-          
+
           if (!weeklyItems.containsKey(weekId)) weeklyItems[weekId] = [];
           weeklyItems[weekId]!.add(item);
         }
@@ -1289,76 +1288,78 @@ class InvoiceDataProcessor {
 
       // Filter items for OTE calculation
       double oteTotal = 0.0;
-      
+
       for (final weekId in weeklyHours.keys) {
         final totalWeekHours = weeklyHours[weekId]!;
         final weekItems = weeklyItems[weekId]!;
-        
+
         // If Under 18 and worked <= 30 hours, exclude this week from Super
         if (isUnder18 && totalWeekHours <= 30) {
-           debugPrint('InvoiceDataProcessor: Under 18 & worked ${totalWeekHours}h in week starting ${DateTime.fromMillisecondsSinceEpoch(weekId)} -> Excluded from Super');
-           continue; 
+          debugPrint(
+              'InvoiceDataProcessor: Under 18 & worked ${totalWeekHours}h in week starting ${DateTime.fromMillisecondsSinceEpoch(weekId)} -> Excluded from Super');
+          continue;
         }
 
         for (final item in weekItems) {
-           // Exclude overtime items from Super calculation (General Rule)
-           if (item['rateSource'] == 'EMP_OVERTIME') {
-             continue;
-           }
-           oteTotal += (item['amount'] as double);
+          // Exclude overtime items from Super calculation (General Rule)
+          if (item['rateSource'] == 'EMP_OVERTIME') {
+            continue;
+          }
+          oteTotal += (item['amount'] as double);
         }
       }
 
       // 2. Quarterly Cap Check ($62,500 OTE per quarter)
       double superableOTE = oteTotal;
       try {
-          // Fetch YTD OTE for the current quarter from backend
-          // We use the invoice start date (or earliest item date) as reference
-          final refDate = clientData['startDate'] ?? DateTime.now().toIso8601String();
-          // Convert dd/MM/yyyy to yyyy-MM-dd if needed, or rely on Api method to handle
-          String refDateIso = '';
-          final parsedRef = _tryParseDateFlexible(refDate);
-          if (parsedRef != null) {
-              refDateIso = parsedRef.toIso8601String().split('T')[0];
-          }
+        // Fetch YTD OTE for the current quarter from backend
+        // We use the invoice start date (or earliest item date) as reference
+        final refDate =
+            clientData['startDate'] ?? DateTime.now().toIso8601String();
+        // Convert dd/MM/yyyy to yyyy-MM-dd if needed, or rely on Api method to handle
+        String refDateIso = '';
+        final parsedRef = _tryParseDateFlexible(refDate);
+        if (parsedRef != null) {
+          refDateIso = parsedRef.toIso8601String().split('T')[0];
+        }
 
-          if (userEmail.isNotEmpty && refDateIso.isNotEmpty) {
-             ApiMethod api;
-             try {
-                api = ref.read(apiMethodProvider);
-             } catch (_) {
-                api = ApiMethod();
-             }
-             
-             final capResp = await api.getQuarterlyOTE(userEmail, date: refDateIso);
-             if (capResp['success'] == true && capResp['data'] != null) {
-                 final ytdOTE = _getSafeDouble(capResp['data']['quarterlyOTE']);
-                 debugPrint('InvoiceDataProcessor: Quarterly Cap Check - YTD OTE: \$$ytdOTE, Current Invoice OTE: \$$oteTotal');
-                 
-                 const quarterlyCap = 62500.0;
-                 final remainingCap = quarterlyCap - ytdOTE;
-                 
-                 if (remainingCap <= 0) {
-                     superableOTE = 0.0;
-                     debugPrint('InvoiceDataProcessor: Quarterly Cap Exceeded. Superable OTE set to 0.');
-                 } else if (oteTotal > remainingCap) {
-                     superableOTE = remainingCap;
-                     debugPrint('InvoiceDataProcessor: Quarterly Cap Reached. Capping Superable OTE at \$$remainingCap');
-                 }
-             }
+        if (userEmail.isNotEmpty && refDateIso.isNotEmpty) {
+          final api = ref.read(apiMethodProvider);
+
+          final capResp =
+              await api.getQuarterlyOTE(userEmail, date: refDateIso);
+          if (capResp['success'] == true && capResp['data'] != null) {
+            final ytdOTE = _getSafeDouble(capResp['data']['quarterlyOTE']);
+            debugPrint(
+                'InvoiceDataProcessor: Quarterly Cap Check - YTD OTE: \$$ytdOTE, Current Invoice OTE: \$$oteTotal');
+
+            const quarterlyCap = 62500.0;
+            final remainingCap = quarterlyCap - ytdOTE;
+
+            if (remainingCap <= 0) {
+              superableOTE = 0.0;
+              debugPrint(
+                  'InvoiceDataProcessor: Quarterly Cap Exceeded. Superable OTE set to 0.');
+            } else if (oteTotal > remainingCap) {
+              superableOTE = remainingCap;
+              debugPrint(
+                  'InvoiceDataProcessor: Quarterly Cap Reached. Capping Superable OTE at \$$remainingCap');
+            }
           }
+        }
       } catch (e) {
-          debugPrint('InvoiceDataProcessor: Error checking quarterly cap: $e');
-          // Proceed with uncapped OTE on error to avoid underpayment risk? 
-          // Or assume 0? Safer to assume uncapped and let admin adjust if needed.
+        debugPrint('InvoiceDataProcessor: Error checking quarterly cap: $e');
+        // Proceed with uncapped OTE on error to avoid underpayment risk?
+        // Or assume 0? Safer to assume uncapped and let admin adjust if needed.
       }
-      
+
       // Calculate 12% Super
       double superAmount = superableOTE * 0.12;
       clientData['superAmount'] = superAmount;
       clientData['superRate'] = 0.12;
-      
-      debugPrint('InvoiceDataProcessor: Final Super Calculation: \$$superAmount (OTE: \$$superableOTE)');
+
+      debugPrint(
+          'InvoiceDataProcessor: Final Super Calculation: \$$superAmount (OTE: \$$superableOTE)');
     }
 
     debugPrint(
@@ -1533,7 +1534,8 @@ class InvoiceDataProcessor {
     // Common Rate Calculation Logic
     DateTime? shiftDate = _tryParseDateFlexible(date);
     if (shiftDate == null) {
-      debugPrint('InvoiceDataProcessor: Could not parse date $date for employee item');
+      debugPrint(
+          'InvoiceDataProcessor: Could not parse date $date for employee item');
       return [];
     }
 
@@ -1549,34 +1551,35 @@ class InvoiceDataProcessor {
     double phRate = (rates?.publicHolidayRate ?? 0.0).toDouble();
     double eveningRate = (rates?.eveningShiftRate ?? 0.0).toDouble();
     double nightRate = (rates?.nightShiftRate ?? 0.0).toDouble();
-    
+
     // Only apply fallback if we have a valid base rate but missing penalties
     if (base > 0 && (satRate <= 0 || sunRate <= 0)) {
-       debugPrint('InvoiceDataProcessor: Detected incomplete rates for ${employeeUser?.email}. Applying SCHADS fallback calculation.');
-       
-       final isCasual = employeeUser?.employmentType == 'Casual';
-       
-       // Standard SCHADS multipliers
-       double satMult = 1.5;
-       double sunMult = 2.0;
-       double phMult = 2.5;
-       double eveningMult = 1.125;
-       double nightMult = 1.15;
+      debugPrint(
+          'InvoiceDataProcessor: Detected incomplete rates for ${employeeUser?.email}. Applying SCHADS fallback calculation.');
 
-       if (isCasual) {
-          // Casual multipliers (adjusted for loading included in base)
-          satMult = 1.4; // 1.75 / 1.25
-          sunMult = 1.8; // 2.25 / 1.25
-          phMult = 2.2;  // 2.75 / 1.25
-          eveningMult = 1.1; // 1.375 / 1.25
-          nightMult = 1.12; // 1.40 / 1.25
-       }
+      final isCasual = employeeUser?.employmentType == 'Casual';
 
-       if (satRate <= 0) satRate = base * satMult;
-       if (sunRate <= 0) sunRate = base * sunMult;
-       if (phRate <= 0) phRate = base * phMult;
-       if (eveningRate <= 0) eveningRate = base * eveningMult;
-       if (nightRate <= 0) nightRate = base * nightMult;
+      // Standard SCHADS multipliers
+      double satMult = 1.5;
+      double sunMult = 2.0;
+      double phMult = 2.5;
+      double eveningMult = 1.125;
+      double nightMult = 1.15;
+
+      if (isCasual) {
+        // Casual multipliers (adjusted for loading included in base)
+        satMult = 1.4; // 1.75 / 1.25
+        sunMult = 1.8; // 2.25 / 1.25
+        phMult = 2.2; // 2.75 / 1.25
+        eveningMult = 1.1; // 1.375 / 1.25
+        nightMult = 1.12; // 1.40 / 1.25
+      }
+
+      if (satRate <= 0) satRate = base * satMult;
+      if (sunRate <= 0) sunRate = base * sunMult;
+      if (phRate <= 0) phRate = base * phMult;
+      if (eveningRate <= 0) eveningRate = base * eveningMult;
+      if (nightRate <= 0) nightRate = base * nightMult;
     }
 
     // -- Calculate Ordinary/Penalty Rate --
@@ -1624,12 +1627,14 @@ class InvoiceDataProcessor {
     if (overtimeHours > 0) {
       // Use overtimeRate from user model
       double otRate = (rates?.overtimeRate ?? 0.0).toDouble();
-      
+
       // Fallback: if OT rate is 0, use 1.5x base rate
       if (otRate <= 0) {
-         double base = (rates?.baseRate ?? employeeUser?.payRate ?? 0.0).toDouble();
-         otRate = base * 1.5;
-         debugPrint('InvoiceDataProcessor: Using fallback OT rate (1.5x Base): $otRate');
+        double base =
+            (rates?.baseRate ?? employeeUser?.payRate ?? 0.0).toDouble();
+        otRate = base * 1.5;
+        debugPrint(
+            'InvoiceDataProcessor: Using fallback OT rate (1.5x Base): $otRate');
       }
 
       String otItemName = 'Overtime (>10h Shift)';
@@ -1637,7 +1642,7 @@ class InvoiceDataProcessor {
       resultItems.add({
         'date': date,
         'day': dayOfWeek,
-        'startTime': startTime, 
+        'startTime': startTime,
         'endTime': endTime,
         'hours': overtimeHours,
         'rate': otRate,
@@ -1656,20 +1661,21 @@ class InvoiceDataProcessor {
     return resultItems;
   }
 
-  String _deriveItemName(DateTime shiftDate, bool isHoliday, String rateSource) {
-      if (isHoliday) return 'Public Holiday Shift';
-      if (shiftDate.weekday == DateTime.saturday) return 'Saturday Shift';
-      if (shiftDate.weekday == DateTime.sunday) return 'Sunday Shift';
-      if (rateSource == 'EMP_EVENING_SHIFT') return 'Evening Shift';
-      if (rateSource == 'EMP_NIGHT_SHIFT') return 'Night Shift';
-      return 'Weekday Ordinary';
+  String _deriveItemName(
+      DateTime shiftDate, bool isHoliday, String rateSource) {
+    if (isHoliday) return 'Public Holiday Shift';
+    if (shiftDate.weekday == DateTime.saturday) return 'Saturday Shift';
+    if (shiftDate.weekday == DateTime.sunday) return 'Sunday Shift';
+    if (rateSource == 'EMP_EVENING_SHIFT') return 'Evening Shift';
+    if (rateSource == 'EMP_NIGHT_SHIFT') return 'Night Shift';
+    return 'Weekday Ordinary';
   }
 
   /// Transform expense data to match PDF generator expectations
-  Map<String, dynamic> _transformExpense(Map<String, dynamic> expense, {String? invoiceType}) {
+  Map<String, dynamic> _transformExpense(Map<String, dynamic> expense,
+      {String? invoiceType}) {
     // Debug: Log original expense data
-    debugPrint(
-        'Data Processor: Processing expense: ${expense['description']}');
+    debugPrint('Data Processor: Processing expense: ${expense['description']}');
     debugPrint(
         'Data Processor: Original receiptPhotos: ${expense['receiptPhotos']}');
 
@@ -1685,11 +1691,12 @@ class InvoiceDataProcessor {
     }).toList();
 
     String description = expense['description'] ?? 'Expense';
-    
+
     // For employee invoices, mention the client name if available
     if (invoiceType == 'employee') {
       final clientName = expense['clientName'] ?? '';
-      if (clientName.toString().isNotEmpty && !description.contains(clientName)) {
+      if (clientName.toString().isNotEmpty &&
+          !description.contains(clientName)) {
         description = '$description ($clientName)';
       }
     }

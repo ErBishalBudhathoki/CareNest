@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:typed_data';
 
@@ -87,7 +86,7 @@ class ChangePasswordViewModel extends ChangeNotifier {
 
   set user(String value) => _user = value;
 
-  ChangePasswordViewModel(Ref ref) {
+  ChangePasswordViewModel(Ref ref) : apiMethod = ref.read(apiMethodProvider) {
     //  _email = email;
     _password = password;
     _confirmPassword = confirmPassword;
@@ -96,7 +95,7 @@ class ChangePasswordViewModel extends ChangeNotifier {
   //get set methods for email and password
 
   // create the user object from json input
-  ChangePasswordViewModel.fromJson(Map<String, dynamic> json) {
+  ChangePasswordViewModel.fromJson(Map<String, dynamic> json, this.apiMethod) {
     // _email = json['email'] as String;
     _password = json['password'] as String;
     _confirmPassword = json['confirmPassword'] as String;
@@ -111,7 +110,7 @@ class ChangePasswordViewModel extends ChangeNotifier {
     return data;
   }
 
-  ApiMethod apiMethod = ApiMethod();
+  final ApiMethod apiMethod;
 
   Future<Map<String, dynamic>?> changePassword(String password,
       String confirmPassword, BuildContext context, WidgetRef ref) async {

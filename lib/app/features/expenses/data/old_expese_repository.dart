@@ -10,7 +10,7 @@ class ExpenseRepository {
   late final FileUploadService _fileUploadService;
 
   ExpenseRepository(this._apiMethod) {
-    _fileUploadService = FileUploadService();
+    _fileUploadService = FileUploadService(api: _apiMethod);
   }
 
   /// Fetches all expenses for an organization
