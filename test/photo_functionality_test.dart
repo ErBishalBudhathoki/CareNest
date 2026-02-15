@@ -8,6 +8,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 // Removed path_provider dependency for unit-test stability; using Directory.systemTemp instead
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // Removed Firebase dependency for unit-test stability; no Firebase required for HTTP mocking
 
 import 'photo_functionality_test.mocks.dart';
@@ -409,6 +410,9 @@ void main() {
   setUpAll(() async {
     // Initialize Flutter binding for testing
     TestWidgetsFlutterBinding.ensureInitialized();
+
+    // Some CI/local runs don't bundle .env for widget tests.
+    await dotenv.load(fileName: ".env", isOptional: true);
   });
 
   group('Photo Functionality Tests', () {

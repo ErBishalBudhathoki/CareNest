@@ -255,7 +255,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true);
     try {
-      await _apiMethod.login(email, password);
+      final response = await _apiMethod.login(email, password);
+      if (response is! Map || response['success'] != true) {
+        final message = response is Map && response['message'] != null
+            ? response['message'].toString()
+            : 'Login failed';
+        throw Exception(message);
+      }
       state = state.copyWith(
         isAuthenticated: true,
         isLoading: false,
@@ -330,8 +336,6 @@ class ShiftDataNotifier extends StateNotifier<List<dynamic>> {
     ];
   }
 }
-
-
 
 // User Role Provider
 final userRoleProvider =

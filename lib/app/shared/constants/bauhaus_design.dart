@@ -7,8 +7,11 @@ class BauhausDesign {
   // ==================== COLORS ====================
   // Core Palette
   static const Color primary = Color(0xFFD12D21); // Fiery Red
+  static const Color primaryRed = Color(0xFFD12D21); // Alias for primary
   static const Color secondary = Color(0xFF1A3BA0); // Royal Indigo
+  static const Color primaryBlue = Color(0xFF1A3BA0); // Alias for secondary
   static const Color accent = Color(0xFFF4B513); // Tangerine/Yellow
+  static const Color primaryYellow = Color(0xFFF4B513); // Alias for accent
   static const Color neutral = Color(0xFF1A1A1A); // Charcoal Black
   static const Color success = Color(0xFF0DA85E); // Emerald Bliss
   static const Color warning = Color(0xFFF4B513); // Warning Yellow
@@ -29,6 +32,7 @@ class BauhausDesign {
   static const Color textDark = Color(0xFF1A1A1A);
   static const Color textLight = Color(0xFFF7F5F0);
   static const Color textMuted = Color(0xFF666666);
+  static const Color textMedium = Color(0xFF666666); // Alias for textMuted
 
   // ==================== SPACING ====================
   // 4pt Grid System

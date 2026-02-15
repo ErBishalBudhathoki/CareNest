@@ -48,7 +48,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: BauhausDesign.surfaceLight,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
@@ -104,79 +104,129 @@ class _SignUpViewState extends ConsumerState<SignUpView>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isSmallScreen = size.width < 400;
+    final topInset = MediaQuery.of(context).padding.top;
+    final horizontalPadding = size.width > 600 ? 80.0 : 24.0;
     FlushBarWidget flushBarWidget = FlushBarWidget();
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: BauhausDesign.surfaceLight,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: BauhausIconButton(
-            icon: Iconsax.arrow_left,
-            onPressed: () => Navigator.pop(context),
-            variant: BauhausActionVariant.neutral,
-            isSmall: true,
+      backgroundColor: BauhausDesign.backgroundLight,
+      body: NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (notification) {
+          notification.disallowIndicator();
+          return true;
+        },
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
-        ),
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-      ),
-      body: Stack(
-        children: [
-          // Background Color
-          Container(color: BauhausDesign.backgroundLight),
-
-          // Liquid Animation Header
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: BauhausLiquidAnimation(
-              height: size.height * 0.35,
-              yOffset: size.height * 0.25,
-            ),
-          ),
-
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(
-                horizontal: size.width > 600 ? 80 : 24,
-                vertical: 20,
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              stretch: true,
+              expandedHeight: 300,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              backgroundColor: BauhausDesign.backgroundLight,
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: BauhausIconButton(
+                  icon: Iconsax.arrow_left,
+                  onPressed: () => Navigator.pop(context),
+                  variant: BauhausActionVariant.neutral,
+                  isSmall: true,
+                ),
               ),
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      final signupViewModel =
-                          ref.watch(signupViewModelProvider);
-                      return Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          _buildHeader(),
-                          const SizedBox(height: 40),
-                          _buildSignupForm(signupViewModel, flushBarWidget),
-                          const SizedBox(height: 24),
-                          _buildLoginLink(),
-                          const SizedBox(height: 20),
-                        ],
-                      );
-                    },
+              systemOverlayStyle: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: Brightness.dark,
+              ),
+              flexibleSpace: LayoutBuilder(
+                builder: (context, constraints) {
+                  final minHeight = kToolbarHeight + topInset;
+                  final maxHeight = 300 + topInset;
+                  final currentHeight = constraints.maxHeight;
+                  final bool isCollapsed = currentHeight <= minHeight + 2;
+
+                  return Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Container(color: BauhausDesign.backgroundLight),
+                      if (!isCollapsed)
+                        IgnorePointer(
+                          child: BauhausLiquidAnimation(
+                            height: maxHeight + 24,
+                            yOffset: maxHeight * 0.58,
+                          ),
+                        ),
+                      Positioned(
+                        left: 24,
+                        right: 24,
+                        bottom: 20,
+                        child: Visibility(
+                          visible: !isCollapsed,
+                          child: _buildHeader(),
+                        ),
+                      ),
+                      if (isCollapsed)
+                        Positioned(
+                          top: topInset + 12,
+                          left: 72,
+                          right: 72,
+                          child: IgnorePointer(
+                            child: Container(
+                              color: BauhausDesign.backgroundLight,
+                              child: Text(
+                                AppLocalizations.of(context)!.signupTitle,
+                                textAlign: TextAlign.center,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: BauhausDesign.textDark,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final signupViewModel =
+                            ref.watch(signupViewModelProvider);
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            _buildSignupForm(signupViewModel, flushBarWidget),
+                            const SizedBox(height: 24),
+                            _buildLoginLink(),
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).padding.bottom + 20,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -351,7 +401,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.accountTypeSection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: BauhausDesign.textLight,
+                color: BauhausDesign.textDark,
               ),
         ),
         const SizedBox(height: 16),
@@ -432,7 +482,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                     style:
                         BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: BauhausDesign.textLight,
+                              color: BauhausDesign.textDark,
                             ),
                   ),
                   const SizedBox(height: 4),
@@ -469,12 +519,12 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.organizationSetupSection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: BauhausDesign.textLight,
+                color: BauhausDesign.textDark,
               ),
         ),
         const SizedBox(height: 16),
         BauhausCard(
-          backgroundColor: BauhausDesign.secondary.withOpacity(0.05),
+          backgroundColor: BauhausDesign.surfaceWhite,
           borderColor: BauhausDesign.secondary.withOpacity(0.2),
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -497,7 +547,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                               .bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textLight,
+                                color: BauhausDesign.textDark,
                               ),
                         ),
                         Text(
@@ -558,12 +608,12 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.joinOrgSection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: BauhausDesign.textLight,
+                color: BauhausDesign.textDark,
               ),
         ),
         const SizedBox(height: 16),
         BauhausCard(
-          backgroundColor: BauhausDesign.neutral.withOpacity(0.05),
+          backgroundColor: BauhausDesign.surfaceWhite,
           borderColor: BauhausDesign.neutral.withOpacity(0.2),
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -586,7 +636,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                               .bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textLight,
+                                color: BauhausDesign.textDark,
                               ),
                         ),
                         Text(
@@ -647,7 +697,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.securitySection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: BauhausDesign.textLight,
+                color: BauhausDesign.textDark,
               ),
         ),
         const SizedBox(height: 16),
@@ -802,6 +852,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                 color: BauhausDesign.neutral,
               ),
         ),
+        const SizedBox(width: 6),
         GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Text(

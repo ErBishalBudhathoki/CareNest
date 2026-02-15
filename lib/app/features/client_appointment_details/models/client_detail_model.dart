@@ -25,6 +25,10 @@ class ClientDetailModel with _$ClientDetailModel {
 
   factory ClientDetailModel.fromJson(Map<String, dynamic> json) =>
       _$ClientDetailModelFromJson(json);
+  
+  static ClientDetailModel fromBackend(Map<String, dynamic> json) {
+    return ClientDetailModel.fromJson(json);
+  }
 }
 
 extension ClientDetailDisplay on ClientDetailModel {

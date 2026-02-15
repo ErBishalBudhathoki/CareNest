@@ -70,18 +70,28 @@ bool isDeepLinkHandled() {
 // Background handler is now defined in firebase_messaging_service.dart
 // This import will be used to register the handler
 
+Future<void> _loadEnvironmentConfig() async {
+  await dotenv.load(fileName: ".env");
+}
+
+String _envValue(String key, {String fallback = ''}) {
+  if (!dotenv.isInitialized) return fallback;
+  final value = dotenv.env[key];
+  if (value == null || value.trim().isEmpty) return fallback;
+  return value;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (_) {}
+  await _loadEnvironmentConfig();
 
   // Set the app flavor to development
   AppConfig.appFlavor = Flavor.development;
+  final resolvedBaseUrl = AppConfig.assertBaseUrlConfigured();
 
   debugPrint('=== Environment Configuration (Development) ===');
   debugPrint('App Flavor: ${AppConfig.flavorName}');
-  debugPrint('Base URL: ${AppConfig.baseUrl}');
+  debugPrint('Base URL: $resolvedBaseUrl');
   debugPrint('Logging Enabled: ${AppConfig.enableLogging}');
   debugPrint('=========================================');
 
@@ -176,9 +186,9 @@ Future<void> _initializeFirebase() async {
 
 Future<void> _initializeAppCheck() async {
   await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider(dotenv.env['RECAPTCHA_SITE_KEY'] ?? ''),
+    webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
     androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.appAttest,
+    appleProvider: AppleProvider.debug,
   );
 }
 

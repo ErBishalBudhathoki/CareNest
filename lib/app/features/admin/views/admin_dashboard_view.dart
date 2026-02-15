@@ -43,6 +43,20 @@ import 'package:carenest/app/features/onboarding/views/admin/admin_onboarding_li
 
 import 'package:carenest/app/features/timesheet/views/admin_payroll_export_view.dart';
 
+// Phase 1-10 Advanced Features
+import 'package:carenest/app/features/analytics/views/enhanced_predictive_insights_view.dart';
+import 'package:carenest/app/features/bulk_actions/views/bulk_actions_view.dart';
+import 'package:carenest/app/features/scheduling/views/auto_schedule_dashboard.dart';
+import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
+import 'package:carenest/app/features/compliance/views/compliance_automation_dashboard.dart';
+import 'package:carenest/app/features/expenses/views/smart_expense_dashboard.dart';
+import 'package:carenest/app/features/payroll/views/advanced_payroll_dashboard.dart';
+import 'package:carenest/app/features/communication/views/communication_hub_dashboard.dart';
+import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dashboard.dart';
+import 'package:carenest/app/features/workforce_optimization/views/workforce_optimization_dashboard.dart';
+import 'package:carenest/app/features/care_intelligence/views/care_intelligence_dashboard.dart';
+import 'package:carenest/app/features/financial_intelligence/views/financial_intelligence_dashboard.dart';
+
 class AdminDashboardView extends ConsumerStatefulWidget {
   final String email;
   final Uint8List? photoData;
@@ -1113,6 +1127,165 @@ class _AdminDashboardViewControllerState
                             MaterialPageRoute(
                               builder: (_) => const AdminOnboardingListView(),
                             ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: BauhausDesign.space6),
+
+                    // Advanced Intelligence & Optimization Section
+                    _buildActionCategorySection(
+                      'ADVANCED INTELLIGENCE & OPTIMIZATION',
+                      [
+                        BauhausActionTile(
+                          icon: const Icon(Icons.analytics_outlined),
+                          title: 'Predictive Analytics',
+                          subtitle: 'Worker churn, demand forecasts, and compliance risk predictions',
+                          color: BauhausDesign.primary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const EnhancedPredictiveInsightsView()),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.playlist_add_check),
+                          title: 'Bulk Actions',
+                          subtitle: 'Approve timesheets, generate invoices, assign shifts in bulk',
+                          color: BauhausDesign.secondary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const BulkActionsView()),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.calendar_today_outlined),
+                          title: 'Smart Scheduling',
+                          subtitle: 'AI-powered shift matching and auto-scheduling with route optimization',
+                          color: BauhausDesign.secondary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => AutoScheduleDashboard(
+                                      organizationId: widget.organizationId,
+                                    )),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.receipt_long_outlined),
+                          title: 'Smart Invoicing',
+                          subtitle: 'Auto-generate invoices with AI error detection and payment predictions',
+                          color: BauhausDesign.primary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => InvoiceAIDashboard(
+                                      organizationId: widget.organizationId,
+                                    )),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.verified_user_outlined),
+                          title: 'Compliance Automation',
+                          subtitle: 'Automated compliance scanning and alerts',
+                          color: BauhausDesign.success,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => ComplianceAutomationDashboard(
+                                      organizationId: widget.organizationId,
+                                    )),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.receipt_outlined),
+                          title: 'Smart Expenses',
+                          subtitle: 'Receipt scanning with AI categorization',
+                          color: BauhausDesign.warning,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => SmartExpenseDashboard(
+                                      organizationId: widget.organizationId,
+                                    )),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.payments_outlined),
+                          title: 'Advanced Payroll',
+                          subtitle: 'Smart payroll calculations with award rates and penalties',
+                          color: BauhausDesign.success,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => AdvancedPayrollDashboard(
+                                      organizationId: widget.organizationId,
+                                      userId: widget.email,
+                                    )),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.forum_outlined),
+                          title: 'Communication Hub',
+                          subtitle: 'Multi-channel messaging with templates and broadcasts',
+                          color: BauhausDesign.secondary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => CommunicationHubDashboard(
+                                      userId: widget.email,
+                                    )),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.real_estate_agent_outlined),
+                          title: 'Real-Time Portal',
+                          subtitle: 'Live tracking, secure messaging, and digital service confirmations',
+                          color: BauhausDesign.accent,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const RealtimePortalDashboard()),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.analytics_outlined),
+                          title: 'Workforce Optimization',
+                          subtitle: 'AI-powered planning, analytics, and business intelligence',
+                          color: BauhausDesign.secondary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const WorkforceOptimizationDashboard()),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.psychology_outlined),
+                          title: 'Care Intelligence',
+                          subtitle: 'AI-powered risk prediction, care planning, and incident management',
+                          color: BauhausDesign.primary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const CareIntelligenceDashboard()),
+                          ),
+                        ),
+                        BauhausActionTile(
+                          icon: const Icon(Icons.trending_up_rounded),
+                          title: 'Financial Intelligence',
+                          subtitle: 'AI-powered revenue forecasting, pricing optimization, and predictive analytics',
+                          color: BauhausDesign.accent,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const FinancialIntelligenceDashboard()),
                           ),
                         ),
                       ],

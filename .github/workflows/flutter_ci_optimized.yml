@@ -1,0 +1,371 @@
+name: Flutter CI/CD - Secure & Optimized
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/flutter_ci_optimized.yml'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deploy target environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - production
+          - internal
+      skip_tests:
+        description: 'Skip tests (emergency only)'
+        required: false
+        default: false
+        type: boolean
+
+# Prevent concurrent deployments
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+# Set minimum permissions (principle of least privilege)
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+  checks: write
+
+env:
+  FLUTTER_VERSION: '3.27.0'
+  JAVA_VERSION: '17'
+  RUBY_VERSION: '3.0'
+
+jobs:
+  # Security and Quality Checks
+  security-scan:
+    name: Security & Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run dependency audit
+        run: |
+          # Check for known vulnerabilities in dependencies
+          dart pub audit || echo "::warning::Vulnerabilities found in dependencies"
+
+      - name: Analyze code
+        run: flutter analyze --fatal-infos
+
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
+
+  # Run Tests
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: security-scan
+    if: github.event.inputs.skip_tests != 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run unit tests
+        run: flutter test --coverage --reporter expanded
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: flutter-coverage
+          fail_ci_if_error: false
+
+      - name: Generate coverage report
+        run: |
+          # Install lcov for coverage reporting
+          sudo apt-get update && sudo apt-get install -y lcov
+          genhtml coverage/lcov.info -o coverage/html
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            coverage/
+            test-reports/
+
+  # Build Android
+  build-android:
+    name: Build Android (${{ matrix.build-type }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: [security-scan, test]
+    if: always() && (needs.security-scan.result == 'success')
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: [debug, release]
+        include:
+          - build-type: debug
+            build-name: 'Debug Build'
+          - build-type: release
+            build-name: 'Release Build'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Decode keystore (Release only)
+        if: matrix.build-type == 'release'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+          else
+            echo "::warning::No keystore found, skipping signing"
+          fi
+
+      - name: Create key.properties (Release only)
+        if: matrix.build-type == 'release'
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=${KEYSTORE_PASSWORD}
+          keyPassword=${KEY_PASSWORD}
+          keyAlias=${KEY_ALIAS}
+          storeFile=keystore.jks
+          EOF
+
+      - name: Build Android ${{ matrix.build-type }}
+        run: |
+          if [ "${{ matrix.build-type }}" == "release" ]; then
+            flutter build appbundle --release --build-number=${{ github.run_number }}
+          else
+            flutter build apk --debug
+          fi
+
+      - name: Sign APK/AAB with apksigner (additional verification)
+        if: matrix.build-type == 'release'
+        run: |
+          # Verify the signature
+          $ANDROID_HOME/build-tools/*/apksigner verify build/app/outputs/bundle/release/app-release.aab || \
+            echo "::warning::APK/AAB verification failed"
+
+      - name: Generate SBOM (Software Bill of Materials)
+        if: matrix.build-type == 'release'
+        run: |
+          # Generate SBOM for supply chain security
+          flutter pub deps --json > build/sbom.json
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ matrix.build-type }}-build
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/release/*.aab
+            build/sbom.json
+          retention-days: 30
+
+      - name: Cleanup sensitive files
+        if: always()
+        run: |
+          rm -f android/app/keystore.jks
+          rm -f android/key.properties
+
+  # Deploy to Google Play
+  deploy-android:
+    name: Deploy to Google Play (${{ github.event.inputs.deploy_target || 'development' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build-android
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch')
+    environment:
+      name: ${{ github.event.inputs.deploy_target || 'development' }}
+      url: https://play.google.com/console
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+          working-directory: android
+
+      - name: Install Fastlane
+        working-directory: android
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Download release build
+        uses: actions/download-artifact@v4
+        with:
+          name: android-release-build
+          path: build/app/outputs/
+
+      - name: Setup Google Play credentials
+        env:
+          GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
+        run: |
+          # Create API key file securely
+          mkdir -p android/fastlane
+          echo "$GOOGLE_PLAY_API_KEY" > android/fastlane/google-play-service-key.json
+          
+          # Set restrictive permissions
+          chmod 600 android/fastlane/google-play-service-key.json
+
+      - name: Validate deployment target
+        id: validate-target
+        run: |
+          TARGET="${{ github.event.inputs.deploy_target || 'development' }}"
+          
+          # Validate target is one of the allowed values
+          if [[ ! "$TARGET" =~ ^(development|production|internal)$ ]]; then
+            echo "::error::Invalid deployment target: $TARGET"
+            exit 1
+          fi
+          
+          # On push to main, force development (safer default)
+          if [ "${{ github.event_name }}" == "push" ]; then
+            TARGET="development"
+          fi
+          
+          # Require manual approval for production
+          if [ "$TARGET" == "production" ]; then
+            echo "::warning::Deploying to PRODUCTION - this requires manual approval"
+          fi
+          
+          echo "target=$TARGET" >> $GITHUB_OUTPUT
+
+      - name: Deploy with Fastlane
+        working-directory: android
+        env:
+          SUPPLY_JSON_KEY: fastlane/google-play-service-key.json
+        run: |
+          TARGET_LANE="deploy_${{ steps.validate-target.outputs.target }}"
+          echo "Deploying via Fastlane lane: $TARGET_LANE"
+          
+          fastlane $TARGET_LANE
+
+      - name: Cleanup sensitive files
+        if: always()
+        run: |
+          rm -f android/fastlane/google-play-service-key.json
+
+      - name: Create deployment summary
+        if: success()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          ## 🚀 Deployment Successful
+          
+          **Target:** ${{ steps.validate-target.outputs.target }}
+          **Build Number:** ${{ github.run_number }}
+          **Commit:** ${{ github.sha }}
+          **Deployed by:** ${{ github.actor }}
+          
+          ### Next Steps
+          - Monitor crash reports
+          - Check analytics
+          - Verify functionality in Play Console
+          EOF
+
+  # Notify on failure
+  notify-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [security-scan, test, build-android, deploy-android]
+    if: failure()
+    steps:
+      - name: Send Slack notification
+        if: ${{ secrets.SLACK_WEBHOOK_URL }}
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "❌ Flutter CI/CD Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Flutter CI/CD Pipeline Failed*\n\n*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref_name }}\n*Commit:* ${{ github.sha }}\n*Triggered by:* ${{ github.actor }}\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

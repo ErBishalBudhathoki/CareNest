@@ -422,3 +422,9 @@ next\ step.md
 **/GoogleService-Info.plist
 **/.env
 **/.env.*
+
+.agents/
+.agents
+.github/skills
+docs/
+.env.example

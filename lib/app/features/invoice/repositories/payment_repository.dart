@@ -48,4 +48,11 @@ class PaymentRepository {
     final response = await _api.post('api/payments/credit-note', body: data);
     return response;
   }
+
+  Future<Map<String, dynamic>> createStripeOnboardingLink(String organizationId) async {
+    final response = await _api.post('api/payments/stripe/onboarding', body: {
+      'organizationId': organizationId,
+    });
+    return response;
+  }
 }

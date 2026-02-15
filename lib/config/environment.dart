@@ -11,14 +11,72 @@ class AppConfig {
   static Flavor appFlavor = Flavor.development;
 
   static String get baseUrl {
-    switch (appFlavor) {
+    final rawBaseUrl = _rawBaseUrlForFlavor(appFlavor);
+    return _normalizeAndValidateBaseUrl(
+      rawBaseUrl,
+      sourceLabel: '${flavorName.toUpperCase()} base URL',
+    );
+  }
+
+  static String _rawBaseUrlForFlavor(Flavor flavor) {
+    switch (flavor) {
       case Flavor.development:
         return Development.baseUrl;
       case Flavor.production:
         return Production.baseUrl;
-      default:
-        return Development.baseUrl;
     }
+  }
+
+  static String _normalizeAndValidateBaseUrl(
+    String raw, {
+    required String sourceLabel,
+  }) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) {
+      throw StateError(
+        '$sourceLabel is empty. Configure the flavor URL before making API requests.',
+      );
+    }
+
+    final withoutTrailing = trimmed.replaceAll(RegExp(r'/+$'), '');
+    final normalized = '$withoutTrailing/';
+    final parsed = Uri.tryParse(normalized);
+    final isHttp = parsed?.scheme == 'http' || parsed?.scheme == 'https';
+    final hasHost = parsed?.host.isNotEmpty == true;
+
+    if (parsed == null || !isHttp || !hasHost) {
+      throw StateError(
+        '$sourceLabel is invalid: "$raw". It must be an absolute http(s) URL.',
+      );
+    }
+
+    return normalized;
+  }
+
+  static bool isBaseUrlConfiguredForCurrentFlavor() {
+    try {
+      baseUrl;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static String? baseUrlConfigurationError() {
+    try {
+      baseUrl;
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  static String assertBaseUrlConfigured() {
+    final resolved = baseUrl;
+    if (enableLogging) {
+      debugPrint('Resolved API base URL for $flavorName: $resolved');
+    }
+    return resolved;
   }
 
   static bool get enableLogging {
@@ -27,8 +85,6 @@ class AppConfig {
         return Development.enableLogging;
       case Flavor.production:
         return Production.enableLogging;
-      default:
-        return Development.enableLogging;
     }
   }
 
@@ -38,15 +94,18 @@ class AppConfig {
         return 'development';
       case Flavor.production:
         return 'production';
-      default:
-        return 'development';
     }
   }
 
   static String normalizeBaseUrl([String? rawBaseUrl]) {
-    final value = (rawBaseUrl ?? baseUrl).trim();
-    final withoutTrailing = value.replaceAll(RegExp(r'/+$'), '');
-    return '$withoutTrailing/';
+    final value = rawBaseUrl;
+    if (value == null || value.trim().isEmpty) {
+      return baseUrl;
+    }
+    return _normalizeAndValidateBaseUrl(
+      value,
+      sourceLabel: 'Provided base URL override',
+    );
   }
 
   static String buildFilesDownloadUrl(
@@ -58,8 +117,9 @@ class AppConfig {
 
     final path = baseUri.path;
     final endsWithApi = path.endsWith('/api/') || path.endsWith('/api');
-    final endpointUri =
-        endsWithApi ? baseUri.resolve('files/download') : baseUri.resolve('api/files/download');
+    final endpointUri = endsWithApi
+        ? baseUri.resolve('files/download')
+        : baseUri.resolve('api/files/download');
 
     return '$endpointUri?url=${Uri.encodeComponent(resourceUrl)}';
   }

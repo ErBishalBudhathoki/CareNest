@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/routes/app_pages.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ChangePasswordView extends ConsumerStatefulWidget {
-  const ChangePasswordView({super.key});
+  final String? resetEmail;
+  final String? resetOtp;
+
+  const ChangePasswordView({
+    super.key,
+    this.resetEmail,
+    this.resetOtp,
+  });
+
+  bool get isResetFlow =>
+      resetEmail != null &&
+      resetEmail!.isNotEmpty &&
+      resetOtp != null &&
+      resetOtp!.isNotEmpty;
 
   @override
   ConsumerState<ChangePasswordView> createState() => _ChangePasswordViewState();
@@ -31,26 +45,48 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       final api = ref.read(apiMethodProvider);
-      // We assume user is logged in and token is set
-      final response = await api.post('api/client-portal/auth/change-password', body: {
-        'currentPassword': _currentController.text,
-        'newPassword': _newController.text,
-      });
+      late final Map<String, dynamic> response;
 
-      if (response['success'] == true) {
+      if (widget.isResetFlow) {
+        response = await api.resetForgotPassword(
+          email: widget.resetEmail!.trim(),
+          otp: widget.resetOtp!.trim(),
+          newPassword: _newController.text.trim(),
+          confirmPassword: _confirmController.text.trim(),
+        );
+      } else {
+        // Logged-in password change flow.
+        response = await api.post('api/client-portal/auth/change-password', body: {
+          'currentPassword': _currentController.text,
+          'newPassword': _newController.text,
+        });
+      }
+
+      final isSuccess = response['success'] == true || response['statusCode'] == 200;
+      if (isSuccess) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Password changed successfully!')),
+            SnackBar(content: Text(l10n.passwordUpdatedSuccess)),
           );
-          Navigator.pushNamedAndRemoveUntil(context, Routes.clientDashboard, (route) => false);
+          final destination = widget.isResetFlow ? Routes.login : Routes.clientDashboard;
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            destination,
+            (route) => false,
+          );
         }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response['message'] ?? 'Failed to change password')),
+            SnackBar(
+              content: Text(
+                response['message']?.toString() ?? l10n.somethingWentWrong,
+              ),
+            ),
           );
         }
       }
@@ -67,10 +103,12 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: BauhausDesign.background,
       appBar: AppBar(
-        title: const Text('Change Password'),
+        title: Text(widget.isResetFlow ? l10n.resetPassword : l10n.changePassword),
         automaticallyImplyLeading: false, // Force change
       ),
       body: SingleChildScrollView(
@@ -81,42 +119,50 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Security Update Required',
+                widget.isResetFlow
+                    ? l10n.resetPassword
+                    : l10n.changePasswordTitle,
                 style: BauhausDesign.getTextTheme(context).headlineMedium,
               ),
               const SizedBox(height: BauhausDesign.space2),
-              const Text('Please update your password to continue using the application.'),
-              const SizedBox(height: BauhausDesign.space6),
-              
-              BauhausTextField(
-                controller: _currentController,
-                label: 'Current (Temporary) Password',
-                obscureText: true,
-                validator: (v) => v?.isEmpty == true ? 'Required' : null,
+              Text(
+                widget.isResetFlow
+                    ? l10n.resetPasswordDesc
+                    : l10n.changePasswordSubtitle,
               ),
-              const SizedBox(height: BauhausDesign.space4),
-              
+              const SizedBox(height: BauhausDesign.space6),
+
+              if (!widget.isResetFlow) ...[
+                BauhausTextField(
+                  controller: _currentController,
+                  label: l10n.passwordLabel,
+                  obscureText: true,
+                  validator: (v) => v?.isEmpty == true ? l10n.required : null,
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+              ],
+
               BauhausTextField(
                 controller: _newController,
-                label: 'New Password',
+                label: l10n.newPasswordHint,
                 obscureText: true,
-                validator: (v) => (v?.length ?? 0) < 8 ? 'Must be at least 8 characters' : null,
+                validator: (v) => (v?.length ?? 0) < 8 ? l10n.passwordMinLength : null,
               ),
               const SizedBox(height: BauhausDesign.space4),
               
               BauhausTextField(
                 controller: _confirmController,
-                label: 'Confirm New Password',
+                label: l10n.confirmPasswordHint,
                 obscureText: true,
                 validator: (v) {
-                  if (v != _newController.text) return 'Passwords do not match';
+                  if (v != _newController.text) return l10n.passwordsDoNotMatch;
                   return null;
                 },
               ),
               const SizedBox(height: BauhausDesign.space6),
               
               BauhausActionButton(
-                text: 'Update Password',
+                text: widget.isResetFlow ? l10n.resetPassword : l10n.changePassword,
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),
@@ -127,6 +173,3 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
     );
   }
 }
-
-// Provider for ApiMethod
-final apiMethodProvider = Provider<ApiMethod>((ref) => ApiMethod());

@@ -19,6 +19,11 @@ class AddExpenseView extends ConsumerStatefulWidget {
   final String? initialCategory;
   final ExpenseModel?
       expenseToEdit; // If provided, we're editing an existing expense
+  final List<String>? initialReceiptFilePaths;
+  final String? initialTitle;
+  final double? initialAmount;
+  final DateTime? initialDate;
+  final String? initialDescription;
 
   const AddExpenseView({
     super.key,
@@ -27,6 +32,11 @@ class AddExpenseView extends ConsumerStatefulWidget {
     this.organizationName,
     this.initialCategory,
     this.expenseToEdit,
+    this.initialReceiptFilePaths,
+    this.initialTitle,
+    this.initialAmount,
+    this.initialDate,
+    this.initialDescription,
   });
 
   @override
@@ -85,6 +95,25 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
     // If a quick category was provided, preselect it (when not editing)
     if (widget.expenseToEdit == null && widget.initialCategory != null) {
       _selectedCategory = widget.initialCategory!;
+    }
+
+    // Initialize from OCR/quick capture if provided
+    if (widget.expenseToEdit == null) {
+      if (widget.initialTitle != null) {
+        _titleController.text = widget.initialTitle!;
+      }
+      if (widget.initialAmount != null) {
+        _amountController.text = widget.initialAmount!.toStringAsFixed(2);
+      }
+      if (widget.initialDate != null) {
+        _selectedDate = widget.initialDate!;
+      }
+      if (widget.initialDescription != null) {
+        _descriptionController.text = widget.initialDescription!;
+      }
+      if (widget.initialReceiptFilePaths != null) {
+        _receiptFiles = widget.initialReceiptFilePaths!.map((path) => File(path)).toList();
+      }
     }
 
     // If editing an existing expense, populate the form

@@ -99,7 +99,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
           // Line Items
           Text('ITEMS', style: BauhausDesign.getTextTheme(context).headlineMedium),
           const SizedBox(height: BauhausDesign.space2),
-          ...invoice.lineItems.map((item) => Container(
+          ...(invoice.lineItems ?? []).map((item) => Container(
             margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(

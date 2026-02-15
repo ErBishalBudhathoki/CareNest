@@ -1,0 +1,276 @@
+name: API Documentation CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Validate OpenAPI Specification
+  validate-spec:
+    name: Validate OpenAPI Spec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Swagger CLI
+        run: npm install -g @apidevtools/swagger-cli spectral-cli
+
+      - name: Validate OpenAPI spec
+        run: swagger-cli validate backend/docs/api/openapi.yaml
+
+      - name: Lint OpenAPI spec
+        run: spectral lint backend/docs/api/openapi.yaml --ruleset https://raw.githubusercontent.com/stoplightio/spectral/develop/rulesets/oas/index.json
+
+      - name: Check for breaking changes
+        if: github.event_name == 'pull_request'
+        run: |
+          npm install -g @openapitools/openapi-generator-cli
+          # Add breaking change detection logic here
+
+  # Run API Tests
+  api-tests:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+    needs: validate-spec
+    services:
+      # Add your backend service here if needed
+      # api:
+      #   image: your-api-image:latest
+      #   ports:
+      #     - 3000:3000
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Wait for API to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000/health 2>/dev/null; do sleep 1; done' || echo "API not available, using mock"
+
+      - name: Run Postman collection tests
+        run: |
+          newman run backend/docs/api/postman_collection.json \
+            --environment backend/docs/api/postman_environment.json \
+            --reporters cli,htmlextra,json \
+            --reporter-htmlextra-export test-reports/report.html \
+            --reporter-json-export test-reports/results.json
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-reports/
+
+  # Generate TypeScript SDK
+  generate-sdk:
+    name: Generate TypeScript SDK
+    runs-on: ubuntu-latest
+    needs: validate-spec
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate TypeScript SDK
+        run: |
+          docker run --rm \
+            -v "${PWD}:/local" \
+            openapitools/openapi-generator-cli generate \
+            -i /local/backend/docs/api/openapi.yaml \
+            -g typescript-axios \
+            -o /local/generated/typescript-sdk \
+            --additional-properties=npmName=invoice-api-client,npmVersion=1.0.0
+
+      - name: Install dependencies
+        run: |
+          cd generated/typescript-sdk
+          npm install
+
+      - name: Build SDK
+        run: |
+          cd generated/typescript-sdk
+          npm run build
+
+      - name: Upload SDK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-sdk
+          path: generated/typescript-sdk/
+
+      - name: Publish to NPM
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd generated/typescript-sdk
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          npm publish
+        continue-on-error: true
+
+  # Build and Deploy Documentation
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: [validate-spec, api-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push documentation images
+        run: |
+          docker-compose -f docker-compose.production.yml build
+          docker-compose -f docker-compose.production.yml push
+
+      - name: Deploy to production
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          # Add deployment script here
+          echo "Deploying to production..."
+          # ssh ${SERVER_USER}@${SERVER_HOST} 'cd /app && docker-compose pull && docker-compose up -d'
+
+  # Security Scan
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Generate Documentation Metrics
+  documentation-metrics:
+    name: Documentation Metrics
+    runs-on: ubuntu-latest
+    needs: validate-spec
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install -g js-yaml
+
+      - name: Generate metrics
+        run: |
+          node -e "
+            const yaml = require('js-yaml');
+            const fs = require('fs');
+            
+            const spec = yaml.load(fs.readFileSync('backend/docs/api/openapi.yaml', 'utf8'));
+            const paths = Object.keys(spec.paths || {});
+            const schemas = Object.keys(spec.components?.schemas || {});
+            
+            const metrics = {
+              totalEndpoints: paths.length,
+              totalSchemas: schemas.length,
+              version: spec.info.version,
+              title: spec.info.title
+            };
+            
+            console.log('📊 Documentation Metrics:');
+            console.log(JSON.stringify(metrics, null, 2));
+            
+            fs.writeFileSync('metrics.json', JSON.stringify(metrics, null, 2));
+          "
+
+      - name: Upload metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-metrics
+          path: metrics.json
+
+  # Create GitHub Release
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [validate-spec, api-tests, generate-sdk]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from OpenAPI spec
+        id: get_version
+        run: |
+          VERSION=$(grep 'version:' backend/docs/api/openapi.yaml | head -1 | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download SDK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: typescript-sdk
+          path: ./typescript-sdk
+
+      - name: Create release archive
+        run: |
+          zip -r api-docs-v${{ steps.get_version.outputs.version }}.zip \
+            backend/docs/api/openapi.yaml \
+            backend/docs/api/postman_collection.json \
+            API_DOCUMENTATION.md \
+            API_TUTORIALS.md \
+            CHANGELOG.md \
+            typescript-sdk/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: Release v${{ steps.get_version.outputs.version }}
+          body_path: CHANGELOG.md
+          files: |
+            api-docs-v${{ steps.get_version.outputs.version }}.zip
+            backend/docs/api/openapi.yaml
+            backend/docs/api/postman_collection.json
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

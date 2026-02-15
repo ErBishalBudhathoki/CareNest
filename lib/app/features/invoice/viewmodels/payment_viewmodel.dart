@@ -77,4 +77,16 @@ class PaymentViewModel extends StateNotifier<AsyncValue<void>> {
       state = AsyncValue.error(e, st);
     }
   }
+
+  Future<String?> createOnboardingLink(String organizationId) async {
+    try {
+      final result = await _repository.createStripeOnboardingLink(organizationId);
+      if (result['success'] == true && result['url'] != null) {
+        return result['url'] as String;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/services/sync/sync_manager.dart';
 
 // ==================== SHARED PREFERENCES ====================
 
@@ -45,4 +46,11 @@ final userEmailProvider = Provider<String?>((ref) {
 final organizationIdProvider = Provider<String?>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return prefs.getOrganizationId();
+});
+
+// ==================== SYNC MANAGER ====================
+
+// Sync manager provider for offline sync functionality
+final syncManagerProvider = Provider<SyncManager>((ref) {
+  return SyncManager.instance;
 });

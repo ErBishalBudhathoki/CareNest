@@ -53,7 +53,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true);
     try {
-      await _apiMethod.login(email, password);
+      final response = await _apiMethod.login(email, password);
+      if (response is! Map || response['success'] != true) {
+        final message = response is Map && response['message'] != null
+            ? response['message'].toString()
+            : 'Login failed';
+        throw Exception(message);
+      }
       state = state.copyWith(
         isAuthenticated: true,
         isLoading: false,
@@ -96,14 +102,16 @@ class UserRoleNotifier extends StateNotifier<UserRole> {
 }
 
 // User role provider
-final userRoleProvider = StateNotifierProvider<UserRoleNotifier, UserRole>((ref) {
+final userRoleProvider =
+    StateNotifierProvider<UserRoleNotifier, UserRole>((ref) {
   return UserRoleNotifier(ref.read(sharedPreferencesProvider));
 });
 
 // ==================== AUTH VIEW MODEL PROVIDERS ====================
 
 // Login view model provider with autoDispose for proper cleanup
-final loginViewModelProvider = ChangeNotifierProvider.autoDispose<LoginViewModel>((ref) {
+final loginViewModelProvider =
+    ChangeNotifierProvider.autoDispose<LoginViewModel>((ref) {
   return LoginViewModel(
     ref.read(apiMethodProvider),
     ref.read(sharedPreferencesProvider),
@@ -111,23 +119,27 @@ final loginViewModelProvider = ChangeNotifierProvider.autoDispose<LoginViewModel
 });
 
 // Signup view model provider with autoDispose
-final signupViewModelProvider = ChangeNotifierProvider.autoDispose<SignupViewModel>((ref) {
+final signupViewModelProvider =
+    ChangeNotifierProvider.autoDispose<SignupViewModel>((ref) {
   return SignupViewModel();
 });
 
 // Forgot password view model provider with autoDispose
-final forgotPasswordViewModelProvider = ChangeNotifierProvider.autoDispose<ForgotPasswordViewModel>((ref) {
+final forgotPasswordViewModelProvider =
+    ChangeNotifierProvider.autoDispose<ForgotPasswordViewModel>((ref) {
   return ForgotPasswordViewModel(
     ref.read(sharedPreferencesProvider),
   );
 });
 
 // Change password view model provider with autoDispose
-final changePasswordViewModelProvider = ChangeNotifierProvider.autoDispose<ChangePasswordViewModel>((ref) {
+final changePasswordViewModelProvider =
+    ChangeNotifierProvider.autoDispose<ChangePasswordViewModel>((ref) {
   return ChangePasswordViewModel(ref);
 });
 
 // OTP verification view model provider with autoDispose
-final verifyOTPViewModelProvider = ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
+final verifyOTPViewModelProvider =
+    ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
   return VerifyOTPViewModel();
 });
