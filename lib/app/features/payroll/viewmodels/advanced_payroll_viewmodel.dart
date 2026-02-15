@@ -1,0 +1,140 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/features/payroll/repositories/advanced_payroll_repository.dart';
+import 'package:carenest/app/features/payroll/models/advanced_payroll_models.dart';
+
+final advancedPayrollViewModelProvider =
+    StateNotifierProvider<AdvancedPayrollViewModel, AdvancedPayrollState>((ref) {
+  final repository = ref.watch(advancedPayrollRepositoryProvider);
+  return AdvancedPayrollViewModel(repository);
+});
+
+class AdvancedPayrollState {
+  final bool isLoading;
+  final String? error;
+  final PayrollCalculation? calculation;
+  final Payslip? payslip;
+  final PayrollSummary? summary;
+  final bool isExporting;
+
+  AdvancedPayrollState({
+    this.isLoading = false,
+    this.error,
+    this.calculation,
+    this.payslip,
+    this.summary,
+    this.isExporting = false,
+  });
+
+  AdvancedPayrollState copyWith({
+    bool? isLoading,
+    String? error,
+    PayrollCalculation? calculation,
+    Payslip? payslip,
+    PayrollSummary? summary,
+    bool? isExporting,
+  }) {
+    return AdvancedPayrollState(
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      calculation: calculation ?? this.calculation,
+      payslip: payslip ?? this.payslip,
+      summary: summary ?? this.summary,
+      isExporting: isExporting ?? this.isExporting,
+    );
+  }
+}
+
+class AdvancedPayrollViewModel extends StateNotifier<AdvancedPayrollState> {
+  final AdvancedPayrollRepository _repository;
+
+  AdvancedPayrollViewModel(this._repository) : super(AdvancedPayrollState());
+
+  /// Calculate payroll with award rates and penalties
+  Future<void> calculatePayroll(Map<String, dynamic> payrollData) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _repository.calculatePayroll(payrollData: payrollData);
+      if (response['success'] == true && response['data'] != null) {
+        final calculation = PayrollCalculation.fromJson(response['data']);
+        state = state.copyWith(isLoading: false, calculation: calculation);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: response['message'] ?? 'Failed to calculate payroll',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Get payslip for a user and period
+  Future<void> getPayslip(String userId, String period) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _repository.getPayslip(userId: userId, period: period);
+      if (response['success'] == true && response['data'] != null) {
+        final payslip = Payslip.fromJson(response['data']);
+        state = state.copyWith(isLoading: false, payslip: payslip);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: response['message'] ?? 'Failed to load payslip',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Generate payslips for all employees
+  Future<bool> generatePayslips(String organizationId, String period) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _repository.generatePayslips(
+        organizationId: organizationId,
+        period: period,
+      );
+      state = state.copyWith(isLoading: false);
+      return response['success'] == true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  /// Get payroll summary for organization
+  Future<void> getPayrollSummary(String organizationId, String period) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _repository.getPayrollSummary(
+        organizationId: organizationId,
+        period: period,
+      );
+      if (response['success'] == true && response['data'] != null) {
+        final summary = PayrollSummary.fromJson(response['data']);
+        state = state.copyWith(isLoading: false, summary: summary);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: response['message'] ?? 'Failed to load summary',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Export payroll data to Xero/MYOB
+  Future<bool> exportPayrollData(Map<String, dynamic> exportData) async {
+    state = state.copyWith(isExporting: true, error: null);
+    try {
+      final response = await _repository.exportPayrollData(exportData: exportData);
+      state = state.copyWith(isExporting: false);
+      return response['success'] == true;
+    } catch (e) {
+      state = state.copyWith(isExporting: false, error: e.toString());
+      return false;
+    }
+  }
+}

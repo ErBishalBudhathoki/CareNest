@@ -70,32 +70,44 @@ bool isDeepLinkHandled() {
 // Background handler is now defined in firebase_messaging_service.dart
 // This import will be used to register the handler
 
+Future<void> _loadEnvironmentConfig() async {
+  await dotenv.load(fileName: ".env");
+}
+
+String _envValue(String key, {String fallback = ''}) {
+  if (!dotenv.isInitialized) return fallback;
+  final value = dotenv.env[key];
+  if (value == null || value.trim().isEmpty) return fallback;
+  return value;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (_) {}
+  await _loadEnvironmentConfig();
 
-  // Dynamically detect flavor based on package name
-  // Development flavor typically has a suffix like '.dev'
-  try {
-    final packageInfo = await PackageInfo.fromPlatform();
-    final packageName = packageInfo.packageName;
-
-    if (packageName.endsWith('.dev')) {
-      AppConfig.appFlavor = Flavor.development;
-    } else {
-      AppConfig.appFlavor = Flavor.production;
-    }
-  } catch (e) {
-    debugPrint('Error getting package info: $e');
-    // Fallback default
+  const flutterFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
+  if (flutterFlavor == 'development') {
     AppConfig.appFlavor = Flavor.development;
+  } else if (flutterFlavor == 'production') {
+    AppConfig.appFlavor = Flavor.production;
+  } else {
+    // Fallback for older builds: infer flavor from package name.
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final packageName = packageInfo.packageName;
+      AppConfig.appFlavor =
+          packageName.endsWith('.dev') ? Flavor.development : Flavor.production;
+    } catch (e) {
+      debugPrint('Error getting package info: $e');
+      AppConfig.appFlavor = Flavor.development;
+    }
   }
+
+  final resolvedBaseUrl = AppConfig.assertBaseUrlConfigured();
 
   debugPrint('=== Environment Configuration (Auto-Detected) ===');
   debugPrint('App Flavor: ${AppConfig.flavorName}');
-  debugPrint('Base URL: ${AppConfig.baseUrl}');
+  debugPrint('Base URL: $resolvedBaseUrl');
   debugPrint('Logging Enabled: ${AppConfig.enableLogging}');
   debugPrint('=========================================');
 
@@ -190,10 +202,14 @@ Future<void> _initializeFirebase() async {
 }
 
 Future<void> _initializeAppCheck() async {
+  final isDevelopmentFlavor = AppConfig.appFlavor == Flavor.development;
   await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider(dotenv.env['RECAPTCHA_SITE_KEY'] ?? ''),
-    androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.appAttest,
+    webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
+    androidProvider: isDevelopmentFlavor
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
+    appleProvider:
+        isDevelopmentFlavor ? AppleProvider.debug : AppleProvider.appAttest,
   );
 }
 

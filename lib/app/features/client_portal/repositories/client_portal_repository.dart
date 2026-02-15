@@ -1,69 +1,166 @@
+import 'package:flutter/foundation.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
-import '../models/client_portal_models.dart';
 
 class ClientPortalRepository {
-  final ApiMethod _apiMethod;
+  final Ref ref;
 
-  ClientPortalRepository(this._apiMethod);
+  ClientPortalRepository(this.ref);
 
-  Future<List<ClientInvoice>> getInvoices({int page = 1, int limit = 10, String? status}) async {
-    final query = 'page=$page&limit=$limit${status != null ? '&status=$status' : ''}';
-    final response = await _apiMethod.get('api/client-portal/invoices?$query');
-    
-    if (response['success'] == true) {
-      final data = response['data'] as Map<String, dynamic>;
-      final list = data['invoices'] as List;
-      return list.map((e) => ClientInvoice.fromJson(e)).toList();
-    } else {
-      throw Exception(response['message'] ?? 'Failed to fetch invoices');
+  Future<Map<String, dynamic>> getClientDashboard({required String clientId}) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      return await apiMethod.getClientDashboard(clientId: clientId);
+    } catch (e) {
+      debugPrint('Error getting client dashboard: $e');
+      return {'success': false, 'message': e.toString()};
     }
   }
 
-  Future<ClientInvoice> getInvoiceDetail(String id) async {
-    final response = await _apiMethod.get('api/client-portal/invoices/$id');
-    
-    if (response['success'] == true) {
-      return ClientInvoice.fromJson(response['data']);
-    } else {
-      throw Exception(response['message'] ?? 'Failed to fetch invoice');
+  Future<Map<String, dynamic>> getWorkerLocation({required String appointmentId}) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      return await apiMethod.getWorkerLocation(appointmentId: appointmentId);
+    } catch (e) {
+      debugPrint('Error getting worker location: $e');
+      return {'success': false, 'message': e.toString()};
     }
   }
 
-  Future<void> approveInvoice(String id) async {
-    final response = await _apiMethod.post('api/client-portal/invoices/$id/approve', body: {});
-    if (response['success'] != true) {
-      throw Exception(response['message']);
+  Future<Map<String, dynamic>> getAppointmentStatus({required String appointmentId}) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      return await apiMethod.getAppointmentStatus(appointmentId: appointmentId);
+    } catch (e) {
+      debugPrint('Error getting appointment status: $e');
+      return {'success': false, 'message': e.toString()};
     }
   }
 
-  Future<void> disputeInvoice(String id, String reason) async {
-    final response = await _apiMethod.post('api/client-portal/invoices/$id/dispute', body: {'reason': reason});
-    if (response['success'] != true) {
-      throw Exception(response['message']);
+  Future<Map<String, dynamic>> sendMessage({required Map<String, dynamic> messageData}) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      return await apiMethod.sendClientMessage(messageData: messageData);
+    } catch (e) {
+      debugPrint('Error sending message: $e');
+      return {'success': false, 'message': e.toString()};
     }
   }
 
-  Future<List<ClientAppointment>> getAppointments() async {
-    final response = await _apiMethod.get('api/client-portal/appointments');
-    
-    if (response['success'] == true) {
-      final list = response['data'] as List;
-      return list.map((e) => ClientAppointment.fromJson(e)).toList();
-    } else {
-      throw Exception(response['message']);
+  Future<Map<String, dynamic>> submitFeedback({required Map<String, dynamic> feedbackData}) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      return await apiMethod.submitServiceFeedback(feedbackData: feedbackData);
+    } catch (e) {
+      debugPrint('Error submitting feedback: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getServiceHistory({required String clientId}) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      return await apiMethod.getServiceHistory(clientId: clientId);
+    } catch (e) {
+      debugPrint('Error getting service history: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get appointments for client (for existing client portal views)
+  Future<List<dynamic>> getAppointments() async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.get('api/client-portal/appointments');
+      if (response['success'] == true && response['data'] != null) {
+        return response['data'] as List;
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Get appointment detail (for existing client portal views)
+  Future<Map<String, dynamic>> getAppointmentDetail({
+    required String assignmentId,
+    required String scheduleId,
+  }) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.get(
+        'api/client-portal/appointment/$assignmentId/$scheduleId',
+      );
+      return response;
+    } catch (e) {
+      return {'success': false, 'message': 'Error fetching appointment detail: $e'};
+    }
+  }
+
+  /// Get invoices for client (for existing client portal views)
+  Future<List<dynamic>> getInvoices() async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.get('api/client-portal/invoices');
+      if (response['success'] == true && response['data'] != null) {
+        return response['data'] as List;
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Get invoice detail (for existing client portal views)
+  Future<Map<String, dynamic>> getInvoiceDetail(String invoiceId) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.get('api/client-portal/invoice/$invoiceId');
+      return response;
+    } catch (e) {
+      return {'success': false, 'message': 'Error fetching invoice detail: $e'};
+    }
+  }
+
+  /// Approve invoice (for existing client portal views)
+  Future<void> approveInvoice(String invoiceId) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      await apiMethod.post('api/client-portal/invoice/$invoiceId/approve');
+    } catch (e) {
+      throw Exception('Error approving invoice: $e');
+    }
+  }
+
+  /// Dispute invoice (for existing client portal views)
+  Future<void> disputeInvoice(String invoiceId, String reason) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      await apiMethod.post(
+        'api/client-portal/invoice/$invoiceId/dispute',
+        body: {'reason': reason},
+      );
+    } catch (e) {
+      throw Exception('Error disputing invoice: $e');
+    }
+  }
+
+  /// Request appointment (for existing client portal views)
+  Future<Map<String, dynamic>> requestAppointment(Map<String, dynamic> requestData) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.post(
+        'api/client-portal/appointment/request',
+        body: requestData,
+      );
+      return response;
+    } catch (e) {
+      return {'success': false, 'message': 'Error requesting appointment: $e'};
     }
   }
 }
 
 final clientPortalRepositoryProvider = Provider<ClientPortalRepository>((ref) {
-  // We need to provide ApiMethod. It's likely a provider or a singleton.
-  // In `InvoiceRepository`, it's passed in constructor.
-  // I need to find where InvoiceRepository is provided.
-  // Likely in `lib/app/core/providers/invoice_providers.dart`.
-  return ClientPortalRepository(ApiMethod()); // ApiMethod() seems to be a class we can instantiate.
-  // However, ApiMethod extends ChangeNotifier.
-  // Ideally we should use the same instance if it holds state (like token).
-  // But ApiMethod reads token from SharedPreferences in `get()`.
-  // So a new instance is fine.
+  return ClientPortalRepository(ref);
 });
+

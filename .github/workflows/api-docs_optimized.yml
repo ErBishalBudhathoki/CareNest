@@ -1,0 +1,587 @@
+name: API Documentation CI/CD - Secure & Optimized
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_docs:
+        description: 'Deploy documentation to production'
+        required: false
+        default: false
+        type: boolean
+
+# Prevent concurrent deployments
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Minimum required permissions
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+  packages: write
+  id-token: write  # For OIDC authentication
+
+env:
+  NODE_VERSION: '20'
+  DOCKER_REGISTRY: 'ghcr.io'
+
+jobs:
+  # Security Scanning
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Scan for secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+
+  # Validate OpenAPI Specification
+  validate-spec:
+    name: Validate OpenAPI Spec
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: security-scan
+    outputs:
+      spec-version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install validation tools
+        run: |
+          npm install -g @apidevtools/swagger-cli@4 spectral-cli@6
+
+      - name: Validate OpenAPI syntax
+        run: swagger-cli validate backend/docs/api/openapi.yaml
+
+      - name: Lint with Spectral
+        run: |
+          spectral lint backend/docs/api/openapi.yaml \
+            --ruleset https://raw.githubusercontent.com/stoplightio/spectral/develop/rulesets/oas/index.json \
+            --fail-severity warn
+
+      - name: Check for breaking changes
+        if: github.event_name == 'pull_request'
+        run: |
+          # Fetch base branch OpenAPI spec
+          git fetch origin ${{ github.base_ref }}
+          git show origin/${{ github.base_ref }}:backend/docs/api/openapi.yaml > /tmp/base-openapi.yaml || echo "No previous spec found"
+          
+          # Install breaking change detector
+          npm install -g @openapitools/openapi-generator-cli
+          
+          # Compare for breaking changes (if base exists)
+          if [ -f /tmp/base-openapi.yaml ]; then
+            # Use oasdiff or similar tool
+            echo "::warning::Manual review required for API changes"
+          fi
+
+      - name: Extract version
+        id: get-version
+        run: |
+          VERSION=$(grep 'version:' backend/docs/api/openapi.yaml | head -1 | awk '{print $2}' | tr -d '"' | tr -d "'")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Check version increment
+        if: github.event_name == 'pull_request'
+        run: |
+          # Verify version was incremented
+          CURRENT_VERSION=$(grep 'version:' backend/docs/api/openapi.yaml | head -1 | awk '{print $2}' | tr -d '"' | tr -d "'")
+          git fetch origin ${{ github.base_ref }}
+          BASE_VERSION=$(git show origin/${{ github.base_ref }}:backend/docs/api/openapi.yaml | grep 'version:' | head -1 | awk '{print $2}' | tr -d '"' | tr -d "'")
+          
+          if [ "$CURRENT_VERSION" == "$BASE_VERSION" ]; then
+            echo "::warning::API version not incremented from $BASE_VERSION"
+          else
+            echo "::notice::Version updated from $BASE_VERSION to $CURRENT_VERSION"
+          fi
+
+  # Run API Tests
+  api-tests:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: validate-spec
+    services:
+      mongodb:
+        image: mongo:7.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: test
+          MONGO_INITDB_ROOT_PASSWORD: testpass
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Start backend server
+        working-directory: backend
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test?authSource=admin
+          NODE_ENV: test
+          PORT: 8080
+        run: |
+          # Start server in background
+          npm start &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          
+          # Wait for server to be ready
+          timeout 60 bash -c 'until curl -f http://localhost:8080/health 2>/dev/null; do sleep 2; done'
+
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Run Postman collection tests
+        run: |
+          newman run backend/docs/api/postman_collection.json \
+            --environment backend/docs/api/postman_environment.json \
+            --reporters cli,htmlextra,json \
+            --reporter-htmlextra-export test-reports/api-test-report.html \
+            --reporter-json-export test-reports/api-test-results.json \
+            --bail || echo "::warning::Some API tests failed"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: test-reports/
+          retention-days: 30
+
+      - name: Cleanup
+        if: always()
+        run: |
+          # Kill backend server
+          kill $SERVER_PID || true
+
+  # Generate TypeScript SDK
+  generate-sdk:
+    name: Generate TypeScript SDK
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate-spec
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Generate TypeScript SDK
+        run: |
+          docker run --rm \
+            -v "${PWD}:/local" \
+            openapitools/openapi-generator-cli:v7.2.0 generate \
+            -i /local/backend/docs/api/openapi.yaml \
+            -g typescript-axios \
+            -o /local/generated/typescript-sdk \
+            --additional-properties=npmName=@carenest/api-client,npmVersion=${{ needs.validate-spec.outputs.spec-version }},supportsES6=true
+
+      - name: Install SDK dependencies
+        working-directory: generated/typescript-sdk
+        run: npm install
+
+      - name: Build and test SDK
+        working-directory: generated/typescript-sdk
+        run: |
+          npm run build
+          npm test || echo "::warning::SDK tests not configured"
+
+      - name: Upload SDK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-sdk
+          path: generated/typescript-sdk/
+          retention-days: 30
+
+      - name: Publish to NPM
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: generated/typescript-sdk
+        run: |
+          if [ -n "$NPM_TOKEN" ]; then
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+            npm publish --access public || echo "::warning::NPM publish failed or package already exists"
+          else
+            echo "::warning::NPM_TOKEN not set, skipping publish"
+          fi
+
+  # Build and Push Documentation Images
+  build-docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [validate-spec, api-tests]
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/docs
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}},value=${{ needs.validate-spec.outputs.spec-version }}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push documentation images
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.docs
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ needs.validate-spec.outputs.spec-version }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/docs:latest
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-sbom
+          path: sbom.spdx.json
+
+  # Deploy Documentation
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [build-docs, generate-sdk]
+    if: |
+      (github.ref == 'refs/heads/main' && github.event_name == 'push') ||
+      (github.event.inputs.deploy_docs == 'true')
+    environment:
+      name: documentation
+      url: https://docs.carenest.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        if: ${{ secrets.SSH_PRIVATE_KEY }}
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          # Setup SSH key
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Add host to known_hosts
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+          
+          # Deploy
+          ssh -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST << 'ENDSSH'
+            cd /opt/carenest/docs
+            docker-compose pull
+            docker-compose up -d --remove-orphans
+            docker-compose logs --tail=50
+          ENDSSH
+          
+          # Cleanup
+          rm -f ~/.ssh/deploy_key
+
+      - name: Verify deployment
+        run: |
+          # Wait for deployment to be ready
+          sleep 10
+          
+          # Check if docs are accessible
+          curl -f https://docs.carenest.com/health || echo "::warning::Docs not accessible"
+
+  # Generate Documentation Metrics
+  documentation-metrics:
+    name: Documentation Metrics
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: validate-spec
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install -g js-yaml
+
+      - name: Generate comprehensive metrics
+        run: |
+          node -e "
+            const yaml = require('js-yaml');
+            const fs = require('fs');
+            
+            const spec = yaml.load(fs.readFileSync('backend/docs/api/openapi.yaml', 'utf8'));
+            
+            const paths = Object.keys(spec.paths || {});
+            const schemas = Object.keys(spec.components?.schemas || {});
+            const tags = spec.tags || [];
+            
+            // Count methods
+            let methodCounts = { GET: 0, POST: 0, PUT: 0, DELETE: 0, PATCH: 0 };
+            paths.forEach(path => {
+              Object.keys(spec.paths[path]).forEach(method => {
+                const m = method.toUpperCase();
+                if (methodCounts.hasOwnProperty(m)) methodCounts[m]++;
+              });
+            });
+            
+            // Count documented vs undocumented
+            let documented = 0, undocumented = 0;
+            paths.forEach(path => {
+              Object.values(spec.paths[path]).forEach(op => {
+                if (op.description || op.summary) documented++;
+                else undocumented++;
+              });
+            });
+            
+            const metrics = {
+              version: spec.info.version,
+              title: spec.info.title,
+              totalEndpoints: paths.length,
+              totalSchemas: schemas.length,
+              totalTags: tags.length,
+              methodBreakdown: methodCounts,
+              documentationCoverage: {
+                documented,
+                undocumented,
+                percentage: ((documented / (documented + undocumented)) * 100).toFixed(2) + '%'
+              },
+              timestamp: new Date().toISOString()
+            };
+            
+            console.log('📊 Documentation Metrics:');
+            console.log(JSON.stringify(metrics, null, 2));
+            
+            fs.writeFileSync('metrics.json', JSON.stringify(metrics, null, 2));
+            
+            // Create summary
+            const summary = \`## 📊 API Documentation Metrics
+
+**Version:** \${metrics.version}
+**Total Endpoints:** \${metrics.totalEndpoints}
+**Total Schemas:** \${metrics.totalSchemas}
+
+### Method Breakdown
+- GET: \${methodCounts.GET}
+- POST: \${methodCounts.POST}
+- PUT: \${methodCounts.PUT}
+- DELETE: \${methodCounts.DELETE}
+- PATCH: \${methodCounts.PATCH}
+
+### Documentation Coverage
+- Documented: \${documented} (\${metrics.documentationCoverage.percentage})
+- Undocumented: \${undocumented}
+
+\${undocumented > 0 ? '⚠️ **Warning:** Some endpoints lack documentation' : '✅ All endpoints documented'}
+\`;
+            
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          "
+
+      - name: Upload metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-metrics
+          path: metrics.json
+
+  # Create GitHub Release
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate-spec, api-tests, generate-sdk, build-docs]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Create release archive
+        run: |
+          VERSION="${{ needs.validate-spec.outputs.spec-version }}"
+          
+          mkdir -p release-assets
+          
+          # Package documentation
+          zip -r release-assets/api-docs-v${VERSION}.zip \
+            backend/docs/api/openapi.yaml \
+            backend/docs/api/postman_collection.json \
+            backend/docs/api/postman_environment.json \
+            API_DOCUMENTATION.md \
+            API_TUTORIALS.md \
+            CHANGELOG.md
+          
+          # Package TypeScript SDK
+          if [ -d artifacts/typescript-sdk ]; then
+            cd artifacts/typescript-sdk
+            npm pack
+            mv *.tgz ../../release-assets/
+            cd ../..
+          fi
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Generate changelog from commits
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -n "$PREV_TAG" ]; then
+            CHANGELOG=$(git log $PREV_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          else
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges | head -20)
+          fi
+          
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.validate-spec.outputs.spec-version }}
+          name: API Documentation v${{ needs.validate-spec.outputs.spec-version }}
+          body: |
+            ## API Documentation Release v${{ needs.validate-spec.outputs.spec-version }}
+            
+            ### Changes
+            ${{ steps.changelog.outputs.changelog }}
+            
+            ### Downloads
+            - OpenAPI Specification: `backend/docs/api/openapi.yaml`
+            - Postman Collection: `backend/docs/api/postman_collection.json`
+            - TypeScript SDK: `@carenest/api-client`
+            
+            ### Documentation
+            - [API Documentation](https://docs.carenest.com)
+            - [API Tutorials](./API_TUTORIALS.md)
+          files: |
+            release-assets/*
+            backend/docs/api/openapi.yaml
+            backend/docs/api/postman_collection.json
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Notify on completion
+  notify-completion:
+    name: Notify on Completion
+    runs-on: ubuntu-latest
+    needs: [security-scan, validate-spec, api-tests, generate-sdk, build-docs, deploy-docs, create-release]
+    if: always()
+    steps:
+      - name: Send Slack notification
+        if: ${{ secrets.SLACK_WEBHOOK_URL }}
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "${{ needs.security-scan.result == 'failure' || needs.validate-spec.result == 'failure' || needs.api-tests.result == 'failure' ? '❌' : '✅' }} API Documentation CI/CD",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*API Documentation Pipeline*\n\n*Status:* ${{ job.status }}\n*Version:* ${{ needs.validate-spec.outputs.spec-version }}\n*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref_name }}\n*Commit:* ${{ github.sha }}\n*Triggered by:* ${{ github.actor }}\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +12,21 @@ class InvoiceEmailService {
       String endDate, String invoiceNumber, String email, String genKey) async {
     ApiMethod apiMethod = ApiMethod();
     final sendingEmailDetail = await apiMethod.getEmailDetailToSendEmail(email);
-    final smtpServer =
-        gmail(dotenv.env['EMAIL_ADDRESS']!, dotenv.env['EMAIL_PASSWORD']!);
+
+    final emailAddress =
+        dotenv.isInitialized ? dotenv.env['EMAIL_ADDRESS'] : null;
+    final emailPassword =
+        dotenv.isInitialized ? dotenv.env['EMAIL_PASSWORD'] : null;
+    if (emailAddress == null ||
+        emailAddress.trim().isEmpty ||
+        emailPassword == null ||
+        emailPassword.trim().isEmpty) {
+      debugPrint(
+          'Missing EMAIL_ADDRESS or EMAIL_PASSWORD in environment config');
+      return 'Error';
+    }
+
+    final smtpServer = gmail(emailAddress, emailPassword);
     final message = Message()
       ..from = const Address('your_email@gmail.com', 'Your Name')
       ..recipients.add(email)
