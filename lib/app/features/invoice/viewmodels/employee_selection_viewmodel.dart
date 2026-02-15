@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/employee_selection_model.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class EmployeeSelectionViewModel extends StateNotifier<EmployeeSelectionState> {
   final ApiMethod _apiMethod;
@@ -228,6 +230,6 @@ final employeeSelectionViewModelProvider = StateNotifierProvider.family<
     EmployeeSelectionViewModel,
     EmployeeSelectionState,
     String>((ref, organizationId) {
-  final apiMethod = ApiMethod();
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   return EmployeeSelectionViewModel(apiMethod, organizationId);
 });

@@ -1,6 +1,6 @@
-import 'package:carenest/app/features/auth/views/verify_otp_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/core/providers/firebase_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
@@ -245,50 +245,184 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     }
 
     try {
-      await viewModel.resetPassword(
-        context,
-        (response) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                AppLocalizations.of(context)!.verificationCodeSent,
-                style: TextStyle(color: BauhausDesign.surfaceWhite),
-              ),
-              backgroundColor: BauhausDesign.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              ),
-            ),
-          );
+      // Use Firebase password reset instead of custom OTP
+      final authService = ref.read(firebaseAuthServiceProvider);
 
-          // Navigate to OTP verification
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => VerifyOTPView(
-                email: viewModel.model.emailController.text.trim(),
+      await authService.sendPasswordResetEmail(
+        email: viewModel.model.emailController.text.trim(),
+      );
+
+      if (mounted) {
+        // Show Bauhaus-styled success dialog
+        showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceWhite,
+                border: Border.all(
+                  color: BauhausDesign.success,
+                  width: 3,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: BauhausDesign.neutral,
+                    offset: const Offset(8, 8),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.success.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: BauhausDesign.success,
+                        width: 3,
+                      ),
+                    ),
+                    child: const Icon(
+                      Iconsax.tick_circle,
+                      color: BauhausDesign.success,
+                      size: 40,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Password Reset Email Sent',
+                    textAlign: TextAlign.center,
+                    style: BauhausDesign.getTextTheme(context)
+                        .headlineSmall
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Check your email for a link to reset your password. If it doesn\'t appear within a few minutes, check your spam folder.',
+                    textAlign: TextAlign.center,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textMuted,
+                          height: 1.5,
+                        ),
+                  ),
+                  const SizedBox(height: 32),
+                  BauhausActionButton(
+                    text: 'Back to Login',
+                    icon: Iconsax.arrow_left,
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close dialog
+                      Navigator.of(context).pop(); // Go back to login
+                    },
+                    variant: BauhausActionVariant.primary,
+                    isFullWidth: true,
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      );
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.failedToSendCode,
-              style: TextStyle(color: BauhausDesign.surfaceWhite),
-            ),
-            backgroundColor: BauhausDesign.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        // Show Bauhaus-styled error dialog
+        showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceWhite,
+                border: Border.all(
+                  color: BauhausDesign.error,
+                  width: 3,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: BauhausDesign.neutral,
+                    offset: const Offset(8, 8),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.error.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: BauhausDesign.error,
+                        width: 3,
+                      ),
+                    ),
+                    child: const Icon(
+                      Iconsax.close_circle,
+                      color: BauhausDesign.error,
+                      size: 40,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Failed to Send Email',
+                    textAlign: TextAlign.center,
+                    style: BauhausDesign.getTextTheme(context)
+                        .headlineSmall
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    _getFriendlyErrorMessage(e.toString()),
+                    textAlign: TextAlign.center,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textMuted,
+                          height: 1.5,
+                        ),
+                  ),
+                  const SizedBox(height: 32),
+                  BauhausActionButton(
+                    text: 'Try Again',
+                    icon: Iconsax.refresh,
+                    onPressed: () => Navigator.of(context).pop(),
+                    variant: BauhausActionVariant.primary,
+                    isFullWidth: true,
+                  ),
+                ],
+              ),
             ),
           ),
         );
       }
     }
+  }
+
+  String _getFriendlyErrorMessage(String error) {
+    if (error.contains('user-not-found')) {
+      return 'No account found with this email address';
+    } else if (error.contains('invalid-email')) {
+      return 'Invalid email address';
+    } else if (error.contains('network')) {
+      return 'Network error. Please check your connection';
+    }
+    return 'An error occurred. Please try again';
   }
 }

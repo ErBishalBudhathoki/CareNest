@@ -542,11 +542,30 @@ class ApiMethod extends ChangeNotifier {
   }
 
   Future<String?> _getAuthorizationHeaderValue() async {
+    // Try to get Firebase ID token first (new auth system)
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final idToken = await user.getIdToken();
+        if (idToken != null && idToken.isNotEmpty) {
+          debugPrint('✅ Using Firebase ID token for authorization');
+          return 'Bearer $idToken';
+        }
+      }
+    } catch (e) {
+      debugPrint('⚠️ Failed to get Firebase ID token: $e');
+    }
+
+    // Fallback to custom JWT token (for backward compatibility during migration)
     final sharedUtils = SharedPreferencesUtils();
     await sharedUtils.init();
     final token = sharedUtils.getAuthToken();
-    if (token == null || token.isEmpty) return null;
+    if (token == null || token.isEmpty) {
+      debugPrint('⚠️ No auth token available');
+      return null;
+    }
     if (token.toLowerCase().startsWith('bearer ')) return token;
+    debugPrint('✅ Using custom JWT token for authorization');
     return 'Bearer $token';
   }
 

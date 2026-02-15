@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 /// Revenue Forecasting State
@@ -40,10 +41,12 @@ class RevenueForecastingState {
 }
 
 /// Revenue Forecasting ViewModel
-class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState> {
+class RevenueForecastingViewModel
+    extends StateNotifier<RevenueForecastingState> {
   final FinancialIntelligenceRepository _repository;
 
-  RevenueForecastingViewModel(this._repository) : super(RevenueForecastingState());
+  RevenueForecastingViewModel(this._repository)
+      : super(RevenueForecastingState());
 
   /// Generate revenue forecast
   Future<void> generateForecast({
@@ -58,7 +61,7 @@ class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState>
         horizon: horizon,
         options: options,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -89,7 +92,7 @@ class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState>
         organizationId: organizationId,
         period: period,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -120,7 +123,7 @@ class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState>
         organizationId: organizationId,
         horizon: horizon,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -151,7 +154,7 @@ class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState>
         organizationId: organizationId,
         changes: changes,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -181,7 +184,7 @@ class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState>
         organizationId: organizationId,
         period: period,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -212,7 +215,7 @@ class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState>
         organizationId: organizationId,
         trainingData: trainingData,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false);
       } else {
@@ -237,8 +240,9 @@ class RevenueForecastingViewModel extends StateNotifier<RevenueForecastingState>
 
 /// Provider for Revenue Forecasting ViewModel
 final revenueForecastingViewModelProvider =
-    StateNotifierProvider<RevenueForecastingViewModel, RevenueForecastingState>((ref) {
-  final apiMethod = ApiMethod();
+    StateNotifierProvider<RevenueForecastingViewModel, RevenueForecastingState>(
+        (ref) {
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   final repository = FinancialIntelligenceRepository(apiMethod);
   return RevenueForecastingViewModel(repository);
 });

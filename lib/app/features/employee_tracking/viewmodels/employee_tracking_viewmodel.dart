@@ -1,13 +1,14 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import '../models/employee_tracking_model.dart';
 import '../repositories/employee_tracking_repository.dart';
 
 // Provider for the repository
 final employeeTrackingRepositoryProvider =
     Provider<EmployeeTrackingRepository>((ref) {
-  return EmployeeTrackingRepository();
+  return EmployeeTrackingRepository(apiMethod: ref.read(app_providers.apiMethodProvider));
 });
 
 // Provider for the ViewModel

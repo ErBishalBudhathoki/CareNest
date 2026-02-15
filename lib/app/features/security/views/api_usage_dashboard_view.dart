@@ -6,17 +6,19 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
-class ApiUsageDashboardView extends StatefulWidget {
+class ApiUsageDashboardView extends ConsumerStatefulWidget {
   const ApiUsageDashboardView({super.key});
 
   @override
-  State<ApiUsageDashboardView> createState() => _ApiUsageDashboardViewState();
+  ConsumerState<ApiUsageDashboardView> createState() => _ApiUsageDashboardViewState();
 }
 
-class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
-  final ApiMethod _api = ApiMethod();
+class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
+  late final ApiMethod _api;
   Map<String, dynamic>? _analyticsData;
   Map<String, dynamic>? _realTimeData;
   Map<String, dynamic>? _rateLimitConfig;
@@ -38,6 +40,7 @@ class _ApiUsageDashboardViewState extends State<ApiUsageDashboardView> {
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     _getOrganizationId().then((_) async {
       // Establish SSE first so analytics can include this connection
       _connectSSE();

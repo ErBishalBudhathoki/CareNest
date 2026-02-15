@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../models/trip.dart';
 import '../../../../backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class AdminMileageViewModel extends ChangeNotifier {
+  final ApiMethod _apiMethod;
   List<Trip> _trips = [];
   bool _isLoading = false;
   String? _error;
-  
+
   // Filter state
   String _filterStatus = 'ALL'; // 'ALL', 'PENDING', 'APPROVED', 'REJECTED'
-  
+
   List<Trip> get trips => _trips;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -21,7 +24,7 @@ class AdminMileageViewModel extends ChangeNotifier {
     return _trips.where((t) => t.status == _filterStatus).toList();
   }
 
-  AdminMileageViewModel() {
+  AdminMileageViewModel(this._apiMethod) {
     fetchTrips();
   }
 
@@ -36,15 +39,14 @@ class AdminMileageViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final api = ApiMethod();
       // Using GET with query params if filters needed
       String endpoint = 'api/trips';
       if (_filterStatus != 'ALL') {
         endpoint += '?status=$_filterStatus';
       }
-      
-      final response = await api.get(endpoint); 
-      
+
+      final response = await _apiMethod.get(endpoint);
+
       if (response != null && response['success'] == true) {
         final List<dynamic> data = response['data'];
         _trips = data.map((json) => Trip.fromJson(json)).toList();
@@ -61,12 +63,11 @@ class AdminMileageViewModel extends ChangeNotifier {
 
   Future<bool> updateTripStatus(String tripId, String status) async {
     try {
-      final api = ApiMethod();
-      final response = await api.patch(
+      final response = await _apiMethod.patch(
         'api/trips/$tripId',
         body: {'status': status},
       );
-      
+
       if (response != null && response['success'] == true) {
         // Optimistic update
         final index = _trips.indexWhere((t) => t.id == tripId);
@@ -84,17 +85,17 @@ class AdminMileageViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateTripDetails(String tripId, double distance, String? clientId) async {
+  Future<bool> updateTripDetails(
+      String tripId, double distance, String? clientId) async {
     try {
-      final api = ApiMethod();
-      final response = await api.patch(
+      final response = await _apiMethod.patch(
         'api/trips/$tripId',
         body: {
           'distance': distance,
           'clientId': clientId,
         },
       );
-      
+
       if (response != null && response['success'] == true) {
         // Refresh list to get updated calculations (billable/reimbursable)
         await fetchTrips();
@@ -109,6 +110,7 @@ class AdminMileageViewModel extends ChangeNotifier {
   }
 }
 
-final adminMileageViewModelProvider = ChangeNotifierProvider<AdminMileageViewModel>((ref) {
-  return AdminMileageViewModel();
+final adminMileageViewModelProvider =
+    ChangeNotifierProvider<AdminMileageViewModel>((ref) {
+  return AdminMileageViewModel(ref.read(app_providers.apiMethodProvider));
 });

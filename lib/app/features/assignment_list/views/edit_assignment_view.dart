@@ -7,6 +7,8 @@ import 'package:carenest/app/features/assignment/views/enhanced_ndis_item_select
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
 import '../viewmodels/assignment_list_viewmodel.dart';
 
 class EditAssignmentView extends ConsumerStatefulWidget {
@@ -24,12 +26,12 @@ class EditAssignmentView extends ConsumerStatefulWidget {
 }
 
 class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
-  final ApiMethod _apiMethod = ApiMethod();
+  late final ApiMethod _apiMethod;
   late Map<String, dynamic> editedAssignment;
   bool isLoading = false;
   NDISItem? _selectedNdisItem;
   String? _selectedNdisItemNumber;
-  final NDISMatcher _ndisMatcher = NDISMatcher();
+  late final NDISMatcher _ndisMatcher;
 
   late List<dynamic> dateList;
   late List<dynamic> startTimeList;
@@ -44,6 +46,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
+    _ndisMatcher = NDISMatcher(apiMethod: _apiMethod);
     editedAssignment = Map<String, dynamic>.from(widget.assignment);
     _selectedNdisItemNumber = editedAssignment['assignedNdisItemNumber'];
     _loadInitialNdisItem();

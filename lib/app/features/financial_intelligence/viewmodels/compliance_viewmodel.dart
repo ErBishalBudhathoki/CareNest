@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class ComplianceState {
@@ -49,9 +50,10 @@ class ComplianceViewModel extends StateNotifier<ComplianceState> {
         organizationId: organizationId,
         data: data,
       );
-      
+
       if (result['success'] == true) {
-        state = state.copyWith(isLoading: false, complianceCheck: result['compliance']);
+        state = state.copyWith(
+            isLoading: false, complianceCheck: result['compliance']);
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -70,7 +72,7 @@ class ComplianceViewModel extends StateNotifier<ComplianceState> {
         organizationId: organizationId,
         period: period,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, auditTrail: result['trail']);
       } else {
@@ -84,7 +86,8 @@ class ComplianceViewModel extends StateNotifier<ComplianceState> {
   Future<void> getStatus(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _repository.getComplianceStatus(organizationId: organizationId);
+      final result =
+          await _repository.getComplianceStatus(organizationId: organizationId);
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, status: result['status']);
       } else {
@@ -102,7 +105,7 @@ class ComplianceViewModel extends StateNotifier<ComplianceState> {
 
 final complianceViewModelProvider =
     StateNotifierProvider<ComplianceViewModel, ComplianceState>((ref) {
-  final apiMethod = ApiMethod();
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   final repository = FinancialIntelligenceRepository(apiMethod);
   return ComplianceViewModel(repository);
 });

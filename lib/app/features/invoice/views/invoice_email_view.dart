@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'add_update_invoice_email_view.dart';
 
-class InvoicingEmailView extends StatefulWidget {
+class InvoicingEmailView extends ConsumerStatefulWidget {
   final String email;
   final String genKey;
   final String? organisationName;
@@ -15,22 +17,23 @@ class InvoicingEmailView extends StatefulWidget {
       {super.key});
 
   @override
-  _InvoicingEmailViewState createState() => _InvoicingEmailViewState();
+  ConsumerState<InvoicingEmailView> createState() => _InvoicingEmailViewState();
 }
 
-class _InvoicingEmailViewState extends State<InvoicingEmailView> {
+class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
   final _formKey = GlobalKey<FormState>(debugLabel: 'invoice_email_form_key');
   final _scaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'invoice_email_scaffold_key');
   var initialData = {};
   final bool _isLoading = true;
   final _passwordController = TextEditingController();
-  ApiMethod apiMethod = ApiMethod();
+  late final ApiMethod apiMethod;
   final passwordVisibleNotifier = ValueNotifier<bool>(true);
 
   @override
   void initState() {
     super.initState();
+    apiMethod = ref.read(app_providers.apiMethodProvider);
   }
 
   Future<Object> getInvoicingEmailDetails(String email) async {

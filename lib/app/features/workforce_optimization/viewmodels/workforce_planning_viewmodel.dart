@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // Provider for WorkforceRepository
 final workforceRepositoryProvider = Provider<WorkforceRepository>((ref) {
-  return WorkforceRepository(ApiMethod());
+  return WorkforceRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 // State class for Workforce Planning
@@ -57,7 +58,8 @@ class WorkforcePlanningState {
 class WorkforcePlanningViewModel extends StateNotifier<WorkforcePlanningState> {
   final WorkforceRepository _repository;
 
-  WorkforcePlanningViewModel(this._repository) : super(WorkforcePlanningState());
+  WorkforcePlanningViewModel(this._repository)
+      : super(WorkforcePlanningState());
 
   // Forecast demand
   Future<void> forecastDemand({
@@ -145,7 +147,8 @@ class WorkforcePlanningViewModel extends StateNotifier<WorkforcePlanningState> {
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          turnoverPredictions: result['predictions'] as List<TurnoverPrediction>,
+          turnoverPredictions:
+              result['predictions'] as List<TurnoverPrediction>,
         );
       } else {
         state = state.copyWith(
@@ -206,7 +209,8 @@ class WorkforcePlanningViewModel extends StateNotifier<WorkforcePlanningState> {
 
 // Provider for WorkforcePlanningViewModel
 final workforcePlanningViewModelProvider =
-    StateNotifierProvider<WorkforcePlanningViewModel, WorkforcePlanningState>((ref) {
+    StateNotifierProvider<WorkforcePlanningViewModel, WorkforcePlanningState>(
+        (ref) {
   final repository = ref.watch(workforceRepositoryProvider);
   return WorkforcePlanningViewModel(repository);
 });

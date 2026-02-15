@@ -12,8 +12,11 @@ import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
 import 'package:carenest/firebase_options.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -201,16 +204,77 @@ Future<void> _initializeFirebase() async {
   }
 }
 
+Future<bool> _isIOSSimulator() async {
+  if (kIsWeb) return false;
+  if (!Platform.isIOS) return false;
+
+  try {
+    final deviceInfo = DeviceInfoPlugin();
+    final iosInfo = await deviceInfo.iosInfo;
+    return !iosInfo.isPhysicalDevice;
+  } catch (e) {
+    debugPrint('Error checking if iOS simulator: $e');
+    return false;
+  }
+}
+
 Future<void> _initializeAppCheck() async {
+  debugPrint('\n=== APP CHECK INITIALIZATION STARTED ===');
+  debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+  debugPrint('Environment: ${AppConfig.flavorName}');
+
+  // Check if running on iOS Simulator
+  final isIOSSimulator = await _isIOSSimulator();
+
+  if (isIOSSimulator) {
+    debugPrint(
+        '⚠️ Running on iOS Simulator - Skipping App Check initialization');
+    debugPrint(
+        'Note: App Check requires physical iOS device or Apple Developer account');
+    debugPrint(
+        'Recommendation: Test on physical device or disable APP_CHECK_ENFORCEMENT in backend');
+    debugPrint(
+        '=== END APP CHECK INITIALIZATION (SKIPPED FOR SIMULATOR) ===\n');
+    return;
+  }
+
   final isDevelopmentFlavor = AppConfig.appFlavor == Flavor.development;
-  await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
-    androidProvider: isDevelopmentFlavor
-        ? AndroidProvider.debug
-        : AndroidProvider.playIntegrity,
-    appleProvider:
-        isDevelopmentFlavor ? AppleProvider.debug : AppleProvider.appAttest,
-  );
+
+  try {
+    await FirebaseAppCheck.instance.activate(
+      webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
+      androidProvider: isDevelopmentFlavor
+          ? AndroidProvider.debug
+          : AndroidProvider.playIntegrity,
+      appleProvider:
+          isDevelopmentFlavor ? AppleProvider.debug : AppleProvider.appAttest,
+    );
+
+    debugPrint('✅ App Check activated successfully');
+    debugPrint(
+        'Android Provider: ${isDevelopmentFlavor ? "Debug" : "Play Integrity"}');
+    debugPrint('iOS Provider: ${isDevelopmentFlavor ? "Debug" : "App Attest"}');
+
+    // Test App Check token generation
+    try {
+      final token = await FirebaseAppCheck.instance.getToken();
+      if (token != null) {
+        debugPrint('✅ App Check token generated successfully');
+        debugPrint('Token preview: ${token.substring(0, 20)}...');
+      } else {
+        debugPrint('⚠️ App Check token is null');
+      }
+    } catch (e) {
+      debugPrint('❌ Error getting App Check token: $e');
+    }
+
+    debugPrint('=== END APP CHECK INITIALIZATION ===\n');
+  } catch (e) {
+    debugPrint('❌ App Check initialization failed: $e');
+    debugPrint('=== END APP CHECK INITIALIZATION (WITH ERROR) ===\n');
+    // Don't rethrow - allow app to continue without App Check
+    // Backend will handle missing App Check token based on APP_CHECK_ENFORCEMENT setting
+  }
 }
 
 Future<void> _initializeDeepLinks() async {

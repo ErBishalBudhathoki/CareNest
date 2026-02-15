@@ -1,10 +1,11 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../models/voice_models.dart';
 
 final voiceRepositoryProvider = Provider<VoiceRepository>((ref) {
-  return VoiceRepository(ApiMethod());
+  return VoiceRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 class VoiceRepository {
@@ -32,7 +33,8 @@ class VoiceRepository {
       final List<dynamic> list = response['data'];
       return list.map((e) => VoiceCommand.fromJson(e)).toList();
     } else {
-      throw Exception(response['message'] ?? 'Failed to fetch voice command history');
+      throw Exception(
+          response['message'] ?? 'Failed to fetch voice command history');
     }
   }
 }

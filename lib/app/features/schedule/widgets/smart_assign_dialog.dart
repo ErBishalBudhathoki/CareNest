@@ -9,10 +9,12 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Dialog showing AI-powered employee recommendations
-class SmartAssignDialog extends StatefulWidget {
+class SmartAssignDialog extends ConsumerStatefulWidget {
   final String organizationId;
   final ShiftModel shift;
   final Function(String employeeEmail) onAssigned;
@@ -25,11 +27,11 @@ class SmartAssignDialog extends StatefulWidget {
   });
 
   @override
-  State<SmartAssignDialog> createState() => _SmartAssignDialogState();
+  ConsumerState<SmartAssignDialog> createState() => _SmartAssignDialogState();
 }
 
-class _SmartAssignDialogState extends State<SmartAssignDialog> {
-  final ApiMethod _api = ApiMethod();
+class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
+  late final ApiMethod _api;
 
   List<RecommendationModel> _recommendations = [];
   bool _isLoading = true;
@@ -40,6 +42,7 @@ class _SmartAssignDialogState extends State<SmartAssignDialog> {
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     _loadRecommendations();
   }
 

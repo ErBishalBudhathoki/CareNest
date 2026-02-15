@@ -6,12 +6,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'file_types.dart';
 
 /// Enhanced file viewer widget that supports multiple file types
 /// including images, PDFs, and Word documents with proper error handling
-class EnhancedFileViewerWidget extends StatelessWidget {
+class EnhancedFileViewerWidget extends ConsumerWidget {
   final List<String> filePaths;
   final String? description;
 
@@ -119,7 +120,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
   }
 
   /// Open file with appropriate viewer
-  Future<void> _openFile(BuildContext context, String filePath) async {
+  Future<void> _openFile(BuildContext context, WidgetRef ref, String filePath) async {
     final fileType = _getFileType(filePath);
     final isServerFile = _isUrl(filePath);
 
@@ -151,7 +152,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
         case ExpenseFileType.document:
           if (isServerFile) {
             // For server files, download and open locally for better compatibility
-            await _downloadAndOpenFile(context, filePath);
+            await _downloadAndOpenFile(context, ref, filePath);
           } else {
             // For local files, try to open with open_file package
             try {
@@ -192,9 +193,10 @@ class EnhancedFileViewerWidget extends StatelessWidget {
   }
 
   /// Check if file exists on server
-  Future<bool> _checkFileAvailability(String url) async {
+  Future<bool> _checkFileAvailability(WidgetRef ref, String url) async {
     try {
-      final response = await ApiMethod().head(url);
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final response = await apiMethod.head(url);
       return response.statusCode == 200;
     } catch (e) {
       debugPrint('Error checking file availability: $e');
@@ -204,7 +206,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
 
   /// Download and open server file locally
   Future<void> _downloadAndOpenFile(
-      BuildContext context, String filePath) async {
+      BuildContext context, WidgetRef ref, String filePath) async {
     BuildContext? dialogContext;
 
     try {
@@ -231,7 +233,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
       );
 
       // Check availability first
-      final isAvailable = await _checkFileAvailability(serverUrl);
+      final isAvailable = await _checkFileAvailability(ref, serverUrl);
 
       if (!isAvailable) {
         if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
@@ -269,7 +271,8 @@ class EnhancedFileViewerWidget extends StatelessWidget {
         },
       );
 
-      final response = await ApiMethod().getRawUrl(serverUrl);
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final response = await apiMethod.getRawUrl(serverUrl);
       debugPrint('DEBUG: HTTP response status: ${response.statusCode}');
       debugPrint(
           'DEBUG: Response content length: ${response.bodyBytes.length}');
@@ -458,7 +461,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (filePaths.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -529,7 +532,7 @@ class EnhancedFileViewerWidget extends StatelessWidget {
               final fileExists = isServerFile || File(filePath).existsSync();
 
               return GestureDetector(
-                onTap: () => _openFile(context, filePath),
+                onTap: () => _openFile(context, ref, filePath),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,

@@ -1,202 +1,198 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import '../../../shared/widgets/flushbar_widget.dart';
 import '../../../shared/widgets/confirmation_alert_dialog_widget.dart';
 import '../viewmodels/bank_details_viewmodel.dart';
 
-class BankDetailsView extends StatelessWidget {
+class BankDetailsView extends ConsumerWidget {
   const BankDetailsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => BankDetailsViewModel(),
-      child: Scaffold(
-        backgroundColor: BauhausDesign.backgroundLight,
-        appBar: AppBar(
-          title: Text(
-            'Bank Details',
-            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
-                ),
-          ),
-          elevation: 0,
-          backgroundColor: BauhausDesign.surfaceWhite,
-          foregroundColor: BauhausDesign.textDark,
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1),
-            child: Container(color: BauhausDesign.neutral, height: 1),
-          ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(app_providers.bankDetailsViewModelProvider);
+    
+    return Scaffold(
+      backgroundColor: BauhausDesign.backgroundLight,
+      appBar: AppBar(
+        title: Text(
+          'Bank Details',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark,
+              ),
         ),
-        body: Consumer<BankDetailsViewModel>(
-          builder: (context, viewModel, child) {
-            return SingleChildScrollView(
-              child: Padding(
+        elevation: 0,
+        backgroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: BauhausDesign.neutral, height: 1),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(BauhausDesign.space6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Section
+              Container(
                 padding: const EdgeInsets.all(BauhausDesign.space6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                decoration: BoxDecoration(
+                  color: BauhausDesign.primary,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+                  boxShadow: const [BauhausDesign.shadowHard],
+                ),
+                child: Row(
                   children: [
-                    // Header Section
                     Container(
-                      padding: const EdgeInsets.all(BauhausDesign.space6),
+                      padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.primary,
-                        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-                        boxShadow: const [BauhausDesign.shadowHard],
+                        color: BauhausDesign.surfaceWhite.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                        border: Border.all(
+                          color: BauhausDesign.surfaceWhite.withOpacity(0.3),
+                        ),
                       ),
-                      child: Row(
+                      child: const Icon(
+                        Icons.account_balance,
+                        color: BauhausDesign.surfaceWhite,
+                        size: 32,
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space4),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(BauhausDesign.space3),
-                            decoration: BoxDecoration(
-                              color: BauhausDesign.surfaceWhite.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                              border: Border.all(
-                                color: BauhausDesign.surfaceWhite.withOpacity(0.3),
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.account_balance,
-                              color: BauhausDesign.surfaceWhite,
-                              size: 32,
-                            ),
+                          Text(
+                            'Banking Information',
+                            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                                  color: BauhausDesign.surfaceWhite,
+                                  fontWeight: FontWeight.w800,
+                                ),
                           ),
-                          const SizedBox(width: BauhausDesign.space4),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Banking Information',
-                                  style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                                        color: BauhausDesign.surfaceWhite,
-                                        fontWeight: FontWeight.w800,
-                                      ),
+                          const SizedBox(height: BauhausDesign.space1),
+                          Text(
+                            'Securely store your account details',
+                            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                                  color: BauhausDesign.surfaceWhite.withOpacity(0.9),
                                 ),
-                                const SizedBox(height: BauhausDesign.space1),
-                                Text(
-                                  'Securely store your account details',
-                                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                                        color: BauhausDesign.surfaceWhite.withOpacity(0.9),
-                                      ),
-                                ),
-                              ],
-                            ),
                           ),
                         ],
                       ),
                     ),
+                  ],
+                ),
+              ),
 
-                    const SizedBox(height: BauhausDesign.space6),
+              const SizedBox(height: BauhausDesign.space6),
 
-                    // Form Card
-                    BauhausCard(
-                      padding: const EdgeInsets.all(BauhausDesign.space6),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              // Form Card
+              BauhausCard(
+                padding: const EdgeInsets.all(BauhausDesign.space6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildBauhausTextField(
+                      context: context,
+                      controller: viewModel.bankNameController,
+                      label: 'Bank Name',
+                      icon: Icons.account_balance_outlined,
+                      hint: 'e.g., Commonwealth Bank',
+                    ),
+
+                    const SizedBox(height: BauhausDesign.space4),
+
+                    _buildBauhausTextField(
+                      context: context,
+                      controller: viewModel.accountNameController,
+                      label: 'Account Name',
+                      icon: Icons.person_outline,
+                      hint: 'Full name as shown on account',
+                    ),
+
+                    const SizedBox(height: BauhausDesign.space4),
+
+                    _buildBauhausTextField(
+                      context: context,
+                      controller: viewModel.bsbController,
+                      label: 'BSB',
+                      icon: Icons.tag,
+                      hint: '000-000',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(6),
+                        _BSBFormatter(),
+                      ],
+                    ),
+
+                    const SizedBox(height: BauhausDesign.space4),
+
+                    _buildBauhausTextField(
+                      context: context,
+                      controller: viewModel.accountNumberController,
+                      label: 'Account Number',
+                      icon: Icons.numbers,
+                      hint: 'Enter account number',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                    ),
+
+                    const SizedBox(height: BauhausDesign.space8),
+
+                    // Save Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: BauhausActionButton(
+                        onPressed: viewModel.isLoading
+                            ? null
+                            : () {
+                                _showSaveConfirmation(context, viewModel);
+                              },
+                        text: 'Save Bank Details',
+                        icon: Icons.save_outlined,
+                        variant: BauhausActionVariant.primary,
+                        isLoading: viewModel.isLoading,
+                      ),
+                    ),
+
+                    const SizedBox(height: BauhausDesign.space4),
+
+                    // Security Notice
+                    Container(
+                      padding: const EdgeInsets.all(BauhausDesign.space3),
+                      decoration: BoxDecoration(
+                        color: BauhausDesign.secondary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                        border: Border.all(
+                          color: BauhausDesign.secondary.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
                         children: [
-                          _buildBauhausTextField(
-                            context: context,
-                            controller: viewModel.bankNameController,
-                            label: 'Bank Name',
-                            icon: Icons.account_balance_outlined,
-                            hint: 'e.g., Commonwealth Bank',
+                          Icon(
+                            Icons.lock_outline,
+                            color: BauhausDesign.secondary,
+                            size: 20,
                           ),
-
-                          const SizedBox(height: BauhausDesign.space4),
-
-                          _buildBauhausTextField(
-                            context: context,
-                            controller: viewModel.accountNameController,
-                            label: 'Account Name',
-                            icon: Icons.person_outline,
-                            hint: 'Full name as shown on account',
-                          ),
-
-                          const SizedBox(height: BauhausDesign.space4),
-
-                          _buildBauhausTextField(
-                            context: context,
-                            controller: viewModel.bsbController,
-                            label: 'BSB',
-                            icon: Icons.tag,
-                            hint: '000-000',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(6),
-                              _BSBFormatter(),
-                            ],
-                          ),
-
-                          const SizedBox(height: BauhausDesign.space4),
-
-                          _buildBauhausTextField(
-                            context: context,
-                            controller: viewModel.accountNumberController,
-                            label: 'Account Number',
-                            icon: Icons.numbers,
-                            hint: 'Enter account number',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(10),
-                            ],
-                          ),
-
-                          const SizedBox(height: BauhausDesign.space8),
-
-                          // Save Button
-                          SizedBox(
-                            width: double.infinity,
-                            child: BauhausActionButton(
-                              onPressed: viewModel.isLoading
-                                  ? null
-                                  : () {
-                                      _showSaveConfirmation(context, viewModel);
-                                    },
-                              text: 'Save Bank Details',
-                              icon: Icons.save_outlined,
-                              variant: BauhausActionVariant.primary,
-                              isLoading: viewModel.isLoading,
-                            ),
-                          ),
-
-                          const SizedBox(height: BauhausDesign.space4),
-
-                          // Security Notice
-                          Container(
-                            padding: const EdgeInsets.all(BauhausDesign.space3),
-                            decoration: BoxDecoration(
-                              color: BauhausDesign.secondary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                              border: Border.all(
-                                color: BauhausDesign.secondary.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.lock_outline,
-                                  color: BauhausDesign.secondary,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: BauhausDesign.space3),
-                                Expanded(
-                                  child: Text(
-                                    'Your information is encrypted and securely stored',
-                                    style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                                          color: BauhausDesign.textDark,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                          const SizedBox(width: BauhausDesign.space3),
+                          Expanded(
+                            child: Text(
+                              'Your information is encrypted and securely stored',
+                              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                                    color: BauhausDesign.textDark,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                ),
-                              ],
                             ),
                           ),
                         ],
@@ -205,8 +201,8 @@ class BankDetailsView extends StatelessWidget {
                   ],
                 ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );

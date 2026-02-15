@@ -35,7 +35,7 @@ class NavBarWidget extends ConsumerWidget {
   final String? organizationName;
   final String? organizationCode;
 
-  NavBarWidget({
+  const NavBarWidget({
     super.key,
     required this.context,
     required this.email,
@@ -51,11 +51,9 @@ class NavBarWidget extends ConsumerWidget {
     Uint8List? photoDataFromParent,
   });
 
-  // Use the static GlobalKey instead of creating a new one for each instance
-  final ApiMethod apiMethod = ApiMethod();
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final apiMethod = ref.read(apiMethodProvider);
     final theme = Theme.of(context);
     
     debugPrint("Navbar widget photo data: $photoData");
@@ -244,7 +242,7 @@ class NavBarWidget extends ConsumerWidget {
                       )),
                   onTap: () {
                     // Show the delete confirmation dialog
-                    _showDeleteConfirmationDialog(context, theme);
+                    _showDeleteConfirmationDialog(context, theme, apiMethod);
                   },
                 ),
                 const Divider(),
@@ -286,7 +284,7 @@ class NavBarWidget extends ConsumerWidget {
     return role.toString();
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, ThemeData theme) {
+  void _showDeleteConfirmationDialog(BuildContext context, ThemeData theme, ApiMethod apiMethod) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -297,7 +295,7 @@ class NavBarWidget extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 // Perform the delete operation
-                _deleteAccount(theme);
+                _deleteAccount(theme, apiMethod);
                 Navigator.of(context).pop();
               },
               child: const Text('Yes'),
@@ -315,7 +313,7 @@ class NavBarWidget extends ConsumerWidget {
     );
   }
 
-  Future<void> _deleteAccount(ThemeData theme) async {
+  Future<void> _deleteAccount(ThemeData theme, ApiMethod apiMethod) async {
     try {
       final response = await apiMethod.deleteUser(email);
       if (response.containsKey('message')) {

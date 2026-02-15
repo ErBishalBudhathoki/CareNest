@@ -7,10 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum BusinessListStatus { initial, loading, loaded, error, empty }
 
 class BusinessListViewModel extends ChangeNotifier {
-  final ApiMethod _apiMethod = ApiMethod();
+  final ApiMethod _apiMethod;
   final Ref _ref;
 
-  BusinessListViewModel(this._ref);
+  BusinessListViewModel(this._ref) : _apiMethod = _ref.read(apiMethodProvider);
 
   BusinessListStatus _status = BusinessListStatus.initial;
   BusinessListStatus get status => _status;

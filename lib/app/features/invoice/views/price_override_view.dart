@@ -6,11 +6,13 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/debug_log.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Price Override View
 /// Allows users to override prices for NDIS line items before invoice generation
-class PriceOverrideView extends StatefulWidget {
+class PriceOverrideView extends ConsumerStatefulWidget {
   final String clientId;
   final String organizationId;
   final List<Map<String, dynamic>> clientAssignments;
@@ -23,10 +25,10 @@ class PriceOverrideView extends StatefulWidget {
   });
 
   @override
-  State<PriceOverrideView> createState() => _PriceOverrideViewState();
+  ConsumerState<PriceOverrideView> createState() => _PriceOverrideViewState();
 }
 
-class _PriceOverrideViewState extends State<PriceOverrideView> {
+class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
   final Map<String, TextEditingController> _priceControllers = {};
   final Map<String, TextEditingController> _descriptionControllers = {};
   final Map<String, TextEditingController> _quantityControllers = {};
@@ -39,12 +41,13 @@ class _PriceOverrideViewState extends State<PriceOverrideView> {
       {}; // Track original client-specific state
   bool _isLoading = false;
   List<Map<String, dynamic>> _lineItems = [];
-  final ApiMethod _apiMethod = ApiMethod();
+  late final ApiMethod _apiMethod;
   double? _fallbackBaseRate; // Cached organization fallback base rate
 
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     _loadLineItems();
   }
 

@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter/foundation.dart';
 
 final currentUserProvider = FutureProvider<User?>((ref) async {
-  final apiMethod = ApiMethod();
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
 
   // Try fetching from API first
   try {
@@ -41,7 +42,7 @@ final currentUserProvider = FutureProvider<User?>((ref) async {
       organizationId: organizationId,
       name: sharedPrefs.getName() ?? '',
       email: email,
-      phone: '', 
+      phone: '',
       role: sharedPrefs.getRole() ?? UserRole.normal,
     );
   }

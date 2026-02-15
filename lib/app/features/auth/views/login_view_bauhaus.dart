@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/auth/providers/auth_provider.dart';
+import 'package:carenest/app/core/providers/firebase_auth_provider.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-
-import 'package:carenest/app/features/auth/views/change_password_view_bauhaus.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
 
 class BauhausLoginView extends ConsumerStatefulWidget {
   const BauhausLoginView({super.key});
@@ -16,6 +15,8 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -24,28 +25,100 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
     super.dispose();
   }
 
-  void _onLogin() {
-    if (_formKey.currentState!.validate()) {
-      ref.read(authStateProvider.notifier).login(
-            _emailController.text.trim(),
-            _passwordController.text.trim(),
-          );
+  Future<void> _onLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final authService = ref.read(firebaseAuthServiceProvider);
+      final apiMethod = ref.read(apiMethodProvider);
+
+      // 1. Sign in with Firebase
+      final credential = await authService.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (credential.user == null) {
+        throw Exception('Login failed: No user returned');
+      }
+
+      // 2. Sync with backend
+      final response = await apiMethod.post('firebase-auth/sync', body: {
+        'firebaseUid': credential.user!.uid,
+        'email': credential.user!.email,
+      });
+
+      if (response['success'] == true) {
+        // 3. Save user data locally
+        final userData = response['data'];
+        final prefs = ref.read(sharedPreferencesProvider);
+        await prefs.setString('userEmail', userData['email'] ?? '');
+        await prefs.setString('userId', userData['_id'] ?? '');
+        await prefs.setString('firebaseUid', userData['firebaseUid'] ?? '');
+        await prefs.setString(
+            'organizationId', userData['organizationId'] ?? '');
+        await prefs.setString('role', userData['role'] ?? 'user');
+
+        // 4. Navigate based on role
+        if (mounted) {
+          final role = userData['role'] ?? 'user';
+          if (role == 'admin' || role == 'superadmin') {
+            Navigator.pushReplacementNamed(
+              context,
+              '/admin',
+              arguments: {
+                'email': userData['email'],
+                'organizationId': userData['organizationId'],
+                'organizationName': userData['organizationName'],
+                'organizationCode': userData['organizationCode'],
+              },
+            );
+          } else {
+            Navigator.pushReplacementNamed(
+              context,
+              '/home',
+              arguments: {'email': userData['email']},
+            );
+          }
+        }
+      } else {
+        throw Exception(response['message'] ?? 'Backend sync failed');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = _getFriendlyErrorMessage(e.toString());
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
+  }
+
+  String _getFriendlyErrorMessage(String error) {
+    if (error.contains('user-not-found')) {
+      return 'No account found with this email';
+    } else if (error.contains('wrong-password')) {
+      return 'Incorrect password';
+    } else if (error.contains('invalid-email')) {
+      return 'Invalid email address';
+    } else if (error.contains('user-disabled')) {
+      return 'This account has been disabled';
+    } else if (error.contains('too-many-requests')) {
+      return 'Too many attempts. Please try again later';
+    } else if (error.contains('network')) {
+      return 'Network error. Please check your connection';
+    }
+    return 'Login failed. Please try again';
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authStateProvider);
-
-    // Redirection Logic
-    if (authState.requiresPasswordChange) {
-      // Use Future.microtask to avoid build-phase navigation
-      Future.microtask(() {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (_) => const BauhausChangePasswordView(isForced: true)));
-      });
-    }
-
     // Bauhaus Palette
     const colorRed = BauhausDesign.primary;
     const colorBlue = BauhausDesign.secondary;
@@ -55,7 +128,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
 
     return Scaffold(
       backgroundColor: colorWhite,
-      body: authState.status == AuthStatus.loading
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: colorBlue))
           : SingleChildScrollView(
               child: SizedBox(
@@ -132,7 +205,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                                     ),
                               ),
                               const SizedBox(height: 32),
-                              if (authState.errorMessage != null)
+                              if (_errorMessage != null)
                                 Container(
                                   padding: const EdgeInsets.all(12),
                                   margin: const EdgeInsets.only(bottom: 24),
@@ -141,7 +214,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                                     border: Border.all(color: colorRed),
                                   ),
                                   child: Text(
-                                    authState.errorMessage!,
+                                    _errorMessage!,
                                     style: const TextStyle(
                                         color: colorRed,
                                         fontWeight: FontWeight.bold),

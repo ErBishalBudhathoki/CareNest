@@ -25,18 +25,11 @@ class FcmTokenManager {
   static const String _fcmTokenKey = 'fcm_token';
   static const String _tokenLastSentKey = 'fcm_token_last_sent';
 
-  final ApiMethod _apiMethod = ApiMethod();
+  final ApiMethod _apiMethod;
   String? _deviceId;
   String? _deviceInfo;
 
-  // Singleton pattern
-  static final FcmTokenManager _instance = FcmTokenManager._internal();
-
-  factory FcmTokenManager() {
-    return _instance;
-  }
-
-  FcmTokenManager._internal();
+  FcmTokenManager({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
 
   /// Check Firebase service availability and provide diagnostics
   Future<void> _checkFirebaseServiceHealth() async {

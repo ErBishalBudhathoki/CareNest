@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
 class AssignC2E extends ConsumerStatefulWidget {
   const AssignC2E({super.key});
 
@@ -14,7 +16,7 @@ class AssignC2E extends ConsumerStatefulWidget {
 
 class _AssignC2EState extends ConsumerState<AssignC2E>
     with TickerProviderStateMixin {
-  final ApiMethod _apiMethod = ApiMethod();
+  late final ApiMethod _apiMethod;
   late Future<List<User>> futureUserData;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -26,6 +28,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     futureUserData = _apiMethod.fetchUserData();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),

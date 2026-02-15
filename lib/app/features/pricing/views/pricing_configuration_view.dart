@@ -2,12 +2,13 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/features/invoice/providers/pricing_settings_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
-class PricingConfigurationView extends StatefulWidget {
+class PricingConfigurationView extends ConsumerStatefulWidget {
   final String adminEmail;
   final String organizationId;
   final String organizationName;
@@ -20,11 +21,11 @@ class PricingConfigurationView extends StatefulWidget {
   });
 
   @override
-  _PricingConfigurationViewState createState() =>
+  ConsumerState<PricingConfigurationView> createState() =>
       _PricingConfigurationViewState();
 }
 
-class _PricingConfigurationViewState extends State<PricingConfigurationView>
+class _PricingConfigurationViewState extends ConsumerState<PricingConfigurationView>
     with TickerProviderStateMixin {
   late TabController _tabController;
   bool _isLoading = false;
@@ -48,7 +49,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
   int _bulkOperationLimit = 1000;
 
   // Fallback base rate state
-  final ApiMethod _api = ApiMethod();
+  late final ApiMethod _api;
   final TextEditingController _fallbackRateController = TextEditingController();
   double? _fallbackBaseRate;
   bool _isFallbackLoading = false;
@@ -117,6 +118,7 @@ class _PricingConfigurationViewState extends State<PricingConfigurationView>
   @override
   void initState() {
     super.initState();
+    _api = ref.read(app_providers.apiMethodProvider);
     _tabController = TabController(length: 4, vsync: this);
     _loadFallbackBaseRate();
   }

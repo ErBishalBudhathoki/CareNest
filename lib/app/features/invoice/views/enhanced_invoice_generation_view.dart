@@ -4,12 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/invoice/viewmodels/enhanced_invoice_viewmodel.dart';
 import 'package:carenest/app/features/invoice/views/price_override_view.dart'
     hide SourceBadge;
 import 'package:carenest/app/features/invoice/widgets/invoice_photo_attachment_widget.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/pricing/views/ndis_pricing_management_view.dart';
 import 'package:carenest/app/features/pricing/views/pricing_configuration_view.dart';
 import 'package:file_picker/file_picker.dart';
@@ -74,11 +75,11 @@ class _EnhancedInvoiceGenerationViewState
   String _ratesCheckMessage = '';
   bool _strictClientGating = false; // Require client-specific base rates
   Map<String, List<Map<String, String>>> _missingClientRatesByItem = {};
-  
+
   // Recurring Billing State
   bool _isRecurring = false;
   String _recurrenceFrequency = 'monthly'; // Default
-  
+
   // Track pricing source per item number for UI annotations
   final Map<String, String> _itemPricingSource = {};
   // Track support item names per item number for clearer UI display
@@ -193,7 +194,7 @@ class _EnhancedInvoiceGenerationViewState
     });
 
     try {
-      final apiMethod = ApiMethod();
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
       final organizationId = _resolveOrganizationId();
       final Set<String> supportItemNumbers = {};
       final Map<String, List<Map<String, String>>> clientsPerItem = {};
@@ -1538,11 +1539,13 @@ class _EnhancedInvoiceGenerationViewState
               decoration: const InputDecoration(
                 labelText: 'Frequency', // TODO: Add to l10n
                 border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               ),
               items: const [
                 DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                DropdownMenuItem(value: 'fortnightly', child: Text('Fortnightly')),
+                DropdownMenuItem(
+                    value: 'fortnightly', child: Text('Fortnightly')),
                 DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
                 DropdownMenuItem(value: 'quarterly', child: Text('Quarterly')),
                 DropdownMenuItem(value: 'annually', child: Text('Annually')),
@@ -2114,7 +2117,7 @@ class _EnhancedInvoiceGenerationViewState
   Future<List<Map<String, dynamic>>> _validateNdisPriceCaps() async {
     final l10n = AppLocalizations.of(context)!;
     final List<Map<String, dynamic>> itemsExceedingCap = [];
-    final ApiMethod apiMethod = ApiMethod();
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
 
     try {
       if (widget.selectedEmployeesAndClients?.isEmpty == true) {
@@ -2619,7 +2622,8 @@ class _EnhancedInvoiceGenerationViewState
 
   Future<void> _generateInvoices() async {
     // Request Storage Permission
-    final hasPermission = await PermissionManager.requestStoragePermission(context);
+    final hasPermission =
+        await PermissionManager.requestStoragePermission(context);
     if (!hasPermission) return;
 
     // Show loading state during validation
@@ -2755,7 +2759,7 @@ class _EnhancedInvoiceGenerationViewState
 
           if (employeeEmail.isNotEmpty) {
             // Get user assignments for this employee
-            final apiMethod = ApiMethod();
+            final apiMethod = ref.read(app_providers.apiMethodProvider);
             final assignments =
                 await apiMethod.getUserAssignments(employeeEmail);
 
@@ -3235,7 +3239,7 @@ class _EnhancedInvoiceGenerationViewState
                   return;
                 }
                 try {
-                  final api = ApiMethod();
+                  final api = ref.read(app_providers.apiMethodProvider);
                   await api.saveAsCustomPricing(
                     orgId,
                     itemNumber,
@@ -3329,7 +3333,7 @@ class _EnhancedInvoiceGenerationViewState
                   return;
                 }
                 try {
-                  final api = ApiMethod();
+                  final api = ref.read(app_providers.apiMethodProvider);
                   await api.saveClientCustomPricing(
                     orgId,
                     clientId,

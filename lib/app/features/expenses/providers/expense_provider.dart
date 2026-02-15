@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
 import 'package:carenest/app/features/expenses/data/expense_repository.dart';
-import 'package:carenest/app/di/service_locator.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 
 // State class for expense management
 class ExpenseState {
@@ -227,7 +227,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
 
 // Provider for expense repository
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
-  return locator<ExpenseRepository>();
+  return ExpenseRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 // Provider for expense state

@@ -3,9 +3,11 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
-import 'package:carenest/backend/api_method.dart';
 
-class SelectClientForAssignment extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
+class SelectClientForAssignment extends ConsumerStatefulWidget {
   final String userName;
   final String userEmail;
 
@@ -13,10 +15,10 @@ class SelectClientForAssignment extends StatefulWidget {
       {super.key, required this.userName, required this.userEmail});
 
   @override
-  _DropdownMenuState createState() => _DropdownMenuState();
+  ConsumerState<SelectClientForAssignment> createState() => _DropdownMenuState();
 }
 
-class _DropdownMenuState extends State<SelectClientForAssignment>
+class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
     with TickerProviderStateMixin {
   late Future<List<Patient>> futureClientsData;
   late AnimationController _animationController;
@@ -29,7 +31,7 @@ class _DropdownMenuState extends State<SelectClientForAssignment>
   @override
   void initState() {
     super.initState();
-    ApiMethod apiMethod = ApiMethod();
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
     futureClientsData = apiMethod.fetchClientData();
     debugPrint('futureClientsData: $futureClientsData');
     futureClientsData.then((clients) {

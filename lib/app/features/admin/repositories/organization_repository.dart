@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 final organizationRepositoryProvider = Provider<OrganizationRepository>((ref) {
-  return OrganizationRepository(ApiMethod());
+  return OrganizationRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 class OrganizationRepository {
@@ -23,9 +25,11 @@ class OrganizationRepository {
     }
   }
 
-  Future<bool> updateOrganization(String orgId, Map<String, dynamic> data) async {
+  Future<bool> updateOrganization(
+      String orgId, Map<String, dynamic> data) async {
     try {
-      final response = await _apiMethod.put('api/organizations/$orgId', body: data);
+      final response =
+          await _apiMethod.put('api/organizations/$orgId', body: data);
       return response != null && response['success'] == true;
     } catch (e) {
       print('Error updating organization: $e');

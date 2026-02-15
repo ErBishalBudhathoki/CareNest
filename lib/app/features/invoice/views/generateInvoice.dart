@@ -1,3 +1,4 @@
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/features/invoice/domain/models/invoice_line_item.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
@@ -44,8 +45,8 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   final double _taxRate = 0.0;
   String _invoiceRecipientType = 'client'; // Default to client invoice
 
-  final ApiMethod _apiMethod = ApiMethod();
-  final NDISMatcher _ndisMatcher = NDISMatcher();
+  late final ApiMethod _apiMethod;
+  late final NDISMatcher _ndisMatcher;
   late final EnhancedInvoiceService _invoiceService;
   List<String> _apiHolidays = [];
   // ignore: unused_field
@@ -57,6 +58,8 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
+    _ndisMatcher = NDISMatcher(apiMethod: _apiMethod);
     // Initialize the invoice service using the provider
     _invoiceService = ref.read(enhancedInvoiceServiceProvider);
     _initializeInvoiceGeneration();

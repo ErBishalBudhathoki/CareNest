@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../models/notification_preferences.dart';
 
 class NotificationPreferencesViewModel
@@ -14,16 +16,18 @@ class NotificationPreferencesViewModel
 
   Future<void> loadPreferences() async {
     state = const AsyncValue.loading();
-    
+
     try {
-      final response = await _apiMethod.get('api/notifications/preferences/$_userId');
-      
+      final response =
+          await _apiMethod.get('api/notifications/preferences/$_userId');
+
       if (response['success'] == true && response['data'] != null) {
         final preferences = NotificationPreferences.fromJson(response['data']);
         state = AsyncValue.data(preferences);
       } else {
         // Use default preferences if none exist
-        final defaultPrefs = NotificationPreferences.defaultPreferences(_userId);
+        final defaultPrefs =
+            NotificationPreferences.defaultPreferences(_userId);
         state = AsyncValue.data(defaultPrefs);
         // Save default preferences
         await _savePreferences(defaultPrefs);
@@ -33,7 +37,8 @@ class NotificationPreferencesViewModel
     }
   }
 
-  Future<void> toggleCategory(NotificationCategory category, bool enabled) async {
+  Future<void> toggleCategory(
+      NotificationCategory category, bool enabled) async {
     final currentPrefs = state.value;
     if (currentPrefs == null) return;
 
@@ -59,7 +64,8 @@ class NotificationPreferencesViewModel
     final currentPrefs = state.value;
     if (currentPrefs == null) return;
 
-    final updatedChannels = Map<NotificationCategory, List<NotificationChannel>>.from(
+    final updatedChannels =
+        Map<NotificationCategory, List<NotificationChannel>>.from(
       currentPrefs.categoryChannels,
     );
 
@@ -195,5 +201,8 @@ final notificationPreferencesViewModelProvider = StateNotifierProvider<
     AsyncValue<NotificationPreferences>>((ref) {
   // In production, get userId from auth provider
   const userId = 'current-user-id'; // TODO: Get from auth
-  return NotificationPreferencesViewModel(ApiMethod(), userId);
+  return NotificationPreferencesViewModel(
+    ref.read(app_providers.apiMethodProvider),
+    userId,
+  );
 });

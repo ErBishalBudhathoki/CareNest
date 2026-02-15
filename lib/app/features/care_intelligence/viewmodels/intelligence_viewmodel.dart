@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
+import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
+    hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // Provider for CareIntelligenceRepository
-final careIntelligenceRepositoryProvider = Provider<CareIntelligenceRepository>((ref) {
-  return CareIntelligenceRepository(ApiMethod());
+final careIntelligenceRepositoryProvider =
+    Provider<CareIntelligenceRepository>((ref) {
+  return CareIntelligenceRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 // State class for Care Intelligence

@@ -36,7 +36,7 @@ class _ClientAndAppointmentDetailsState
     extends ConsumerState<ClientAndAppointmentDetails>
     with TickerProviderStateMixin {
   late final PersistentTabController controller;
-  ApiMethod apiMethod = ApiMethod();
+  late final ApiMethod apiMethod;
   var setClientAndAppointmentData;
   var clientAndAppointmentData = {};
   late Future<List<Patient>> futureClientsData;
@@ -66,6 +66,7 @@ class _ClientAndAppointmentDetailsState
   @override
   void initState() {
     super.initState();
+    apiMethod = ref.read(apiMethodProvider);
     _setupAnimations();
     timerModel = ref.read(timerServiceProvider);
 

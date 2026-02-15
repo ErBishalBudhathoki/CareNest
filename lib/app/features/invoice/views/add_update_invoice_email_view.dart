@@ -8,7 +8,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 
-class AddUpdateInvoicingEmailView extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
+class AddUpdateInvoicingEmailView extends ConsumerStatefulWidget {
   final String email;
   final String appPassword;
   final String organizationName;
@@ -17,12 +20,13 @@ class AddUpdateInvoicingEmailView extends StatefulWidget {
       {super.key});
 
   @override
-  State<AddUpdateInvoicingEmailView> createState() =>
+  ConsumerState<AddUpdateInvoicingEmailView> createState() =>
       _AddUpdateInvoicingEmailViewState();
 }
 
 class _AddUpdateInvoicingEmailViewState
-    extends State<AddUpdateInvoicingEmailView> {
+    extends ConsumerState<AddUpdateInvoicingEmailView> {
+  late final ApiMethod apiMethod;
   final _formKey =
       GlobalKey<FormState>(debugLabel: 'add_update_invoice_email_form_key');
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -37,6 +41,12 @@ class _AddUpdateInvoicingEmailViewState
       ValueNotifier<bool>(false);
   final ValueNotifier<bool> _passwordVisibilityNotifier =
       ValueNotifier<bool>(true); // Default to hidden
+
+  @override
+  void initState() {
+    super.initState();
+    apiMethod = ref.read(app_providers.apiMethodProvider);
+  }
 
   @override
   void dispose() {
@@ -311,7 +321,6 @@ class _AddUpdateInvoicingEmailViewState
     );
   }
 
-  ApiMethod apiMethod = ApiMethod();
   Future<dynamic> _addInvoicingEmailDetails(String email) async {
     var ins = await apiMethod.addUpdateInvoicingEmailDetail(
         email,

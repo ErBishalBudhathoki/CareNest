@@ -11,7 +11,9 @@ class SignupViewModel extends ChangeNotifier {
       TextEditingController();
   var ins;
   dynamic result;
-  ApiMethod apiMethod = ApiMethod();
+  final ApiMethod apiMethod;
+
+  SignupViewModel(this.apiMethod);
 
   // Loading state property
   bool _isLoading = false;

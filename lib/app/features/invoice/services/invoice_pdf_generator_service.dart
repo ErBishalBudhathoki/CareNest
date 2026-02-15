@@ -14,7 +14,10 @@ import '../../../core/services/file_conversion_service.dart';
 import 'invoice_number_generator_service.dart';
 
 class InvoicePdfGenerator {
+  final ApiMethod _api;
   final FileConversionService _fileConversionService = FileConversionService();
+
+  InvoicePdfGenerator({required ApiMethod api}) : _api = api;
 
   Future<List<String>> generatePdfs(
     Map<String, dynamic> invoices, {
@@ -679,7 +682,7 @@ class InvoicePdfGenerator {
     if (useAdmin) {
       // Admin selected: fetch admin bank details from backend using configured owner email
       try {
-        final api = ApiMethod();
+        final api = _api;
         // Use logged-in user's email instead of static config
         final String? currentUserEmail = sharedUtils.getString('userEmail');
         final String adminEmail = currentUserEmail ?? '';
@@ -731,7 +734,7 @@ class InvoicePdfGenerator {
 
       if (employeeIncomplete) {
         try {
-          final api = ApiMethod();
+          final api = _api;
           String employeeEmail = '';
           final dynamic emailCandidate = clientData['employeeEmail'];
           if (emailCandidate is String && emailCandidate.isNotEmpty) {
@@ -783,7 +786,7 @@ class InvoicePdfGenerator {
 
       // Employee missing: fall back to admin (network only)
       try {
-        final api = ApiMethod();
+        final api = _api;
         // Use logged-in user's email instead of static config
         final String? currentUserEmail = sharedUtils.getString('userEmail');
         final String adminEmail = currentUserEmail ?? '';
@@ -1095,7 +1098,7 @@ class InvoicePdfGenerator {
       debugPrint('PDF Generator: Downloading image from URL: $url');
 
       // Add timeout to prevent hanging
-      final response = await ApiMethod().getRawUrl(
+      final response = await _api.getRawUrl(
         url,
         timeout: const Duration(seconds: 30),
       );

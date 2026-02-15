@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 /// Pricing Optimization State
@@ -40,10 +41,12 @@ class PricingOptimizationState {
 }
 
 /// Pricing Optimization ViewModel
-class PricingOptimizationViewModel extends StateNotifier<PricingOptimizationState> {
+class PricingOptimizationViewModel
+    extends StateNotifier<PricingOptimizationState> {
   final FinancialIntelligenceRepository _repository;
 
-  PricingOptimizationViewModel(this._repository) : super(PricingOptimizationState());
+  PricingOptimizationViewModel(this._repository)
+      : super(PricingOptimizationState());
 
   /// Optimize prices
   Future<void> optimizePrices({
@@ -58,7 +61,7 @@ class PricingOptimizationViewModel extends StateNotifier<PricingOptimizationStat
         services: services,
         constraints: constraints,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -89,7 +92,7 @@ class PricingOptimizationViewModel extends StateNotifier<PricingOptimizationStat
         organizationId: organizationId,
         testConfig: testConfig,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false);
       } else {
@@ -117,7 +120,7 @@ class PricingOptimizationViewModel extends StateNotifier<PricingOptimizationStat
         serviceId: serviceId,
         marketData: marketData,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -148,7 +151,7 @@ class PricingOptimizationViewModel extends StateNotifier<PricingOptimizationStat
         organizationId: organizationId,
         services: services,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -179,7 +182,7 @@ class PricingOptimizationViewModel extends StateNotifier<PricingOptimizationStat
         serviceId: serviceId,
         historicalData: historicalData,
       );
-      
+
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
@@ -206,9 +209,9 @@ class PricingOptimizationViewModel extends StateNotifier<PricingOptimizationStat
 }
 
 /// Provider for Pricing Optimization ViewModel
-final pricingOptimizationViewModelProvider =
-    StateNotifierProvider<PricingOptimizationViewModel, PricingOptimizationState>((ref) {
-  final apiMethod = ApiMethod();
+final pricingOptimizationViewModelProvider = StateNotifierProvider<
+    PricingOptimizationViewModel, PricingOptimizationState>((ref) {
+  final apiMethod = ref.read(app_providers.apiMethodProvider);
   final repository = FinancialIntelligenceRepository(apiMethod);
   return PricingOptimizationViewModel(repository);
 });

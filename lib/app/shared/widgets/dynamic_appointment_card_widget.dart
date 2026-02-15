@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shimmer/shimmer.dart';
 
-class DynamicAppointmentCardWidget extends StatefulWidget {
+class DynamicAppointmentCardWidget extends ConsumerStatefulWidget {
   final List clientEmailList;
   final int listLength;
   final String currentUserEmail;
@@ -20,13 +22,13 @@ class DynamicAppointmentCardWidget extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() {
+  ConsumerState<DynamicAppointmentCardWidget> createState() {
     return _DynamicAppointmentCardWidgetState();
   }
 }
 
 class _DynamicAppointmentCardWidgetState
-    extends State<DynamicAppointmentCardWidget> {
+    extends ConsumerState<DynamicAppointmentCardWidget> {
   // Color constants - Vibrant Dark Theme
   static const Color _primaryColor = Color(0xFF8B5CF6); // Vibrant Violet
   static const Color _primaryGradientStart = Color(0xFF8B5CF6);
@@ -183,7 +185,7 @@ class _DynamicAppointmentCardWidgetState
   var setFutureClientsData;
   var appointmentData = {};
   late List<dynamic> clients = [];
-  ApiMethod apiMethod = ApiMethod();
+  late final ApiMethod apiMethod;
 
   late int selectedPage;
   final PageController pageController = PageController(initialPage: 0);
@@ -191,6 +193,7 @@ class _DynamicAppointmentCardWidgetState
   @override
   void initState() {
     super.initState();
+    apiMethod = ref.read(app_providers.apiMethodProvider);
     print("getFutureClientsData: ${widget.clientEmailList.toString()}");
     for (var i = 0; i < widget.listLength; i++) {
       print("getFutureClientsData: ${widget.clientEmailList[i]}");

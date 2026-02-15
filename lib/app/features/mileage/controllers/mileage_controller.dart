@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // State class for Mileage
 class MileageState {
@@ -67,17 +69,16 @@ class MileageController extends StateNotifier<MileageState> {
       if (lat != null && lng != null && timeStr != null) {
         // Reconstruct position (mocking timestamp/accuracy for simplicity as they aren't stored)
         final position = Position(
-          latitude: lat,
-          longitude: lng,
-          timestamp: DateTime.parse(timeStr),
-          accuracy: 0,
-          altitude: 0,
-          heading: 0,
-          speed: 0,
-          speedAccuracy: 0,
-          altitudeAccuracy: 0,
-          headingAccuracy: 0
-        );
+            latitude: lat,
+            longitude: lng,
+            timestamp: DateTime.parse(timeStr),
+            accuracy: 0,
+            altitude: 0,
+            heading: 0,
+            speed: 0,
+            speedAccuracy: 0,
+            altitudeAccuracy: 0,
+            headingAccuracy: 0);
 
         state = state.copyWith(
           isTracking: true,
@@ -91,7 +92,7 @@ class MileageController extends StateNotifier<MileageState> {
   Future<void> startTrip() async {
     try {
       state = state.copyWith(error: null);
-      
+
       // 1. Check Permissions
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -103,7 +104,8 @@ class MileageController extends StateNotifier<MileageState> {
       }
 
       if (permission == LocationPermission.deniedForever) {
-        state = state.copyWith(error: 'Location permissions are permanently denied');
+        state = state.copyWith(
+            error: 'Location permissions are permanently denied');
         return;
       }
 
@@ -126,7 +128,6 @@ class MileageController extends StateNotifier<MileageState> {
         startTime: DateTime.now(),
         currentDistance: 0,
       );
-
     } catch (e) {
       state = state.copyWith(error: 'Failed to start trip: $e');
     }
@@ -148,7 +149,7 @@ class MileageController extends StateNotifier<MileageState> {
         endPosition.latitude,
         endPosition.longitude,
       );
-      
+
       // Convert to KM
       final distanceKm = distanceMeters / 1000;
 
@@ -184,8 +185,10 @@ class MileageController extends StateNotifier<MileageState> {
       final distanceKm = state.currentDistance / 1000;
       final tripData = {
         'date': DateTime.now().toIso8601String(),
-        'startLocation': startLocation ?? '${state.startPosition?.latitude}, ${state.startPosition?.longitude}',
-        'endLocation': endLocation ?? 'Current Location', // Ideally reverse geocode this
+        'startLocation': startLocation ??
+            '${state.startPosition?.latitude}, ${state.startPosition?.longitude}',
+        'endLocation':
+            endLocation ?? 'Current Location', // Ideally reverse geocode this
         'distance': distanceKm,
         'tripType': withClient ? 'WITH_CLIENT' : 'BETWEEN_CLIENTS',
         'clientId': clientId,
@@ -194,7 +197,8 @@ class MileageController extends StateNotifier<MileageState> {
       // 2. Call API
       final response = await _api.post('api/trips', body: tripData);
 
-      if (response != null && (response['success'] == true || response['status'] == 201)) {
+      if (response != null &&
+          (response['success'] == true || response['status'] == 201)) {
         // Success
         state = MileageState(); // Reset completely
         return true;
@@ -231,9 +235,7 @@ class MileageController extends StateNotifier<MileageState> {
   }
 }
 
-final mileageControllerProvider = StateNotifierProvider<MileageController, MileageState>((ref) {
-  // Assuming ApiMethod is available or can be instantiated simply
-  // If ApiMethod is a provider, we would watch it. 
-  // Based on context, ApiMethod is a ChangeNotifier but used as a utility class often.
-  return MileageController(ApiMethod());
+final mileageControllerProvider =
+    StateNotifierProvider<MileageController, MileageState>((ref) {
+  return MileageController(ref.read(app_providers.apiMethodProvider));
 });

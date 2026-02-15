@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
-import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
@@ -9,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 
 class NotificationHandler extends ConsumerStatefulWidget {
   final Widget child;
@@ -229,7 +230,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
           email.isNotEmpty &&
           organizationId != null &&
           organizationId.isNotEmpty) {
-        await FcmTokenManager().initialize(email, organizationId);
+        await ref.read(app_providers.fcmTokenManagerProvider).initialize(email, organizationId);
       }
     } catch (e) {
       debugPrint(

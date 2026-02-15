@@ -1,5 +1,4 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,8 +13,6 @@ class LineItemsView extends ConsumerStatefulWidget {
 }
 
 class _LineItemsControllerState extends ConsumerState<LineItemsView> {
-  final ApiMethod apiMethod = ApiMethod();
-
   List<Map<String, dynamic>> _lineItems = [];
 
   @override

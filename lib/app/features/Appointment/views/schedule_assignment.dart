@@ -1,3 +1,4 @@
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/features/assignment/views/enhanced_ndis_item_selection_view.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -33,7 +34,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   String _selectedBreak = "No";
   List<String> breakOptionItems = ["Yes", "No"];
 
-  ApiMethod apiMethod = ApiMethod();
+  late final ApiMethod apiMethod;
   List<String> dateList = [];
   List<String> startTimeList = [];
   List<String> endTimeList = [];
@@ -64,6 +65,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   @override
   void initState() {
     super.initState();
+    apiMethod = ref.read(app_providers.apiMethodProvider);
   }
 
   @override

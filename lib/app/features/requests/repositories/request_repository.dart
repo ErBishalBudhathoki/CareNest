@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
 final requestRepositoryProvider = Provider<RequestRepository>((ref) {
-  return RequestRepository(ApiMethod());
+  return RequestRepository(ref.read(app_providers.apiMethodProvider));
 });
 
 class RequestRepository {

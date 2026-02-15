@@ -1,4 +1,6 @@
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/forgotPassword_model.dart';
@@ -8,10 +10,10 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey =
       GlobalKey<FormState>(debugLabel: 'forgot_password_form_key');
   final TextEditingController emailController = TextEditingController();
-  final ApiMethod apiMethod = ApiMethod();
+  final ApiMethod apiMethod;
   final SharedPreferencesUtils _sharedPrefs;
 
-  ForgotPasswordViewModel(this._sharedPrefs);
+  ForgotPasswordViewModel(this._sharedPrefs, this.apiMethod);
 
   bool _isLoading = false; // Loading state property
 
@@ -59,32 +61,106 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   showWarningDialog(BuildContext context, String message) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Warning',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                message,
-                style: Theme.of(context).textTheme.bodyMedium,
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              border: Border.all(
+                color: BauhausDesign.neutral,
+                width: 2,
               ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(
-                'OK',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the warning dialog
-              },
+              boxShadow: const [
+                BauhausDesign.shadowHard,
+              ],
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.warning.withOpacity(0.1),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(BauhausDesign.radiusMd - 2),
+                      topRight: Radius.circular(BauhausDesign.radiusMd - 2),
+                    ),
+                    border: const Border(
+                      bottom: BorderSide(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.warning,
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.warning_rounded,
+                          color: BauhausDesign.surfaceWhite,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Warning',
+                        style: BauhausDesign.getTextTheme(context)
+                            .titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textDark,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(
+                    message,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          height: 1.5,
+                        ),
+                  ),
+                ),
+
+                // Action Button
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: BauhausActionButton(
+                    text: 'OK',
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    variant: BauhausActionVariant.primary,
+                    isFullWidth: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

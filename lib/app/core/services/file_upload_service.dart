@@ -7,7 +7,7 @@ import 'package:carenest/backend/api_method.dart';
 class FileUploadService {
   final ApiMethod _api;
 
-  FileUploadService({ApiMethod? api}) : _api = api ?? ApiMethod();
+  FileUploadService({required ApiMethod api}) : _api = api;
 
   /// Upload a receipt file to the server
   /// Returns the server URL of the uploaded file

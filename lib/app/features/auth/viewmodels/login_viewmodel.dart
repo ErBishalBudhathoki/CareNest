@@ -23,6 +23,7 @@ class LoginViewModel extends ChangeNotifier {
   final LoginModel model = LoginModel();
   final ApiMethod _apiMethod;
   final SharedPreferencesUtils _sharedPrefs;
+  final FcmTokenManager _fcmTokenManager;
 
   // Security enhancements
   bool isLoading = false;
@@ -38,7 +39,7 @@ class LoginViewModel extends ChangeNotifier {
   // Security logging
   final List<Map<String, dynamic>> _securityLogs = [];
 
-  LoginViewModel(this._apiMethod, this._sharedPrefs) {
+  LoginViewModel(this._apiMethod, this._sharedPrefs, this._fcmTokenManager) {
     _initializeSecurityContext();
     if (kDebugMode) {
       // Only set debug credentials in debug mode and with user consent
@@ -403,15 +404,14 @@ class LoginViewModel extends ChangeNotifier {
   /// Register FCM token with enhanced security
   Future<void> _registerFcmToken(User user) async {
     try {
-      final tokenManager = FcmTokenManager();
-      await tokenManager.initialize(
+      await _fcmTokenManager.initialize(
         user.email,
         user.organizationId,
         deviceId: _deviceId,
         deviceInfo: _deviceInfo,
       );
 
-      final storedToken = await tokenManager.getCurrentToken();
+      final storedToken = await _fcmTokenManager.getCurrentToken();
       if (storedToken != null) {
         _logSecurityEvent('fcm_token_registered', {
           'email': user.email,

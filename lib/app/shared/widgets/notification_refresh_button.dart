@@ -2,7 +2,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
 
 /// A button widget that allows users to manually refresh their FCM token
 /// and force registration with the backend.
@@ -46,7 +45,7 @@ class NotificationRefreshButton extends ConsumerWidget {
           // Get a fresh FCM token
           await FirebaseMessaging.instance.deleteToken();
           final updated =
-              await FcmTokenManager().forceUpdateToken(userEmail, organizationId);
+              await ref.read(fcmTokenManagerProvider).forceUpdateToken(userEmail, organizationId);
           if (!updated) {
             throw Exception('Failed to refresh FCM token');
           }
@@ -165,7 +164,7 @@ class NotificationSettingsPanel extends ConsumerWidget {
                     try {
                       // Get a fresh FCM token
                       await FirebaseMessaging.instance.deleteToken();
-                      final updated = await FcmTokenManager()
+                      final updated = await ref.read(fcmTokenManagerProvider)
                           .forceUpdateToken(userEmail, organizationId);
                       if (!updated) {
                         throw Exception('Failed to refresh FCM token');

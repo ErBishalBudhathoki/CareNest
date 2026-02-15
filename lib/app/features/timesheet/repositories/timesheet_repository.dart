@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/timesheet/models/timesheet_model.dart';
 import 'package:flutter/foundation.dart';
 
-final timesheetRepositoryProvider =
-    Provider((ref) => TimesheetRepository(ApiMethod()));
+final timesheetRepositoryProvider = Provider(
+    (ref) => TimesheetRepository(ref.read(app_providers.apiMethodProvider)));
 
 class TimesheetRepository {
   final ApiMethod _apiMethod;

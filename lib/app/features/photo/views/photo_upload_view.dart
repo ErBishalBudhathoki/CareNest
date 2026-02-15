@@ -27,11 +27,17 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
   bool _isLoading = false;
 
   // Services and Utils
-  final ApiMethod _apiMethod = ApiMethod();
+  late final ApiMethod _apiMethod;
   final ImagePicker _picker = ImagePicker();
   final ImageCropper _imageCropper = ImageCropper();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _apiMethod = ref.read(apiMethodProvider);
+  }
 
   void _showSnackBar(
       {required String message, required Color backgroundColor}) {

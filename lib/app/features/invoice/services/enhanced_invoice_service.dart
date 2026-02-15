@@ -79,9 +79,9 @@ class EnhancedInvoiceService {
   })
       : _repository = InvoiceRepository(_apiMethod),
         _helpers = InvoiceHelpers(),
-        _emailService = InvoiceEmailService(),
+        _emailService = InvoiceEmailService(apiMethod: _apiMethod),
         _dataProcessor = dataProcessor ?? InvoiceDataProcessor(ref),
-        _pdfGenerator = InvoicePdfGenerator(),
+        _pdfGenerator = InvoicePdfGenerator(api: _apiMethod),
         _fileUploadService = FileUploadService(api: _apiMethod),
         _mileageRepository = mileageRepository ?? MileageRepository(_apiMethod) {
     // Set the enhanced service reference after initialization

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/backend/api_method.dart';
 
 /// OAuth callback handler for integrations
 /// This view handles the OAuth redirect after user authorizes an integration
-class IntegrationOAuthCallbackView extends StatefulWidget {
+class IntegrationOAuthCallbackView extends ConsumerStatefulWidget {
   final String? code;
   final String? state;
   final String? error;
@@ -18,11 +20,11 @@ class IntegrationOAuthCallbackView extends StatefulWidget {
   });
 
   @override
-  State<IntegrationOAuthCallbackView> createState() => _IntegrationOAuthCallbackViewState();
+  ConsumerState<IntegrationOAuthCallbackView> createState() => _IntegrationOAuthCallbackViewState();
 }
 
-class _IntegrationOAuthCallbackViewState extends State<IntegrationOAuthCallbackView> {
-  final ApiMethod _apiMethod = ApiMethod();
+class _IntegrationOAuthCallbackViewState extends ConsumerState<IntegrationOAuthCallbackView> {
+  late final ApiMethod _apiMethod;
   bool _isProcessing = true;
   String? _errorMessage;
   String? _successMessage;
@@ -30,6 +32,7 @@ class _IntegrationOAuthCallbackViewState extends State<IntegrationOAuthCallbackV
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     _handleCallback();
   }
 

@@ -82,7 +82,7 @@ class _AdminDashboardViewControllerState
     extends ConsumerState<AdminDashboardView> with TickerProviderStateMixin {
   Map<String, dynamic> getInitialData = {};
   Map<String, dynamic> businessStats = {};
-  final ApiMethod _apiMethod = ApiMethod();
+  late final ApiMethod _apiMethod;
   final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
   String? key;
   bool _isLoading = true;
@@ -95,6 +95,7 @@ class _AdminDashboardViewControllerState
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(apiMethodProvider);
 
     _initializeAnimations();
     _fetchInitialData();

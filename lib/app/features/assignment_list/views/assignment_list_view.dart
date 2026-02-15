@@ -7,6 +7,7 @@ import 'package:carenest/app/features/assignment_list/viewmodels/assignment_list
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:intl/intl.dart';
 
@@ -218,7 +219,7 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
   }
 }
 
-class EnhancedAssignmentCard extends StatefulWidget {
+class EnhancedAssignmentCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> assignment;
   final VoidCallback onEdit;
 
@@ -229,11 +230,11 @@ class EnhancedAssignmentCard extends StatefulWidget {
   });
 
   @override
-  State<EnhancedAssignmentCard> createState() => _EnhancedAssignmentCardState();
+  ConsumerState<EnhancedAssignmentCard> createState() => _EnhancedAssignmentCardState();
 }
 
-class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
-  final ApiMethod _apiMethod = ApiMethod();
+class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard> {
+  late final ApiMethod _apiMethod;
   Patient? clientDetails;
   Map<String, dynamic>? employeeDetails;
   bool isLoadingDetails = false;
@@ -242,6 +243,7 @@ class _EnhancedAssignmentCardState extends State<EnhancedAssignmentCard> {
   @override
   void initState() {
     super.initState();
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     _loadDetailedInfo();
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/auth/providers/auth_provider.dart';
+import 'package:carenest/app/core/providers/firebase_auth_provider.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
 
 class BauhausSignupView extends ConsumerStatefulWidget {
   const BauhausSignupView({super.key});
@@ -15,7 +16,10 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
   final _lastNameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _orgCodeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  String? _errorMessage;
 
   // Real-time validation state
   bool _hasMinLength = false;
@@ -32,30 +36,91 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
     });
   }
 
-  void _onRegister() async {
-    if (_formKey.currentState!.validate()) {
-      if (!(_hasMinLength && _hasUppercase && _hasNumber && _hasSpecial)) {
-        return; // Visual validation fallback
+  Future<void> _onRegister() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (!(_hasMinLength && _hasUppercase && _hasNumber && _hasSpecial)) {
+      setState(() {
+        _errorMessage = 'Password does not meet requirements';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final authService = ref.read(firebaseAuthServiceProvider);
+      final apiMethod = ref.read(apiMethodProvider);
+
+      // 1. Create Firebase user
+      final credential = await authService.signUpWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (credential.user == null) {
+        throw Exception('Signup failed: No user returned');
       }
 
-      try {
-        await ref.read(authStateProvider.notifier).register(
-              _emailController.text.trim(),
-              _passwordController.text.trim(),
-              _firstNameController.text.trim(),
-              _lastNameController.text.trim(),
-            );
+      // 2. Update display name
+      await authService.updateDisplayName(
+        '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
+      );
+
+      // 3. Send email verification
+      await authService.sendEmailVerification();
+
+      // 4. Sync with backend
+      final response = await apiMethod.post('firebase-auth/sync', body: {
+        'firebaseUid': credential.user!.uid,
+        'email': credential.user!.email,
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'organizationCode': _orgCodeController.text.trim(),
+      });
+
+      if (response['success'] == true) {
         if (mounted) {
-          Navigator.of(context).pop(); // Go back to login
+          // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('Registration successful! Please login.')),
+              content:
+                  Text('Account created! Please verify your email and login.'),
+              backgroundColor: Colors.green,
+            ),
           );
+
+          // Navigate back to login
+          Navigator.pop(context);
         }
-      } catch (e) {
-        // Error handled in state?
+      } else {
+        throw Exception(response['message'] ?? 'Backend sync failed');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = _getFriendlyErrorMessage(e.toString());
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
+  }
+
+  String _getFriendlyErrorMessage(String error) {
+    if (error.contains('email-already-in-use')) {
+      return 'An account with this email already exists';
+    } else if (error.contains('invalid-email')) {
+      return 'Invalid email address';
+    } else if (error.contains('weak-password')) {
+      return 'Password is too weak';
+    } else if (error.contains('network')) {
+      return 'Network error. Please check your connection';
+    }
+    return 'Signup failed. Please try again';
   }
 
   @override
@@ -75,97 +140,120 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'JOIN US',
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: colorBlack,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: colorBlue))
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'JOIN US',
+                        style:
+                            Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: colorBlack,
+                                ),
                       ),
-                ),
-                const SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildBauhausTextField(
-                        controller: _firstNameController,
-                        label: 'FIRST NAME',
-                        icon: Icons.person_outline,
+                      const SizedBox(height: 32),
+                      if (_errorMessage != null)
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                            color: colorRed.withOpacity(0.1),
+                            border: Border.all(color: colorRed),
+                          ),
+                          child: Text(
+                            _errorMessage!,
+                            style: const TextStyle(
+                                color: colorRed, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildBauhausTextField(
+                              controller: _firstNameController,
+                              label: 'FIRST NAME',
+                              icon: Icons.person_outline,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildBauhausTextField(
+                              controller: _lastNameController,
+                              label: 'LAST NAME',
+                              icon: Icons.person_outline,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildBauhausTextField(
-                        controller: _lastNameController,
-                        label: 'LAST NAME',
-                        icon: Icons.person_outline,
+                      const SizedBox(height: 16),
+                      _buildBauhausTextField(
+                          controller: _emailController,
+                          label: 'EMAIL',
+                          icon: Icons.email_outlined,
+                          inputType: TextInputType.emailAddress),
+                      const SizedBox(height: 16),
+                      _buildBauhausTextField(
+                          controller: _orgCodeController,
+                          label: 'ORGANIZATION CODE',
+                          icon: Icons.business_outlined,
+                          inputType: TextInputType.text),
+                      const SizedBox(height: 16),
+                      _buildBauhausTextField(
+                        controller: _passwordController,
+                        label: 'PASSWORD',
+                        icon: Icons.lock_outline,
+                        isObscure: true,
+                        onChanged: _updatePasswordStrength,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildBauhausTextField(
-                    controller: _emailController,
-                    label: 'EMAIL',
-                    icon: Icons.email_outlined,
-                    inputType: TextInputType.emailAddress),
-                const SizedBox(height: 16),
-                _buildBauhausTextField(
-                  controller: _passwordController,
-                  label: 'PASSWORD',
-                  icon: Icons.lock_outline,
-                  isObscure: true,
-                  onChanged: _updatePasswordStrength,
-                ),
-                const SizedBox(height: 8),
-                _buildPasswordValidationIndicators(),
-                const SizedBox(height: 16),
-                _buildBauhausTextField(
-                    controller: _confirmPasswordController,
-                    label: 'CONFIRM PASSWORD',
-                    icon: Icons.lock_outline,
-                    isObscure: true,
-                    validator: (val) {
-                      if (val != _passwordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    }),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _onRegister,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colorBlue,
-                      foregroundColor: Colors.white,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
+                      const SizedBox(height: 8),
+                      _buildPasswordValidationIndicators(),
+                      const SizedBox(height: 16),
+                      _buildBauhausTextField(
+                          controller: _confirmPasswordController,
+                          label: 'CONFIRM PASSWORD',
+                          icon: Icons.lock_outline,
+                          isObscure: true,
+                          validator: (val) {
+                            if (val != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          }),
+                      const SizedBox(height: 32),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: _onRegister,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colorBlue,
+                            foregroundColor: Colors.white,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            'CREATE ACCOUNT',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
                       ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'CREATE ACCOUNT',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 

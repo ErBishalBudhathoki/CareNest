@@ -12,6 +12,7 @@ import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart'
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 
 // ==================== AUTH STATE ====================
 
@@ -115,13 +116,14 @@ final loginViewModelProvider =
   return LoginViewModel(
     ref.read(apiMethodProvider),
     ref.read(sharedPreferencesProvider),
+    ref.read(app_providers.fcmTokenManagerProvider),
   );
 });
 
 // Signup view model provider with autoDispose
 final signupViewModelProvider =
     ChangeNotifierProvider.autoDispose<SignupViewModel>((ref) {
-  return SignupViewModel();
+  return SignupViewModel(ref.read(apiMethodProvider));
 });
 
 // Forgot password view model provider with autoDispose
@@ -129,6 +131,7 @@ final forgotPasswordViewModelProvider =
     ChangeNotifierProvider.autoDispose<ForgotPasswordViewModel>((ref) {
   return ForgotPasswordViewModel(
     ref.read(sharedPreferencesProvider),
+    ref.read(apiMethodProvider),
   );
 });
 
@@ -141,5 +144,5 @@ final changePasswordViewModelProvider =
 // OTP verification view model provider with autoDispose
 final verifyOTPViewModelProvider =
     ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
-  return VerifyOTPViewModel();
+  return VerifyOTPViewModel(ref.read(apiMethodProvider));
 });

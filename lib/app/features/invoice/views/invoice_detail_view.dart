@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/viewmodels/invoice_detail_viewmodel.dart';
 import 'package:carenest/app/features/invoice/services/invoice_share_service.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
@@ -202,7 +204,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         padding: const EdgeInsets.all(BauhausDesign.space4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          color: BauhausDesign.primary, // Use solid color instead of gradient for Bauhaus style
+          color: BauhausDesign
+              .primary, // Use solid color instead of gradient for Bauhaus style
           border: Border.all(color: BauhausDesign.neutral, width: 2),
         ),
         child: Column(
@@ -405,7 +408,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
   Widget _buildPaymentActions(InvoiceListModel invoice) {
     // Map InvoiceListModel to InvoiceModel for the widget (or update widget to accept ListModel)
-    // For now, we construct a temporary model or adapt the widget. 
+    // For now, we construct a temporary model or adapt the widget.
     // Adapting is cleaner, but let's wrap it here.
     final invoiceModel = InvoiceModel.empty().copyWith(
       invoiceNumber: invoice.invoiceNumber,
@@ -532,7 +535,10 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
     if (shareMethod != null) {
       final invoiceService = ref.read(invoiceManagementServiceProvider);
-      final shareService = InvoiceShareService(invoiceService);
+      final shareService = InvoiceShareService(
+        invoiceService,
+        apiMethod: ref.read(app_providers.apiMethodProvider),
+      );
 
       final l10n = AppLocalizations.of(context)!;
       // Show loading indicator
@@ -662,7 +668,10 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
       // Use the invoice share service to check for existing PDF or regenerate
       final invoiceService = ref.read(invoiceManagementServiceProvider);
-      final shareService = InvoiceShareService(invoiceService);
+      final shareService = InvoiceShareService(
+        invoiceService,
+        apiMethod: ref.read(app_providers.apiMethodProvider),
+      );
 
       // Generate PDF for viewing (this now checks for existing files first)
       final result = await shareService.generatePdfForViewing(

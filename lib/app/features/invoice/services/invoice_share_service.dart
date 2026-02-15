@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:share_plus/share_plus.dart';
@@ -15,9 +14,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class InvoiceShareService {
   final InvoiceManagementService _invoiceService;
-  final InvoicePdfGenerator _pdfGenerator = InvoicePdfGenerator();
+  final InvoicePdfGenerator _pdfGenerator;
+  final ApiMethod _apiMethod;
 
-  InvoiceShareService(this._invoiceService);
+  InvoiceShareService(
+    this._invoiceService, {
+    required ApiMethod apiMethod,
+  })  : _apiMethod = apiMethod,
+        _pdfGenerator = InvoicePdfGenerator(api: apiMethod);
 
   /// Share invoice with multiple options
   Future<Map<String, dynamic>> shareInvoice({
@@ -490,7 +494,6 @@ Your Invoice Team
                 providerABN == 'N/A') {
               debugPrint(
                   'Provider details missing or generic in calculated payload, fetching fresh employee details...');
-              final apiMethod = ApiMethod();
               String fetchedEmail = employeeEmail.isNotEmpty
                   ? employeeEmail
                   : (invoiceData['employeeEmail'] ??
@@ -511,7 +514,7 @@ Your Invoice Team
               }
               if (fetchedEmail.isNotEmpty) {
                 final freshEmployeeDetails =
-                    await apiMethod.checkEmail(fetchedEmail);
+                    await _apiMethod.checkEmail(fetchedEmail);
                 if (freshEmployeeDetails != null) {
                   final userData = freshEmployeeDetails;
                   employeeName = userData['name'] ??
@@ -560,7 +563,6 @@ Your Invoice Team
                 clientState.trim().isEmpty) {
               debugPrint(
                   'Client address fields missing in calculated payload, fetching fresh client details...');
-              final apiMethod = ApiMethod();
               final clientEmail = (clientData['clientEmail'] ??
                       invoiceData['clientEmail'] ??
                       invoice.clientEmail ??
@@ -568,7 +570,7 @@ Your Invoice Team
                   .toString();
               if (clientEmail.isNotEmpty) {
                 final freshClientDetails =
-                    await apiMethod.getClientDetails(clientEmail);
+                    await _apiMethod.getClientDetails(clientEmail);
                 if (freshClientDetails != null) {
                   final c =
                       freshClientDetails['clientDetails'] ?? freshClientDetails;
@@ -635,12 +637,11 @@ Your Invoice Team
           debugPrint(
               'Address fields are empty, fetching fresh client details...');
           try {
-            final apiMethod = ApiMethod();
             final clientEmail =
                 invoiceData['clientEmail'] ?? invoice.clientEmail;
             if (clientEmail.isNotEmpty) {
               final freshClientDetails =
-                  await apiMethod.getClientDetails(clientEmail);
+                  await _apiMethod.getClientDetails(clientEmail);
               if (freshClientDetails != null) {
                 // Handle the response structure: { statusCode: 200, message: "...", clientDetails: {...} }
                 final clientData =
@@ -674,11 +675,10 @@ Your Invoice Team
           debugPrint(
               'Provider details are missing, fetching fresh employee details...');
           try {
-            final apiMethod = ApiMethod();
             String employeeEmail = employeeEmailForMeta;
             if (employeeEmail.isNotEmpty) {
               final freshEmployeeDetails =
-                  await apiMethod.checkEmail(employeeEmail);
+                  await _apiMethod.checkEmail(employeeEmail);
               if (freshEmployeeDetails != null) {
                 // Handle the response structure: { statusCode: 200, message: "...", firstName: "...", lastName: "...", abn: "...", name: "..." }
                 final userData = freshEmployeeDetails;
@@ -937,8 +937,10 @@ Your Invoice Team
       if (originalTaxRate > 1.0) originalTaxRate = 1.0;
 
       // Only apply default tax rate if no explicit rate was provided in pdfGenerationParams
-      if (originalTaxRate == 0.0 && shouldShowTax && !pdfGenerationParams.containsKey('taxRate')) {
-      originalTaxRate = 0.10;
+      if (originalTaxRate == 0.0 &&
+          shouldShowTax &&
+          !pdfGenerationParams.containsKey('taxRate')) {
+        originalTaxRate = 0.10;
       }
 
       // If taxRate is known and no explicit decision yet, default to showing tax unless the invoice is tax-exempt
