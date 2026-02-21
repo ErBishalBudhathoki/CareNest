@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 
@@ -24,7 +23,7 @@ class WorkforceOptimizationDashboard extends ConsumerWidget {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.colorWhite),
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(
@@ -173,7 +172,7 @@ class WorkforceOptimizationDashboard extends ConsumerWidget {
           subtitle: feature['subtitle'] as String,
           icon: feature['icon'] as IconData,
           color: feature['color'] as Color,
-          onTap: () => Get.toNamed(feature['route'] as String),
+          onTap: () => Navigator.pushNamed(context, feature['route'] as String),
         );
       },
     );
@@ -362,7 +361,8 @@ class WorkforceOptimizationDashboard extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isPositive ? AppColors.colorGreen : AppColors.colorRed,
+                    color:
+                        isPositive ? AppColors.colorGreen : AppColors.colorRed,
                   ),
                 ),
               ),
