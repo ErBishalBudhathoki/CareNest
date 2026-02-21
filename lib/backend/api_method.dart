@@ -6,7 +6,6 @@ import 'package:carenest/app/core/utils/Services/upload_notes.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/shared/utils/encryption/encrypt_decrypt.dart';
-import 'package:carenest/app/shared/utils/encryption/encryption_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -336,6 +335,9 @@ class ApiMethod extends ChangeNotifier {
       if (appCheckToken != null && appCheckToken.isNotEmpty) {
         request.headers['X-Firebase-AppCheck'] = appCheckToken;
       }
+      if (!kIsWeb && Platform.isIOS) {
+        request.headers['X-Platform'] = 'ios';
+      }
 
       if (fields != null) {
         request.fields.addAll(fields);
@@ -589,6 +591,7 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     final headers = <String, String>{
       'Content-Type': 'application/json',
+      if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
       if (extra != null) ...extra,
     };
 
@@ -620,6 +623,7 @@ class ApiMethod extends ChangeNotifier {
     final baseUri = Uri.parse(_baseUrl);
     final Map<String, String> combinedHeaders = {
       if (headers != null) ...headers,
+      if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
     };
 
     if (_isSameOrigin(targetUri, baseUri)) {
@@ -653,6 +657,7 @@ class ApiMethod extends ChangeNotifier {
     final baseUri = Uri.parse(_baseUrl);
     final Map<String, String> combinedHeaders = {
       if (headers != null) ...headers,
+      if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
     };
 
     if (_isSameOrigin(targetUri, baseUri)) {
@@ -683,6 +688,7 @@ class ApiMethod extends ChangeNotifier {
     final uri = _buildUri(endpoint);
     final Map<String, String> combinedHeaders = {
       if (headers != null) ...headers,
+      if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
     };
     final authValue = await _getAuthorizationHeaderValue();
     if (authValue != null && !combinedHeaders.containsKey('Authorization')) {
@@ -710,6 +716,9 @@ class ApiMethod extends ChangeNotifier {
     final appCheckToken = await _getAppCheckToken();
     if (appCheckToken != null && appCheckToken.isNotEmpty) {
       request.headers['X-Firebase-AppCheck'] = appCheckToken;
+    }
+    if (!kIsWeb && Platform.isIOS) {
+      request.headers['X-Platform'] = 'ios';
     }
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -764,6 +773,9 @@ class ApiMethod extends ChangeNotifier {
     if (appCheckToken != null && appCheckToken.isNotEmpty) {
       request.headers['X-Firebase-AppCheck'] = appCheckToken;
     }
+    if (!kIsWeb && Platform.isIOS) {
+      request.headers['X-Platform'] = 'ios';
+    }
     request.files.add(
       await http.MultipartFile.fromPath(
         'receipt',
@@ -806,6 +818,9 @@ class ApiMethod extends ChangeNotifier {
     final appCheckToken = await _getAppCheckToken();
     if (appCheckToken != null && appCheckToken.isNotEmpty) {
       request.headers['X-Firebase-AppCheck'] = appCheckToken;
+    }
+    if (!kIsWeb && Platform.isIOS) {
+      request.headers['X-Platform'] = 'ios';
     }
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -2153,87 +2168,97 @@ class ApiMethod extends ChangeNotifier {
 
   Future<Map<String, dynamic>> signupUser(String firstName, String lastName,
       String email, String password, String abn, String role,
-      {String? organizationId, String? organizationCode}) async {
+      {String? organizationId,
+      String? organizationCode,
+      String? organizationName,
+      bool? isOwner}) async {
     try {
-      final checkEmailResponse =
-          await http.get(Uri.parse('${_baseUrl}checkEmail/$email'));
-      debugPrint('${_baseUrl}checkEmail/$email');
+      // Prepare request body for the unified register endpoint
+      // Backend handles email check + Firebase user creation via Admin SDK
+      final Map<String, dynamic> requestBody = {
+        "firstName": firstName,
+        "lastName": lastName,
+        "email": email,
+        "password": password,
+        "confirmPassword": password,
+        "abn": abn,
+      };
 
-      switch (checkEmailResponse.statusCode) {
+      // Handle organization creation/joining
+      if (isOwner == true || role == 'admin') {
+        requestBody["isOwner"] = true;
+        if (organizationName != null && organizationName.isNotEmpty) {
+          requestBody["organizationName"] = organizationName;
+        }
+      }
+
+      if (organizationId != null && organizationId.isNotEmpty) {
+        requestBody["organizationId"] = organizationId;
+      }
+      if (organizationCode != null && organizationCode.isNotEmpty) {
+        requestBody["organizationCode"] = organizationCode;
+      }
+
+      // Get Firebase App Check token
+      String? appCheckToken;
+      try {
+        appCheckToken = await FirebaseAppCheck.instance.getToken();
+      } catch (e) {
+        debugPrint('App Check token error: $e');
+      }
+
+      final signupResponse = await http.post(
+        Uri.parse('${_baseUrl}auth/register'),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
+          if (appCheckToken != null) "X-Firebase-AppCheck": appCheckToken,
+        },
+        body: jsonEncode(requestBody),
+      );
+      debugPrint('${_baseUrl}auth/register');
+      debugPrint('Request body: ${jsonEncode(requestBody)}');
+      debugPrint('Response status: ${signupResponse.statusCode}');
+      debugPrint('Response body: ${signupResponse.body}');
+
+      switch (signupResponse.statusCode) {
         case 200:
-          debugPrint(
-              "Email already exists: ${json.decode(checkEmailResponse.body)['email']}");
-          return {"error": "Email already exists"};
-        case 404: // Email not found, proceed with signup
-        case 400: // Proceed with signup (some backends might use 400 for 'bad request' but here we treat as check passed or proceed)
-          // Generate salt and hash password before sending to backend
-          final encryptionUtils = EncryptionUtils();
-          final salt = encryptionUtils.generateSalt();
-          final hashedPassword =
-              encryptionUtils.encryptPasswordWithArgon2andSalt(password, salt);
-
-          // Convert salt to hex string for backend storage
-          final saltHex =
-              salt.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
-
-          // Prepare request body
-          final requestBody = {
-            "firstName": firstName,
-            "lastName": lastName,
-            "email": email,
-            "password": hashedPassword,
-            "salt": saltHex,
-            "abn": abn,
-            "role": role
+        case 201:
+          final signupData = json.decode(signupResponse.body);
+          debugPrint("Signup successful: ${signupResponse.body}");
+          return {
+            ...signupData,
+            "success": true,
           };
-
-          // Add organization parameters if provided
-          if (organizationId != null) {
-            requestBody["organizationId"] = organizationId;
-          }
-          if (organizationCode != null) {
-            requestBody["organizationCode"] = organizationCode;
-          }
-
-          final signupResponse = await http.post(
-            Uri.parse('${_baseUrl}signup/$email'),
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-            },
-            body: jsonEncode(requestBody),
-          );
-          debugPrint('${_baseUrl}signup/$email');
-
-          switch (signupResponse.statusCode) {
-            case 200:
-              final signupData = json.decode(signupResponse.body);
-              debugPrint("Signup successful: ${signupResponse.body}");
-              return signupData;
-            case 400:
-              final errorData = json.decode(signupResponse.body);
-              debugPrint("Signup failed: ${signupResponse.body}");
-              return {"error": errorData['message'] ?? "Signup failed"};
-            case 409:
-              debugPrint("Email already exists");
-              return {"error": "Email already exists"};
-            case 500:
-              debugPrint("Server error: ${signupResponse.body}");
-              return {"error": "Server error: ${signupResponse.body}"};
-            default:
-              debugPrint(
-                  "Signup failed with status code ${signupResponse.statusCode}");
-              return {
-                "error":
-                    "Signup failed with status code ${signupResponse.statusCode}"
-              };
-          }
+        case 400:
+          final errorData = json.decode(signupResponse.body);
+          debugPrint("Signup failed: ${signupResponse.body}");
+          return {
+            "error":
+                errorData['message'] ?? errorData['error'] ?? "Signup failed"
+          };
+        case 409:
+          debugPrint("Email already exists");
+          return {"error": "Email already exists"};
+        case 500:
+          debugPrint("Server error: ${signupResponse.body}");
+          return {"error": "Server error occurred"};
+        default:
+          debugPrint(
+              "Signup failed with status code ${signupResponse.statusCode}");
+          return {
+            "error":
+                "Signup failed with status code ${signupResponse.statusCode}"
+          };
       }
     } on SocketException {
       debugPrint("Server error. Please retry");
       return {"error": "Server error. Please retry"};
+    } catch (e) {
+      debugPrint("Signup exception: $e");
+      return {"error": "An error occurred: $e"};
     }
-    return {"error": "Unknown error occurred"};
   }
 
   Future<dynamic> addClient(
@@ -2417,8 +2442,9 @@ class ApiMethod extends ChangeNotifier {
     String organizationCode,
   ) async {
     try {
+      // Use public endpoint for signup flow (no auth required)
       final response = await http.get(
-        Uri.parse('${_baseUrl}organization/verify/$organizationCode'),
+        Uri.parse('${_baseUrl}api/auth/verify-organization/$organizationCode'),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
@@ -2429,17 +2455,22 @@ class ApiMethod extends ChangeNotifier {
         case 200:
           final responseData = json.decode(response.body);
           debugPrint("Organization code verified: ${response.body}");
-          return responseData;
+          return {
+            "success": true,
+            "organizationId": responseData['organizationId'],
+            "organizationName": responseData['organizationName'],
+            "organizationCode": responseData['organizationCode'],
+          };
         case 404:
           debugPrint("Invalid organization code");
-          return {"error": "Invalid organization code"};
+          return {"success": false, "message": "Invalid organization code"};
         default:
           debugPrint("Verification failed: ${response.statusCode}");
-          return {"error": "Verification failed"};
+          return {"success": false, "message": "Verification failed"};
       }
     } catch (e) {
       debugPrint("Error verifying organization code: $e");
-      return {"error": "Network error occurred"};
+      return {"success": false, "message": "Network error occurred"};
     }
   }
 
@@ -7459,5 +7490,71 @@ class ApiMethod extends ChangeNotifier {
       Map<String, dynamic> data) async {
     return await post('/api/financial-intelligence/reporting/regulatory',
         body: data);
+  }
+
+  /// Sync Firebase Auth user with MongoDB backend.
+  ///
+  /// This method is called after successful Firebase authentication to ensure
+  /// the user exists in MongoDB with proper organization and role data.
+  ///
+  /// Parameters:
+  /// - [firebaseUid]: The Firebase Auth UID
+  /// - [email]: User's email address
+  /// - [idToken]: Firebase ID token for backend verification
+  /// - [firstName]: Optional first name
+  /// - [lastName]: Optional last name
+  /// - [photoURL]: Optional profile photo URL
+  ///
+  /// Returns user data including role and organization info for navigation.
+  Future<Map<String, dynamic>> syncFirebaseUser({
+    required String firebaseUid,
+    required String email,
+    required String idToken,
+    String? firstName,
+    String? lastName,
+    String? photoURL,
+  }) async {
+    try {
+      final cleanEndpoint = 'firebase-auth/sync';
+      final baseNoTrailing = _baseUrl.replaceAll(RegExp(r'/+$'), '');
+      final fullUrl = '$baseNoTrailing/$cleanEndpoint';
+
+      final body = {
+        'firebaseUid': firebaseUid,
+        'email': email,
+        if (firstName != null) 'firstName': firstName,
+        if (lastName != null) 'lastName': lastName,
+        if (photoURL != null) 'photoURL': photoURL,
+      };
+
+      final appCheckToken = await _getAppCheckToken();
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $idToken',
+        if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
+        if (appCheckToken != null && appCheckToken.isNotEmpty)
+          'X-Firebase-AppCheck': appCheckToken,
+      };
+
+      debugPrint('🔐 syncFirebaseUser: POST to $fullUrl');
+      debugPrint('🔐 syncFirebaseUser: body = $body');
+
+      final response = await http.post(
+        Uri.parse(fullUrl),
+        headers: headers,
+        body: json.encode(body),
+      );
+
+      debugPrint('🔐 syncFirebaseUser: status = ${response.statusCode}');
+      debugPrint('🔐 syncFirebaseUser: response = ${response.body}');
+
+      return _handleResponse(response);
+    } catch (e) {
+      debugPrint('🔐 syncFirebaseUser exception: $e');
+      return {
+        'success': false,
+        'message': 'Failed to sync user: $e',
+      };
+    }
   }
 }
