@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 
 class ReportBuilderView extends ConsumerStatefulWidget {
@@ -32,7 +31,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.colorWhite),
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(
@@ -62,7 +61,10 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorSecondary, AppColors.colorSecondary.withOpacity(0.8)],
+          colors: [
+            AppColors.colorSecondary,
+            AppColors.colorSecondary.withOpacity(0.8)
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -442,13 +444,12 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             onPressed: _selectedMetrics.isEmpty
                 ? null
                 : () {
-                    // TODO: Generate report
-                    Get.snackbar(
-                      'Report Generated',
-                      'Your report is being generated in $_selectedFormat format',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.colorSuccess,
-                      colorText: AppColors.colorWhite,
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'Your report is being generated in $_selectedFormat format'),
+                        backgroundColor: AppColors.colorSuccess,
+                      ),
                     );
                   },
             icon: const Icon(Icons.play_arrow),

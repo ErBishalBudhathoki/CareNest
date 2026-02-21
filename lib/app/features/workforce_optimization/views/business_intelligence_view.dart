@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/business_intelligence_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
@@ -54,7 +53,7 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.colorWhite),
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
