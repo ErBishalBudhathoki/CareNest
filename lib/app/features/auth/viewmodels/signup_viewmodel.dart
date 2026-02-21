@@ -1,5 +1,6 @@
 import 'package:carenest/app/core/utils/Services/signup_result.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/signup_model.dart';
 
@@ -12,6 +13,7 @@ class SignupViewModel extends ChangeNotifier {
   var ins;
   dynamic result;
   final ApiMethod apiMethod;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   SignupViewModel(this.apiMethod);
 
@@ -66,86 +68,24 @@ class SignupViewModel extends ChangeNotifier {
       if (formKey.currentState!.validate()) {
         if (model.passwordController.text ==
             model.confirmPasswordController.text) {
-          // try {
-          // UserCredential userCredential =
-          //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          //   email: model.emailController.text,
-          //   password: model.passwordController.text,
-          // );
+          // Determine if creating organization (admin role)
+          bool isOwner =
+              model.selectedRole == 'admin' && model.isCreatingOrganization;
+          String? orgName =
+              isOwner ? model.organizationNameController.text : null;
 
-          // await FirebaseFirestore.instance
-          //     .collection('users')
-          //     .doc(userCredential.user?.uid)
-          //     .set({
-          //   'email': model.emailController.text,
-          // });
-
-          // Handle multi-tenant signup
+          // If joining organization, verify the code first
           String? organizationId;
           String? organizationCode;
 
-          // If creating organization (admin role)
-          // Handle organization creation or joining
-          if (model.selectedRole == 'admin' && model.isCreatingOrganization) {
-            debugPrint("DEBUG: Starting organization creation...");
-            debugPrint(
-                "DEBUG: Organization name: ${model.organizationNameController.text}");
-            debugPrint("DEBUG: Owner email: ${model.emailController.text}");
-
-            var orgResult = await apiMethod.createOrganization(
-              model.organizationNameController.text,
-              model.emailController.text,
-            );
-            debugPrint("DEBUG: Organization creation result: $orgResult");
-            debugPrint(
-                "DEBUG: Organization result type: ${orgResult.runtimeType}");
-            debugPrint("DEBUG: Organization result keys: ${orgResult.keys}");
-
-            // Check if organization creation was successful
-            // Success response contains organizationId and organizationCode
-            // Error response contains 'error' key
-            if (orgResult.containsKey('error')) {
-              debugPrint(
-                  "DEBUG: Organization creation failed with error: ${orgResult['error']}");
-              return SignupResult(
-                success: false,
-                title: "Error",
-                message: orgResult['error'] ?? "Failed to create organization",
-                surfaceColor: Colors.red,
-              );
-            } else if (orgResult.containsKey('organizationId') &&
-                orgResult.containsKey('organizationCode')) {
-              debugPrint("DEBUG: Organization created successfully!");
-              organizationId = orgResult['organizationId'];
-              organizationCode = orgResult['organizationCode'];
-              // Set the properties for access in the view
-              _organizationId = orgResult['organizationId'];
-              _organizationName = model.organizationNameController.text;
-              _organizationCode = orgResult['organizationCode'];
-              debugPrint("DEBUG: Organization ID: $organizationId");
-              debugPrint("DEBUG: Organization Code: $organizationCode");
-            } else {
-              debugPrint(
-                  "DEBUG: Organization creation failed - unexpected response format");
-              debugPrint(
-                  "DEBUG: Expected 'organizationId' and 'organizationCode' keys but got: ${orgResult.keys}");
-              return SignupResult(
-                success: false,
-                title: "Error",
-                message: "Failed to create organization - invalid response",
-                surfaceColor: Colors.red,
-              );
-            }
-          }
-          // If joining organization
-          else if (model.isJoiningOrganization) {
+          if (model.isJoiningOrganization && !isOwner) {
+            debugPrint("DEBUG: Verifying organization code...");
             var verifyResult = await apiMethod.verifyOrganizationCode(
               model.organizationCodeController.text,
             );
             if (verifyResult['success'] == true) {
               organizationId = verifyResult['organizationId'];
               organizationCode = model.organizationCodeController.text;
-              // Set the properties for access in the view
               _organizationId = verifyResult['organizationId'];
               _organizationName = verifyResult['organizationName'];
               _organizationCode = model.organizationCodeController.text;
@@ -159,7 +99,10 @@ class SignupViewModel extends ChangeNotifier {
             }
           }
 
-          debugPrint("DEBUG: Starting user signup...");
+          // Step 1: Call backend /register — backend creates Firebase user via Admin SDK
+          debugPrint("DEBUG: Calling backend register endpoint...");
+          debugPrint("DEBUG: isOwner: $isOwner");
+          debugPrint("DEBUG: organizationName: $orgName");
           debugPrint("DEBUG: Organization ID for signup: $organizationId");
           debugPrint("DEBUG: Organization Code for signup: $organizationCode");
 
@@ -172,24 +115,53 @@ class SignupViewModel extends ChangeNotifier {
             model.selectedRole,
             organizationId: organizationId,
             organizationCode: organizationCode,
+            organizationName: orgName,
+            isOwner: isOwner,
           );
-          debugPrint('DEBUG: User signup result: $success');
-          debugPrint('DEBUG: User signup result type: ${success.runtimeType}');
-          debugPrint('DEBUG: User signup result keys: ${success.keys}');
+          debugPrint('DEBUG: MongoDB user creation result: $success');
 
           if (success.containsKey('error')) {
-            debugPrint("DEBUG: User signup failed!");
+            debugPrint("DEBUG: Backend registration failed!");
+
             String errorMessage = success['error'] ?? "Unknown error occurred";
-            debugPrint("DEBUG: Error message: $errorMessage");
             return SignupResult(
               success: false,
               title: "Error",
               message: errorMessage,
               surfaceColor: Colors.red,
             );
-          } else if (success.containsKey('userId') ||
-              success.containsKey('message')) {
-            debugPrint("DEBUG: User signup successful!");
+          } else if (success.containsKey('success') ||
+              success.containsKey('userId')) {
+            debugPrint("DEBUG: Backend registration successful!");
+
+            // Extract organization info from response if available
+            final data = success['data'] ?? success;
+            debugPrint("DEBUG: Response data: $data");
+            if (data is Map) {
+              _organizationId = data['organizationId']?.toString();
+              _organizationCode = data['organizationCode']?.toString() ??
+                  data['organization']?['code']?.toString();
+              _organizationName = data['organizationName']?.toString() ??
+                  data['organization']?['name']?.toString();
+              debugPrint(
+                  "DEBUG: Extracted orgId: $_organizationId, orgCode: $_organizationCode, orgName: $_organizationName");
+            }
+
+            // Step 2: Sign into Firebase using the customToken returned by backend
+            final customToken =
+                (success['data'] ?? success)['customToken']?.toString();
+            if (customToken != null && customToken.isNotEmpty) {
+              try {
+                debugPrint("DEBUG: Signing into Firebase with custom token...");
+                await _firebaseAuth.signInWithCustomToken(customToken);
+                debugPrint("DEBUG: Firebase sign-in successful");
+              } catch (e) {
+                // Non-fatal — user is registered, just couldn't auto-sign-in
+                debugPrint(
+                    "DEBUG: Firebase custom token sign-in failed (non-fatal): $e");
+              }
+            }
+
             String message = success['message'] ?? "Signup successful";
             return SignupResult(
               success: true,
@@ -200,8 +172,6 @@ class SignupViewModel extends ChangeNotifier {
           } else {
             debugPrint(
                 "DEBUG: User signup failed - unexpected response format");
-            debugPrint(
-                "DEBUG: Expected 'userId' or 'message' keys but got: ${success.keys}");
             return SignupResult(
               success: false,
               title: "Error",
@@ -235,7 +205,7 @@ class SignupViewModel extends ChangeNotifier {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
-    model.dispose(); // Dispose of the model's controllers
+    model.dispose();
     super.dispose();
   }
 }
