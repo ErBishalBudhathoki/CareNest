@@ -48,4 +48,24 @@ class TrainingViewModel extends StateNotifier<TrainingState> {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
+
+  Future<void> updateModule(String moduleId, Map<String, dynamic> data) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await _repository.updateTrainingModule(moduleId, data);
+      await loadModules();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+    }
+  }
+
+  Future<void> deleteModule(String moduleId) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await _repository.deleteTrainingModule(moduleId);
+      await loadModules();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+    }
+  }
 }

@@ -47,4 +47,24 @@ class ComplianceViewModel extends StateNotifier<ComplianceState> {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
+
+  Future<void> updateChecklist(String checklistId, Map<String, dynamic> data) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await _repository.updateChecklist(checklistId, data);
+      await loadChecklists();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+    }
+  }
+
+  Future<void> deleteChecklist(String checklistId) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await _repository.deleteChecklist(checklistId);
+      await loadChecklists();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+    }
+  }
 }

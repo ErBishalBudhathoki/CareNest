@@ -31,15 +31,17 @@ import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/features/settings/views/settings_view.dart';
 import 'package:carenest/app/features/security/views/api_usage_dashboard_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
-import 'package:carenest/app/features/admin/widgets/bauhaus_invoice_grid.dart';
+import 'package:carenest/app/features/admin/widgets/bauhaus_command_center.dart';
 import 'package:carenest/app/features/admin/widgets/business_overview_sliver.dart';
 import 'package:carenest/app/features/training_compliance/views/admin_certification_audit_view.dart';
+import 'package:carenest/app/features/training_compliance/views/admin_certification_requirements_view.dart';
 import 'package:carenest/app/features/training_compliance/views/admin_training_management_view.dart';
 import 'package:carenest/app/features/training_compliance/views/admin_compliance_management_view.dart';
 import 'package:carenest/app/features/analytics/views/analytics_dashboard_view.dart';
 import 'package:carenest/app/features/admin/views/mileage/admin_mileage_dashboard.dart';
 import 'package:carenest/app/features/schedule/views/schedule_dashboard_screen.dart';
 import 'package:carenest/app/features/onboarding/views/admin/admin_onboarding_list_view.dart';
+import 'package:carenest/app/features/admin/views/admin_feedback_feed_view.dart';
 
 import 'package:carenest/app/features/timesheet/views/admin_payroll_export_view.dart';
 
@@ -139,44 +141,43 @@ class _AdminDashboardViewControllerState
 
   Future<void> _fetchInitialData() async {
     try {
+      await _sharedPrefs.init();
       final data = await _apiMethod.getInitData(widget.email);
       final emailKey = await _checkEmailKey(widget.email);
+      final organizationId = _resolveOrganizationId(data);
 
-      Map<String, dynamic> stats = {};
+      Map<String, dynamic> stats = _defaultBusinessStats();
       String? statsError;
 
-      if (widget.organizationId != null && widget.organizationId!.isNotEmpty) {
+      if (organizationId != null && organizationId.isNotEmpty) {
         try {
-          final response =
-              await _apiMethod.getInvoiceStats(widget.organizationId!);
-
-          if (response['success'] == true && response['data'] != null) {
-            stats = response['data'];
-          } else {
-            stats = {
-              'activeBusinesses': 0,
-              'totalClients': 0,
-              'totalInvoices': 0,
-              'totalRevenue': '\$0.00'
-            };
-          }
+          final response = await _apiMethod.getInvoiceStats(organizationId);
+          stats = _normalizeBusinessStats(response);
         } catch (e) {
           statsError = AppLocalizations.of(context)!.failedToLoadStats;
-          stats = {
-            'activeBusinesses': 0,
-            'totalClients': 0,
-            'totalInvoices': 0,
-            'totalRevenue': '\$0.00'
-          };
         }
+
+        try {
+          final businesses = await _apiMethod.getBusinesses(organizationId);
+          if (businesses.isNotEmpty || _toInt(stats['activeBusinesses']) == 0) {
+            stats['activeBusinesses'] = businesses.length;
+          }
+        } catch (_) {}
+
+        try {
+          final clients =
+              await _apiMethod.getClientsByOrganizationId(organizationId);
+          if (clients.isNotEmpty || _toInt(stats['totalClients']) == 0) {
+            stats['totalClients'] = clients.length;
+          }
+        } catch (_) {}
+
+        stats['activeBusinesses'] = _toInt(stats['activeBusinesses']);
+        stats['totalClients'] = _toInt(stats['totalClients']);
+        stats['totalInvoices'] = _toInt(stats['totalInvoices']);
+        stats['totalRevenue'] = _formatRevenueDisplay(stats);
       } else {
         statsError = AppLocalizations.of(context)!.orgIdNotAvailable;
-        stats = {
-          'activeBusinesses': 0,
-          'totalClients': 0,
-          'totalInvoices': 0,
-          'totalRevenue': '\$0.00'
-        };
       }
 
       if (mounted) {
@@ -202,6 +203,77 @@ class _AdminDashboardViewControllerState
       debugPrint("Error fetching initial data: $e");
       setState(() => _isLoading = false);
     }
+  }
+
+  String? _resolveOrganizationId(dynamic initData) {
+    final widgetOrgId = widget.organizationId?.trim();
+    if (widgetOrgId != null && widgetOrgId.isNotEmpty) return widgetOrgId;
+
+    final prefsOrgId = _sharedPrefs.getOrganizationId()?.trim();
+    if (prefsOrgId != null && prefsOrgId.isNotEmpty) return prefsOrgId;
+
+    if (initData is Map<String, dynamic>) {
+      final dynamic orgId = initData['organizationId'] ??
+          initData['orgId'] ??
+          (initData['data'] is Map<String, dynamic>
+              ? (initData['data'] as Map<String, dynamic>)['organizationId']
+              : null);
+      final parsed = orgId?.toString().trim();
+      if (parsed != null && parsed.isNotEmpty) return parsed;
+    }
+    return null;
+  }
+
+  Map<String, dynamic> _defaultBusinessStats() {
+    return {
+      'activeBusinesses': 0,
+      'totalClients': 0,
+      'totalInvoices': 0,
+      'totalRevenue': '\$0.00',
+      'rawRevenue': 0
+    };
+  }
+
+  Map<String, dynamic> _normalizeBusinessStats(Map<String, dynamic> response) {
+    final defaults = _defaultBusinessStats();
+    if (response.isEmpty) return defaults;
+
+    dynamic stats = response['data'];
+    if (stats is Map<String, dynamic> &&
+        stats['data'] is Map<String, dynamic>) {
+      stats = stats['data'];
+    }
+    if (stats is! Map<String, dynamic>) return defaults;
+
+    final normalized = <String, dynamic>{...defaults, ...stats};
+
+    if (!normalized.containsKey('totalRevenue') &&
+        normalized['totalAmount'] != null) {
+      normalized['totalRevenue'] = normalized['totalAmount'];
+    }
+    if (!normalized.containsKey('rawRevenue') &&
+        normalized['totalAmount'] != null) {
+      normalized['rawRevenue'] = normalized['totalAmount'];
+    }
+
+    return normalized;
+  }
+
+  int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  String _formatRevenueDisplay(Map<String, dynamic> stats) {
+    final revenue = stats['totalRevenue'];
+    if (revenue is String && revenue.trim().isNotEmpty) return revenue;
+    final raw = stats['rawRevenue'];
+    final numValue = raw is num
+        ? raw.toDouble()
+        : (revenue is num ? revenue.toDouble() : 0.0);
+    return '\$${numValue.toStringAsFixed(2)}';
   }
 
   Future<String> _checkEmailKey(String email) async {
@@ -304,102 +376,387 @@ class _AdminDashboardViewControllerState
               ),
             ),
           ),
-          child: Stack(
-            children: [
-              AnimatedBuilder(
-                animation: _headerAnimationController,
-                builder: (context, child) {
-                  return Positioned(
-                    top: isSmallScreen ? 50 : 60, // Pushed up slightly for small screens
-                    right: 24,
-                    child: Transform.scale(
-                      scale: _headerAnimationController.value,
-                      child: Opacity(
-                        opacity: _headerAnimationController.value,
-                        child: Row(
-                          children: [
-                            Consumer(
-                              builder: (context, ref, child) {
-                                final unreadCount =
-                                    ref.watch(unreadNotificationCountProvider);
-                                final hasUnread = unreadCount > 0;
-
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const NotificationListView(),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: BauhausDesign.surfaceWhite,
-                                      borderRadius: BorderRadius.circular(
-                                          BauhausDesign.radiusMd),
-                                      border: Border.all(
-                                        color: BauhausDesign.neutral,
-                                        width: 2,
-                                      ),
-                                      boxShadow: const [
-                                        BauhausDesign.shadowHardSm,
-                                      ],
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(24, isSmallScreen ? 10 : 20, 24, 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedBuilder(
+                    animation: _headerAnimationController,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(
+                          0,
+                          15 * (1 - _headerAnimationController.value),
+                        ),
+                        child: Opacity(
+                          opacity: _headerAnimationController.value,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Hero(
+                                tag: 'profile_photo',
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: BauhausDesign.neutral,
+                                      width: 2,
                                     ),
-                                    child: Stack(
+                                    boxShadow: const [
+                                      BauhausDesign.shadowHard,
+                                    ],
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(0),
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: BauhausDesign.surfaceWhite,
+                                    ),
+                                    child: AdminProfileImage(
+                                      email: widget.email,
+                                      photoData: displayPhoto,
+                                      size: 70,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: BauhausDesign.space6),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Greeting row with icons
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        Icon(
-                                          hasUnread
-                                              ? Icons.notifications_active
-                                              : Icons.notifications_outlined,
-                                          color: BauhausDesign.neutral,
-                                          size: 20,
-                                        ),
-                                        if (hasUnread)
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: Container(
-                                              width: 10,
-                                              height: 10,
-                                              decoration: BoxDecoration(
-                                                color: BauhausDesign.error,
-                                                shape: BoxShape.rectangle,
-                                                border: Border.all(
-                                                  color: BauhausDesign.neutral,
-                                                  width: 1,
+                                        Expanded(
+                                          child: TweenAnimationBuilder<double>(
+                                            duration: const Duration(
+                                                milliseconds: 600),
+                                            tween: Tween(begin: 0.0, end: 1.0),
+                                            builder: (context, value, child) {
+                                              return Transform.translate(
+                                                offset:
+                                                    Offset(0, 8 * (1 - value)),
+                                                child: Opacity(
+                                                  opacity: value,
+                                                  child: Text(
+                                                    _getCurrentGreeting(),
+                                                    style: BauhausDesign
+                                                            .getTextTheme(
+                                                                context)
+                                                        .bodyMedium
+                                                        ?.copyWith(
+                                                          color: BauhausDesign
+                                                              .surfaceWhite,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                  ),
                                                 ),
-                                              ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        // Notification & Settings icons
+                                        Transform.scale(
+                                          scale:
+                                              _headerAnimationController.value,
+                                          child: Opacity(
+                                            opacity: _headerAnimationController
+                                                .value,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Consumer(
+                                                  builder:
+                                                      (context, ref, child) {
+                                                    final unreadCount = ref.watch(
+                                                        unreadNotificationCountProvider);
+                                                    final hasUnread =
+                                                        unreadCount > 0;
+
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const NotificationListView(),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: BauhausDesign
+                                                              .surfaceWhite,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  BauhausDesign
+                                                                      .radiusMd),
+                                                          border: Border.all(
+                                                            color: BauhausDesign
+                                                                .neutral,
+                                                            width: 2,
+                                                          ),
+                                                          boxShadow: const [
+                                                            BauhausDesign
+                                                                .shadowHardSm,
+                                                          ],
+                                                        ),
+                                                        child: Stack(
+                                                          children: [
+                                                            Icon(
+                                                              hasUnread
+                                                                  ? Icons
+                                                                      .notifications_active
+                                                                  : Icons
+                                                                      .notifications_outlined,
+                                                              color:
+                                                                  BauhausDesign
+                                                                      .neutral,
+                                                              size: 20,
+                                                            ),
+                                                            if (hasUnread)
+                                                              Positioned(
+                                                                top: 0,
+                                                                right: 0,
+                                                                child:
+                                                                    Container(
+                                                                  width: 10,
+                                                                  height: 10,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: BauhausDesign
+                                                                        .error,
+                                                                    shape: BoxShape
+                                                                        .rectangle,
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: BauhausDesign
+                                                                          .neutral,
+                                                                      width: 1,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                                const SizedBox(
+                                                    width:
+                                                        BauhausDesign.space4),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SettingsView(
+                                                          userEmail:
+                                                              widget.email,
+                                                          userName:
+                                                              '$firstName $lastName',
+                                                          photoData:
+                                                              photoDataState
+                                                                  .photoData,
+                                                          organizationId: widget
+                                                              .organizationId,
+                                                          organizationName: widget
+                                                              .organizationName,
+                                                          organizationCode: widget
+                                                              .organizationCode,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: BauhausDesign
+                                                          .surfaceWhite,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              BauhausDesign
+                                                                  .radiusMd),
+                                                      border: Border.all(
+                                                        color: BauhausDesign
+                                                            .neutral,
+                                                        width: 2,
+                                                      ),
+                                                      boxShadow: const [
+                                                        BauhausDesign
+                                                            .shadowHardSm,
+                                                      ],
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.settings_outlined,
+                                                      color:
+                                                          BauhausDesign.neutral,
+                                                      size: 20,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(width: BauhausDesign.space4),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SettingsView(
-                                      userEmail: widget.email,
-                                      userName: '$firstName $lastName',
-                                      photoData: photoDataState.photoData,
-                                      organizationId: widget.organizationId,
-                                      organizationName: widget.organizationName,
-                                      organizationCode: widget.organizationCode,
+                                    const SizedBox(
+                                        height: BauhausDesign.space1),
+                                    TweenAnimationBuilder<double>(
+                                      duration:
+                                          const Duration(milliseconds: 800),
+                                      tween: Tween(begin: 0.0, end: 1.0),
+                                      builder: (context, value, child) {
+                                        return Transform.translate(
+                                          offset: Offset(0, 12 * (1 - value)),
+                                          child: Opacity(
+                                            opacity: value,
+                                            child: Text(
+                                              '$firstName $lastName',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: BauhausDesign.getTextTheme(
+                                                      context)
+                                                  .headlineMedium
+                                                  ?.copyWith(
+                                                    color: BauhausDesign
+                                                        .surfaceWhite,
+                                                    fontWeight: FontWeight.w700,
+                                                    letterSpacing: -0.5,
+                                                    height: 1.1,
+                                                    fontSize:
+                                                        isSmallScreen ? 24 : 32,
+                                                  ),
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
+                                    const SizedBox(
+                                        height: BauhausDesign.space2),
+                                    TweenAnimationBuilder<double>(
+                                      duration:
+                                          const Duration(milliseconds: 1000),
+                                      tween: Tween(begin: 0.0, end: 1.0),
+                                      builder: (context, value, child) {
+                                        return Transform.translate(
+                                          offset: Offset(0, 15 * (1 - value)),
+                                          child: Opacity(
+                                            opacity: value,
+                                            child: Row(
+                                              children: [
+                                                _buildQuickStat(
+                                                    context,
+                                                    'Active',
+                                                    (businessStats[
+                                                                'activeInvoices'] ??
+                                                            0)
+                                                        .toString(),
+                                                    Icons.trending_up),
+                                                const SizedBox(
+                                                    width:
+                                                        BauhausDesign.space4),
+                                                _buildQuickStat(
+                                                    context,
+                                                    'Pending',
+                                                    (businessStats[
+                                                                'pendingInvoices'] ??
+                                                            0)
+                                                        .toString(),
+                                                    Icons.schedule),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Spacer(),
+                  AnimatedBuilder(
+                    animation: _headerAnimationController,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(
+                          0,
+                          (isSmallScreen ? 10 : 20) *
+                              (1 - _headerAnimationController.value),
+                        ),
+                        child: Opacity(
+                          opacity: _headerAnimationController.value,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   color: BauhausDesign.surfaceWhite,
+                                  borderRadius: BorderRadius.circular(
+                                      BauhausDesign.radiusLg),
+                                  border: Border.all(
+                                    color: BauhausDesign.neutral,
+                                    width: 1.5,
+                                  ),
+                                  boxShadow: const [
+                                    BauhausDesign.shadowHardSm,
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        color: BauhausDesign.success,
+                                        shape: BoxShape.rectangle,
+                                        border: Border.all(
+                                            color: BauhausDesign.neutral,
+                                            width: 1),
+                                      ),
+                                    ),
+                                    const SizedBox(width: BauhausDesign.space2),
+                                    Text(
+                                      AppLocalizations.of(context)!.adminActive,
+                                      style: BauhausDesign.getTextTheme(context)
+                                          .labelSmall
+                                          ?.copyWith(
+                                            color: BauhausDesign.neutral,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: BauhausDesign.accent,
                                   borderRadius: BorderRadius.circular(
                                       BauhausDesign.radiusMd),
                                   border: Border.all(
@@ -407,273 +764,24 @@ class _AdminDashboardViewControllerState
                                     width: 2,
                                   ),
                                   boxShadow: const [
-                                    BauhausDesign.shadowHardSm,
+                                    BauhausDesign.shadowHard,
                                   ],
                                 ),
                                 child: const Icon(
-                                  Icons.settings_outlined,
+                                  Icons.add_rounded,
                                   color: BauhausDesign.neutral,
                                   size: 20,
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(24, isSmallScreen ? 10 : 20, 24, 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AnimatedBuilder(
-                        animation: _headerAnimationController,
-                        builder: (context, child) {
-                          return Transform.translate(
-                            offset: Offset(
-                              0,
-                              15 * (1 - _headerAnimationController.value),
-                            ),
-                            child: Opacity(
-                              opacity: _headerAnimationController.value,
-                              child: Row(
-                                children: [
-                                  Hero(
-                                    tag: 'profile_photo',
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: BauhausDesign.neutral,
-                                          width: 2,
-                                        ),
-                                        boxShadow: const [
-                                          BauhausDesign.shadowHard,
-                                        ],
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(0),
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: BauhausDesign.surfaceWhite,
-                                        ),
-                                        child: AdminProfileImage(
-                                          email: widget.email,
-                                          photoData: displayPhoto,
-                                          size: 70,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: BauhausDesign.space6),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        TweenAnimationBuilder<double>(
-                                          duration:
-                                              const Duration(milliseconds: 600),
-                                          tween: Tween(begin: 0.0, end: 1.0),
-                                          builder: (context, value, child) {
-                                            return Transform.translate(
-                                              offset:
-                                                  Offset(0, 8 * (1 - value)),
-                                              child: Opacity(
-                                                opacity: value,
-                                                child: Text(
-                                                  _getCurrentGreeting(),
-                                                  style: BauhausDesign
-                                                          .getTextTheme(context)
-                                                      .bodyMedium
-                                                      ?.copyWith(
-                                                        color: BauhausDesign
-                                                            .surfaceWhite,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(
-                                          height: BauhausDesign.space1),
-                                      TweenAnimationBuilder<double>(
-                                        duration:
-                                            const Duration(milliseconds: 800),
-                                        tween: Tween(begin: 0.0, end: 1.0),
-                                        builder: (context, value, child) {
-                                          return Transform.translate(
-                                            offset:
-                                                Offset(0, 12 * (1 - value)),
-                                            child: Opacity(
-                                              opacity: value,
-                                              child: Text(
-                                                '$firstName $lastName',
-                                                style: BauhausDesign
-                                                        .getTextTheme(context)
-                                                    .headlineMedium
-                                                    ?.copyWith(
-                                                      color: BauhausDesign
-                                                          .surfaceWhite,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      letterSpacing: -0.5,
-                                                      height: 1.1,
-                                                      fontSize: isSmallScreen ? 24 : 32, // Smaller font for small screens
-                                                    ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(
-                                          height: BauhausDesign.space2),
-                                        TweenAnimationBuilder<double>(
-                                          duration: const Duration(
-                                              milliseconds: 1000),
-                                          tween: Tween(begin: 0.0, end: 1.0),
-                                          builder: (context, value, child) {
-                                            return Transform.translate(
-                                              offset:
-                                                  Offset(0, 15 * (1 - value)),
-                                              child: Opacity(
-                                                opacity: value,
-                                                child: Row(
-                                                  children: [
-                                                    _buildQuickStat(
-                                                        context,
-                                                        'Active',
-                                                        (businessStats[
-                                                                    'activeInvoices'] ??
-                                                                0)
-                                                            .toString(),
-                                                        Icons.trending_up),
-                                                    const SizedBox(
-                                                        width: BauhausDesign
-                                                            .space4),
-                                                    _buildQuickStat(
-                                                        context,
-                                                        'Pending',
-                                                        (businessStats[
-                                                                    'pendingInvoices'] ??
-                                                                0)
-                                                            .toString(),
-                                                        Icons.schedule),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const Spacer(),
-                      AnimatedBuilder(
-                        animation: _headerAnimationController,
-                        builder: (context, child) {
-                          return Transform.translate(
-                            offset: Offset(
-                              0,
-                              (isSmallScreen ? 10 : 20) * (1 - _headerAnimationController.value),
-                            ),
-                            child: Opacity(
-                              opacity: _headerAnimationController.value,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: BauhausDesign.surfaceWhite,
-                                      borderRadius: BorderRadius.circular(
-                                          BauhausDesign.radiusLg),
-                                      border: Border.all(
-                                        color: BauhausDesign.neutral,
-                                        width: 1.5,
-                                      ),
-                                      boxShadow: const [
-                                        BauhausDesign.shadowHardSm,
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          width: 10,
-                                          height: 10,
-                                          decoration: BoxDecoration(
-                                            color: BauhausDesign.success,
-                                            shape:
-                                                BoxShape.rectangle, // Geometric
-                                            border: Border.all(
-                                                color: BauhausDesign.neutral,
-                                                width: 1),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                            width: BauhausDesign.space2),
-                                        Text(
-                                          AppLocalizations.of(context)!
-                                              .adminActive,
-                                          style: BauhausDesign.getTextTheme(
-                                                  context)
-                                              .labelSmall
-                                              ?.copyWith(
-                                                color: BauhausDesign.neutral,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: BauhausDesign.accent,
-                                      borderRadius: BorderRadius.circular(
-                                          BauhausDesign.radiusMd),
-                                      border: Border.all(
-                                        color: BauhausDesign.neutral,
-                                        width: 2,
-                                      ),
-                                      boxShadow: const [
-                                        BauhausDesign.shadowHard,
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.add_rounded,
-                                      color: BauhausDesign.neutral,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -699,7 +807,8 @@ class _AdminDashboardViewControllerState
                     color: BauhausDesign.backgroundLight,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 10), // Reduced top padding
+                    padding: const EdgeInsets.fromLTRB(
+                        24, 20, 24, 10), // Reduced top padding
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -914,8 +1023,7 @@ class _AdminDashboardViewControllerState
                               AssetsStrings.cardImageGirl,
                               fit: BoxFit.contain,
                             ),
-                            gradientStartColor: BauhausDesign
-                                .secondary, // Solid color by matching start/end
+                            gradientStartColor: BauhausDesign.secondary,
                             gradientEndColor: BauhausDesign.secondary,
                             onPressed: () => Navigator.push(
                               context,
@@ -971,6 +1079,431 @@ class _AdminDashboardViewControllerState
   }
 
   Widget _buildQuickActionsSliver() {
+    final l10n = AppLocalizations.of(context)!;
+
+    final categories = <CommandCategory>[
+      // Invoice Management
+      CommandCategory(
+        title: 'Invoice Operations',
+        headerIcon: Icons.receipt_long_rounded,
+        accentColor: BauhausDesign.primary,
+        actions: [
+          CommandAction(
+            icon: const Icon(Icons.add_circle_outline_rounded),
+            title: l10n.addClientButton,
+            subtitle: 'Generate invoice for selected employees',
+            color: BauhausDesign.primary,
+            onTap: _navigateToEmployeeSelection,
+          ),
+          CommandAction(
+            icon: const Icon(Icons.person_outline_rounded),
+            title: 'Employee Invoice',
+            subtitle: 'Individual employee invoicing',
+            color: BauhausDesign.secondary,
+            onTap: _navigateToEmployeeInvoice,
+          ),
+          CommandAction(
+            icon: const Icon(Icons.auto_awesome_rounded),
+            title: 'Auto Invoices',
+            subtitle: 'Automatic invoice generation',
+            color: BauhausDesign.accent,
+            onTap: _navigateToAutomaticInvoiceGeneration,
+          ),
+          CommandAction(
+            icon: const Icon(Icons.dashboard_customize_rounded),
+            title: 'Enhanced Invoice',
+            subtitle: 'Advanced invoicing features',
+            color: BauhausDesign.success,
+            onTap: _navigateToEnhancedInvoice,
+          ),
+          CommandAction(
+            icon: const Icon(Icons.list_alt_rounded),
+            title: 'Invoice List',
+            subtitle: 'View all generated invoices',
+            color: BauhausDesign.info,
+            onTap: _navigateToInvoiceList,
+          ),
+        ],
+      ),
+
+      // Training & Compliance
+      CommandCategory(
+        title: l10n.trainingCompliance,
+        headerIcon: Icons.school_rounded,
+        accentColor: BauhausDesign.accent,
+        actions: [
+          CommandAction(
+            icon: const Icon(Icons.verified_user),
+            title: l10n.auditCertifications,
+            subtitle: l10n.auditCertificationsDesc,
+            color: BauhausDesign.warning,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const AdminCertificationAuditView()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.rule_folder_rounded),
+            title: 'Certification Requirements',
+            subtitle: 'Manage required employee certifications',
+            color: BauhausDesign.info,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) =>
+                      const AdminCertificationRequirementsView()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.model_training_rounded),
+            title: l10n.manageTraining,
+            subtitle: l10n.manageTrainingDesc,
+            color: BauhausDesign.secondary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const AdminTrainingManagementView()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.checklist_rounded),
+            title: l10n.complianceChecklists,
+            subtitle: l10n.complianceChecklistsDesc,
+            color: BauhausDesign.primary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const AdminComplianceManagementView()),
+            ),
+          ),
+        ],
+      ),
+
+      // Organization Management
+      CommandCategory(
+        title: l10n.organizationManagement,
+        headerIcon: Icons.business_rounded,
+        accentColor: BauhausDesign.secondary,
+        actions: [
+          CommandAction(
+            icon: const Icon(Icons.calendar_month_rounded),
+            title: l10n.scheduleTitle,
+            subtitle: 'Manage shifts and assignments',
+            color: BauhausDesign.secondary,
+            onTap: _navigateToScheduleDashboard,
+          ),
+          CommandAction(
+            icon: const Icon(Icons.assignment_ind_rounded),
+            title: l10n.requestsDashboard,
+            subtitle: l10n.requestsDashboardDesc,
+            color: BauhausDesign.warning,
+            onTap: () => Navigator.of(context, rootNavigator: true)
+                .pushNamed(Routes.adminRequests),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.celebration_rounded),
+            title: l10n.holidayList,
+            subtitle: l10n.holidayListDesc,
+            color: BauhausDesign.accent,
+            onTap: () => _navigateToHolidayList(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.work_outline_rounded),
+            title: l10n.viewAssignments,
+            subtitle: l10n.viewAssignmentsDesc,
+            color: BauhausDesign.primary,
+            onTap: () => _navigateToAssignments(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.location_on_outlined),
+            title: l10n.employeeTracking,
+            subtitle: l10n.employeeTrackingDesc,
+            color: BauhausDesign.info,
+            onTap: () => _navigateToEmployeeTracking(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.directions_car_filled_rounded),
+            title: l10n.mileageAdmin,
+            subtitle: l10n.mileageAdminDesc,
+            color: BauhausDesign.secondary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AdminMileageDashboard(),
+              ),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.rate_review_outlined),
+            title: 'Client Feedback',
+            subtitle: 'View service ratings and comments',
+            color: BauhausDesign.accent,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AdminFeedbackFeedView(),
+              ),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.person_add_alt_1_rounded),
+            title: 'Onboarding',
+            subtitle: 'Review pending onboardings',
+            color: BauhausDesign.success,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AdminOnboardingListView(),
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      // Advanced Intelligence & Optimization
+      CommandCategory(
+        title: 'Intelligence & Automation',
+        headerIcon: Icons.psychology_rounded,
+        accentColor: BauhausDesign.success,
+        actions: [
+          CommandAction(
+            icon: const Icon(Icons.analytics_outlined),
+            title: 'Predictive Analytics',
+            subtitle: 'Churn, demand forecasts, compliance risk',
+            color: BauhausDesign.primary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const EnhancedPredictiveInsightsView()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.playlist_add_check),
+            title: 'Bulk Actions',
+            subtitle: 'Mass approve, invoice, and assign',
+            color: BauhausDesign.secondary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const BulkActionsView()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.calendar_today_outlined),
+            title: 'Smart Scheduling',
+            subtitle: 'AI shift matching & route optimization',
+            color: BauhausDesign.accent,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => AutoScheduleDashboard(
+                        organizationId: widget.organizationId,
+                      )),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.receipt_long_outlined),
+            title: 'Smart Invoicing',
+            subtitle: 'AI error detection & payment predictions',
+            color: BauhausDesign.primary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => InvoiceAIDashboard(
+                        organizationId: widget.organizationId,
+                      )),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.verified_user_outlined),
+            title: 'Compliance Automation',
+            subtitle: 'Automated scanning and alerts',
+            color: BauhausDesign.success,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ComplianceAutomationDashboard(
+                        organizationId: widget.organizationId,
+                      )),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.receipt_outlined),
+            title: 'Smart Expenses',
+            subtitle: 'Receipt scanning with AI categorization',
+            color: BauhausDesign.warning,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => SmartExpenseDashboard(
+                        organizationId: widget.organizationId,
+                      )),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.payments_outlined),
+            title: 'Advanced Payroll',
+            subtitle: 'Award rates & penalty calculations',
+            color: BauhausDesign.success,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => AdvancedPayrollDashboard(
+                        organizationId: widget.organizationId,
+                        userId: widget.email,
+                      )),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.forum_outlined),
+            title: 'Communication Hub',
+            subtitle: 'Multi-channel messaging & broadcasts',
+            color: BauhausDesign.secondary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => CommunicationHubDashboard(
+                        userId: widget.email,
+                      )),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.real_estate_agent_outlined),
+            title: 'Real-Time Portal',
+            subtitle: 'Live tracking & service confirmations',
+            color: BauhausDesign.accent,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const RealtimePortalDashboard()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.insights_rounded),
+            title: 'Workforce Optimization',
+            subtitle: 'AI planning & business intelligence',
+            color: BauhausDesign.secondary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const WorkforceOptimizationDashboard()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.psychology_outlined),
+            title: 'Care Intelligence',
+            subtitle: 'AI risk prediction & care planning',
+            color: BauhausDesign.primary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const CareIntelligenceDashboard()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.trending_up_rounded),
+            title: 'Financial Intelligence',
+            subtitle: 'Revenue forecasting & pricing optimization',
+            color: BauhausDesign.accent,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const FinancialIntelligenceDashboard()),
+            ),
+          ),
+        ],
+      ),
+
+      // Configuration & Finance
+      CommandCategory(
+        title: l10n.configFinance,
+        headerIcon: Icons.settings_rounded,
+        accentColor: BauhausDesign.neutral,
+        actions: [
+          CommandAction(
+            icon: const Icon(Icons.bar_chart_rounded),
+            title: l10n.workforceAnalytics,
+            subtitle: l10n.workforceAnalyticsDesc,
+            color: BauhausDesign.accent,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AnalyticsDashboardView()),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.email_outlined),
+            title: l10n.emailSettings,
+            subtitle: l10n.emailSettingsDesc,
+            color: BauhausDesign.error,
+            onTap: () => _navigateToEmailSettings(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.price_change_outlined),
+            title: l10n.pricingManagement,
+            subtitle: l10n.pricingManagementDesc,
+            color: BauhausDesign.primary,
+            onTap: () => _navigateToPricingManagement(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.attach_money_rounded),
+            title: l10n.employeePayRates,
+            subtitle: l10n.employeePayRatesDesc,
+            color: BauhausDesign.secondary,
+            onTap: () => _navigateToEmployeePayRates(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.account_balance_wallet_outlined),
+            title: l10n.earningsDashboard,
+            subtitle: l10n.earningsDashboardDesc,
+            color: BauhausDesign.success,
+            onTap: () => _navigateToEarningsDashboard(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.credit_card_rounded),
+            title: l10n.expenseManagement,
+            subtitle: l10n.expenseManagementDesc,
+            color: BauhausDesign.warning,
+            onTap: () => _navigateToExpenseManagement(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.account_balance_rounded),
+            title: l10n.bankDetails,
+            subtitle: l10n.bankDetailsDesc,
+            color: BauhausDesign.neutral,
+            onTap: () => _navigateToBankDetails(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.rate_review_outlined),
+            title: l10n.clientPricingReview,
+            subtitle: l10n.clientPricingReviewDesc,
+            color: BauhausDesign.success,
+            onTap: () => _navigateToClientPricingReview(),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.security_rounded),
+            title: l10n.apiUsageDashboard,
+            subtitle: l10n.apiUsageDashboardDesc,
+            color: BauhausDesign.primary,
+            onTap: _navigateToApiUsageDashboard,
+          ),
+          CommandAction(
+            icon: const Icon(Icons.download_rounded),
+            title: 'Payroll Export',
+            subtitle: 'Export timesheets for payroll',
+            color: BauhausDesign.accent,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AdminPayrollExportView(
+                  organizationId: widget.organizationId ?? '',
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ];
+
     return SliverToBoxAdapter(
       child: AnimatedBuilder(
         animation: _contentAnimationController,
@@ -988,421 +1521,11 @@ class _AdminDashboardViewControllerState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BauhausSectionHeader(
-                      title: AppLocalizations.of(context)!.quickActions,
-                      subtitle: AppLocalizations.of(context)!.quickActionsDesc,
+                      title: 'Command Center',
+                      subtitle: 'Use tabs to jump between admin workflows',
                     ),
                     const SizedBox(height: BauhausDesign.space6),
-
-                    // Invoice Management Section - Bauhaus Grid
-                    BauhausInvoiceGrid(
-                      onGenerateInvoice: _navigateToEmployeeSelection,
-                      onEmployeeInvoice: _navigateToEmployeeInvoice,
-                      onAllInvoices: _navigateToAutomaticInvoiceGeneration,
-                      onEnhancedInvoice: _navigateToEnhancedInvoice,
-                      onInvoiceList: _navigateToInvoiceList,
-                    ),
-
-                    const SizedBox(height: BauhausDesign.space6),
-
-                    // Training & Compliance Section
-                    _buildActionCategorySection(
-                      AppLocalizations.of(context)!.trainingCompliance,
-                      [
-                        BauhausActionTile(
-                          icon: const Icon(Icons.verified_user),
-                          title:
-                              AppLocalizations.of(context)!.auditCertifications,
-                          subtitle: AppLocalizations.of(context)!
-                              .auditCertificationsDesc,
-                          color: BauhausDesign.warning,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const AdminCertificationAuditView()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-mail-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!.manageTraining,
-                          subtitle:
-                              AppLocalizations.of(context)!.manageTrainingDesc,
-                          color: BauhausDesign.secondary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const AdminTrainingManagementView()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!
-                              .complianceChecklists,
-                          subtitle: AppLocalizations.of(context)!
-                              .complianceChecklistsDesc,
-                          color: BauhausDesign.primary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const AdminComplianceManagementView()),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: BauhausDesign.space6),
-
-                    // Organization Management Section
-                    _buildActionCategorySection(
-                      AppLocalizations.of(context)!.organizationManagement,
-                      [
-                        BauhausActionTile(
-                          icon: const Icon(Icons.calendar_month_rounded),
-                          title: AppLocalizations.of(context)!.scheduleTitle,
-                          subtitle: 'Manage shifts and assignments',
-                          color: BauhausDesign.secondary,
-                          onTap: _navigateToScheduleDashboard,
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.assignment_ind_rounded),
-                          title:
-                              AppLocalizations.of(context)!.requestsDashboard,
-                          subtitle: AppLocalizations.of(context)!
-                              .requestsDashboardDesc,
-                          color: BauhausDesign.warning,
-                          onTap: () =>
-                              Navigator.of(context, rootNavigator: true)
-                                  .pushNamed(Routes.adminRequests),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-calendar-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!.holidayList,
-                          subtitle:
-                              AppLocalizations.of(context)!.holidayListDesc,
-                          color: BauhausDesign.secondary,
-                          onTap: () => _navigateToHolidayList(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-tools-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!.viewAssignments,
-                          subtitle:
-                              AppLocalizations.of(context)!.viewAssignmentsDesc,
-                          color: BauhausDesign.primary,
-                          onTap: () => _navigateToAssignments(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-clock-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!.employeeTracking,
-                          subtitle: AppLocalizations.of(context)!
-                              .employeeTrackingDesc,
-                          color: BauhausDesign.primary,
-                          onTap: () => _navigateToEmployeeTracking(),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.directions_car_filled_rounded),
-                          title: AppLocalizations.of(context)!.mileageAdmin,
-                          subtitle:
-                              AppLocalizations.of(context)!.mileageAdminDesc,
-                          color: BauhausDesign.secondary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const AdminMileageDashboard(),
-                            ),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.person_add_alt_1_rounded),
-                          title: 'Onboarding', 
-                          subtitle: 'Review pending onboardings',
-                          color: BauhausDesign.primary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const AdminOnboardingListView(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: BauhausDesign.space6),
-
-                    // Advanced Intelligence & Optimization Section
-                    _buildActionCategorySection(
-                      'ADVANCED INTELLIGENCE & OPTIMIZATION',
-                      [
-                        BauhausActionTile(
-                          icon: const Icon(Icons.analytics_outlined),
-                          title: 'Predictive Analytics',
-                          subtitle: 'Worker churn, demand forecasts, and compliance risk predictions',
-                          color: BauhausDesign.primary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const EnhancedPredictiveInsightsView()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.playlist_add_check),
-                          title: 'Bulk Actions',
-                          subtitle: 'Approve timesheets, generate invoices, assign shifts in bulk',
-                          color: BauhausDesign.secondary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const BulkActionsView()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.calendar_today_outlined),
-                          title: 'Smart Scheduling',
-                          subtitle: 'AI-powered shift matching and auto-scheduling with route optimization',
-                          color: BauhausDesign.secondary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => AutoScheduleDashboard(
-                                      organizationId: widget.organizationId,
-                                    )),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.receipt_long_outlined),
-                          title: 'Smart Invoicing',
-                          subtitle: 'Auto-generate invoices with AI error detection and payment predictions',
-                          color: BauhausDesign.primary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => InvoiceAIDashboard(
-                                      organizationId: widget.organizationId,
-                                    )),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.verified_user_outlined),
-                          title: 'Compliance Automation',
-                          subtitle: 'Automated compliance scanning and alerts',
-                          color: BauhausDesign.success,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => ComplianceAutomationDashboard(
-                                      organizationId: widget.organizationId,
-                                    )),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.receipt_outlined),
-                          title: 'Smart Expenses',
-                          subtitle: 'Receipt scanning with AI categorization',
-                          color: BauhausDesign.warning,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => SmartExpenseDashboard(
-                                      organizationId: widget.organizationId,
-                                    )),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.payments_outlined),
-                          title: 'Advanced Payroll',
-                          subtitle: 'Smart payroll calculations with award rates and penalties',
-                          color: BauhausDesign.success,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => AdvancedPayrollDashboard(
-                                      organizationId: widget.organizationId,
-                                      userId: widget.email,
-                                    )),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.forum_outlined),
-                          title: 'Communication Hub',
-                          subtitle: 'Multi-channel messaging with templates and broadcasts',
-                          color: BauhausDesign.secondary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => CommunicationHubDashboard(
-                                      userId: widget.email,
-                                    )),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.real_estate_agent_outlined),
-                          title: 'Real-Time Portal',
-                          subtitle: 'Live tracking, secure messaging, and digital service confirmations',
-                          color: BauhausDesign.accent,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const RealtimePortalDashboard()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.analytics_outlined),
-                          title: 'Workforce Optimization',
-                          subtitle: 'AI-powered planning, analytics, and business intelligence',
-                          color: BauhausDesign.secondary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const WorkforceOptimizationDashboard()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.psychology_outlined),
-                          title: 'Care Intelligence',
-                          subtitle: 'AI-powered risk prediction, care planning, and incident management',
-                          color: BauhausDesign.primary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const CareIntelligenceDashboard()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.trending_up_rounded),
-                          title: 'Financial Intelligence',
-                          subtitle: 'AI-powered revenue forecasting, pricing optimization, and predictive analytics',
-                          color: BauhausDesign.accent,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    const FinancialIntelligenceDashboard()),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: BauhausDesign.space6),
-
-                    // Configuration & Finance Section
-                    _buildActionCategorySection(
-                      AppLocalizations.of(context)!.configFinance,
-                      [
-                        BauhausActionTile(
-                          icon: const Icon(Icons.bar_chart_rounded),
-                          title:
-                              AppLocalizations.of(context)!.workforceAnalytics,
-                          subtitle: AppLocalizations.of(context)!
-                              .workforceAnalyticsDesc,
-                          color: BauhausDesign.accent,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const AnalyticsDashboardView()),
-                          ),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-mail-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!.emailSettings,
-                          subtitle:
-                              AppLocalizations.of(context)!.emailSettingsDesc,
-                          color: BauhausDesign.error,
-                          onTap: () => _navigateToEmailSettings(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
-                          title:
-                              AppLocalizations.of(context)!.pricingManagement,
-                          subtitle: AppLocalizations.of(context)!
-                              .pricingManagementDesc,
-                          color: BauhausDesign.primary,
-                          onTap: () => _navigateToPricingManagement(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!.employeePayRates,
-                          subtitle: AppLocalizations.of(context)!
-                              .employeePayRatesDesc,
-                          color: BauhausDesign.secondary,
-                          onTap: () => _navigateToEmployeePayRates(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
-                          title:
-                              AppLocalizations.of(context)!.earningsDashboard,
-                          subtitle: AppLocalizations.of(context)!
-                              .earningsDashboardDesc,
-                          color: BauhausDesign.success,
-                          onTap: () => _navigateToEarningsDashboard(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-credit-card-dynamic-premium.png'),
-                          title:
-                              AppLocalizations.of(context)!.expenseManagement,
-                          subtitle: AppLocalizations.of(context)!
-                              .expenseManagementDesc,
-                          color: BauhausDesign.success,
-                          onTap: () => _navigateToExpenseManagement(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/3D Icons/3dicons-money-dynamic-color.png'),
-                          title: AppLocalizations.of(context)!.bankDetails,
-                          subtitle:
-                              AppLocalizations.of(context)!.bankDetailsDesc,
-                          color: BauhausDesign.neutral,
-                          onTap: () => _navigateToBankDetails(),
-                        ),
-                        BauhausActionTile(
-                          icon: Image.asset(
-                              'assets/icons/profile_placeholder.png'),
-                          title:
-                              AppLocalizations.of(context)!.clientPricingReview,
-                          subtitle: AppLocalizations.of(context)!
-                              .clientPricingReviewDesc,
-                          color: BauhausDesign.success,
-                          onTap: () => _navigateToClientPricingReview(),
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.security_rounded),
-                          title:
-                              AppLocalizations.of(context)!.apiUsageDashboard,
-                          subtitle: AppLocalizations.of(context)!
-                              .apiUsageDashboardDesc,
-                          color: BauhausDesign.primary,
-                          onTap: _navigateToApiUsageDashboard,
-                        ),
-                        BauhausActionTile(
-                          icon: const Icon(Icons.download_rounded),
-                          title: 'Payroll Export',
-                          subtitle: 'Export timesheets for payroll',
-                          color: BauhausDesign.accent,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => AdminPayrollExportView(
-                                organizationId: widget.organizationId ?? '',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    BauhausCommandCenter(categories: categories),
                   ],
                 ),
               ),
@@ -1443,263 +1566,6 @@ class _AdminDashboardViewControllerState
         builder: (context) => EarningsDashboardView(
           organizationId: widget.organizationId,
           organizationName: widget.organizationName,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionCategorySection(String title, List<Widget> actions) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
-              ),
-        ),
-        const SizedBox(height: BauhausDesign.space4),
-        ...actions,
-      ],
-    );
-  }
-
-  Widget _buildActionCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double scale = (screenWidth / 375.0).clamp(0.95, 1.25);
-    final double tileRadius = (16.0 * scale).clamp(14.0, 20.0);
-    // Use slightly larger container size for Material Icons vs Image Assets to maintain visual balance
-    final double iconContainerSize = (64.0 * scale).clamp(56.0, 84.0);
-    final double iconSize = (32.0 * scale).clamp(24.0, 40.0);
-    final double chevronContainerSize = (32.0 * scale).clamp(28.0, 40.0);
-    final double chevronIconSize = (20.0 * scale).clamp(18.0, 24.0);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(tileRadius),
-          child: Container(
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              boxShadow: const [
-                BauhausDesign.shadowHard,
-              ],
-              border: Border.all(
-                color: BauhausDesign.neutral,
-                width: 2,
-              ),
-            ),
-            padding: EdgeInsets.symmetric(
-                horizontal: 16 * scale, vertical: 14 * scale),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: iconContainerSize,
-                  height: iconContainerSize,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 1.5,
-                    ),
-                    boxShadow: const [
-                      BauhausDesign.shadowHardSm,
-                    ],
-                  ),
-                  child: Icon(
-                    icon,
-                    color: BauhausDesign.surfaceLight,
-                    size: iconSize,
-                  ),
-                ),
-                const SizedBox(width: BauhausDesign.space4),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: BauhausDesign.textDark,
-                              letterSpacing: -0.5,
-                            ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              color: BauhausDesign.neutral,
-                              fontWeight: FontWeight.w500,
-                              height: 1.25,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Container(
-                  width: chevronContainerSize,
-                  height: chevronContainerSize,
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    color: BauhausDesign.neutral,
-                    size: chevronIconSize,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImageActionTile({
-    required String asset,
-    required String title,
-    required String subtitle,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double scale = (screenWidth / 375.0).clamp(0.95, 1.25);
-    final double tileRadius = (16.0 * scale).clamp(14.0, 20.0);
-    final double iconContainerSize = (64.0 * scale).clamp(56.0, 84.0);
-    final double iconSize = (44.0 * scale).clamp(36.0, 56.0);
-    final double chevronContainerSize = (32.0 * scale).clamp(28.0, 40.0);
-    final double chevronIconSize = (20.0 * scale).clamp(18.0, 24.0);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(tileRadius),
-          child: Container(
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              boxShadow: const [
-                BauhausDesign.shadowHard,
-              ],
-              border: Border.all(
-                color: BauhausDesign.neutral,
-                width: 2,
-              ),
-            ),
-            padding: EdgeInsets.symmetric(
-                horizontal: 16 * scale, vertical: 14 * scale),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: iconContainerSize,
-                  height: iconContainerSize,
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceLight,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 1.5,
-                    ),
-                    boxShadow: const [
-                      BauhausDesign.shadowHardSm,
-                    ],
-                  ),
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    asset,
-                    width: iconSize,
-                    height: iconSize,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(
-                        Icons.image_not_supported_outlined,
-                        size: iconSize,
-                        color: BauhausDesign.neutral,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: BauhausDesign.space4),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: BauhausDesign.textDark,
-                              letterSpacing: -0.5,
-                            ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              color: BauhausDesign.neutral,
-                              fontWeight: FontWeight.w500,
-                              height: 1.25,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Container(
-                  width: chevronContainerSize,
-                  height: chevronContainerSize,
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    color: BauhausDesign.neutral,
-                    size: chevronIconSize,
-                  ),
-                )
-              ],
-            ),
-          ),
         ),
       ),
     );

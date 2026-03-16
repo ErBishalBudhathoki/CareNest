@@ -25,6 +25,8 @@ mixin _$Certification {
   String get userId => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get issuer => throw _privateConstructorUsedError;
+  String? get certificationNumber => throw _privateConstructorUsedError;
+  String? get requirementId => throw _privateConstructorUsedError;
   String get fileUrl => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   DateTime get expiryDate => throw _privateConstructorUsedError;
@@ -50,6 +52,8 @@ abstract class $CertificationCopyWith<$Res> {
       String userId,
       String name,
       String issuer,
+      String? certificationNumber,
+      String? requirementId,
       String fileUrl,
       String status,
       DateTime expiryDate,
@@ -76,6 +80,8 @@ class _$CertificationCopyWithImpl<$Res, $Val extends Certification>
     Object? userId = null,
     Object? name = null,
     Object? issuer = null,
+    Object? certificationNumber = freezed,
+    Object? requirementId = freezed,
     Object? fileUrl = null,
     Object? status = null,
     Object? expiryDate = null,
@@ -101,6 +107,14 @@ class _$CertificationCopyWithImpl<$Res, $Val extends Certification>
           ? _value.issuer
           : issuer // ignore: cast_nullable_to_non_nullable
               as String,
+      certificationNumber: freezed == certificationNumber
+          ? _value.certificationNumber
+          : certificationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      requirementId: freezed == requirementId
+          ? _value.requirementId
+          : requirementId // ignore: cast_nullable_to_non_nullable
+              as String?,
       fileUrl: null == fileUrl
           ? _value.fileUrl
           : fileUrl // ignore: cast_nullable_to_non_nullable
@@ -146,6 +160,8 @@ abstract class _$$CertificationImplCopyWith<$Res>
       String userId,
       String name,
       String issuer,
+      String? certificationNumber,
+      String? requirementId,
       String fileUrl,
       String status,
       DateTime expiryDate,
@@ -170,6 +186,8 @@ class __$$CertificationImplCopyWithImpl<$Res>
     Object? userId = null,
     Object? name = null,
     Object? issuer = null,
+    Object? certificationNumber = freezed,
+    Object? requirementId = freezed,
     Object? fileUrl = null,
     Object? status = null,
     Object? expiryDate = null,
@@ -195,6 +213,14 @@ class __$$CertificationImplCopyWithImpl<$Res>
           ? _value.issuer
           : issuer // ignore: cast_nullable_to_non_nullable
               as String,
+      certificationNumber: freezed == certificationNumber
+          ? _value.certificationNumber
+          : certificationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      requirementId: freezed == requirementId
+          ? _value.requirementId
+          : requirementId // ignore: cast_nullable_to_non_nullable
+              as String?,
       fileUrl: null == fileUrl
           ? _value.fileUrl
           : fileUrl // ignore: cast_nullable_to_non_nullable
@@ -235,6 +261,8 @@ class _$CertificationImpl implements _Certification {
       required this.userId,
       required this.name,
       required this.issuer,
+      this.certificationNumber,
+      this.requirementId,
       required this.fileUrl,
       this.status = 'Pending',
       required this.expiryDate,
@@ -256,6 +284,10 @@ class _$CertificationImpl implements _Certification {
   @override
   final String issuer;
   @override
+  final String? certificationNumber;
+  @override
+  final String? requirementId;
+  @override
   final String fileUrl;
   @override
   @JsonKey()
@@ -273,7 +305,7 @@ class _$CertificationImpl implements _Certification {
 
   @override
   String toString() {
-    return 'Certification(id: $id, userId: $userId, name: $name, issuer: $issuer, fileUrl: $fileUrl, status: $status, expiryDate: $expiryDate, uploadedAt: $uploadedAt, auditedBy: $auditedBy, auditDate: $auditDate, notes: $notes)';
+    return 'Certification(id: $id, userId: $userId, name: $name, issuer: $issuer, certificationNumber: $certificationNumber, requirementId: $requirementId, fileUrl: $fileUrl, status: $status, expiryDate: $expiryDate, uploadedAt: $uploadedAt, auditedBy: $auditedBy, auditDate: $auditDate, notes: $notes)';
   }
 
   @override
@@ -285,6 +317,10 @@ class _$CertificationImpl implements _Certification {
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.issuer, issuer) || other.issuer == issuer) &&
+            (identical(other.certificationNumber, certificationNumber) ||
+                other.certificationNumber == certificationNumber) &&
+            (identical(other.requirementId, requirementId) ||
+                other.requirementId == requirementId) &&
             (identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.expiryDate, expiryDate) ||
@@ -301,7 +337,8 @@ class _$CertificationImpl implements _Certification {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, userId, name, issuer,
-      fileUrl, status, expiryDate, uploadedAt, auditedBy, auditDate, notes);
+      certificationNumber, requirementId, fileUrl, status, expiryDate,
+      uploadedAt, auditedBy, auditDate, notes);
 
   @JsonKey(ignore: true)
   @override
@@ -323,6 +360,8 @@ abstract class _Certification implements Certification {
       required final String userId,
       required final String name,
       required final String issuer,
+      final String? certificationNumber,
+      final String? requirementId,
       required final String fileUrl,
       final String status,
       required final DateTime expiryDate,
@@ -343,6 +382,10 @@ abstract class _Certification implements Certification {
   String get name;
   @override
   String get issuer;
+  @override
+  String? get certificationNumber;
+  @override
+  String? get requirementId;
   @override
   String get fileUrl;
   @override
