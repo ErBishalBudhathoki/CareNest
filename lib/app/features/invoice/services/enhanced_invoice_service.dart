@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math' as math;
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,6 @@ import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/core/services/file_upload_service.dart';
 import 'package:carenest/app/features/invoice/services/invoice_pdf_generator_service.dart';
 import 'package:carenest/app/features/invoice/services/invoice_email_service.dart';
-import 'package:carenest/app/features/invoice/services/invoice_number_generator_service.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_data_processor.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_helpers.dart';
 import 'package:carenest/app/features/invoice/repositories/invoice_repository.dart';
@@ -73,17 +74,19 @@ class EnhancedInvoiceService {
     _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
   }
 
-  EnhancedInvoiceService(this.ref, this._apiMethod, {
-    InvoiceDataProcessor? dataProcessor, 
+  EnhancedInvoiceService(
+    this.ref,
+    this._apiMethod, {
+    InvoiceDataProcessor? dataProcessor,
     MileageRepository? mileageRepository,
-  })
-      : _repository = InvoiceRepository(_apiMethod),
+  })  : _repository = InvoiceRepository(_apiMethod),
         _helpers = InvoiceHelpers(),
         _emailService = InvoiceEmailService(apiMethod: _apiMethod),
         _dataProcessor = dataProcessor ?? InvoiceDataProcessor(ref),
         _pdfGenerator = InvoicePdfGenerator(api: _apiMethod),
         _fileUploadService = FileUploadService(api: _apiMethod),
-        _mileageRepository = mileageRepository ?? MileageRepository(_apiMethod) {
+        _mileageRepository =
+            mileageRepository ?? MileageRepository(_apiMethod) {
     // Set the enhanced service reference after initialization
     _dataProcessor.setEnhancedInvoiceService(this);
   }
@@ -104,6 +107,126 @@ class EnhancedInvoiceService {
     if (value is num) return value.toDouble();
     if (value is String) return double.tryParse(value) ?? defaultValue;
     return defaultValue;
+  }
+
+  Map<String, String> _extractBankDetailsFromMap(
+      Map<String, dynamic> source) {
+    final merged = <String, dynamic>{}..addAll(source);
+    for (final key in const [
+      'bankDetails',
+      'paymentDetails',
+      'bank',
+      'billing',
+      'invoiceProfile',
+    ]) {
+      final nested = source[key];
+      if (nested is Map) {
+        merged.addAll(Map<String, dynamic>.from(nested));
+      }
+    }
+
+    final bankName =
+        (merged['bankName'] ?? merged['bank'] ?? merged['bank_name'] ?? '')
+            .toString()
+            .trim();
+    final accountName = (merged['accountName'] ??
+            merged['accountHolderName'] ??
+            merged['account_holder_name'] ??
+            '')
+        .toString()
+        .trim();
+    final bsb =
+        (merged['bsb'] ?? merged['BSB'] ?? merged['routingNumber'] ?? '')
+            .toString()
+            .trim();
+    final accountNumber =
+        (merged['accountNumber'] ?? merged['accountNo'] ?? merged['account_number'] ?? '')
+            .toString()
+            .trim();
+
+    if (bankName.isEmpty ||
+        accountName.isEmpty ||
+        bsb.isEmpty ||
+        accountNumber.isEmpty) {
+      return {};
+    }
+
+    return {
+      'bankName': bankName,
+      'accountName': accountName,
+      'bsb': bsb,
+      'accountNumber': accountNumber,
+    };
+  }
+
+  Future<Map<String, String>> _fetchOrganizationBankDetails(
+      String? organizationId) async {
+    if (organizationId == null || organizationId.trim().isEmpty) {
+      return {};
+    }
+
+    try {
+      final resp =
+          await _apiMethod.getOrganizationDetails(organizationId.trim());
+      if (resp['success'] != true) {
+        return {};
+      }
+
+      final rawOrg = resp['organization'] ?? resp['data'];
+      if (rawOrg is! Map) {
+        return {};
+      }
+
+      final Map<String, dynamic> orgMap = Map<String, dynamic>.from(rawOrg);
+      final nestedOrg = orgMap['organization'];
+      final Map<String, dynamic> resolvedOrg = nestedOrg is Map
+          ? Map<String, dynamic>.from(nestedOrg)
+          : orgMap;
+
+      return _extractBankDetailsFromMap(resolvedOrg);
+    } catch (e) {
+      debugPrint('Error fetching organization bank details: $e');
+      return {};
+    }
+  }
+
+  bool _looksLikeDuplicateInvoiceNumberError(Map<String, dynamic> response) {
+    final raw = [
+      response['message'],
+      response['error'],
+      response['details'],
+    ].where((v) => v != null).map((v) => v.toString().toLowerCase()).join(' ');
+
+    return raw.contains('e11000') &&
+        (raw.contains('invoice') || raw.contains('invoicenumber'));
+  }
+
+  List<String> _dedupePdfPaths(List<String> paths) {
+    final seen = <String>{};
+    final deduped = <String>[];
+    for (final path in paths) {
+      final normalized = path.trim();
+      if (normalized.isEmpty) continue;
+      if (seen.add(normalized)) {
+        deduped.add(normalized);
+      }
+    }
+    return deduped;
+  }
+
+  Future<String?> _encodePdfAsBase64(String? pdfPath) async {
+    try {
+      final normalizedPath = pdfPath?.trim() ?? '';
+      if (normalizedPath.isEmpty) return null;
+      final file = File(normalizedPath);
+      if (!await file.exists()) return null;
+      final bytes = await file.readAsBytes();
+      if (bytes.isEmpty) return null;
+      return base64Encode(bytes);
+    } catch (e) {
+      debugPrint('Failed to encode invoice PDF to base64: $e');
+      return null;
+    }
   }
 
   String _composeAddress(dynamic address) {
@@ -579,6 +702,7 @@ class EnhancedInvoiceService {
             clientEmail: clientEmail,
             startDate: effectiveStart?.toIso8601String(),
             endDate: effectiveEnd?.toIso8601String(),
+            invoiceType: invoiceType,
           );
           lineItems = List<dynamic>.from(invoiceData['lineItems'] ?? []);
           expenses = List<dynamic>.from(invoiceData['expenses'] ?? []);
@@ -819,23 +943,40 @@ class EnhancedInvoiceService {
         for (var invoice in _invoices) {
           invoice['recurrence'] = recurrence;
           // Calculate next date based on frequency
-          final issueDate = _tryParseDateFlexible(invoice['issueDate'] as String?) ?? DateTime.now();
+          final issueDate =
+              _tryParseDateFlexible(invoice['issueDate'] as String?) ??
+                  DateTime.now();
           DateTime nextDate = issueDate;
           switch (recurrence['frequency']) {
-            case 'weekly': nextDate = nextDate.add(const Duration(days: 7)); break;
-            case 'fortnightly': nextDate = nextDate.add(const Duration(days: 14)); break;
-            case 'monthly': nextDate = DateTime(nextDate.year, nextDate.month + 1, nextDate.day); break;
-            case 'quarterly': nextDate = DateTime(nextDate.year, nextDate.month + 3, nextDate.day); break;
-            case 'annually': nextDate = DateTime(nextDate.year + 1, nextDate.month, nextDate.day); break;
+            case 'weekly':
+              nextDate = nextDate.add(const Duration(days: 7));
+              break;
+            case 'fortnightly':
+              nextDate = nextDate.add(const Duration(days: 14));
+              break;
+            case 'monthly':
+              nextDate =
+                  DateTime(nextDate.year, nextDate.month + 1, nextDate.day);
+              break;
+            case 'quarterly':
+              nextDate =
+                  DateTime(nextDate.year, nextDate.month + 3, nextDate.day);
+              break;
+            case 'annually':
+              nextDate =
+                  DateTime(nextDate.year + 1, nextDate.month, nextDate.day);
+              break;
           }
           // Ensure we don't produce invalid dates (e.g. Feb 30)
-          if (recurrence['frequency'] == 'monthly' || recurrence['frequency'] == 'quarterly' || recurrence['frequency'] == 'annually') {
-             // Basic fix for month overflow is handled by DateTime constructor but day might need clamping
-             // DateTime(2023, 2, 30) -> March 2. 
-             // Ideally we want last day of month if original was last day.
-             // keeping it simple for now as per DateTime behavior.
+          if (recurrence['frequency'] == 'monthly' ||
+              recurrence['frequency'] == 'quarterly' ||
+              recurrence['frequency'] == 'annually') {
+            // Basic fix for month overflow is handled by DateTime constructor but day might need clamping
+            // DateTime(2023, 2, 30) -> March 2.
+            // Ideally we want last day of month if original was last day.
+            // keeping it simple for now as per DateTime behavior.
           }
-          
+
           invoice['recurrence']['nextDate'] = nextDate.toIso8601String();
           invoice['recurrence']['startDate'] = issueDate.toIso8601String();
         }
@@ -906,122 +1047,14 @@ class EnhancedInvoiceService {
         processedData['metadata']['validationSummary'] = validationSummary;
       }
 
-      // Add mileage items if applicable (Client Invoice)
-      if (invoiceType != 'employee') {
-        for (final client in _invoices) {
-          final clientId = client['clientId'];
-          final clientStartStr = client['startDate'];
-          final clientEndStr = client['endDate'];
-          
-          if (clientId != null && clientStartStr != null && clientEndStr != null) {
-             final parsedStart = _tryParseDateFlexible(clientStartStr);
-             final parsedEnd = _tryParseDateFlexible(clientEndStr);
-             
-             if (parsedStart != null && parsedEnd != null) {
-                // Format dates for API: yyyy-MM-dd
-                final apiStart = parsedStart.toIso8601String().split('T')[0];
-                final apiEnd = parsedEnd.toIso8601String().split('T')[0];
-                
-                final trips = await _mileageRepository.getTripsForClient(
-                  clientId, 
-                  startDate: apiStart, 
-                  endDate: apiEnd
-                );
-                
-                // Add trip line items
-                final items = client['items'] as List<dynamic>;
-                
-                // Get Organization Rate or Default
-                // Ideally this comes from organizationId, but let's assume default for now or pass it down
-                // Task: "Extend the Client Invoice generation to bill WITH_CLIENT trips"
-                final rate = 0.99; // Fallback, should be fetched from org settings
-                
-                for (final trip in trips) {
-                   if (trip.tripType == 'WITH_CLIENT' && trip.status == 'APPROVED') {
-                      final amount = trip.distance * rate;
-                      items.add({
-                        'date': trip.date.toIso8601String().split('T')[0],
-                        'description': 'Travel with Client (${trip.startLocation} - ${trip.endLocation})',
-                        'quantity': trip.distance,
-                        'unitPrice': rate,
-                        'amount': amount,
-                        'gst': amount * 0.1, // Assuming GST applies
-                        'total': amount * 1.1,
-                        'ndisItemNumber': '07_001_0106_8_3', // Example Transport Item Code
-                      });
-                   }
-                }
-                
-                // Recalculate totals
-                _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
-             }
-          }
-        }
-      }
-
       // Upload attachments before generating PDFs
       List<String>? uploadedPhotoUrls;
       List<String>? uploadedAdditionalFileUrls;
-
-      // Add mileage items if applicable (Client Invoice)
-      if (invoiceType != 'employee') {
-        for (final client in _invoices) {
-          final clientId = client['clientId'];
-          final clientStartStr = client['startDate'];
-          final clientEndStr = client['endDate'];
-          
-          if (clientId != null && clientStartStr != null && clientEndStr != null) {
-             final parsedStart = _tryParseDateFlexible(clientStartStr);
-             final parsedEnd = _tryParseDateFlexible(clientEndStr);
-             
-             if (parsedStart != null && parsedEnd != null) {
-                // Format dates for API: yyyy-MM-dd
-                final apiStart = parsedStart.toIso8601String().split('T')[0];
-                final apiEnd = parsedEnd.toIso8601String().split('T')[0];
-                
-                final trips = await _mileageRepository.getTripsForClient(
-                  clientId, 
-                  startDate: apiStart, 
-                  endDate: apiEnd
-                );
-                
-                // Add trip line items
-                final items = client['lineItems'] as List<dynamic>; // Assuming lineItems is the key for PDF
-                // NOTE: Check if 'lineItems' or 'items' is used.
-                // The loop above populates 'itemsExceedingPriceCap' from 'lineItems'.
-                // The PDF generator typically uses 'items'. 
-                // Let's check processInvoiceData output. It returns 'items'.
-                // But _checkForMissingPrices uses 'lineItems' inside logic.
-                // Let's assume 'items' is the main list for PDF.
-                
-                final pdfItems = client['items'] as List<dynamic>? ?? [];
-                
-                // Get Organization Rate or Default
-                final rate = 0.99; // Fallback
-                
-                for (final trip in trips) {
-                   if (trip.tripType == 'WITH_CLIENT' && trip.status == 'APPROVED') {
-                      final amount = trip.distance * rate;
-                      pdfItems.add({
-                        'date': trip.date.toIso8601String().split('T')[0],
-                        'description': 'Travel with Client (${trip.startLocation} - ${trip.endLocation})',
-                        'quantity': trip.distance,
-                        'unitPrice': rate,
-                        'amount': amount,
-                        'gst': amount * 0.1, // Assuming GST applies
-                        'total': amount * 1.1,
-                        'ndisItemNumber': '07_001_0106_8_3', // Example Transport Item Code
-                        'isMileage': true,
-                      });
-                   }
-                }
-                
-                // Recalculate totals
-                _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
-             }
-          }
-        }
-      }
+      await _attachMileageToInvoices(
+        invoiceType: invoiceType,
+        applyTax: applyTax,
+        taxRate: taxRate,
+      );
 
       try {
         // Upload photo attachments if provided
@@ -1397,10 +1430,12 @@ class EnhancedInvoiceService {
 
     // Perform bulk pricing lookup if we have NDIS item numbers
     Map<String, dynamic>? bulkPricingData = {};
+    String? resolvedOrganizationId = organizationId;
+    double organizationFallbackBaseRate = 0.0;
     if (ndisItemNumbers.isNotEmpty) {
       try {
         // Get organizationId from parameter, first client, or use a default
-        String? finalOrganizationId = organizationId;
+        String? finalOrganizationId = resolvedOrganizationId;
         if (finalOrganizationId == null && clients.isNotEmpty) {
           final firstClient = clients.first as Map<String, dynamic>;
           finalOrganizationId = firstClient['organizationId'] as String? ??
@@ -1408,6 +1443,7 @@ class EnhancedInvoiceService {
         }
         finalOrganizationId ??=
             'default-org'; // Fallback if no organizationId found
+        resolvedOrganizationId = finalOrganizationId;
 
         debugPrint(
             'Enhanced Invoice Service: About to call getBulkPricingLookup with organizationId: $finalOrganizationId');
@@ -1442,6 +1478,23 @@ class EnhancedInvoiceService {
         debugPrint(
             'Enhanced Invoice Service: Error in bulk pricing lookup: $e');
         bulkPricingData = {};
+      }
+    }
+
+    if (resolvedOrganizationId != null &&
+        resolvedOrganizationId.isNotEmpty &&
+        resolvedOrganizationId != 'default-org') {
+      try {
+        final fallbackRate =
+            await _apiMethod.getFallbackBaseRate(resolvedOrganizationId);
+        if (fallbackRate != null && fallbackRate > 0) {
+          organizationFallbackBaseRate = fallbackRate;
+          debugPrint(
+              'Enhanced Invoice Service: Organization fallback base rate detected: $organizationFallbackBaseRate');
+        }
+      } catch (e) {
+        debugPrint(
+            'Enhanced Invoice Service: Failed to fetch organization fallback base rate: $e');
       }
     }
 
@@ -1712,50 +1765,70 @@ class EnhancedInvoiceService {
 
             // If price is missing, try to use fallback base rate from bulk lookup first
             if (needsPricing) {
-              // Apply organization fallback base rate from bulk pricing if available
+              // Apply pricing in this priority:
+              // 1) Custom rate, 2) Organization/client configured base rate, 3) Organization fallback base rate.
               final fallbackFromBulk = () {
                 try {
                   final cachedPricing = bulkPricingData?[ndisItemNumber];
-                  if (cachedPricing != null) {
+                  final source =
+                      cachedPricing?['source']?.toString().toLowerCase() ?? '';
+                  final isNdisDefaultSource = source == 'ndis_default' ||
+                      source == 'fallback' ||
+                      source == 'standard';
+
+                  double? resolvedRate;
+                  String resolvedSource = l10n.sourceFallbackBaseRate;
+
+                  if (cachedPricing != null && !isNdisDefaultSource) {
                     final priceField = cachedPricing['price'];
                     if (priceField != null) {
                       final parsed = double.tryParse(priceField.toString());
                       if (parsed != null && parsed > 0) {
-                        // Attach price cap if present in bulk data
-                        double? cap;
-                        final priceCapStr =
-                            cachedPricing['priceCap']?.toString();
-                        if (priceCapStr != null &&
-                            priceCapStr.isNotEmpty &&
-                            priceCapStr != 'null') {
-                          cap = double.tryParse(priceCapStr);
-                        }
-
-                        // Clamp to price cap when present
-                        double applied = parsed;
-                        if (cap != null && cap > 0 && applied > cap) {
-                          applied = cap;
-                        }
-                        // Round to 2 decimals
-                        final roundedPrice =
-                            double.parse(applied.toStringAsFixed(2));
-
-                        item['price'] = roundedPrice;
-                        item['pricingSource'] = l10n.sourceFallbackBaseRate;
-                        item['hasCustomPricing'] = false;
-                        if (cap != null) {
-                          item['priceCap'] = cap;
-                          item['exceedsPriceCap'] = roundedPrice > cap;
-                        }
-                        // Recalculate total for this line item
-                        final quantity = item['quantity'] ?? 1;
-                        final qty =
-                            (quantity is num) ? (quantity).toDouble() : 1.0;
-                        item['total'] = double.parse(
-                            (roundedPrice * qty).toStringAsFixed(2));
-                        return true;
+                        resolvedRate = parsed;
+                        resolvedSource = source == 'client_specific'
+                            ? l10n.sourceClientSpecific
+                            : l10n.sourceOrganizationWide;
                       }
                     }
+                  }
+
+                  // If lookup resolves only to NDIS default, prefer organization fallback base rate.
+                  if ((resolvedRate == null || resolvedRate <= 0) &&
+                      organizationFallbackBaseRate > 0) {
+                    resolvedRate = organizationFallbackBaseRate;
+                    resolvedSource = l10n.sourceFallbackBaseRate;
+                  }
+
+                  if (resolvedRate != null && resolvedRate > 0) {
+                    // Attach price cap if present in bulk data and enforce cap check.
+                    double? cap;
+                    final priceCapStr = cachedPricing?['priceCap']?.toString();
+                    if (priceCapStr != null &&
+                        priceCapStr.isNotEmpty &&
+                        priceCapStr != 'null') {
+                      cap = double.tryParse(priceCapStr);
+                    }
+
+                    double applied = resolvedRate;
+                    if (cap != null && cap > 0 && applied > cap) {
+                      applied = cap;
+                    }
+                    final roundedPrice =
+                        double.parse(applied.toStringAsFixed(2));
+
+                    item['price'] = roundedPrice;
+                    item['pricingSource'] = resolvedSource;
+                    item['hasCustomPricing'] = false;
+                    if (cap != null) {
+                      item['priceCap'] = cap;
+                      item['exceedsPriceCap'] = roundedPrice > cap;
+                    }
+                    // Recalculate total for this line item
+                    final quantity = item['quantity'] ?? 1;
+                    final qty = (quantity is num) ? quantity.toDouble() : 1.0;
+                    item['total'] =
+                        double.parse((roundedPrice * qty).toStringAsFixed(2));
+                    return true;
                   }
                 } catch (e) {
                   debugPrint(
@@ -1786,6 +1859,14 @@ class EnhancedInvoiceService {
                     // Custom price already handled above
 
                     // Fallback to standard price if no custom price
+                    if (suggestedPrice == null || suggestedPrice <= 0) {
+                      if (organizationFallbackBaseRate > 0) {
+                        suggestedPrice = organizationFallbackBaseRate;
+                        debugPrint(
+                            'Enhanced Invoice Service: Using organization fallback base rate for $ndisItemNumber: $suggestedPrice');
+                      }
+                    }
+
                     if (suggestedPrice == null || suggestedPrice <= 0) {
                       if (cachedPricing['standardPrice'] != null) {
                         final standardPriceStr =
@@ -2064,6 +2145,253 @@ class EnhancedInvoiceService {
     } else {
       return l10n.sourceManualEntry;
     }
+  }
+
+  Future<void> _attachMileageToInvoices({
+    String? invoiceType,
+    bool? applyTax,
+    double? taxRate,
+  }) async {
+    final normalizedType = (invoiceType ?? 'client').toLowerCase();
+    if (normalizedType == 'employee') {
+      await _attachEmployeeMileage(
+        applyTax: applyTax,
+        taxRate: taxRate,
+      );
+      return;
+    }
+    await _attachClientMileage(
+      applyTax: applyTax,
+      taxRate: taxRate,
+    );
+  }
+
+  Future<void> _attachClientMileage({
+    bool? applyTax,
+    double? taxRate,
+  }) async {
+    const rate = 0.99;
+
+    for (final client in _invoices) {
+      final clientId = client['clientId']?.toString();
+      final parsedStart =
+          _tryParseDateFlexible(client['startDate']?.toString());
+      final parsedEnd = _tryParseDateFlexible(client['endDate']?.toString());
+      if (clientId == null ||
+          clientId.isEmpty ||
+          parsedStart == null ||
+          parsedEnd == null) {
+        continue;
+      }
+
+      final apiStart = parsedStart.toIso8601String().split('T')[0];
+      final apiEnd = parsedEnd.toIso8601String().split('T')[0];
+      final trips = await _mileageRepository.getTripsForClient(
+        clientId,
+        startDate: apiStart,
+        endDate: apiEnd,
+      );
+      if (trips.isEmpty) continue;
+
+      final lineItems = (client['lineItems'] as List<dynamic>?) ??
+          (client['items'] as List<dynamic>?) ??
+          <dynamic>[];
+      final items = (client['items'] as List<dynamic>?) ?? lineItems;
+      client['lineItems'] = lineItems;
+      client['items'] = items;
+
+      var added = false;
+      for (final trip in trips) {
+        if (trip.clientId != clientId ||
+            trip.tripType != 'WITH_CLIENT' ||
+            trip.status != 'APPROVED') {
+          continue;
+        }
+        final alreadyExists = lineItems.any((item) =>
+            item is Map<String, dynamic> && item['mileageTripId'] == trip.id);
+        if (alreadyExists) continue;
+
+        final amount = trip.distance * rate;
+        final mileageItem = <String, dynamic>{
+          'date': trip.date.toIso8601String().split('T')[0],
+          'description':
+              'Travel with Client (${trip.startLocation} - ${trip.endLocation})',
+          'itemName':
+              'Travel with Client (${trip.startLocation} - ${trip.endLocation})',
+          'itemCode': '07_001_0106_8_3',
+          'ndisItemNumber': '07_001_0106_8_3',
+          'quantity': trip.distance,
+          'hours': trip.distance,
+          'unitPrice': rate,
+          'rate': rate,
+          'amount': amount,
+          'total': amount,
+          'isMileage': true,
+          'mileageTripId': trip.id,
+        };
+
+        lineItems.add(mileageItem);
+        if (!identical(items, lineItems)) {
+          items.add(Map<String, dynamic>.from(mileageItem));
+        }
+        added = true;
+      }
+
+      if (added) {
+        _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
+      }
+    }
+  }
+
+  Future<void> _attachEmployeeMileage({
+    bool? applyTax,
+    double? taxRate,
+  }) async {
+    const rate = 0.99;
+    final seenEmployeePeriods = <String>{};
+
+    for (final client in _invoices) {
+      final employeeId = _resolveEmployeeId(client);
+      final parsedStart =
+          _tryParseDateFlexible(client['startDate']?.toString());
+      final parsedEnd = _tryParseDateFlexible(client['endDate']?.toString());
+      if (employeeId == null ||
+          employeeId.isEmpty ||
+          parsedStart == null ||
+          parsedEnd == null) {
+        continue;
+      }
+
+      final apiStart = parsedStart.toIso8601String().split('T')[0];
+      final apiEnd = parsedEnd.toIso8601String().split('T')[0];
+      final periodKey = '$employeeId|$apiStart|$apiEnd';
+      if (seenEmployeePeriods.contains(periodKey)) {
+        continue;
+      }
+
+      final trips = await _mileageRepository.getTrips(
+        employeeId,
+        startDate: apiStart,
+        endDate: apiEnd,
+      );
+      if (trips.isEmpty) continue;
+
+      final items = (client['items'] as List<dynamic>?) ?? <dynamic>[];
+      final lineItems = (client['lineItems'] as List<dynamic>?) ?? <dynamic>[];
+      client['items'] = items;
+      client['lineItems'] = lineItems;
+
+      var added = false;
+      for (final trip in trips) {
+        if (trip.userId != employeeId ||
+            !trip.isReimbursable ||
+            trip.status != 'APPROVED') {
+          continue;
+        }
+        final alreadyExists = items.any((item) =>
+            item is Map<String, dynamic> && item['mileageTripId'] == trip.id);
+        if (alreadyExists) continue;
+
+        final amount = trip.distance * rate;
+        final mileageItem = <String, dynamic>{
+          'date': trip.date.toIso8601String().split('T')[0],
+          'startTime': '',
+          'endTime': '',
+          'hours': trip.distance,
+          'quantity': trip.distance,
+          'rate': rate,
+          'unitPrice': rate,
+          'amount': amount,
+          'total': amount,
+          'itemCode': 'ALW-VEH',
+          'itemName':
+              'Vehicle Allowance (${trip.startLocation} - ${trip.endLocation})',
+          'description':
+              'Vehicle Allowance (${trip.startLocation} - ${trip.endLocation})',
+          'isMileage': true,
+          'mileageTripId': trip.id,
+          'tripType': trip.tripType,
+        };
+
+        items.add(mileageItem);
+        if (!identical(lineItems, items)) {
+          lineItems.add(Map<String, dynamic>.from(mileageItem));
+        }
+        added = true;
+      }
+
+      if (added) {
+        seenEmployeePeriods.add(periodKey);
+        _recalculateInvoiceTotalFromItems(
+          client,
+          applyTax: applyTax,
+          taxRate: taxRate,
+        );
+      }
+    }
+  }
+
+  String? _resolveEmployeeId(Map<String, dynamic> client) {
+    final directId = client['employeeId']?.toString();
+    if (directId != null && directId.isNotEmpty) return directId;
+
+    final userId = client['userId']?.toString();
+    if (userId != null && userId.isNotEmpty) return userId;
+
+    final employeeDetails = client['employeeDetails'] as Map<String, dynamic>?;
+    final detailId = employeeDetails?['id']?.toString();
+    if (detailId != null && detailId.isNotEmpty) return detailId;
+
+    final detailMongoId = employeeDetails?['_id']?.toString();
+    if (detailMongoId != null && detailMongoId.isNotEmpty) return detailMongoId;
+
+    final detailUserId = employeeDetails?['userId']?.toString();
+    if (detailUserId != null && detailUserId.isNotEmpty) return detailUserId;
+
+    return null;
+  }
+
+  double _asDouble(dynamic value) {
+    if (value is num) return value.toDouble();
+    return double.tryParse(value?.toString() ?? '') ?? 0.0;
+  }
+
+  void _recalculateInvoiceTotalFromItems(
+    Map<String, dynamic> client, {
+    bool? applyTax,
+    double? taxRate,
+  }) {
+    final items = client['items'] as List<dynamic>? ?? [];
+    final expenses = client['expenses'] as List<dynamic>? ?? [];
+
+    final itemsSubtotal = items.fold<double>(0.0, (sum, item) {
+      if (item is! Map<String, dynamic>) return sum;
+      final amount = _asDouble(item['amount']);
+      if (amount > 0) return sum + amount;
+      final total = _asDouble(item['total']);
+      if (total > 0) return sum + total;
+      return sum + (_asDouble(item['hours']) * _asDouble(item['rate']));
+    });
+
+    final expensesTotal = expenses.fold<double>(0.0, (sum, expense) {
+      if (expense is! Map<String, dynamic>) return sum;
+      final totalAmount = _asDouble(expense['totalAmount']);
+      if (totalAmount > 0) return sum + totalAmount;
+      return sum + _asDouble(expense['amount']);
+    });
+
+    final subtotal = itemsSubtotal + expensesTotal;
+    final shouldApplyTax = applyTax ?? (client['taxExempt'] != true);
+    final currentTaxRate = taxRate ?? _asDouble(client['taxRate']);
+    final taxAmount = shouldApplyTax ? subtotal * currentTaxRate : 0.0;
+
+    client['itemsSubtotal'] = itemsSubtotal;
+    client['expensesTotal'] = expensesTotal;
+    client['subtotal'] = subtotal;
+    client['taxAmount'] = taxAmount;
+    client['tax'] = taxAmount;
+    client['taxRate'] = currentTaxRate;
+    client['total'] = subtotal + taxAmount;
   }
 
   /// Recalculate invoice total for a client
@@ -2383,6 +2711,8 @@ class EnhancedInvoiceService {
     int processedClientCount = 0;
     int skippedClientCount = 0;
     List<String> errors = [];
+    final Map<String, Map<String, Map<String, dynamic>>>
+        employeeDirectoryByOrg = {};
 
     // For each selected employee
     for (var employee in selectedEmployeesAndClients) {
@@ -2417,26 +2747,6 @@ class EnhancedInvoiceService {
       debugPrint(
           'Processing employee: $employeeEmail with ${selectedClients.length} clients');
 
-      // ENHANCEMENT 1: Get detailed employee information from login collection
-      Map<String, dynamic>? employeeDetails;
-      try {
-        final employeeResponse = await _apiMethod.checkEmail(employeeEmail);
-        if (employeeResponse != null) {
-          // Handle the response structure: { statusCode: 200, message: "...", firstName: "...", lastName: "...", abn: "...", name: "..." }
-          employeeDetails = employeeResponse;
-          (result['employeeDetails'] as List).add(employeeDetails);
-        }
-        debugPrint('Employee details from login collection: $employeeDetails');
-      } catch (e) {
-        debugPrint(
-            'Warning: Could not fetch employee details from login collection: $e');
-        employeeDetails = {
-          'email': employeeEmail,
-          'name': employee['employee']?['name'] ?? 'Unknown Employee',
-        };
-        (result['employeeDetails'] as List).add(employeeDetails);
-      }
-
       // Get user assignments for this employee once to avoid multiple API calls
       Map<String, dynamic>? assignments;
       try {
@@ -2465,6 +2775,81 @@ class EnhancedInvoiceService {
         continue;
       }
 
+      String organizationIdForEmployee =
+          employee['employee']?['organizationId'] as String? ??
+              employee['organizationId'] as String? ??
+              '';
+      final assignmentsListForOrg =
+          assignments['assignments'] as List<dynamic>? ?? [];
+      if (organizationIdForEmployee.isEmpty) {
+        for (final assignment in assignmentsListForOrg) {
+          if (assignment is! Map<String, dynamic>) continue;
+          final assignmentOrgId =
+              assignment['organizationId']?.toString().trim() ?? '';
+          if (assignmentOrgId.isNotEmpty) {
+            organizationIdForEmployee = assignmentOrgId;
+            break;
+          }
+        }
+      }
+
+      // Build employee details from selected payload first, then enrich from
+      // organization employee directory (live route).
+      final employeeMap =
+          Map<String, dynamic>.from(employee['employee'] as Map? ?? {});
+      final embeddedDetails = employeeMap['details'];
+      Map<String, dynamic> employeeDetails = {
+        ...employeeMap,
+        if (embeddedDetails is Map)
+          ...Map<String, dynamic>.from(embeddedDetails),
+      };
+      employeeDetails['email'] = employeeEmail;
+      employeeDetails['organizationId'] =
+          employeeDetails['organizationId'] ?? organizationIdForEmployee;
+      if ((employeeDetails['name']?.toString().trim() ?? '').isEmpty) {
+        employeeDetails['name'] =
+            employee['employee']?['name'] ?? employeeEmail;
+      }
+
+      if (organizationIdForEmployee.isNotEmpty) {
+        if (!employeeDirectoryByOrg.containsKey(organizationIdForEmployee)) {
+          final Map<String, Map<String, dynamic>> byEmail = {};
+          try {
+            final orgEmployees = await _apiMethod
+                .getOrganizationEmployees(organizationIdForEmployee);
+            if (orgEmployees['success'] == true &&
+                orgEmployees['employees'] is List) {
+              final list = orgEmployees['employees'] as List<dynamic>;
+              for (final item in list) {
+                if (item is! Map) continue;
+                final map = Map<String, dynamic>.from(item);
+                final mail =
+                    map['email']?.toString().toLowerCase().trim() ?? '';
+                if (mail.isNotEmpty) {
+                  byEmail[mail] = map;
+                }
+              }
+            }
+          } catch (e) {
+            debugPrint(
+                'Warning: Could not load org employee directory for $organizationIdForEmployee: $e');
+          }
+          employeeDirectoryByOrg[organizationIdForEmployee] = byEmail;
+        }
+
+        final orgMatch = employeeDirectoryByOrg[organizationIdForEmployee]
+            ?[employeeEmail.toLowerCase().trim()];
+        if (orgMatch != null) {
+          employeeDetails = {
+            ...orgMatch,
+            ...employeeDetails,
+          };
+        }
+      }
+
+      (result['employeeDetails'] as List).add(employeeDetails);
+      debugPrint('Employee details resolved: $employeeDetails');
+
       // For each selected client of this employee
       for (var client in selectedClients) {
         try {
@@ -2486,8 +2871,11 @@ class EnhancedInvoiceService {
           Map<String, dynamic>? clientDetails;
           try {
             // Fetch client details from clients collection
-            final clientResponse =
-                await _apiMethod.getClientDetails(clientEmail);
+            final clientResponse = await _apiMethod.getClientDetails(
+              clientEmail,
+              clientId: clientId.toString(),
+              organizationId: organizationIdForEmployee,
+            );
             if (clientResponse != null) {
               // Handle the response structure: { statusCode: 200, message: "...", clientDetails: {...} }
               clientDetails = clientResponse['clientDetails'] ?? clientResponse;
@@ -2573,11 +2961,12 @@ class EnhancedInvoiceService {
             Map<String, dynamic> enhancedWorkedTimeData = {};
             try {
               // Get organization ID from employee data or assignment
-              final organizationId =
-                  employee['employee']?['organizationId'] as String? ??
+              final organizationId = organizationIdForEmployee.isNotEmpty
+                  ? organizationIdForEmployee
+                  : (employee['employee']?['organizationId'] as String? ??
                       clientAssignment['organizationId'] as String? ??
-                      employeeDetails?['organizationId'] as String? ??
-                      '';
+                      employeeDetails['organizationId']?.toString() ??
+                      '');
 
               if (organizationId.isNotEmpty) {
                 debugPrint(
@@ -2630,7 +3019,7 @@ class EnhancedInvoiceService {
                   workedTimeData, // Original data for debugging
               'pricingPreferences': pricingPreferences,
               'invoiceMetadata': {
-                'generatedBy': employeeDetails?['name'] ??
+                'generatedBy': employeeDetails['name'] ??
                     employee['employee']?['name'] ??
                     employeeEmail,
                 'generatedFor': _formatClientDisplayName(clientDetails),
@@ -2702,10 +3091,56 @@ class EnhancedInvoiceService {
 
       final workedTimes = workedTimeData['workedTimes'] as List<dynamic>? ?? [];
       final schedule = clientAssignment['schedule'] as List<dynamic>? ?? [];
+      const minBillableHours = 1.0 / 60.0; // Ignore sub-1-minute timer noise.
 
-      List<Map<String, dynamic>> enhancedWorkedTimes = [];
-      double totalHoursWorked = 0.0;
-      double totalBreakTime = 0.0;
+      final List<Map<String, dynamic>> scheduleMeta = [];
+      final Map<String, Map<String, dynamic>> scheduleByKey = {};
+      final Map<String, List<Map<String, dynamic>>> scheduleByDate = {};
+
+      for (int i = 0; i < schedule.length; i++) {
+        final raw = schedule[i];
+        if (raw is! Map<String, dynamic>) continue;
+
+        final scheduleDate = _normalizeDateOnly(raw['date']);
+        final scheduleStart = _normalizeTimeLabel(raw['startTime']);
+        final scheduleEnd = _normalizeTimeLabel(raw['endTime']);
+        final scheduleKey = _buildScheduleKey(scheduleDate, scheduleStart);
+
+        double scheduledHours = 0.0;
+        try {
+          scheduledHours = _helpers.hoursBetweenPerListItem(
+            raw['startTime']?.toString() ?? '',
+            raw['endTime']?.toString() ?? '',
+          );
+        } catch (_) {}
+
+        final breakFromSchedule =
+            _parseBreakMinutesToHours(raw['breakMinutes'] ?? raw['break']);
+
+        final meta = <String, dynamic>{
+          'index': i,
+          'schedule': raw,
+          'date': scheduleDate,
+          'start': scheduleStart,
+          'end': scheduleEnd,
+          'key': scheduleKey,
+          'scheduledHours': scheduledHours,
+          'scheduleBreakHours': breakFromSchedule,
+        };
+
+        scheduleMeta.add(meta);
+        if (scheduleKey.isNotEmpty) {
+          scheduleByKey[scheduleKey] = meta;
+        }
+        if (scheduleDate.isNotEmpty) {
+          scheduleByDate.putIfAbsent(scheduleDate, () => []).add(meta);
+        }
+      }
+
+      final Map<String, Map<String, dynamic>> bestByScheduleKey = {};
+      int skippedUnmatched = 0;
+      int skippedTiny = 0;
+      int deduplicatedEntries = 0;
 
       debugPrint(
           'Processing ${workedTimes.length} worked time entries with ${schedule.length} schedule entries');
@@ -2713,15 +3148,90 @@ class EnhancedInvoiceService {
       for (var workedTime in workedTimes) {
         if (workedTime is! Map<String, dynamic>) continue;
 
-        final shiftIndex = workedTime['shiftIndex'] as int? ?? -1;
+        final shiftIndex =
+            _coerceInt(workedTime['shiftIndex'], defaultValue: -1);
+        final workedShiftKey = _normalizeShiftKey(workedTime['shiftKey']);
+        final workedDate = _extractWorkedDate(workedTime);
+        final workedStart = _extractWorkedTimeLabel(workedTime, isStart: true);
+        final workedEnd = _extractWorkedTimeLabel(workedTime, isStart: false);
+
+        Map<String, dynamic>? matchedScheduleMeta;
+
+        if (workedShiftKey.isNotEmpty) {
+          matchedScheduleMeta = scheduleByKey[workedShiftKey];
+        }
+
+        if (matchedScheduleMeta == null &&
+            shiftIndex >= 0 &&
+            shiftIndex < scheduleMeta.length) {
+          final byIndex = scheduleMeta[shiftIndex];
+          final byIndexDate = byIndex['date']?.toString() ?? '';
+          // Guard against wrong shiftIndex values by validating the date too.
+          if (workedDate.isEmpty ||
+              byIndexDate.isEmpty ||
+              workedDate == byIndexDate) {
+            matchedScheduleMeta = byIndex;
+          }
+        }
+
+        if (matchedScheduleMeta == null && workedDate.isNotEmpty) {
+          final dateCandidates = scheduleByDate[workedDate] ?? const [];
+          if (dateCandidates.length == 1) {
+            matchedScheduleMeta = dateCandidates.first;
+          } else if (dateCandidates.isNotEmpty) {
+            final exactTimeMatches = dateCandidates.where((candidate) {
+              final cStart = candidate['start']?.toString() ?? '';
+              final cEnd = candidate['end']?.toString() ?? '';
+              final startMatches = workedStart.isNotEmpty &&
+                  cStart.isNotEmpty &&
+                  workedStart == cStart;
+              final endMatches =
+                  workedEnd.isNotEmpty && cEnd.isNotEmpty && workedEnd == cEnd;
+              return startMatches && endMatches;
+            }).toList();
+
+            if (exactTimeMatches.length == 1) {
+              matchedScheduleMeta = exactTimeMatches.first;
+            } else {
+              final startOnlyMatches = dateCandidates.where((candidate) {
+                final cStart = candidate['start']?.toString() ?? '';
+                return workedStart.isNotEmpty &&
+                    cStart.isNotEmpty &&
+                    workedStart == cStart;
+              }).toList();
+              if (startOnlyMatches.length == 1) {
+                matchedScheduleMeta = startOnlyMatches.first;
+              }
+            }
+          }
+        }
+
+        if (matchedScheduleMeta == null) {
+          skippedUnmatched++;
+          debugPrint(
+              'Skipping unmatched worked time entry. shiftIndex=$shiftIndex, shiftKey=$workedShiftKey, date=$workedDate, start=$workedStart');
+          continue;
+        }
+
+        final correspondingSchedule =
+            matchedScheduleMeta['schedule'] as Map<String, dynamic>?;
+        final canonicalShiftIndex =
+            _coerceInt(matchedScheduleMeta['index'], defaultValue: shiftIndex);
+        final canonicalShiftKey =
+            matchedScheduleMeta['key']?.toString() ?? workedShiftKey;
+
         final timeWorkedRaw = workedTime['timeWorked'];
         double timeWorked = 0.0;
 
         // Handle different timeWorked formats (String "HH:MM:SS" or number)
-        if (timeWorkedRaw is String) {
+        if (workedTime['totalHours'] is num) {
+          timeWorked = (workedTime['totalHours'] as num).toDouble();
+        } else if (timeWorkedRaw is String) {
           timeWorked = _parseTimeStringToHours(timeWorkedRaw);
         } else if (timeWorkedRaw is num) {
           timeWorked = timeWorkedRaw.toDouble();
+        } else if (workedTime['totalSeconds'] is num) {
+          timeWorked = (workedTime['totalSeconds'] as num).toDouble() / 3600.0;
         }
 
         final shiftBreak =
@@ -2731,13 +3241,6 @@ class EnhancedInvoiceService {
         double breakTime = 0.0;
         if (shiftBreak == 'yes' || shiftBreak == 'true') {
           breakTime = 0.5; // 30 minutes = 0.5 hours
-          totalBreakTime += breakTime;
-        }
-
-        // Get corresponding schedule entry if shiftIndex is valid
-        Map<String, dynamic>? correspondingSchedule;
-        if (shiftIndex >= 0 && shiftIndex < schedule.length) {
-          correspondingSchedule = schedule[shiftIndex] as Map<String, dynamic>?;
         }
 
         // Calculate actual worked time (subtract break if applicable)
@@ -2746,54 +3249,113 @@ class EnhancedInvoiceService {
           actualWorkedTime = timeWorked - breakTime;
         }
 
+        final scheduledHours = _safeDouble(
+            matchedScheduleMeta['scheduledHours'],
+            defaultValue: 0.0);
+        final scheduleBreakHours = _safeDouble(
+          matchedScheduleMeta['scheduleBreakHours'],
+          defaultValue: 0.0,
+        );
+
         // Fallback: if actualWorkedTime is zero or negative, compute from schedule start/end
         if ((actualWorkedTime <= 0.0) && correspondingSchedule != null) {
-          final startStr = correspondingSchedule['startTime']?.toString() ?? '';
-          final endStr = correspondingSchedule['endTime']?.toString() ?? '';
-
-          double scheduledHours = 0.0;
-          try {
-            scheduledHours = _helpers.hoursBetweenPerListItem(startStr, endStr);
-          } catch (e) {
-            debugPrint('Fallback hoursBetweenPerListItem failed: $e');
-          }
-
-          // Use schedule-provided breakMinutes if available; otherwise retain breakTime
-          double scheduleBreakHours = breakTime;
-          final breakVal = correspondingSchedule['breakMinutes'];
-          if (breakVal != null) {
-            try {
-              scheduleBreakHours = _parseBreakMinutesToHours(breakVal);
-            } catch (e) {
-              debugPrint(
-                  'Failed to parse schedule breakMinutes "$breakVal": $e');
-            }
-          }
-
-          actualWorkedTime = scheduledHours - scheduleBreakHours;
+          actualWorkedTime =
+              scheduledHours - (breakTime > 0 ? breakTime : scheduleBreakHours);
           if (actualWorkedTime < 0)
             actualWorkedTime = 0.0; // Ensure non-negative
         } else if (actualWorkedTime < 0) {
           actualWorkedTime = 0.0; // Ensure non-negative
         }
 
-        totalHoursWorked += actualWorkedTime;
+        if (actualWorkedTime < minBillableHours) {
+          skippedTiny++;
+          debugPrint(
+              'Skipping tiny worked time entry (<1 min). shiftIndex=$shiftIndex, actualWorkedTime=$actualWorkedTime');
+          continue;
+        }
 
         // Create enhanced worked time entry
         final enhancedEntry = Map<String, dynamic>.from(workedTime);
+        final scheduleDelta = scheduledHours > 0
+            ? (actualWorkedTime - scheduledHours).abs()
+            : double.infinity;
+        final hasNdisItemNumber =
+            ((workedTime['ndisItem'] as Map<String, dynamic>?)?['itemNumber'] ??
+                        '')
+                    .toString()
+                    .isNotEmpty ||
+                ((correspondingSchedule?['ndisItem']
+                            as Map<String, dynamic>?)?['itemNumber'] ??
+                        '')
+                    .toString()
+                    .isNotEmpty;
+        final qualityScore = (workedShiftKey.isNotEmpty ? 60 : 0) +
+            (workedTime['assignedClientId'] != null ? 20 : 0) +
+            (workedTime['organizationId'] != null ? 10 : 0) +
+            (workedTime['startTime'] != null && workedTime['endTime'] != null
+                ? 8
+                : 0) +
+            (hasNdisItemNumber ? 15 : 0) +
+            (canonicalShiftIndex >= 0 ? 5 : 0) +
+            math.max(0, 100 - (scheduleDelta * 10).round());
+
         enhancedEntry.addAll({
+          'shiftIndex': canonicalShiftIndex,
+          'shiftKey': canonicalShiftKey,
           'actualWorkedTime': actualWorkedTime,
           'breakTime': breakTime,
           'hasBreak': breakTime > 0,
           'correspondingSchedule': correspondingSchedule,
           'scheduleMatched': correspondingSchedule != null,
+          '__qualityScore': qualityScore,
+          '__scheduleDelta': scheduleDelta,
         });
 
-        enhancedWorkedTimes.add(enhancedEntry);
+        final dedupeKey = canonicalShiftKey.isNotEmpty
+            ? canonicalShiftKey
+            : 'shift-$canonicalShiftIndex-${matchedScheduleMeta['date'] ?? workedDate}';
+        final existing = bestByScheduleKey[dedupeKey];
+        if (existing == null ||
+            _shouldPreferWorkedTimeEntry(enhancedEntry, existing)) {
+          if (existing != null) {
+            deduplicatedEntries++;
+          }
+          bestByScheduleKey[dedupeKey] = enhancedEntry;
+        } else {
+          deduplicatedEntries++;
+        }
 
         debugPrint(
-            'Processed worked time entry: shiftIndex=$shiftIndex, timeWorked=$timeWorked, breakTime=$breakTime, actualWorkedTime=$actualWorkedTime');
+            'Processed worked time entry: rawShiftIndex=$shiftIndex, canonicalShiftIndex=$canonicalShiftIndex, timeWorked=$timeWorked, breakTime=$breakTime, actualWorkedTime=$actualWorkedTime');
       }
+
+      final List<Map<String, dynamic>> enhancedWorkedTimes =
+          bestByScheduleKey.values.toList()
+            ..sort((a, b) {
+              final aDate =
+                  _normalizeDateOnly(a['correspondingSchedule']?['date']) ?? '';
+              final bDate =
+                  _normalizeDateOnly(b['correspondingSchedule']?['date']) ?? '';
+              final byDate = aDate.compareTo(bDate);
+              if (byDate != 0) return byDate;
+              final ai = _coerceInt(a['shiftIndex'], defaultValue: 9999);
+              final bi = _coerceInt(b['shiftIndex'], defaultValue: 9999);
+              return ai.compareTo(bi);
+            });
+
+      for (final entry in enhancedWorkedTimes) {
+        entry.remove('__qualityScore');
+        entry.remove('__scheduleDelta');
+      }
+
+      final totalHoursWorked = enhancedWorkedTimes.fold<double>(
+        0.0,
+        (sum, entry) => sum + _safeDouble(entry['actualWorkedTime']),
+      );
+      final totalBreakTime = enhancedWorkedTimes.fold<double>(
+        0.0,
+        (sum, entry) => sum + _safeDouble(entry['breakTime']),
+      );
 
       // Create enhanced response
       final enhancedResponse = Map<String, dynamic>.from(workedTimeData);
@@ -2808,6 +3370,9 @@ class EnhancedInvoiceService {
         'entriesWithScheduleMatch': enhancedWorkedTimes
             .where((e) => e['scheduleMatched'] == true)
             .length,
+        'skippedUnmatchedEntries': skippedUnmatched,
+        'skippedTinyEntries': skippedTiny,
+        'deduplicatedEntries': deduplicatedEntries,
       };
 
       debugPrint(
@@ -2822,6 +3387,144 @@ class EnhancedInvoiceService {
         'originalData': workedTimeData,
       };
     }
+  }
+
+  bool _shouldPreferWorkedTimeEntry(
+    Map<String, dynamic> candidate,
+    Map<String, dynamic> existing,
+  ) {
+    final candidateScore =
+        _coerceInt(candidate['__qualityScore'], defaultValue: 0);
+    final existingScore =
+        _coerceInt(existing['__qualityScore'], defaultValue: 0);
+    if (candidateScore != existingScore) {
+      return candidateScore > existingScore;
+    }
+
+    final candidateDelta = _safeDouble(candidate['__scheduleDelta'],
+        defaultValue: double.infinity);
+    final existingDelta =
+        _safeDouble(existing['__scheduleDelta'], defaultValue: double.infinity);
+    if (candidateDelta != existingDelta) {
+      return candidateDelta < existingDelta;
+    }
+
+    final candidateHours =
+        _safeDouble(candidate['actualWorkedTime'], defaultValue: 0.0);
+    final existingHours =
+        _safeDouble(existing['actualWorkedTime'], defaultValue: 0.0);
+    if (candidateHours != existingHours) {
+      return candidateHours > existingHours;
+    }
+
+    final candidateUpdated = _safeDateTime(candidate['updatedAt']);
+    final existingUpdated = _safeDateTime(existing['updatedAt']);
+    if (candidateUpdated != null && existingUpdated != null) {
+      return candidateUpdated.isAfter(existingUpdated);
+    }
+    if (candidateUpdated != null && existingUpdated == null) return true;
+    return false;
+  }
+
+  int _coerceInt(dynamic value, {int defaultValue = 0}) {
+    if (value == null) return defaultValue;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString()) ?? defaultValue;
+  }
+
+  DateTime? _safeDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    if (value is Map && value.containsKey(r'$date')) {
+      final raw = value[r'$date'];
+      if (raw is String) return DateTime.tryParse(raw);
+    }
+    return null;
+  }
+
+  String _extractWorkedDate(Map<String, dynamic> workedTime) {
+    final fromShiftDate = _normalizeDateOnly(workedTime['shiftDate']);
+    if (fromShiftDate.isNotEmpty) return fromShiftDate;
+    final fromDate = _normalizeDateOnly(workedTime['date']);
+    if (fromDate.isNotEmpty) return fromDate;
+    return _normalizeDateOnly(workedTime['workDate']);
+  }
+
+  String _extractWorkedTimeLabel(
+    Map<String, dynamic> workedTime, {
+    required bool isStart,
+  }) {
+    final explicit = _normalizeTimeLabel(
+      isStart ? workedTime['shiftStartTime'] : workedTime['shiftEndTime'],
+    );
+    if (explicit.isNotEmpty) return explicit;
+    return _normalizeTimeLabel(
+        isStart ? workedTime['startTime'] : workedTime['endTime']);
+  }
+
+  String _normalizeDateOnly(dynamic value) {
+    if (value == null) return '';
+    if (value is DateTime) {
+      return DateFormat('yyyy-MM-dd').format(value.toLocal());
+    }
+    if (value is Map && value.containsKey(r'$date')) {
+      return _normalizeDateOnly(value[r'$date']);
+    }
+    final raw = value.toString().trim();
+    if (raw.isEmpty) return '';
+    final parsed = _tryParseDateFlexible(raw) ?? DateTime.tryParse(raw);
+    if (parsed == null) return '';
+    return DateFormat('yyyy-MM-dd').format(parsed.toLocal());
+  }
+
+  String _normalizeTimeLabel(dynamic value) {
+    if (value == null) return '';
+    if (value is DateTime) {
+      return DateFormat('h:mm a').format(value.toLocal()).toUpperCase();
+    }
+    if (value is Map && value.containsKey(r'$date')) {
+      return _normalizeTimeLabel(value[r'$date']);
+    }
+
+    final raw = value.toString().trim();
+    if (raw.isEmpty) return '';
+
+    final asDateTime = DateTime.tryParse(raw);
+    if (asDateTime != null) {
+      return DateFormat('h:mm a').format(asDateTime.toLocal()).toUpperCase();
+    }
+
+    final compact = raw.replaceAll('.', '').replaceAll(RegExp(r'\s+'), ' ');
+    final normalizedUpper = compact.toUpperCase();
+
+    try {
+      final parsed = DateFormat('h:mm a').parseLoose(normalizedUpper);
+      return DateFormat('h:mm a').format(parsed).toUpperCase();
+    } catch (_) {}
+
+    try {
+      final parsed24 = DateFormat('H:mm').parseLoose(normalizedUpper);
+      return DateFormat('h:mm a').format(parsed24).toUpperCase();
+    } catch (_) {}
+
+    return normalizedUpper;
+  }
+
+  String _normalizeShiftKey(dynamic value) {
+    final raw = value?.toString().trim() ?? '';
+    if (raw.isEmpty) return '';
+    final parts = raw.split('_');
+    if (parts.length < 2) return '';
+    final date = _normalizeDateOnly(parts.first);
+    final time = _normalizeTimeLabel(parts.sublist(1).join('_'));
+    return _buildScheduleKey(date, time);
+  }
+
+  String _buildScheduleKey(String date, String startTime) {
+    if (date.isEmpty || startTime.isEmpty) return '';
+    return '${date}_$startTime';
   }
 
   /// Format client display name with business name if available
@@ -2958,6 +3661,8 @@ class EnhancedInvoiceService {
       {String? invoiceType,
       Map<String, dynamic>? adminProfile,
       bool useAdminBankDetails = false}) async {
+    final savedInvoiceIndexes = <int>[];
+
     try {
       if (organizationId == null || organizationId.isEmpty) {
         debugPrint('Cannot save invoices: organizationId is null or empty');
@@ -3017,21 +3722,25 @@ class EnhancedInvoiceService {
             clientDetails['businessName'] ?? invoice['businessName'] ?? '';
 
         // Resolve Bank Details for Metadata/Payload
+        final resolvedInvoiceType =
+            (invoice['invoiceType'] ?? invoiceType ?? '')
+                .toString()
+                .toLowerCase();
+        final bool preferOrganizationBankDetails =
+            resolvedInvoiceType == 'client' || useAdminBankDetails == true;
+
         Map<String, String> bankDetails = {};
         try {
-          if (useAdminBankDetails) {
-            // Admin selected: fetch admin bank details
-            if (adminProfile != null &&
-                adminProfile['bankName'] != null &&
-                adminProfile['accountNumber'] != null) {
-              bankDetails = {
-                'bankName': adminProfile['bankName'].toString(),
-                'accountName': adminProfile['accountName'].toString(),
-                'bsb': adminProfile['bsb'].toString(),
-                'accountNumber': adminProfile['accountNumber'].toString(),
-              };
-            } else {
-              // Fallback to fetch
+          if (preferOrganizationBankDetails) {
+            bankDetails = await _fetchOrganizationBankDetails(organizationId);
+
+            if (bankDetails.isEmpty && adminProfile != null) {
+              bankDetails = _extractBankDetailsFromMap(
+                  Map<String, dynamic>.from(adminProfile));
+            }
+
+            if (bankDetails.isEmpty) {
+              // Fallback to current user if org details are not available
               final sp = SharedPreferencesUtils();
               await sp.init();
               final String? currentUserEmail = sp.getUserEmail();
@@ -3039,13 +3748,8 @@ class EnhancedInvoiceService {
                 final resp = await _apiMethod.getBankDetailsForUserEmail(
                     currentUserEmail, organizationId);
                 if (resp['success'] == true && resp['data'] is Map) {
-                  final data = Map<String, dynamic>.from(resp['data']);
-                  bankDetails = {
-                    'bankName': (data['bankName'] ?? '').toString(),
-                    'accountName': (data['accountName'] ?? '').toString(),
-                    'bsb': (data['bsb'] ?? '').toString(),
-                    'accountNumber': (data['accountNumber'] ?? '').toString(),
-                  };
+                  bankDetails = _extractBankDetailsFromMap(
+                      Map<String, dynamic>.from(resp['data']));
                 }
               }
             }
@@ -3055,13 +3759,8 @@ class EnhancedInvoiceService {
               final resp = await _apiMethod.getBankDetailsForUserEmail(
                   employeeEmailForSave, organizationId);
               if (resp['success'] == true && resp['data'] is Map) {
-                final data = Map<String, dynamic>.from(resp['data']);
-                bankDetails = {
-                  'bankName': (data['bankName'] ?? '').toString(),
-                  'accountName': (data['accountName'] ?? '').toString(),
-                  'bsb': (data['bsb'] ?? '').toString(),
-                  'accountNumber': (data['accountNumber'] ?? '').toString(),
-                };
+                bankDetails = _extractBankDetailsFromMap(
+                    Map<String, dynamic>.from(resp['data']));
               }
             }
           }
@@ -3072,48 +3771,8 @@ class EnhancedInvoiceService {
         // Add to invoice for consistency
         invoice.addAll(bankDetails);
 
-        // Generate unique invoice number (always generate new format)
-        String invoiceNumber = invoice['invoiceNumber'] ?? '';
-        // Force regeneration to use new ultra-compact format
-        if (invoiceNumber.isEmpty ||
-            invoiceNumber.contains('-') ||
-            invoiceNumber.length > 12) {
-          try {
-            // Get organization details for invoice number generation
-            final sp = SharedPreferencesUtils();
-            await sp.init();
-            final orgId = sp.getOrganizationId() ?? organizationId ?? 'DEFAULT';
-            // Get organization code from SharedPreferences (saved during login)
-            final organizationCode = sp.getOrganizationCode() ?? 'ORG';
-
-            // Generate unique invoice number
-            invoiceNumber =
-                await InvoiceNumberGeneratorService.generateInvoiceNumber(
-              organizationId: organizationId,
-              organizationCode: organizationCode,
-              clientId: invoice['clientId'] ?? '',
-              clientName: invoice['clientName'] ?? '',
-              employeeId:
-                  employeeDetails['id'] ?? employeeDetails['employeeId'] ?? '',
-              employeeName: providerName,
-              issueDate: DateTime.now(),
-            );
-            debugPrint("invoice number here: $invoiceNumber");
-            // Update the invoice with the generated number
-            invoice['invoiceNumber'] = invoiceNumber;
-            _invoices[i]['invoiceNumber'] = invoiceNumber;
-
-            debugPrint(
-                'Generated invoice number: $invoiceNumber for client: ${invoice['clientName']}');
-          } catch (e) {
-            debugPrint('Error generating invoice number: $e');
-            // Fallback to timestamp-based number
-            final timestamp = DateTime.now().millisecondsSinceEpoch;
-            invoiceNumber = 'INV-$timestamp';
-            invoice['invoiceNumber'] = invoiceNumber;
-            _invoices[i]['invoiceNumber'] = invoiceNumber;
-          }
-        }
+        String invoiceNumber = (invoice['invoiceNumber'] ?? '').toString();
+        final pdfBase64 = await _encodePdfAsBase64(pdfPath);
 
         // Extract period dates from the original invoice data
         final startDate = invoice['startDate'] ?? '';
@@ -3188,15 +3847,69 @@ class EnhancedInvoiceService {
           'metadata': processedData['metadata'] ?? {},
         };
 
-        for (int i = 0; i < _invoices.length; i++) {
-          debugPrint("OOr $i ${_invoices[i]['invoiceNumber']}");
-        }
+        final pdfGenerationParams = {
+          'showTax': persistedShowTax,
+          'taxRate': persistedTaxRate,
+          'includeExpenses': processedData['includeExpenses'] ?? false,
+          'allowPriceCapOverride':
+              processedData['allowPriceCapOverride'] ?? false,
+          'useAdminBankDetails': useAdminBankDetails,
+          'invoiceType': invoice['invoiceType'] ?? invoiceType ?? 'client',
+          'startDate': startDate,
+          'endDate': endDate,
+          'attachedPhotos': processedData['attachedPhotos'] ?? [],
+          'photoDescription': processedData['photoDescription'] ?? '',
+          'uploadedPhotoUrls': processedData['uploadedPhotoUrls'] ?? [],
+          'uploadedAdditionalFileUrls':
+              processedData['uploadedAdditionalFileUrls'] ?? [],
+        };
+
+        final financialSummarySnapshot = {
+          'itemsSubtotal': invoice['itemsSubtotal'] ?? 0.0,
+          'expensesTotal': invoice['expensesTotal'] ?? 0.0,
+          'subtotal': invoice['subtotal'] ?? 0.0,
+          'taxAmount': invoice['taxAmount'] ?? 0.0,
+          'totalAmount': invoice['total'] ?? 0.0,
+          'currency': 'AUD',
+          'paymentTerms': 30,
+        };
+
+        final pdfRenderSnapshot = {
+          'version': 'invoice-render-snapshot:v1',
+          'capturedAt': DateTime.now().toIso8601String(),
+          'invoiceNumber': invoiceNumber,
+          'renderPayload': calculatedPayloadData,
+          'renderParams': pdfGenerationParams,
+          'financialSummary': financialSummarySnapshot,
+          'sourceContext': {
+            'invoiceType': invoice['invoiceType'] ?? invoiceType ?? 'client',
+            'recurrence': invoice['recurrence'],
+            'metadata': processedData['metadata'] ?? {},
+            'issuer': {
+              'businessName': adminProfile?['businessName'] ??
+                  invoice['adminProfile']?['businessName'] ??
+                  '',
+              'businessAddress': adminProfile?['businessAddress'] ??
+                  invoice['adminProfile']?['businessAddress'] ??
+                  '',
+              'contactEmail': adminProfile?['contactEmail'] ??
+                  invoice['adminProfile']?['contactEmail'] ??
+                  '',
+              'contactPhone': adminProfile?['contactPhone'] ??
+                  invoice['adminProfile']?['contactPhone'] ??
+                  '',
+              'taxIdentifiers': adminProfile?['taxIdentifiers'] ??
+                  invoice['adminProfile']?['taxIdentifiers'],
+              'abn': adminProfile?['abn'] ?? invoice['adminProfile']?['abn'],
+            },
+            'billedTo': invoice['billTo'] ?? {},
+            'bankDetails': bankDetails,
+          },
+        };
 
         // Prepare complete invoice data for backend including all calculated payload data
         final invoiceData = {
           'organizationId': organizationId,
-          'invoiceNumber': _invoices[i]['invoiceNumber'] ??
-              'INV-${DateTime.now().millisecondsSinceEpoch}', // Include the generated invoice number with fallback
           'clientId': invoice['clientId'] ?? '',
           'clientEmail': invoice['clientEmail'] ?? '',
           'clientName': invoice['clientName'] ?? '',
@@ -3226,30 +3939,17 @@ class EnhancedInvoiceService {
           'expenses': invoice['expenses'] ?? [],
 
           // Save complete financial summary
-          'financialSummary': {
-            'itemsSubtotal': invoice['itemsSubtotal'] ?? 0.0,
-            'expensesTotal': invoice['expensesTotal'] ?? 0.0,
-            'subtotal': invoice['subtotal'] ?? 0.0,
-            'taxAmount': invoice['taxAmount'] ?? 0.0,
-            'totalAmount': invoice['total'] ?? 0.0,
-            'currency': 'AUD',
-            'paymentTerms': 30,
-          },
+          'financialSummary': financialSummarySnapshot,
 
           // Save complete calculated payload data for PDF regeneration
           'calculatedPayloadData': calculatedPayloadData,
+          // Immutable PDF render snapshot for deterministic re-rendering.
+          'pdfRenderSnapshot': pdfRenderSnapshot,
+          // Immutable original generated PDF content for backend artifact upload.
+          'pdfBase64': pdfBase64,
 
           // Save PDF generation parameters
-          'pdfGenerationParams': {
-            'showTax': persistedShowTax,
-            'taxRate': persistedTaxRate,
-            'includeExpenses': processedData['includeExpenses'] ?? false,
-            'attachedPhotos': processedData['attachedPhotos'] ?? [],
-            'photoDescription': processedData['photoDescription'] ?? '',
-            'uploadedPhotoUrls': processedData['uploadedPhotoUrls'] ?? [],
-            'uploadedAdditionalFileUrls':
-                processedData['uploadedAdditionalFileUrls'] ?? [],
-          },
+          'pdfGenerationParams': pdfGenerationParams,
           'issuer': {
             'businessName': adminProfile?['businessName'] ??
                 invoice['adminProfile']?['businessName'] ??
@@ -3268,6 +3968,7 @@ class EnhancedInvoiceService {
             'abn': adminProfile?['abn'] ?? invoice['adminProfile']?['abn'],
           },
           'billedTo': invoice['billTo'] ?? {},
+          'recurrence': invoice['recurrence'],
 
           'pdfPath': pdfPath,
           'generatedAt': DateTime.now().toIso8601String(),
@@ -3288,32 +3989,47 @@ class EnhancedInvoiceService {
           },
         };
 
-        // Call backend API to save invoice
-        debugPrint(
-            'Saving invoice for client: ${invoice['clientName']} to /api/invoices'
-            '\n\n'
-            ' $invoiceData');
-        final response =
-            await _apiMethod.post('/api/invoices', body: invoiceData);
+        if (invoiceNumber.isNotEmpty) {
+          // Keep a preferred number hint for backend. Backend may replace this
+          // if the number is already taken.
+          invoiceData['invoiceNumber'] = invoiceNumber;
+        }
 
-        debugPrint('Save invoice response: $response');
+        Map<String, dynamic> response = {};
+        const maxCreateAttempts = 3;
+        for (int attempt = 1; attempt <= maxCreateAttempts; attempt++) {
+          debugPrint(
+              'Saving invoice for client: ${invoice['clientName']} (attempt $attempt/$maxCreateAttempts)');
+          response = await _apiMethod.post('invoices', body: invoiceData);
+          debugPrint('Save invoice response: $response');
+          if (response['success'] == true) {
+            break;
+          }
+
+          final isDuplicate = _looksLikeDuplicateInvoiceNumberError(response);
+          if (!isDuplicate || attempt == maxCreateAttempts) {
+            break;
+          }
+
+          debugPrint(
+              'Duplicate invoice number detected for ${invoice['clientName']}. Retrying with backend-generated number.');
+          invoiceData.remove('invoiceNumber');
+          await Future<void>.delayed(Duration(milliseconds: 75 * attempt));
+        }
 
         if (response['success'] == true) {
           debugPrint(
               'Invoice saved successfully for client: ${invoice['clientName']}');
-
-          // Skip backend invoice number override to preserve ultra-compact format
-          if (response['data'] != null &&
-              response['data']['invoiceNumber'] != null) {
-            final backendInvoiceNumber = response['data']['invoiceNumber'];
+          final backendInvoiceNumber =
+              response['data']?['invoiceNumber']?.toString() ?? '';
+          if (backendInvoiceNumber.isNotEmpty) {
+            invoiceNumber = backendInvoiceNumber;
+            invoice['invoiceNumber'] = backendInvoiceNumber;
+            _invoices[i]['invoiceNumber'] = backendInvoiceNumber;
             debugPrint(
-                'Backend generated invoice number: $backendInvoiceNumber (skipped to preserve ultra-compact format)');
-
-            // Keep using locally generated ultra-compact invoice number
-            // Do not override with backend number to maintain ORGYMNNCC format
-            debugPrint(
-                'Using local ultra-compact invoice number: ${invoice['invoiceNumber']}');
+                'Using persisted backend invoice number: $backendInvoiceNumber');
           }
+          savedInvoiceIndexes.add(i);
         } else {
           final errorMessage =
               response['message'] ?? response['error'] ?? 'Unknown error';
@@ -3324,17 +4040,34 @@ class EnhancedInvoiceService {
       }
     } catch (e) {
       debugPrint('Error saving invoices to backend: $e');
-      // Don't throw error as this is non-critical for PDF generation
-      return null;
+      return _dedupePdfPaths(pdfPaths);
+    }
+
+    if (savedInvoiceIndexes.isEmpty) {
+      debugPrint(
+          'No invoices were persisted to backend. Skipping PDF regeneration.');
+      return _dedupePdfPaths(pdfPaths);
     }
 
     // Regenerate PDFs with correct backend invoice numbers
     try {
+      final clientsForRegeneration = savedInvoiceIndexes
+          .map((index) => _invoices[index])
+          .whereType<Map<String, dynamic>>()
+          .toList();
+      if (clientsForRegeneration.isEmpty) {
+        return _dedupePdfPaths(pdfPaths);
+      }
+
+      final regenerationPayload = Map<String, dynamic>.from(processedData);
+      regenerationPayload['clients'] = clientsForRegeneration;
+
       debugPrint(
-          'Regenerating PDFs with backend invoice numbers... $processedData');
+          'Regenerating PDFs with backend invoice numbers for ${clientsForRegeneration.length} invoice(s)...');
       // Resolve tax rate safely with robust fallbacks to avoid null → double errors
       double resolvedTaxRate = _safeDouble(
-        processedData['taxRate'] ?? processedData['metadata']?['taxRate'],
+        regenerationPayload['taxRate'] ??
+            regenerationPayload['metadata']?['taxRate'],
         defaultValue: 0.0,
       );
 
@@ -3342,13 +4075,13 @@ class EnhancedInvoiceService {
       if (resolvedTaxRate == 0.0) {
         try {
           final List<dynamic> clientsRoot =
-              processedData['clients'] as List<dynamic>? ?? [];
+              regenerationPayload['clients'] as List<dynamic>? ?? [];
           Map<String, dynamic>? firstClient;
           if (clientsRoot.isNotEmpty && clientsRoot.first is Map) {
             firstClient = clientsRoot.first as Map<String, dynamic>;
           } else {
             final List<dynamic> altClients =
-                processedData['calculatedPayloadData']?['clients']
+                regenerationPayload['calculatedPayloadData']?['clients']
                         as List<dynamic>? ??
                     [];
             if (altClients.isNotEmpty && altClients.first is Map) {
@@ -3369,23 +4102,23 @@ class EnhancedInvoiceService {
       }
 
       // Respect processedData's tax display preference when regenerating PDFs
-      final bool showTaxFlag = ((processedData['applyTax'] ??
-              processedData['metadata']?['includesTax'] ??
-              processedData['pdfGenerationParams']?['showTax'] ??
+      final bool showTaxFlag = ((regenerationPayload['applyTax'] ??
+              regenerationPayload['metadata']?['includesTax'] ??
+              regenerationPayload['pdfGenerationParams']?['showTax'] ??
               true) ==
           true);
 
       final updatedPdfPaths = await _pdfGenerator.generatePdfs(
-        processedData,
+        regenerationPayload,
         showTax: showTaxFlag,
         taxRate: resolvedTaxRate,
       );
       debugPrint(
           'Successfully regenerated ${updatedPdfPaths.length} PDFs with backend invoice numbers');
-      return updatedPdfPaths;
+      return _dedupePdfPaths(updatedPdfPaths);
     } catch (e) {
       debugPrint('Error regenerating PDFs with backend invoice numbers: $e');
-      return null;
+      return _dedupePdfPaths(pdfPaths);
     }
   }
 }
