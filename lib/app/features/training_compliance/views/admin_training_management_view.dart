@@ -312,12 +312,14 @@ class _EditTrainingModuleDialogState
       ),
       title: Text(AppLocalizations.of(context)!.editButton,
           style: BauhausDesign.getTextTheme(context).headlineLarge),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
               TextFormField(
                 controller: _titleController,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
@@ -341,8 +343,21 @@ class _EditTrainingModuleDialogState
                 value: _contentType,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
                     labelText: AppLocalizations.of(context)!.contentTypeLabel),
+                dropdownColor: BauhausDesign.surfaceLight,
+                iconEnabledColor: BauhausDesign.textDark,
+                style: BauhausDesign.getTextTheme(context)
+                    .bodyMedium
+                    ?.copyWith(color: BauhausDesign.textDark),
                 items: ['Video', 'Text', 'Link']
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                    .map((t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(
+                            t,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(color: BauhausDesign.textDark),
+                          ),
+                        ))
                     .toList(),
                 onChanged: (v) => setState(() => _contentType = v!),
               ),
@@ -377,7 +392,8 @@ class _EditTrainingModuleDialogState
                     ? AppLocalizations.of(context)!.requiredValidation
                     : null,
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
