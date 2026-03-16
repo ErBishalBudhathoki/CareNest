@@ -304,8 +304,19 @@ class _EditTrainingModuleDialogState
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final dialogWidth = screenWidth > 560 ? 520.0 : screenWidth - 32;
+    final dropdownTextStyle = BauhausDesign.getTextTheme(context)
+            .bodyMedium
+            ?.copyWith(color: BauhausDesign.textDark) ??
+        const TextStyle(color: BauhausDesign.textDark);
+
     return AlertDialog(
       backgroundColor: BauhausDesign.surfaceLight,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space4,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
@@ -313,7 +324,7 @@ class _EditTrainingModuleDialogState
       title: Text(AppLocalizations.of(context)!.editButton,
           style: BauhausDesign.getTextTheme(context).headlineLarge),
       content: SizedBox(
-        width: 420,
+        width: dialogWidth,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -345,17 +356,13 @@ class _EditTrainingModuleDialogState
                     labelText: AppLocalizations.of(context)!.contentTypeLabel),
                 dropdownColor: BauhausDesign.surfaceLight,
                 iconEnabledColor: BauhausDesign.textDark,
-                style: BauhausDesign.getTextTheme(context)
-                    .bodyMedium
-                    ?.copyWith(color: BauhausDesign.textDark),
+                style: dropdownTextStyle,
                 items: ['Video', 'Text', 'Link']
                     .map((t) => DropdownMenuItem(
                           value: t,
                           child: Text(
                             t,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(color: BauhausDesign.textDark),
+                            style: dropdownTextStyle,
                           ),
                         ))
                     .toList(),
@@ -443,20 +450,33 @@ class _AddTrainingModuleDialogState
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final dialogWidth = screenWidth > 560 ? 520.0 : screenWidth - 32;
+    final dropdownTextStyle = BauhausDesign.getTextTheme(context)
+            .bodyMedium
+            ?.copyWith(color: BauhausDesign.textDark) ??
+        const TextStyle(color: BauhausDesign.textDark);
+
     return AlertDialog(
       backgroundColor: BauhausDesign.surfaceLight,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space4,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
       title: Text(AppLocalizations.of(context)!.addModuleTitle,
           style: BauhausDesign.getTextTheme(context).headlineLarge),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+      content: SizedBox(
+        width: dialogWidth,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
               TextFormField(
                 controller: _titleController,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
@@ -480,8 +500,17 @@ class _AddTrainingModuleDialogState
                 value: _contentType,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
                     labelText: AppLocalizations.of(context)!.contentTypeLabel),
+                dropdownColor: BauhausDesign.surfaceLight,
+                iconEnabledColor: BauhausDesign.textDark,
+                style: dropdownTextStyle,
                 items: ['Video', 'Text', 'Link']
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                    .map((t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(
+                            t,
+                            style: dropdownTextStyle,
+                          ),
+                        ))
                     .toList(),
                 onChanged: (v) => setState(() => _contentType = v!),
               ),
@@ -516,7 +545,8 @@ class _AddTrainingModuleDialogState
                     ? AppLocalizations.of(context)!.requiredValidation
                     : null,
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
