@@ -592,6 +592,12 @@ class _UploadCertificationDialogState
 
   @override
   Widget build(BuildContext context) {
+    final requirementsState =
+        ref.watch(certificationRequirementsViewModelProvider);
+    final requirements = requirementsState.requirements
+        .where((req) => req.isActive)
+        .toList();
+
     return Dialog(
       insetPadding: const EdgeInsets.all(BauhausDesign.space4),
       backgroundColor: Colors.transparent,
@@ -615,30 +621,32 @@ class _UploadCertificationDialogState
                       ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
-              if (requirements.isNotEmpty) ...[
-                DropdownButtonFormField<String>(
-                  value: _selectedRequirementId,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: 'Certification Requirement (Optional)'),
-                  items: requirements
-                      .map((req) => DropdownMenuItem(
-                            value: req.id,
-                            child: Text(req.name),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    final selected = requirements
-                        .firstWhere((req) => req.id == value, orElse: () => requirements.first);
-                    setState(() {
-                      _selectedRequirementId = value;
-                      _nameController.text = selected.name;
-                    });
-                  },
-                ),
-                const SizedBox(height: BauhausDesign.space3),
-              ],
-              TextFormField(
+                if (requirements.isNotEmpty) ...[
+                  DropdownButtonFormField<String>(
+                    value: _selectedRequirementId,
+                    decoration: BauhausDesign.inputDecoration('').copyWith(
+                        labelText: 'Certification Requirement (Optional)'),
+                    items: requirements
+                        .map((req) => DropdownMenuItem(
+                              value: req.id,
+                              child: Text(req.name),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      final selected = requirements.firstWhere(
+                        (req) => req.id == value,
+                        orElse: () => requirements.first,
+                      );
+                      setState(() {
+                        _selectedRequirementId = value;
+                        _nameController.text = selected.name;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: BauhausDesign.space3),
+                ],
+                TextFormField(
                 controller: _nameController,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
                     labelText:

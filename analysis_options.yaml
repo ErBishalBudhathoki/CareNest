@@ -13,6 +13,7 @@ analyzer:
   exclude:
     - build/**
     - .dart_tool/**
+    - libos/**
   errors:
     avoid_print: ignore
     avoid_unnecessary_containers: ignore
