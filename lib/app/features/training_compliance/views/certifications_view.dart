@@ -182,7 +182,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                   BauhausActionButton(
                     text: AppLocalizations.of(context)!.uploadButtonAction,
                     icon: Icons.upload_file,
@@ -334,7 +334,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

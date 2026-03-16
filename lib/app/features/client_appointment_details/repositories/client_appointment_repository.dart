@@ -8,17 +8,64 @@ class ClientAppointmentRepository {
 
   ClientAppointmentRepository(this._apiMethod);
 
-  Future<ClientDetailModel?> getClientDetails(String clientId, String organizationId) async {
+  Future<ClientDetailModel?> getClientDetails(
+    String clientId,
+    String organizationId,
+  ) async {
     try {
-      final response = await _apiMethod.get('clients/$clientId?organizationId=$organizationId');
+      final endpoint =
+          'details/$clientId?organizationId=${Uri.encodeComponent(organizationId)}';
+      final response = await _apiMethod.get(endpoint);
       if (response['success'] == true && response['client'] != null) {
-        return ClientDetailModel.fromJson(response['client']);
+        return ClientDetailModel.fromJson(_normalizeClientJson(
+          Map<String, dynamic>.from(response['client']),
+        ));
       }
       return null;
     } catch (e) {
       debugPrint('Error fetching client details: $e');
       rethrow;
     }
+  }
+
+  Future<ClientDetailModel?> getClientByEmail(
+    String clientEmail,
+    String organizationId,
+  ) async {
+    try {
+      final encodedEmail = Uri.encodeComponent(clientEmail);
+      final response = await _apiMethod.get('getMultipleClients/$encodedEmail');
+      final data = response['data'];
+      if (data is List && data.isNotEmpty) {
+        final candidates = data
+            .whereType<Map>()
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
+
+        if (candidates.isEmpty) return null;
+
+        final match = candidates.firstWhere(
+          (item) => item['organizationId']?.toString() == organizationId,
+          orElse: () => candidates.first,
+        );
+
+        return ClientDetailModel.fromJson(_normalizeClientJson(match));
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching client by email: $e');
+      return null;
+    }
+  }
+
+  Map<String, dynamic> _normalizeClientJson(Map<String, dynamic> json) {
+    if (!json.containsKey('id') || json['id'] == null) {
+      final fallbackId = json['_id'] ?? json['clientId'] ?? json['uid'];
+      if (fallbackId != null) {
+        json['id'] = fallbackId.toString();
+      }
+    }
+    return json;
   }
 
   Future<bool> updateCareNotes(String clientId, String careNotes, String organizationId, String userEmail) async {
