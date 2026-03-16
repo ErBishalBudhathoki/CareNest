@@ -10,6 +10,8 @@ class Certification with _$Certification {
     required String userId,
     required String name,
     required String issuer,
+    String? certificationNumber,
+    String? requirementId,
     required String fileUrl,
     @Default('Pending') String status,
     required DateTime expiryDate,

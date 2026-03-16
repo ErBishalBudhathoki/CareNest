@@ -30,7 +30,15 @@ class CertificationsViewModel extends StateNotifier<CertificationsState> {
     }
   }
 
-  Future<void> uploadCertification(File file, String name, String issuer, DateTime expiryDate, String? notes) async {
+  Future<void> uploadCertification(
+    File file,
+    String name,
+    String issuer,
+    DateTime expiryDate,
+    String? notes, {
+    String? certificationNumber,
+    String? requirementId,
+  }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       await _repository.uploadCertification(
@@ -39,8 +47,46 @@ class CertificationsViewModel extends StateNotifier<CertificationsState> {
         issuer: issuer,
         expiryDate: expiryDate,
         notes: notes,
+        certificationNumber: certificationNumber,
+        requirementId: requirementId,
       );
       // Reload list
+      await loadCertifications();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+    }
+  }
+
+  Future<void> updateCertification({
+    required String id,
+    String? name,
+    String? issuer,
+    DateTime? expiryDate,
+    String? notes,
+    String? certificationNumber,
+    String? requirementId,
+  }) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await _repository.updateCertification(
+        id: id,
+        name: name,
+        issuer: issuer,
+        expiryDate: expiryDate,
+        notes: notes,
+        certificationNumber: certificationNumber,
+        requirementId: requirementId,
+      );
+      await loadCertifications();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+    }
+  }
+
+  Future<void> deleteCertification(String id) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await _repository.deleteCertification(id);
       await loadCertifications();
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
