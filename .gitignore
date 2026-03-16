@@ -92,6 +92,18 @@ uploads/
 # Generated PDFs
 *.pdf
 
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Local screenshots and captures (root only)
+/screenshots/
+/*.png
+/*.jpg
+/*.jpeg
+
 # Log files
 *.log
 nohup.out
@@ -211,6 +223,10 @@ tests/
 .cursorrules
 *.js
 superPrompt.xml
+telemetry-id
+AGENTS.md
+TODO.md
+libos/
 
 # Gemini CLI config folder
 .gemini/
