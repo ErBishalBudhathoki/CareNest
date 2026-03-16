@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:carenest/app/features/training_compliance/models/certification_requirement.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -245,15 +246,18 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
                 maxLines: 2,
               ),
               const SizedBox(height: BauhausDesign.space3),
-              SwitchListTile(
+              _BauhausSwitchRow(
+                label: 'Required',
                 value: _isRequired,
                 onChanged: (val) => setState(() => _isRequired = val),
-                title: const Text('Required'),
+                variant: BauhausSwitchVariant.primary,
               ),
-              SwitchListTile(
+              const SizedBox(height: BauhausDesign.space2),
+              _BauhausSwitchRow(
+                label: 'Active',
                 value: _isActive,
                 onChanged: (val) => setState(() => _isActive = val),
-                title: const Text('Active'),
+                variant: BauhausSwitchVariant.secondary,
               ),
             ],
           ),
@@ -286,6 +290,41 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
             }
             if (mounted) Navigator.pop(context);
           },
+        ),
+      ],
+    );
+  }
+}
+
+class _BauhausSwitchRow extends StatelessWidget {
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final BauhausSwitchVariant variant;
+
+  const _BauhausSwitchRow({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    required this.variant,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: BauhausDesign.getTextTheme(context)
+                .labelLarge
+                ?.copyWith(color: BauhausDesign.textDark),
+          ),
+        ),
+        BauhausSwitch(
+          value: value,
+          onChanged: onChanged,
+          variant: variant,
         ),
       ],
     );
