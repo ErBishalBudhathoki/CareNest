@@ -340,7 +340,7 @@ class EmployeeTrackingRepository {
         debugPrint('🔍 DEBUG: ERROR - API response failed or is null');
         debugPrint('🔍 DEBUG: Response: $response');
         throw Exception(
-            'Failed to fetch employee tracking data: ${response['error'] ?? 'Unknown error'}');
+            'Failed to fetch employee tracking data: ${response['message'] ?? response['error'] ?? response['errorMessage'] ?? 'Unknown error'}');
       }
     } catch (e) {
       debugPrint('🔍 DEBUG: Exception in getEmployeeTrackingData: $e');
