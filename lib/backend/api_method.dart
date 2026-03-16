@@ -4602,22 +4602,25 @@ class ApiMethod extends ChangeNotifier {
           'data': null,
         };
       }
-      final primaryUri =
-          Uri.parse('${_baseUrl}employee-tracking/$organizationId');
-      final legacyUri =
-          Uri.parse('${_baseUrl}getEmployeeTrackingData/$organizationId');
+      final endpoints = <String>[
+        '${_baseUrl}employee-tracking/api/employee-tracking/$organizationId',
+        '${_baseUrl}employee-tracking/$organizationId',
+        '${_baseUrl}getEmployeeTrackingData/$organizationId',
+      ];
 
-      http.Response response = await http.get(primaryUri, headers: headers);
-      if (response.statusCode == 404) {
-        response = await http.get(legacyUri, headers: headers);
+      http.Response? response;
+      for (final endpoint in endpoints) {
+        response = await http.get(Uri.parse(endpoint), headers: headers);
+        if (response.statusCode == 200) {
+          return jsonDecode(response.body);
+        }
+        if (response.statusCode != 404) {
+          break;
+        }
       }
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception(
-            'Failed to load employee tracking data: ${response.statusCode}');
-      }
+      final statusCode = response?.statusCode ?? 'unknown';
+      throw Exception('Failed to load employee tracking data: $statusCode');
     } catch (e) {
       return {
         'success': false,
