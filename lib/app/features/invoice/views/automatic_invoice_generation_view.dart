@@ -9,8 +9,9 @@ import 'package:carenest/app/features/invoice/services/send_invoice_service.dart
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
-import 'package:carenest/app/core/utils/permission_manager.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 
 /// Automatic Invoice Generation View
 /// Modern UI for one-click invoice generation for all employees and clients
@@ -38,16 +39,20 @@ class AutomaticInvoiceGenerationView extends ConsumerStatefulWidget {
 class _AutomaticInvoiceGenerationViewState
     extends ConsumerState<AutomaticInvoiceGenerationView> {
   String? _organizationId;
+  bool _hasAttemptedGeneration = false;
   bool _includeExpenses = true;
   bool _applyTax = true;
   double _taxRate = 0.00;
   bool _validatePrices = true;
   bool _allowPriceCapOverride = false;
   bool _includeDetailedPricingInfo = true;
-  bool _useAdminBankDetails = false;
+
   bool _useSelectedEmployees =
       false; // false => All employees, true => Selected employees only
   final Set<String> _selectedEmployeeEmails = {};
+  bool _useSelectedClients =
+      false; // false => All clients, true => Selected clients only
+  final Set<String> _selectedClientEmails = {};
   // Local state for date range selection
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
@@ -55,62 +60,29 @@ class _AutomaticInvoiceGenerationViewState
   @override
   void initState() {
     super.initState();
+    // Prevent stale error/progress state when opening this screen.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(automaticInvoiceViewModelProvider.notifier).reset();
+      }
+    });
     _loadOrganizationId();
-    _loadUseAdminPreference();
-    if (widget.autoMode) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _generateInvoices();
-      });
-    }
   }
 
   Future<void> _loadOrganizationId() async {
     if (widget.organizationId != null) {
       _organizationId = widget.organizationId;
-      return;
-    }
+    } else {
+      final sharedPrefs = SharedPreferencesUtils();
+      await sharedPrefs.init();
+      _organizationId = sharedPrefs.getString('organizationId');
 
-    final sharedPrefs = SharedPreferencesUtils();
-    await sharedPrefs.init();
-    _organizationId = sharedPrefs.getString('organizationId');
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  /// Loads the persisted preference for using admin bank details.
-  /// Defaults to false if no value is stored.
-  Future<void> _loadUseAdminPreference() async {
-    try {
-      final prefs = SharedPreferencesUtils();
-      await prefs.init();
-      final stored =
-          prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
-      if (stored != null && mounted) {
-        setState(() => _useAdminBankDetails = stored);
+      if (mounted) {
+        setState(() {});
       }
-    } catch (e) {
-      debugPrint('Failed to load useAdminBankDetails preference: $e');
     }
   }
 
-  /// Persists the current admin/employee bank detail preference.
-  Future<void> _persistUseAdminPreference(bool value) async {
-    try {
-      final prefs = SharedPreferencesUtils();
-      await prefs.init();
-      await prefs.setBool(
-          SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
-    } catch (e) {
-      debugPrint('Failed to persist useAdminBankDetails preference: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,17 +97,36 @@ class _AutomaticInvoiceGenerationViewState
     return AppBar(
       foregroundColor: BauhausDesign.textDark,
       elevation: 0,
-      title: Text(
-        AppLocalizations.of(context)!.automaticInvoiceGenerationTitle,
-        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+      titleSpacing: BauhausDesign.space4,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.automaticInvoiceGenerationTitle,
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.8,
+                  color: BauhausDesign.textDark,
+                ),
+          ),
+          Text(
+            widget.organizationName ??
+                AppLocalizations.of(context)!.organizationLabel,
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.textDark.withOpacity(0.7),
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+        ],
       ),
-      centerTitle: true,
       backgroundColor: BauhausDesign.surfaceWhite,
+      surfaceTintColor: Colors.transparent,
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Container(color: BauhausDesign.neutral),
+        preferredSize: const Size.fromHeight(3),
+        child: Container(
+          height: 3,
+          color: BauhausDesign.neutral,
+        ),
       ),
     );
   }
@@ -151,21 +142,36 @@ class _AutomaticInvoiceGenerationViewState
       builder: (context, ref, child) {
         final state = ref.watch(automaticInvoiceViewModelProvider);
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(BauhausDesign.space4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeaderCard(),
-              const SizedBox(height: BauhausDesign.space4),
-              _buildConfigurationCard(),
-              const SizedBox(height: BauhausDesign.space4),
-              if (state.isLoading) ..._buildProgressSection(state),
-              if (!state.isLoading && !state.isCompleted)
-                _buildGenerateButton(),
-              if (state.isCompleted) _buildResultsSection(state),
-              if (state.errorMessage.isNotEmpty) _buildErrorSection(state),
-            ],
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1120),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                BauhausDesign.space5,
+                BauhausDesign.space5,
+                BauhausDesign.space5,
+                BauhausDesign.space8,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeaderCard(),
+                  const SizedBox(height: BauhausDesign.space5),
+                  _buildConfigurationCard(),
+                  const SizedBox(height: BauhausDesign.space5),
+                  if (_hasAttemptedGeneration && state.isLoading)
+                    ..._buildProgressSection(state),
+                  if (!state.isLoading &&
+                      !state.isCompleted &&
+                      (!_hasAttemptedGeneration || state.errorMessage.isEmpty))
+                    _buildGenerateButton(),
+                  if (_hasAttemptedGeneration && state.isCompleted)
+                    _buildResultsSection(state),
+                  if (_hasAttemptedGeneration && state.errorMessage.isNotEmpty)
+                    _buildErrorSection(state),
+                ],
+              ),
+            ),
           ),
         );
       },
@@ -173,88 +179,86 @@ class _AutomaticInvoiceGenerationViewState
   }
 
   Widget _buildHeaderCard() {
-    return BauhausCard(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
+    return Container(
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHard],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
-                  border: Border.all(
-                    color: BauhausDesign.textDark,
-                    width: 2,
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: BauhausDesign.textDark,
-                      offset: Offset(2, 2),
-                      blurRadius: 0,
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.auto_awesome,
+              Expanded(
+                child: Container(
                   color: BauhausDesign.primary,
-                  size: 24,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space5,
+                    vertical: BauhausDesign.space4,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.oneClickGenerationTitle,
+                    style: BauhausDesign.getTextTheme(context)
+                        .titleMedium
+                        ?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: BauhausDesign.surfaceWhite,
+                          letterSpacing: 1.1,
+                        ),
+                  ),
                 ),
               ),
-              const SizedBox(width: BauhausDesign.space4),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.oneClickGenerationTitle,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
-                          ),
-                    ),
-                    const SizedBox(height: BauhausDesign.space1),
-                    Text(
-                      widget.organizationName ??
-                          AppLocalizations.of(context)!.organizationLabel,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
-                    ),
-                  ],
+              Container(
+                width: 74,
+                height: 74,
+                color: BauhausDesign.accent,
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.auto_awesome,
+                  color: BauhausDesign.textDark,
+                  size: 30,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: BauhausDesign.space4),
+          Container(height: 2, color: BauhausDesign.neutral),
           Container(
-            padding: const EdgeInsets.all(BauhausDesign.space4),
+            width: double.infinity,
+            padding: const EdgeInsets.all(BauhausDesign.space5),
             decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
-              border: Border.all(
-                color: BauhausDesign.neutral,
-                width: 1,
-              ),
+              color: BauhausDesign.surfaceWhite,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(
-                  Icons.info_outline,
-                  color: BauhausDesign.textDark,
-                  size: 20,
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.surfaceOffWhite,
+                    border:
+                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.info_outline,
+                    color: BauhausDesign.textDark,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context)!
                         .automaticInvoiceGenerationDesc,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w600,
+                          height: 1.45,
+                        ),
                   ),
                 ),
               ],
@@ -266,70 +270,96 @@ class _AutomaticInvoiceGenerationViewState
   }
 
   Widget _buildConfigurationCard() {
-    return BauhausCard(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
+    return Container(
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHard],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            AppLocalizations.of(context)!
-                .invoiceConfigurationTitle
-                .toUpperCase(),
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
+          Container(
+            width: double.infinity,
+            color: BauhausDesign.textDark,
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space5,
+              vertical: BauhausDesign.space4,
+            ),
+            child: Text(
+              AppLocalizations.of(context)!
+                  .invoiceConfigurationTitle
+                  .toUpperCase(),
+              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                    color: BauhausDesign.surfaceWhite,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.1,
+                  ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildConfigOption(
+                  AppLocalizations.of(context)!.includeExpensesOption,
+                  AppLocalizations.of(context)!.includeExpensesOptionDesc,
+                  _includeExpenses,
+                  (value) => setState(() => _includeExpenses = value),
+                  Icons.receipt_long,
                 ),
+                const SizedBox(height: BauhausDesign.space4),
+                _buildConfigOption(
+                  AppLocalizations.of(context)!.applyTaxOption,
+                  AppLocalizations.of(context)!.applyTaxOptionDesc,
+                  _applyTax,
+                  (value) => setState(() => _applyTax = value),
+                  Icons.calculate,
+                ),
+                if (_applyTax) ...[
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildTaxRateSlider(),
+                ],
+                const SizedBox(height: BauhausDesign.space4),
+                _buildConfigOption(
+                  AppLocalizations.of(context)!.validatePricesOption,
+                  AppLocalizations.of(context)!.validatePricesOptionDesc,
+                  _validatePrices,
+                  (value) => setState(() => _validatePrices = value),
+                  Icons.verified,
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                _buildConfigOption(
+                  AppLocalizations.of(context)!.allowPriceCapOverrideOption,
+                  AppLocalizations.of(context)!.allowPriceCapOverrideOptionDesc,
+                  _allowPriceCapOverride,
+                  (value) => setState(() => _allowPriceCapOverride = value),
+                  Icons.warning,
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                _buildConfigOption(
+                  AppLocalizations.of(context)!.detailedPricingInfoOption,
+                  AppLocalizations.of(context)!.detailedPricingInfoOptionDesc,
+                  _includeDetailedPricingInfo,
+                  (value) =>
+                      setState(() => _includeDetailedPricingInfo = value),
+                  Icons.info,
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                if (widget.invoiceType != 'client') ...[
+                  _buildEmployeesSelection(),
+                  const SizedBox(height: BauhausDesign.space4),
+                ],
+                if (widget.invoiceType != 'employee') ...[
+                  _buildClientsSelection(),
+                  const SizedBox(height: BauhausDesign.space4),
+                ],
+
+                _buildInvoicePeriodSelection(),
+              ],
+            ),
           ),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildConfigOption(
-            AppLocalizations.of(context)!.includeExpensesOption,
-            AppLocalizations.of(context)!.includeExpensesOptionDesc,
-            _includeExpenses,
-            (value) => setState(() => _includeExpenses = value),
-            Icons.receipt_long,
-          ),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildConfigOption(
-            AppLocalizations.of(context)!.applyTaxOption,
-            AppLocalizations.of(context)!.applyTaxOptionDesc,
-            _applyTax,
-            (value) => setState(() => _applyTax = value),
-            Icons.calculate,
-          ),
-          if (_applyTax) ...[
-            const SizedBox(height: BauhausDesign.space4),
-            _buildTaxRateSlider(),
-          ],
-          const SizedBox(height: BauhausDesign.space4),
-          _buildConfigOption(
-            AppLocalizations.of(context)!.validatePricesOption,
-            AppLocalizations.of(context)!.validatePricesOptionDesc,
-            _validatePrices,
-            (value) => setState(() => _validatePrices = value),
-            Icons.verified,
-          ),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildConfigOption(
-            AppLocalizations.of(context)!.allowPriceCapOverrideOption,
-            AppLocalizations.of(context)!.allowPriceCapOverrideOptionDesc,
-            _allowPriceCapOverride,
-            (value) => setState(() => _allowPriceCapOverride = value),
-            Icons.warning,
-          ),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildConfigOption(
-            AppLocalizations.of(context)!.detailedPricingInfoOption,
-            AppLocalizations.of(context)!.detailedPricingInfoOptionDesc,
-            _includeDetailedPricingInfo,
-            (value) => setState(() => _includeDetailedPricingInfo = value),
-            Icons.info,
-          ),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildEmployeesSelection(),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildBankDetailsSelection(),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildInvoicePeriodSelection(),
         ],
       ),
     );
@@ -338,42 +368,41 @@ class _AutomaticInvoiceGenerationViewState
   /// Builds the invoice period selection UI, allowing the user to choose a
   /// start and end date for filtering line items and expenses.
   Widget _buildInvoicePeriodSelection() {
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral),
-      ),
+    return _buildModuleFrame(
+      icon: Icons.calendar_today_rounded,
+      title: AppLocalizations.of(context)!.invoicePeriodTitle,
+      subtitle: 'Filter invoices and expenses by a custom date range.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.primary),
-                ),
-                child: const Icon(
-                  Icons.calendar_today_rounded,
-                  color: BauhausDesign.primary,
-                  size: 20,
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space3,
+                    vertical: BauhausDesign.space3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.surfaceWhite,
+                    border:
+                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  ),
+                  child: Text(
+                    (_selectedStartDate != null && _selectedEndDate != null)
+                        ? '${_formatDate(_selectedStartDate!)}  →  ${_formatDate(_selectedEndDate!)}'
+                        : AppLocalizations.of(context)!.noPeriodSelectedText,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
                 ),
               ),
               const SizedBox(width: BauhausDesign.space3),
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.invoicePeriodTitle,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                ),
-              ),
-              TextButton.icon(
+              BauhausIconButton(
                 onPressed: () async {
                   final picked = await showDateRangePicker(
                     context: context,
@@ -407,142 +436,32 @@ class _AutomaticInvoiceGenerationViewState
                     });
                   }
                 },
-                icon: const Icon(Icons.date_range_rounded),
-                label: Text(AppLocalizations.of(context)!.selectPeriodButton),
-                style: TextButton.styleFrom(
-                  foregroundColor: BauhausDesign.primary,
-                  textStyle:
-                      BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                ),
+                icon: Icons.date_range_rounded,
+                tooltip: AppLocalizations.of(context)!.selectPeriodButton,
+                variant: BauhausActionVariant.secondary,
               ),
             ],
           ),
-          const SizedBox(height: BauhausDesign.space3),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  (_selectedStartDate != null && _selectedEndDate != null)
-                      ? '${_formatDate(_selectedStartDate!)}  —  ${_formatDate(_selectedEndDate!)}'
-                      : AppLocalizations.of(context)!.noPeriodSelectedText,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
-                ),
-              ),
-              if (_selectedStartDate != null && _selectedEndDate != null)
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedStartDate = null;
-                      _selectedEndDate = null;
-                    });
-                  },
-                  style: TextButton.styleFrom(
-                      foregroundColor: BauhausDesign.error),
-                  child: Text(AppLocalizations.of(context)!.clearButton),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Employees inclusion/selection UI for intuitive control
-  Widget _buildEmployeesSelection() {
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.primary),
-                ),
-                child: const Icon(
-                  Icons.people_alt,
-                  color: BauhausDesign.primary,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: BauhausDesign.space3),
-              Text(
-                AppLocalizations.of(context)!.employeesTitle,
-                style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ],
-          ),
-          const SizedBox(height: BauhausDesign.space3),
-          RadioListTile<bool>(
-            title: Text(AppLocalizations.of(context)!.allEmployeesOption,
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
-            value: false,
-            groupValue: _useSelectedEmployees,
-            onChanged: (value) {
-              setState(() {
-                _useSelectedEmployees = value!;
-              });
-            },
-            activeColor: BauhausDesign.primary,
-            contentPadding: EdgeInsets.zero,
-          ),
-          RadioListTile<bool>(
-            title: Text(AppLocalizations.of(context)!.selectEmployeesOption,
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
-            value: true,
-            groupValue: _useSelectedEmployees,
-            onChanged: (value) async {
-              setState(() {
-                _useSelectedEmployees = value!;
-              });
-              // Prompt employee picker immediately for a smooth flow
-              await _openEmployeeSelectionSheet();
-            },
-            activeColor: BauhausDesign.primary,
-            contentPadding: EdgeInsets.zero,
-          ),
-          if (_useSelectedEmployees) ...[
+          if (_selectedStartDate != null && _selectedEndDate != null) ...[
             const SizedBox(height: BauhausDesign.space3),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _selectedEmployeeEmails.isEmpty
-                        ? AppLocalizations.of(context)!.noEmployeesSelectedText
-                        : AppLocalizations.of(context)!.employeesSelectedCount(
-                            _selectedEmployeeEmails.length.toString()),
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
-                  ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _selectedStartDate = null;
+                    _selectedEndDate = null;
+                  });
+                },
+                icon: const Icon(Icons.close_rounded),
+                label: Text(AppLocalizations.of(context)!.clearButton),
+                style: TextButton.styleFrom(
+                  foregroundColor: BauhausDesign.error,
+                  textStyle: BauhausDesign.getTextTheme(context)
+                      .labelMedium
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
-                TextButton.icon(
-                  onPressed: _openEmployeeSelectionSheet,
-                  icon: const Icon(Icons.edit),
-                  label:
-                      Text(AppLocalizations.of(context)!.chooseEmployeesButton),
-                  style: TextButton.styleFrom(
-                    foregroundColor: BauhausDesign.primary,
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ],
@@ -550,67 +469,212 @@ class _AutomaticInvoiceGenerationViewState
     );
   }
 
-  Widget _buildBankDetailsSelection() {
+  /// Employees inclusion/selection UI for intuitive control
+  Widget _buildEmployeesSelection() {
+    return _buildModuleFrame(
+      icon: Icons.people_alt,
+      title: AppLocalizations.of(context)!.employeesTitle,
+      subtitle: 'Run for all employees or target only selected people.',
+      child: Column(
+        children: [
+          _buildChoiceTile(
+            title: AppLocalizations.of(context)!.allEmployeesOption,
+            subtitle: 'Use everyone in this organization',
+            selected: !_useSelectedEmployees,
+            onTap: () => setState(() => _useSelectedEmployees = false),
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          _buildChoiceTile(
+            title: AppLocalizations.of(context)!.selectEmployeesOption,
+            subtitle: 'Choose specific employees',
+            selected: _useSelectedEmployees,
+            onTap: () async {
+              setState(() => _useSelectedEmployees = true);
+              await _openEmployeeSelectionSheet();
+            },
+          ),
+          if (_useSelectedEmployees) ...[
+            const SizedBox(height: BauhausDesign.space3),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(BauhausDesign.space3),
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceOffWhite,
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedEmployeeEmails.isEmpty
+                          ? AppLocalizations.of(context)!
+                              .noEmployeesSelectedText
+                          : AppLocalizations.of(context)!
+                              .employeesSelectedCount(
+                                  _selectedEmployeeEmails.length.toString()),
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ),
+                  BauhausActionButton(
+                    text: AppLocalizations.of(context)!.chooseEmployeesButton,
+                    onPressed: _openEmployeeSelectionSheet,
+                    icon: Icons.edit,
+                    isSmall: true,
+                    variant: BauhausActionVariant.secondary,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildModuleFrame({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Widget child,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral),
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.primary),
-                ),
-                child: const Icon(
-                  Icons.account_balance,
-                  color: BauhausDesign.primary,
-                  size: 20,
-                ),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceOffWhite,
+              border: Border(
+                bottom: BorderSide(color: BauhausDesign.neutral, width: 1.5),
               ),
-              const SizedBox(width: BauhausDesign.space3),
-              Text(
-                AppLocalizations.of(context)!.bankDetailsTitle,
-                style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ],
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space3,
+              vertical: BauhausDesign.space3,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  color: BauhausDesign.accent,
+                  alignment: Alignment.center,
+                  child: Icon(
+                    icon,
+                    color: BauhausDesign.textDark,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: BauhausDesign.space3),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.w900,
+                            ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: BauhausDesign.space3),
-          RadioListTile<bool>(
-            title: Text(AppLocalizations.of(context)!.employeeBankDetailsOption,
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
-            value: false,
-            groupValue: _useAdminBankDetails,
-            onChanged: (value) {
-              setState(() => _useAdminBankDetails = value!);
-              _persistUseAdminPreference(_useAdminBankDetails);
-            },
-            activeColor: BauhausDesign.primary,
-            contentPadding: EdgeInsets.zero,
-          ),
-          RadioListTile<bool>(
-            title: Text(AppLocalizations.of(context)!.adminBankDetailsOption,
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
-            value: true,
-            groupValue: _useAdminBankDetails,
-            onChanged: (value) {
-              setState(() => _useAdminBankDetails = value!);
-              _persistUseAdminPreference(_useAdminBankDetails);
-            },
-            activeColor: BauhausDesign.primary,
-            contentPadding: EdgeInsets.zero,
+          Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space3),
+            child: child,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildChoiceTile({
+    required String title,
+    required String subtitle,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(BauhausDesign.space3),
+        decoration: BoxDecoration(
+          color: selected
+              ? BauhausDesign.primary.withOpacity(0.08)
+              : BauhausDesign.surfaceWhite,
+          border: Border.all(
+            color: selected ? BauhausDesign.primary : BauhausDesign.neutral,
+            width: selected ? 2 : 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: selected
+                    ? BauhausDesign.primary
+                    : BauhausDesign.surfaceWhite,
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              ),
+            ),
+            const SizedBox(width: BauhausDesign.space3),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style:
+                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                              color: BauhausDesign.textMuted,
+                              fontWeight: FontWeight.w600,
+                            ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -624,49 +688,48 @@ class _AutomaticInvoiceGenerationViewState
   ) {
     return InkWell(
       onTap: () => onChanged(!value),
-      borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
           color: value
-              ? BauhausDesign.primary.withOpacity(0.05)
+              ? BauhausDesign.surfaceOffWhite
               : BauhausDesign.surfaceWhite,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(
             color: value ? BauhausDesign.primary : BauhausDesign.neutral,
+            width: value ? 2 : 1.5,
           ),
+          boxShadow: const [BauhausDesign.shadowHardXs],
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(BauhausDesign.space2),
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
-                color: value
-                    ? BauhausDesign.primary.withOpacity(0.1)
-                    : BauhausDesign.backgroundLight,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(
-                    color:
-                        value ? BauhausDesign.primary : BauhausDesign.neutral),
+                color:
+                    value ? BauhausDesign.primary : BauhausDesign.surfaceWhite,
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
               ),
               child: Icon(
                 icon,
-                color: value ? BauhausDesign.primary : BauhausDesign.textMuted,
-                size: 20,
+                color:
+                    value ? BauhausDesign.surfaceWhite : BauhausDesign.textDark,
+                size: 18,
               ),
             ),
-            const SizedBox(width: BauhausDesign.space4),
+            const SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: BauhausDesign.textDark,
-                            ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: BauhausDesign.textDark,
+                        ),
                   ),
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
@@ -674,16 +737,16 @@ class _AutomaticInvoiceGenerationViewState
                     style:
                         BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                               color: BauhausDesign.textMuted,
+                              fontWeight: FontWeight.w600,
                             ),
                   ),
                 ],
               ),
             ),
-            Switch(
+            BauhausSwitch(
               value: value,
               onChanged: onChanged,
-              activeColor: BauhausDesign.primary,
-              activeTrackColor: BauhausDesign.primary.withOpacity(0.2),
+              variant: BauhausSwitchVariant.primary,
             ),
           ],
         ),
@@ -695,9 +758,9 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral),
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        boxShadow: const [BauhausDesign.shadowHardXs],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -707,8 +770,9 @@ class _AutomaticInvoiceGenerationViewState
             children: [
               Text(
                 AppLocalizations.of(context)!.taxRateLabel,
-                style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: BauhausDesign.textDark,
                     ),
               ),
               Container(
@@ -717,16 +781,15 @@ class _AutomaticInvoiceGenerationViewState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.primary),
+                  color: BauhausDesign.accent,
+                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                 ),
                 child: Text(
                   '${(_taxRate * 100).toStringAsFixed(1)}%',
                   style:
                       BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.primary,
-                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w900,
                           ),
                 ),
               ),
@@ -779,6 +842,7 @@ class _AutomaticInvoiceGenerationViewState
                     style: BauhausDesign.getTextTheme(context)
                         .titleMedium
                         ?.copyWith(
+                          color: BauhausDesign.textDark,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -827,12 +891,18 @@ class _AutomaticInvoiceGenerationViewState
   }
 
   Widget _buildGenerateButton() {
-    return BauhausActionButton(
-      text:
-          AppLocalizations.of(context)!.generateAllInvoicesButton.toUpperCase(),
-      onPressed: _generateInvoices,
-      icon: Icons.auto_awesome,
-      isFullWidth: true,
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: const [BauhausDesign.shadowHard],
+      ),
+      child: BauhausActionButton(
+        text: AppLocalizations.of(context)!
+            .generateAllInvoicesButton
+            .toUpperCase(),
+        onPressed: _generateInvoices,
+        icon: Icons.auto_awesome,
+        isFullWidth: true,
+      ),
     );
   }
 
@@ -961,6 +1031,13 @@ class _AutomaticInvoiceGenerationViewState
   }
 
   Widget _buildErrorSection(AutomaticInvoiceState state) {
+    final isWarning = _isInvoiceWarningState(state.errorMessage);
+    final accent = isWarning ? BauhausDesign.warning : BauhausDesign.error;
+    final icon = isWarning ? Icons.info_outline : Icons.error_outline;
+    final title = isWarning
+        ? 'Invoice Setup Required'
+        : AppLocalizations.of(context)!.generationFailedTitle.toUpperCase();
+
     return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -970,26 +1047,24 @@ class _AutomaticInvoiceGenerationViewState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.error.withOpacity(0.1),
-                  border: Border.all(color: BauhausDesign.error, width: 2),
+                  color: accent.withOpacity(0.1),
+                  border: Border.all(color: accent, width: 2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
-                child: const Icon(
-                  Icons.error_outline,
-                  color: BauhausDesign.error,
+                child: Icon(
+                  icon,
+                  color: accent,
                   size: 28,
                 ),
               ),
               const SizedBox(width: BauhausDesign.space4),
               Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!
-                      .generationFailedTitle
-                      .toUpperCase(),
+                  title,
                   style:
                       BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.error,
+                            fontWeight: FontWeight.w800,
+                            color: accent,
                           ),
                 ),
               ),
@@ -999,7 +1074,7 @@ class _AutomaticInvoiceGenerationViewState
           Text(
             state.errorMessage,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.error,
+                  color: BauhausDesign.textDark,
                   fontWeight: FontWeight.w600,
                 ),
           ),
@@ -1015,11 +1090,15 @@ class _AutomaticInvoiceGenerationViewState
     );
   }
 
-  Future<void> _generateInvoices() async {
-    // Request Storage Permission before generation
-    final hasPermission = await PermissionManager.requestStoragePermission(context);
-    if (!hasPermission) return;
+  bool _isInvoiceWarningState(String message) {
+    final m = message.toLowerCase();
+    return m.contains('no clients found') ||
+        m.contains('no employees found') ||
+        m.contains('no valid employee-client relationships') ||
+        m.contains('no selected employees');
+  }
 
+  Future<void> _generateInvoices() async {
     if (_organizationId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1030,11 +1109,22 @@ class _AutomaticInvoiceGenerationViewState
     }
 
     // If using selected employees, ensure at least one is chosen
-    if (_useSelectedEmployees && _selectedEmployeeEmails.isEmpty) {
+    if (widget.invoiceType != 'client' && _useSelectedEmployees && _selectedEmployeeEmails.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content:
               Text(AppLocalizations.of(context)!.errorSelectAtLeastOneEmployee),
+        ),
+      );
+      return;
+    }
+
+    // If using selected clients, ensure at least one is chosen
+    if (widget.invoiceType != 'employee' && _useSelectedClients && _selectedClientEmails.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Please select at least one client to include.'), // AppLocalizations doesn't exist for this right now
         ),
       );
       return;
@@ -1064,6 +1154,10 @@ class _AutomaticInvoiceGenerationViewState
 
     final viewModel = ref.read(automaticInvoiceViewModelProvider.notifier);
 
+    setState(() {
+      _hasAttemptedGeneration = true;
+    });
+
     await viewModel.generateAutomaticInvoices(
       context,
       organizationId: _organizationId!,
@@ -1073,11 +1167,13 @@ class _AutomaticInvoiceGenerationViewState
       applyTax: _applyTax,
       taxRate: _taxRate,
       includeExpenses: _includeExpenses,
-      useAdminBankDetails: _useAdminBankDetails,
       selectedEmployeeEmails:
           _useSelectedEmployees ? _selectedEmployeeEmails.toList() : null,
+      selectedClientEmails:
+          _useSelectedClients ? _selectedClientEmails.toList() : null,
       startDate: _selectedStartDate,
       endDate: _selectedEndDate,
+      invoiceType: widget.invoiceType,
     );
   }
 
@@ -1222,9 +1318,248 @@ class _AutomaticInvoiceGenerationViewState
     );
   }
 
+  /// Clients inclusion/selection UI for intuitive control
+  Widget _buildClientsSelection() {
+    return _buildModuleFrame(
+      icon: Icons.business_rounded,
+      title: 'Clients', // Assuming localization might not cover it directly, fallback
+      subtitle: 'Run for all clients or target only selected clients.',
+      child: Column(
+        children: [
+          _buildChoiceTile(
+            title: 'All Clients',
+            subtitle: 'Use all clients in this organization',
+            selected: !_useSelectedClients,
+            onTap: () => setState(() => _useSelectedClients = false),
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          _buildChoiceTile(
+            title: 'Select Clients',
+            subtitle: 'Choose specific clients',
+            selected: _useSelectedClients,
+            onTap: () async {
+              setState(() => _useSelectedClients = true);
+              await _openClientSelectionSheet();
+            },
+          ),
+          if (_useSelectedClients) ...[
+            const SizedBox(height: BauhausDesign.space3),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(BauhausDesign.space3),
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceOffWhite,
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedClientEmails.isEmpty
+                          ? 'No clients selected'
+                          : '${_selectedClientEmails.length} client(s) selected',
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ),
+                  BauhausActionButton(
+                    text: 'Choose Clients',
+                    onPressed: _openClientSelectionSheet,
+                    icon: Icons.edit,
+                    isSmall: true,
+                    variant: BauhausActionVariant.secondary,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Opens a bottom sheet to quickly pick clients to include
+  Future<void> _openClientSelectionSheet() async {
+    if (_organizationId == null) return;
+
+    List<Map<String, dynamic>> clientsData = [];
+    bool isLoading = true;
+    String error = '';
+
+    // Create a local StateSetter to manage sheet state
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: BauhausDesign.surfaceWhite,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusXl)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            // Fetch once
+            if (isLoading && clientsData.isEmpty && error.isEmpty) {
+              final api = ref.read(app_providers.apiMethodProvider);
+              api.getClientsByOrganizationId(_organizationId!).then((clients) {
+                if (mounted) {
+                  setModalState(() {
+                    clientsData = clients;
+                    isLoading = false;
+                  });
+                }
+              }).catchError((e) {
+                if (mounted) {
+                  setModalState(() {
+                    error = 'Failed to load clients: $e';
+                    isLoading = false;
+                  });
+                }
+              });
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: BauhausDesign.space4,
+                right: BauhausDesign.space4,
+                top: BauhausDesign.space4,
+                bottom: BauhausDesign.space4 +
+                    MediaQuery.of(context).padding.bottom,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(BauhausDesign.space2),
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.primary.withOpacity(0.1),
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          border: Border.all(color: BauhausDesign.primary),
+                        ),
+                        child: const Icon(Icons.business_rounded,
+                            color: BauhausDesign.primary, size: 20),
+                      ),
+                      const SizedBox(width: BauhausDesign.space3),
+                      Text(
+                        'Select Clients',
+                        style: BauhausDesign.getTextTheme(context)
+                            .titleLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                        color: BauhausDesign.textDark,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: BauhausDesign.space4),
+                  if (isLoading)
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                          child: CircularProgressIndicator(
+                              color: BauhausDesign.primary)),
+                    )
+                  else if (error.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        error,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(color: BauhausDesign.error),
+                      ),
+                    )
+                  else if (clientsData.isEmpty)
+                    Text(
+                      'No clients found in this organization.',
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
+                    )
+                  else
+                    const SizedBox(height: BauhausDesign.space2),
+                  if (!isLoading && clientsData.isNotEmpty)
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: clientsData.length,
+                        itemBuilder: (context, index) {
+                          final client = clientsData[index];
+                          final clientEmail = client['clientEmail'] ?? '';
+                          final clientName = client['clientName'] ??
+                              client['clientEmail'] ??
+                              'Unknown';
+                          final isChecked =
+                              _selectedClientEmails.contains(clientEmail);
+
+                          // Important: skip empty emails
+                          if (clientEmail.toString().isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          return CheckboxListTile(
+                            title: Text(clientName,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600)),
+                            subtitle: Text(clientEmail,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodySmall
+                                    ?.copyWith(color: BauhausDesign.textMuted)),
+                            value: isChecked,
+                            activeColor: BauhausDesign.primary,
+                            checkColor: BauhausDesign.surfaceWhite,
+                            onChanged: (val) {
+                              setModalState(() {
+                                if (val == true) {
+                                  _selectedClientEmails.add(clientEmail);
+                                } else {
+                                  _selectedClientEmails.remove(clientEmail);
+                                }
+                              });
+                              // Also call main setState so UI updates under the modal
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  const SizedBox(height: BauhausDesign.space4),
+                  BauhausActionButton(
+                    text: AppLocalizations.of(context)!
+                        .confirmSelectionButton
+                        .toUpperCase(),
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icons.check_circle,
+                    isFullWidth: true,
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _resetGeneration() {
     final viewModel = ref.read(automaticInvoiceViewModelProvider.notifier);
     viewModel.reset();
+    if (mounted) {
+      setState(() {
+        _hasAttemptedGeneration = false;
+      });
+    }
   }
 
   Widget _buildGeneratedPdfsSection(List<String> generatedPdfs) {
@@ -1419,6 +1754,9 @@ class _AutomaticInvoiceGenerationViewState
                       return null;
                     }
                     try {
+                      if (AppConfig.isPrivateR2StorageUrl(resolved)) {
+                        return AppConfig.buildFilesProxyUrl(resolved);
+                      }
                       return AppConfig.buildFilesDownloadUrl(resolved);
                     } catch (e) {
                       debugPrint(

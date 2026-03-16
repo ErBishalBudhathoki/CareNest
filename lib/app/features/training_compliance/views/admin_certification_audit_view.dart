@@ -24,7 +24,7 @@ class _AdminCertificationAuditViewState
       // Load all pending certifications
       ref
           .read(certificationsViewModelProvider.notifier)
-          .loadCertifications(status: 'Pending');
+          .loadCertifications(status: 'pending_approval');
     });
   }
 
@@ -94,7 +94,7 @@ class _AdminCertificationAuditViewState
                   border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                 ),
                 child: Text(
-                  'PENDING',
+                  cert.status.toUpperCase(),
                   style:
                       BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                             color: Colors.white,
@@ -113,6 +113,10 @@ class _AdminCertificationAuditViewState
               AppLocalizations.of(context)!.expiresLabel(
                   DateFormat('dd MMM yyyy').format(cert.expiryDate)),
               style: BauhausDesign.getTextTheme(context).bodyMedium),
+          if (cert.certificationNumber != null &&
+              cert.certificationNumber!.isNotEmpty)
+            Text('Certification No: ${cert.certificationNumber}',
+                style: BauhausDesign.getTextTheme(context).bodyMedium),
           if (cert.notes != null)
             Text(AppLocalizations.of(context)!.notesDetailLabel(cert.notes!),
                 style: BauhausDesign.getTextTheme(context)
@@ -146,7 +150,7 @@ class _AdminCertificationAuditViewState
                 child: BauhausButton(
                   text: 'Reject',
                   backgroundColor: BauhausDesign.error,
-                  onPressed: () => _showAuditDialog(context, cert, 'Rejected'),
+                  onPressed: () => _showAuditDialog(context, cert, 'rejected'),
                 ),
               ),
               const SizedBox(width: BauhausDesign.space3),
@@ -154,7 +158,7 @@ class _AdminCertificationAuditViewState
                 child: BauhausButton(
                   text: 'Approve',
                   backgroundColor: BauhausDesign.success,
-                  onPressed: () => _showAuditDialog(context, cert, 'Approved'),
+                  onPressed: () => _showAuditDialog(context, cert, 'active'),
                 ),
               ),
             ],
@@ -166,21 +170,66 @@ class _AdminCertificationAuditViewState
 
   void _showAuditDialog(
       BuildContext context, Certification cert, String status) {
+    final actionLabel = status == 'active' ? 'Approve' : 'Reject';
     final notesController = TextEditingController();
+    final numberController =
+        TextEditingController(text: cert.certificationNumber ?? '');
+    DateTime? expiryDate = cert.expiryDate;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
         backgroundColor: BauhausDesign.surfaceLight,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
             side: const BorderSide(color: BauhausDesign.neutral, width: 2)),
-        title: Text('$status Certification',
+        title: Text('$actionLabel Certification',
             style: BauhausDesign.getTextTheme(context).headlineLarge),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Are you sure you want to mark this as $status?',
+            Text('Are you sure you want to mark this as $actionLabel?',
                 style: BauhausDesign.getTextTheme(context).bodyMedium),
+            const SizedBox(height: BauhausDesign.space3),
+            TextFormField(
+              controller: numberController,
+              decoration: BauhausDesign.inputDecoration('').copyWith(
+                  labelText: 'Certification / NDIS Check Number (Optional)'),
+            ),
+            const SizedBox(height: BauhausDesign.space3),
+            GestureDetector(
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate:
+                      expiryDate ?? DateTime.now().add(const Duration(days: 365)),
+                  firstDate: DateTime.now().subtract(const Duration(days: 3650)),
+                  lastDate: DateTime.now().add(const Duration(days: 3650)),
+                );
+                if (date != null) {
+                  setState(() => expiryDate = date);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.backgroundLight,
+                  border: Border.all(color: BauhausDesign.neutral),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 20),
+                    const SizedBox(width: BauhausDesign.space2),
+                    Text(
+                      expiryDate == null
+                          ? AppLocalizations.of(context)!.selectExpiryDate
+                          : DateFormat('dd MMM yyyy').format(expiryDate!),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: BauhausDesign.space3),
             TextFormField(
               controller: notesController,
@@ -200,7 +249,7 @@ class _AdminCertificationAuditViewState
           ),
           BauhausButton(
             text: 'Confirm',
-            backgroundColor: status == 'Approved'
+            backgroundColor: status == 'active'
                 ? BauhausDesign.success
                 : BauhausDesign.error,
             onPressed: () async {
@@ -208,13 +257,20 @@ class _AdminCertificationAuditViewState
               final repo = ref.read(trainingComplianceRepositoryProvider);
               try {
                 await repo.auditCertification(
-                    cert.id!, status, notesController.text);
+                    cert.id!,
+                    status,
+                    notesController.text,
+                    certificationNumber: numberController.text.trim().isEmpty
+                        ? null
+                        : numberController.text.trim(),
+                    expiryDate: expiryDate,
+                  );
                 if (context.mounted) {
                   Navigator.pop(context);
                   // Refresh list
                   ref
                       .read(certificationsViewModelProvider.notifier)
-                      .loadCertifications(status: 'Pending');
+                      .loadCertifications(status: 'pending_approval');
                 }
               } catch (e) {
                 if (context.mounted) {
@@ -225,6 +281,7 @@ class _AdminCertificationAuditViewState
             },
           ),
         ],
+      ),
       ),
     );
   }

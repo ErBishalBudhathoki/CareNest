@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/invoice/utils/hours_formatting.dart';
@@ -23,6 +22,7 @@ class InvoicePdfGenerator {
     Map<String, dynamic> invoices, {
     bool showTax = true,
     required double taxRate,
+    bool preserveSnapshotTotals = false,
     List<File>? attachedPhotos,
     String? photoDescription,
     List<File>? additionalAttachments,
@@ -43,7 +43,7 @@ class InvoicePdfGenerator {
           continue;
         }
 
-        // Ensure admin bank details flag is present for downstream usage
+        // Ensure organization bank details flag is present for downstream usage
         // If the generator was invoked with useAdminBankDetails=true, propagate it to each client
         if (useAdminBankDetails == true) {
           clientData['useAdminBankDetails'] = true;
@@ -67,8 +67,11 @@ class InvoicePdfGenerator {
         debugPrint(
             "PDF Generator: expenses key exists: ${clientData.containsKey('expenses')}");
 
-        // Recalculate and apply tax fixes so corrected totals are persisted downstream
-        _applyTaxFixesAndPersistableTotals(clientData, showTax, taxRate);
+        // For regeneration/rebuild flows, keep persisted totals unchanged.
+        // For normal generation flows, continue applying tax/total fixes.
+        if (!preserveSnapshotTotals) {
+          _applyTaxFixesAndPersistableTotals(clientData, showTax, taxRate);
+        }
 
         final pdf = pw.Document();
 
@@ -115,7 +118,7 @@ class InvoicePdfGenerator {
               pw.SizedBox(height: 24),
               _buildInvoiceDetails(clientData),
               pw.SizedBox(height: 6),
-              _buildInvoiceItemsNote(),
+              _buildInvoiceItemsNote(clientData),
               pw.SizedBox(height: 24),
               if (_hasExpenses(clientData)) ...[
                 _buildExpensesTable(clientData),
@@ -326,10 +329,9 @@ class InvoicePdfGenerator {
                   _buildAlignedKeyValue(
                       'Hours Completed:',
                       HoursFormatting.formatDecimalHours(
-                        _getSafeDouble(
-                          clientData['totalHours'] ??
-                              _calculateTotalHours(clientData),
-                        ),
+                        _calculateTotalHours(clientData) > 0
+                            ? _calculateTotalHours(clientData)
+                            : _getSafeDouble(clientData['totalHours']),
                         minDecimals: 2,
                         maxDecimals: 4,
                       )),
@@ -355,6 +357,7 @@ class InvoicePdfGenerator {
     double totalHours = 0.0;
     for (var item in items) {
       if (item is Map<String, dynamic>) {
+        if (_isMileageItem(item)) continue;
         // Skip items marked to be excluded from total hours (e.g. penalty loadings)
         if (item['excludeFromTotalHours'] == true) continue;
 
@@ -472,115 +475,218 @@ class InvoicePdfGenerator {
   }
 
   pw.Widget _buildInvoiceDetails(Map<String, dynamic> clientData) {
-    final items = clientData['items'] as List<dynamic>? ?? [];
-    final List<List<String>> rows = [
-      ['Invoice Components', 'Time Worked', 'Hours', 'Rate', 'Total Amount'],
-      ...items.map<List<String>>((item) {
-        if (item is! Map<String, dynamic>) {
-          debugPrint('Warning: Invalid item format');
-          return ['', '', '', '', ''];
-        }
+    final allItems = clientData['items'] as List<dynamic>? ?? [];
+    final serviceItems = <Map<String, dynamic>>[];
+    final mileageItems = <Map<String, dynamic>>[];
 
-        debugPrint("""\n\nitem: ${item.toString()}\n\n""");
+    for (final rawItem in allItems) {
+      if (rawItem is! Map) continue;
+      final item = Map<String, dynamic>.from(rawItem);
+      if (_isMileageItem(item)) {
+        mileageItems.add(item);
+      } else {
+        serviceItems.add(item);
+      }
+    }
 
-        String timeWorked = '';
-        if (item['date'] != null &&
-            item['startTime'] != null &&
-            item['endTime'] != null) {
-          final String date = _getSafeString(item['date']);
-          final String startTime = _getSafeString(item['startTime']);
-          final String endTime = _getSafeString(item['endTime']);
-          final String clientState =
-              _getSafeString(clientData['clientState'] ?? 'NSW');
+    final widgets = <pw.Widget>[];
+    if (serviceItems.isNotEmpty) {
+      widgets.add(_buildServiceItemsTable(clientData, serviceItems));
+    }
+    if (mileageItems.isNotEmpty) {
+      if (widgets.isNotEmpty) {
+        widgets.add(pw.SizedBox(height: 14));
+      }
+      widgets.add(_buildMileageItemsTable(mileageItems));
+    }
+    if (widgets.isEmpty) {
+      widgets.add(pw.Text('No invoice items available.'));
+    }
 
-          final double hoursDouble = _getSafeDouble(item['hours']);
-          final String formattedHours = HoursFormatting.formatDecimalHours(
-            hoursDouble,
-            minDecimals: 2,
-            maxDecimals: 4,
-          );
-
-          timeWorked =
-              '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
-        } else if (item['date'] != null &&
-            item['timeStart'] != null &&
-            item['timeEnd'] != null) {
-          final String date = _getSafeString(item['date']);
-          final String startTime = _getSafeString(item['timeStart']);
-          final String endTime = _getSafeString(item['timeEnd']);
-          final String clientState =
-              _getSafeString(clientData['clientState'] ?? 'NSW');
-
-          final double hoursDouble = _getSafeDouble(item['hours']);
-          final String formattedHours = HoursFormatting.formatDecimalHours(
-            hoursDouble,
-            minDecimals: 2,
-            maxDecimals: 4,
-          );
-
-          timeWorked =
-              '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
-        }
-
-        String description = '';
-        if (item['ndisItem'] != null &&
-            item['ndisItem']['itemNumber'] != null &&
-            item['ndisItem']['itemName'] != null) {
-          final number = _getSafeString(item['ndisItem']['itemNumber']);
-          final name = _getSafeString(item['ndisItem']['itemName']);
-          description = number.isNotEmpty ? '$number $name' : name;
-        } else if (item['ndisItemNumber'] != null &&
-            item['ndisItemName'] != null) {
-          final number = _getSafeString(item['ndisItemNumber']);
-          final name = _getSafeString(item['ndisItemName']);
-          description = number.isNotEmpty ? '$number $name' : name;
-        } else if (item['itemCode'] != null) {
-          final number = _getSafeString(item['itemCode']);
-          final name = _getSafeString(item['itemName'] ?? 'Assistance With Self-Care Activities');
-          description = number.isNotEmpty ? '$number $name' : name;
-        }
-
-        final String hoursText = HoursFormatting.formatDecimalHours(
-          _getSafeDouble(item['hours']),
-          minDecimals: 2,
-          maxDecimals: 4,
-        );
-        final String rateText =
-            '\$${_getSafeDouble(item['rate']).toStringAsFixed(2)}';
-        final String amountText =
-            '\$${_getSafeDouble(item['amount']).toStringAsFixed(2)}';
-
-        return [description, timeWorked, hoursText, rateText, amountText];
-      }),
-    ];
-
-    return pw.TableHelper.fromTextArray(
-      border: pw.TableBorder.all(color: PdfColors.black),
-      headerCount: 1,
-      headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-      cellPadding: const pw.EdgeInsets.all(5),
-      columnWidths: {
-        0: const pw.FlexColumnWidth(3),
-        1: const pw.FlexColumnWidth(2),
-        2: const pw.FlexColumnWidth(1),
-        3: const pw.FlexColumnWidth(1),
-        4: const pw.FlexColumnWidth(1),
-      },
-      cellAlignments: {
-        0: pw.Alignment.centerLeft,
-        1: pw.Alignment.centerLeft,
-        2: pw.Alignment.centerRight,
-        3: pw.Alignment.centerRight,
-        4: pw.Alignment.centerRight,
-      },
-      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-      data: rows,
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: widgets,
     );
   }
 
-  pw.Widget _buildInvoiceItemsNote() {
+  pw.Widget _buildServiceItemsTable(
+    Map<String, dynamic> clientData,
+    List<Map<String, dynamic>> items,
+  ) {
+    final rows = <List<String>>[
+      ['Invoice Components', 'Time Worked', 'Hours', 'Rate', 'Total Amount'],
+    ];
+
+    for (final item in items) {
+      final date = _getSafeString(item['date']);
+      final startTime = _getSafeString(item['startTime'] ?? item['timeStart']);
+      final endTime = _getSafeString(item['endTime'] ?? item['timeEnd']);
+      final clientState = _getSafeString(clientData['clientState'] ?? 'NSW');
+
+      String timeWorked = '';
+      if (date.isNotEmpty && startTime.isNotEmpty && endTime.isNotEmpty) {
+        final hoursDouble = _getSafeDouble(item['hours']);
+        final formattedHours = HoursFormatting.formatDecimalHours(
+          hoursDouble,
+          minDecimals: 2,
+          maxDecimals: 4,
+        );
+        timeWorked =
+            '$date - $startTime to $endTime - $clientState ($formattedHours hours)';
+      } else if (date.isNotEmpty) {
+        // For non-shift rows without a time range, show date only.
+        timeWorked = date;
+      }
+
+      final description = _buildItemDescription(item);
+      final hoursText = HoursFormatting.formatDecimalHours(
+        _getSafeDouble(item['hours']),
+        minDecimals: 2,
+        maxDecimals: 4,
+      );
+      final rateText =
+          '\$${_getSafeDouble(item['rate'] ?? item['unitPrice']).toStringAsFixed(2)}';
+      final amountText = '\$${_getSafeDouble(
+        item['amount'] ??
+            item['total'] ??
+            (_getSafeDouble(item['hours']) * _getSafeDouble(item['rate'])),
+      ).toStringAsFixed(2)}';
+
+      rows.add([description, timeWorked, hoursText, rateText, amountText]);
+    }
+
+    return pw.Container(
+      width: double.infinity,
+      child: pw.TableHelper.fromTextArray(
+        border: pw.TableBorder.all(color: PdfColors.black),
+        headerCount: 1,
+        headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+        cellPadding: const pw.EdgeInsets.all(5),
+        columnWidths: {
+          0: const pw.FlexColumnWidth(3),
+          1: const pw.FlexColumnWidth(2),
+          2: const pw.FlexColumnWidth(1),
+          3: const pw.FlexColumnWidth(1),
+          4: const pw.FlexColumnWidth(1),
+        },
+        cellAlignments: {
+          0: pw.Alignment.centerLeft,
+          1: pw.Alignment.centerLeft,
+          2: pw.Alignment.centerRight,
+          3: pw.Alignment.centerRight,
+          4: pw.Alignment.centerRight,
+        },
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        data: rows,
+      ),
+    );
+  }
+
+  pw.Widget _buildMileageItemsTable(List<Map<String, dynamic>> mileageItems) {
+    final rows = <List<String>>[
+      ['Mileage', 'Date', 'Distance (km)', 'Rate', 'Total Amount'],
+    ];
+
+    for (final item in mileageItems) {
+      final description = _buildItemDescription(item);
+      final date = _getSafeString(item['date']);
+      final distanceKm = _getSafeDouble(
+        item['quantity'] ?? item['distance'] ?? item['hours'],
+      );
+      final rate = _getSafeDouble(item['rate'] ?? item['unitPrice']);
+      final amount = _getSafeDouble(
+        item['amount'] ?? item['total'] ?? (distanceKm * rate),
+      );
+
+      rows.add([
+        description,
+        date,
+        distanceKm.toStringAsFixed(2),
+        '\$${rate.toStringAsFixed(2)}',
+        '\$${amount.toStringAsFixed(2)}',
+      ]);
+    }
+
+    return pw.Container(
+      width: double.infinity,
+      child: pw.TableHelper.fromTextArray(
+        border: pw.TableBorder.all(color: PdfColors.black),
+        headerCount: 1,
+        headerDecoration: const pw.BoxDecoration(color: PdfColors.grey200),
+        cellPadding: const pw.EdgeInsets.all(5),
+        // Keep identical proportions as service table for visual symmetry.
+        columnWidths: {
+          0: const pw.FlexColumnWidth(3),
+          1: const pw.FlexColumnWidth(2),
+          2: const pw.FlexColumnWidth(1),
+          3: const pw.FlexColumnWidth(1),
+          4: const pw.FlexColumnWidth(1),
+        },
+        cellAlignments: {
+          0: pw.Alignment.centerLeft,
+          1: pw.Alignment.centerLeft,
+          2: pw.Alignment.centerRight,
+          3: pw.Alignment.centerRight,
+          4: pw.Alignment.centerRight,
+        },
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        data: rows,
+      ),
+    );
+  }
+
+  String _buildItemDescription(Map<String, dynamic> item) {
+    if (item['ndisItem'] != null &&
+        item['ndisItem'] is Map &&
+        item['ndisItem']['itemNumber'] != null &&
+        item['ndisItem']['itemName'] != null) {
+      final number = _getSafeString(item['ndisItem']['itemNumber']);
+      final name = _getSafeString(item['ndisItem']['itemName']);
+      return number.isNotEmpty ? '$number $name' : name;
+    }
+    if (item['ndisItemNumber'] != null && item['ndisItemName'] != null) {
+      final number = _getSafeString(item['ndisItemNumber']);
+      final name = _getSafeString(item['ndisItemName']);
+      return number.isNotEmpty ? '$number $name' : name;
+    }
+    if (item['itemCode'] != null) {
+      final number = _getSafeString(item['itemCode']);
+      final name = _getSafeString(
+          item['itemName'] ?? item['description'] ?? 'Invoice Item');
+      return number.isNotEmpty ? '$number $name' : name;
+    }
+    return _getSafeString(item['itemName'] ?? item['description'] ?? '');
+  }
+
+  bool _isMileageItem(Map<String, dynamic> item) {
+    if (item['isMileage'] == true || item['mileageTripId'] != null) {
+      return true;
+    }
+
+    final itemCode = _getSafeString(item['itemCode'] ?? item['ndisItemNumber'])
+        .toUpperCase();
+    if (itemCode == 'ALW-VEH' || itemCode == '07_001_0106_8_3') {
+      return true;
+    }
+
+    final itemName = _getSafeString(
+      item['itemName'] ?? item['description'] ?? item['ndisItemName'],
+    ).toLowerCase();
+    return itemName.contains('mileage') ||
+        itemName.contains('vehicle allowance') ||
+        itemName.contains('travel with client');
+  }
+
+  pw.Widget _buildInvoiceItemsNote(Map<String, dynamic> clientData) {
+    final items = clientData['items'] as List<dynamic>? ?? [];
+    final hasMileage = items.any(
+      (item) => item is Map && _isMileageItem(Map<String, dynamic>.from(item)),
+    );
+    final note = hasMileage
+        ? 'Service hours are shown in the service table. Mileage is shown separately and billed by distance (km).'
+        : 'Hours include seconds and are shown up to 4 decimals. Totals are Hours × Rate, rounded to 2 decimals.';
     return pw.Text(
-      'Note: Hours include seconds and are shown up to 4 decimals. Totals are Hours × Rate, rounded to 2 decimals.',
+      'Note: $note',
       style: pw.TextStyle(fontSize: 8),
     );
   }
@@ -588,9 +694,10 @@ class InvoicePdfGenerator {
   /// Builds the totals section and resolves bank details for display.
   ///
   /// Bank details resolution strategy:
-  /// - If `clientData['useAdminBankDetails']` is true, prefer admin bank details.
-  /// - If employee bank details are missing, fall back to admin bank details.
-  /// - If both employee and admin bank details are unavailable, throws
+  /// - If `invoiceType` is `client` or `clientData['useAdminBankDetails']` is true,
+  ///   prefer organization bank details.
+  /// - If employee bank details are missing, fall back to organization bank details.
+  /// - If both employee and organization bank details are unavailable, throws
   ///   `Exception('BANK_DETAILS_REQUIRED')` for upstream UI to prompt user.
   Future<pw.Widget> _buildInvoiceTotal(
       Map<String, dynamic> clientData, bool showTax, double taxRate) async {
@@ -636,14 +743,16 @@ class InvoicePdfGenerator {
               pw.Divider(color: PdfColors.black),
               _buildTotalRow('Total', _getSafeDouble(clientData['total']),
                   isBold: true),
-              
+
               // Superannuation Display (SCHADS/Employee Invoices)
               if (_getSafeDouble(clientData['superAmount']) > 0) ...[
-                 pw.SizedBox(height: 5),
-                 _buildTotalRow('Superannuation (${_formatPercentage(_getSafeDouble(clientData['superRate']) > 0 ? _getSafeDouble(clientData['superRate']) : 0.12)}%)', 
-                    _getSafeDouble(clientData['superAmount']), 
+                pw.SizedBox(height: 5),
+                _buildTotalRow(
+                    'Superannuation (${_formatPercentage(_getSafeDouble(clientData['superRate']) > 0 ? _getSafeDouble(clientData['superRate']) : 0.12)}%)',
+                    _getSafeDouble(clientData['superAmount']),
                     isBold: false),
-                 pw.Text('(Paid to Super Fund)', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey700)),
+                pw.Text('(Paid to Super Fund)',
+                    style: pw.TextStyle(fontSize: 8, color: PdfColors.grey700)),
               ],
             ],
           ),
@@ -662,120 +771,222 @@ class InvoicePdfGenerator {
   /// Resolve bank details to print on the invoice.
   ///
   /// Parameters:
-  /// - clientData: Map containing client invoice data and `useAdminBankDetails` flag.
+  /// - clientData: Map containing client invoice data, `invoiceType`, and
+  ///   `useAdminBankDetails` flag.
   ///
   /// Returns:
   /// - Map<String, String> with keys: `bankName`, `accountName`, `bsb`, `accountNumber`.
   ///
-  /// Throws:
-  /// - Exception('BANK_DETAILS_REQUIRED') when neither employee nor admin bank
-  ///   details are available.
+  /// Notes:
+  /// - Returns placeholder values ('N/A') when neither employee nor organization
+  ///   bank details are available so PDF generation can still complete.
   Future<Map<String, String>> _resolveBankDetailsForClient(
       Map<String, dynamic> clientData) async {
-    final prefs = await SharedPreferences.getInstance();
     final sharedUtils = SharedPreferencesUtils();
     await sharedUtils.init();
 
-    // Determine whether admin bank details should be used
-    final bool useAdmin = clientData['useAdminBankDetails'] == true;
-    // Branch strictly on selection to avoid cross-overriding
-    if (useAdmin) {
-      // Admin selected: fetch admin bank details from backend using configured owner email
-      try {
-        final api = _api;
-        // Use logged-in user's email instead of static config
-        final String? currentUserEmail = sharedUtils.getString('userEmail');
-        final String adminEmail = currentUserEmail ?? '';
+    final String organizationId = _getSafeString(
+      clientData['organizationId'] ?? sharedUtils.getString('organizationId'),
+    ).trim();
 
-        final String? organizationId = sharedUtils.getString('organizationId');
-        if (adminEmail.isEmpty ||
-            organizationId == null ||
-            organizationId.isEmpty) {
-          throw Exception('Missing userEmail or organizationId');
-        }
-        final resp =
-            await api.getBankDetailsForUserEmail(adminEmail, organizationId);
-        if (resp['success'] == true && resp['data'] is Map) {
-          final data = Map<String, dynamic>.from(resp['data']);
-          final adminBankName = (data['bankName'] ?? '').toString();
-          final adminAccountName = (data['accountName'] ?? '').toString();
-          final adminBsb = (data['bsb'] ?? '').toString();
-          final adminAccountNumber = (data['accountNumber'] ?? '').toString();
-          if (adminBankName.isEmpty ||
-              adminAccountName.isEmpty ||
-              adminBsb.isEmpty ||
-              adminAccountNumber.isEmpty) {
-            throw Exception('BANK_DETAILS_REQUIRED');
-          }
-          return {
-            'bankName': adminBankName,
-            'accountName': adminAccountName,
-            'bsb': adminBsb,
-            'accountNumber': adminAccountNumber,
-          };
-        }
-        throw Exception('BANK_DETAILS_REQUIRED');
-      } catch (e) {
-        debugPrint('Failed to fetch admin bank details: $e');
-        // Throw specific exception for UI to handle
-        throw Exception('BANK_DETAILS_NOT_FOUND');
+    final inlineInvoice = _extractBankDetailsFromCandidates([
+      clientData,
+    ]);
+
+    final inlineEmployee = _extractBankDetailsFromCandidates([
+      clientData['employeeDetails'],
+      clientData['employeeProfile'],
+      clientData['providerProfile'],
+    ]);
+
+    final inlineOrganization = _extractBankDetailsFromCandidates([
+      clientData['organizationProfile'],
+      clientData['organizationDetails'],
+      clientData['organization'],
+      clientData['organizationInfo'],
+      clientData['businessProfile'],
+      clientData['invoiceProfile'],
+    ]);
+
+    final inlineAdmin = _extractBankDetailsFromCandidates([
+      clientData['adminProfile'],
+    ]);
+
+    final String employeeEmail = _extractEmployeeEmail(clientData);
+    final invoiceType = _getSafeString(clientData['invoiceType']).toLowerCase();
+    final bool preferOrganization =
+        invoiceType == 'client' || clientData['useAdminBankDetails'] == true;
+
+    if (inlineInvoice != null) {
+      return inlineInvoice;
+    }
+
+    if (preferOrganization) {
+      if (inlineOrganization != null) {
+        return inlineOrganization;
+      }
+
+      final fetchedOrg = await _fetchOrganizationBankDetails(
+        organizationId: organizationId,
+      );
+      if (fetchedOrg != null) {
+        return fetchedOrg;
+      }
+
+      if (inlineEmployee != null) {
+        return inlineEmployee;
+      }
+
+      final fetchedEmployee = await _fetchBankDetailsByEmail(
+        userEmail: employeeEmail,
+        organizationId: organizationId,
+      );
+      if (fetchedEmployee != null) {
+        return fetchedEmployee;
+      }
+
+      if (inlineAdmin != null) {
+        return inlineAdmin;
       }
     } else {
-      // Employee selected: prefer employee bank details; fall back to admin only if employee is missing
-      String bankName = (clientData['bankName'] ?? '').toString();
-      String accountName = (clientData['accountName'] ?? '').toString();
-      String bsb = (clientData['bsb'] ?? '').toString();
-      String accountNumber = (clientData['accountNumber'] ?? '').toString();
-
-      final bool employeeIncomplete = bankName.isEmpty ||
-          accountName.isEmpty ||
-          bsb.isEmpty ||
-          accountNumber.isEmpty;
-
-      if (employeeIncomplete) {
-        try {
-          final api = _api;
-          String employeeEmail = '';
-          final dynamic emailCandidate = clientData['employeeEmail'];
-          if (emailCandidate is String && emailCandidate.isNotEmpty) {
-            employeeEmail = emailCandidate;
-          } else {
-            final String? spEmail = sharedUtils.getString('userEmail');
-            if (spEmail != null && spEmail.isNotEmpty) {
-              employeeEmail = spEmail;
-            }
-          }
-          final String? organizationId =
-              sharedUtils.getString('organizationId');
-          if (employeeEmail.isNotEmpty &&
-              organizationId != null &&
-              organizationId.isNotEmpty) {
-            final resp = await api.getBankDetailsForUserEmail(
-                employeeEmail, organizationId);
-            if (resp['success'] == true && resp['data'] is Map) {
-              final data = Map<String, dynamic>.from(resp['data']);
-              bankName = bankName.isNotEmpty
-                  ? bankName
-                  : (data['bankName'] ?? '').toString();
-              accountName = accountName.isNotEmpty
-                  ? accountName
-                  : (data['accountName'] ?? '').toString();
-              bsb = bsb.isNotEmpty ? bsb : (data['bsb'] ?? '').toString();
-              accountNumber = accountNumber.isNotEmpty
-                  ? accountNumber
-                  : (data['accountNumber'] ?? '').toString();
-            }
-          }
-        } catch (e) {
-          debugPrint('Failed to fetch employee bank details: $e');
-        }
+      if (inlineEmployee != null) {
+        return inlineEmployee;
       }
 
-      final bool employeeComplete = bankName.isNotEmpty &&
+      final fetchedEmployee = await _fetchBankDetailsByEmail(
+        userEmail: employeeEmail,
+        organizationId: organizationId,
+      );
+      if (fetchedEmployee != null) {
+        return fetchedEmployee;
+      }
+
+      if (inlineOrganization != null) {
+        return inlineOrganization;
+      }
+
+      final fetchedOrg = await _fetchOrganizationBankDetails(
+        organizationId: organizationId,
+      );
+      if (fetchedOrg != null) {
+        return fetchedOrg;
+      }
+
+      if (inlineAdmin != null) {
+        return inlineAdmin;
+      }
+    }
+
+    // Do not block PDF rendering when bank details are unavailable in client portal.
+    debugPrint(
+        'Bank details unavailable for invoice PDF. Rendering with placeholders.');
+    return const {
+      'bankName': 'N/A',
+      'accountName': 'N/A',
+      'bsb': 'N/A',
+      'accountNumber': 'N/A',
+    };
+  }
+
+  Future<Map<String, String>?> _fetchOrganizationBankDetails({
+    required String organizationId,
+  }) async {
+    if (organizationId.trim().isEmpty) {
+      return null;
+    }
+
+    try {
+      final resp = await _api.getOrganizationDetails(organizationId.trim());
+      if (resp['success'] != true) {
+        return null;
+      }
+
+      final rawOrg = resp['organization'] ?? resp['data'];
+      if (rawOrg is! Map) {
+        return null;
+      }
+
+      final Map<String, dynamic> orgMap = Map<String, dynamic>.from(rawOrg);
+      final nestedOrg = orgMap['organization'];
+      final Map<String, dynamic> resolvedOrg = nestedOrg is Map
+          ? Map<String, dynamic>.from(nestedOrg)
+          : orgMap;
+
+      return _extractBankDetailsFromCandidates([resolvedOrg]);
+    } catch (e) {
+      debugPrint('Failed to fetch organization bank details: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, String>?> _fetchBankDetailsByEmail({
+    required String userEmail,
+    required String organizationId,
+  }) async {
+    if (userEmail.trim().isEmpty || organizationId.trim().isEmpty) {
+      return null;
+    }
+
+    try {
+      final resp = await _api.getBankDetailsForUserEmail(
+        userEmail.trim(),
+        organizationId.trim(),
+      );
+      if (resp['success'] != true || resp['data'] is! Map) {
+        return null;
+      }
+
+      return _extractBankDetailsFromCandidates([resp['data']]);
+    } catch (e) {
+      debugPrint('Failed to fetch bank details for $userEmail: $e');
+      return null;
+    }
+  }
+
+  Map<String, String>? _extractBankDetailsFromCandidates(
+      List<dynamic> sources) {
+    final List<Map<String, dynamic>> maps = [];
+    for (final source in sources) {
+      if (source is Map) {
+        final map = Map<String, dynamic>.from(source);
+        maps.add(map);
+        for (final nestedKey in const [
+          'bankDetails',
+          'paymentDetails',
+          'bank',
+          'billing',
+          'invoiceProfile',
+        ]) {
+          final nested = map[nestedKey];
+          if (nested is Map) {
+            maps.add(Map<String, dynamic>.from(nested));
+          }
+        }
+      }
+    }
+
+    for (final map in maps) {
+      final bankName = _getSafeString(
+        map['bankName'] ?? map['bank'] ?? map['bank_name'],
+      ).trim();
+      final accountName = _getSafeString(
+        map['accountName'] ??
+            map['accountHolderName'] ??
+            map['account_holder_name'],
+      ).trim();
+      final bsb = _getSafeString(
+        map['bsb'] ?? map['BSB'] ?? map['routingNumber'],
+      ).trim();
+      final accountNumber = _getSafeString(
+        map['accountNumber'] ?? map['accountNo'] ?? map['account_number'],
+      ).trim();
+
+      final isComplete = bankName.isNotEmpty &&
           accountName.isNotEmpty &&
           bsb.isNotEmpty &&
           accountNumber.isNotEmpty;
-      if (employeeComplete) {
+
+      if (isComplete) {
         return {
           'bankName': bankName,
           'accountName': accountName,
@@ -783,48 +994,53 @@ class InvoicePdfGenerator {
           'accountNumber': accountNumber,
         };
       }
+    }
 
-      // Employee missing: fall back to admin (network only)
-      try {
-        final api = _api;
-        // Use logged-in user's email instead of static config
-        final String? currentUserEmail = sharedUtils.getString('userEmail');
-        final String adminEmail = currentUserEmail ?? '';
+    return null;
+  }
 
-        final String? organizationId = sharedUtils.getString('organizationId');
-        if (adminEmail.isEmpty ||
-            organizationId == null ||
-            organizationId.isEmpty) {
-          throw Exception('BANK_DETAILS_REQUIRED');
-        }
-        final resp =
-            await api.getBankDetailsForUserEmail(adminEmail, organizationId);
-        if (resp['success'] == true && resp['data'] is Map) {
-          final data = Map<String, dynamic>.from(resp['data']);
-          final adminBankName = (data['bankName'] ?? '').toString();
-          final adminAccountName = (data['accountName'] ?? '').toString();
-          final adminBsb = (data['bsb'] ?? '').toString();
-          final adminAccountNumber = (data['accountNumber'] ?? '').toString();
-          if (adminBankName.isEmpty ||
-              adminAccountName.isEmpty ||
-              adminBsb.isEmpty ||
-              adminAccountNumber.isEmpty) {
-            throw Exception('BANK_DETAILS_REQUIRED');
-          }
-          return {
-            'bankName': adminBankName,
-            'accountName': adminAccountName,
-            'bsb': adminBsb,
-            'accountNumber': adminAccountNumber,
-          };
-        }
-        throw Exception('BANK_DETAILS_REQUIRED');
-      } catch (e) {
-        debugPrint('Failed to fetch admin bank details for fallback: $e');
-        // Throw specific exception for UI to handle
-        throw Exception('BANK_DETAILS_NOT_FOUND');
+  String _extractEmployeeEmail(Map<String, dynamic> clientData) {
+    final employeeDetails = clientData['employeeDetails'];
+    final employee = clientData['employee'];
+    final candidates = [
+      clientData['employeeEmail'],
+      clientData['workerEmail'],
+      clientData['providerEmail'],
+      if (employeeDetails is Map) employeeDetails['email'],
+      if (employeeDetails is Map) employeeDetails['userEmail'],
+      if (employee is Map) employee['email'],
+      if (employee is Map) employee['userEmail'],
+    ];
+
+    for (final candidate in candidates) {
+      final value = _getSafeString(candidate).trim();
+      if (value.contains('@')) {
+        return value;
       }
     }
+
+    return '';
+  }
+
+  String _extractAdminEmail(Map<String, dynamic> clientData) {
+    final adminProfile = clientData['adminProfile'];
+    final candidates = [
+      clientData['adminEmail'],
+      clientData['ownerEmail'],
+      if (adminProfile is Map) adminProfile['email'],
+      if (adminProfile is Map) adminProfile['userEmail'],
+      if (adminProfile is Map) adminProfile['adminEmail'],
+      if (adminProfile is Map) adminProfile['ownerEmail'],
+    ];
+
+    for (final candidate in candidates) {
+      final value = _getSafeString(candidate).trim();
+      if (value.contains('@')) {
+        return value;
+      }
+    }
+
+    return '';
   }
 
   pw.Widget _buildTableHeader(String text) {
