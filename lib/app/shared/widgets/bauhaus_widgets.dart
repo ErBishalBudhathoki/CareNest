@@ -113,90 +113,117 @@ class BauhausStatCard extends StatelessWidget {
 
     return BauhausCard(
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = constraints.maxHeight < 120;
+          final valueStyle = isCompact
+              ? BauhausDesign.getTextTheme(context).headlineLarge
+              : BauhausDesign.getTextTheme(context).displayMedium;
+          final titleStyle = BauhausDesign.getTextTheme(context)
+              .bodyMedium
+              ?.copyWith(color: BauhausDesign.textMuted);
+          final subtitleStyle = BauhausDesign.getTextTheme(context)
+              .bodyMedium
+              ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12);
+          final topSpacing =
+              isCompact ? BauhausDesign.space2 : BauhausDesign.space4;
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: (iconColor ?? BauhausDesign.primary).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1),
-                ),
-                child: Icon(
-                  icon,
-                  color: iconColor ?? BauhausDesign.primary,
-                  size: 20,
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space2),
+                    decoration: BoxDecoration(
+                      color:
+                          (iconColor ?? BauhausDesign.primary).withOpacity(0.1),
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: iconColor ?? BauhausDesign.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (changePercentage != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space2,
+                        vertical: BauhausDesign.space1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: changeColor.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        border:
+                            Border.all(color: BauhausDesign.neutral, width: 1),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isPositiveChange
+                                ? Icons.trending_up
+                                : Icons.trending_down,
+                            color: changeColor,
+                            size: 12,
+                          ),
+                          const SizedBox(width: BauhausDesign.space1),
+                          Text(
+                            '${changePercentage!.abs().toStringAsFixed(1)}%',
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(
+                                  color: changeColor,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
               ),
-              const Spacer(),
-              if (changePercentage != null)
+              SizedBox(height: topSpacing),
+              if (isLoading)
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space2,
-                    vertical: BauhausDesign.space1,
-                  ),
-                  decoration: BoxDecoration(
-                    color: changeColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isPositiveChange
-                            ? Icons.trending_up
-                            : Icons.trending_down,
-                        color: changeColor,
-                        size: 12,
-                      ),
-                      const SizedBox(width: BauhausDesign.space1),
-                      Text(
-                        '${changePercentage!.abs().toStringAsFixed(1)}%',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
-                            ?.copyWith(
-                              color: changeColor,
-                            ),
-                      ),
-                    ],
+                  height: 24,
+                  width: 80,
+                  color: BauhausDesign.neutral.withOpacity(0.1),
+                )
+              else
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    value,
+                    style: valueStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+              const SizedBox(height: BauhausDesign.space1),
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: titleStyle,
+              ),
+              if (subtitle != null && !isCompact) ...[
+                const SizedBox(height: BauhausDesign.space1),
+                Text(
+                  subtitle!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: subtitleStyle,
+                ),
+              ],
             ],
-          ),
-          const SizedBox(height: BauhausDesign.space4),
-          if (isLoading)
-            Container(
-              height: 24,
-              width: 80,
-              color: BauhausDesign.neutral.withOpacity(0.1),
-            )
-          else
-            Text(
-              value,
-              style: BauhausDesign.getTextTheme(context).displayMedium,
-            ),
-          const SizedBox(height: BauhausDesign.space1),
-          Text(
-            title,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
-          ),
-          if (subtitle != null) ...[
-            const SizedBox(height: BauhausDesign.space1),
-            Text(
-              subtitle!,
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontSize: 12,
-                  ),
-            ),
-          ],
-        ],
+          );
+        },
       ),
     );
   }
@@ -618,7 +645,8 @@ class BauhausActionButton extends StatelessWidget {
     }
 
     if (isOutlined) {
-      effectiveText = textColor ?? effectiveBg; // Text color matches the 'color' of the button unless explicit textColor provided
+      effectiveText = textColor ??
+          effectiveBg; // Text color matches the 'color' of the button unless explicit textColor provided
       effectiveBg = BauhausDesign.surfaceWhite;
     }
 
@@ -657,7 +685,8 @@ class BauhausActionButton extends StatelessWidget {
           color: isOutlined ? effectiveText : BauhausDesign.neutral,
           width: 1.5,
         ),
-        boxShadow: isOutlined || backgroundColor == BauhausDesign.neutral.withOpacity(0.2)
+        boxShadow: isOutlined ||
+                backgroundColor == BauhausDesign.neutral.withOpacity(0.2)
             ? [] // No shadow for outlined or disabled/neutral-ghost buttons
             : [BauhausDesign.shadowHard],
       ),
@@ -847,7 +876,6 @@ class BauhausEmptyState extends StatelessWidget {
               padding: const EdgeInsets.all(BauhausDesign.space6),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
-                shape: BoxShape.circle,
                 border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
@@ -941,6 +969,7 @@ class BauhausActionTile extends StatelessWidget {
                         .labelLarge
                         ?.copyWith(
                           fontWeight: FontWeight.w700,
+                          color: BauhausDesign.textDark,
                         ),
                   ),
                   if (subtitle != null) ...[
@@ -950,7 +979,8 @@ class BauhausActionTile extends StatelessWidget {
                       style: BauhausDesign.getTextTheme(context)
                           .bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w600,
                           ),
                     ),
                   ],
@@ -968,7 +998,7 @@ class BauhausActionTile extends StatelessWidget {
                 ),
                 child: const Icon(
                   Icons.chevron_right_rounded,
-                  color: BauhausDesign.textMuted,
+                  color: BauhausDesign.textDark,
                   size: 16,
                 ),
               ),
