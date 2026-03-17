@@ -28,92 +28,15 @@ class EmployeeStatsOverview extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(BauhausDesign.space4),
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceOffWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
-              boxShadow: const [BauhausDesign.shadowHardSm],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'EMPLOYEE OVERVIEW',
-                        style: BauhausDesign.getTextTheme(context)
-                            .headlineMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
-                              letterSpacing: 0.6,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: BauhausDesign.space2,
-                        vertical: BauhausDesign.space1,
-                      ),
-                      decoration: BoxDecoration(
-                        color: BauhausDesign.accent,
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 2),
-                        boxShadow: const [BauhausDesign.shadowHardXs],
-                      ),
-                      child: Text(
-                        isLoading ? 'SYNCING' : 'LIVE',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
-                            ?.copyWith(
-                              color: BauhausDesign.textDark,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                    if (onRefresh != null) ...[
-                      const SizedBox(width: BauhausDesign.space2),
-                      BauhausActionButton(
-                        onPressed: isLoading ? null : onRefresh,
-                        icon: Icons.refresh,
-                        variant: BauhausActionVariant.ghost,
-                        isLoading: isLoading,
-                        isSmall: true,
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: BauhausDesign.space3),
-                Text(
-                  'TOTAL HEADCOUNT',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(
-                        color: BauhausDesign.textMuted,
-                        letterSpacing: 1.0,
-                      ),
-                ),
-                const SizedBox(height: BauhausDesign.space1),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    total.toString(),
-                    style: BauhausDesign.getTextTheme(context)
-                        .displayMedium
-                        ?.copyWith(
-                          color: BauhausDesign.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
-              ],
-            ),
+          _HeroBanner(
+            total: total,
+            active: active,
+            onBreak: onBreak,
+            offline: offline,
+            isLoading: isLoading,
+            onRefresh: onRefresh,
           ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
-          const SizedBox(height: BauhausDesign.space4),
+          const SizedBox(height: BauhausDesign.space5),
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 360;
@@ -125,33 +48,37 @@ class EmployeeStatsOverview extends StatelessWidget {
                 spacing: BauhausDesign.space4,
                 runSpacing: BauhausDesign.space4,
                 children: [
-                  _NeoStatTile(
+                  _PulseStatTile(
                     width: tileWidth,
                     label: 'Active',
                     value: active.toString(),
                     icon: Icons.work,
                     accentColor: BauhausDesign.success,
+                    background: BauhausDesign.surfaceWhite,
                   ),
-                  _NeoStatTile(
+                  _PulseStatTile(
                     width: tileWidth,
                     label: 'On Break',
                     value: onBreak.toString(),
                     icon: Icons.coffee,
                     accentColor: BauhausDesign.warning,
+                    background: BauhausDesign.surfaceOffWhite,
                   ),
-                  _NeoStatTile(
+                  _PulseStatTile(
                     width: tileWidth,
                     label: 'Offline',
                     value: offline.toString(),
                     icon: Icons.offline_bolt,
                     accentColor: BauhausDesign.textMuted,
+                    background: BauhausDesign.surfaceWhite,
                   ),
-                  _NeoStatTile(
+                  _PulseStatTile(
                     width: tileWidth,
                     label: 'Total',
                     value: total.toString(),
                     icon: Icons.people,
                     accentColor: BauhausDesign.primary,
+                    background: BauhausDesign.surfaceOffWhite,
                   ),
                 ],
               )
@@ -160,8 +87,8 @@ class EmployeeStatsOverview extends StatelessWidget {
                   .slideY(begin: 0.06, end: 0);
             },
           ),
-          const SizedBox(height: BauhausDesign.space4),
-          _NeoStatusStrip(
+          const SizedBox(height: BauhausDesign.space5),
+          _SignalStrip(
             total: total,
             active: active,
             onBreak: onBreak,
@@ -173,201 +100,173 @@ class EmployeeStatsOverview extends StatelessWidget {
   }
 }
 
-class _NeoStatTile extends StatelessWidget {
-  final double width;
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color accentColor;
-
-  const _NeoStatTile({
-    required this.width,
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: Container(
-        padding: const EdgeInsets.all(BauhausDesign.space3),
-        decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: const [BauhausDesign.shadowHardSm],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(BauhausDesign.space1),
-              decoration: BoxDecoration(
-                color: accentColor.withOpacity(0.15),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-              ),
-              child: Icon(icon, size: 16, color: accentColor),
-            ),
-            const SizedBox(height: BauhausDesign.space2),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                value,
-                style: BauhausDesign.getTextTheme(context)
-                    .headlineLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: BauhausDesign.space1),
-            Text(
-              label.toUpperCase(),
-              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    letterSpacing: 0.8,
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NeoStatusStrip extends StatelessWidget {
+class _HeroBanner extends StatelessWidget {
   final int total;
   final int active;
   final int onBreak;
   final int offline;
+  final bool isLoading;
+  final VoidCallback? onRefresh;
 
-  const _NeoStatusStrip({
+  const _HeroBanner({
     required this.total,
     required this.active,
     required this.onBreak,
     required this.offline,
+    required this.isLoading,
+    required this.onRefresh,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (total <= 0) {
-      return Container(
-        padding: const EdgeInsets.all(BauhausDesign.space3),
-        decoration: BoxDecoration(
-          color: BauhausDesign.surfaceOffWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: const [BauhausDesign.shadowHardSm],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: BauhausDesign.neutral,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-              ),
-            ),
-            const SizedBox(width: BauhausDesign.space2),
-            Expanded(
-              child: Text(
-                'No employee activity yet',
-                style: BauhausDesign.getTextTheme(context)
-                    .bodyMedium
-                    ?.copyWith(color: BauhausDesign.textMuted),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    int safeFlex(int count) => count > 0 ? count : 1;
-
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space3),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-        boxShadow: const [BauhausDesign.shadowHardSm],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'STATUS STRIP',
-            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  letterSpacing: 0.8,
-                ),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceOffWhite,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
           ),
-          const SizedBox(height: BauhausDesign.space2),
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: safeFlex(active),
-                child: Container(
-                  height: 10,
-                  color: BauhausDesign.success,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'WORKFORCE PULSE',
+                      style: BauhausDesign.getTextTheme(context)
+                          .headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.textDark,
+                            letterSpacing: 1.2,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space2,
+                      vertical: BauhausDesign.space1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.accent,
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 2),
+                      boxShadow: const [BauhausDesign.shadowHardXs],
+                    ),
+                    child: Text(
+                      isLoading ? 'SYNC' : 'LIVE',
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.6,
+                          ),
+                    ),
+                  ),
+                  if (onRefresh != null) ...[
+                    const SizedBox(width: BauhausDesign.space2),
+                    BauhausActionButton(
+                      onPressed: isLoading ? null : onRefresh,
+                      icon: Icons.refresh,
+                      variant: BauhausActionVariant.ghost,
+                      isLoading: isLoading,
+                      isSmall: true,
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              Text(
+                'HEADCOUNT',
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      color: BauhausDesign.textMuted,
+                      letterSpacing: 1.0,
+                    ),
+              ),
+              const SizedBox(height: BauhausDesign.space1),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  total.toString(),
+                  style: BauhausDesign.getTextTheme(context)
+                      .displayMedium
+                      ?.copyWith(
+                        color: BauhausDesign.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
-              const SizedBox(width: 2),
-              Expanded(
-                flex: safeFlex(onBreak),
-                child: Container(
-                  height: 10,
-                  color: BauhausDesign.warning,
-                ),
-              ),
-              const SizedBox(width: 2),
-              Expanded(
-                flex: safeFlex(offline),
-                child: Container(
-                  height: 10,
-                  color: BauhausDesign.textMuted,
-                ),
+              const SizedBox(height: BauhausDesign.space3),
+              Wrap(
+                spacing: BauhausDesign.space2,
+                runSpacing: BauhausDesign.space1,
+                children: [
+                  _MiniBadge(
+                    label: 'Active',
+                    value: active,
+                    color: BauhausDesign.success,
+                  ),
+                  _MiniBadge(
+                    label: 'Break',
+                    value: onBreak,
+                    color: BauhausDesign.warning,
+                  ),
+                  _MiniBadge(
+                    label: 'Offline',
+                    value: offline,
+                    color: BauhausDesign.textMuted,
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: BauhausDesign.space2),
-          Wrap(
-            spacing: BauhausDesign.space3,
-            runSpacing: BauhausDesign.space1,
-            children: [
-              _LegendChip(
-                color: BauhausDesign.success,
-                label: 'Active',
-                value: active,
-              ),
-              _LegendChip(
-                color: BauhausDesign.warning,
-                label: 'On Break',
-                value: onBreak,
-              ),
-              _LegendChip(
-                color: BauhausDesign.textMuted,
-                label: 'Offline',
-                value: offline,
-              ),
-            ],
+        ),
+        Positioned(
+          right: -10,
+          top: -10,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: BauhausDesign.secondary,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardSm],
+            ),
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          left: 12,
+          bottom: -8,
+          child: Container(
+            width: 120,
+            height: 10,
+            decoration: BoxDecoration(
+              color: BauhausDesign.primary,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-class _LegendChip extends StatelessWidget {
-  final Color color;
+class _MiniBadge extends StatelessWidget {
   final String label;
   final int value;
+  final Color color;
 
-  const _LegendChip({
-    required this.color,
+  const _MiniBadge({
     required this.label,
     required this.value,
+    required this.color,
   });
 
   @override
@@ -398,6 +297,185 @@ class _LegendChip extends StatelessWidget {
             style: BauhausDesign.getTextTheme(context)
                 .labelSmall
                 ?.copyWith(color: BauhausDesign.textDark),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PulseStatTile extends StatelessWidget {
+  final double width;
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color accentColor;
+  final Color background;
+
+  const _PulseStatTile({
+    required this.width,
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.accentColor,
+    required this.background,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: Container(
+        padding: const EdgeInsets.all(BauhausDesign.space3),
+        decoration: BoxDecoration(
+          color: background,
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          boxShadow: const [BauhausDesign.shadowHardSm],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space1),
+                  decoration: BoxDecoration(
+                    color: accentColor.withOpacity(0.15),
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  ),
+                  child: Icon(icon, size: 16, color: accentColor),
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      value,
+                      style: BauhausDesign.getTextTheme(context)
+                          .headlineLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: BauhausDesign.space2),
+            Text(
+              label.toUpperCase(),
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    color: BauhausDesign.textMuted,
+                    letterSpacing: 1.0,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SignalStrip extends StatelessWidget {
+  final int total;
+  final int active;
+  final int onBreak;
+  final int offline;
+
+  const _SignalStrip({
+    required this.total,
+    required this.active,
+    required this.onBreak,
+    required this.offline,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (total <= 0) {
+      return Container(
+        padding: const EdgeInsets.all(BauhausDesign.space3),
+        decoration: BoxDecoration(
+          color: BauhausDesign.surfaceOffWhite,
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          boxShadow: const [BauhausDesign.shadowHardSm],
+        ),
+        child: Text(
+          'No activity yet. Start tracking to light up the board.',
+          style: BauhausDesign.getTextTheme(context)
+              .bodyMedium
+              ?.copyWith(color: BauhausDesign.textMuted),
+        ),
+      );
+    }
+
+    int safeFlex(int count) => count > 0 ? count : 1;
+
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space3),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceOffWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'SIGNAL STRIP',
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  letterSpacing: 1.0,
+                ),
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Row(
+            children: [
+              Expanded(
+                flex: safeFlex(active),
+                child: Container(
+                  height: 12,
+                  color: BauhausDesign.success,
+                ),
+              ),
+              const SizedBox(width: 3),
+              Expanded(
+                flex: safeFlex(onBreak),
+                child: Container(
+                  height: 12,
+                  color: BauhausDesign.warning,
+                ),
+              ),
+              const SizedBox(width: 3),
+              Expanded(
+                flex: safeFlex(offline),
+                child: Container(
+                  height: 12,
+                  color: BauhausDesign.textMuted,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          Wrap(
+            spacing: BauhausDesign.space3,
+            runSpacing: BauhausDesign.space1,
+            children: [
+              _MiniBadge(
+                label: 'Active',
+                value: active,
+                color: BauhausDesign.success,
+              ),
+              _MiniBadge(
+                label: 'Break',
+                value: onBreak,
+                color: BauhausDesign.warning,
+              ),
+              _MiniBadge(
+                label: 'Offline',
+                value: offline,
+                color: BauhausDesign.textMuted,
+              ),
+            ],
           ),
         ],
       ),
