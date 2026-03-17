@@ -686,54 +686,51 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
               border: Border.all(color: BauhausDesign.neutral, width: 2),
               boxShadow: const [BauhausDesign.shadowHardSm],
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(width: 6, color: BauhausDesign.primary),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(BauhausDesign.space4),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: BauhausDesign.space1),
-                        Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            color: BauhausDesign.surfaceOffWhite,
-                            border: Border.all(
-                                color: BauhausDesign.neutral, width: 2),
-                          ),
-                          child: const Icon(Icons.inbox,
-                              color: BauhausDesign.textMuted, size: 30),
-                        ),
-                        const SizedBox(height: BauhausDesign.space3),
-                        Text(
-                          'QUEUE EMPTY',
-                          style: BauhausDesign.getTextTheme(context)
-                              .headlineMedium
-                              ?.copyWith(fontWeight: FontWeight.w800),
-                        ),
-                        const SizedBox(height: BauhausDesign.space1),
-                        Text(
-                          'Synchronizing modules — check in will be logged once data pipelines are online.',
-                          textAlign: TextAlign.center,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(color: BauhausDesign.textMuted),
-                        ),
-                        const SizedBox(height: BauhausDesign.space3),
-                        BauhausActionButton(
-                          text: 'FORCE SYNC',
-                          onPressed: _refreshData,
-                          backgroundColor: BauhausDesign.neutral,
-                          textColor: BauhausDesign.surfaceWhite,
-                        ),
-                      ],
-                    ),
-                  ),
+            child: Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: BauhausDesign.primary, width: 6),
                 ),
-              ],
+              ),
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              child: Column(
+                children: [
+                  const SizedBox(height: BauhausDesign.space1),
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.surfaceOffWhite,
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 2),
+                    ),
+                    child: const Icon(Icons.inbox,
+                        color: BauhausDesign.textMuted, size: 30),
+                  ),
+                  const SizedBox(height: BauhausDesign.space3),
+                  Text(
+                    'QUEUE EMPTY',
+                    style: BauhausDesign.getTextTheme(context)
+                        .headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: BauhausDesign.space1),
+                  Text(
+                    'Synchronizing modules — check in will be logged once data pipelines are online.',
+                    textAlign: TextAlign.center,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(color: BauhausDesign.textMuted),
+                  ),
+                  const SizedBox(height: BauhausDesign.space3),
+                  BauhausActionButton(
+                    text: 'FORCE SYNC',
+                    onPressed: _refreshData,
+                    backgroundColor: BauhausDesign.neutral,
+                    textColor: BauhausDesign.surfaceWhite,
+                  ),
+                ],
+              ),
             ),
           ),
       ],
