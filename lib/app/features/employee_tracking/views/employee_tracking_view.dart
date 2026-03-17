@@ -758,6 +758,74 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   }
 
   Widget _buildShiftsTab(EmployeeTrackingState state) {
+    if (state.data.shifts.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardSm],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.surfaceOffWhite,
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  ),
+                  child: const Icon(Icons.schedule,
+                      color: BauhausDesign.textMuted, size: 30),
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                Text(
+                  'NO SHIFTS SCHEDULED',
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.w800),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: BauhausDesign.space1),
+                Text(
+                  'Assign employees to shifts to see live coverage and activity.',
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodyMedium
+                      ?.copyWith(color: BauhausDesign.textMuted),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                Wrap(
+                  spacing: BauhausDesign.space3,
+                  runSpacing: BauhausDesign.space3,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    BauhausActionButton(
+                      text: 'CREATE SHIFT',
+                      onPressed: () => debugPrint('Create shift tapped'),
+                      backgroundColor: BauhausDesign.primary,
+                      textColor: BauhausDesign.surfaceWhite,
+                    ),
+                    BauhausActionButton(
+                      text: 'REFRESH',
+                      onPressed: _refreshData,
+                      backgroundColor: BauhausDesign.neutral,
+                      textColor: BauhausDesign.surfaceWhite,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Column(
