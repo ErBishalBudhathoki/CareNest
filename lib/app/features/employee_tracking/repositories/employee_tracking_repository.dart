@@ -49,6 +49,36 @@ class EmployeeTrackingRepository {
         final responseData = response['data'];
         debugPrint('🔍 DEBUG: Response data: $responseData');
 
+        final liveZoneEntries =
+            responseData['liveZone'] as List<dynamic>? ?? [];
+        final Map<String, Map<String, dynamic>> liveZoneByEmail = {};
+        for (final entry in liveZoneEntries) {
+          if (entry is! Map) continue;
+          final email =
+              entry['userEmail']?.toString().toLowerCase().trim() ?? '';
+          if (email.isEmpty) continue;
+
+          final existing = liveZoneByEmail[email];
+          DateTime entryUpdatedAt = DateTime.fromMillisecondsSinceEpoch(0);
+          DateTime existingUpdatedAt = DateTime.fromMillisecondsSinceEpoch(0);
+
+          if (entry['lastUpdate'] != null) {
+            entryUpdatedAt =
+                DateTime.tryParse(entry['lastUpdate'].toString()) ??
+                    entryUpdatedAt;
+          }
+          if (existing != null && existing['lastUpdate'] != null) {
+            existingUpdatedAt =
+                DateTime.tryParse(existing['lastUpdate'].toString()) ??
+                    existingUpdatedAt;
+          }
+
+          if (existing == null || entryUpdatedAt.isAfter(existingUpdatedAt)) {
+            liveZoneByEmail[email] =
+                Map<String, dynamic>.from(entry as Map);
+          }
+        }
+
         // Transform the backend response to match our model structure
         // Convert assignments to employee status format
         final assignments = responseData['assignments'] as List<dynamic>? ?? [];
@@ -200,9 +230,36 @@ class EmployeeTrackingRepository {
             'lastSeen': assignment['createdAt'],
             'currentShiftId': assignment['assignmentId'],
             'assignedClientId': assignment['clientEmail'],
+            'liveLatitude': null,
+            'liveLongitude': null,
+            'liveAccuracy': null,
+            'liveUpdatedAt': null,
+            'liveAppointmentId': null,
+            'liveClientName': null,
+            'liveDistanceMeters': null,
+            'liveGeofenceRadiusMeters': null,
+            'liveInsideGeofence': null,
             'hoursWorked': 0.0,
             'isOnBreak': isOnBreak,
           };
+
+          final liveZoneEntry =
+              liveZoneByEmail[userEmail.toString().toLowerCase()];
+          if (liveZoneEntry != null) {
+            employeeData['liveLatitude'] = liveZoneEntry['latitude'];
+            employeeData['liveLongitude'] = liveZoneEntry['longitude'];
+            employeeData['liveAccuracy'] = liveZoneEntry['accuracy'];
+            employeeData['liveUpdatedAt'] = liveZoneEntry['lastUpdate'];
+            employeeData['liveAppointmentId'] =
+                liveZoneEntry['appointmentId'];
+            employeeData['liveClientName'] = liveZoneEntry['clientName'];
+            employeeData['liveDistanceMeters'] =
+                liveZoneEntry['distanceMeters'];
+            employeeData['liveGeofenceRadiusMeters'] =
+                liveZoneEntry['geofenceRadiusMeters'];
+            employeeData['liveInsideGeofence'] =
+                liveZoneEntry['insideGeofence'];
+          }
 
           // Store the decoded photoData in the employee object
           // This will be manually assigned to the photoData field after JSON deserialization
