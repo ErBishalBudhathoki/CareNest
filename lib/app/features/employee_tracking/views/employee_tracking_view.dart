@@ -8,6 +8,9 @@ import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/routes/app_pages.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import '../viewmodels/employee_tracking_viewmodel.dart';
 import '../widgets/employee_status_card.dart';
 import '../widgets/employee_stats_overview.dart';
@@ -807,7 +810,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                   children: [
                     BauhausActionButton(
                       text: 'CREATE SHIFT',
-                      onPressed: () => debugPrint('Create shift tapped'),
+                      onPressed: _navigateToAssignTab,
                       backgroundColor: BauhausDesign.primary,
                       textColor: BauhausDesign.surfaceWhite,
                     ),
@@ -1389,6 +1392,32 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         content: const Text('Export functionality coming soon!'),
         backgroundColor: BauhausDesign.info,
       ),
+    );
+  }
+
+  Future<void> _navigateToAssignTab() async {
+    final sharedPrefs = SharedPreferencesUtils();
+    await sharedPrefs.init();
+
+    final userEmail =
+        await sharedPrefs.getUserEmailFromSharedPreferences() ?? '';
+    final role = sharedPrefs.getRole() ?? UserRole.admin;
+    final organizationId = sharedPrefs.getOrganizationId() ?? '';
+    final organizationName = sharedPrefs.getString('organizationName') ?? '';
+    final organizationCode = sharedPrefs.getOrganizationCode() ?? '';
+
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      Routes.bottomNavBar,
+      (route) => false,
+      arguments: {
+        'email': userEmail,
+        'role': role,
+        'organizationId': organizationId,
+        'organizationName': organizationName,
+        'organizationCode': organizationCode,
+        'initialIndex': role == UserRole.admin ? 1 : 0,
+      },
     );
   }
 

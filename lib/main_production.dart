@@ -1,6 +1,7 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/core/providers/theme_providers.dart';
 import 'package:carenest/app/features/business/views/add_business_details_view.dart';
+import 'package:carenest/app/features/business/views/business_list_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:carenest/app/features/invoice/views/automatic_invoice_generation_view.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
@@ -14,6 +15,8 @@ import 'package:carenest/firebase_options.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +25,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
+import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/themes/app_themes.dart';
@@ -42,6 +46,8 @@ import 'package:carenest/app/features/admin/views/employee_invoice_generation_vi
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/features/home/views/home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
+import 'package:carenest/app/features/client/views/client_list_view.dart';
+import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
@@ -58,8 +64,10 @@ import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
 // But we need to IMPORT it explicitly here to use it in MaterialApp.
 
 final mediaStorePlugin = MediaStore();
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 bool _deepLinkHandled = false;
+Uri? _pendingInitialDeepLink;
+String? _lastHandledDeepLink;
+DateTime? _lastHandledDeepLinkAt;
 
 bool isDeepLinkHandled() {
   return _deepLinkHandled;
@@ -116,6 +124,9 @@ void main() async {
       child: MyApp(),
     ),
   );
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _processPendingInitialDeepLink();
+  });
 }
 
 // _requestPermissions removed
@@ -125,64 +136,82 @@ Future<void> _initializeFirebase() async {
   debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
 
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      debugPrint('✅ Firebase initialized with explicit web options');
+    } else {
+      // On Android/iOS use native Firebase config files to avoid API-key flavor
+      // mismatches from environment overrides.
+      await Firebase.initializeApp();
+      debugPrint('✅ Firebase initialized from native config');
+    }
     debugPrint('✅ Firebase Core initialized successfully');
-
-    // Get initial FCM token for logging
-    try {
-      final token = await FirebaseMessaging.instance.getToken();
-      if (token != null) {
-        debugPrint(
-            '✅ FCM Token available at startup: ${token.substring(0, 20)}...');
-        debugPrint('Full FCM Token: $token');
-      } else {
-        debugPrint('❌ No FCM Token available at startup');
-      }
-    } catch (e) {
-      debugPrint('❌ Error getting initial FCM token: $e');
+  } on FirebaseException catch (e) {
+    if (e.code == 'duplicate-app') {
+      // Firebase was already initialized natively (e.g., GoogleService-Info.plist on iOS).
+      // Safe to ignore — the existing [DEFAULT] app will be used.
+      debugPrint(
+          'ℹ️ Firebase already initialized (native), reusing existing app.');
+    } else {
+      debugPrint('❌ Firebase initialization failed: $e');
+      debugPrint('=== END FIREBASE INITIALIZATION (WITH ERROR) ===\n');
+      rethrow;
     }
-
-    // Check notification permissions
-    try {
-      final settings =
-          await FirebaseMessaging.instance.getNotificationSettings();
-      debugPrint('\n--- NOTIFICATION PERMISSIONS STATUS ---');
-      debugPrint('Authorization Status: ${settings.authorizationStatus}');
-      debugPrint('Alert Setting: ${settings.alert}');
-      debugPrint('Badge Setting: ${settings.badge}');
-      debugPrint('Sound Setting: ${settings.sound}');
-      debugPrint('Announcement Setting: ${settings.announcement}');
-      debugPrint('Car Play Setting: ${settings.carPlay}');
-      debugPrint('Critical Alert Setting: ${settings.criticalAlert}');
-      debugPrint('Time Sensitive Setting: ${settings.timeSensitive}');
-    } catch (e) {
-      debugPrint('❌ Error checking notification settings: $e');
-    }
-
-    // Note: FirebaseMessagingService initialization removed to avoid conflicts
-    // NotificationHandler widget will handle all foreground notification setup
-
-    // Set up token refresh listener for debugging
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-      debugPrint('\n=== FCM TOKEN REFRESHED ===');
-      debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
-      debugPrint('New Token: ${newToken.substring(0, 20)}...');
-      debugPrint('Full New Token: $newToken');
-      debugPrint('=== END TOKEN REFRESH ===\n');
-    });
-
-    debugPrint('✅ Firebase initialization completed successfully');
-    debugPrint('=== END FIREBASE INITIALIZATION ===\n');
   } catch (e) {
     debugPrint('❌ Firebase initialization failed: $e');
     debugPrint('=== END FIREBASE INITIALIZATION (WITH ERROR) ===\n');
     rethrow;
   }
+
+  // FCM token & permissions — run regardless of how Firebase was initialized.
+  try {
+    final token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      debugPrint(
+          '✅ FCM Token available at startup: ${token.substring(0, 20)}...');
+      debugPrint('Full FCM Token: $token');
+    } else {
+      debugPrint('❌ No FCM Token available at startup');
+    }
+  } catch (e) {
+    debugPrint('❌ Error getting initial FCM token: $e');
+  }
+
+  try {
+    final settings = await FirebaseMessaging.instance.getNotificationSettings();
+    debugPrint('\n--- NOTIFICATION PERMISSIONS STATUS ---');
+    debugPrint('Authorization Status: ${settings.authorizationStatus}');
+    debugPrint('Alert Setting: ${settings.alert}');
+    debugPrint('Badge Setting: ${settings.badge}');
+    debugPrint('Sound Setting: ${settings.sound}');
+    debugPrint('Announcement Setting: ${settings.announcement}');
+    debugPrint('Car Play Setting: ${settings.carPlay}');
+    debugPrint('Critical Alert Setting: ${settings.criticalAlert}');
+    debugPrint('Time Sensitive Setting: ${settings.timeSensitive}');
+  } catch (e) {
+    debugPrint('❌ Error checking notification settings: $e');
+  }
+
+  // Set up token refresh listener for debugging
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+    debugPrint('\n=== FCM TOKEN REFRESHED ===');
+    debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+    debugPrint('New Token: ${newToken.substring(0, 20)}...');
+    debugPrint('Full New Token: $newToken');
+    debugPrint('=== END TOKEN REFRESH ===\n');
+  });
+
+  debugPrint('✅ Firebase initialization completed successfully');
+  debugPrint('=== END FIREBASE INITIALIZATION ===\n');
 }
 
 Future<void> _initializeAppCheck() async {
+  if (!kIsWeb && Platform.isIOS) {
+    debugPrint('⚠️ Running on iOS - Skipping App Check initialization');
+    return;
+  }
   await FirebaseAppCheck.instance.activate(
     webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
     androidProvider: AndroidProvider.playIntegrity,
@@ -198,17 +227,14 @@ Future<void> _initializeDeepLinks() async {
     final initialLink = await appLinks.getInitialLink();
     if (initialLink != null) {
       debugPrint('Initial link: $initialLink');
-      // Don't handle immediately, wait for app to be ready
+      _pendingInitialDeepLink = initialLink;
     }
 
     // Listen for incoming links when app is already running
     appLinks.uriLinkStream.listen(
       (uri) {
         debugPrint('Received link: $uri');
-        if (!_deepLinkHandled) {
-          _handleDeepLink(uri);
-          _deepLinkHandled = true;
-        }
+        _handleIncomingDeepLink(uri);
       },
       onError: (err) {
         debugPrint('Deep link error: $err');
@@ -217,6 +243,33 @@ Future<void> _initializeDeepLinks() async {
   } catch (e) {
     debugPrint('Error initializing deep links: $e');
   }
+}
+
+void _processPendingInitialDeepLink() {
+  if (_pendingInitialDeepLink == null) return;
+  _handleIncomingDeepLink(_pendingInitialDeepLink!);
+  _pendingInitialDeepLink = null;
+}
+
+void _handleIncomingDeepLink(Uri uri) {
+  if (_isDuplicateDeepLink(uri)) return;
+  _handleDeepLink(uri);
+  _deepLinkHandled = true;
+}
+
+bool _isDuplicateDeepLink(Uri uri) {
+  final now = DateTime.now();
+  final asString = uri.toString();
+
+  if (_lastHandledDeepLink == asString &&
+      _lastHandledDeepLinkAt != null &&
+      now.difference(_lastHandledDeepLinkAt!) < const Duration(seconds: 2)) {
+    return true;
+  }
+
+  _lastHandledDeepLink = asString;
+  _lastHandledDeepLinkAt = now;
+  return false;
 }
 
 Future<void> _initializeTimerService() async {
@@ -324,7 +377,39 @@ class MyApp extends ConsumerWidget {
           Routes.forgotPassword: (context) => ForgotPasswordView(),
           Routes.changePassword: (context) => const ChangePasswordView(),
           Routes.addClientDetails: (context) => const AddClientDetails(),
+          Routes.clientList: (context) => const ClientListView(),
           Routes.addBusinessDetails: (context) => const AddBusinessDetails(),
+          Routes.businessList: (context) => const BusinessListView(),
+          '/client-portal': (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.clientPortal: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.clientDashboard: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
@@ -353,6 +438,7 @@ class MyApp extends ConsumerWidget {
                 arguments?['organizationName'] as String? ?? '';
             final organizationCode =
                 arguments?['organizationCode'] as String? ?? '';
+            final initialIndex = arguments?['initialIndex'] as int?;
             return BottomNavBarWidget(
               key: ValueKey('bottom_nav_${email}_${role.toString()}'),
               email: email,
@@ -360,6 +446,7 @@ class MyApp extends ConsumerWidget {
               organizationId: organizationId,
               organizationName: organizationName,
               organizationCode: organizationCode,
+              initialIndex: initialIndex,
             );
           },
           Routes.clientAndAppointmentDetails: (context) {
@@ -531,9 +618,12 @@ class MyApp extends ConsumerWidget {
             final String invoiceId = arguments['invoiceId'] as String? ?? '';
             final String organizationId =
                 arguments['organizationId'] as String? ?? '';
+            final Map<String, dynamic>? invoiceData =
+                arguments['invoiceData'] as Map<String, dynamic>?;
             return InvoiceDetailView(
               invoiceId: invoiceId,
               organizationId: organizationId,
+              initialInvoiceData: invoiceData,
             );
           },
           Routes.bankDetails: (context) => const BankDetailsView(),

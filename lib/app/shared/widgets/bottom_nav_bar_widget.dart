@@ -6,13 +6,11 @@ import 'package:carenest/app/features/Appointment/views/select_employee_view.dar
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/home/views/home_view.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
-import 'package:carenest/app/features/photo/views/photo_upload_view.dart';
-import 'package:carenest/app/features/settings/views/settings_view.dart';
 
+import 'package:carenest/app/features/settings/views/settings_view.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class BottomNavBarWidget extends ConsumerStatefulWidget {
   final String email;
@@ -20,6 +18,7 @@ class BottomNavBarWidget extends ConsumerStatefulWidget {
   final String organizationId;
   final String organizationName;
   final String organizationCode;
+  final int? initialIndex;
 
   const BottomNavBarWidget({
     required this.email,
@@ -27,6 +26,7 @@ class BottomNavBarWidget extends ConsumerStatefulWidget {
     required this.organizationId,
     required this.organizationName,
     required this.organizationCode,
+    this.initialIndex,
     super.key,
   });
 
@@ -35,30 +35,35 @@ class BottomNavBarWidget extends ConsumerStatefulWidget {
 }
 
 class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
-  late PersistentTabController _controller;
+  int _selectedIndex = 0;
   Uint8List? _photoData;
-  final bool _isLoading = true;
+  String? _imageUrl;
   String _firstName = '';
   String _lastName = '';
-
-  // Color constants
-  // Removed unused legacy colors
 
   @override
   void initState() {
     super.initState();
-    _controller = PersistentTabController(initialIndex: 0);
+    _selectedIndex = _normalizeInitialIndex(widget.initialIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _loadUserData();
-      // Request notification permission after the dashboard is loaded
       if (mounted) {
         await PermissionManager.requestNotificationPermission(context);
       }
     });
   }
 
+  int _normalizeInitialIndex(int? value) {
+    if (value == null) return 0;
+    final maxIndex = widget.role == UserRole.admin ? 2 : 1;
+    if (value < 0) return 0;
+    if (value > maxIndex) return maxIndex;
+    return value;
+  }
+
   Future<void> _loadUserData() async {
     await _initializePhotoData();
+    if (!mounted) return;
     try {
       final sharedPrefs = SharedPreferencesUtils();
       await sharedPrefs.init();
@@ -66,218 +71,170 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
       final firstName = sharedPrefs.getString('firstName');
       final lastName = sharedPrefs.getString('lastName');
 
+      if (!mounted) return;
       setState(() {
         _firstName = firstName ?? '';
         _lastName = lastName ?? '';
       });
     } catch (e) {
       debugPrint('Error loading user data: $e');
-      setState(() {
-        _firstName = '';
-        _lastName = '';
-      });
     }
   }
 
   Future<void> _initializePhotoData() async {
-    debugPrint("=== _initializePhotoData started, _isLoading: $_isLoading ===");
     try {
-      await ref.read(photoDataProvider.notifier).fetchPhotoData(widget.email);
+      final notifier = ref.read(photoDataProvider.notifier);
+      await notifier.fetchPhotoData(widget.email);
+      if (!mounted) return;
+
       final photoState = ref.read(photoDataProvider);
 
+      // Also get imageUrl from shared prefs if available, or we might need to fetch user data
+      final sharedPrefs = SharedPreferencesUtils();
+      await sharedPrefs.init();
+      final imageUrl = sharedPrefs.getString('profilePic') ??
+          sharedPrefs.getString('photoUrl');
+
+      if (!mounted) return;
       setState(() {
         _photoData = photoState.photoData;
+        _imageUrl = imageUrl;
       });
-
-      if (photoState.photoData != null) {
-        debugPrint("Photo data successfully loaded in BottomNavBarWidget");
-      } else {
-        debugPrint("No photo data available in BottomNavBarWidget");
-      }
     } catch (e) {
       debugPrint("Error in _initializePhotoData: $e");
     }
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  List<Widget> _getScreens() {
+    final screens = <Widget>[
+      _buildHomeScreen(),
+    ];
 
-  List<PersistentTabConfig> _buildNavBarItems() {
-    debugPrint("BottomNavBarWidget role: ${widget.role}");
     if (widget.role == UserRole.admin) {
-      return [
-        _buildHomeTab(),
-        _buildAssignC2ETab(),
-        _buildPhotoUploadTab(),
-        _buildSettingsTab(),
-      ];
-    } else {
-      return [
-        _buildHomeTab(),
-        _buildPhotoUploadTab(),
-        _buildSettingsTab(),
-      ];
-    }
-  }
-
-  List<PersistentTabConfig> _buildLoadingTabs() {
-    if (widget.role == UserRole.admin) {
-      return [
-        _buildHomeTab(),
-        _buildAssignC2ETab(),
-        _buildPhotoUploadTab(),
-        _buildSettingsTab(),
-      ];
-    } else {
-      return [
-        _buildHomeTab(),
-        _buildPhotoUploadTab(),
-        _buildSettingsTab(),
-      ];
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: PersistentTabView(
-        tabs: _buildNavBarItems(),
-        controller: _controller,
-        navBarBuilder: (navBarConfig) => Style1BottomNavBar(
-          navBarConfig: navBarConfig,
-          navBarDecoration: NavBarDecoration(
-            color: BauhausDesign.surfaceLight,
-            border: null,
-            boxShadow: null,
-          ),
-        ),
-        navBarHeight: 70, // Accommodate content without overflow
-        navBarOverlap: const NavBarOverlap.none(),
-      ),
-    );
-  }
-
-  PersistentTabConfig _buildHomeTab() {
-    Widget homeScreen;
-    if (widget.role == UserRole.admin) {
-      homeScreen = AdminDashboardView(
-        email: widget.email,
-        photoData: _photoData,
-        controller: _controller,
-        organizationId: widget.organizationId,
-        organizationName: widget.organizationName,
-        organizationCode: widget.organizationCode,
-      );
-    } else {
-      homeScreen = HomeView(
-        email: widget.email,
-        photoData: _photoData,
-        controller: _controller,
-        organizationId: widget.organizationId,
-        organizationName: widget.organizationName,
-        organizationCode: widget.organizationCode,
-      );
+      screens.add(AssignC2E());
     }
 
-    return PersistentTabConfig(
-      screen: homeScreen,
-      item: ItemConfig(
-        icon: _buildActiveTabItem(
-          Icons.home,
-          'HOME',
-          BauhausDesign.primary,
-          BauhausDesign.textLight,
-        ),
-        inactiveIcon: _buildInactiveTabItem(Icons.home_outlined, 'HOME'),
-        title: '',
-        activeForegroundColor: BauhausDesign.primary,
-        inactiveForegroundColor: BauhausDesign.neutral,
-      ),
-    );
-  }
-
-  PersistentTabConfig _buildPhotoUploadTab() {
-    return PersistentTabConfig(
-      screen: PhotoUploadScreen(email: widget.email),
-      item: ItemConfig(
-        icon: _buildActiveTabItem(
-          Icons.person,
-          'PROFILE',
-          BauhausDesign.secondary,
-          BauhausDesign.textLight,
-        ),
-        inactiveIcon: _buildInactiveTabItem(Icons.person_outline, 'PROFILE'),
-        title: '',
-        activeForegroundColor: BauhausDesign.secondary,
-        inactiveForegroundColor: BauhausDesign.neutral,
-      ),
-    );
-  }
-
-  PersistentTabConfig _buildAssignC2ETab() {
-    return PersistentTabConfig(
-      screen: AssignC2E(),
-      item: ItemConfig(
-        icon: _buildActiveTabItem(
-          Icons.search,
-          'ASSIGN',
-          BauhausDesign.accent,
-          BauhausDesign.textDark,
-        ),
-        inactiveIcon: _buildInactiveTabItem(Icons.search_outlined, 'ASSIGN'),
-        title: '',
-        activeForegroundColor: BauhausDesign.neutral,
-        inactiveForegroundColor: BauhausDesign.neutral,
-      ),
-    );
-  }
-
-  PersistentTabConfig _buildSettingsTab() {
-    return PersistentTabConfig(
-      screen: SettingsView(
+    screens.add(
+      SettingsView(
         organizationId: widget.organizationId,
         organizationName: widget.organizationName,
         organizationCode: widget.organizationCode,
         userEmail: widget.email,
         userName: '$_firstName $_lastName'.trim(),
         photoData: _photoData,
+        imageUrl: _imageUrl,
       ),
-      item: ItemConfig(
-        icon: _buildActiveTabItem(
-          Icons.settings,
-          'SETTINGS',
-          BauhausDesign.neutral,
-          BauhausDesign.textLight,
+    );
+
+    return screens;
+  }
+
+  Widget _buildHomeScreen() {
+    if (widget.role == UserRole.admin) {
+      return AdminDashboardView(
+        email: widget.email,
+        photoData: _photoData,
+        organizationId: widget.organizationId,
+        organizationName: widget.organizationName,
+        organizationCode: widget.organizationCode,
+      );
+    } else {
+      return HomeView(
+        email: widget.email,
+        photoData: _photoData,
+        organizationId: widget.organizationId,
+        organizationName: widget.organizationName,
+        organizationCode: widget.organizationCode,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screens = _getScreens();
+
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: screens,
+      ),
+      bottomNavigationBar: _buildBottomBar(),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        border: Border(
+          top: BorderSide(
+              color: BauhausDesign.neutral.withOpacity(0.2), width: 1),
         ),
-        inactiveIcon:
-            _buildInactiveTabItem(Icons.settings_outlined, 'SETTINGS'),
-        title: '',
-        activeForegroundColor: BauhausDesign.neutral,
-        inactiveForegroundColor: BauhausDesign.neutral,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Container(
+          height: 64, // Precise height for content
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: _buildNavItems(),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildActiveTabItem(
-    IconData icon,
-    String label,
-    Color bgColor,
-    Color contentColor,
-  ) {
+  List<Widget> _buildNavItems() {
+    final items = <Widget>[
+      _buildNavItem(0, Icons.home, Icons.home_outlined, 'HOME',
+          BauhausDesign.primary, BauhausDesign.textLight),
+    ];
+
+    int indexOffset = 1;
+    if (widget.role == UserRole.admin) {
+      items.add(_buildNavItem(1, Icons.search, Icons.search_outlined, 'ASSIGN',
+          BauhausDesign.accent, BauhausDesign.textDark));
+      indexOffset = 2;
+    }
+
+    items.add(_buildNavItem(
+        indexOffset,
+        Icons.settings,
+        Icons.settings_outlined,
+        'SETTINGS',
+        BauhausDesign.neutral,
+        BauhausDesign.textLight));
+
+    return items;
+  }
+
+  Widget _buildNavItem(int index, IconData activeIcon, IconData inactiveIcon,
+      String label, Color activeBg, Color activeContent) {
+    final isSelected = _selectedIndex == index;
+
+    return GestureDetector(
+      onTap: () => setState(() => _selectedIndex = index),
+      behavior: HitTestBehavior.opaque,
+      child: isSelected
+          ? _buildActiveItem(activeIcon, label, activeBg, activeContent)
+          : _buildInactiveItem(inactiveIcon, label),
+    );
+  }
+
+  Widget _buildActiveItem(
+      IconData icon, String label, Color bgColor, Color contentColor) {
     return Container(
-      width: 70, // Wider to accommodate text
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      width: 72,
+      padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: BauhausDesign.neutral, width: 2),
         boxShadow: const [
           BoxShadow(
             color: BauhausDesign.neutral,
-            offset: Offset(2, 2),
+            offset: Offset(1.5, 1.5),
             blurRadius: 0,
           ),
         ],
@@ -286,11 +243,8 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: contentColor,
-          ),
+          Icon(icon, size: 16, color: contentColor),
+          const SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
@@ -306,16 +260,12 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     );
   }
 
-  Widget _buildInactiveTabItem(IconData icon, String label) {
+  Widget _buildInactiveItem(IconData icon, String label) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: BauhausDesign.neutral,
-        ),
+        Icon(icon, size: 20, color: BauhausDesign.neutral),
         const SizedBox(height: 4),
         Text(
           label,

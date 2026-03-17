@@ -1,6 +1,7 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/core/providers/theme_providers.dart';
 import 'package:carenest/app/features/business/views/add_business_details_view.dart';
+import 'package:carenest/app/features/business/views/business_list_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:carenest/app/features/invoice/views/automatic_invoice_generation_view.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
@@ -26,6 +27,7 @@ import 'package:carenest/app/services/crashlytics/crashlytics_service.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
+import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/themes/app_themes.dart';
@@ -46,6 +48,8 @@ import 'package:carenest/app/features/admin/views/employee_invoice_generation_vi
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/features/home/views/home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
+import 'package:carenest/app/features/client/views/client_list_view.dart';
+import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
@@ -59,12 +63,22 @@ import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.d
 
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
+import 'package:carenest/app/features/care_intelligence/views/care_intelligence_dashboard.dart';
+import 'package:carenest/app/features/care_intelligence/views/risk_assessment_view.dart';
+import 'package:carenest/app/features/care_intelligence/views/care_plan_builder_view.dart';
+import 'package:carenest/app/features/care_intelligence/views/incident_management_view.dart';
+import 'package:carenest/app/features/care_intelligence/views/medication_management_view.dart';
+import 'package:carenest/app/features/care_intelligence/views/behavior_support_view.dart';
+import 'package:carenest/app/features/care_intelligence/views/health_monitoring_view.dart';
+import 'package:carenest/app/features/care_intelligence/views/outcome_tracking_view.dart';
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
 // But we need to IMPORT it explicitly here to use it in MaterialApp.
 
 final mediaStorePlugin = MediaStore();
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 bool _deepLinkHandled = false;
+Uri? _pendingInitialDeepLink;
+String? _lastHandledDeepLink;
+DateTime? _lastHandledDeepLinkAt;
 
 bool isDeepLinkHandled() {
   return _deepLinkHandled;
@@ -138,6 +152,9 @@ void main() async {
       child: MyApp(),
     ),
   );
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _processPendingInitialDeepLink();
+  });
 }
 
 // _requestPermissions removed - handled in app flow
@@ -147,61 +164,75 @@ Future<void> _initializeFirebase() async {
   debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
 
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      debugPrint('✅ Firebase initialized with explicit web options');
+    } else {
+      // On Android/iOS use native Firebase config files to avoid API-key flavor
+      // mismatches from environment overrides.
+      await Firebase.initializeApp();
+      debugPrint('✅ Firebase initialized from native config');
+    }
     debugPrint('✅ Firebase Core initialized successfully');
-
-    // Get initial FCM token for logging
-    try {
-      final token = await FirebaseMessaging.instance.getToken();
-      if (token != null) {
-        debugPrint(
-            '✅ FCM Token available at startup: ${token.substring(0, 20)}...');
-        debugPrint('Full FCM Token: $token');
-      } else {
-        debugPrint('❌ No FCM Token available at startup');
-      }
-    } catch (e) {
-      debugPrint('❌ Error getting initial FCM token: $e');
+  } on FirebaseException catch (e) {
+    if (e.code == 'duplicate-app') {
+      // Firebase was already initialized natively (e.g., GoogleService-Info.plist on iOS).
+      // Safe to ignore — the existing [DEFAULT] app will be used.
+      debugPrint(
+          'ℹ️ Firebase already initialized (native), reusing existing app.');
+    } else {
+      debugPrint('❌ Firebase initialization failed: $e');
+      debugPrint('=== END FIREBASE INITIALIZATION (WITH ERROR) ===\n');
+      rethrow;
     }
-
-    // Check notification permissions
-    try {
-      final settings =
-          await FirebaseMessaging.instance.getNotificationSettings();
-      debugPrint('\n--- NOTIFICATION PERMISSIONS STATUS ---');
-      debugPrint('Authorization Status: ${settings.authorizationStatus}');
-      debugPrint('Alert Setting: ${settings.alert}');
-      debugPrint('Badge Setting: ${settings.badge}');
-      debugPrint('Sound Setting: ${settings.sound}');
-      debugPrint('Announcement Setting: ${settings.announcement}');
-      debugPrint('Car Play Setting: ${settings.carPlay}');
-      debugPrint('Critical Alert Setting: ${settings.criticalAlert}');
-      debugPrint('Time Sensitive Setting: ${settings.timeSensitive}');
-    } catch (e) {
-      debugPrint('❌ Error checking notification settings: $e');
-    }
-
-    // Note: FirebaseMessagingService initialization removed to avoid conflicts
-    // NotificationHandler widget will handle all foreground notification setup
-
-    // Set up token refresh listener for debugging
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-      debugPrint('\n=== FCM TOKEN REFRESHED ===');
-      debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
-      debugPrint('New Token: ${newToken.substring(0, 20)}...');
-      debugPrint('Full New Token: $newToken');
-      debugPrint('=== END TOKEN REFRESH ===\n');
-    });
-
-    debugPrint('✅ Firebase initialization completed successfully');
-    debugPrint('=== END FIREBASE INITIALIZATION ===\n');
   } catch (e) {
     debugPrint('❌ Firebase initialization failed: $e');
     debugPrint('=== END FIREBASE INITIALIZATION (WITH ERROR) ===\n');
     rethrow;
   }
+
+  // FCM token & permissions — run regardless of how Firebase was initialized.
+  try {
+    final token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      debugPrint(
+          '✅ FCM Token available at startup: ${token.substring(0, 20)}...');
+      debugPrint('Full FCM Token: $token');
+    } else {
+      debugPrint('❌ No FCM Token available at startup');
+    }
+  } catch (e) {
+    debugPrint('❌ Error getting initial FCM token: $e');
+  }
+
+  try {
+    final settings = await FirebaseMessaging.instance.getNotificationSettings();
+    debugPrint('\n--- NOTIFICATION PERMISSIONS STATUS ---');
+    debugPrint('Authorization Status: ${settings.authorizationStatus}');
+    debugPrint('Alert Setting: ${settings.alert}');
+    debugPrint('Badge Setting: ${settings.badge}');
+    debugPrint('Sound Setting: ${settings.sound}');
+    debugPrint('Announcement Setting: ${settings.announcement}');
+    debugPrint('Car Play Setting: ${settings.carPlay}');
+    debugPrint('Critical Alert Setting: ${settings.criticalAlert}');
+    debugPrint('Time Sensitive Setting: ${settings.timeSensitive}');
+  } catch (e) {
+    debugPrint('❌ Error checking notification settings: $e');
+  }
+
+  // Set up token refresh listener for debugging
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+    debugPrint('\n=== FCM TOKEN REFRESHED ===');
+    debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+    debugPrint('New Token: ${newToken.substring(0, 20)}...');
+    debugPrint('Full New Token: $newToken');
+    debugPrint('=== END TOKEN REFRESH ===\n');
+  });
+
+  debugPrint('✅ Firebase initialization completed successfully');
+  debugPrint('=== END FIREBASE INITIALIZATION ===\n');
 }
 
 Future<bool> _isIOSSimulator() async {
@@ -223,22 +254,17 @@ Future<void> _initializeAppCheck() async {
   debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
   debugPrint('Environment: ${AppConfig.flavorName}');
 
-  // Check if running on iOS Simulator
-  final isIOSSimulator = await _isIOSSimulator();
+  final isDevelopmentFlavor = AppConfig.appFlavor == Flavor.development;
 
-  if (isIOSSimulator) {
+  if (!kIsWeb && Platform.isIOS) {
+    debugPrint('⚠️ Running on iOS - Skipping App Check initialization');
     debugPrint(
-        '⚠️ Running on iOS Simulator - Skipping App Check initialization');
+        'Note: App Check requires physical iOS device and Apple Developer account');
     debugPrint(
-        'Note: App Check requires physical iOS device or Apple Developer account');
-    debugPrint(
-        'Recommendation: Test on physical device or disable APP_CHECK_ENFORCEMENT in backend');
-    debugPrint(
-        '=== END APP CHECK INITIALIZATION (SKIPPED FOR SIMULATOR) ===\n');
+        'Recommendation: Disable APP_CHECK_ENFORCEMENT in backend for iOS requests');
+    debugPrint('=== END APP CHECK INITIALIZATION (SKIPPED FOR IOS) ===\n');
     return;
   }
-
-  final isDevelopmentFlavor = AppConfig.appFlavor == Flavor.development;
 
   try {
     await FirebaseAppCheck.instance.activate(
@@ -285,17 +311,14 @@ Future<void> _initializeDeepLinks() async {
     final initialLink = await appLinks.getInitialLink();
     if (initialLink != null) {
       debugPrint('Initial link: $initialLink');
-      // Don't handle immediately, wait for app to be ready
+      _pendingInitialDeepLink = initialLink;
     }
 
     // Listen for incoming links when app is already running
     appLinks.uriLinkStream.listen(
       (uri) {
         debugPrint('Received link: $uri');
-        if (!_deepLinkHandled) {
-          _handleDeepLink(uri);
-          _deepLinkHandled = true;
-        }
+        _handleIncomingDeepLink(uri);
       },
       onError: (err) {
         debugPrint('Deep link error: $err');
@@ -304,6 +327,33 @@ Future<void> _initializeDeepLinks() async {
   } catch (e) {
     debugPrint('Error initializing deep links: $e');
   }
+}
+
+void _processPendingInitialDeepLink() {
+  if (_pendingInitialDeepLink == null) return;
+  _handleIncomingDeepLink(_pendingInitialDeepLink!);
+  _pendingInitialDeepLink = null;
+}
+
+void _handleIncomingDeepLink(Uri uri) {
+  if (_isDuplicateDeepLink(uri)) return;
+  _handleDeepLink(uri);
+  _deepLinkHandled = true;
+}
+
+bool _isDuplicateDeepLink(Uri uri) {
+  final now = DateTime.now();
+  final asString = uri.toString();
+
+  if (_lastHandledDeepLink == asString &&
+      _lastHandledDeepLinkAt != null &&
+      now.difference(_lastHandledDeepLinkAt!) < const Duration(seconds: 2)) {
+    return true;
+  }
+
+  _lastHandledDeepLink = asString;
+  _lastHandledDeepLinkAt = now;
+  return false;
 }
 
 Future<void> _initializeTimerService() async {
@@ -348,7 +398,6 @@ class MyApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/splashScreen',
         routes: {
-          '/': (context) => const SplashScreen(), // Add root route
           Routes.splashScreen: (context) => const SplashScreen(),
           Routes.admin: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
@@ -411,7 +460,39 @@ class MyApp extends ConsumerWidget {
           Routes.forgotPassword: (context) => ForgotPasswordView(),
           Routes.changePassword: (context) => const ChangePasswordView(),
           Routes.addClientDetails: (context) => const AddClientDetails(),
+          Routes.clientList: (context) => const ClientListView(),
           Routes.addBusinessDetails: (context) => const AddBusinessDetails(),
+          Routes.businessList: (context) => const BusinessListView(),
+          '/client-portal': (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.clientPortal: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.clientDashboard: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.onboarding: (context) => const OnboardingWelcomeView(),
           Routes.navBar: (context) {
@@ -441,6 +522,7 @@ class MyApp extends ConsumerWidget {
                 arguments?['organizationName'] as String? ?? '';
             final organizationCode =
                 arguments?['organizationCode'] as String? ?? '';
+            final initialIndex = arguments?['initialIndex'] as int?;
             return BottomNavBarWidget(
               key: ValueKey('bottom_nav_${email}_${role.toString()}'),
               email: email,
@@ -448,6 +530,7 @@ class MyApp extends ConsumerWidget {
               organizationId: organizationId,
               organizationName: organizationName,
               organizationCode: organizationCode,
+              initialIndex: initialIndex,
             );
           },
           Routes.clientAndAppointmentDetails: (context) {
@@ -619,16 +702,29 @@ class MyApp extends ConsumerWidget {
             final String invoiceId = arguments['invoiceId'] as String? ?? '';
             final String organizationId =
                 arguments['organizationId'] as String? ?? '';
+            final Map<String, dynamic>? invoiceData =
+                arguments['invoiceData'] as Map<String, dynamic>?;
             return InvoiceDetailView(
               invoiceId: invoiceId,
               organizationId: organizationId,
+              initialInvoiceData: invoiceData,
             );
           },
           Routes.bankDetails: (context) => const BankDetailsView(),
-          Routes.adminRequests: (context) {
-            return const AdminRequestsDashboardView();
-          },
+          Routes.adminRequests: (context) => const AdminRequestsDashboardView(),
           Routes.mileageTracker: (context) => const MileageTrackerView(),
+          // Care Intelligence Routes
+          Routes.careIntelligence: (context) =>
+              const CareIntelligenceDashboard(),
+          Routes.riskAssessment: (context) => const RiskAssessmentView(),
+          Routes.carePlanBuilder: (context) => const CarePlanBuilderView(),
+          Routes.incidentManagement: (context) =>
+              const IncidentManagementView(),
+          Routes.medicationManagement: (context) =>
+              const MedicationManagementView(),
+          Routes.behaviorSupport: (context) => const BehaviorSupportView(),
+          Routes.healthMonitoring: (context) => const HealthMonitoringView(),
+          Routes.outcomeTracking: (context) => const OutcomeTrackingView(),
         },
       ),
     );
