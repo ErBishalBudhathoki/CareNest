@@ -225,7 +225,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             const SizedBox(height: BauhausDesign.space5),
             _buildWorkforceStatusSection(stats),
             const SizedBox(height: BauhausDesign.space6),
-            _buildLiveZoneSection(),
+            _buildLiveZoneSection(state),
             const SizedBox(height: BauhausDesign.space6),
             _buildQuickActionsSection(),
             const SizedBox(height: BauhausDesign.space6),
@@ -489,7 +489,14 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     );
   }
 
-  Widget _buildLiveZoneSection() {
+  Widget _buildLiveZoneSection(EmployeeTrackingState state) {
+    final employees = [...state.data.employees]
+      ..sort((a, b) {
+        final aSeen = a.lastSeen ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bSeen = b.lastSeen ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return bSeen.compareTo(aSeen);
+      });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -506,7 +513,10 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(BauhausDesign.space2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space3,
+                  vertical: BauhausDesign.space2,
+                ),
                 decoration: BoxDecoration(
                   color: BauhausDesign.primaryBlue,
                   border: Border(
@@ -524,54 +534,135 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                       ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space4),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceOffWhite,
-                        border: Border.all(
-                            color: BauhausDesign.neutral, width: 2),
-                        boxShadow: const [BauhausDesign.shadowHardSm],
-                      ),
-                      child: Center(
-                        child: Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            color: BauhausDesign.surfaceWhite,
-                            border: Border.all(
-                                color: BauhausDesign.neutral, width: 2),
+              if (employees.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(BauhausDesign.space4),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.surfaceOffWhite,
+                          border: Border.all(
+                              color: BauhausDesign.neutral, width: 2),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: 46,
+                            height: 46,
+                            decoration: BoxDecoration(
+                              color: BauhausDesign.surfaceWhite,
+                              border: Border.all(
+                                  color: BauhausDesign.neutral, width: 2),
+                            ),
+                            child: const Icon(Icons.gps_fixed,
+                                color: BauhausDesign.primary, size: 22),
                           ),
-                          child: const Icon(Icons.gps_fixed,
-                              color: BauhausDesign.primary, size: 22),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: BauhausDesign.space3),
-                    Text(
-                      'HQ-01',
-                      style: BauhausDesign.getTextTheme(context)
-                          .headlineLarge
-                          ?.copyWith(fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(height: BauhausDesign.space1),
-                    Text(
-                      'Live Activity Zone',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(color: BauhausDesign.textMuted),
-                    ),
-                  ],
+                      const SizedBox(height: BauhausDesign.space3),
+                      Text(
+                        'NO LIVE SIGNALS',
+                        style: BauhausDesign.getTextTheme(context)
+                            .headlineLarge
+                            ?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: BauhausDesign.space1),
+                      Text(
+                        'Employee live zones will appear once activity begins.',
+                        textAlign: TextAlign.center,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(color: BauhausDesign.textMuted),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(BauhausDesign.space4),
+                  itemBuilder: (context, index) =>
+                      _buildLiveZoneEmployeeCard(employees[index]),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: BauhausDesign.space3),
+                  itemCount: employees.length,
                 ),
-              ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLiveZoneEmployeeCard(EmployeeStatus employee) {
+    final statusColor = _statusColor(employee.status);
+    final statusLabel = _statusLabel(employee.status);
+    final location =
+        (employee.currentLocation == null || employee.currentLocation!.isEmpty)
+            ? 'Location pending'
+            : employee.currentLocation!;
+    final lastSeen = _formatLastSeen(employee.lastSeen);
+
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space3),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceOffWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardXs],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                ),
+              ),
+              const SizedBox(width: BauhausDesign.space2),
+              Expanded(
+                child: Text(
+                  employee.name,
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelLarge
+                      ?.copyWith(fontWeight: FontWeight.w700),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(
+                statusLabel,
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      color: BauhausDesign.textMuted,
+                      letterSpacing: 0.6,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            location,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
+          ),
+          const SizedBox(height: BauhausDesign.space1),
+          Text(
+            'Last seen: $lastSeen',
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  fontSize: 12,
+                ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -981,6 +1072,41 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             ),
       ),
     );
+  }
+
+  Color _statusColor(WorkStatus status) {
+    switch (status) {
+      case WorkStatus.active:
+        return BauhausDesign.success;
+      case WorkStatus.onBreak:
+        return BauhausDesign.warning;
+      case WorkStatus.offline:
+      case WorkStatus.clockedOut:
+        return BauhausDesign.textMuted;
+    }
+  }
+
+  String _statusLabel(WorkStatus status) {
+    switch (status) {
+      case WorkStatus.active:
+        return 'ACTIVE';
+      case WorkStatus.onBreak:
+        return 'ON BREAK';
+      case WorkStatus.offline:
+        return 'OFFLINE';
+      case WorkStatus.clockedOut:
+        return 'CLOCKED OUT';
+    }
+  }
+
+  String _formatLastSeen(DateTime? lastSeen) {
+    if (lastSeen == null) return 'No check-in';
+    final now = DateTime.now();
+    final diff = now.difference(lastSeen);
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
   }
 
   Widget _buildLoadingState() {
