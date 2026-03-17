@@ -53,6 +53,18 @@ _$EmployeeStatusImpl _$$EmployeeStatusImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['lastSeen'] as String),
       currentShiftId: json['currentShiftId'] as String?,
       assignedClientId: json['assignedClientId'] as String?,
+      liveLatitude: (json['liveLatitude'] as num?)?.toDouble(),
+      liveLongitude: (json['liveLongitude'] as num?)?.toDouble(),
+      liveAccuracy: (json['liveAccuracy'] as num?)?.toDouble(),
+      liveUpdatedAt: json['liveUpdatedAt'] == null
+          ? null
+          : DateTime.parse(json['liveUpdatedAt'] as String),
+      liveAppointmentId: json['liveAppointmentId'] as String?,
+      liveClientName: json['liveClientName'] as String?,
+      liveDistanceMeters: (json['liveDistanceMeters'] as num?)?.toDouble(),
+      liveGeofenceRadiusMeters:
+          (json['liveGeofenceRadiusMeters'] as num?)?.toDouble(),
+      liveInsideGeofence: json['liveInsideGeofence'] as bool?,
       hoursWorked: (json['hoursWorked'] as num?)?.toDouble() ?? 0.0,
       isOnBreak: json['isOnBreak'] as bool? ?? false,
     );
@@ -70,6 +82,15 @@ Map<String, dynamic> _$$EmployeeStatusImplToJson(
       'lastSeen': instance.lastSeen?.toIso8601String(),
       'currentShiftId': instance.currentShiftId,
       'assignedClientId': instance.assignedClientId,
+      'liveLatitude': instance.liveLatitude,
+      'liveLongitude': instance.liveLongitude,
+      'liveAccuracy': instance.liveAccuracy,
+      'liveUpdatedAt': instance.liveUpdatedAt?.toIso8601String(),
+      'liveAppointmentId': instance.liveAppointmentId,
+      'liveClientName': instance.liveClientName,
+      'liveDistanceMeters': instance.liveDistanceMeters,
+      'liveGeofenceRadiusMeters': instance.liveGeofenceRadiusMeters,
+      'liveInsideGeofence': instance.liveInsideGeofence,
       'hoursWorked': instance.hoursWorked,
       'isOnBreak': instance.isOnBreak,
     };

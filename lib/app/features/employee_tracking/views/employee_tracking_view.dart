@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform, listEquals;
+import 'package:google_maps_flutter/google_maps_flutter.dart' as google_maps;
+import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -490,10 +493,18 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   }
 
   Widget _buildLiveZoneSection(EmployeeTrackingState state) {
-    final employees = [...state.data.employees]
+    final liveEmployees = state.data.employees
+        .where(
+          (employee) =>
+              employee.liveLatitude != null &&
+              employee.liveLongitude != null,
+        )
+        .toList()
       ..sort((a, b) {
-        final aSeen = a.lastSeen ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bSeen = b.lastSeen ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final aSeen =
+            a.liveUpdatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bSeen =
+            b.liveUpdatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
         return bSeen.compareTo(aSeen);
       });
 
@@ -524,17 +535,43 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                         BorderSide(color: BauhausDesign.neutral, width: 2),
                   ),
                 ),
-                child: Text(
-                  'DISTRICT ALPHA // GRID 7',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(
-                        color: BauhausDesign.surfaceWhite,
-                        letterSpacing: 0.6,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'DISTRICT ALPHA // GRID 7',
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.surfaceWhite,
+                              letterSpacing: 0.6,
+                            ),
                       ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space2,
+                        vertical: BauhausDesign.space1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: BauhausDesign.surfaceWhite,
+                        border:
+                            Border.all(color: BauhausDesign.neutral, width: 2),
+                      ),
+                      child: Text(
+                        '${liveEmployees.length} LIVE',
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              if (employees.isEmpty)
+              if (liveEmployees.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   child: Column(
@@ -581,15 +618,22 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                   ),
                 )
               else
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                Padding(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
-                  itemBuilder: (context, index) =>
-                      _buildLiveZoneEmployeeCard(employees[index]),
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: BauhausDesign.space3),
-                  itemCount: employees.length,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 220,
+                        child: _LiveZoneMap(employees: liveEmployees),
+                      ),
+                      const SizedBox(height: BauhausDesign.space4),
+                      Column(
+                        children: liveEmployees
+                            .map(_buildLiveZoneEmployeeCard)
+                            .toList(),
+                      ),
+                    ],
+                  ),
                 ),
             ],
           ),
@@ -601,11 +645,18 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   Widget _buildLiveZoneEmployeeCard(EmployeeStatus employee) {
     final statusColor = _statusColor(employee.status);
     final statusLabel = _statusLabel(employee.status);
-    final location =
-        (employee.currentLocation == null || employee.currentLocation!.isEmpty)
+    final location = (employee.liveClientName == null ||
+            employee.liveClientName!.isEmpty)
+        ? (employee.currentLocation == null ||
+                employee.currentLocation!.isEmpty)
             ? 'Location pending'
-            : employee.currentLocation!;
-    final lastSeen = _formatLastSeen(employee.lastSeen);
+            : employee.currentLocation!
+        : employee.liveClientName!;
+    final lastSeen = _formatLastSeen(employee.liveUpdatedAt ?? employee.lastSeen);
+    final coords = _formatCoordinates(employee);
+    final distance = employee.liveDistanceMeters != null
+        ? '${employee.liveDistanceMeters!.round()}m'
+        : null;
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -654,6 +705,24 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                 ),
           ),
           const SizedBox(height: BauhausDesign.space1),
+          if (coords != null)
+            Text(
+              coords,
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.textMuted,
+                    fontSize: 12,
+                  ),
+            ),
+          if (distance != null) ...[
+            const SizedBox(height: BauhausDesign.space1),
+            Text(
+              'Distance to geofence: $distance',
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.textMuted,
+                    fontSize: 12,
+                  ),
+            ),
+          ],
           Text(
             'Last seen: $lastSeen',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
@@ -1109,6 +1178,13 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     return '${diff.inDays}d ago';
   }
 
+  String? _formatCoordinates(EmployeeStatus employee) {
+    final lat = employee.liveLatitude;
+    final lng = employee.liveLongitude;
+    if (lat == null || lng == null) return null;
+    return 'LAT ${lat.toStringAsFixed(4)} • LNG ${lng.toStringAsFixed(4)}';
+  }
+
   Widget _buildLoadingState() {
     return const Center(
       child: BauhausLoadingState(message: 'Loading employee data...'),
@@ -1250,5 +1326,183 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
 
   String _formatTime(DateTime dateTime) {
     return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+class _LiveZoneMap extends StatefulWidget {
+  final List<EmployeeStatus> employees;
+
+  const _LiveZoneMap({required this.employees});
+
+  @override
+  State<_LiveZoneMap> createState() => _LiveZoneMapState();
+}
+
+class _LiveZoneMapState extends State<_LiveZoneMap> {
+  google_maps.GoogleMapController? _googleController;
+
+  @override
+  void didUpdateWidget(covariant _LiveZoneMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.employees, widget.employees)) {
+      _fitMarkers();
+    }
+  }
+
+  @override
+  void dispose() {
+    _googleController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.employees.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final center = _computeCenter();
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: BauhausDesign.surfaceWhite,
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          boxShadow: const [BauhausDesign.shadowHardSm],
+        ),
+        child: defaultTargetPlatform == TargetPlatform.iOS
+            ? _buildAppleMap(center)
+            : _buildGoogleMap(center),
+      ),
+    );
+  }
+
+  Widget _buildGoogleMap(google_maps.LatLng center) {
+    final markers = widget.employees
+        .where((e) => e.liveLatitude != null && e.liveLongitude != null)
+        .map(
+          (employee) => google_maps.Marker(
+            markerId: google_maps.MarkerId(employee.email),
+            position: google_maps.LatLng(
+              employee.liveLatitude!,
+              employee.liveLongitude!,
+            ),
+            infoWindow: google_maps.InfoWindow(
+              title: employee.name,
+              snippet: employee.liveClientName ?? employee.currentLocation,
+            ),
+          ),
+        )
+        .toSet();
+
+    return google_maps.GoogleMap(
+      initialCameraPosition: google_maps.CameraPosition(
+        target: center,
+        zoom: 14,
+      ),
+      markers: markers,
+      myLocationEnabled: false,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+      mapToolbarEnabled: false,
+      liteModeEnabled: false,
+      onMapCreated: (controller) {
+        _googleController = controller;
+        _fitMarkers();
+      },
+    );
+  }
+
+  Widget _buildAppleMap(google_maps.LatLng center) {
+    final annotations = widget.employees
+        .where((e) => e.liveLatitude != null && e.liveLongitude != null)
+        .map(
+          (employee) => apple_maps.Annotation(
+            annotationId: apple_maps.AnnotationId(employee.email),
+            position: apple_maps.LatLng(
+              employee.liveLatitude!,
+              employee.liveLongitude!,
+            ),
+          ),
+        )
+        .toSet();
+
+    return apple_maps.AppleMap(
+      initialCameraPosition: apple_maps.CameraPosition(
+        target: apple_maps.LatLng(center.latitude, center.longitude),
+        zoom: 14,
+      ),
+      annotations: annotations,
+      myLocationEnabled: false,
+    );
+  }
+
+  google_maps.LatLng _computeCenter() {
+    if (widget.employees.isEmpty) {
+      return const google_maps.LatLng(-37.8136, 144.9631);
+    }
+
+    double latSum = 0;
+    double lngSum = 0;
+    int count = 0;
+
+    for (final employee in widget.employees) {
+      final lat = employee.liveLatitude;
+      final lng = employee.liveLongitude;
+      if (lat == null || lng == null) continue;
+      latSum += lat;
+      lngSum += lng;
+      count += 1;
+    }
+
+    if (count == 0) {
+      return const google_maps.LatLng(-37.8136, 144.9631);
+    }
+
+    return google_maps.LatLng(latSum / count, lngSum / count);
+  }
+
+  void _fitMarkers() {
+    if (_googleController == null || widget.employees.isEmpty) return;
+
+    final liveEmployees = widget.employees
+        .where((e) => e.liveLatitude != null && e.liveLongitude != null)
+        .toList();
+    if (liveEmployees.isEmpty) return;
+
+    if (liveEmployees.length == 1) {
+      _googleController?.animateCamera(
+        google_maps.CameraUpdate.newLatLngZoom(
+          google_maps.LatLng(
+            liveEmployees.first.liveLatitude!,
+            liveEmployees.first.liveLongitude!,
+          ),
+          15,
+        ),
+      );
+      return;
+    }
+
+    double minLat = liveEmployees.first.liveLatitude!;
+    double maxLat = liveEmployees.first.liveLatitude!;
+    double minLng = liveEmployees.first.liveLongitude!;
+    double maxLng = liveEmployees.first.liveLongitude!;
+
+    for (final employee in liveEmployees) {
+      minLat = employee.liveLatitude! < minLat ? employee.liveLatitude! : minLat;
+      maxLat = employee.liveLatitude! > maxLat ? employee.liveLatitude! : maxLat;
+      minLng = employee.liveLongitude! < minLng ? employee.liveLongitude! : minLng;
+      maxLng = employee.liveLongitude! > maxLng ? employee.liveLongitude! : maxLng;
+    }
+
+    final bounds = google_maps.LatLngBounds(
+      southwest: google_maps.LatLng(minLat, minLng),
+      northeast: google_maps.LatLng(maxLat, maxLng),
+    );
+
+    _googleController?.animateCamera(
+      google_maps.CameraUpdate.newLatLngBounds(bounds, 48),
+    );
   }
 }
