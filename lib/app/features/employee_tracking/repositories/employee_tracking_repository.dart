@@ -123,7 +123,7 @@ class EmployeeTrackingRepository {
 
           debugPrint(
               '🔍 DEBUG: Processing assignment for $userEmail with userName: $userName');
-          debugPrint('🔍 DEBUG: Full assignment data: $assignment');
+          debugPrint('🔍 DEBUG: Full assignment data: $entry');
 
           userNameCounts[userName] = (userNameCounts[userName] ?? 0) + 1;
         }
