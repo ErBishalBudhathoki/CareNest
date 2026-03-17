@@ -809,30 +809,31 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      email,
-      status,
-      profileImage,
-      filename,
-      const DeepCollectionEquality().hash(photoData),
-      currentLocation,
-      lastSeen,
-      currentShiftId,
-      assignedClientId,
-      liveLatitude,
-      liveLongitude,
-      liveAccuracy,
-      liveUpdatedAt,
-      liveAppointmentId,
-      liveClientName,
-      liveDistanceMeters,
-      liveGeofenceRadiusMeters,
-      liveInsideGeofence,
-      hoursWorked,
-      isOnBreak);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        name,
+        email,
+        status,
+        profileImage,
+        filename,
+        const DeepCollectionEquality().hash(photoData),
+        currentLocation,
+        lastSeen,
+        currentShiftId,
+        assignedClientId,
+        liveLatitude,
+        liveLongitude,
+        liveAccuracy,
+        liveUpdatedAt,
+        liveAppointmentId,
+        liveClientName,
+        liveDistanceMeters,
+        liveGeofenceRadiusMeters,
+        liveInsideGeofence,
+        hoursWorked,
+        isOnBreak,
+      ]);
 
   @JsonKey(ignore: true)
   @override
