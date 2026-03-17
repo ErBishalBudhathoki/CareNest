@@ -82,6 +82,10 @@ class EmployeeTrackingRepository {
         // Transform the backend response to match our model structure
         // Convert assignments to employee status format
         final assignments = responseData['assignments'] as List<dynamic>? ?? [];
+        final fallbackEmployees =
+            responseData['allEmployees'] as List<dynamic>? ?? [];
+        final useFallbackEmployees =
+            assignments.isEmpty && fallbackEmployees.isNotEmpty;
         final activeTimers =
             responseData['activeTimers'] as List<dynamic>? ?? [];
         final currentlyWorkingCount = responseData['currentlyWorking'] ?? 0;
@@ -90,8 +94,20 @@ class EmployeeTrackingRepository {
         debugPrint('🔍 DEBUG: Currently working count: $currentlyWorkingCount');
 
         // Create a set of active user emails from activeTimers
-        final activeUserEmails =
-            activeTimers.map((timer) => timer['userEmail'] as String).toSet();
+        final activeUserEmails = activeTimers
+            .map((timer) => timer['userEmail'] as String?)
+            .whereType<String>()
+            .toSet();
+        if (activeUserEmails.isEmpty && useFallbackEmployees) {
+          for (final emp in fallbackEmployees) {
+            if (emp is! Map) continue;
+            final isCurrentlyWorking = emp['isCurrentlyWorking'] == true;
+            final userEmail = emp['userEmail']?.toString() ?? '';
+            if (isCurrentlyWorking && userEmail.isNotEmpty) {
+              activeUserEmails.add(userEmail);
+            }
+          }
+        }
         debugPrint('🔍 DEBUG: Active user emails: $activeUserEmails');
 
         // Create a map to track userName usage and ensure unique display names
@@ -99,9 +115,11 @@ class EmployeeTrackingRepository {
         final Map<String, String> uniqueDisplayNames = {};
 
         // First pass: count userName occurrences and create unique display names
-        for (final assignment in assignments) {
-          final userEmail = assignment['userEmail'] ?? '';
-          final userName = assignment['userName'] ?? 'Unknown';
+        final nameSource = useFallbackEmployees ? fallbackEmployees : assignments;
+        for (final entry in nameSource) {
+          if (entry is! Map) continue;
+          final userEmail = entry['userEmail'] ?? '';
+          final userName = entry['userName'] ?? entry['userDetails']?['name'] ?? 'Unknown';
 
           debugPrint(
               '🔍 DEBUG: Processing assignment for $userEmail with userName: $userName');
@@ -112,9 +130,10 @@ class EmployeeTrackingRepository {
 
         // Second pass: assign unique display names
         final Map<String, int> userNameCounters = {};
-        for (final assignment in assignments) {
-          final userEmail = assignment['userEmail'] ?? '';
-          final userName = assignment['userName'] ?? 'Unknown';
+        for (final entry in nameSource) {
+          if (entry is! Map) continue;
+          final userEmail = entry['userEmail'] ?? '';
+          final userName = entry['userName'] ?? entry['userDetails']?['name'] ?? 'Unknown';
 
           String displayName;
           if (userNameCounts[userName]! > 1) {
@@ -128,7 +147,95 @@ class EmployeeTrackingRepository {
           uniqueDisplayNames[userEmail] = displayName;
         }
 
-        final transformedEmployees = assignments.map((assignment) {
+        final transformedEmployees = (useFallbackEmployees
+                ? fallbackEmployees
+                : assignments)
+            .map((entry) {
+          if (entry is! Map<String, dynamic>) {
+            return <String, dynamic>{};
+          }
+
+          if (useFallbackEmployees) {
+            final userEmail = entry['userEmail'] ?? '';
+            final displayName = uniqueDisplayNames[userEmail] ??
+                entry['userName'] ??
+                entry['userDetails']?['name'] ??
+                'Unknown';
+
+            final isActive = entry['isCurrentlyWorking'] == true ||
+                activeUserEmails.contains(userEmail);
+            final status = isActive ? 'active' : 'offline';
+
+            final timer = entry['currentTimer'] as Map<String, dynamic>?;
+            final assignmentsList =
+                entry['assignments'] as List<dynamic>? ?? [];
+            final firstAssignment =
+                assignmentsList.isNotEmpty && assignmentsList.first is Map
+                    ? assignmentsList.first as Map<String, dynamic>
+                    : null;
+            final recentShifts = entry['recentShifts'] as List<dynamic>? ?? [];
+            final recentShift =
+                recentShifts.isNotEmpty && recentShifts.first is Map
+                    ? recentShifts.first as Map<String, dynamic>
+                    : null;
+
+            final currentLocation = timer?['clientAddress'] ??
+                timer?['clientDetails']?['clientAddress'] ??
+                firstAssignment?['clientAddress'];
+
+            final lastSeen = timer?['startTime'] ??
+                recentShift?['endTime'] ??
+                recentShift?['startTime'];
+
+            final Map<String, dynamic> employeeData = {
+              'id': userEmail.toString().isNotEmpty
+                  ? userEmail
+                  : (entry['id'] ?? entry['_id'] ?? '').toString(),
+              'name': displayName,
+              'email': userEmail,
+              'status': status,
+              'profileImage': entry['profileImage'],
+              'filename': entry['filename'],
+              'currentLocation': currentLocation,
+              'lastSeen': lastSeen,
+              'currentShiftId': null,
+              'assignedClientId':
+                  timer?['clientEmail'] ?? firstAssignment?['clientEmail'],
+              'liveLatitude': null,
+              'liveLongitude': null,
+              'liveAccuracy': null,
+              'liveUpdatedAt': null,
+              'liveAppointmentId': null,
+              'liveClientName': null,
+              'liveDistanceMeters': null,
+              'liveGeofenceRadiusMeters': null,
+              'liveInsideGeofence': null,
+              'hoursWorked': 0.0,
+              'isOnBreak': false,
+            };
+
+            final liveZoneEntry =
+                liveZoneByEmail[userEmail.toString().toLowerCase()];
+            if (liveZoneEntry != null) {
+              employeeData['liveLatitude'] = liveZoneEntry['latitude'];
+              employeeData['liveLongitude'] = liveZoneEntry['longitude'];
+              employeeData['liveAccuracy'] = liveZoneEntry['accuracy'];
+              employeeData['liveUpdatedAt'] = liveZoneEntry['lastUpdate'];
+              employeeData['liveAppointmentId'] =
+                  liveZoneEntry['appointmentId'];
+              employeeData['liveClientName'] = liveZoneEntry['clientName'];
+              employeeData['liveDistanceMeters'] =
+                  liveZoneEntry['distanceMeters'];
+              employeeData['liveGeofenceRadiusMeters'] =
+                  liveZoneEntry['geofenceRadiusMeters'];
+              employeeData['liveInsideGeofence'] =
+                  liveZoneEntry['insideGeofence'];
+            }
+
+            return employeeData;
+          }
+
+          final assignment = entry;
           final userEmail = assignment['userEmail'] ?? '';
 
           // Determine status based on activeTimers data
@@ -272,7 +379,7 @@ class EmployeeTrackingRepository {
           }
 
           return employeeData;
-        }).toList();
+        }).where((e) => e.isNotEmpty).toList();
 
         // Transform workedTimeRecords to match ShiftDetail model
         final workedTimeRecords =
