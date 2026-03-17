@@ -115,19 +115,72 @@ class BauhausStatCard extends StatelessWidget {
       onTap: onTap,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final isCompact = constraints.maxHeight < 120;
-          final valueStyle = isCompact
-              ? BauhausDesign.getTextTheme(context).headlineLarge
-              : BauhausDesign.getTextTheme(context).displayMedium;
+          final isCompact = constraints.maxHeight < 110;
           final titleStyle = BauhausDesign.getTextTheme(context)
               .bodyMedium
               ?.copyWith(color: BauhausDesign.textMuted);
           final subtitleStyle = BauhausDesign.getTextTheme(context)
               .bodyMedium
               ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12);
-          final topSpacing =
-              isCompact ? BauhausDesign.space2 : BauhausDesign.space4;
 
+          if (isCompact) {
+            final valueStyle =
+                BauhausDesign.getTextTheme(context).titleLarge ??
+                    const TextStyle(fontSize: 18);
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(BauhausDesign.space1),
+                      decoration: BoxDecoration(
+                        color: (iconColor ?? BauhausDesign.primary)
+                            .withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        border:
+                            Border.all(color: BauhausDesign.neutral, width: 1),
+                      ),
+                      child: Icon(
+                        icon,
+                        color: iconColor ?? BauhausDesign.primary,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space2),
+                    Expanded(
+                      child: isLoading
+                          ? Container(
+                              height: 18,
+                              color: BauhausDesign.neutral.withOpacity(0.1),
+                            )
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                value,
+                                style: valueStyle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: BauhausDesign.space1),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: titleStyle,
+                ),
+              ],
+            );
+          }
+
+          final valueStyle = BauhausDesign.getTextTheme(context).displayMedium;
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,7 +240,7 @@ class BauhausStatCard extends StatelessWidget {
                     ),
                 ],
               ),
-              SizedBox(height: topSpacing),
+              const SizedBox(height: BauhausDesign.space4),
               if (isLoading)
                 Container(
                   height: 24,
@@ -212,7 +265,7 @@ class BauhausStatCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: titleStyle,
               ),
-              if (subtitle != null && !isCompact) ...[
+              if (subtitle != null) ...[
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
                   subtitle!,
