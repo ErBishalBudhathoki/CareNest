@@ -337,6 +337,15 @@ mixin _$EmployeeStatus {
   DateTime? get lastSeen => throw _privateConstructorUsedError;
   String? get currentShiftId => throw _privateConstructorUsedError;
   String? get assignedClientId => throw _privateConstructorUsedError;
+  double? get liveLatitude => throw _privateConstructorUsedError;
+  double? get liveLongitude => throw _privateConstructorUsedError;
+  double? get liveAccuracy => throw _privateConstructorUsedError;
+  DateTime? get liveUpdatedAt => throw _privateConstructorUsedError;
+  String? get liveAppointmentId => throw _privateConstructorUsedError;
+  String? get liveClientName => throw _privateConstructorUsedError;
+  double? get liveDistanceMeters => throw _privateConstructorUsedError;
+  double? get liveGeofenceRadiusMeters => throw _privateConstructorUsedError;
+  bool? get liveInsideGeofence => throw _privateConstructorUsedError;
   double get hoursWorked => throw _privateConstructorUsedError;
   bool get isOnBreak => throw _privateConstructorUsedError;
 
@@ -365,6 +374,15 @@ abstract class $EmployeeStatusCopyWith<$Res> {
       DateTime? lastSeen,
       String? currentShiftId,
       String? assignedClientId,
+      double? liveLatitude,
+      double? liveLongitude,
+      double? liveAccuracy,
+      DateTime? liveUpdatedAt,
+      String? liveAppointmentId,
+      String? liveClientName,
+      double? liveDistanceMeters,
+      double? liveGeofenceRadiusMeters,
+      bool? liveInsideGeofence,
       double hoursWorked,
       bool isOnBreak});
 }
@@ -393,6 +411,15 @@ class _$EmployeeStatusCopyWithImpl<$Res, $Val extends EmployeeStatus>
     Object? lastSeen = freezed,
     Object? currentShiftId = freezed,
     Object? assignedClientId = freezed,
+    Object? liveLatitude = freezed,
+    Object? liveLongitude = freezed,
+    Object? liveAccuracy = freezed,
+    Object? liveUpdatedAt = freezed,
+    Object? liveAppointmentId = freezed,
+    Object? liveClientName = freezed,
+    Object? liveDistanceMeters = freezed,
+    Object? liveGeofenceRadiusMeters = freezed,
+    Object? liveInsideGeofence = freezed,
     Object? hoursWorked = null,
     Object? isOnBreak = null,
   }) {
@@ -441,6 +468,42 @@ class _$EmployeeStatusCopyWithImpl<$Res, $Val extends EmployeeStatus>
           ? _value.assignedClientId
           : assignedClientId // ignore: cast_nullable_to_non_nullable
               as String?,
+      liveLatitude: freezed == liveLatitude
+          ? _value.liveLatitude
+          : liveLatitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveLongitude: freezed == liveLongitude
+          ? _value.liveLongitude
+          : liveLongitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveAccuracy: freezed == liveAccuracy
+          ? _value.liveAccuracy
+          : liveAccuracy // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveUpdatedAt: freezed == liveUpdatedAt
+          ? _value.liveUpdatedAt
+          : liveUpdatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      liveAppointmentId: freezed == liveAppointmentId
+          ? _value.liveAppointmentId
+          : liveAppointmentId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      liveClientName: freezed == liveClientName
+          ? _value.liveClientName
+          : liveClientName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      liveDistanceMeters: freezed == liveDistanceMeters
+          ? _value.liveDistanceMeters
+          : liveDistanceMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveGeofenceRadiusMeters: freezed == liveGeofenceRadiusMeters
+          ? _value.liveGeofenceRadiusMeters
+          : liveGeofenceRadiusMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveInsideGeofence: freezed == liveInsideGeofence
+          ? _value.liveInsideGeofence
+          : liveInsideGeofence // ignore: cast_nullable_to_non_nullable
+              as bool?,
       hoursWorked: null == hoursWorked
           ? _value.hoursWorked
           : hoursWorked // ignore: cast_nullable_to_non_nullable
@@ -474,6 +537,15 @@ abstract class _$$EmployeeStatusImplCopyWith<$Res>
       DateTime? lastSeen,
       String? currentShiftId,
       String? assignedClientId,
+      double? liveLatitude,
+      double? liveLongitude,
+      double? liveAccuracy,
+      DateTime? liveUpdatedAt,
+      String? liveAppointmentId,
+      String? liveClientName,
+      double? liveDistanceMeters,
+      double? liveGeofenceRadiusMeters,
+      bool? liveInsideGeofence,
       double hoursWorked,
       bool isOnBreak});
 }
@@ -500,6 +572,15 @@ class __$$EmployeeStatusImplCopyWithImpl<$Res>
     Object? lastSeen = freezed,
     Object? currentShiftId = freezed,
     Object? assignedClientId = freezed,
+    Object? liveLatitude = freezed,
+    Object? liveLongitude = freezed,
+    Object? liveAccuracy = freezed,
+    Object? liveUpdatedAt = freezed,
+    Object? liveAppointmentId = freezed,
+    Object? liveClientName = freezed,
+    Object? liveDistanceMeters = freezed,
+    Object? liveGeofenceRadiusMeters = freezed,
+    Object? liveInsideGeofence = freezed,
     Object? hoursWorked = null,
     Object? isOnBreak = null,
   }) {
@@ -548,6 +629,42 @@ class __$$EmployeeStatusImplCopyWithImpl<$Res>
           ? _value.assignedClientId
           : assignedClientId // ignore: cast_nullable_to_non_nullable
               as String?,
+      liveLatitude: freezed == liveLatitude
+          ? _value.liveLatitude
+          : liveLatitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveLongitude: freezed == liveLongitude
+          ? _value.liveLongitude
+          : liveLongitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveAccuracy: freezed == liveAccuracy
+          ? _value.liveAccuracy
+          : liveAccuracy // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveUpdatedAt: freezed == liveUpdatedAt
+          ? _value.liveUpdatedAt
+          : liveUpdatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      liveAppointmentId: freezed == liveAppointmentId
+          ? _value.liveAppointmentId
+          : liveAppointmentId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      liveClientName: freezed == liveClientName
+          ? _value.liveClientName
+          : liveClientName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      liveDistanceMeters: freezed == liveDistanceMeters
+          ? _value.liveDistanceMeters
+          : liveDistanceMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveGeofenceRadiusMeters: freezed == liveGeofenceRadiusMeters
+          ? _value.liveGeofenceRadiusMeters
+          : liveGeofenceRadiusMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveInsideGeofence: freezed == liveInsideGeofence
+          ? _value.liveInsideGeofence
+          : liveInsideGeofence // ignore: cast_nullable_to_non_nullable
+              as bool?,
       hoursWorked: null == hoursWorked
           ? _value.hoursWorked
           : hoursWorked // ignore: cast_nullable_to_non_nullable
@@ -575,6 +692,15 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
       this.lastSeen,
       this.currentShiftId,
       this.assignedClientId,
+      this.liveLatitude,
+      this.liveLongitude,
+      this.liveAccuracy,
+      this.liveUpdatedAt,
+      this.liveAppointmentId,
+      this.liveClientName,
+      this.liveDistanceMeters,
+      this.liveGeofenceRadiusMeters,
+      this.liveInsideGeofence,
       this.hoursWorked = 0.0,
       this.isOnBreak = false});
 
@@ -605,6 +731,24 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
   @override
   final String? assignedClientId;
   @override
+  final double? liveLatitude;
+  @override
+  final double? liveLongitude;
+  @override
+  final double? liveAccuracy;
+  @override
+  final DateTime? liveUpdatedAt;
+  @override
+  final String? liveAppointmentId;
+  @override
+  final String? liveClientName;
+  @override
+  final double? liveDistanceMeters;
+  @override
+  final double? liveGeofenceRadiusMeters;
+  @override
+  final bool? liveInsideGeofence;
+  @override
   @JsonKey()
   final double hoursWorked;
   @override
@@ -613,7 +757,7 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
 
   @override
   String toString() {
-    return 'EmployeeStatus(id: $id, name: $name, email: $email, status: $status, profileImage: $profileImage, filename: $filename, photoData: $photoData, currentLocation: $currentLocation, lastSeen: $lastSeen, currentShiftId: $currentShiftId, assignedClientId: $assignedClientId, hoursWorked: $hoursWorked, isOnBreak: $isOnBreak)';
+    return 'EmployeeStatus(id: $id, name: $name, email: $email, status: $status, profileImage: $profileImage, filename: $filename, photoData: $photoData, currentLocation: $currentLocation, lastSeen: $lastSeen, currentShiftId: $currentShiftId, assignedClientId: $assignedClientId, liveLatitude: $liveLatitude, liveLongitude: $liveLongitude, liveAccuracy: $liveAccuracy, liveUpdatedAt: $liveUpdatedAt, liveAppointmentId: $liveAppointmentId, liveClientName: $liveClientName, liveDistanceMeters: $liveDistanceMeters, liveGeofenceRadiusMeters: $liveGeofenceRadiusMeters, liveInsideGeofence: $liveInsideGeofence, hoursWorked: $hoursWorked, isOnBreak: $isOnBreak)';
   }
 
   @override
@@ -638,6 +782,25 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
                 other.currentShiftId == currentShiftId) &&
             (identical(other.assignedClientId, assignedClientId) ||
                 other.assignedClientId == assignedClientId) &&
+            (identical(other.liveLatitude, liveLatitude) ||
+                other.liveLatitude == liveLatitude) &&
+            (identical(other.liveLongitude, liveLongitude) ||
+                other.liveLongitude == liveLongitude) &&
+            (identical(other.liveAccuracy, liveAccuracy) ||
+                other.liveAccuracy == liveAccuracy) &&
+            (identical(other.liveUpdatedAt, liveUpdatedAt) ||
+                other.liveUpdatedAt == liveUpdatedAt) &&
+            (identical(other.liveAppointmentId, liveAppointmentId) ||
+                other.liveAppointmentId == liveAppointmentId) &&
+            (identical(other.liveClientName, liveClientName) ||
+                other.liveClientName == liveClientName) &&
+            (identical(other.liveDistanceMeters, liveDistanceMeters) ||
+                other.liveDistanceMeters == liveDistanceMeters) &&
+            (identical(
+                    other.liveGeofenceRadiusMeters, liveGeofenceRadiusMeters) ||
+                other.liveGeofenceRadiusMeters == liveGeofenceRadiusMeters) &&
+            (identical(other.liveInsideGeofence, liveInsideGeofence) ||
+                other.liveInsideGeofence == liveInsideGeofence) &&
             (identical(other.hoursWorked, hoursWorked) ||
                 other.hoursWorked == hoursWorked) &&
             (identical(other.isOnBreak, isOnBreak) ||
@@ -659,6 +822,15 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
       lastSeen,
       currentShiftId,
       assignedClientId,
+      liveLatitude,
+      liveLongitude,
+      liveAccuracy,
+      liveUpdatedAt,
+      liveAppointmentId,
+      liveClientName,
+      liveDistanceMeters,
+      liveGeofenceRadiusMeters,
+      liveInsideGeofence,
       hoursWorked,
       isOnBreak);
 
@@ -691,6 +863,15 @@ abstract class _EmployeeStatus implements EmployeeStatus {
       final DateTime? lastSeen,
       final String? currentShiftId,
       final String? assignedClientId,
+      final double? liveLatitude,
+      final double? liveLongitude,
+      final double? liveAccuracy,
+      final DateTime? liveUpdatedAt,
+      final String? liveAppointmentId,
+      final String? liveClientName,
+      final double? liveDistanceMeters,
+      final double? liveGeofenceRadiusMeters,
+      final bool? liveInsideGeofence,
       final double hoursWorked,
       final bool isOnBreak}) = _$EmployeeStatusImpl;
 
@@ -720,6 +901,24 @@ abstract class _EmployeeStatus implements EmployeeStatus {
   String? get currentShiftId;
   @override
   String? get assignedClientId;
+  @override
+  double? get liveLatitude;
+  @override
+  double? get liveLongitude;
+  @override
+  double? get liveAccuracy;
+  @override
+  DateTime? get liveUpdatedAt;
+  @override
+  String? get liveAppointmentId;
+  @override
+  String? get liveClientName;
+  @override
+  double? get liveDistanceMeters;
+  @override
+  double? get liveGeofenceRadiusMeters;
+  @override
+  bool? get liveInsideGeofence;
   @override
   double get hoursWorked;
   @override
