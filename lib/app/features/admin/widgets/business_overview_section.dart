@@ -16,7 +16,7 @@ class BusinessOverviewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final child = Container(
       decoration: const BoxDecoration(
-        color: BauhausDesign.backgroundLight,
+        color: Colors.white,
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 40, 24, 10),
