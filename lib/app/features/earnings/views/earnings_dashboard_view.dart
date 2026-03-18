@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/earnings/viewmodels/earnings_viewmodel.dart';
@@ -14,6 +16,8 @@ import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/app/features/admin/providers/business_stats_provider.dart';
 import 'package:carenest/app/features/admin/widgets/business_overview_section.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+
+final earningsChartHighlightProvider = StateProvider<double?>((ref) => null);
 
 class EarningsDashboardView extends ConsumerWidget {
   final String? organizationId;
@@ -170,7 +174,7 @@ class EarningsDashboardView extends ConsumerWidget {
                           SizedBox(
                             height: 220,
                             child: _buildChart(
-                                state.summary?.history ?? [], context),
+                                state.summary?.history ?? [], context, ref),
                           ),
                           const SizedBox(height: 12),
                           _buildHistoryList(
@@ -646,79 +650,160 @@ class EarningsDashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildChart(List<EarningsHistoryItem> history, BuildContext context) {
-    if (history.isEmpty)
+  Widget _buildChart(
+      List<EarningsHistoryItem> history, BuildContext context, WidgetRef ref) {
+    if (history.isEmpty) {
       return Center(
-          child: Text(AppLocalizations.of(context)!.noDataForChart,
-              style: BauhausDesign.getTextTheme(context)
-                  .bodyMedium
-                  ?.copyWith(color: BauhausDesign.neutral)));
+        child: Text(AppLocalizations.of(context)!.noDataForChart,
+            style: BauhausDesign.getTextTheme(context)
+                .bodyMedium
+                ?.copyWith(color: BauhausDesign.neutral)),
+      );
+    }
 
-    return BarChart(
-      BarChartData(
-        alignment: BarChartAlignment.spaceAround,
-        maxY: history
-                .map((e) => e.earnings)
-                .fold<double>(0.0, (p, c) => c > p ? c : p) *
-            1.2,
-        gridData: FlGridData(show: false),
-        barTouchData: BarTouchData(
-          enabled: true,
-          touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (group) => BauhausDesign.neutral,
-            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-              return BarTooltipItem(
-                '\$${rod.toY.toStringAsFixed(0)}',
-                BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                        color: BauhausDesign.surfaceLight,
-                        fontWeight: FontWeight.bold) ??
-                    const TextStyle(),
-              );
-            },
-          ),
+    final spots = history
+        .asMap()
+        .entries
+        .map((entry) => FlSpot(entry.key.toDouble(), entry.value.earnings))
+        .toList();
+    final maxEarnings = spots
+        .map((spot) => spot.y)
+        .fold<double>(0.0, (prev, next) => next > prev ? next : prev);
+    final maxY = math.max(1, maxEarnings * 1.2).toDouble();
+    final highlighted = ref.watch(earningsChartHighlightProvider);
+    final displayValue = highlighted ?? maxEarnings;
+    final notifier = ref.read(earningsChartHighlightProvider.notifier);
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF05050B),
+            Color(0xFF0D0D14),
+          ],
         ),
-        titlesData: FlTitlesData(
-          show: true,
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (double value, TitleMeta meta) {
-                if (value.toInt() >= 0 && value.toInt() < history.length) {
-                  final date = DateTime.parse(history[value.toInt()].date);
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(DateFormat('dd').format(date),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
-                            ?.copyWith(
-                                fontSize: 10, color: BauhausDesign.textDark)),
-                  );
-                }
-                return const Text('');
-              },
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x66000000),
+            blurRadius: 24,
+            offset: Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 12, right: 12, bottom: 12, top: 16),
+              child: LineChart(
+                LineChartData(
+                  minY: 0,
+                  maxY: maxY,
+                  gridData: const FlGridData(show: false),
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 22,
+                        getTitlesWidget: (value, meta) {
+                          if (value.toInt() >= 0 && value.toInt() < history.length) {
+                            final date = DateTime.parse(history[value.toInt()].date);
+                            return Text(DateFormat('dd').format(date),
+                                style: BauhausDesign.getTextTheme(context)
+                                    .labelSmall
+                                    ?.copyWith(color: Colors.white70, fontSize: 10));
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    leftTitles:
+                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles:
+                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  lineTouchData: LineTouchData(
+                    getTouchedSpotIndicator: (barData, spotIndexes) => [],
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (_) => Colors.white70,
+                      getTooltipItems: (spots) => spots
+                          .map(
+                            (spot) => LineTooltipItem(
+                              '\$${spot.y.toStringAsFixed(0)}',
+                              const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    touchCallback: (event, response) {
+                      final spot = response?.lineBarSpots?.first;
+                      if (spot != null) {
+                        notifier.state = spot.y;
+                        return;
+                      }
+                      if (event is FlPanEndEvent ||
+                          event is FlTapUpEvent ||
+                          event is FlLongPressEnd) {
+                        notifier.state = null;
+                      }
+                    },
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      preventCurveOverShooting: true,
+                      color: Colors.redAccent,
+                      barWidth: 3,
+                      dotData: const FlDotData(show: false),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.redAccent.withOpacity(0.2),
+                            Colors.red.shade900.withOpacity(0.8),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                      shadow: const Shadow(
+                          blurRadius: 20, color: Color(0x99FF2E2E), offset: Offset(0, 10)),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          leftTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        ),
-        borderData: FlBorderData(show: false),
-        barGroups: history.asMap().entries.map((entry) {
-          return BarChartGroupData(
-            x: entry.key,
-            barRods: [
-              BarChartRodData(
-                toY: entry.value.earnings,
-                color: BauhausDesign.secondary,
-                width: 12,
-                borderRadius: BorderRadius.zero, // Bauhaus: No radius
-              ),
-            ],
-          );
-        }).toList(),
+          Positioned(
+            right: 16,
+            top: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('EXPENSES',
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(color: Colors.white70, letterSpacing: 1.5)),
+                const SizedBox(height: 4),
+                Text(
+                  '\$${displayValue.toStringAsFixed(0)}',
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineMedium
+                      ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

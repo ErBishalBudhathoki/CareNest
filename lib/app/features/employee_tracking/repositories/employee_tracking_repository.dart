@@ -74,8 +74,7 @@ class EmployeeTrackingRepository {
           }
 
           if (existing == null || entryUpdatedAt.isAfter(existingUpdatedAt)) {
-            liveZoneByEmail[email] =
-                Map<String, dynamic>.from(entry as Map);
+            liveZoneByEmail[email] = Map<String, dynamic>.from(entry);
           }
         }
 
