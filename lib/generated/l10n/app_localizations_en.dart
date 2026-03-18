@@ -1658,7 +1658,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pendingUpdates => 'Pending Updates';
 
   @override
-  String get permissionCamera => 'Camera access is required to take photos.';
+  String get permissionCamera => "Camera access is required to scan receipts for your organization's expenses.";
 
   @override
   String get permissionRequired => 'PERMISSION REQUIRED';
@@ -3102,6 +3102,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requireClientRates => 'Require client-specific base rates';
 
   @override
+  String get useClientBaseRates => 'Use client-specific base rates';
+
+  @override
   String get invoicePeriodTitle => 'Invoice Period';
 
   @override
@@ -4527,6 +4530,148 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseModuleDesc => 'Choose a module to manage your pricing';
 
   @override
+  String get moduleStatusNeedsAction => 'Needs Action';
+
+  @override
+  String get moduleStatusHealthy => 'Healthy';
+
+  @override
+  String get moduleStatusReady => 'Ready';
+
+  @override
+  String get moduleStatusIdle => 'Idle';
+
+  @override
+  String get moduleStatusRecentlyUpdated => 'Recently Updated';
+
+  @override
+  String get moduleBadgeOverview => 'Overview';
+
+  @override
+  String get moduleBadgeNdis => 'NDIS Catalog';
+
+  @override
+  String get moduleBadgeRates => 'Rate Coverage';
+
+  @override
+  String get moduleBadgeBulk => 'Bulk Queue';
+
+  @override
+  String get moduleBadgeHistory => 'Change History';
+
+  @override
+  String get moduleBadgeActions => 'Action Center';
+
+  @override
+  String get moduleMetricRevenue => 'Revenue';
+
+  @override
+  String get moduleMetricCoverage => 'Coverage';
+
+  @override
+  String get moduleMetricCompliance => 'Compliance';
+
+  @override
+  String get moduleMetricCatalogItems => 'Catalog Items';
+
+  @override
+  String get moduleMetricCustomPrices => 'Custom Prices';
+
+  @override
+  String get moduleMetricConfiguredRates => 'Configured Rates';
+
+  @override
+  String get moduleMetricAvgBaseRate => 'Avg Base Rate';
+
+  @override
+  String get moduleMetricBulkCandidates => 'Bulk Candidates';
+
+  @override
+  String get moduleMetricRecommendedBatch => 'Recommended Batch';
+
+  @override
+  String get moduleMetricWeeklyChanges => 'Weekly Changes';
+
+  @override
+  String get moduleMetricTrackedEntries => 'Tracked Entries';
+
+  @override
+  String get moduleMetricActionableItems => 'Actionable Items';
+
+  @override
+  String get moduleMetricAvailableActions => 'Available Modules';
+
+  @override
+  String get moduleNoTrackedChanges => 'No tracked changes yet';
+
+  @override
+  String get moduleNoDataYet => 'No data available yet';
+
+  @override
+  String moduleLastUpdatedDays(String days) {
+    return 'Last updated ${days}d ago';
+  }
+
+  @override
+  String moduleRatesCoverage(String configured, String total) {
+    return '$configured/$total rates configured';
+  }
+
+  @override
+  String moduleKeyInsightCoverage(String custom, String total) {
+    return '$custom/$total items with custom pricing';
+  }
+
+  @override
+  String moduleKeyInsightViolations(String count) {
+    return '$count compliance issues need review';
+  }
+
+  @override
+  String get moduleKeyInsightHealthy => 'Compliance signals are healthy';
+
+  @override
+  String moduleKeyInsightQuotable(String count) {
+    return '$count quotable supports need tracked handling';
+  }
+
+  @override
+  String moduleKeyInsightMissingRates(String count) {
+    return '$count employees still missing pay rates';
+  }
+
+  @override
+  String get moduleKeyInsightAllRatesConfigured =>
+      'All employee rates are configured';
+
+  @override
+  String moduleKeyInsightBacklog(String pending, String total) {
+    return '$pending of $total items are pending updates';
+  }
+
+  @override
+  String moduleKeyInsightBatchSuggestion(String batch) {
+    return 'Suggested batch size: $batch';
+  }
+
+  @override
+  String moduleKeyInsightHistory(String count) {
+    return '$count priced items are tracked in history';
+  }
+
+  @override
+  String get moduleKeyInsightActionCenter =>
+      'Central queue for pricing follow-ups';
+
+  @override
+  String moduleKeyInsightPendingActions(String count) {
+    return '$count items need immediate action';
+  }
+
+  @override
+  String get moduleKeyInsightClearQueue => 'No pending actions in queue';
+
+  @override
   String get activeLabel => 'Active';
 
   @override
@@ -5026,6 +5171,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payPointLabel => 'Pay Point';
 
   @override
+  String get selectStreamFirstHint => 'Choose a stream to unlock levels.';
+
+  @override
+  String get selectLevelFirstHint => 'Choose a level to show pay points.';
+
+  @override
   String get baseRateHourlyLabel => 'Base Rate (Hourly)';
 
   @override
@@ -5039,6 +5190,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get publicHolidayPenaltyLabel => 'Public Holiday (250%)';
+
+  @override
+  String get eveningShiftLabel => 'Evening Shift';
+
+  @override
+  String get nightShiftLabel => 'Night Shift';
 
   @override
   String get overtimeFirst2hLabel => 'First 2 Hours (150%)';
@@ -6612,4 +6769,141 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noUpcomingShifts => 'No upcoming shifts';
+
+  @override
+  String get ruleNdisPriceCapValidationName => 'NDIS Price Cap Validation';
+
+  @override
+  String get ruleNdisPriceCapValidationDescription =>
+      'Ensures prices do not exceed NDIS price guide limits';
+
+  @override
+  String get ruleMinimumRateValidationName => 'Minimum Rate Validation';
+
+  @override
+  String get ruleMinimumRateValidationDescription =>
+      'Validates minimum hourly rates for different service types';
+
+  @override
+  String get ruleGeographicLoadingName => 'Geographic Loading Rules';
+
+  @override
+  String get ruleGeographicLoadingDescription =>
+      'Applies geographic loading based on service location';
+
+  @override
+  String get integrationNdisPriceGuideApiName => 'NDIS Price Guide API';
+
+  @override
+  String get integrationNdisPriceGuideApiDescription =>
+      'Automatic synchronization with NDIS price guide updates';
+
+  @override
+  String get integrationAccountingSystemName => 'Accounting System';
+
+  @override
+  String get integrationAccountingSystemDescription =>
+      'Integration with external accounting software';
+
+  @override
+  String get integrationCrmSystemName => 'CRM System';
+
+  @override
+  String get integrationCrmSystemDescription =>
+      'Customer relationship management system integration';
+
+  @override
+  String failedLoadFallbackBaseRate(String error) {
+    return 'Failed to load fallback base rate: $error';
+  }
+
+  @override
+  String get failedUpdateFallbackBaseRate =>
+      'Failed to update fallback base rate';
+
+  @override
+  String errorUpdatingFallbackBaseRate(String error) {
+    return 'Error updating fallback base rate: $error';
+  }
+
+  @override
+  String get supportCoordinationCategory => 'Support Coordination';
+
+  @override
+  String get unitHour => 'Hour';
+
+  @override
+  String get unitDay => 'Day';
+
+  @override
+  String get unitWeek => 'Week';
+
+  @override
+  String get unitMonth => 'Month';
+
+  @override
+  String get unitEach => 'Each';
+
+  @override
+  String get unitKilometer => 'Kilometer';
+
+  @override
+  String get deleteSelectedAction => 'Delete selected';
+
+  @override
+  String get ndisItemCardSemantics => 'NDIS item card';
+
+  @override
+  String perUnit(String unit) {
+    return 'per $unit';
+  }
+
+  @override
+  String get enterItemCodeError => 'Please enter item code';
+
+  @override
+  String get enterItemNameError => 'Please enter item name';
+
+  @override
+  String get enterUnitPriceError => 'Please enter unit price';
+
+  @override
+  String get ndisItemCreatedSuccess => 'NDIS item created successfully!';
+
+  @override
+  String get ndisItemUpdatedSuccess => 'NDIS item updated successfully!';
+
+  @override
+  String get itemStatusActivated => 'activated';
+
+  @override
+  String get itemStatusDeactivated => 'deactivated';
+
+  @override
+  String itemStatusChanged(String status) {
+    return 'Item $status successfully!';
+  }
+
+  @override
+  String get deleteItemTitle => 'Delete Item';
+
+  @override
+  String deleteItemConfirm(String name) {
+    return 'Are you sure you want to delete \"$name\"?';
+  }
+
+  @override
+  String get itemDeletedSuccess => 'Item deleted successfully!';
+
+  @override
+  String get deleteSelectedItemsTitle => 'Delete Selected Items';
+
+  @override
+  String deleteSelectedItemsConfirm(String count) {
+    return 'Are you sure you want to delete $count selected items?';
+  }
+
+  @override
+  String get selectedItemsDeletedSuccess =>
+      'Selected items deleted successfully!';
 }

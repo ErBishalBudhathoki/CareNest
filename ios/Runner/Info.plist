@@ -103,7 +103,7 @@
 		<string>_dartobservatory._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow access to the camera to capture photos.</string>
+	<string>We use the camera to scan receipts and attach them to your organization's expenses.</string>
 	<key>NSDocumentsFolderUsageDescription</key>
 	<string>Your app needs access to the documents folder to save and download files.</string>
 	<key>NSFileProtectionKey</key>
