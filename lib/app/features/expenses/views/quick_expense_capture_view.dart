@@ -265,14 +265,27 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     if (status.isGranted) {
       return true;
     }
-    if (status.isDenied || status.isRestricted) {
+    if (status.isDenied) {
+      final proceed = await _showCameraRationaleDialog();
+      if (!proceed) {
+        return false;
+      }
       final req = await Permission.camera.request();
       if (req.isGranted) return true;
       // Show guidance sheet if still denied
       if (mounted) {
         await _showPermissionSheet(
-          title: 'Camera Permission Required',
-          message: 'To scan receipts, enable camera access in Settings.',
+          title: AppLocalizations.of(context)!.permissionRequired,
+          message: '${AppLocalizations.of(context)!.permissionCamera}\n\nEnable it in Settings to scan receipts.',
+        );
+      }
+      return false;
+    }
+    if (status.isRestricted) {
+      if (mounted) {
+        await _showPermissionSheet(
+          title: AppLocalizations.of(context)!.permissionRequired,
+          message: '${AppLocalizations.of(context)!.permissionCamera}\n\nCamera access is restricted on this device.',
         );
       }
       return false;
@@ -280,13 +293,73 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     if (status.isPermanentlyDenied) {
       if (mounted) {
         await _showPermissionSheet(
-          title: 'Camera Permission Disabled',
-          message: 'Camera access is disabled. Open Settings to enable it.',
+          title: AppLocalizations.of(context)!.permissionRequired,
+          message: '${AppLocalizations.of(context)!.permissionCamera}\n\nCamera access is disabled. Open Settings to enable it.',
         );
       }
       return false;
     }
     return false;
+  }
+
+  Future<bool> _showCameraRationaleDialog() async {
+    final localizations = AppLocalizations.of(context)!;
+    final message = '${localizations.permissionCamera}\n\nWe only use the camera when you tap Scan Receipt.';
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: BauhausTheme.black,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(localizations.permissionRequired, style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.white)),
+                const SizedBox(height: 8),
+                Text(message, style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.white)),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(ctx, false),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: BauhausTheme.black,
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                          ),
+                          child: Text(localizations.cancelButtonCaps, style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(ctx, true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: BauhausTheme.black,
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                          ),
+                          child: Text(localizations.grantPermission, style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    return result ?? false;
   }
 
   Future<void> _showPermissionSheet({required String title, required String message}) async {
