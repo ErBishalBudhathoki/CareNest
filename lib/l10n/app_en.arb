@@ -607,7 +607,7 @@
   },
   "pendingTab": "PENDING",
   "pendingUpdates": "Pending Updates",
-  "permissionCamera": "Camera access is required to take photos.",
+  "permissionCamera": "Camera access is required to scan receipts for your organization's expenses.",
   "permissionRequired": "PERMISSION REQUIRED",
   "permissionStorage": "Storage access is required to save files.",
   "personalDetailsAndContact": "Personal details and contact information",
@@ -1252,6 +1252,7 @@
   "openPricingManagement": "Open Pricing Management",
   "setFallbackRate": "Set Fallback Rate",
   "requireClientRates": "Require client-specific base rates",
+  "useClientBaseRates": "Use client-specific base rates",
   "invoicePeriodTitle": "Invoice Period",
   "selectPeriodButton": "Select Period",
   "noPeriodSelected": "No period selected (using default)",
@@ -1840,6 +1841,125 @@
   "projectedMonthlyStat": "projected monthly",
   "pricingModulesTitle": "Pricing Modules",
   "chooseModuleDesc": "Choose a module to manage your pricing",
+  "moduleStatusNeedsAction": "Needs Action",
+  "moduleStatusHealthy": "Healthy",
+  "moduleStatusReady": "Ready",
+  "moduleStatusIdle": "Idle",
+  "moduleStatusRecentlyUpdated": "Recently Updated",
+  "moduleBadgeOverview": "Overview",
+  "moduleBadgeNdis": "NDIS Catalog",
+  "moduleBadgeRates": "Rate Coverage",
+  "moduleBadgeBulk": "Bulk Queue",
+  "moduleBadgeHistory": "Change History",
+  "moduleBadgeActions": "Action Center",
+  "moduleMetricRevenue": "Revenue",
+  "moduleMetricCoverage": "Coverage",
+  "moduleMetricCompliance": "Compliance",
+  "moduleMetricCatalogItems": "Catalog Items",
+  "moduleMetricCustomPrices": "Custom Prices",
+  "moduleMetricConfiguredRates": "Configured Rates",
+  "moduleMetricAvgBaseRate": "Avg Base Rate",
+  "moduleMetricBulkCandidates": "Bulk Candidates",
+  "moduleMetricRecommendedBatch": "Recommended Batch",
+  "moduleMetricWeeklyChanges": "Weekly Changes",
+  "moduleMetricTrackedEntries": "Tracked Entries",
+  "moduleMetricActionableItems": "Actionable Items",
+  "moduleMetricAvailableActions": "Available Modules",
+  "moduleNoTrackedChanges": "No tracked changes yet",
+  "moduleNoDataYet": "No data available yet",
+  "moduleLastUpdatedDays": "Last updated {days}d ago",
+  "@moduleLastUpdatedDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleRatesCoverage": "{configured}/{total} rates configured",
+  "@moduleRatesCoverage": {
+    "placeholders": {
+      "configured": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightCoverage": "{custom}/{total} items with custom pricing",
+  "@moduleKeyInsightCoverage": {
+    "placeholders": {
+      "custom": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightViolations": "{count} compliance issues need review",
+  "@moduleKeyInsightViolations": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightHealthy": "Compliance signals are healthy",
+  "moduleKeyInsightQuotable": "{count} quotable supports need tracked handling",
+  "@moduleKeyInsightQuotable": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightMissingRates": "{count} employees still missing pay rates",
+  "@moduleKeyInsightMissingRates": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightAllRatesConfigured": "All employee rates are configured",
+  "moduleKeyInsightBacklog": "{pending} of {total} items are pending updates",
+  "@moduleKeyInsightBacklog": {
+    "placeholders": {
+      "pending": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightBatchSuggestion": "Suggested batch size: {batch}",
+  "@moduleKeyInsightBatchSuggestion": {
+    "placeholders": {
+      "batch": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightHistory": "{count} priced items are tracked in history",
+  "@moduleKeyInsightHistory": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightActionCenter": "Central queue for pricing follow-ups",
+  "moduleKeyInsightPendingActions": "{count} items need immediate action",
+  "@moduleKeyInsightPendingActions": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleKeyInsightClearQueue": "No pending actions in queue",
   "activeLabel": "Active",
   "bulkPriceUpdateTitle": "Bulk Price Update",
   "bulkPriceUpdateSubtitle": "Update multiple prices at once",
@@ -2017,11 +2137,15 @@
   "employmentTypeLabel": "Employment Type",
   "levelLabel": "Level",
   "payPointLabel": "Pay Point",
+  "selectStreamFirstHint": "Choose a stream to unlock levels.",
+  "selectLevelFirstHint": "Choose a level to show pay points.",
   "baseRateHourlyLabel": "Base Rate (Hourly)",
   "payTypeLabel": "Pay Type",
   "saturdayPenaltyLabel": "Saturday (150%)",
   "sundayPenaltyLabel": "Sunday (200%)",
   "publicHolidayPenaltyLabel": "Public Holiday (250%)",
+  "eveningShiftLabel": "Evening Shift",
+  "nightShiftLabel": "Night Shift",
   "overtimeFirst2hLabel": "First 2 Hours (150%)",
   "overtimeAfter2hLabel": "After 2 Hours (200%)",
   "rateBelowAwardWarning": "Rate is below Award minimum ({minRate})",
@@ -3159,5 +3283,86 @@
   "actionsCaps": "ACTIONS",
   "recentExpensesCaps": "RECENT EXPENSES",
   "noRecentExpenses": "No recent expenses",
-  "noUpcomingShifts": "No upcoming shifts"
+  "noUpcomingShifts": "No upcoming shifts",
+  "ruleNdisPriceCapValidationName": "NDIS Price Cap Validation",
+  "ruleNdisPriceCapValidationDescription": "Ensures prices do not exceed NDIS price guide limits",
+  "ruleMinimumRateValidationName": "Minimum Rate Validation",
+  "ruleMinimumRateValidationDescription": "Validates minimum hourly rates for different service types",
+  "ruleGeographicLoadingName": "Geographic Loading Rules",
+  "ruleGeographicLoadingDescription": "Applies geographic loading based on service location",
+  "integrationNdisPriceGuideApiName": "NDIS Price Guide API",
+  "integrationNdisPriceGuideApiDescription": "Automatic synchronization with NDIS price guide updates",
+  "integrationAccountingSystemName": "Accounting System",
+  "integrationAccountingSystemDescription": "Integration with external accounting software",
+  "integrationCrmSystemName": "CRM System",
+  "integrationCrmSystemDescription": "Customer relationship management system integration",
+  "failedLoadFallbackBaseRate": "Failed to load fallback base rate: {error}",
+  "@failedLoadFallbackBaseRate": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedUpdateFallbackBaseRate": "Failed to update fallback base rate",
+  "errorUpdatingFallbackBaseRate": "Error updating fallback base rate: {error}",
+  "@errorUpdatingFallbackBaseRate": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "supportCoordinationCategory": "Support Coordination",
+  "unitHour": "Hour",
+  "unitDay": "Day",
+  "unitWeek": "Week",
+  "unitMonth": "Month",
+  "unitEach": "Each",
+  "unitKilometer": "Kilometer",
+  "deleteSelectedAction": "Delete selected",
+  "ndisItemCardSemantics": "NDIS item card",
+  "perUnit": "per {unit}",
+  "@perUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "enterItemCodeError": "Please enter item code",
+  "enterItemNameError": "Please enter item name",
+  "enterUnitPriceError": "Please enter unit price",
+  "ndisItemCreatedSuccess": "NDIS item created successfully!",
+  "ndisItemUpdatedSuccess": "NDIS item updated successfully!",
+  "itemStatusActivated": "activated",
+  "itemStatusDeactivated": "deactivated",
+  "itemStatusChanged": "Item {status} successfully!",
+  "@itemStatusChanged": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteItemTitle": "Delete Item",
+  "deleteItemConfirm": "Are you sure you want to delete \"{name}\"?",
+  "@deleteItemConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDeletedSuccess": "Item deleted successfully!",
+  "deleteSelectedItemsTitle": "Delete Selected Items",
+  "deleteSelectedItemsConfirm": "Are you sure you want to delete {count} selected items?",
+  "@deleteSelectedItemsConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "selectedItemsDeletedSuccess": "Selected items deleted successfully!"
 }
