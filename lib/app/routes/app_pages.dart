@@ -45,6 +45,7 @@ import 'package:carenest/app/features/workforce_optimization/views/business_inte
 import 'package:carenest/app/features/workforce_optimization/views/report_builder_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/care_intelligence_dashboard.dart';
 import 'package:carenest/app/features/financial_intelligence/views/financial_intelligence_dashboard.dart';
+import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view.dart';
 part 'app_routes.dart';
 
 class AppPages {
@@ -105,7 +106,7 @@ class AppPages {
     const SecureMessagingView(),
     const ServiceConfirmationView(),
     const FamilyManagementView(),
-    
+
     // Phase 8 - Workforce Optimization & Business Intelligence
     const WorkforceOptimizationDashboard(),
     const WorkforcePlanningView(),
@@ -114,13 +115,14 @@ class AppPages {
     const QualityAssuranceView(),
     const BusinessIntelligenceView(),
     const ReportBuilderView(),
-    
+
     // Phase 9 - AI-Powered Care Intelligence & Risk Management
     const CareIntelligenceDashboard(),
-    
+
     // Phase 10 - Advanced Financial Intelligence & Predictive Revenue System
     const FinancialIntelligenceDashboard(),
-    
+    const VoiceAssistantView(),
+
     // const AssignmentListView(),
     //const BottomNavBarWidget(email: '', role: UserRole.normal),
   ];

@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:carenest/app/features/voice_assistant/models/voice_models.dart';
 import 'package:carenest/app/features/voice_assistant/repositories/voice_repository.dart';
@@ -18,18 +17,26 @@ class VoiceViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   VoiceCommand? get lastCommand => _lastCommand;
 
-  Future<void> processCommand(String text) async {
+  Future<VoiceCommand?> processCommand(
+    String text, {
+    Map<String, dynamic>? context,
+  }) async {
     _isProcessing = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final command = await _repository.processCommand(text);
+      final command = await _repository.processCommand(
+        text,
+        context: context,
+      );
       _lastCommand = command;
       _history.insert(0, command); // Add to top of history
+      return command;
     } catch (e) {
       _errorMessage = e.toString();
       debugPrint('VoiceViewModel Error: $e');
+      return null;
     } finally {
       _isProcessing = false;
       notifyListeners();
@@ -38,6 +45,7 @@ class VoiceViewModel extends ChangeNotifier {
 
   Future<void> loadHistory() async {
     _isProcessing = true;
+    _errorMessage = null;
     try {
       _history = await _repository.getHistory();
     } catch (e) {

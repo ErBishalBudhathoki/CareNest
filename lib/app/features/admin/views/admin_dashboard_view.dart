@@ -331,6 +331,10 @@ class _AdminDashboardViewControllerState
     );
   }
 
+  void _openVoiceAssistant() {
+    Navigator.pushNamed(context, Routes.voiceAssistant);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -346,11 +350,11 @@ class _AdminDashboardViewControllerState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openScanInvoice,
+        onPressed: _openVoiceAssistant,
         backgroundColor: BauhausDesign.primary,
         foregroundColor: BauhausDesign.surfaceWhite,
-        icon: const Icon(Icons.document_scanner_outlined),
-        label: const Text('Scan Invoice'),
+        icon: const Icon(Icons.keyboard_voice_outlined),
+        label: const Text('Voice Assistant'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
@@ -522,8 +526,8 @@ class _AdminDashboardViewControllerState
                                                     child: const Icon(
                                                       Icons
                                                           .document_scanner_outlined,
-                                                      color: BauhausDesign
-                                                          .neutral,
+                                                      color:
+                                                          BauhausDesign.neutral,
                                                       size: 20,
                                                     ),
                                                   ),
@@ -1211,8 +1215,7 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) =>
-                      const AdminCertificationRequirementsView()),
+                  builder: (_) => const AdminCertificationRequirementsView()),
             ),
           ),
           CommandAction(
@@ -1433,6 +1436,13 @@ class _AdminDashboardViewControllerState
                         userId: widget.email,
                       )),
             ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.keyboard_voice_outlined),
+            title: 'Voice Assistant',
+            subtitle: 'Hands-free commands for admin workflows',
+            color: BauhausDesign.info,
+            onTap: () => Navigator.pushNamed(context, Routes.voiceAssistant),
           ),
           CommandAction(
             icon: const Icon(Icons.real_estate_agent_outlined),
