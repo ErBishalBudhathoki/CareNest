@@ -22,12 +22,24 @@ class ScheduleAssignment extends ConsumerStatefulWidget {
   final String clientEmail;
   final String? clientId;
   final String? organizationId;
+  final String? initialDate;
+  final String? initialStartTime;
+  final String? initialEndTime;
+  final String? initialBreakValue;
+  final bool? initialHighIntensity;
+  final Map<String, dynamic>? initialNdisItem;
   const ScheduleAssignment(
       {super.key,
       required this.userEmail,
       required this.clientEmail,
       this.clientId,
-      this.organizationId});
+      this.organizationId,
+      this.initialDate,
+      this.initialStartTime,
+      this.initialEndTime,
+      this.initialBreakValue,
+      this.initialHighIntensity,
+      this.initialNdisItem});
 
   @override
   ConsumerState<ScheduleAssignment> createState() => _TimeAndDatePickerState();
@@ -222,7 +234,100 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   void initState() {
     super.initState();
     apiMethod = ref.read(app_providers.apiMethodProvider);
+    _applyVoicePrefill();
     _resolvePricingContext();
+  }
+
+  void _applyVoicePrefill() {
+    final initialDate = widget.initialDate?.trim();
+    if (initialDate != null && initialDate.isNotEmpty) {
+      final parsedDate = DateTime.tryParse(initialDate);
+      if (parsedDate != null) {
+        _focusedDay = DateTime(
+          parsedDate.year,
+          parsedDate.month,
+          parsedDate.day,
+        );
+      }
+    }
+
+    final startTime = _parseTimeOfDay(widget.initialStartTime);
+    if (startTime != null) {
+      _focusedTime = startTime;
+    }
+
+    final endTime = _parseTimeOfDay(widget.initialEndTime);
+    if (endTime != null) {
+      _focusedTime1 = endTime;
+    }
+
+    if (widget.initialBreakValue == 'Yes' || widget.initialBreakValue == 'No') {
+      _selectedBreak = widget.initialBreakValue!;
+    }
+
+    if (widget.initialHighIntensity != null) {
+      _isHighIntensity = widget.initialHighIntensity!;
+    }
+
+    final initialNdisItem = _buildInitialNdisItem(widget.initialNdisItem);
+    if (initialNdisItem != null) {
+      _selectedNdisItem = initialNdisItem;
+      _selectedNdisItemNumber = initialNdisItem.itemNumber;
+    }
+  }
+
+  TimeOfDay? _parseTimeOfDay(String? rawValue) {
+    final match =
+        RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(rawValue?.trim() ?? '');
+    if (match == null) {
+      return null;
+    }
+
+    final hour = int.tryParse(match.group(1) ?? '');
+    final minute = int.tryParse(match.group(2) ?? '');
+    if (hour == null || minute == null) {
+      return null;
+    }
+
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  NDISItem? _buildInitialNdisItem(Map<String, dynamic>? rawItem) {
+    if (rawItem == null || rawItem.isEmpty) {
+      return null;
+    }
+
+    final itemNumber = rawItem['itemNumber']?.toString().trim() ?? '';
+    if (itemNumber.isEmpty) {
+      return null;
+    }
+
+    return NDISItem(
+      itemNumber: itemNumber,
+      itemName: rawItem['itemName']?.toString().trim() ?? '',
+      supportCategoryNumber:
+          rawItem['supportCategoryNumber']?.toString().trim() ?? '',
+      supportCategoryName:
+          rawItem['supportCategoryName']?.toString().trim() ?? '',
+      registrationGroupNumber:
+          rawItem['registrationGroupNumber']?.toString().trim() ?? '',
+      registrationGroupName:
+          rawItem['registrationGroupName']?.toString().trim() ?? '',
+      unit: rawItem['unit']?.toString().trim() ?? 'H',
+      type: rawItem['type']?.toString().trim() ?? 'Price Limited Supports',
+      isQuotable: rawItem['isQuotable'] == true,
+      regionalPrices: <PriceRegion, double?>{},
+      supportPurposeId: rawItem['supportPurposeId']?.toString().trim() ?? '0',
+      generalCategory: rawItem['generalCategory']?.toString().trim() ?? '',
+      supportCategoryNumberPACE:
+          rawItem['supportCategoryNumberPACE']?.toString(),
+      supportCategoryNamePACE: rawItem['supportCategoryNamePACE']?.toString(),
+      nonFaceToFaceSupport: rawItem['nonFaceToFaceSupport']?.toString(),
+      providerTravel: rawItem['providerTravel']?.toString(),
+      shortNoticeCancellations: rawItem['shortNoticeCancellations']?.toString(),
+      ndiaRequestedReports: rawItem['ndiaRequestedReports']?.toString(),
+      irregularSILSupports: rawItem['irregularSILSupports']?.toString(),
+    );
   }
 
   Future<void> _resolvePricingContext() async {
