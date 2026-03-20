@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+
+enum BankDetailsScope {
+  personal,
+  organization,
+}
 
 /// ViewModel for managing bank details inputs and persistence.
 /// - Holds text controllers for bank details fields.
@@ -13,6 +19,7 @@ class BankDetailsViewModel extends ChangeNotifier {
   final TextEditingController accountNumberController = TextEditingController();
 
   final ApiMethod _apiMethod;
+  final BankDetailsScope scope;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -28,7 +35,15 @@ class BankDetailsViewModel extends ChangeNotifier {
   static const String bsbKey = 'bsb';
   static const String accountNumberKey = 'accountNumber';
 
-  BankDetailsViewModel({required ApiMethod apiMethod}) : _apiMethod = apiMethod {
+  String get _bankNameStorageKey => '${scope.name}_$bankNameKey';
+  String get _accountNameStorageKey => '${scope.name}_$accountNameKey';
+  String get _bsbStorageKey => '${scope.name}_$bsbKey';
+  String get _accountNumberStorageKey => '${scope.name}_$accountNumberKey';
+
+  BankDetailsViewModel({
+    required ApiMethod apiMethod,
+    this.scope = BankDetailsScope.personal,
+  }) : _apiMethod = apiMethod {
     loadBankDetails();
   }
 
@@ -37,10 +52,13 @@ class BankDetailsViewModel extends ChangeNotifier {
   Future<void> saveBankDetails() async {
     // Persist locally first for offline safety
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(bankNameKey, bankNameController.text);
-    await prefs.setString(accountNameKey, accountNameController.text);
-    await prefs.setString(bsbKey, bsbController.text);
-    await prefs.setString(accountNumberKey, accountNumberController.text);
+    await prefs.setString(_bankNameStorageKey, bankNameController.text);
+    await prefs.setString(_accountNameStorageKey, accountNameController.text);
+    await prefs.setString(_bsbStorageKey, bsbController.text);
+    await prefs.setString(
+      _accountNumberStorageKey,
+      accountNumberController.text,
+    );
 
     // Validate before syncing to backend
     final inputsValid = _validateInputs();
@@ -56,12 +74,37 @@ class BankDetailsViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _apiMethod.saveBankDetails(
-        bankName: bankNameController.text,
-        accountName: accountNameController.text,
-        bsb: bsbController.text,
-        accountNumber: accountNumberController.text,
-      );
+      late final Map<String, dynamic> response;
+      if (scope == BankDetailsScope.organization) {
+        final sharedUtils = SharedPreferencesUtils();
+        await sharedUtils.init();
+        final organizationId = sharedUtils.getOrganizationId();
+        if (organizationId == null || organizationId.isEmpty) {
+          _errorMessage = 'Missing organization context';
+          _isLoading = false;
+          notifyListeners();
+          return;
+        }
+
+        response = await _apiMethod.updateOrganizationDetails(
+          organizationId,
+          {
+            'bankDetails': {
+              'bankName': bankNameController.text.trim(),
+              'accountName': accountNameController.text.trim(),
+              'bsb': bsbController.text.trim(),
+              'accountNumber': accountNumberController.text.trim(),
+            },
+          },
+        );
+      } else {
+        response = await _apiMethod.saveBankDetails(
+          bankName: bankNameController.text,
+          accountName: accountNameController.text,
+          bsb: bsbController.text,
+          accountNumber: accountNumberController.text,
+        );
+      }
 
       if (response['success'] != true) {
         _errorMessage = response['message']?.toString() ??
@@ -79,10 +122,11 @@ class BankDetailsViewModel extends ChangeNotifier {
   /// If backend returns data, overrides local values and re-persists.
   Future<void> loadBankDetails() async {
     final prefs = await SharedPreferences.getInstance();
-    bankNameController.text = prefs.getString(bankNameKey) ?? '';
-    accountNameController.text = prefs.getString(accountNameKey) ?? '';
-    bsbController.text = prefs.getString(bsbKey) ?? '';
-    accountNumberController.text = prefs.getString(accountNumberKey) ?? '';
+    bankNameController.text = prefs.getString(_bankNameStorageKey) ?? '';
+    accountNameController.text = prefs.getString(_accountNameStorageKey) ?? '';
+    bsbController.text = prefs.getString(_bsbStorageKey) ?? '';
+    accountNumberController.text =
+        prefs.getString(_accountNumberStorageKey) ?? '';
     notifyListeners();
 
     // Try backend fetch to keep local state in sync
@@ -90,21 +134,68 @@ class BankDetailsViewModel extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final response = await _apiMethod.getBankDetails();
-      if (response['success'] == true && response['data'] is Map) {
-        final data = Map<String, dynamic>.from(response['data']);
-        bankNameController.text = (data['bankName'] ?? '').toString();
-        accountNameController.text = (data['accountName'] ?? '').toString();
-        bsbController.text = (data['bsb'] ?? '').toString();
-        accountNumberController.text = (data['accountNumber'] ?? '').toString();
+      Map<String, dynamic> resolvedData = const {};
+      bool resolvedSuccess = false;
+      String? resolvedError;
+
+      if (scope == BankDetailsScope.organization) {
+        final sharedUtils = SharedPreferencesUtils();
+        await sharedUtils.init();
+        final organizationId = sharedUtils.getOrganizationId();
+
+        if (organizationId == null || organizationId.isEmpty) {
+          resolvedError = 'Missing organization context';
+        } else {
+          final response = await _apiMethod.getOrganizationDetails(
+            organizationId,
+            forceRefresh: true,
+          );
+          final organization = response['organization'];
+          final bankDetails =
+              organization is Map ? organization['bankDetails'] : null;
+
+          if (organization is Map) {
+            resolvedSuccess = true;
+            resolvedData = Map<String, dynamic>.from(
+              bankDetails is Map ? bankDetails : const {},
+            );
+          } else {
+            resolvedError = response['message']?.toString() ??
+                response['error']?.toString() ??
+                'Failed to fetch organization bank details';
+          }
+        }
+      } else {
+        final response = await _apiMethod.getBankDetails();
+        if (response['success'] == true && response['data'] is Map) {
+          resolvedSuccess = true;
+          resolvedData = Map<String, dynamic>.from(response['data']);
+        } else {
+          resolvedError = response['message']?.toString();
+        }
+      }
+
+      if (resolvedSuccess) {
+        bankNameController.text = (resolvedData['bankName'] ?? '').toString();
+        accountNameController.text =
+            (resolvedData['accountName'] ?? '').toString();
+        bsbController.text = (resolvedData['bsb'] ?? '').toString();
+        accountNumberController.text =
+            (resolvedData['accountNumber'] ?? '').toString();
 
         // Persist server values locally
-        await prefs.setString(bankNameKey, bankNameController.text);
-        await prefs.setString(accountNameKey, accountNameController.text);
-        await prefs.setString(bsbKey, bsbController.text);
-        await prefs.setString(accountNumberKey, accountNumberController.text);
-      } else if (response['success'] == false) {
-        _errorMessage = response['message']?.toString();
+        await prefs.setString(_bankNameStorageKey, bankNameController.text);
+        await prefs.setString(
+          _accountNameStorageKey,
+          accountNameController.text,
+        );
+        await prefs.setString(_bsbStorageKey, bsbController.text);
+        await prefs.setString(
+          _accountNumberStorageKey,
+          accountNumberController.text,
+        );
+      } else if (resolvedError != null && resolvedError.isNotEmpty) {
+        _errorMessage = resolvedError;
       }
     } catch (e) {
       _errorMessage = 'Error loading bank details: $e';
@@ -116,9 +207,9 @@ class BankDetailsViewModel extends ChangeNotifier {
 
   /// Validate user inputs for BSB and account number formats.
   bool _validateInputs() {
-    final bsb = bsbController.text.trim();
+    final bsb = bsbController.text.trim().replaceAll('-', '');
     final acc = accountNumberController.text.trim();
-    final bsbRegex = RegExp(r'^\d{3}-\d{3}$');
+    final bsbRegex = RegExp(r'^\d{6}$');
     final accRegex = RegExp(r'^\d{6,10}$');
     return bsbRegex.hasMatch(bsb) && accRegex.hasMatch(acc);
   }

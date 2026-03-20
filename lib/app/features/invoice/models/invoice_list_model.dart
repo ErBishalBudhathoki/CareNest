@@ -21,6 +21,7 @@ class InvoiceListModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? pdfPath;
+  final String? pdfArtifactUrl;
   final String? shareableLink;
   final bool isDeleted;
   final List<String> receiptUrls;
@@ -45,6 +46,7 @@ class InvoiceListModel {
     required this.createdAt,
     required this.updatedAt,
     this.pdfPath,
+    this.pdfArtifactUrl,
     this.shareableLink,
     this.isDeleted = false,
     this.receiptUrls = const [],
@@ -74,11 +76,14 @@ class InvoiceListModel {
                 debugPrint(
                     '🔍 InvoiceListModel: Expense has - receiptUrl: $receiptUrl, files: ${receiptFiles?.length}, photos: ${receiptPhotos?.length}');
 
-                String? resolveToHttpUrl(String value) {
+                String? resolveToDownloadUrl(String value) {
                   final resolved = AppConfig.resolveResourceUrl(value);
                   if (resolved.startsWith('http://') ||
                       resolved.startsWith('https://')) {
-                    return resolved;
+                    if (AppConfig.isPrivateR2StorageUrl(resolved)) {
+                      return AppConfig.buildFilesProxyUrl(resolved);
+                    }
+                    return AppConfig.buildFilesDownloadUrl(resolved);
                   }
                   return null;
                 }
@@ -87,7 +92,7 @@ class InvoiceListModel {
                 if (receiptFiles != null) {
                   for (var file in receiptFiles) {
                     if (file is String && file.trim().isNotEmpty) {
-                      final fullUrl = resolveToHttpUrl(file.trim());
+                      final fullUrl = resolveToDownloadUrl(file.trim());
                       if (fullUrl != null) extractedReceiptUrls.add(fullUrl);
                     }
                   }
@@ -97,7 +102,7 @@ class InvoiceListModel {
                 if (receiptPhotos != null) {
                   for (var photo in receiptPhotos) {
                     if (photo is String && photo.trim().isNotEmpty) {
-                      final fullUrl = resolveToHttpUrl(photo.trim());
+                      final fullUrl = resolveToDownloadUrl(photo.trim());
                       if (fullUrl != null) extractedReceiptUrls.add(fullUrl);
                     }
                   }
@@ -105,7 +110,7 @@ class InvoiceListModel {
 
                 // Add from receiptUrl
                 if (receiptUrl != null && receiptUrl.trim().isNotEmpty) {
-                  final fullUrl = resolveToHttpUrl(receiptUrl.trim());
+                  final fullUrl = resolveToDownloadUrl(receiptUrl.trim());
                   if (fullUrl != null) extractedReceiptUrls.add(fullUrl);
                 }
               }
@@ -154,11 +159,17 @@ class InvoiceListModel {
       updatedAt: DateTime.parse(
           json['auditTrail']?['updatedAt'] ?? DateTime.now().toIso8601String()),
       pdfPath: json['metadata']?['pdfPath'],
+      pdfArtifactUrl:
+          json['pdfArtifact']?['url'] ?? json['metadata']?['pdfArtifactUrl'],
       shareableLink: json['sharing']?['shareableLink'],
       isDeleted: json['deletion']?['isDeleted'] ?? false,
       receiptUrls: extractedReceiptUrls,
-      payment: json['payment'] != null ? PaymentInfo.fromJson(json['payment']) : null,
-      recurrence: json['recurrence'] != null ? RecurrenceInfo.fromJson(json['recurrence']) : null,
+      payment: json['payment'] != null
+          ? PaymentInfo.fromJson(json['payment'])
+          : null,
+      recurrence: json['recurrence'] != null
+          ? RecurrenceInfo.fromJson(json['recurrence'])
+          : null,
     );
   }
 
@@ -188,6 +199,7 @@ class InvoiceListModel {
       'updatedAt': updatedAt.toIso8601String(),
       'deliveryInfo': {
         'pdfPath': pdfPath,
+        'pdfArtifactUrl': pdfArtifactUrl,
       },
       'sharing': {
         'shareableLink': shareableLink,
@@ -219,6 +231,7 @@ class InvoiceListModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? pdfPath,
+    String? pdfArtifactUrl,
     String? shareableLink,
     bool? isDeleted,
     List<String>? receiptUrls,
@@ -243,6 +256,7 @@ class InvoiceListModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       pdfPath: pdfPath ?? this.pdfPath,
+      pdfArtifactUrl: pdfArtifactUrl ?? this.pdfArtifactUrl,
       shareableLink: shareableLink ?? this.shareableLink,
       isDeleted: isDeleted ?? this.isDeleted,
       receiptUrls: receiptUrls ?? this.receiptUrls,

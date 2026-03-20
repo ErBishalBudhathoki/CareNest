@@ -1,4 +1,5 @@
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/constants/bauhaus_design.dart';
 import '../viewmodels/mileage_view_model.dart';
@@ -71,34 +72,47 @@ class ManualEntryForm extends StatelessWidget {
               ),
         ),
         const Spacer(),
-        Switch(
+        BauhausSwitch(
           value: viewModel.isWithClient,
           onChanged: (val) => viewModel.toggleWithClient(val),
-          activeColor: BauhausDesign.primary,
+          variant: BauhausSwitchVariant.primary,
         ),
       ],
     );
   }
 
   Widget _buildClientDropdown(BuildContext context) {
+    final clients = viewModel.assignableClients;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField<String>(
-          value: null,
-          decoration: BauhausDesign.inputDecoration('Select Client'),
-          dropdownColor: BauhausDesign.surfaceWhite,
-          items: ['John Doe', 'Jane Smith', 'Bob Brown'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: BauhausDesign.getTextTheme(context).bodyMedium,
-              ),
-            );
-          }).toList(),
-          onChanged: (_) {},
-        ),
+        if (clients.isEmpty)
+          Text(
+            'No assigned clients found for this account.',
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
+          )
+        else
+          DropdownButtonFormField<String>(
+            value: viewModel.selectedClientId,
+            decoration: BauhausDesign.inputDecoration('Select Client').copyWith(
+              filled: true,
+              fillColor: BauhausDesign.surfaceLight,
+            ),
+            dropdownColor: BauhausDesign.surfaceWhite,
+            items: clients.map((client) {
+              return DropdownMenuItem<String>(
+                value: client['id'],
+                child: Text(
+                  client['name'] ?? client['id'] ?? 'Unknown Client',
+                  style: BauhausDesign.getTextTheme(context).bodyMedium,
+                ),
+              );
+            }).toList(),
+            onChanged: viewModel.selectClient,
+          ),
       ],
     );
   }

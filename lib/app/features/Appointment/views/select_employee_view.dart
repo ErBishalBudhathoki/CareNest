@@ -1,11 +1,14 @@
 import 'package:carenest/app/features/Appointment/views/select_client_for_assignmnet.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class AssignC2E extends ConsumerStatefulWidget {
   const AssignC2E({super.key});
@@ -24,6 +27,14 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
   List<User> _filteredUsers = [];
   List<User> _allUsers = [];
   bool _isSearching = false;
+
+  /// Keep assignable staff in picker; exclude only client accounts.
+  List<User> _extractEmployeeUsers(List<User> users) {
+    return users.where((user) {
+      if (user.email.trim().isEmpty) return false;
+      return user.role != UserRole.client;
+    }).toList();
+  }
 
   @override
   void initState() {
@@ -118,29 +129,16 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                     child: Row(
                       children: [
                         // Avatar
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: BauhausDesign.primary,
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusMd),
-                            border: Border.all(
-                                color: BauhausDesign.neutral, width: 1.5),
-                          ),
-                          child: Center(
-                            child: Text(
-                              user.name.isNotEmpty
-                                  ? user.name[0].toUpperCase()
-                                  : 'U',
-                              style: BauhausDesign.getTextTheme(context)
-                                  .headlineMedium
-                                  ?.copyWith(
-                                    color: BauhausDesign.surfaceWhite,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ),
+                        ProfileImageWidget(
+                          imageUrl: user.profilePic,
+                          size: 56,
+                          shape: BoxShape.rectangle,
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusMd),
+                          borderWidth: 1.5,
+                          borderColor: BauhausDesign.neutral,
+                          elevation: 0,
+                          showLoading: true,
                         ),
                         const SizedBox(width: BauhausDesign.space4),
                         // User Info
@@ -215,6 +213,8 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           hintStyle: TextStyle(
             color: BauhausDesign.textMuted.withOpacity(0.5),
           ),
+          filled: false,
+          fillColor: Colors.transparent,
           prefixIcon: Icon(
             Icons.search,
             color: BauhausDesign.textMuted,
@@ -232,6 +232,10 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                 )
               : null,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: BauhausDesign.space4,
             vertical: BauhausDesign.space4,
@@ -324,6 +328,11 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
         elevation: 0,
         backgroundColor: BauhausDesign.surfaceWhite,
         foregroundColor: BauhausDesign.textDark,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
         title: Text(
           'Employee List',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
@@ -364,7 +373,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
 
                 // Update the user lists when data is available
                 if (_allUsers.isEmpty) {
-                  _allUsers = snapshot.data!;
+                  _allUsers = _extractEmployeeUsers(snapshot.data!);
                   _filteredUsers = _allUsers;
                 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/employee_selection_model.dart';
@@ -360,7 +361,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                       .fetchClientsForEmployee(employee.email);
                 }
               },
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd - 2),
+              borderRadius: BorderRadius.circular(
+                math.max(0.0, BauhausDesign.radiusMd - 2),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 child: Row(

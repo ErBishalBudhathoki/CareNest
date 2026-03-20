@@ -29,8 +29,10 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
     bool applyTax = true,
     double taxRate = 0.00,
     bool includeExpenses = true,
-    bool useAdminBankDetails = false,
+
     List<String>? selectedEmployeeEmails,
+    List<String>? selectedClientEmails,
+    String? invoiceType,
   }) async {
     try {
       final l10n = AppLocalizations.of(context)!;
@@ -40,6 +42,13 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         errorMessage: '',
         currentStep: l10n.fetchingOrgDataStep,
         progress: 0.0,
+        isCompleted: false,
+        generatedPdfPaths: const <String>[],
+        invoices: const <Map<String, dynamic>>[],
+        employeeClientPairs: const <Map<String, dynamic>>[],
+        totalEmployees: 0,
+        totalClients: 0,
+        validPairs: 0,
       );
 
       // Step 1: Fetch all employees for the organization
@@ -51,8 +60,17 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
       final employeesResponse =
           await _apiMethod.getOrganizationEmployees(organizationId);
       if (employeesResponse['success'] != true) {
-        throw Exception(l10n.failedToFetchEmployeesError(
-            employeesResponse['message']?.toString() ?? ''));
+        final statusCode = employeesResponse['statusCode']?.toString() ?? '';
+        final message = employeesResponse['message']?.toString() ?? '';
+        if (statusCode == '401' ||
+            message.toLowerCase().contains('authentication')) {
+          throw Exception('AUTH_REQUIRED_401');
+        }
+        if (statusCode == '403' ||
+            message.toLowerCase().contains('permission')) {
+          throw Exception('AUTH_FORBIDDEN_403');
+        }
+        throw Exception(l10n.failedToFetchEmployeesError(message));
       }
 
       final List<dynamic> employeesData = employeesResponse['employees'] ?? [];
@@ -84,6 +102,18 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         throw Exception(l10n.noClientsFoundError);
       }
 
+      // Filter clients to selected ones
+      final List<Map<String, dynamic>> filteredClientsData =
+          (selectedClientEmails == null || selectedClientEmails.isEmpty)
+              ? clientsData
+              : clientsData
+                  .where((c) => selectedClientEmails
+                      .contains((c['clientEmail'] ?? '') as String))
+                  .toList();
+      if (filteredClientsData.isEmpty) {
+        throw Exception('No selected clients found in the organization.');
+      }
+
       // Step 3: Build employee-client relationships
       state = state.copyWith(
         currentStep: l10n.buildingRelationshipsStep,
@@ -92,10 +122,15 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
 
       final List<Map<String, dynamic>> selectedEmployeesAndClients = [];
       int processedEmployees = 0;
+      int assignmentLookups = 0;
+      int assignmentAuthFailures = 0;
+      int assignmentForbiddenFailures = 0;
+      int assignmentOtherFailures = 0;
 
       for (final employeeData in filteredEmployeesData) {
         final String employeeEmail = employeeData['email'] ?? '';
         if (employeeEmail.isEmpty) continue;
+        assignmentLookups++;
 
         // Update progress
         processedEmployees++;
@@ -111,6 +146,23 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         final assignmentsResponse =
             await _apiMethod.getUserAssignments(employeeEmail);
         if (assignmentsResponse['success'] != true) {
+          final statusCode = (assignmentsResponse['status_code'] ??
+                  assignmentsResponse['statusCode'])
+              ?.toString();
+          final failureMessage =
+              assignmentsResponse['message']?.toString().toLowerCase() ?? '';
+          if (statusCode == '401' ||
+              failureMessage.contains('authentication') ||
+              failureMessage.contains('missing_token') ||
+              failureMessage.contains('unauthorized')) {
+            assignmentAuthFailures++;
+          } else if (statusCode == '403' ||
+              failureMessage.contains('permission') ||
+              failureMessage.contains('forbidden')) {
+            assignmentForbiddenFailures++;
+          } else {
+            assignmentOtherFailures++;
+          }
           debugPrint(l10n.failedToGetAssignmentsLog(
               employeeEmail, assignmentsResponse['message']?.toString() ?? ''));
           continue;
@@ -130,7 +182,7 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
           if (clientEmail.isEmpty) continue;
 
           // Find client details
-          final clientDetails = clientsData.firstWhere(
+          final clientDetails = filteredClientsData.firstWhere(
             (client) => client['clientEmail'] == clientEmail,
             orElse: () => <String, dynamic>{},
           );
@@ -165,6 +217,18 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
       }
 
       if (selectedEmployeesAndClients.isEmpty) {
+        if (assignmentLookups > 0 &&
+            assignmentAuthFailures == assignmentLookups) {
+          throw Exception('AUTH_REQUIRED_401');
+        }
+        if (assignmentLookups > 0 &&
+            assignmentForbiddenFailures == assignmentLookups) {
+          throw Exception('AUTH_FORBIDDEN_403');
+        }
+        if (assignmentLookups > 0 &&
+            assignmentOtherFailures == assignmentLookups) {
+          throw Exception('ASSIGNMENTS_UNAVAILABLE');
+        }
         throw Exception(l10n.noValidRelationshipsError);
       }
 
@@ -172,7 +236,7 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
       state = state.copyWith(
         employeeClientPairs: selectedEmployeesAndClients,
         totalEmployees: filteredEmployeesData.length,
-        totalClients: clientsData.length,
+        totalClients: filteredClientsData.length,
         validPairs: selectedEmployeesAndClients.length,
       );
 
@@ -182,41 +246,67 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
         progress: 0.7,
       );
 
-      final pdfPaths = await _invoiceService.generateInvoicesWithPricing(
-        context,
-        selectedEmployeesAndClients: selectedEmployeesAndClients,
-        organizationId: organizationId,
-        validatePrices: validatePrices,
-        allowPriceCapOverride: allowPriceCapOverride,
-        includeDetailedPricingInfo: includeDetailedPricingInfo,
-        applyTax: applyTax,
-        taxRate: taxRate,
-        includeExpenses: includeExpenses,
-        useAdminBankDetails: useAdminBankDetails,
-        startDate: startDate,
-        endDate: endDate,
-      );
+      // Determine which invoice types to generate.
+      // 'both' means we generate employee invoices first, then client invoices.
+      final effectiveType = (invoiceType ?? 'employee').toLowerCase();
+      final List<String> typesToGenerate = effectiveType == 'both'
+          ? ['employee', 'client']
+          : [effectiveType];
+
+      final List<String> allPdfPaths = [];
+      final List<Map<String, dynamic>> allInvoices = [];
+
+      for (int i = 0; i < typesToGenerate.length; i++) {
+        final currentType = typesToGenerate[i];
+        final progressBase = 0.7 + (0.25 * i / typesToGenerate.length);
+
+        state = state.copyWith(
+          currentStep: typesToGenerate.length > 1
+              ? '${l10n.generatingInvoicesStep} (${currentType == 'employee' ? 'Employee' : 'Client'})'
+              : l10n.generatingInvoicesStep,
+          progress: progressBase,
+        );
+
+        final pdfPaths = await _invoiceService.generateInvoicesWithPricing(
+          context,
+          selectedEmployeesAndClients: selectedEmployeesAndClients,
+          organizationId: organizationId,
+          validatePrices: validatePrices,
+          allowPriceCapOverride: allowPriceCapOverride,
+          includeDetailedPricingInfo: includeDetailedPricingInfo,
+          applyTax: applyTax,
+          taxRate: taxRate,
+          includeExpenses: includeExpenses,
+          useAdminBankDetails: currentType == 'client' ? true : false,
+          startDate: startDate,
+          endDate: endDate,
+          invoiceType: currentType,
+        );
+
+        allPdfPaths.addAll(pdfPaths);
+        allInvoices.addAll(_invoiceService.invoices);
+      }
 
       // Step 5: Complete
       state = state.copyWith(
         isLoading: false,
         currentStep: l10n.generationCompletedStep,
         progress: 1.0,
-        generatedPdfPaths: pdfPaths,
-        invoices: _invoiceService.invoices,
+        generatedPdfPaths: allPdfPaths,
+        invoices: allInvoices,
         isCompleted: true,
       );
 
       // Update global providers
-      ref.read(invoiceGenerationStateProvider.notifier).state = pdfPaths.isEmpty
+      ref.read(invoiceGenerationStateProvider.notifier).state = allPdfPaths.isEmpty
           ? InvoiceGenerationState.error
           : InvoiceGenerationState.completed;
-      ref.read(generatedInvoicePathsProvider.notifier).state = pdfPaths;
+      ref.read(generatedInvoicePathsProvider.notifier).state = allPdfPaths;
 
-      return pdfPaths;
+      return allPdfPaths;
     } catch (e) {
       final l10n = AppLocalizations.of(context)!;
-      final errorMessage = e.toString();
+      final errorMessage = _mapAutomaticInvoiceError(e, l10n);
       state = state.copyWith(
         isLoading: false,
         errorMessage: errorMessage,
@@ -231,6 +321,88 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
 
       return [];
     }
+  }
+
+  String _stripExceptionPrefix(String input) {
+    var value = input.trim();
+    while (value.startsWith('Exception: ')) {
+      value = value.substring('Exception: '.length).trim();
+    }
+    return value;
+  }
+
+  String _mapAutomaticInvoiceError(Object error, AppLocalizations l10n) {
+    final raw = _stripExceptionPrefix(error.toString());
+    final lower = raw.toLowerCase();
+
+    if (raw == l10n.noEmployeesFoundError ||
+        raw == l10n.noClientsFoundError ||
+        raw == l10n.noValidRelationshipsError ||
+        raw == l10n.noSelectedEmployeesError) {
+      return raw;
+    }
+
+    if (lower.contains('auth_required_401') ||
+        lower.contains('missing_token') ||
+        lower.contains('unauthorized') ||
+        lower.contains('authentication failed') ||
+        lower.contains('401')) {
+      return 'Session expired. Please sign in again, then retry generating invoices.';
+    }
+
+    if (lower.contains('auth_forbidden_403') || lower.contains('403')) {
+      return 'You do not have permission to generate invoices for this organization.';
+    }
+
+    if (lower.contains('no clients found') ||
+        lower.contains('clients_fetch_failed') ||
+        lower.contains('failed to get clients') ||
+        lower.contains('404')) {
+      return '${l10n.noClientsFoundError}. Add at least one client and try again.';
+    }
+
+    if (lower.contains('no employees found')) {
+      return '${l10n.noEmployeesFoundError}. Add at least one employee and try again.';
+    }
+
+    if (lower.contains('no valid employee-client relationships found') ||
+        lower.contains('no assignments found')) {
+      return '${l10n.noValidRelationshipsError}. Assign clients to employees, then retry.';
+    }
+
+    if (lower.contains('assignments_unavailable') ||
+        lower.contains('failed to load user assignments')) {
+      return 'Unable to load employee-client assignments right now. Please try again shortly.';
+    }
+
+    if (lower.contains('bank_details_required') ||
+        lower.contains('bank_details_not_found') ||
+        lower.contains('bank details')) {
+      return 'Bank details are missing or incomplete. Configure bank details, then generate invoices again.';
+    }
+
+    if (lower.contains('route not found')) {
+      return 'Required invoice service endpoint is unavailable right now. Please try again shortly.';
+    }
+
+    if (lower.contains('route_not_found_clients')) {
+      return 'Client service endpoint is unavailable right now. Please try again shortly.';
+    }
+
+    if (lower.contains('server_error_') ||
+        lower.contains('internal server error') ||
+        lower.contains('500')) {
+      return 'Server error occurred while preparing invoices. Please try again shortly.';
+    }
+
+    if (lower.contains('socketexception') ||
+        lower.contains('connection') ||
+        lower.contains('network') ||
+        lower.contains('timed out')) {
+      return 'Network issue while loading invoice data. Check your internet connection and retry.';
+    }
+
+    return raw;
   }
 
   /// Reset the state

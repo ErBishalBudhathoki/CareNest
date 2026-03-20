@@ -99,5 +99,8 @@ abstract class Routes {
   static const String paymentProcessing = '/financial-intelligence/payments';
   static const String financialCompliance = '/financial-intelligence/compliance';
   static const String financialReporting = '/financial-intelligence/reporting';
+  static const String workerDashboard = '/worker/dashboard';
+  static const String workerShiftHistory = '/worker/shift-history';
+  static const String teamDashboard = '/teams/dashboard';
 }
 

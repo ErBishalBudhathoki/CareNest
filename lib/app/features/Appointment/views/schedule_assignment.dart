@@ -1,7 +1,12 @@
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/assignment/views/enhanced_ndis_item_selection_view.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
+import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,8 +20,14 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 class ScheduleAssignment extends ConsumerStatefulWidget {
   final String userEmail;
   final String clientEmail;
+  final String? clientId;
+  final String? organizationId;
   const ScheduleAssignment(
-      {super.key, required this.userEmail, required this.clientEmail});
+      {super.key,
+      required this.userEmail,
+      required this.clientEmail,
+      this.clientId,
+      this.organizationId});
 
   @override
   ConsumerState<ScheduleAssignment> createState() => _TimeAndDatePickerState();
@@ -46,6 +57,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   List<String?> pricingTypeList = [];
   bool _isSubmitting = false;
   bool _isHighIntensity = false;
+  String? _resolvedOrganizationId;
+  String? _resolvedClientId;
+  String _resolvedUserState = 'NSW';
 
   // NDIS Item Selection
   NDISItem? _selectedNdisItem;
@@ -57,15 +71,226 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   double? _customPrice;
   String? _pricingType;
 
+  String? get _effectiveOrganizationId {
+    final candidate = (widget.organizationId?.trim().isNotEmpty ?? false)
+        ? widget.organizationId
+        : _resolvedOrganizationId;
+    return (candidate != null && candidate.trim().isNotEmpty)
+        ? candidate.trim()
+        : null;
+  }
+
+  String? get _effectiveClientId {
+    final widgetClientId = widget.clientId?.trim();
+    if (widgetClientId != null && widgetClientId.isNotEmpty) {
+      return widgetClientId;
+    }
+    final resolvedClientId = _resolvedClientId?.trim();
+    if (resolvedClientId != null && resolvedClientId.isNotEmpty) {
+      return resolvedClientId;
+    }
+    final emailFallback = widget.clientEmail.trim();
+    return emailFallback.isNotEmpty ? emailFallback : null;
+  }
+
   // Error states
   String? _ndisError;
   String? _scheduleError;
   List<String> _validationErrors = [];
 
+  BoxDecoration _panelDecoration({
+    Color color = BauhausDesign.surfaceLight,
+    Color borderColor = BauhausDesign.neutral,
+    double borderWidth = 2,
+  }) {
+    return BoxDecoration(
+      color: color,
+      border: Border.all(color: borderColor, width: borderWidth),
+      boxShadow: const [BauhausDesign.shadowHardXs],
+    );
+  }
+
+  Widget _squareCard({
+    required Widget child,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(BauhausDesign.space4),
+    EdgeInsetsGeometry? margin,
+  }) {
+    return Container(
+      margin: margin,
+      padding: padding,
+      decoration: _panelDecoration(),
+      child: child,
+    );
+  }
+
+  Widget _squareActionButton({
+    required String text,
+    required IconData icon,
+    required VoidCallback? onPressed,
+    bool isLoading = false,
+    bool isOutlined = false,
+    bool isFullWidth = false,
+    Color? backgroundColor,
+    Color? textColor,
+    Color? borderColor,
+  }) {
+    final Color bg = backgroundColor ??
+        (isOutlined ? BauhausDesign.surfaceLight : BauhausDesign.primary);
+    final Color fg = textColor ??
+        (isOutlined ? BauhausDesign.primary : BauhausDesign.surfaceLight);
+    final Color bd = borderColor ?? (isOutlined ? fg : BauhausDesign.neutral);
+
+    return Container(
+      width: isFullWidth ? double.infinity : null,
+      decoration: BoxDecoration(
+        color: bg,
+        border: Border.all(color: bd, width: 2),
+        boxShadow: (isOutlined || onPressed == null)
+            ? const []
+            : const [BauhausDesign.shadowHardSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isLoading ? null : onPressed,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4,
+              vertical: BauhausDesign.space3,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (isLoading)
+                  SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(fg),
+                    ),
+                  )
+                else
+                  Icon(icon, size: 18, color: fg),
+                const SizedBox(width: BauhausDesign.space2),
+                Flexible(
+                  child: Text(
+                    text,
+                    overflow: TextOverflow.ellipsis,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelLarge
+                        ?.copyWith(
+                          color: fg,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _returnToAdminDashboard() async {
+    final sharedPrefs = SharedPreferencesUtils();
+    await sharedPrefs.init();
+
+    final userEmail =
+        await sharedPrefs.getUserEmailFromSharedPreferences() ?? '';
+    final role = sharedPrefs.getRole() ?? UserRole.admin;
+    final organizationId = sharedPrefs.getOrganizationId() ?? '';
+    final organizationName = sharedPrefs.getString('organizationName') ?? '';
+    final organizationCode = sharedPrefs.getOrganizationCode() ?? '';
+
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      Routes.bottomNavBar,
+      (route) => false,
+      arguments: {
+        'email': userEmail,
+        'role': role,
+        'organizationId': organizationId,
+        'organizationName': organizationName,
+        'organizationCode': organizationCode,
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     apiMethod = ref.read(app_providers.apiMethodProvider);
+    _resolvePricingContext();
+  }
+
+  Future<void> _resolvePricingContext() async {
+    try {
+      final prefs = SharedPreferencesUtils();
+      await prefs.init();
+
+      final organizationId =
+          widget.organizationId ?? prefs.getOrganizationId() ?? '';
+      final userState = prefs.getString('userState') ?? 'NSW';
+      String? clientId = widget.clientId;
+
+      if (clientId == null || clientId.trim().isEmpty) {
+        final clients = await apiMethod.fetchClientData();
+        for (final client in clients) {
+          if (client.clientEmail.toLowerCase() ==
+              widget.clientEmail.toLowerCase()) {
+            clientId = client.id;
+            if (client.clientState != null &&
+                client.clientState!.trim().isNotEmpty) {
+              _resolvedUserState = client.clientState!.trim().toUpperCase();
+            }
+            break;
+          }
+        }
+      }
+
+      if ((clientId == null || clientId.trim().isEmpty) &&
+          organizationId.trim().isNotEmpty) {
+        final organizationClients =
+            await apiMethod.getClientsByOrganizationId(organizationId);
+        for (final client in organizationClients) {
+          final email = (client['clientEmail'] ?? '').toString().trim();
+          if (email.toLowerCase() == widget.clientEmail.toLowerCase()) {
+            final rawId = client['_id'] ?? client['id'] ?? client['clientId'];
+            clientId = rawId?.toString();
+            final clientState = client['clientState']?.toString().trim();
+            if (clientState != null && clientState.isNotEmpty) {
+              _resolvedUserState = clientState.toUpperCase();
+            }
+            break;
+          }
+        }
+      }
+
+      if (clientId == null || clientId.trim().isEmpty) {
+        clientId = widget.clientEmail.trim();
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _resolvedOrganizationId =
+            organizationId.trim().isEmpty ? null : organizationId;
+        _resolvedClientId =
+            (clientId != null && clientId.trim().isNotEmpty) ? clientId : null;
+        if (_resolvedUserState == 'NSW') {
+          _resolvedUserState =
+              userState.trim().isEmpty ? 'NSW' : userState.trim().toUpperCase();
+        }
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _resolvedOrganizationId =
+            _resolvedOrganizationId ?? widget.organizationId;
+        _resolvedClientId = _resolvedClientId ?? widget.clientId;
+      });
+    }
   }
 
   @override
@@ -373,7 +598,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   }
 
   Widget _card(int index) {
-    return BauhausCard(
+    return _squareCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -383,7 +608,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
                   color: BauhausDesign.secondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: BauhausDesign.neutral, width: 1),
                 ),
                 child: Icon(
                   Icons.event_available_outlined,
@@ -397,9 +622,11 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.scheduleDetails,
-                    style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                    ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .titleMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                        ),
                   ),
                   Text(
                     AppLocalizations.of(context)!.addedOn(
@@ -413,29 +640,42 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 ],
               ),
               const Spacer(),
-              BauhausActionButton(
-                onPressed: () {
+              InkWell(
+                onTap: () {
                   setState(() {
                     if (dateList.length > index) dateList.removeAt(index);
-                    if (startTimeList.length > index)
+                    if (startTimeList.length > index) {
                       startTimeList.removeAt(index);
+                    }
                     if (endTimeList.length > index) endTimeList.removeAt(index);
                     if (breakList.length > index) breakList.removeAt(index);
                     if (ndisItemList.length > index)
                       ndisItemList.removeAt(index);
-                    if (highIntensityList.length > index)
+                    if (highIntensityList.length > index) {
                       highIntensityList.removeAt(index);
-                    if (customPricingSetList.length > index)
+                    }
+                    if (customPricingSetList.length > index) {
                       customPricingSetList.removeAt(index);
-                    if (customPriceList.length > index)
+                    }
+                    if (customPriceList.length > index) {
                       customPriceList.removeAt(index);
-                    if (pricingTypeList.length > index)
+                    }
+                    if (pricingTypeList.length > index) {
                       pricingTypeList.removeAt(index);
+                    }
                   });
                 },
-                icon: Icons.delete_outline_rounded,
-                variant: BauhausActionVariant.ghost,
-                textColor: BauhausDesign.error,
+                child: Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space2),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: BauhausDesign.error, width: 1.5),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    size: 18,
+                    color: BauhausDesign.error,
+                  ),
+                ),
               ),
             ],
           ),
@@ -500,16 +740,16 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           const SizedBox(height: BauhausDesign.space3),
           SizedBox(
             width: double.infinity,
-            child: BauhausActionButton(
+            child: _squareActionButton(
               onPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EnhancedNdisItemSelectionView(
-                      organizationId: null,
-                      clientId: null,
+                      organizationId: _effectiveOrganizationId,
+                      clientId: _effectiveClientId,
                       highIntensity: highIntensityList[index],
-                      userState: 'NSW',
+                      userState: _resolvedUserState,
                     ),
                   ),
                 );
@@ -529,13 +769,13 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 }
               },
               text: ndisItemList[index] != null
-                  ? 'Change NDIS Item'
-                  : 'Select NDIS Item',
+                  ? AppLocalizations.of(context)!.changeNdisItem
+                  : AppLocalizations.of(context)!.selectNdisItemTitleNormal,
               icon: ndisItemList[index] != null ? Icons.edit : Icons.add,
-              variant: BauhausActionVariant.primary,
               isOutlined: true,
               isFullWidth: true,
               textColor: BauhausDesign.primary,
+              borderColor: BauhausDesign.primary,
             ),
           ),
           if (customPricingSetList.length > index &&
@@ -545,11 +785,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               padding: const EdgeInsets.only(top: BauhausDesign.space2),
               child: Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.success.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border:
-                      Border.all(color: BauhausDesign.success.withOpacity(0.3)),
+                decoration: _panelDecoration(
+                  color: BauhausDesign.success.withOpacity(0.08),
+                  borderColor: BauhausDesign.success,
+                  borderWidth: 1.5,
                 ),
                 child: Row(
                   children: [
@@ -576,11 +815,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           const SizedBox(height: BauhausDesign.space3),
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral),
-            ),
+            decoration: _panelDecoration(),
             child: Row(
               children: [
                 Icon(
@@ -590,20 +825,21 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 const SizedBox(width: BauhausDesign.space3),
                 Text(
                   AppLocalizations.of(context)!.highIntensityCare,
-                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark, // Changed to textDark
-                  ),
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodyMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark, // Changed to textDark
+                      ),
                 ),
                 const Spacer(),
-                Switch(
+                BauhausSwitch(
                   value: highIntensityList[index],
+                  variant: BauhausSwitchVariant.primary,
                   onChanged: (value) {
                     setState(() {
                       highIntensityList[index] = value;
                     });
                   },
-                  activeColor: BauhausDesign.primary,
-                  inactiveTrackColor: BauhausDesign.neutral,
                 ),
               ],
             ),
@@ -625,13 +861,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
     return Container(
       padding: const EdgeInsets.symmetric(
           vertical: BauhausDesign.space3, horizontal: BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 1,
-        ),
+      decoration: _panelDecoration(
+        color: BauhausDesign.surfaceLight,
+        borderColor: BauhausDesign.neutral,
       ),
       child: Row(
         children: [
@@ -639,7 +871,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
               color: effectiveBackgroundColor,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: BauhausDesign.neutral, width: 1),
             ),
             child: Icon(
               icon,
@@ -747,50 +979,98 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: BauhausDesign.backgroundLight,
-      appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
-        elevation: 0,
-        title: Text(
-          AppLocalizations.of(context)!.scheduleAssignmentTitle,
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.textDark,
+    return WillPopScope(
+      onWillPop: () async {
+        await _returnToAdminDashboard();
+        return false;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: BauhausDesign.backgroundLight,
+        appBar: AppBar(
+          backgroundColor: BauhausDesign.surfaceWhite,
+          foregroundColor: BauhausDesign.textDark,
+          elevation: 0,
+          title: Text(
+            AppLocalizations.of(context)!.scheduleAssignmentTitle,
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded,
+                color: BauhausDesign.textDark),
+            onPressed: _returnToAdminDashboard,
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(color: BauhausDesign.neutral),
           ),
         ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: BauhausDesign.textDark),
-          onPressed: () => Navigator.pop(context),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral),
-        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(BauhausDesign.space6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildStatusStrip(),
+              const SizedBox(height: BauhausDesign.space6),
+              _buildHeaderSection(),
+              const SizedBox(height: BauhausDesign.space6),
+              _buildDateTimeSection(),
+              const SizedBox(height: BauhausDesign.space6),
+              _buildScheduleList(),
+              const SizedBox(height: BauhausDesign.space6),
+              _buildActionButtons(),
+              const SizedBox(height: BauhausDesign.space4),
+            ],
+          ),
+        ).animate().fadeIn().slideY(begin: 0.1, end: 0),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(BauhausDesign.space6),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeaderSection(),
-            const SizedBox(height: BauhausDesign.space6),
-            _buildDateTimeSection(),
-            const SizedBox(height: BauhausDesign.space6),
-            _buildScheduleList(),
-            const SizedBox(height: BauhausDesign.space6),
-            _buildActionButtons(),
-            const SizedBox(height: BauhausDesign.space4),
-          ],
-        ),
-      ).animate().fadeIn().slideY(begin: 0.1, end: 0),
+    );
+  }
+
+  Widget _buildStatusStrip() {
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space3),
+      decoration: _panelDecoration(),
+      child: Row(
+        children: [
+          const Icon(Icons.event_note, color: BauhausDesign.secondary),
+          const SizedBox(width: BauhausDesign.space3),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.addedSchedules,
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space2,
+              vertical: BauhausDesign.space1,
+            ),
+            decoration: BoxDecoration(
+              color: BauhausDesign.warning,
+              border: Border.all(color: BauhausDesign.neutral, width: 1),
+            ),
+            child: Text(
+              '${dateList.length}',
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildHeaderSection() {
-    return BauhausCard(
+    return _squareCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -801,7 +1081,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
                 color: BauhausDesign.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),
               child: Icon(
                 Icons.assignment_ind_rounded,
@@ -824,18 +1104,14 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   Widget _buildEnhancedInfoRow(String label, String value, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral),
-      ),
+      decoration: _panelDecoration(),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
               color: BauhausDesign.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: BauhausDesign.neutral, width: 1),
             ),
             child: Icon(
               icon,
@@ -872,7 +1148,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   }
 
   Widget _buildDateTimeSection() {
-    return BauhausCard(
+    return _squareCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -884,7 +1160,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),
               child: Icon(
                 Icons.schedule_rounded,
@@ -920,59 +1196,96 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           const SizedBox(height: BauhausDesign.space4),
           _buildBreakSelector(),
           const SizedBox(height: BauhausDesign.space4),
-          BauhausActionButton(
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EnhancedNdisItemSelectionView(
-                    organizationId: null,
-                    clientId: null,
-                    highIntensity: _isHighIntensity,
-                    userState: 'NSW',
+          SizedBox(
+            width: double.infinity,
+            child: _squareActionButton(
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EnhancedNdisItemSelectionView(
+                      organizationId: _effectiveOrganizationId,
+                      clientId: _effectiveClientId,
+                      highIntensity: _isHighIntensity,
+                      userState: _resolvedUserState,
+                    ),
                   ),
-                ),
-              );
-              if (result != null) {
-                setState(() {
-                  _clearValidationErrors();
-                  _selectedNdisItem = result.ndisItem;
-                  _selectedNdisItemNumber = result.ndisItem.itemNumber;
-                  _searchController.text =
-                      '${result.ndisItem.itemNumber} - ${result.ndisItem.itemName}';
+                );
+                if (result != null) {
+                  setState(() {
+                    _clearValidationErrors();
+                    _selectedNdisItem = result.ndisItem;
+                    _selectedNdisItemNumber = result.ndisItem.itemNumber;
+                    _searchController.text =
+                        '${result.ndisItem.itemNumber} - ${result.ndisItem.itemName}';
 
-                  if (result.isCustomPriceSet && result.customPrice != null) {
-                    _isCustomPriceSet = true;
-                    _customPrice = result.customPrice;
-                    _pricingType = result.pricingType;
-                  } else {
-                    _isCustomPriceSet = false;
-                    _customPrice = null;
-                    _pricingType = null;
-                  }
-                });
-              }
-            },
-            text: _selectedNdisItem != null
-                ? '${_selectedNdisItem!.itemNumber} - ${_selectedNdisItem!.itemName}'
-                : 'Select NDIS Item',
-            icon: Icons.search,
-            variant: BauhausActionVariant.primary,
+                    if (result.isCustomPriceSet && result.customPrice != null) {
+                      _isCustomPriceSet = true;
+                      _customPrice = result.customPrice;
+                      _pricingType = result.pricingType;
+                    } else {
+                      _isCustomPriceSet = false;
+                      _customPrice = null;
+                      _pricingType = null;
+                    }
+                  });
+                }
+              },
+              text: _selectedNdisItem != null
+                  ? '${_selectedNdisItem!.itemNumber} - ${_selectedNdisItem!.itemName}'
+                  : AppLocalizations.of(context)!.selectNdisItemTitleNormal,
+              icon: Icons.search,
+              isFullWidth: true,
+              backgroundColor: BauhausDesign.primary,
+              textColor: BauhausDesign.surfaceLight,
+            ),
           ),
           if (_selectedNdisItem != null) ...[
             const SizedBox(height: BauhausDesign.space3),
-            BauhausChip(
-              label:
-                  '${_selectedNdisItem!.itemName} ${_selectedNdisItem!.itemNumber}',
-              icon: Icons.check_circle,
-              variant: BauhausChipVariant.primary,
-              onTap: () {
-                setState(() {
-                  _selectedNdisItem = null;
-                  _selectedNdisItemNumber = null;
-                  _searchController.clear();
-                });
-              },
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space3,
+                vertical: BauhausDesign.space2,
+              ),
+              decoration: BoxDecoration(
+                color: BauhausDesign.primary.withOpacity(0.1),
+                border: Border.all(color: BauhausDesign.primary, width: 1.5),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    size: 16,
+                    color: BauhausDesign.primary,
+                  ),
+                  const SizedBox(width: BauhausDesign.space2),
+                  Expanded(
+                    child: Text(
+                      '${_selectedNdisItem!.itemName} ${_selectedNdisItem!.itemNumber}',
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _selectedNdisItem = null;
+                        _selectedNdisItemNumber = null;
+                        _searchController.clear();
+                      });
+                    },
+                    child: const Icon(
+                      Icons.close,
+                      size: 16,
+                      color: BauhausDesign.textDark,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ],
@@ -985,11 +1298,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       onTap: _showDatePicker,
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
-        decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral),
-        ),
+        decoration: _panelDecoration(),
         child: Row(
           children: [
             Icon(Icons.calendar_today_rounded, color: BauhausDesign.primary),
@@ -1000,8 +1309,8 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                     ? AppLocalizations.of(context)!.selectDate
                     : DateFormat('MMM dd, yyyy').format(_focusedDay),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+                      color: BauhausDesign.textDark,
+                    ),
               ),
             ),
             Icon(Icons.keyboard_arrow_down_rounded,
@@ -1028,11 +1337,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral),
-            ),
+            decoration: _panelDecoration(),
             child: Row(
               children: [
                 Icon(Icons.access_time_rounded, color: BauhausDesign.secondary),
@@ -1042,9 +1347,11 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                     isVisible
                         ? AppLocalizations.of(context)!.selectTime
                         : time.format(context),
-                    style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                    ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                        ),
                   ),
                 ),
               ],
@@ -1072,26 +1379,26 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: BauhausDesign.space3),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral),
-                ),
+                decoration: _panelDecoration(),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: _selectedBreak,
                     isExpanded: true,
-                    icon: Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
+                    icon: Icon(Icons.arrow_drop_down,
+                        color: BauhausDesign.textDark),
                     dropdownColor: BauhausDesign.surfaceWhite,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                    ),
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                        ),
                     items: breakOptionItems.map((String item) {
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(item,
-                            style:
-                                BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(
                                   color: BauhausDesign.textDark,
                                 )),
                       );
@@ -1123,24 +1430,19 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 height: 48,
                 padding: const EdgeInsets.symmetric(
                     horizontal: BauhausDesign.space3),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral),
-                ),
+                decoration: _panelDecoration(),
                 child: Row(
                   children: [
                     Icon(Icons.fitness_center_outlined,
                         color: BauhausDesign.textMuted),
                     const Spacer(),
-                    Switch(
+                    BauhausSwitch(
                       value: _isHighIntensity,
+                      variant: BauhausSwitchVariant.primary,
                       onChanged: (value) => setState(() {
                         _clearValidationErrors();
                         _isHighIntensity = value;
                       }),
-                      activeColor: BauhausDesign.primary,
-                      inactiveTrackColor: BauhausDesign.neutral,
                     ),
                   ],
                 ),
@@ -1188,10 +1490,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           Container(
             margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
             padding: const EdgeInsets.all(BauhausDesign.space3),
-            decoration: BoxDecoration(
-              color: BauhausDesign.error.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.error.withOpacity(0.3)),
+            decoration: _panelDecoration(
+              color: BauhausDesign.error.withOpacity(0.08),
+              borderColor: BauhausDesign.error,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1224,19 +1525,20 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           ),
         SizedBox(
           width: double.infinity,
-          child: BauhausActionButton(
+          child: _squareActionButton(
             onPressed: _addCardWidget,
             text: AppLocalizations.of(context)!.addSchedule,
             icon: Icons.add_rounded,
-            variant: BauhausActionVariant.primary, // Changed from secondary to primary to work with isOutlined
             isOutlined: true,
             isFullWidth: true,
+            textColor: BauhausDesign.primary,
+            borderColor: BauhausDesign.primary,
           ),
         ),
         const SizedBox(height: BauhausDesign.space3),
         SizedBox(
           width: double.infinity,
-          child: BauhausActionButton(
+          child: _squareActionButton(
             onPressed: () {
               if (_isSubmitting || dateList.isEmpty) return;
               _handleSubmit();
@@ -1246,12 +1548,16 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 : AppLocalizations.of(context)!.submitAssignment,
             icon: Icons.send_rounded,
             isLoading: _isSubmitting,
-            variant: dateList.isEmpty
-                ? BauhausActionVariant.neutral // Changed to neutral for disabled state
-                : BauhausActionVariant.primary,
             isFullWidth: true,
-            backgroundColor: dateList.isEmpty ? BauhausDesign.neutral.withOpacity(0.2) : BauhausDesign.primary,
-            textColor: dateList.isEmpty ? BauhausDesign.textMuted : BauhausDesign.surfaceWhite,
+            backgroundColor: dateList.isEmpty
+                ? BauhausDesign.neutral.withOpacity(0.2)
+                : BauhausDesign.primary,
+            textColor: dateList.isEmpty
+                ? BauhausDesign.textMuted
+                : BauhausDesign.surfaceWhite,
+            borderColor: dateList.isEmpty
+                ? BauhausDesign.neutral
+                : BauhausDesign.neutral,
           ),
         ),
       ],
@@ -1296,7 +1602,19 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
         });
 
         FlushBarWidget fbw = FlushBarWidget();
-        Map<String, dynamic> responseData = response as Map<String, dynamic>;
+        final Map<String, dynamic> responseData =
+            response is Map<String, dynamic>
+                ? response
+                : <String, dynamic>{
+                    'success': false,
+                    'statusCode': 0,
+                    'message': AppLocalizations.of(context)!.requestFailed,
+                  };
+        final statusCode = responseData['statusCode'] as int?;
+        final message =
+            (responseData['message']?.toString().trim().isNotEmpty ?? false)
+                ? responseData['message'].toString()
+                : AppLocalizations.of(context)!.requestFailed;
 
         if (responseData['success'] == true) {
           Map<String, dynamic> shiftData = {
@@ -1315,7 +1633,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 userEmail: widget.userEmail,
                 clientEmail: widget.clientEmail,
                 shiftData: shiftData,
-                assignmentId: DateTime.now().millisecondsSinceEpoch.toString(),
+                assignmentId: responseData['assignmentId']?.toString(),
               ),
             ),
           );
@@ -1323,14 +1641,17 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           fbw.flushBar(
             context: context,
             title: AppLocalizations.of(context)!.successTitle,
-            message: responseData['message'].toString(),
+            message: message,
             backgroundColor: BauhausDesign.success,
           );
         } else {
+          final errorMessage = statusCode == 403
+              ? AppLocalizations.of(context)!.adminAccessRequiredMessage
+              : message;
           fbw.flushBar(
             context: context,
             title: AppLocalizations.of(context)!.errorTitle,
-            message: responseData['message'].toString(),
+            message: errorMessage,
             backgroundColor: BauhausDesign.error,
           );
         }
@@ -1344,8 +1665,8 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
         FlushBarWidget fbw = FlushBarWidget();
         fbw.flushBar(
           context: context,
-          title: "Error",
-          message: "An error occurred. Please try again.",
+          title: AppLocalizations.of(context)!.errorTitle,
+          message: AppLocalizations.of(context)!.requestFailed,
           backgroundColor: BauhausDesign.error,
         );
       }

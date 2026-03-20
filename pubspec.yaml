@@ -38,6 +38,7 @@ dependencies:
   cloud_firestore: ^5.4.0
   download: ^1.0.0
   path_provider: ^2.1.5
+  google_mlkit_text_recognition: ^0.13.0
   flutter_secure_storage: ^9.2.2
   # document_file_save_plus: ^2.0.0
   file_picker: ^10.2.0
@@ -123,8 +124,6 @@ dev_dependencies:
   faker: ^2.1.0
   # Visual regression testing
   golden_toolkit: ^0.15.0
-  # Accessibility testing
-  flutter_accessibility_service: ^0.2.0
   # Performance testing
   integration_test:
     sdk: flutter
@@ -145,9 +144,12 @@ flutter:
     - assets/images/ud.gif
     - assets/images/splash_screen.png
     - assets/images/splash_screen.gif
+    - assets/images/grid_pattern.png
     - assets/icons/profile_placeholder.png
     - assets/icons/3D Icons/
     - assets/icons/PNG with shadow/
+    - assets/images/he_sitting_with_notebook.png
+    - assets/images/she_with_phone.png
     - lib/main.dart
     - assets/lottieAnimationJSON/loading_horizontal_line.json
     - assets/lottieAnimationJSON/warning.json

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 /// Extension methods for expense calculations and transformations
@@ -90,9 +89,10 @@ class ExpenseModel {
     debugPrint('=== EXPENSE MODEL DEBUG: Parsing JSON: $json ===');
 
     // Debug ID parsing
-    final id = json['_id'] is Map && json['_id']['\$oid'] != null
-        ? json['_id']['\$oid']
-        : json['_id'].toString();
+    final rawId = json['_id'] ?? json['id'] ?? json['expenseId'];
+    final id = rawId is Map && rawId['\$oid'] != null
+        ? rawId['\$oid'].toString()
+        : (rawId?.toString() ?? '');
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed ID: $id ===');
 
     // Debug title parsing
@@ -100,11 +100,14 @@ class ExpenseModel {
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed title: $title ===');
 
     // Debug amount parsing
-    final amount = (json['amount'] as num).toDouble();
+    final amountRaw = json['amount'];
+    final amount = amountRaw is num
+        ? amountRaw.toDouble()
+        : double.tryParse(amountRaw?.toString() ?? '0') ?? 0.0;
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed amount: $amount ===');
 
     // Debug category parsing
-    final category = json['category'] as String;
+    final category = json['category']?.toString() ?? 'Other';
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed category: $category ===');
 
     // Debug date parsing
@@ -113,62 +116,25 @@ class ExpenseModel {
         '=== EXPENSE MODEL DEBUG: expenseDate raw: ${json['expenseDate']} ===');
     debugPrint(
         '=== EXPENSE MODEL DEBUG: expenseDate type: ${json['expenseDate'].runtimeType} ===');
-
-    if (json['expenseDate'] is String) {
-      date = DateTime.parse(json['expenseDate']);
-      debugPrint('=== EXPENSE MODEL DEBUG: Parsed date from string: $date ===');
-    } else if (json['expenseDate'] is Map &&
-        json['expenseDate']['\$date'] != null) {
-      if (json['expenseDate']['\$date'] is Map &&
-          json['expenseDate']['\$date']['\$numberLong'] != null) {
-        // Handle MongoDB extended JSON format
-        final timestamp =
-            int.parse(json['expenseDate']['\$date']['\$numberLong']);
-        date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-        debugPrint(
-            '=== EXPENSE MODEL DEBUG: Parsed date from MongoDB extended JSON: $date ===');
-      } else {
-        date =
-            DateTime.fromMillisecondsSinceEpoch(json['expenseDate']['\$date']);
-        debugPrint('=== EXPENSE MODEL DEBUG: Parsed date from \$date: $date ===');
-      }
-    } else if (json['expenseDate'] is int) {
-      date = DateTime.fromMillisecondsSinceEpoch(json['expenseDate']);
-      debugPrint('=== EXPENSE MODEL DEBUG: Parsed date from timestamp: $date ===');
-    } else {
-      throw Exception('Unsupported expenseDate format: ${json['expenseDate']}');
-    }
+    date = _parseFlexibleDate(json['expenseDate']) ?? DateTime.now();
+    debugPrint('=== EXPENSE MODEL DEBUG: Parsed date: $date ===');
 
     // Debug status parsing
-    final status = json['approvalStatus'] as String;
+    final status =
+        (json['approvalStatus'] ?? json['status'] ?? 'pending').toString();
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed status: $status ===');
 
     // Debug submittedBy parsing
-    final submittedBy = json['submittedBy'] as String;
+    final submittedBy =
+        (json['submittedBy'] ?? json['userEmail'] ?? json['createdBy'] ?? '')
+            .toString();
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed submittedBy: $submittedBy ===');
 
     // Debug createdAt parsing
     DateTime createdAt;
-    debugPrint('=== EXPENSE MODEL DEBUG: createdAt raw: ${json['createdAt']} ===');
-
-    if (json['createdAt'] is String) {
-      createdAt = DateTime.parse(json['createdAt']);
-    } else if (json['createdAt'] is Map &&
-        json['createdAt']['\$date'] != null) {
-      if (json['createdAt']['\$date'] is Map &&
-          json['createdAt']['\$date']['\$numberLong'] != null) {
-        final timestamp =
-            int.parse(json['createdAt']['\$date']['\$numberLong']);
-        createdAt = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      } else {
-        createdAt =
-            DateTime.fromMillisecondsSinceEpoch(json['createdAt']['\$date']);
-      }
-    } else if (json['createdAt'] is int) {
-      createdAt = DateTime.fromMillisecondsSinceEpoch(json['createdAt']);
-    } else {
-      throw Exception('Unsupported createdAt format: ${json['createdAt']}');
-    }
+    debugPrint(
+        '=== EXPENSE MODEL DEBUG: createdAt raw: ${json['createdAt']} ===');
+    createdAt = _parseFlexibleDate(json['createdAt']) ?? date;
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed createdAt: $createdAt ===');
 
     // Parse receiptUrl, receiptPhotos, and receiptFiles
@@ -178,12 +144,14 @@ class ExpenseModel {
     final receiptPhotos = json['receiptPhotos'] != null
         ? List<String>.from(json['receiptPhotos'])
         : null;
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed receiptPhotos: $receiptPhotos ===');
+    debugPrint(
+        '=== EXPENSE MODEL DEBUG: Parsed receiptPhotos: $receiptPhotos ===');
 
     final receiptFiles = json['receiptFiles'] != null
         ? List<String>.from(json['receiptFiles'])
         : null;
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed receiptFiles: $receiptFiles ===');
+    debugPrint(
+        '=== EXPENSE MODEL DEBUG: Parsed receiptFiles: $receiptFiles ===');
 
     final photoDescription = json['photoDescription']?.toString();
     debugPrint(
@@ -194,7 +162,7 @@ class ExpenseModel {
         '=== EXPENSE MODEL DEBUG: Parsed fileDescription: $fileDescription ===');
 
     // Debug organizationId parsing
-    final organizationId = json['organizationId'] as String;
+    final organizationId = json['organizationId']?.toString() ?? '';
     debugPrint(
         '=== EXPENSE MODEL DEBUG: Parsed organizationId: $organizationId ===');
 
@@ -214,30 +182,34 @@ class ExpenseModel {
       submittedBy: submittedBy,
       approvedBy: json['approvedBy'] as String?,
       createdAt: createdAt,
-      updatedAt: json['updatedAt'] != null
-          ? (json['updatedAt'] is String
-              ? DateTime.parse(json['updatedAt'])
-              : (json['updatedAt'] is Map && json['updatedAt']['\$date'] != null
-                  ? (json['updatedAt']['\$date'] is Map &&
-                          json['updatedAt']['\$date']['\$numberLong'] != null
-                      ? DateTime.fromMillisecondsSinceEpoch(int.parse(
-                          json['updatedAt']['\$date']['\$numberLong']))
-                      : DateTime.fromMillisecondsSinceEpoch(
-                          json['updatedAt']['\$date']))
-                  : (json['updatedAt'] is int
-                      ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt'])
-                      : throw Exception(
-                          'Unsupported updatedAt format: ${json['updatedAt']}'))))
-          : null,
+      updatedAt: _parseFlexibleDate(json['updatedAt']),
       isRecurring: json['isRecurring'] ?? false,
       recurringFrequency: json['recurringFrequency'] as String?,
       organizationId: organizationId,
-      clientId: json['clientId'] as String?,
+      clientId: json['clientId']?.toString(),
     );
 
     debugPrint(
         '=== EXPENSE MODEL DEBUG: Successfully created ExpenseModel: ${expense.id} - ${expense.title} ===');
     return expense;
+  }
+
+  static DateTime? _parseFlexibleDate(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+    if (value is Map) {
+      final dateValue = value['\$date'];
+      if (dateValue is String) return DateTime.tryParse(dateValue);
+      if (dateValue is int)
+        return DateTime.fromMillisecondsSinceEpoch(dateValue);
+      if (dateValue is Map && dateValue['\$numberLong'] != null) {
+        final parsed = int.tryParse(dateValue['\$numberLong'].toString());
+        if (parsed != null) return DateTime.fromMillisecondsSinceEpoch(parsed);
+      }
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {

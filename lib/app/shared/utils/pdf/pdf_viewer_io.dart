@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:carenest/config/environment.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
@@ -6,6 +11,8 @@ import 'package:carenest/app/features/invoice/services/download_service.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 class PdfViewPage extends StatefulWidget {
   final String pdfPath;
@@ -51,9 +58,23 @@ class _PdfViewPageState extends State<PdfViewPage> {
     if (_isOpeningReceipt) return;
 
     setState(() => _isOpeningReceipt = true);
-    debugPrint('🔗 PdfViewPage: Attempting to launch URL: $url');
-    final uri = Uri.parse(url);
+    final cleanUrl = url.trim().replaceAll('`', '');
+    debugPrint('🔗 PdfViewPage: Attempting to launch URL: $cleanUrl');
+    final uri = Uri.parse(cleanUrl);
     try {
+      final isPrivateR2ApiHost = AppConfig.isPrivateR2StorageHost(uri.host);
+      final isFilesDownloadProxy = uri.path.contains('/files/download');
+      debugPrint(
+          '🔗 PdfViewPage: URL classification host=${uri.host}, isPrivateR2ApiHost=$isPrivateR2ApiHost, isFilesDownloadProxy=$isFilesDownloadProxy');
+
+      if (isPrivateR2ApiHost || isFilesDownloadProxy) {
+        final proxyUrl = isFilesDownloadProxy
+            ? uri.toString()
+            : AppConfig.buildFilesProxyUrl(uri.toString());
+        await _downloadAndOpenAuthenticated(proxyUrl);
+        return;
+      }
+
       // Check if we can launch, but don't stop if we can't (as it might be a false negative)
       final canLaunch = await canLaunchUrl(uri);
       debugPrint('🔗 PdfViewPage: canLaunchUrl returned $canLaunch');
@@ -108,6 +129,70 @@ class _PdfViewPageState extends State<PdfViewPage> {
         setState(() => _isOpeningReceipt = false);
       }
     }
+  }
+
+  Future<void> _downloadAndOpenAuthenticated(String url) async {
+    final uri = Uri.parse(url);
+    final headers = <String, String>{};
+
+    final user = FirebaseAuth.instance.currentUser;
+    final idToken = await user?.getIdToken();
+    if (idToken != null && idToken.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $idToken';
+    }
+
+    try {
+      final appCheckToken = await FirebaseAppCheck.instance.getToken();
+      if (appCheckToken != null && appCheckToken.isNotEmpty) {
+        headers['X-Firebase-AppCheck'] = appCheckToken;
+      }
+    } catch (_) {
+      // App Check token is optional for this operation.
+    }
+
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Failed to download receipt (HTTP ${response.statusCode})');
+    }
+
+    final fileName = _extractFileName(response, uri);
+    final tempDir = await getTemporaryDirectory();
+    final filePath = '${tempDir.path}/$fileName';
+    final file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+
+    final result = await OpenFile.open(filePath);
+    if (result.type != ResultType.done) {
+      throw Exception(result.message);
+    }
+  }
+
+  String _extractFileName(http.Response response, Uri fallbackUri) {
+    final disposition = response.headers['content-disposition'] ?? '';
+    final quotedMatch =
+        RegExp(r'filename=\"([^\"]+)\"').firstMatch(disposition);
+    if (quotedMatch != null && quotedMatch.groupCount >= 1) {
+      final value = quotedMatch.group(1);
+      if (value != null && value.trim().isNotEmpty) {
+        return value.trim();
+      }
+    }
+
+    final sourceUrl = fallbackUri.queryParameters['url'];
+    if (sourceUrl != null && sourceUrl.isNotEmpty) {
+      final source = Uri.tryParse(sourceUrl);
+      final sourceName = source?.pathSegments.isNotEmpty == true
+          ? source!.pathSegments.last
+          : '';
+      if (sourceName.isNotEmpty) return sourceName;
+    }
+
+    final fallbackName = fallbackUri.pathSegments.isNotEmpty
+        ? fallbackUri.pathSegments.last
+        : '';
+    if (fallbackName.isNotEmpty) return fallbackName;
+    return 'receipt_${DateTime.now().millisecondsSinceEpoch}';
   }
 
   void _showReceiptsDialog(BuildContext context) {
@@ -199,6 +284,27 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
     setState(() => _isDownloading = true);
     try {
+      if (Platform.isIOS) {
+        final box = context.findRenderObject() as RenderBox?;
+        await Share.shareXFiles(
+          [XFile(widget.pdfPath)],
+          subject: 'Invoice PDF',
+          sharePositionOrigin:
+              box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('PDF ready. Choose Save to Files to keep a local copy.'),
+              backgroundColor: BauhausDesign.success,
+            ),
+          );
+        }
+        return;
+      }
+
       final downloadService = DownloadService();
       final zipPath = await downloadService.downloadFiles([widget.pdfPath]);
       if (zipPath.isNotEmpty && mounted) {

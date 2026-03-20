@@ -21,12 +21,12 @@ class AnalyticsDashboardView extends ConsumerWidget {
     final analyticsState = ref.watch(analyticsControllerProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         title: Text(
           'WORKFORCE ANALYTICS',
-          style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                fontWeight: FontWeight.w900,
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                fontWeight: FontWeight.w700,
                 color: BauhausDesign.textDark,
               ),
         ),
@@ -46,39 +46,60 @@ class AnalyticsDashboardView extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // TOOLBAR: Date Filter
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'PERIOD:',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: BauhausDesign.textDark,
-                            ),
-                      ),
-                      const SizedBox(width: 8),
-                      _DateFilterButton(
-                        currentRange:
-                            '${DateFormat('MMM d').format(filter.startDate)} - ${DateFormat('MMM d').format(filter.endDate)}',
-                        onTap: () => _showFilterOptions(context, ref, filter),
-                      ),
-                    ],
+                  _DashboardStatusStrip(
+                    activeLabel:
+                        '${DateFormat('MMM d').format(filter.startDate)} - ${DateFormat('MMM d').format(filter.endDate)}',
+                  ),
+                  const SizedBox(height: BauhausDesign.space3),
+                  Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space3),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.surfaceLight,
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 2),
+                      boxShadow: const [BauhausDesign.shadowHardSm],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'PERIOD:',
+                          style: BauhausDesign.getTextTheme(context)
+                              .labelMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                color: BauhausDesign.textDark,
+                              ),
+                        ),
+                        const SizedBox(width: 8),
+                        _DateFilterButton(
+                          currentRange:
+                              '${DateFormat('MMM d').format(filter.startDate)} - ${DateFormat('MMM d').format(filter.endDate)}',
+                          onTap: () => _showFilterOptions(context, ref, filter),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
-
                   if (analyticsState.valueOrNull?.hasFinancialLoss == true)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
-                      child: BauhausContainer(
-                        color: BauhausDesign.error,
+                      child: Container(
                         padding: const EdgeInsets.all(BauhausDesign.space3),
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.surfaceLight,
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          border:
+                              Border.all(color: BauhausDesign.error, width: 2),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
                         child: Row(
                           children: [
                             const Icon(Icons.warning,
-                                color: BauhausDesign.surfaceWhite),
+                                color: BauhausDesign.error),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -87,7 +108,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                                     .titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: BauhausDesign.surfaceWhite,
+                                      color: BauhausDesign.textDark,
                                     ),
                               ),
                             ),
@@ -95,7 +116,6 @@ class AnalyticsDashboardView extends ConsumerWidget {
                         ),
                       ),
                     ),
-
                   analyticsState.when(
                     data: (data) {
                       if (data.isEmpty) {
@@ -241,6 +261,56 @@ class AnalyticsDashboardView extends ConsumerWidget {
   }
 }
 
+class _DashboardStatusStrip extends StatelessWidget {
+  final String activeLabel;
+  const _DashboardStatusStrip({required this.activeLabel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space3),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.insights, color: BauhausDesign.secondary),
+          const SizedBox(width: BauhausDesign.space3),
+          Expanded(
+            child: Text(
+              'Monitoring period',
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space2,
+              vertical: BauhausDesign.space1,
+            ),
+            decoration: BoxDecoration(
+              color: BauhausDesign.secondary,
+              border: Border.all(color: BauhausDesign.neutral, width: 1),
+            ),
+            child: Text(
+              activeLabel,
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    color: BauhausDesign.surfaceLight,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _FilterOption extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
@@ -261,13 +331,13 @@ class _FilterOption extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label,
-                style: BauhausDesign.getTextTheme(context)
-                    .titleMedium
-                    ?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark, // Ensure visible text
-                    )),
-            Icon(Icons.arrow_forward, color: BauhausDesign.textDark), // Ensure visible icon
+                style:
+                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark, // Ensure visible text
+                        )),
+            Icon(Icons.arrow_forward,
+                color: BauhausDesign.textDark), // Ensure visible icon
           ],
         ),
       ),
@@ -294,14 +364,14 @@ class _DateFilterButton extends StatelessWidget {
         child: Row(
           children: [
             Text(currentRange,
-                style: BauhausDesign.getTextTheme(context)
-                    .labelMedium
-                    ?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark, // Ensure visible text
-                    )),
+                style:
+                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark, // Ensure visible text
+                        )),
             const SizedBox(width: 8),
-            Icon(Icons.calendar_today, size: 16, color: BauhausDesign.textDark), // Ensure visible icon
+            Icon(Icons.calendar_today,
+                size: 16, color: BauhausDesign.textDark), // Ensure visible icon
           ],
         ),
       ),

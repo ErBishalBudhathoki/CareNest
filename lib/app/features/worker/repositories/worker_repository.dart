@@ -1,5 +1,6 @@
 import 'package:carenest/app/core/providers/core_providers.dart';
 import 'package:carenest/app/features/worker/models/worker_dashboard_data.dart';
+import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -70,4 +71,39 @@ class WorkerRepository {
 
   /// Refresh dashboard data (convenience method with same behavior)
   Future<WorkerDashboardData> refreshDashboard() => getDashboardData();
+
+  /// Get full past shift history for worker dashboard.
+  ///
+  /// [days]:
+  /// - `7` => last 7 days
+  /// - `30` => last 30 days
+  /// - `90` => last 90 days
+  /// - `null` => all available history (bounded by backend limit)
+  Future<List<ShiftModel>> getShiftHistory({int? days, int limit = 200}) async {
+    try {
+      final params = <String>[
+        if (days != null) 'days=$days',
+        'limit=$limit',
+      ];
+      final endpoint = params.isEmpty
+          ? 'worker/shift-history'
+          : 'worker/shift-history?${params.join('&')}';
+
+      final response = await _apiMethod.get(endpoint);
+      if (response['success'] == true) {
+        final raw = response['data'];
+        if (raw is! List) return [];
+        return raw
+            .whereType<Map<String, dynamic>>()
+            .map(ShiftModel.fromJson)
+            .toList();
+      }
+
+      throw Exception(response['message'] ??
+          'Failed to fetch shift history: ${response['code'] ?? 'UNKNOWN_ERROR'}');
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('Unexpected error fetching shift history: $e');
+    }
+  }
 }

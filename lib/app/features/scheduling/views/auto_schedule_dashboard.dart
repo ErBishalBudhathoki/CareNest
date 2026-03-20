@@ -42,9 +42,10 @@ class AutoScheduleDashboard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Container(
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isCompact = constraints.maxWidth < 520;
+                        final leadingIcon = Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: BauhausDesign.secondary.withOpacity(0.1),
@@ -58,12 +59,14 @@ class AutoScheduleDashboard extends ConsumerWidget {
                             color: BauhausDesign.secondary,
                             size: 32,
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
+                        );
+
+                        if (isCompact) {
+                          return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              leadingIcon,
+                              const SizedBox(height: 12),
                               Text(
                                 'INTELLIGENT SCHEDULING',
                                 style: BauhausDesign.getTextTheme(context)
@@ -78,13 +81,44 @@ class AutoScheduleDashboard extends ConsumerWidget {
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: BauhausDesign.neutral,
+                                      color: BauhausDesign.textDark,
                                     ),
                               ),
                             ],
-                          ),
-                        ),
-                      ],
+                          );
+                        }
+
+                        return Row(
+                          children: [
+                            leadingIcon,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'INTELLIGENT SCHEDULING',
+                                    style: BauhausDesign.getTextTheme(context)
+                                        .titleLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Automatically assign optimal workers to shifts',
+                                    style: BauhausDesign.getTextTheme(context)
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: BauhausDesign.textDark,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -94,54 +128,59 @@ class AutoScheduleDashboard extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // Stats Cards
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    context,
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final stats = [
+                  const _AutoScheduleStatItem(
                     title: 'OPEN SHIFTS',
                     value: '12',
                     icon: Icons.event_available,
                     color: BauhausDesign.warning,
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context,
+                  const _AutoScheduleStatItem(
                     title: 'FILLED TODAY',
                     value: '8',
                     icon: Icons.check_circle_outline,
                     color: BauhausDesign.success,
                   ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    context,
+                  const _AutoScheduleStatItem(
                     title: 'FILL RATE',
                     value: '87%',
                     icon: Icons.trending_up,
                     color: BauhausDesign.secondary,
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context,
+                  const _AutoScheduleStatItem(
                     title: 'AVG MATCH',
                     value: '92%',
                     icon: Icons.stars,
                     color: BauhausDesign.primary,
                   ),
-                ),
-              ],
+                ];
+
+                final columns = constraints.maxWidth >= 860 ? 2 : 1;
+                final cardWidth = columns == 1
+                    ? constraints.maxWidth
+                    : (constraints.maxWidth - 16) / 2;
+
+                return Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: stats
+                      .map(
+                        (stat) => SizedBox(
+                          width: cardWidth,
+                          child: _buildStatCard(
+                            context,
+                            title: stat.title,
+                            value: stat.value,
+                            icon: stat.icon,
+                            color: stat.color,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                );
+              },
             ),
 
             const SizedBox(height: 32),
@@ -164,7 +203,7 @@ class AutoScheduleDashboard extends ConsumerWidget {
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
                                 ?.copyWith(
-                                  color: BauhausDesign.neutral,
+                                  color: BauhausDesign.textDark,
                                 ),
                           ),
                           Text(
@@ -317,15 +356,16 @@ class AutoScheduleDashboard extends ConsumerWidget {
             Text(
               title,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
+                    color: BauhausDesign.textDark,
                   ),
             ),
             const SizedBox(height: 4),
             Text(
               value,
-              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style:
+                  BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
             ),
           ],
         ),
@@ -381,7 +421,8 @@ class AutoScheduleDashboard extends ConsumerWidget {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Route optimization feature requires worker data'),
+                  content:
+                      Text('Route optimization feature requires worker data'),
                 ),
               );
             },
@@ -391,4 +432,18 @@ class AutoScheduleDashboard extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _AutoScheduleStatItem {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _AutoScheduleStatItem({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 }

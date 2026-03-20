@@ -53,6 +53,8 @@ class BauhausProfileCard extends StatelessWidget {
   final String userName;
   final String userEmail;
   final Uint8List? photoData;
+  final String? imageUrl;
+  final bool isEmailVerified;
   final VoidCallback onPhotoTap;
 
   const BauhausProfileCard({
@@ -60,8 +62,24 @@ class BauhausProfileCard extends StatelessWidget {
     required this.userName,
     required this.userEmail,
     this.photoData,
+    this.imageUrl,
+    this.isEmailVerified = false,
     required this.onPhotoTap,
   });
+
+  String get _safeName {
+    final normalized = userName.trim();
+    return normalized.isEmpty ? 'User' : normalized;
+  }
+
+  String get _primaryName {
+    final parts = _safeName
+        .split(RegExp(r'\s+'))
+        .where((part) => part.trim().isNotEmpty)
+        .toList();
+    if (parts.isEmpty) return 'User';
+    return parts.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,74 +98,66 @@ class BauhausProfileCard extends StatelessWidget {
         ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Profile Image with "Edit" badge
-          GestureDetector(
-            onTap: onPhotoTap,
-            child: Stack(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(2), // White gap
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 2.0,
-                    ),
+          _buildIdentityHeader(context),
+          const SizedBox(height: BauhausDesign.space3),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              userEmail,
+              textAlign: TextAlign.left,
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: BauhausDesign.textMuted,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
                   ),
-                  child: ProfileImageWidget(
-                    photoData: photoData,
-                    size: 64,
-                    borderWidth: 0, // Handled by container
-                    borderColor: Colors.transparent,
-                    elevation: 0,
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: BauhausDesign.primary,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: BauhausDesign.neutral,
-                        width: 1.5,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      size: 12,
-                      color: BauhausDesign.textDark, // Dark icon on orange
-                    ),
-                  ),
-                ),
-              ],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(width: BauhausDesign.space4),
-          // User Details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: BauhausDesign.space3),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space3,
+              vertical: BauhausDesign.space2,
+            ),
+            decoration: BoxDecoration(
+              color: (isEmailVerified
+                      ? BauhausDesign.success
+                      : BauhausDesign.warning)
+                  .withOpacity(0.12),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(
+                color: isEmailVerified
+                    ? BauhausDesign.success
+                    : BauhausDesign.warning,
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  userName,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: BauhausDesign.textDark,
-                          ),
+                Icon(
+                  isEmailVerified
+                      ? Icons.verified
+                      : Icons.warning_amber_rounded,
+                  size: 14,
+                  color: isEmailVerified
+                      ? BauhausDesign.success
+                      : BauhausDesign.warning,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(width: 6),
                 Text(
-                  userEmail,
+                  isEmailVerified ? 'EMAIL VERIFIED' : 'EMAIL NOT VERIFIED',
                   style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textDark.withOpacity(0.7),
-                            fontWeight: FontWeight.w500,
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                            color: isEmailVerified
+                                ? BauhausDesign.success
+                                : BauhausDesign.warning,
                           ),
                 ),
               ],
@@ -155,6 +165,111 @@ class BauhausProfileCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIdentityHeader(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Hello,',
+                  style: BauhausDesign.getTextTheme(context)
+                      .displayLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontSize: 56,
+                        height: 1.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space1),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  _primaryName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: BauhausDesign.getTextTheme(context)
+                      .displayLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontSize: 72,
+                        height: 0.96,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space2),
+              Container(
+                width: 64,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: BauhausDesign.secondary,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space3),
+        GestureDetector(
+          onTap: onPhotoTap,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: BauhausDesign.neutral,
+                    width: 2.0,
+                  ),
+                ),
+                child: ProfileImageWidget(
+                  photoData: photoData,
+                  imageUrl: imageUrl,
+                  size: 76,
+                  borderWidth: 0,
+                  borderColor: Colors.transparent,
+                  elevation: 0,
+                ),
+              ),
+              Positioned(
+                bottom: -2,
+                right: -2,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.surfaceWhite,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 2.0,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    size: 12,
+                    color: BauhausDesign.neutral,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -210,6 +325,11 @@ class BauhausSettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iconForegroundColor =
+        ThemeData.estimateBrightnessForColor(iconColor) == Brightness.dark
+            ? BauhausDesign.textLight
+            : BauhausDesign.textDark;
+
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space4,
@@ -247,7 +367,7 @@ class BauhausSettingsTile extends StatelessWidget {
                   child: Icon(
                     icon,
                     size: 20,
-                    color: BauhausDesign.textDark, // Dark icons for contrast
+                    color: iconForegroundColor,
                   ),
                 ),
                 const SizedBox(width: BauhausDesign.space3),

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:carenest/config/environment.dart'; // Assuming this exists or similar
+import 'dart:io';
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
@@ -54,6 +55,11 @@ class AuthInterceptor extends Interceptor {
     if (accessToken != null) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
+
+    if (!kIsWeb && Platform.isIOS) {
+      options.headers['X-Platform'] = 'ios';
+    }
+
     return handler.next(options);
   }
 

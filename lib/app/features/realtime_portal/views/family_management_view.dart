@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/family_access_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
@@ -47,7 +46,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
@@ -306,8 +305,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     final emailController = TextEditingController();
     String selectedRole = 'family';
 
-    Get.dialog(
-      AlertDialog(
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
         title: const Text('Invite Family Member'),
         content: SingleChildScrollView(
           child: Column(
@@ -334,18 +334,18 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
-              // TODO: Implement invite logic
-              Get.back();
-              Get.snackbar(
-                'Invitation Sent',
-                'Family member invitation sent successfully',
-                backgroundColor: AppColors.colorSuccess,
-                colorText: Colors.white,
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      const Text('Family member invitation sent successfully'),
+                  backgroundColor: AppColors.colorSuccess,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -359,8 +359,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   }
 
   void _showPermissionsDialog(FamilyMember member) {
-    Get.dialog(
-      AlertDialog(
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
         title: Text('Manage Permissions - ${member.name}'),
         content: SingleChildScrollView(
           child: Column(
@@ -401,17 +402,17 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
-              Get.back();
-              Get.snackbar(
-                'Success',
-                'Permissions updated successfully',
-                backgroundColor: AppColors.colorSuccess,
-                colorText: Colors.white,
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Permissions updated successfully'),
+                  backgroundColor: AppColors.colorSuccess,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -438,13 +439,14 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   }
 
   void _confirmRemoveMember(FamilyMember member) {
-    Get.dialog(
-      AlertDialog(
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
         title: const Text('Remove Member'),
         content: Text('Are you sure you want to remove ${member.name}?'),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
@@ -452,12 +454,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               ref
                   .read(familyAccessViewModelProvider.notifier)
                   .removeMember(member.id);
-              Get.back();
-              Get.snackbar(
-                'Success',
-                'Family member removed successfully',
-                backgroundColor: AppColors.colorSuccess,
-                colorText: Colors.white,
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Family member removed successfully'),
+                  backgroundColor: AppColors.colorSuccess,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(

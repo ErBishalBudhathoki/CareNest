@@ -21,7 +21,7 @@ class MockEmployeePayRateViewModel extends StateNotifier<EmployeePayRateState>
   final String organizationId = 'test-org';
 
   @override
-  Future<void> fetchEmployees() async {}
+  Future<void> fetchEmployees({bool showLoading = true}) async {}
 }
 
 void main() {

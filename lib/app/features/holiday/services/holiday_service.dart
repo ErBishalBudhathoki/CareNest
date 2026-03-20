@@ -24,10 +24,9 @@ class HolidayService {
       final publicHolidays = await _fetchPublicHolidays();
       final customHolidays = await _fetchCustomHolidays();
 
-      // Merge lists
-      // Note: We might want to deduplicate here if a custom holiday overrides a public one
-      // For now, we return both.
-      return [...publicHolidays, ...customHolidays];
+      final merged = [...publicHolidays, ...customHolidays];
+      merged.sort((a, b) => a.date.compareTo(b.date));
+      return merged;
     } catch (e) {
       debugPrint('Error fetching holidays: $e');
       // If public API fails, at least return custom holidays or cached
@@ -108,56 +107,81 @@ class HolidayService {
       final prefs = SharedPreferencesUtils();
       await prefs.init();
       final String? currentOrgId = prefs.getOrganizationId();
-      
-      // Pass organizationId to backend if available
-      final List<dynamic>? rawHolidays = await _apiMethod.getHolidays(organizationId: currentOrgId);
-      final currentYear = DateTime.now().year;
 
-      if (rawHolidays != null) {
-        for (var item in rawHolidays) {
-          // Organization Filter (Double check on client side)
-          final itemOrgId = item['OrganizationId'] ?? item['organizationId'];
+      // Pass organizationId to backend if available.
+      final response =
+          await _apiMethod.getHolidays(organizationId: currentOrgId);
+      final rawHolidays = response['data'];
 
-          if (currentOrgId != null &&
-              itemOrgId != null &&
-              itemOrgId != currentOrgId) {
-            continue; 
-          }
+      if (rawHolidays is! List) {
+        return customHolidays;
+      }
 
-          final dateStr = item['Date'];
-          final id =
-              item['_id'] ?? DateTime.now().millisecondsSinceEpoch.toString();
-          final name = item['Holiday'] ??
-              item['HolidayName'] ??
-              item['name'] ??
-              'Custom Holiday';
+      for (final item in rawHolidays) {
+        if (item is! Map) continue;
+        final map = Map<String, dynamic>.from(item);
 
-          if (dateStr != null) {
-            try {
-              final date = DateFormat("dd-MM-yyyy").parse(dateStr);
-              // Filter by current year to avoid showing old "PAST" holidays
-              // NOTE: For pay calculation, we might need older/future ones, but this view is likely just for the "Holidays List"
-              // For now, keeping the year filter as it was, but this might be an issue if generating payslips for last year.
-              // Let's REMOVE the year filter so invoices work correctly for any period.
-              
-              customHolidays.add(Holiday(
-                id: id,
-                title: name,
-                date: date,
-                jurisdiction: 'custom',
-                isPublic: false,
-                isCustom: true,
-              ));
-              
-            } catch (e) {
-              debugPrint("Error parsing custom holiday date: $dateStr");
-            }
-          }
+        final itemOrgId = map['organizationId'] ?? map['OrganizationId'];
+        final itemOrgIdStr = itemOrgId?.toString();
+        final bool isCustom = map['isCustom'] == true ||
+            (itemOrgIdStr != null && itemOrgIdStr.isNotEmpty);
+
+        // We only return organization-specific custom holidays from MongoDB.
+        if (!isCustom) continue;
+        if (currentOrgId != null &&
+            itemOrgIdStr != null &&
+            itemOrgIdStr != currentOrgId) {
+          continue;
         }
+
+        final name = (map['name'] ??
+                    map['Holiday'] ??
+                    map['HolidayName'] ??
+                    map['title'])
+                ?.toString() ??
+            'Custom Holiday';
+
+        final date = _parseBackendHolidayDate(map['date'] ?? map['Date']);
+        if (date == null) {
+          debugPrint('Error parsing custom holiday date: ${map['date']}');
+          continue;
+        }
+
+        customHolidays.add(
+          Holiday(
+            id: (map['_id'] ?? map['id'] ?? date.millisecondsSinceEpoch)
+                .toString(),
+            title: name,
+            date: date,
+            jurisdiction: 'custom',
+            isPublic: false,
+            isCustom: true,
+          ),
+        );
       }
     } catch (e) {
       debugPrint('Error in _fetchCustomHolidays: $e');
     }
     return customHolidays;
+  }
+
+  DateTime? _parseBackendHolidayDate(dynamic rawDate) {
+    if (rawDate == null) return null;
+    final value = rawDate.toString().trim();
+    if (value.isEmpty) return null;
+
+    try {
+      return DateTime.parse(value);
+    } catch (_) {}
+
+    try {
+      return DateFormat('dd-MM-yyyy').parseStrict(value);
+    } catch (_) {}
+
+    try {
+      return DateFormat('yyyy-MM-dd').parseStrict(value);
+    } catch (_) {
+      return null;
+    }
   }
 }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/features/pricing/providers/pricing_live_data_providers.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
-
-import 'package:flutter_animate/flutter_animate.dart';
 
 class PriceHistoryView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -22,99 +21,24 @@ class PriceHistoryView extends ConsumerStatefulWidget {
 }
 
 class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
+    with SingleTickerProviderStateMixin {
+  static const Color _screenGray = Color(0xFFE3E3E3);
+  static const Color _inkBlack = Color(0xFF171717);
+  static const Color _accentRed = Color(0xFFE21F26);
+  static const Color _panelWhite = Color(0xFFF8F8F8);
+
+  late final TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
-  String _selectedTimeRange = '30 days';
-  String _selectedCategory = 'All';
-  bool _isLoading = false;
 
-  // Mock data for price history
-  final List<Map<String, dynamic>> _priceHistory = [
-    {
-      'id': 'PH001',
-      'itemCode': '01_001_0107_1_1',
-      'itemName': 'Personal Care - Weekday',
-      'category': 'Core Support',
-      'oldPrice': 62.17,
-      'newPrice': 65.57,
-      'changeAmount': 3.40,
-      'changePercentage': 5.47,
-      'changeType': 'Increase',
-      'changeDate': '2024-01-15',
-      'effectiveDate': '2024-02-01',
-      'reason': 'Annual NDIS price review',
-      'changedBy': 'admin@example.com',
-      'status': 'Active',
-    },
-    {
-      'id': 'PH002',
-      'itemCode': '01_002_0107_1_1',
-      'itemName': 'Community Participation',
-      'category': 'Capacity Building',
-      'oldPrice': 64.82,
-      'newPrice': 68.19,
-      'changeAmount': 3.37,
-      'changePercentage': 5.20,
-      'changeType': 'Increase',
-      'changeDate': '2024-01-15',
-      'effectiveDate': '2024-02-01',
-      'reason': 'Annual NDIS price review',
-      'changedBy': 'admin@example.com',
-      'status': 'Active',
-    },
-    {
-      'id': 'PH003',
-      'itemCode': '01_003_0107_1_1',
-      'itemName': 'Household Tasks',
-      'category': 'Core Support',
-      'oldPrice': 65.57,
-      'newPrice': 62.17,
-      'changeAmount': -3.40,
-      'changePercentage': -5.18,
-      'changeType': 'Decrease',
-      'changeDate': '2024-01-10',
-      'effectiveDate': '2024-01-20',
-      'reason': 'Regional adjustment',
-      'changedBy': 'admin@example.com',
-      'status': 'Pending',
-    },
-    {
-      'id': 'PH004',
-      'itemCode': '01_004_0107_1_1',
-      'itemName': 'Transport Services',
-      'category': 'Core Support',
-      'oldPrice': 58.90,
-      'newPrice': 61.85,
-      'changeAmount': 2.95,
-      'changePercentage': 5.01,
-      'changeType': 'Increase',
-      'changeDate': '2024-01-05',
-      'effectiveDate': '2024-01-15',
-      'reason': 'Fuel cost adjustment',
-      'changedBy': 'admin@example.com',
-      'status': 'Active',
-    },
-  ];
-
-  List<String> _getTimeRanges(BuildContext context) => [
-        AppLocalizations.of(context)!.timeRange7Days,
-        AppLocalizations.of(context)!.timeRange30Days,
-        AppLocalizations.of(context)!.timeRange90Days,
-        AppLocalizations.of(context)!.timeRange6Months,
-        AppLocalizations.of(context)!.timeRange1Year,
-      ];
-  List<String> _getCategories(BuildContext context) => [
-        AppLocalizations.of(context)!.allCategories,
-        AppLocalizations.of(context)!.coreSupport,
-        AppLocalizations.of(context)!.capacityBuilding,
-        AppLocalizations.of(context)!.capitalSupport,
-      ];
+  int _rangeDays = 30;
+  String? _selectedClientId;
+  String? _selectedSupportItem;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _searchController.addListener(() => setState(() {}));
   }
 
   @override
@@ -124,896 +48,783 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     super.dispose();
   }
 
+  DateTime? _historyDateFromMap(Map<String, dynamic> row) {
+    return pricingParseDate(
+      row['changedAt'] ?? row['updatedAt'] ?? row['createdAt'] ?? row['date'],
+    );
+  }
+
+  String _formatDate(DateTime value) {
+    return '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          _buildModernHeader(),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  _buildStatsCards(),
-                  const SizedBox(height: 24),
-                  _buildTabSection(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    final l10n = AppLocalizations.of(context)!;
+    final recordsAsync =
+        ref.watch(pricingLiveRecordsProvider(widget.organizationId));
+    final analyticsAsync =
+        ref.watch(pricingOrgAnalyticsProvider(widget.organizationId));
+    final clientsAsync =
+        ref.watch(pricingOrgClientsProvider(widget.organizationId));
 
-  Widget _buildModernHeader() {
-    return SliverToBoxAdapter(
-      child: Container(
-        color: Colors.white,
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final isSmallScreen = constraints.maxWidth < 600;
-              return Padding(
-                padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new,
-                              size: 20,
-                            ),
-                            color: const Color(0xFF475569),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.priceHistoryTitle,
-                                style: TextStyle(
-                                  fontSize: isSmallScreen ? 24 : 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF0F172A),
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              if (!isSmallScreen) ...[
-                                const SizedBox(height: 8),
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .trackPricingChanges,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ]
-                            ],
-                          ),
-                        ),
-                        if (!isSmallScreen)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF10B981).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF10B981),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  AppLocalizations.of(context)!.systemActive,
-                                  style: const TextStyle(
-                                    color: Color(0xFF10B981),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                    if (isSmallScreen) ...[
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              AppLocalizations.of(context)!.trackPricingChanges,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF10B981).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF10B981),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  AppLocalizations.of(context)!.systemActive,
-                                  style: const TextStyle(
-                                    color: Color(0xFF10B981),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ]
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
+    final records = recordsAsync.valueOrNull ?? const <PricingLiveRecord>[];
+    final clients = clientsAsync.valueOrNull ?? const <Map<String, dynamic>>[];
+    final analytics = analyticsAsync.valueOrNull;
 
-  // Widget _buildSliverAppBar() {
-  //   return SliverAppBar(
-  //     expandedHeight: 120,
-  //     floating: false,
-  //     pinned: true,
-  //,
-  //     flexibleSpace: FlexibleSpaceBar(
-  //       title: const Text(
-  //         'Price History',
-  //         style: TextStyle(
-  //           color: Colors.white,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //       ),
-  //       surface: Container(
-  //         decoration: BoxDecoration(
-  //           gradient: LinearGradient(
-  //             begin: Alignment.topLeft,
-  //             end: Alignment.bottomRight,
-  //             colors: [
-  //               AppColors.colorPrimary,
-  //               AppColors.colorPrimary.withOpacity(0.1),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //     leading: IconButton(
-  //       icon: const Icon(Icons.arrow_back, color: Colors.white),
-  //       onPressed: () => Navigator.pop(context),
-  //     ),
-  //     actions: [
-  //       IconButton(
-  //         icon: const Icon(Icons.refresh, color: Colors.white),
-  //         onPressed: _refreshData,
-  //       ),
-  //       IconButton(
-  //         icon: const Icon(Icons.download, color: Colors.white),
-  //         onPressed: _exportHistory,
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  Widget _buildStatsCards() {
-    final totalChanges = _priceHistory.length;
-    final increases =
-        _priceHistory.where((h) => h['changeType'] == 'Increase').length;
-    final decreases =
-        _priceHistory.where((h) => h['changeType'] == 'Decrease').length;
-    final avgChange = _priceHistory.isNotEmpty
-        ? _priceHistory
-                .map((h) => h['changePercentage'] as double)
-                .reduce((a, b) => a + b) /
-            _priceHistory.length
-        : 0.0;
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 160,
-            child: _buildStatCard(
-              AppLocalizations.of(context)!.totalChanges,
-              '$totalChanges',
-              Icons.timeline,
-              AppColors.colorBlue,
-              AppColors.colorBlue50,
-            ),
-          ),
-          const SizedBox(width: 16),
-          SizedBox(
-            width: 160,
-            child: _buildStatCard(
-              AppLocalizations.of(context)!.priceIncreases,
-              '$increases',
-              Icons.trending_up,
-              AppColors.colorGreen,
-              AppColors.colorGreen50,
-            ),
-          ),
-          const SizedBox(width: 16),
-          SizedBox(
-            width: 160,
-            child: _buildStatCard(
-              AppLocalizations.of(context)!.priceDecreases,
-              '$decreases',
-              Icons.trending_down,
-              AppColors.colorRed,
-              AppColors.colorRed50,
-            ),
-          ),
-          const SizedBox(width: 16),
-          SizedBox(
-            width: 160,
-            child: _buildStatCard(
-              AppLocalizations.of(context)!.avgChange,
-              '${avgChange.toStringAsFixed(1)}%',
-              Icons.percent,
-              AppColors.colorPurple,
-              Colors.purple[50]!,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(
-      String title, String value, IconData icon, Color color, Color bgInfo) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 100),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.colorGrey200),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: bgInfo,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, color: color, size: 18),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.colorGrey900,
-                  height: 1.2,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.colorGrey600,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
-  }
-
-  Widget _buildTabSection() {
-    return Column(
-      children: [
-        Container(
-          height: 48,
-          decoration: BoxDecoration(
-            color: AppColors.colorGrey100,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.all(4),
-          child: TabBar(
-            controller: _tabController,
-            labelColor: AppColors.colorWhite,
-            unselectedLabelColor: AppColors.colorGrey600,
-            indicator: BoxDecoration(
-              color: AppColors.colorPrimary,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerColor: Colors.transparent,
-            tabs: [
-              Tab(text: AppLocalizations.of(context)!.tabPriceChanges),
-              Tab(text: AppLocalizations.of(context)!.tabTrends),
-              Tab(text: AppLocalizations.of(context)!.tabAnalytics),
-            ],
-          ),
-        ),
-        const SizedBox(height: 24),
-        Container(
-          constraints: BoxConstraints(
-            minHeight: 400,
-            maxHeight: MediaQuery.of(context).size.height * 0.7,
-          ),
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildPriceChangesTab(),
-              _buildTrendsTab(),
-              _buildAnalyticsTab(),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPriceChangesTab() {
-    return Column(
-      children: [
-        _buildSearchAndFilters(),
-        const SizedBox(height: 8),
-        Expanded(
-          child: _buildHistoryList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchAndFilters() {
-    return LayoutBuilder(builder: (context, constraints) {
-      final searchField = TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.searchHistoryHint,
-          hintStyle:
-              const TextStyle(color: AppColors.colorGrey400, fontSize: 14),
-          prefixIcon: const Icon(Icons.search, color: AppColors.colorGrey400),
-          filled: true,
-          fillColor: AppColors.colorWhite,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.colorGrey200),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.colorGrey200),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide:
-                const BorderSide(color: AppColors.colorPrimary, width: 1.5),
-          ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        ),
-        onChanged: (value) => setState(() {}),
-      );
-
-      final timeRangeDropdown = DropdownButtonFormField<String>(
-        initialValue: _selectedTimeRange,
-        isExpanded: true,
-        isDense: true,
-        decoration: InputDecoration(
-          labelText: AppLocalizations.of(context)!.timeRangeLabel,
-          labelStyle:
-              const TextStyle(color: AppColors.colorGrey600, fontSize: 14),
-          filled: true,
-          fillColor: AppColors.colorWhite,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.colorGrey200),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.colorGrey200),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide:
-                const BorderSide(color: AppColors.colorPrimary, width: 1.5),
-          ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        ),
-        items: _getTimeRanges(context).map((range) {
-          return DropdownMenuItem(
-            value: range == AppLocalizations.of(context)!.timeRange7Days
-                ? '7 days'
-                : range == AppLocalizations.of(context)!.timeRange30Days
-                    ? '30 days'
-                    : range == AppLocalizations.of(context)!.timeRange90Days
-                        ? '90 days'
-                        : range ==
-                                AppLocalizations.of(context)!.timeRange6Months
-                            ? '6 months'
-                            : range ==
-                                    AppLocalizations.of(context)!.timeRange1Year
-                                ? '1 year'
-                                : range,
-            child: Text(
-              range,
-              overflow: TextOverflow.ellipsis,
-              style:
-                  const TextStyle(fontSize: 14, color: AppColors.colorGrey800),
-            ),
-          );
-        }).toList(),
-        onChanged: (value) => setState(() => _selectedTimeRange = value!),
-      );
-
-      final categoryDropdown = DropdownButtonFormField<String>(
-        initialValue: _selectedCategory,
-        isExpanded: true,
-        isDense: true,
-        decoration: InputDecoration(
-          labelText: AppLocalizations.of(context)!.categoryLabel,
-          labelStyle:
-              const TextStyle(color: AppColors.colorGrey600, fontSize: 14),
-          filled: true,
-          fillColor: AppColors.colorWhite,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.colorGrey200),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.colorGrey200),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide:
-                const BorderSide(color: AppColors.colorPrimary, width: 1.5),
-          ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        ),
-        items: _getCategories(context).map((category) {
-          return DropdownMenuItem(
-            value: category == AppLocalizations.of(context)!.allCategories
-                ? 'All'
-                : category == AppLocalizations.of(context)!.coreSupport
-                    ? 'Core Support'
-                    : category == AppLocalizations.of(context)!.capacityBuilding
-                        ? 'Capacity Building'
-                        : category ==
-                                AppLocalizations.of(context)!.capitalSupport
-                            ? 'Capital Support'
-                            : category,
-            child: Text(
-              category,
-              overflow: TextOverflow.ellipsis,
-              style:
-                  const TextStyle(fontSize: 14, color: AppColors.colorGrey800),
-            ),
-          );
-        }).toList(),
-        onChanged: (value) => setState(() => _selectedCategory = value!),
-      );
-
-      if (constraints.maxWidth > 700) {
-        return Row(
-          children: [
-            Expanded(flex: 2, child: searchField),
-            const SizedBox(width: 16),
-            Expanded(flex: 1, child: timeRangeDropdown),
-            const SizedBox(width: 16),
-            Expanded(flex: 1, child: categoryDropdown),
-          ],
-        );
-      } else {
-        return Column(
-          children: [
-            searchField,
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: timeRangeDropdown),
-                const SizedBox(width: 12),
-                Expanded(child: categoryDropdown),
-              ],
-            ),
-          ],
-        );
+    final filteredRecords = records.where((record) {
+      if (!record.isCustom) return false;
+      final search = _searchController.text.trim().toLowerCase();
+      if (search.isNotEmpty &&
+          !record.supportItemName.toLowerCase().contains(search) &&
+          !record.supportItemNumber.toLowerCase().contains(search)) {
+        return false;
       }
-    });
-  }
-
-  Widget _buildHistoryList() {
-    final filteredHistory = _priceHistory.where((history) {
-      final matchesSearch = _searchController.text.isEmpty ||
-          history['itemName']
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase()) ||
-          history['itemCode']
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase());
-      final matchesCategory = _selectedCategory == 'All' ||
-          history['category'] == _selectedCategory;
-      return matchesSearch && matchesCategory;
+      final dt = record.effectiveTimestamp;
+      if (dt == null) return true;
+      return dt.isAfter(DateTime.now().subtract(Duration(days: _rangeDays)));
     }).toList();
 
-    return ListView.builder(
+    final detailAsync =
+        (_selectedClientId != null && _selectedSupportItem != null)
+            ? ref.watch(
+                pricingDetailedHistoryProvider(
+                  PriceHistoryQuery(
+                    supportItemNumber: _selectedSupportItem!,
+                    clientId: _selectedClientId!,
+                  ),
+                ),
+              )
+            : const AsyncData<List<Map<String, dynamic>>>([]);
+
+    final detailRows =
+        detailAsync.valueOrNull ?? const <Map<String, dynamic>>[];
+
+    return Scaffold(
+      backgroundColor: _screenGray,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(pricingLiveRecordsProvider(widget.organizationId));
+          ref.invalidate(pricingOrgAnalyticsProvider(widget.organizationId));
+          ref.invalidate(pricingOrgClientsProvider(widget.organizationId));
+          if (_selectedClientId != null && _selectedSupportItem != null) {
+            ref.invalidate(
+              pricingDetailedHistoryProvider(
+                PriceHistoryQuery(
+                  supportItemNumber: _selectedSupportItem!,
+                  clientId: _selectedClientId!,
+                ),
+              ),
+            );
+          }
+        },
+        color: BauhausDesign.primary,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(child: _buildHeader(l10n)),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildStats(l10n, records, analytics),
+                    const SizedBox(height: 20),
+                    _buildTabs(l10n),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.60,
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildRecordTimeline(l10n, filteredRecords),
+                          _buildClientHistory(
+                            l10n: l10n,
+                            clients: clients,
+                            records: records,
+                            detailRows: detailRows,
+                            isLoading: detailAsync.isLoading,
+                          ),
+                          _buildAnalyticsTab(l10n, records, analytics),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(AppLocalizations l10n) {
+    return Container(
+      color: _screenGray,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
+          child: Container(
+            color: _screenGray,
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: _panelWhite,
+                          border: Border.all(color: _inkBlack, width: 2),
+                        ),
+                        child: const Icon(Icons.arrow_back,
+                            size: 18, color: _inkBlack),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        l10n.priceHistoryTitle,
+                        style: BauhausDesign.getTextTheme(context)
+                            .headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: _inkBlack,
+                              letterSpacing: 0.4,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.trackPricingChanges,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              color: _inkBlack,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _accentRed,
+                        border: Border.all(color: _inkBlack, width: 2),
+                      ),
+                      child: Text(
+                        l10n.systemActive.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.surfaceWhite,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.6,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Divider(color: _inkBlack, height: 1, thickness: 1),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStats(
+    AppLocalizations l10n,
+    List<PricingLiveRecord> records,
+    dynamic analytics,
+  ) {
+    final custom = records.where((record) => record.isCustom).length;
+    final updated = records
+        .where((record) =>
+            record.isCustom &&
+            (record.effectiveTimestamp != null) &&
+            record.effectiveTimestamp!
+                .isAfter(DateTime.now().subtract(const Duration(days: 7))))
+        .length;
+    final violations = analytics?.metrics.nonCompliantItems ?? 0;
+    final compliance = analytics?.metrics.complianceRate ??
+        (records.isEmpty ? 0.0 : (custom / records.length) * 100);
+
+    final List<Map<String, Object>> cards = [
+      {
+        'title': l10n.totalChanges,
+        'value': custom.toString(),
+        'color': BauhausDesign.secondary,
+        'icon': Icons.history_outlined,
+      },
+      {
+        'title': l10n.pendingUpdatesLabel,
+        'value': updated.toString(),
+        'color': BauhausDesign.success,
+        'icon': Icons.update_outlined,
+      },
+      {
+        'title': l10n.moduleMetricActionableItems,
+        'value': violations.toString(),
+        'color': BauhausDesign.warning,
+        'icon': Icons.warning_amber_outlined,
+      },
+      {
+        'title': l10n.moduleMetricCompliance,
+        'value': '${compliance.toStringAsFixed(1)}%',
+        'color': BauhausDesign.info,
+        'icon': Icons.verified_outlined,
+      },
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      primary: false,
       padding: EdgeInsets.zero,
-      itemCount: filteredHistory.length,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: cards.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        mainAxisExtent: 88,
+      ),
       itemBuilder: (context, index) {
-        final history = filteredHistory[index];
-        return _buildHistoryCard(history);
+        final card = cards[index];
+        return Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _panelWhite,
+            border: Border.all(color: _inkBlack, width: 2),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: card['color'] as Color,
+                  border: Border.all(color: _inkBlack, width: 2),
+                ),
+                child: Icon(card['icon'] as IconData,
+                    size: 12, color: BauhausDesign.surfaceWhite),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      card['value'] as String,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelLarge
+                          ?.copyWith(
+                              color: _inkBlack, fontWeight: FontWeight.w900),
+                    ),
+                    Text(
+                      card['title'] as String,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(color: BauhausDesign.textMuted),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }
 
-  Widget _buildHistoryCard(Map<String, dynamic> history) {
-    final isIncrease = history['changeType'] == 'Increase';
-    final changeColor = isIncrease ? Colors.green : Colors.red;
-    final changeIcon = isIncrease ? Icons.trending_up : Icons.trending_down;
-
+  Widget _buildTabs(AppLocalizations l10n) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: TabBar(
+        controller: _tabController,
+        indicator: const BoxDecoration(color: _inkBlack),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorPadding: EdgeInsets.zero,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        labelColor: BauhausDesign.surfaceWhite,
+        unselectedLabelColor: _inkBlack,
+        labelStyle: BauhausDesign.getTextTheme(context)
+            .labelSmall
+            ?.copyWith(fontWeight: FontWeight.w900),
+        tabs: [
+          Tab(text: l10n.tabPriceChanges),
+          Tab(text: l10n.tabHistory),
+          Tab(text: l10n.tabAnalytics),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      history['itemName'],
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${history['itemCode']} • ${history['category']}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: history['status'] == 'Active'
-                          ? Colors.green[100]
-                          : Colors.orange[100],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      history['status'] == 'Active'
-                          ? AppLocalizations.of(context)!.statusActive
-                          : AppLocalizations.of(context)!.statusPending,
-                      style: TextStyle(
-                        color: history['status'] == 'Active'
-                            ? Colors.green[700]
-                            : Colors.orange[700],
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(changeIcon, color: changeColor, size: 24),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildPriceInfo(
-                  AppLocalizations.of(context)!.oldPrice,
-                  '\$${history['oldPrice'].toStringAsFixed(2)}',
-                  Colors.grey[600]!,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Icon(Icons.arrow_forward, color: Colors.grey[400]),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildPriceInfo(
-                  AppLocalizations.of(context)!.newPrice,
-                  '\$${history['newPrice'].toStringAsFixed(2)}',
-                  changeColor,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: _buildPriceInfo(
-                  AppLocalizations.of(context)!.changeLabel,
-                  '${isIncrease ? '+' : ''}\$${history['changeAmount'].toStringAsFixed(2)}',
-                  changeColor,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildPriceInfo(
-                  AppLocalizations.of(context)!.percentage,
-                  '${isIncrease ? '+' : ''}${history['changePercentage'].toStringAsFixed(1)}%',
-                  changeColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${AppLocalizations.of(context)!.reasonLabel}: ${history['reason']}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${AppLocalizations.of(context)!.changeDateLabel}: ${history['changeDate']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '${AppLocalizations.of(context)!.effectiveDateLabel}: ${history['effectiveDate']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '${AppLocalizations.of(context)!.changedByLabel}: ${history['changedBy']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.end,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
+    );
   }
 
-  Widget _buildPriceInfo(String label, String value, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildRecordTimeline(
+      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    return ListView(
+      primary: false,
+      padding: const EdgeInsets.only(top: 0),
       children: [
-        Text(
+        _buildFilterControls(l10n),
+        const SizedBox(height: 2),
+        if (records.isEmpty)
+          _buildEmpty(l10n.moduleNoTrackedChanges)
+        else
+          ...records.take(80).map(
+                (record) => _buildTimelineCard(
+                  title:
+                      '${record.supportItemNumber} · ${record.supportItemName}',
+                  subtitle:
+                      '\$${(record.customPrice ?? 0).toStringAsFixed(2)} · cap ${record.priceCap?.toStringAsFixed(2) ?? '-'} · ${record.source}',
+                  time: record.effectiveTimestamp,
+                  status: record.ndisCompliant == false
+                      ? l10n.moduleStatusNeedsAction
+                      : l10n.moduleStatusHealthy,
+                ),
+              ),
+      ],
+    );
+  }
+
+  Widget _buildFilterControls(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: Column(
+        children: [
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: l10n.searchHistoryHint,
+              prefixIcon: const Icon(Icons.search, color: _inkBlack),
+              isDense: true,
+              filled: true,
+              fillColor: BauhausDesign.surfaceWhite,
+              enabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: _inkBlack, width: 2),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: _inkBlack, width: 2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: _buildRangeButton(l10n.timeRange7Days, 7),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: _buildRangeButton(l10n.timeRange30Days, 30),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: _buildRangeButton(l10n.timeRange90Days, 90),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRangeButton(String label, int days) {
+    final selected = _rangeDays == days;
+    return InkWell(
+      onTap: () => setState(() => _rangeDays = days),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? _inkBlack : BauhausDesign.surfaceWhite,
+          border: Border.all(color: _inkBlack, width: 2),
+        ),
+        child: Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
+          textAlign: TextAlign.center,
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: selected ? BauhausDesign.surfaceWhite : _inkBlack,
+                fontWeight: FontWeight.w900,
+              ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClientHistory({
+    required AppLocalizations l10n,
+    required List<Map<String, dynamic>> clients,
+    required List<PricingLiveRecord> records,
+    required List<Map<String, dynamic>> detailRows,
+    required bool isLoading,
+  }) {
+    final customRecords = records.where((record) => record.isCustom).toList();
+
+    return ListView(
+      primary: false,
+      padding: const EdgeInsets.only(top: 0),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _panelWhite,
+            border: Border.all(color: _inkBlack, width: 2),
+          ),
+          child: Column(
+            children: [
+              _buildDropdown(
+                value: _selectedClientId,
+                hint: l10n.selectClientToViewPricing,
+                items: clients
+                    .map(
+                      (client) => DropdownMenuItem<String>(
+                        value: (client['id'] ??
+                                client['_id'] ??
+                                client['clientId'])
+                            ?.toString(),
+                        child: Text(
+                          (client['name'] ??
+                                  '${client['firstName'] ?? ''} ${client['lastName'] ?? ''}')
+                              .toString()
+                              .trim(),
+                          overflow: TextOverflow.ellipsis,
+                          style: (BauhausDesign.getTextTheme(context).labelSmall ??
+                                  const TextStyle(fontSize: 12))
+                              .copyWith(
+                                color: BauhausDesign.textDark,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ),
+                    )
+                    .where(
+                        (item) => item.value != null && item.value!.isNotEmpty)
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => _selectedClientId = value);
+                },
+              ),
+              const SizedBox(height: 4),
+              _buildDropdown(
+                value: _selectedSupportItem,
+                hint: l10n.searchItems,
+                items: customRecords
+                    .map(
+                      (record) => DropdownMenuItem<String>(
+                        value: record.supportItemNumber,
+                        child: Text(
+                          '${record.supportItemNumber} · ${record.supportItemName}',
+                          overflow: TextOverflow.ellipsis,
+                          style: (BauhausDesign.getTextTheme(context).labelSmall ??
+                                  const TextStyle(fontSize: 12))
+                              .copyWith(
+                                color: BauhausDesign.textDark,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => _selectedSupportItem = value);
+                },
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: color,
+        if (_selectedClientId == null || _selectedSupportItem == null)
+          _buildEmpty(l10n.selectClientToViewPricing)
+        else if (isLoading)
+          const Center(
+              child: Padding(
+            padding: EdgeInsets.all(16),
+            child: CircularProgressIndicator(),
+          ))
+        else if (detailRows.isEmpty)
+          _buildEmpty(l10n.moduleNoTrackedChanges)
+        else
+          ...detailRows.map((row) {
+            final oldPrice = pricingToDouble(row['oldPrice']);
+            final newPrice = pricingToDouble(row['newPrice'] ?? row['price']);
+            final reason =
+                (row['reason'] ?? row['changeReason'] ?? '').toString();
+            final changedBy =
+                (row['changedBy'] ?? row['userEmail'] ?? '').toString();
+            return _buildTimelineCard(
+              title: '${row['supportItemNumber'] ?? _selectedSupportItem}',
+              subtitle:
+                  'old \$${oldPrice.toStringAsFixed(2)} -> new \$${newPrice.toStringAsFixed(2)} ${reason.isNotEmpty ? '· $reason' : ''} ${changedBy.isNotEmpty ? '· $changedBy' : ''}',
+              time: _historyDateFromMap(row),
+              status: (row['status'] ??
+                      row['changeType'] ??
+                      l10n.moduleStatusHealthy)
+                  .toString(),
+            );
+          }),
+      ],
+    );
+  }
+
+  Widget _buildAnalyticsTab(
+    AppLocalizations l10n,
+    List<PricingLiveRecord> records,
+    dynamic analytics,
+  ) {
+    final custom = records.where((record) => record.isCustom).toList();
+    final avgCustom = custom.isEmpty
+        ? 0.0
+        : custom.fold<double>(
+                0.0, (sum, record) => sum + (record.customPrice ?? 0)) /
+            custom.length;
+    final avgStandard = records.isEmpty
+        ? 0.0
+        : records.fold<double>(
+                0.0, (sum, record) => sum + record.standardPrice) /
+            records.length;
+
+    final compliance = analytics?.metrics.complianceRate ??
+        (records.isEmpty ? 0.0 : (custom.length / records.length) * 100);
+    final violations = analytics?.metrics.nonCompliantItems ?? 0;
+
+    return ListView(
+      primary: false,
+      padding: const EdgeInsets.only(top: 0),
+      children: [
+        _buildInsightCard(
+          title: l10n.moduleMetricAvgBaseRate,
+          value: avgCustom > 0
+              ? '\$${avgCustom.toStringAsFixed(2)}'
+              : l10n.naLabel,
+          secondary:
+              '${l10n.standardNdisRateLabel}: \$${avgStandard.toStringAsFixed(2)}',
+        ),
+        _buildInsightCard(
+          title: l10n.moduleMetricCompliance,
+          value: '${compliance.toStringAsFixed(1)}%',
+          secondary: '${l10n.moduleMetricActionableItems}: $violations',
+        ),
+        _buildInsightCard(
+          title: l10n.moduleMetricTrackedEntries,
+          value: custom.length.toString(),
+          secondary: l10n.moduleKeyInsightCoverage(
+            custom.length.toString(),
+            records.length.toString(),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTrendsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.trending_up, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.priceTrendsTitle,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.visualChartsAndTrends,
-              style: TextStyle(color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-          ],
+  Widget _buildDropdown({
+    required String? value,
+    required String hint,
+    required List<DropdownMenuItem<String>> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    final baseStyle =
+        BauhausDesign.getTextTheme(context).labelSmall ??
+            const TextStyle(fontSize: 12);
+    final dropdownTextStyle = baseStyle.copyWith(
+      color: BauhausDesign.textDark,
+      fontWeight: FontWeight.w700,
+    );
+    final bool hasItems = items.isNotEmpty;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: items.any((item) => item.value == value) ? value : null,
+          hint: Text(
+            hint,
+            overflow: TextOverflow.ellipsis,
+            style: dropdownTextStyle,
+          ),
+          disabledHint: Text(
+            hint,
+            overflow: TextOverflow.ellipsis,
+            style: dropdownTextStyle,
+          ),
+          style: dropdownTextStyle,
+          dropdownColor: BauhausDesign.surfaceWhite,
+          iconEnabledColor: _inkBlack,
+          isExpanded: true,
+          items: items,
+          onChanged: hasItems ? onChanged : null,
         ),
       ),
     );
   }
 
-  Widget _buildAnalyticsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.analytics, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.priceAnalyticsTitle,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.detailedAnalyticsInsights,
-              style: TextStyle(color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+  Widget _buildInsightCard({
+    required String title,
+    required String value,
+    required String secondary,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: BauhausDesign.getTextTheme(context)
+                .headlineSmall
+                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            secondary,
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(color: BauhausDesign.textMuted),
+          ),
+        ],
       ),
     );
   }
 
-  void _refreshData() {
-    setState(() {
-      _isLoading = true;
-    });
-    // Simulate API call
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        _isLoading = false;
-      });
-      _showSnackBar(AppLocalizations.of(context)!.dataRefreshedSuccess);
-    });
+  Widget _buildTimelineCard({
+    required String title,
+    required String subtitle,
+    required DateTime? time,
+    required String status,
+  }) {
+    final statusColor = _statusColor(status);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelSmall
+                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelSmall
+                      ?.copyWith(color: BauhausDesign.textMuted),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  time == null
+                      ? AppLocalizations.of(context)!.moduleNoDataYet
+                      : _formatDate(time),
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelSmall
+                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: statusColor,
+              border: Border.all(color: _inkBlack, width: 1),
+            ),
+            child: Text(
+              status.toUpperCase(),
+              style: BauhausDesign.getTextTheme(context)
+                  .labelSmall
+                  ?.copyWith(color: BauhausDesign.surfaceWhite),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  void _exportHistory() {
-    _showSnackBar(AppLocalizations.of(context)!.exportingHistory);
+  Color _statusColor(String status) {
+    final l10n = AppLocalizations.of(context)!;
+    final normalized = status.trim().toLowerCase();
+    if (normalized == l10n.moduleStatusHealthy.toLowerCase() ||
+        normalized.contains('healthy')) {
+      return BauhausDesign.success;
+    }
+    if (normalized == l10n.moduleStatusNeedsAction.toLowerCase() ||
+        normalized.contains('unhealthy') ||
+        normalized.contains('needs')) {
+      return BauhausDesign.warning;
+    }
+    return BauhausDesign.neutral;
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
+  Widget _buildEmpty(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: BauhausDesign.getTextTheme(context)
+            .bodyMedium
+            ?.copyWith(color: BauhausDesign.textMuted),
       ),
     );
   }

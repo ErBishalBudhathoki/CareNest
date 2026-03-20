@@ -16,11 +16,13 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 class InvoiceDetailView extends ConsumerStatefulWidget {
   final String invoiceId;
   final String organizationId;
+  final Map<String, dynamic>? initialInvoiceData;
 
   const InvoiceDetailView({
     super.key,
     required this.invoiceId,
     required this.organizationId,
+    this.initialInvoiceData,
   });
 
   @override
@@ -41,9 +43,17 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
     // Load invoice details when the view initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(invoiceDetailViewModelProvider.notifier)
-          .loadInvoiceDetails(widget.invoiceId, widget.organizationId);
+      final notifier = ref.read(invoiceDetailViewModelProvider.notifier);
+      if (widget.initialInvoiceData != null) {
+        try {
+          final fallback =
+              InvoiceListModel.fromJson(widget.initialInvoiceData!);
+          notifier.setInitialInvoice(fallback);
+        } catch (_) {
+          // Ignore malformed fallback snapshot and continue with backend fetch.
+        }
+      }
+      notifier.loadInvoiceDetails(widget.invoiceId, widget.organizationId);
     });
   }
 
@@ -143,7 +153,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
   Widget _buildBody(InvoiceDetailState state) {
     final l10n = AppLocalizations.of(context)!;
-    if (state.isLoading) {
+    if (state.isLoading && state.invoice == null) {
       return Center(
         child: BauhausLoadingState(
           message: l10n.loadingInvoiceDetails,
@@ -151,7 +161,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       );
     }
 
-    if (state.error != null) {
+    if (state.error != null && state.invoice == null) {
       return BauhausErrorState(
         title: l10n.errorLoadingInvoice,
         description: state.error!,
@@ -176,6 +186,24 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (state.warning != null && state.warning!.trim().isNotEmpty) ...[
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
+              padding: const EdgeInsets.all(BauhausDesign.space3),
+              decoration: BoxDecoration(
+                color: BauhausDesign.warning.withOpacity(0.1),
+                border: Border.all(color: BauhausDesign.warning, width: 1.5),
+              ),
+              child: Text(
+                state.warning!,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ],
           _buildInvoiceHeader(state.invoice!),
           const SizedBox(height: BauhausDesign.space4),
           _buildClientInformation(state.invoice!),
@@ -553,7 +581,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       final result = await shareService.shareInvoice(
         invoice: invoice,
         organizationId: widget.organizationId,
-        method: ShareMethod.pdf,
+        method: shareMethod,
       );
 
       // Show loading and show result

@@ -3,27 +3,24 @@ import 'package:carenest/app/features/client_appointment_details/models/client_d
 import 'package:carenest/app/features/client_appointment_details/models/visit_history_model.dart';
 import 'package:carenest/app/features/client_appointment_details/repositories/client_appointment_repository.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-
-final clientAppointmentDetailsViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
-  // Assuming we have a provider for repository. If not, we instantiate it here for now.
-  // In a real app, use ref.watch(repositoryProvider)
-  // For now, I'll instantiate ApiMethod directly or rely on DI if available.
-  // Using a simplified approach for this snippet.
-  throw UnimplementedError('Provider must be overridden');
-});
 
 class ClientAppointmentDetailsViewModel extends ChangeNotifier {
   final ClientAppointmentRepository _repository;
-  final String _clientId;
+  String _clientId;
+  final String? _clientEmail;
   
   ClientDetailModel? _client;
   List<VisitHistoryModel> _visitHistory = [];
   ViewState _state = ViewState.idle;
   String? _errorMessage;
 
-  ClientAppointmentDetailsViewModel(this._repository, this._clientId) {
+  ClientAppointmentDetailsViewModel(
+    this._repository,
+    String clientId, {
+    String? clientEmail,
+  })  : _clientId = clientId,
+        _clientEmail = clientEmail {
     _init();
   }
 
@@ -45,9 +42,26 @@ class ClientAppointmentDetailsViewModel extends ChangeNotifier {
         throw Exception('Organization ID not found');
       }
 
-      // Fetch client details
-      _client = await _repository.getClientDetails(_clientId, organizationId);
-      
+      if (_clientId.trim().isEmpty &&
+          _clientEmail != null &&
+          _clientEmail!.trim().isNotEmpty) {
+        final resolved = await _repository.getClientByEmail(
+          _clientEmail!.trim(),
+          organizationId,
+        );
+        if (resolved != null) {
+          _client = resolved;
+          _clientId = resolved.id;
+        }
+      }
+
+      if (_clientId.trim().isEmpty) {
+        throw Exception('Client not found');
+      }
+
+      // Fetch client details (if not already resolved)
+      _client ??= await _repository.getClientDetails(_clientId, organizationId);
+
       // Fetch visit history
       _visitHistory = await _repository.getVisitHistory(_clientId, organizationId);
       
@@ -68,7 +82,12 @@ class ClientAppointmentDetailsViewModel extends ChangeNotifier {
       final organizationId = prefs.getString('organizationId') ?? '';
       final userEmail = prefs.getString('userEmail') ?? '';
 
-      final success = await _repository.updateCareNotes(_clientId, careNotes, organizationId, userEmail);
+      final success = await _repository.updateCareNotes(
+        _clientId,
+        careNotes,
+        organizationId,
+        userEmail,
+      );
       if (success) {
         // Optimistic update or refetch
         _client = _client?.copyWith(careNotes: careNotes);

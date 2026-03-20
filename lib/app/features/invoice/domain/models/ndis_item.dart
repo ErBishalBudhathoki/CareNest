@@ -124,27 +124,49 @@ class NDISItem {
 
     Map<PriceRegion, double?> extractRegionalPrices(
         Map<String, dynamic> jsonMap) {
-      final Map<PriceRegion, double?> prices = {};
-      prices[PriceRegion.act] =
-          parsePrice(jsonMap[" ACT "]); // Note the spaces in keys
-      prices[PriceRegion.nsw] = parsePrice(jsonMap[" NSW "]);
-      prices[PriceRegion.nt] = parsePrice(jsonMap[" NT "]);
-      prices[PriceRegion.qld] = parsePrice(jsonMap[" QLD "]);
-      prices[PriceRegion.sa] = parsePrice(jsonMap[" SA "]);
-      prices[PriceRegion.tas] = parsePrice(jsonMap[" TAS "]);
-      prices[PriceRegion.vic] = parsePrice(jsonMap[" VIC "]);
-      prices[PriceRegion.wa] = parsePrice(jsonMap[" WA "]);
-      prices[PriceRegion.remote] = parsePrice(jsonMap[" Remote "]);
-      prices[PriceRegion.veryRemote] = parsePrice(jsonMap[" Very Remote "]);
+      final normalizedLookup = <String, dynamic>{};
+      jsonMap.forEach((key, value) {
+        normalizedLookup[key.toString().trim().toUpperCase()] = value;
+      });
 
-      // Fallback for P01/P02 if regional are missing (seen in "Sheet3" of your new example)
-      if (prices.values.every((p) => p == null)) {
-        final p01 = parsePrice(jsonMap["P01"]); // No spaces for P01/P02 usually
-        final p02 = parsePrice(jsonMap["P02"]);
-        if (p01 != null || p02 != null) {
-          prices[PriceRegion.national] =
-              p01 ?? p02; // Use P01 or P02 as a national/default
+      dynamic readValue(List<String> candidateKeys) {
+        for (final key in candidateKeys) {
+          if (jsonMap.containsKey(key)) {
+            return jsonMap[key];
+          }
         }
+        for (final key in candidateKeys) {
+          final normalized = key.trim().toUpperCase();
+          if (normalizedLookup.containsKey(normalized)) {
+            return normalizedLookup[normalized];
+          }
+        }
+        return null;
+      }
+
+      final Map<PriceRegion, double?> prices = {};
+      prices[PriceRegion.act] = parsePrice(readValue(['ACT', ' ACT ']));
+      prices[PriceRegion.nsw] = parsePrice(readValue(['NSW', ' NSW ']));
+      prices[PriceRegion.nt] = parsePrice(readValue(['NT', ' NT ']));
+      prices[PriceRegion.qld] = parsePrice(readValue(['QLD', ' QLD ']));
+      prices[PriceRegion.sa] = parsePrice(readValue(['SA', ' SA ']));
+      prices[PriceRegion.tas] = parsePrice(readValue(['TAS', ' TAS ']));
+      prices[PriceRegion.vic] = parsePrice(readValue(['VIC', ' VIC ']));
+      prices[PriceRegion.wa] = parsePrice(readValue(['WA', ' WA ']));
+
+      final p01 = parsePrice(readValue(['P01']));
+      final p02 = parsePrice(readValue(['P02']));
+      prices[PriceRegion.remote] =
+          parsePrice(readValue(['REMOTE', ' Remote '])) ?? p01;
+      prices[PriceRegion.veryRemote] =
+          parsePrice(readValue(['VERY REMOTE', ' Very Remote '])) ?? p02;
+      prices[PriceRegion.national] =
+          parsePrice(readValue(['NATIONAL'])) ?? p01 ?? p02;
+
+      // Keep a stable fallback if a dataset only has P01/P02.
+      if (prices.values.every((p) => p == null) &&
+          (p01 != null || p02 != null)) {
+        prices[PriceRegion.national] = p01 ?? p02;
       }
       return prices;
     }

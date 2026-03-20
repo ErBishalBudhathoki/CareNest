@@ -97,53 +97,63 @@ class _ComplianceAutomationDashboardState
   }
 
   Widget _buildStatsSection() {
+    final stats = [
+      _ComplianceStatItem(
+        label: 'Score',
+        value: '$_complianceScore%',
+        icon: Icons.verified_user_outlined,
+        color: _getScoreColor(_complianceScore),
+      ),
+      _ComplianceStatItem(
+        label: 'Risk Level',
+        value: _riskLevel.toUpperCase(),
+        icon: Icons.shield_outlined,
+        color: _getRiskColor(_riskLevel),
+      ),
+      _ComplianceStatItem(
+        label: 'Expiring',
+        value: '$_expiringDocs',
+        icon: Icons.schedule_outlined,
+        color: BauhausDesign.warning,
+      ),
+      _ComplianceStatItem(
+        label: 'Critical',
+        value: '$_criticalIssues',
+        icon: Icons.error_outline,
+        color: BauhausDesign.error,
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         BauhausSectionHeader(title: 'COMPLIANCE OVERVIEW'),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                label: 'Score',
-                value: '$_complianceScore%',
-                icon: Icons.verified_user_outlined,
-                color: _getScoreColor(_complianceScore),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                label: 'Risk Level',
-                value: _riskLevel.toUpperCase(),
-                icon: Icons.shield_outlined,
-                color: _getRiskColor(_riskLevel),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                label: 'Expiring',
-                value: '$_expiringDocs',
-                icon: Icons.schedule_outlined,
-                color: BauhausDesign.warning,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                label: 'Critical',
-                value: '$_criticalIssues',
-                icon: Icons.error_outline,
-                color: BauhausDesign.error,
-              ),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final columns = constraints.maxWidth >= 860 ? 2 : 1;
+            final cardWidth = columns == 1
+                ? constraints.maxWidth
+                : (constraints.maxWidth - 16) / 2;
+
+            return Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: stats
+                  .map(
+                    (stat) => SizedBox(
+                      width: cardWidth,
+                      child: _buildStatCard(
+                        label: stat.label,
+                        value: stat.value,
+                        icon: stat.icon,
+                        color: stat.color,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            );
+          },
         ),
       ],
     );
@@ -166,7 +176,10 @@ class _ComplianceAutomationDashboardState
               children: [
                 Text(
                   label.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(context).labelSmall,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                 ),
                 Icon(icon, color: color, size: 20),
               ],
@@ -174,10 +187,11 @@ class _ComplianceAutomationDashboardState
             const SizedBox(height: 8),
             Text(
               value,
-              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style:
+                  BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
             ),
           ],
         ),
@@ -197,9 +211,10 @@ class _ComplianceAutomationDashboardState
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 500;
+              final leadingIcon = Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
@@ -207,12 +222,23 @@ class _ComplianceAutomationDashboardState
                   border: Border.all(color: color, width: 2),
                 ),
                 child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
+              );
+
+              if (isCompact) {
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        leadingIcon,
+                        const Spacer(),
+                        const Icon(
+                          Icons.arrow_forward,
+                          color: BauhausDesign.textDark,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     Text(
                       title.toUpperCase(),
                       style: BauhausDesign.getTextTheme(context)
@@ -222,13 +248,51 @@ class _ComplianceAutomationDashboardState
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: BauhausDesign.getTextTheme(context).bodySmall,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                     ),
                   ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward, color: BauhausDesign.textDark),
-            ],
+                );
+              }
+
+              return Row(
+                children: [
+                  leadingIcon,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title.toUpperCase(),
+                          style: BauhausDesign.getTextTheme(context)
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          description,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodySmall
+                              ?.copyWith(
+                                color: BauhausDesign.textDark,
+                              ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward,
+                      color: BauhausDesign.textDark),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -278,4 +342,18 @@ class _ComplianceAutomationDashboardState
       const SnackBar(content: Text('Loading compliance trends...')),
     );
   }
+}
+
+class _ComplianceStatItem {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  _ComplianceStatItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 }

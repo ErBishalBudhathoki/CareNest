@@ -24,7 +24,6 @@ class AnimatedShiftCard extends StatefulWidget {
 class _AnimatedShiftCardState extends State<AnimatedShiftCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   bool _isHovered = false;
@@ -41,14 +40,6 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-
-    _slideAnimation = Tween<double>(
-      begin: 50.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic),
-    ));
 
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -86,14 +77,11 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, _slideAnimation.value),
-          child: Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Opacity(
-              opacity: _fadeAnimation.value.clamp(0.0, 1.0),
-              child: _buildCard(),
-            ),
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(
+            opacity: _fadeAnimation.value.clamp(0.0, 1.0),
+            child: _buildCard(),
           ),
         );
       },
@@ -108,30 +96,28 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.symmetric(
-              vertical: BauhausDesign.space2, horizontal: BauhausDesign.space1),
+          margin: EdgeInsets.zero,
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceLight,
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
             boxShadow: _isHovered
-                ? const [BauhausDesign.shadowHard]
-                : const [BauhausDesign.shadowHardSm],
+                ? const [BauhausDesign.shadowHardSm]
+                : const [BauhausDesign.shadowHardXs],
             border: Border.all(
               color: BauhausDesign.neutral,
-              width: 1.5,
+              width: 2,
             ),
           ),
           transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
           child: Padding(
-            padding: const EdgeInsets.all(BauhausDesign.space4),
+            padding: const EdgeInsets.all(BauhausDesign.space2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                const SizedBox(height: BauhausDesign.space4),
+                const SizedBox(height: BauhausDesign.space2),
                 _buildShiftDetails(),
                 if (widget.shiftDetails.containsKey('timeWorked')) ...[
-                  const SizedBox(height: BauhausDesign.space3),
+                  const SizedBox(height: BauhausDesign.space1),
                   _buildTimeWorked(),
                 ],
               ],
@@ -150,8 +136,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
               horizontal: BauhausDesign.space3, vertical: BauhausDesign.space1),
           decoration: BoxDecoration(
             color: BauhausDesign.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-            border: Border.all(color: BauhausDesign.primary),
+            border: Border.all(color: BauhausDesign.primary, width: 1.5),
           ),
           child: Text(
             AppLocalizations.of(context)!.shiftIndex(widget.index + 1),
@@ -180,7 +165,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
           value: widget.shiftDetails['date'] ?? 'N/A',
           color: BauhausDesign.info,
         ),
-        const SizedBox(height: BauhausDesign.space3),
+        const SizedBox(height: BauhausDesign.space1),
         Row(
           children: [
             Expanded(
@@ -192,7 +177,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
                 isCompact: true,
               ),
             ),
-            const SizedBox(width: BauhausDesign.space4),
+            const SizedBox(width: BauhausDesign.space2),
             Expanded(
               child: _buildDetailRow(
                 icon: Icons.stop,
@@ -204,7 +189,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
             ),
           ],
         ),
-        const SizedBox(height: BauhausDesign.space3),
+        const SizedBox(height: BauhausDesign.space1),
         _buildDetailRow(
           icon: Icons.coffee,
           label: AppLocalizations.of(context)!.breakLabel,
@@ -229,8 +214,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
           padding: const EdgeInsets.all(BauhausDesign.space2),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: color),
+            border: Border.all(color: color, width: 1.5),
           ),
           child: Icon(
             icon,
@@ -267,12 +251,11 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
 
   Widget _buildTimeWorked() {
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space3),
+      padding: const EdgeInsets.all(BauhausDesign.space2),
       decoration: BoxDecoration(
         color: BauhausDesign.success.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(
-          color: BauhausDesign.success.withOpacity(0.3),
+          color: BauhausDesign.success,
           width: 1.5,
         ),
       ),

@@ -1,8 +1,5 @@
-import 'dart:async';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/business_name_dropdown_widget.dart';
-
-import 'package:carenest/app/shared/widgets/text_field_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +19,7 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
       GlobalKey<ScaffoldState>(debugLabel: 'add_client_details_scaffold_key');
   final _formKey =
       GlobalKey<FormState>(debugLabel: 'add_client_details_form_key');
+
   final _clientFirstNameController = TextEditingController();
   final _clientLastNameController = TextEditingController();
   final _clientEmailController = TextEditingController();
@@ -31,13 +29,11 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
   final _clientStateController = TextEditingController();
   final _clientZipController = TextEditingController();
   final _clientBusinessNameController = TextEditingController();
-  late String selectedBusinessName;
-  List businessNameList = [];
 
-  @override
-  void initState() {
-    super.initState();
-    // apiMethod.getBusinessNameList();
+  bool _isSubmitting = false;
+
+  bool _isCompactLayout(BuildContext context) {
+    return MediaQuery.of(context).size.width < 390;
   }
 
   @override
@@ -54,482 +50,647 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
     super.dispose();
   }
 
+  Color _contentColorOn(Color background) {
+    return ThemeData.estimateBrightnessForColor(background) == Brightness.dark
+        ? BauhausDesign.surfaceWhite
+        : BauhausDesign.textDark;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final textVisibleNotifier = ValueNotifier<bool>(false);
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final isCompact = _isCompactLayout(context);
+    final horizontalPadding =
+        isCompact ? BauhausDesign.space3 : BauhausDesign.space4;
+    final sectionSpacing =
+        isCompact ? BauhausDesign.space3 : BauhausDesign.space4;
 
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: BauhausDesign.primary,
+        backgroundColor: BauhausDesign.secondary,
         foregroundColor: BauhausDesign.surfaceWhite,
-        iconTheme: IconThemeData(
-          color: BauhausDesign.surfaceWhite,
-        ),
         title: Text(
-          l10n.addClient,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+          l10n.addClient.toUpperCase(),
+          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                fontWeight: FontWeight.w900,
                 color: BauhausDesign.surfaceWhite,
+                letterSpacing: 1.0,
               ),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: BauhausDesign.neutral,
+          ),
+        ),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(BauhausDesign.space6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header Section
-              BauhausCard(
-                padding: EdgeInsets.all(BauhausDesign.space6),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.person_add_rounded,
-                      size: 48,
-                      color: BauhausDesign.primary,
-                    ),
-                    SizedBox(height: BauhausDesign.space3),
-                    Text(
-                      l10n.newClientTitle,
-                      style: BauhausDesign.getTextTheme(context)
-                          .headlineMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.primary,
-                          ),
-                    ),
-                    SizedBox(height: BauhausDesign.space2),
-                    Text(
-                      l10n.addClientDesc,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: BauhausDesign.space8),
-
-              // Personal Information Section
-              _buildSectionHeader(
-                  context, l10n.personalInfoSection, Icons.person_rounded),
-              SizedBox(height: BauhausDesign.space4),
-              _buildPersonalInfoSection(
-                  context, textVisibleNotifier, size, l10n),
-              SizedBox(height: BauhausDesign.space8),
-
-              // Contact Information Section
-              _buildSectionHeader(
-                  context, l10n.contactInformation, Icons.contact_mail_rounded),
-              SizedBox(height: BauhausDesign.space4),
-              _buildContactInfoSection(
-                  context, textVisibleNotifier, size, l10n),
-              SizedBox(height: BauhausDesign.space8),
-
-              // Address Information Section
-              _buildSectionHeader(
-                  context, l10n.addressInformation, Icons.location_on_rounded),
-              SizedBox(height: BauhausDesign.space4),
-              _buildAddressInfoSection(
-                  context, textVisibleNotifier, size, l10n),
-              SizedBox(height: BauhausDesign.space8),
-
-              // Business Information Section
-              _buildSectionHeader(
-                  context, l10n.businessInformation, Icons.business_rounded),
-              SizedBox(height: BauhausDesign.space4),
-              _buildBusinessInfoSection(context),
-              SizedBox(height: BauhausDesign.space10),
-
-              // Submit Button
-              _buildSubmitButton(context, theme, l10n),
-              SizedBox(height: BauhausDesign.space6),
-            ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: EdgeInsets.fromLTRB(
+              horizontalPadding,
+              horizontalPadding,
+              horizontalPadding,
+              isCompact ? BauhausDesign.space6 : BauhausDesign.space8,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeroCard(context, l10n, isCompact: isCompact),
+                SizedBox(height: sectionSpacing),
+                _buildPersonalInfoSection(context, l10n, isCompact: isCompact),
+                SizedBox(height: sectionSpacing),
+                _buildContactInfoSection(context, l10n, isCompact: isCompact),
+                SizedBox(height: sectionSpacing),
+                _buildAddressInfoSection(context, l10n, isCompact: isCompact),
+                SizedBox(height: sectionSpacing),
+                _buildBusinessInfoSection(context, l10n, isCompact: isCompact),
+                SizedBox(
+                    height: isCompact
+                        ? BauhausDesign.space5
+                        : BauhausDesign.space6),
+                _buildActionButtons(context, l10n, isCompact: isCompact),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  /// Builds a section header with icon and title
-  Widget _buildSectionHeader(
-      BuildContext context, String title, IconData icon) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(BauhausDesign.space2),
-          decoration: BoxDecoration(
-            color: BauhausDesign.primary,
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+  Widget _buildHeroCard(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    const heroColor = BauhausDesign.primary;
+    final foreground = _contentColorOn(heroColor);
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: heroColor,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHard],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(
+              isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: isCompact ? 40 : 44,
+                  height: isCompact ? 40 : 44,
+                  decoration: BoxDecoration(
+                    color: foreground.withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                    border: Border.all(color: BauhausDesign.neutral),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.person_add_rounded,
+                    color: foreground,
+                    size: isCompact ? 22 : 24,
+                  ),
+                ),
+                SizedBox(
+                    width: isCompact
+                        ? BauhausDesign.space2
+                        : BauhausDesign.space3),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.newClientTitle.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context)
+                            .titleLarge
+                            ?.copyWith(
+                              color: foreground,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.8,
+                            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: BauhausDesign.space1),
+                      Text(
+                        l10n.addClientDesc,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodySmall
+                            ?.copyWith(
+                              color: foreground.withOpacity(0.92),
+                            ),
+                        maxLines: isCompact ? 3 : 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: BauhausDesign.surfaceWhite,
-          ),
-        ),
-        SizedBox(width: BauhausDesign.space3),
-        Text(
-          title,
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal:
+                  isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+              vertical: isCompact ? BauhausDesign.space2 : BauhausDesign.space3,
+            ),
+            decoration: const BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border(
+                top: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
+            ),
+            child: Text(
+              'ENTER CLIENT DETAILS',
+              style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                    color: BauhausDesign.primary,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color accentColor,
+    required List<Widget> children,
+    required bool isCompact,
+  }) {
+    final iconForeground = _contentColorOn(accentColor);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 8,
+            decoration: BoxDecoration(
+              color: accentColor,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(BauhausDesign.radiusLg - 2),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(
+              isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: isCompact ? 32 : 36,
+                      height: isCompact ? 32 : 36,
+                      decoration: BoxDecoration(
+                        color: accentColor,
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        border: Border.all(color: BauhausDesign.neutral),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        icon,
+                        size: isCompact ? 16 : 18,
+                        color: iconForeground,
+                      ),
+                    ),
+                    SizedBox(
+                        width: isCompact
+                            ? BauhausDesign.space2
+                            : BauhausDesign.space3),
+                    Expanded(
+                      child: Text(
+                        title.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.8,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height:
+                      isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+                ),
+                ...children,
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPersonalInfoSection(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    return _buildSectionCard(
+      context,
+      title: l10n.personalInfoSection,
+      icon: Icons.person_outline_rounded,
+      accentColor: BauhausDesign.primary,
+      isCompact: isCompact,
+      children: [
+        BauhausTextField(
+          label: l10n.firstNameHint.toUpperCase(),
+          hintText: l10n.firstNameHint,
+          controller: _clientFirstNameController,
+          prefixIcon: const Icon(Icons.person_outline, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) return l10n.firstNameRequired;
+            return null;
+          },
+        ),
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        BauhausTextField(
+          label: l10n.lastNameHint.toUpperCase(),
+          hintText: l10n.lastNameHint,
+          controller: _clientLastNameController,
+          prefixIcon: const Icon(Icons.badge_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) return l10n.lastNameRequired;
+            return null;
+          },
         ),
       ],
     );
   }
 
-  /// Builds the personal information section
-  Widget _buildPersonalInfoSection(
-      BuildContext context,
-      ValueNotifier<bool> textVisibleNotifier,
-      Size size,
-      AppLocalizations l10n) {
-    return BauhausCard(
-      padding: EdgeInsets.all(BauhausDesign.space5),
-      child: Column(
-        children: [
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.firstNameHint,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.firstNameRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.person_outline,
-            suffixIconData: null,
-            controller: _clientFirstNameController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _clientFirstNameController.text = value!;
-            },
-          ),
-          SizedBox(height: BauhausDesign.space4),
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.lastNameHint,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.lastNameRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.person_outline,
-            suffixIconData: null,
-            controller: _clientLastNameController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _clientLastNameController.text = value!;
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Builds the contact information section
   Widget _buildContactInfoSection(
-      BuildContext context,
-      ValueNotifier<bool> textVisibleNotifier,
-      Size size,
-      AppLocalizations l10n) {
-    return BauhausCard(
-      padding: EdgeInsets.all(BauhausDesign.space5),
-      child: Column(
-        children: [
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.emailAddress,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.emailRequired;
-              }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                  .hasMatch(value)) {
-                return l10n.emailInvalid;
-              }
-              return null;
-            },
-            prefixIconData: Icons.email_outlined,
-            suffixIconData: null,
-            controller: _clientEmailController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _clientEmailController.text = value!;
-            },
-          ),
-          SizedBox(height: BauhausDesign.space4),
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.phoneNumber,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.phoneRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.phone_outlined,
-            suffixIconData: null,
-            controller: _clientPhoneController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _clientPhoneController.text = value!;
-            },
-          ),
-        ],
-      ),
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    return _buildSectionCard(
+      context,
+      title: l10n.contactInformation,
+      icon: Icons.contact_mail_outlined,
+      accentColor: BauhausDesign.secondary,
+      isCompact: isCompact,
+      children: [
+        BauhausTextField(
+          label: l10n.emailAddressLabel.toUpperCase(),
+          hintText: l10n.emailAddress,
+          keyboardType: TextInputType.emailAddress,
+          controller: _clientEmailController,
+          prefixIcon: const Icon(Icons.email_outlined, size: 20),
+          validator: (value) {
+            final email = (value ?? '').trim();
+            if (email.isEmpty) return l10n.emailRequired;
+            if (!RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+              return l10n.emailInvalid;
+            }
+            return null;
+          },
+        ),
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        BauhausTextField(
+          label: l10n.phoneNumber.toUpperCase(),
+          hintText: l10n.phoneNumber,
+          keyboardType: TextInputType.phone,
+          controller: _clientPhoneController,
+          prefixIcon: const Icon(Icons.phone_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) return l10n.phoneRequired;
+            return null;
+          },
+        ),
+      ],
     );
   }
 
-  /// Builds the address information section
   Widget _buildAddressInfoSection(
-      BuildContext context,
-      ValueNotifier<bool> textVisibleNotifier,
-      Size size,
-      AppLocalizations l10n) {
-    return BauhausCard(
-      padding: EdgeInsets.all(BauhausDesign.space5),
-      child: Column(
-        children: [
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.streetAddressHint,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.streetAddressRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.home_outlined,
-            suffixIconData: null,
-            controller: _clientAddressController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _clientAddressController.text = value!;
-            },
-          ),
-          SizedBox(height: BauhausDesign.space4),
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    return _buildSectionCard(
+      context,
+      title: l10n.addressInformation,
+      icon: Icons.location_on_outlined,
+      accentColor: BauhausDesign.accent,
+      isCompact: isCompact,
+      children: [
+        BauhausTextField(
+          label: l10n.addressLine1.toUpperCase(),
+          hintText: l10n.streetAddressHint,
+          controller: _clientAddressController,
+          prefixIcon: const Icon(Icons.home_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) {
+              return l10n.streetAddressRequired;
+            }
+            return null;
+          },
+        ),
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        if (isCompact)
+          Column(
+            children: [
+              BauhausTextField(
+                label: l10n.city.toUpperCase(),
+                hintText: l10n.city,
+                controller: _clientCityController,
+                prefixIcon: const Icon(Icons.location_city_outlined, size: 20),
+                validator: (value) {
+                  if ((value ?? '').trim().isEmpty) return l10n.cityRequired;
+                  return null;
+                },
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              BauhausTextField(
+                label: l10n.state.toUpperCase(),
+                hintText: l10n.state,
+                controller: _clientStateController,
+                prefixIcon: const Icon(Icons.map_outlined, size: 20),
+                validator: (value) {
+                  if ((value ?? '').trim().isEmpty) return l10n.stateRequired;
+                  return null;
+                },
+              ),
+            ],
+          )
+        else
           Row(
             children: [
               Expanded(
-                flex: 2,
-                child: TextFieldWidget(
-                  suffixIconClickable: false,
-                  obscureTextNotifier: textVisibleNotifier,
+                flex: 7,
+                child: BauhausTextField(
+                  label: l10n.city.toUpperCase(),
                   hintText: l10n.city,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return l10n.cityRequired;
-                    }
-                    return null;
-                  },
-                  prefixIconData: Icons.location_city_outlined,
-                  suffixIconData: null,
                   controller: _clientCityController,
-                  onChanged: (value) {},
-                  onSaved: (value) {
-                    _clientCityController.text = value!;
+                  prefixIcon:
+                      const Icon(Icons.location_city_outlined, size: 20),
+                  validator: (value) {
+                    if ((value ?? '').trim().isEmpty) return l10n.cityRequired;
+                    return null;
                   },
                 ),
               ),
-              SizedBox(width: BauhausDesign.space3),
+              const SizedBox(width: BauhausDesign.space3),
               Expanded(
-                child: TextFieldWidget(
-                  suffixIconClickable: false,
-                  obscureTextNotifier: textVisibleNotifier,
+                flex: 8,
+                child: BauhausTextField(
+                  label: l10n.state.toUpperCase(),
                   hintText: l10n.state,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return l10n.stateRequired;
-                    }
-                    return null;
-                  },
-                  prefixIconData: Icons.map_outlined,
-                  suffixIconData: null,
                   controller: _clientStateController,
-                  onChanged: (value) {},
-                  onSaved: (value) {
-                    _clientStateController.text = value!;
+                  prefixIcon: const Icon(Icons.map_outlined, size: 20),
+                  validator: (value) {
+                    if ((value ?? '').trim().isEmpty) return l10n.stateRequired;
+                    return null;
                   },
                 ),
               ),
             ],
           ),
-          SizedBox(height: BauhausDesign.space4),
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.zipCodeHint,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.zipCodeRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.pin_drop_outlined,
-            suffixIconData: null,
-            controller: _clientZipController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _clientZipController.text = value!;
-            },
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        BauhausTextField(
+          label: l10n.postcodeLabel.toUpperCase(),
+          hintText: l10n.zipCodeHint,
+          keyboardType: TextInputType.number,
+          controller: _clientZipController,
+          prefixIcon: const Icon(Icons.pin_drop_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) return l10n.zipCodeRequired;
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBusinessInfoSection(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    return _buildSectionCard(
+      context,
+      title: l10n.businessInformation,
+      icon: Icons.business_outlined,
+      accentColor: BauhausDesign.info,
+      isCompact: isCompact,
+      children: [
+        Text(
+          l10n.businessName.toUpperCase(),
+          style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+        const SizedBox(height: BauhausDesign.space1),
+        BusinessNameDropdown(
+          organizationId: ref.read(organizationIdProvider),
+          onChanged: (selectedValue) {
+            _clientBusinessNameController.text = selectedValue;
+            debugPrint('Selected Business Name: $selectedValue');
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    if (isCompact) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          BauhausActionButton(
+            text: l10n.addClientButton.toUpperCase(),
+            variant: BauhausActionVariant.primary,
+            icon: Icons.check_rounded,
+            isLoading: _isSubmitting,
+            onPressed:
+                _isSubmitting ? null : () => _showConfirmationDialog(context),
+            isFullWidth: true,
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          BauhausActionButton(
+            text: l10n.cancelButton.toUpperCase(),
+            isOutlined: true,
+            onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
+            isFullWidth: true,
           ),
         ],
-      ),
+      );
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: BauhausActionButton(
+            text: l10n.cancelButton.toUpperCase(),
+            isOutlined: true,
+            onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
+            isFullWidth: true,
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space3),
+        Expanded(
+          child: BauhausActionButton(
+            text: l10n.addClientButton.toUpperCase(),
+            variant: BauhausActionVariant.primary,
+            icon: Icons.check_rounded,
+            isLoading: _isSubmitting,
+            onPressed:
+                _isSubmitting ? null : () => _showConfirmationDialog(context),
+            isFullWidth: true,
+          ),
+        ),
+      ],
     );
   }
 
-  /// Builds the business information section
-  Widget _buildBusinessInfoSection(BuildContext context) {
-    return BauhausCard(
-      padding: EdgeInsets.all(BauhausDesign.space5),
-      child: BusinessNameDropdown(
-        onChanged: (selectedValue) {
-          _clientBusinessNameController.text = selectedValue;
-          debugPrint('Selected Business Name: $selectedValue');
-        },
-      ),
-    );
-  }
-
-  /// Builds the submit button with modern styling
-  Widget _buildSubmitButton(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
-    return SizedBox(
-      width: double.infinity,
-      child: BauhausActionButton(
-        text: l10n.addClientButton,
-        variant: BauhausActionVariant.primary,
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  backgroundColor: BauhausDesign.surfaceWhite,
-                  title: Text(l10n.addClient,
-                      style:
-                          BauhausDesign.getTextTheme(context).headlineMedium),
-                  content: Text(l10n.confirmAddClient,
-                      style: BauhausDesign.getTextTheme(context).bodyMedium),
-                  actions: [
-                    BauhausActionButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      text: l10n.cancelButton,
-                      variant: BauhausActionVariant.ghost,
-                    ),
-                    BauhausActionButton(
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                        await _addClient();
-                      },
-                      text: l10n.addClientButton,
-                      variant: BauhausActionVariant.primary,
-                    ),
-                  ],
-                );
+  void _showConfirmationDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+            side: const BorderSide(
+              color: BauhausDesign.neutral,
+              width: BauhausDesign.borderThick,
+            ),
+          ),
+          backgroundColor: BauhausDesign.surfaceWhite,
+          title: Text(
+            l10n.addClient.toUpperCase(),
+            style: BauhausDesign.getTextTheme(dialogContext)
+                .headlineMedium
+                ?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          content: Text(
+            l10n.confirmAddClient,
+            style: BauhausDesign.getTextTheme(dialogContext).bodyMedium,
+          ),
+          actions: [
+            BauhausActionButton(
+              text: l10n.cancelButton.toUpperCase(),
+              variant: BauhausActionVariant.ghost,
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+            BauhausActionButton(
+              text: l10n.addClientButton.toUpperCase(),
+              variant: BauhausActionVariant.primary,
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await _addClient();
               },
-            );
-          }
-        },
-      ),
+            ),
+          ],
+        );
+      },
     );
   }
 
   Future<void> _addClient() async {
+    if (_isSubmitting) return;
     final l10n = AppLocalizations.of(context)!;
+
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSubmitting = true);
     try {
       final apiMethod = ref.read(apiMethodProvider);
       final sharedPreferencesUtils = ref.read(sharedPreferencesProvider);
-
-      // Initialize SharedPreferences if not already done
       await sharedPreferencesUtils.init();
 
-      // Get current user's email
-      String? currentUserEmail =
+      final String? currentUserEmail =
           await sharedPreferencesUtils.getUserEmailFromSharedPreferences();
+      final String? currentOrganizationId =
+          sharedPreferencesUtils.getOrganizationId();
 
-      var ins = await apiMethod.addClient(
-        _clientFirstNameController.text,
-        _clientLastNameController.text,
-        _clientEmailController.text,
-        _clientPhoneController.text,
-        _clientAddressController.text,
-        _clientCityController.text,
-        _clientStateController.text,
-        _clientZipController.text,
-        _clientBusinessNameController.text,
+      final response = await apiMethod.addClient(
+        _clientFirstNameController.text.trim(),
+        _clientLastNameController.text.trim(),
+        _clientEmailController.text.trim(),
+        _clientPhoneController.text.trim(),
+        _clientAddressController.text.trim(),
+        _clientCityController.text.trim(),
+        _clientStateController.text.trim(),
+        _clientZipController.text.trim(),
+        _clientBusinessNameController.text.trim(),
         userEmail: currentUserEmail,
+        organizationId: currentOrganizationId,
       );
-      debugPrint("Response: $ins");
+      debugPrint('Add client response: $response');
 
-      if (ins['message'] == 'Client added successfully') {
-        if (kDebugMode) {
-          debugPrint("Client added successfully");
-        }
-        // Navigate back or show success message
-        if (mounted) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.clientAddedSuccess),
-              backgroundColor: BauhausDesign.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              ),
-            ),
-          );
-        }
-      } else {
-        if (kDebugMode) {
-          debugPrint("Client addition failed");
-        }
-        debugPrint("Response: $ins");
-        // Show error message
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.clientAddFailed),
-              backgroundColor: BauhausDesign.error,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              ),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint("Error adding client: $e");
-      }
-      if (mounted) {
+      final isSuccess = response['success'] == true ||
+          response['statusCode'] == 200 ||
+          response['statusCode'] == 201 ||
+          (response['message']?.toString().toLowerCase().contains('success') ??
+              false);
+
+      if (!mounted) return;
+
+      if (isSuccess) {
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.errorGenericMessage),
+            content: Text(l10n.clientAddedSuccess),
+            backgroundColor: BauhausDesign.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(response['message']?.toString() ?? l10n.clientAddFailed),
             backgroundColor: BauhausDesign.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -537,6 +698,25 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
             ),
           ),
         );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error adding client: $e');
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.errorGenericMessage),
+          backgroundColor: BauhausDesign.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
       }
     }
   }

@@ -3241,7 +3241,7 @@ abstract class AppLocalizations {
   /// No description provided for @permissionCamera.
   ///
   /// In en, this message translates to:
-  /// **'Camera access is required to take photos.'**
+  /// **'Camera access is required to scan receipts for your organization\'s expenses.'**
   String get permissionCamera;
 
   /// No description provided for @permissionRequired.
@@ -5969,6 +5969,12 @@ abstract class AppLocalizations {
   /// **'Require client-specific base rates'**
   String get requireClientRates;
 
+  /// No description provided for @useClientBaseRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Use client-specific base rates'**
+  String get useClientBaseRates;
+
   /// No description provided for @invoicePeriodTitle.
   ///
   /// In en, this message translates to:
@@ -8579,6 +8585,246 @@ abstract class AppLocalizations {
   /// **'Choose a module to manage your pricing'**
   String get chooseModuleDesc;
 
+  /// No description provided for @moduleStatusNeedsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Action'**
+  String get moduleStatusNeedsAction;
+
+  /// No description provided for @moduleStatusHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy'**
+  String get moduleStatusHealthy;
+
+  /// No description provided for @moduleStatusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get moduleStatusReady;
+
+  /// No description provided for @moduleStatusIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Idle'**
+  String get moduleStatusIdle;
+
+  /// No description provided for @moduleStatusRecentlyUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently Updated'**
+  String get moduleStatusRecentlyUpdated;
+
+  /// No description provided for @moduleBadgeOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get moduleBadgeOverview;
+
+  /// No description provided for @moduleBadgeNdis.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS Catalog'**
+  String get moduleBadgeNdis;
+
+  /// No description provided for @moduleBadgeRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Coverage'**
+  String get moduleBadgeRates;
+
+  /// No description provided for @moduleBadgeBulk.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Queue'**
+  String get moduleBadgeBulk;
+
+  /// No description provided for @moduleBadgeHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Change History'**
+  String get moduleBadgeHistory;
+
+  /// No description provided for @moduleBadgeActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Center'**
+  String get moduleBadgeActions;
+
+  /// No description provided for @moduleMetricRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get moduleMetricRevenue;
+
+  /// No description provided for @moduleMetricCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage'**
+  String get moduleMetricCoverage;
+
+  /// No description provided for @moduleMetricCompliance.
+  ///
+  /// In en, this message translates to:
+  /// **'Compliance'**
+  String get moduleMetricCompliance;
+
+  /// No description provided for @moduleMetricCatalogItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Catalog Items'**
+  String get moduleMetricCatalogItems;
+
+  /// No description provided for @moduleMetricCustomPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Prices'**
+  String get moduleMetricCustomPrices;
+
+  /// No description provided for @moduleMetricConfiguredRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Configured Rates'**
+  String get moduleMetricConfiguredRates;
+
+  /// No description provided for @moduleMetricAvgBaseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Base Rate'**
+  String get moduleMetricAvgBaseRate;
+
+  /// No description provided for @moduleMetricBulkCandidates.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Candidates'**
+  String get moduleMetricBulkCandidates;
+
+  /// No description provided for @moduleMetricRecommendedBatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Batch'**
+  String get moduleMetricRecommendedBatch;
+
+  /// No description provided for @moduleMetricWeeklyChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Changes'**
+  String get moduleMetricWeeklyChanges;
+
+  /// No description provided for @moduleMetricTrackedEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracked Entries'**
+  String get moduleMetricTrackedEntries;
+
+  /// No description provided for @moduleMetricActionableItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Actionable Items'**
+  String get moduleMetricActionableItems;
+
+  /// No description provided for @moduleMetricAvailableActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Modules'**
+  String get moduleMetricAvailableActions;
+
+  /// No description provided for @moduleNoTrackedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'No tracked changes yet'**
+  String get moduleNoTrackedChanges;
+
+  /// No description provided for @moduleNoDataYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available yet'**
+  String get moduleNoDataYet;
+
+  /// No description provided for @moduleLastUpdatedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated {days}d ago'**
+  String moduleLastUpdatedDays(String days);
+
+  /// No description provided for @moduleRatesCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'{configured}/{total} rates configured'**
+  String moduleRatesCoverage(String configured, String total);
+
+  /// No description provided for @moduleKeyInsightCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'{custom}/{total} items with custom pricing'**
+  String moduleKeyInsightCoverage(String custom, String total);
+
+  /// No description provided for @moduleKeyInsightViolations.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} compliance issues need review'**
+  String moduleKeyInsightViolations(String count);
+
+  /// No description provided for @moduleKeyInsightHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Compliance signals are healthy'**
+  String get moduleKeyInsightHealthy;
+
+  /// No description provided for @moduleKeyInsightQuotable.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} quotable supports need tracked handling'**
+  String moduleKeyInsightQuotable(String count);
+
+  /// No description provided for @moduleKeyInsightMissingRates.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} employees still missing pay rates'**
+  String moduleKeyInsightMissingRates(String count);
+
+  /// No description provided for @moduleKeyInsightAllRatesConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'All employee rates are configured'**
+  String get moduleKeyInsightAllRatesConfigured;
+
+  /// No description provided for @moduleKeyInsightBacklog.
+  ///
+  /// In en, this message translates to:
+  /// **'{pending} of {total} items are pending updates'**
+  String moduleKeyInsightBacklog(String pending, String total);
+
+  /// No description provided for @moduleKeyInsightBatchSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested batch size: {batch}'**
+  String moduleKeyInsightBatchSuggestion(String batch);
+
+  /// No description provided for @moduleKeyInsightHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} priced items are tracked in history'**
+  String moduleKeyInsightHistory(String count);
+
+  /// No description provided for @moduleKeyInsightActionCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Central queue for pricing follow-ups'**
+  String get moduleKeyInsightActionCenter;
+
+  /// No description provided for @moduleKeyInsightPendingActions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items need immediate action'**
+  String moduleKeyInsightPendingActions(String count);
+
+  /// No description provided for @moduleKeyInsightClearQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending actions in queue'**
+  String get moduleKeyInsightClearQueue;
+
   /// No description provided for @activeLabel.
   ///
   /// In en, this message translates to:
@@ -9515,6 +9761,18 @@ abstract class AppLocalizations {
   /// **'Pay Point'**
   String get payPointLabel;
 
+  /// No description provided for @selectStreamFirstHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a stream to unlock levels.'**
+  String get selectStreamFirstHint;
+
+  /// No description provided for @selectLevelFirstHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a level to show pay points.'**
+  String get selectLevelFirstHint;
+
   /// No description provided for @baseRateHourlyLabel.
   ///
   /// In en, this message translates to:
@@ -9544,6 +9802,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Public Holiday (250%)'**
   String get publicHolidayPenaltyLabel;
+
+  /// No description provided for @eveningShiftLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Shift'**
+  String get eveningShiftLabel;
+
+  /// No description provided for @nightShiftLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Night Shift'**
+  String get nightShiftLabel;
 
   /// No description provided for @overtimeFirst2hLabel.
   ///
@@ -12257,6 +12527,48 @@ abstract class AppLocalizations {
   /// **'WORKER DASHBOARD'**
   String get workerDashboardTitle;
 
+  /// No description provided for @workerDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access your shifts and tasks'**
+  String get workerDashboardSubtitle;
+
+  /// No description provided for @workerSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker'**
+  String get workerSection;
+
+  /// No description provided for @workerShiftHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SHIFT HISTORY'**
+  String get workerShiftHistoryTitle;
+
+  /// No description provided for @workerShiftHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View your past shifts and timesheets'**
+  String get workerShiftHistorySubtitle;
+
+  /// No description provided for @teamDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TEAM COORDINATION'**
+  String get teamDashboardTitle;
+
+  /// No description provided for @teamDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage teams and emergency broadcasts'**
+  String get teamDashboardSubtitle;
+
+  /// No description provided for @teamSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Teams'**
+  String get teamSection;
+
   /// No description provided for @nextShiftCaps.
   ///
   /// In en, this message translates to:
@@ -12286,6 +12598,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No upcoming shifts'**
   String get noUpcomingShifts;
+
+  /// No description provided for @ruleNdisPriceCapValidationName.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS Price Cap Validation'**
+  String get ruleNdisPriceCapValidationName;
+
+  /// No description provided for @ruleNdisPriceCapValidationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensures prices do not exceed NDIS price guide limits'**
+  String get ruleNdisPriceCapValidationDescription;
+
+  /// No description provided for @ruleMinimumRateValidationName.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Rate Validation'**
+  String get ruleMinimumRateValidationName;
+
+  /// No description provided for @ruleMinimumRateValidationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Validates minimum hourly rates for different service types'**
+  String get ruleMinimumRateValidationDescription;
+
+  /// No description provided for @ruleGeographicLoadingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Geographic Loading Rules'**
+  String get ruleGeographicLoadingName;
+
+  /// No description provided for @ruleGeographicLoadingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies geographic loading based on service location'**
+  String get ruleGeographicLoadingDescription;
+
+  /// No description provided for @integrationNdisPriceGuideApiName.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS Price Guide API'**
+  String get integrationNdisPriceGuideApiName;
+
+  /// No description provided for @integrationNdisPriceGuideApiDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic synchronization with NDIS price guide updates'**
+  String get integrationNdisPriceGuideApiDescription;
+
+  /// No description provided for @integrationAccountingSystemName.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting System'**
+  String get integrationAccountingSystemName;
+
+  /// No description provided for @integrationAccountingSystemDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Integration with external accounting software'**
+  String get integrationAccountingSystemDescription;
+
+  /// No description provided for @integrationCrmSystemName.
+  ///
+  /// In en, this message translates to:
+  /// **'CRM System'**
+  String get integrationCrmSystemName;
+
+  /// No description provided for @integrationCrmSystemDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer relationship management system integration'**
+  String get integrationCrmSystemDescription;
+
+  /// No description provided for @failedLoadFallbackBaseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load fallback base rate: {error}'**
+  String failedLoadFallbackBaseRate(String error);
+
+  /// No description provided for @failedUpdateFallbackBaseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update fallback base rate'**
+  String get failedUpdateFallbackBaseRate;
+
+  /// No description provided for @errorUpdatingFallbackBaseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating fallback base rate: {error}'**
+  String errorUpdatingFallbackBaseRate(String error);
+
+  /// No description provided for @supportCoordinationCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Coordination'**
+  String get supportCoordinationCategory;
+
+  /// No description provided for @unitHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Hour'**
+  String get unitHour;
+
+  /// No description provided for @unitDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get unitDay;
+
+  /// No description provided for @unitWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get unitWeek;
+
+  /// No description provided for @unitMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get unitMonth;
+
+  /// No description provided for @unitEach.
+  ///
+  /// In en, this message translates to:
+  /// **'Each'**
+  String get unitEach;
+
+  /// No description provided for @unitKilometer.
+  ///
+  /// In en, this message translates to:
+  /// **'Kilometer'**
+  String get unitKilometer;
+
+  /// No description provided for @deleteSelectedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete selected'**
+  String get deleteSelectedAction;
+
+  /// No description provided for @ndisItemCardSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS item card'**
+  String get ndisItemCardSemantics;
+
+  /// No description provided for @perUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'per {unit}'**
+  String perUnit(String unit);
+
+  /// No description provided for @enterItemCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter item code'**
+  String get enterItemCodeError;
+
+  /// No description provided for @enterItemNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter item name'**
+  String get enterItemNameError;
+
+  /// No description provided for @enterUnitPriceError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter unit price'**
+  String get enterUnitPriceError;
+
+  /// No description provided for @ndisItemCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS item created successfully!'**
+  String get ndisItemCreatedSuccess;
+
+  /// No description provided for @ndisItemUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS item updated successfully!'**
+  String get ndisItemUpdatedSuccess;
+
+  /// No description provided for @itemStatusActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'activated'**
+  String get itemStatusActivated;
+
+  /// No description provided for @itemStatusDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'deactivated'**
+  String get itemStatusDeactivated;
+
+  /// No description provided for @itemStatusChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Item {status} successfully!'**
+  String itemStatusChanged(String status);
+
+  /// No description provided for @deleteItemTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Item'**
+  String get deleteItemTitle;
+
+  /// No description provided for @deleteItemConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{name}\"?'**
+  String deleteItemConfirm(String name);
+
+  /// No description provided for @itemDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Item deleted successfully!'**
+  String get itemDeletedSuccess;
+
+  /// No description provided for @deleteSelectedItemsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Selected Items'**
+  String get deleteSelectedItemsTitle;
+
+  /// No description provided for @deleteSelectedItemsConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete {count} selected items?'**
+  String deleteSelectedItemsConfirm(String count);
+
+  /// No description provided for @selectedItemsDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected items deleted successfully!'**
+  String get selectedItemsDeletedSuccess;
 }
 
 class _AppLocalizationsDelegate

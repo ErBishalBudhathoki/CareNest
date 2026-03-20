@@ -108,19 +108,27 @@ class User {
         name: name,
         email: json['email']?.toString() ?? '',
         phone: json['phone']?.toString() ?? '',
-        profilePic: json['profilePic']?.toString(),
+        profilePic: (json['profilePic'] ?? json['photoUrl'])?.toString(),
         role: _parseRole(json['role']),
         jobRole: json['jobRole']?.toString(),
         payRate: (json['payRate'] as num?)?.toDouble() ?? 0.0,
-        detailedRates: json['rates'] != null ? RatesModel.fromJson(json['rates']) : null,
-        activeAllowances: (json['activeAllowances'] as List?)?.map((e) => e.toString()).toList() ?? [],
+        detailedRates:
+            json['rates'] != null ? RatesModel.fromJson(json['rates']) : null,
+        activeAllowances: (json['activeAllowances'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [],
         payType: json['payType']?.toString(),
         stream: json['stream']?.toString(),
         classificationLevel: json['classificationLevel']?.toString(),
         payPoint: json['payPoint']?.toString(),
         employmentType: json['employmentType']?.toString(),
-        dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
-        permissions: (json['permissions'] as List?)?.map((e) => e.toString()).toList() ?? [],
+        dob: json['dob'] != null
+            ? DateTime.tryParse(json['dob'].toString())
+            : null,
+        permissions:
+            (json['permissions'] as List?)?.map((e) => e.toString()).toList() ??
+                [],
       );
     } catch (e) {
       debugPrint('Error parsing user data: $e');

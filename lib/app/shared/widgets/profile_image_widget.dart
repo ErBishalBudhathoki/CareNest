@@ -285,6 +285,7 @@ class AdminProfileImage extends ProfileImageWidget {
     super.key,
     required String email,
     required super.photoData,
+    super.imageUrl,
     super.size = 60.0,
     super.onTap,
   }) : super(

@@ -908,9 +908,8 @@ class InvoicePdfGenerator {
 
       final Map<String, dynamic> orgMap = Map<String, dynamic>.from(rawOrg);
       final nestedOrg = orgMap['organization'];
-      final Map<String, dynamic> resolvedOrg = nestedOrg is Map
-          ? Map<String, dynamic>.from(nestedOrg)
-          : orgMap;
+      final Map<String, dynamic> resolvedOrg =
+          nestedOrg is Map ? Map<String, dynamic>.from(nestedOrg) : orgMap;
 
       return _extractBankDetailsFromCandidates([resolvedOrg]);
     } catch (e) {

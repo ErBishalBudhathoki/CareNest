@@ -1,8 +1,7 @@
-import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/alert_dialog_widget.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_liquid_animation.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
 import 'package:flutter/material.dart';
@@ -376,12 +375,22 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         BauhausTextField(
           controller: signupViewModel.model.abnController,
           label: AppLocalizations.of(context)!.abnHint,
-          hintText: '11 digits',
+          hintText: '11 digits (numbers only)',
           prefixIcon: Icon(Iconsax.building_4, color: BauhausDesign.textMuted),
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(11),
+          ],
           validator: (value) {
-            if (value == null || value.isEmpty || value.length != 11) {
+            if (value == null || value.isEmpty) {
               return AppLocalizations.of(context)!.abnInvalid;
+            }
+            if (value.length != 11) {
+              return 'ABN must be exactly 11 digits';
+            }
+            if (!RegExp(r'^\d{11}$').hasMatch(value)) {
+              return 'ABN must contain only numbers';
             }
             return null;
           },
@@ -561,13 +570,13 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                       ],
                     ),
                   ),
-                  Switch(
+                  BauhausSwitch(
                     value: signupViewModel.model.isCreatingOrganization,
                     onChanged: (value) {
                       signupViewModel.model.isCreatingOrganization = value;
                       signupViewModel.notifyListeners();
                     },
-                    activeColor: BauhausDesign.secondary,
+                    variant: BauhausSwitchVariant.secondary,
                   ),
                 ],
               ),
@@ -650,14 +659,13 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                       ],
                     ),
                   ),
-                  Switch(
+                  BauhausSwitch(
                     value: signupViewModel.model.isJoiningOrganization,
                     onChanged: (value) {
-                      signupViewModel.model.isJoiningOrganization =
-                          value ?? false;
+                      signupViewModel.model.isJoiningOrganization = value;
                       signupViewModel.notifyListeners();
                     },
-                    activeColor: BauhausDesign.neutral,
+                    variant: BauhausSwitchVariant.neutral,
                   ),
                 ],
               ),
@@ -762,20 +770,22 @@ class _SignUpViewState extends ConsumerState<SignUpView>
 
   Widget _buildSignupButton(
       dynamic signupViewModel, FlushBarWidget flushBarWidget) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final isLoading = signupViewModel.isLoading ?? false;
-        return BauhausActionButton(
-          text: AppLocalizations.of(context)!.signupTitle,
-          variant:
-              BauhausActionVariant.secondary, // Uses secondary color (purple)
-          isLoading: isLoading,
-          icon: Iconsax.user_add,
-          backgroundColor: BauhausDesign.secondary,
-          textColor: Colors.white,
-          onPressed: () => _handleSignup(signupViewModel, flushBarWidget),
-        );
-      },
+    return Center(
+      child: Consumer(
+        builder: (context, ref, child) {
+          final isLoading = signupViewModel.isLoading ?? false;
+          return BauhausActionButton(
+            text: AppLocalizations.of(context)!.signupTitle,
+            variant:
+                BauhausActionVariant.secondary, // Uses secondary color (purple)
+            isLoading: isLoading,
+            icon: Iconsax.user_add,
+            backgroundColor: BauhausDesign.secondary,
+            textColor: Colors.white,
+            onPressed: () => _handleSignup(signupViewModel, flushBarWidget),
+          );
+        },
+      ),
     );
   }
 
@@ -793,36 +803,25 @@ class _SignUpViewState extends ConsumerState<SignUpView>
             flushBarWidget.flushBar(
               title: response.title,
               message: response.message,
-              backgroundColor: response.backgroundColor,
+              backgroundColor: response.surfaceColor,
               context: context,
             );
 
-            Future.delayed(const Duration(seconds: 2), () {
-              Navigator.pushReplacementNamed(
-                context,
-                Routes.bottomNavBar,
-                arguments: {
-                  'email': signupViewModel.model.emailController.text,
-                  'role': signupViewModel.model.selectedRole == 'admin'
-                      ? UserRole.admin
-                      : UserRole.normal,
-                  'organizationId': signupViewModel.organizationId,
-                  'organizationName': signupViewModel.organizationName,
-                  'organizationCode': signupViewModel.organizationCode,
-                },
-              );
+            Future.delayed(const Duration(milliseconds: 1200), () {
+              if (!mounted) return;
+              Navigator.of(context).pop();
             });
           } else {
-            flushBarWidget
-                .flushBar(
-                  title: response.title,
-                  message: response.message,
-                  backgroundColor: response.backgroundColor,
-                  context: context,
-                )
-                .show(context);
+            flushBarWidget.flushBar(
+              title: response.title,
+              message: response.message,
+              backgroundColor: response.surfaceColor,
+              context: context,
+            );
           }
-        } catch (e) {
+        } catch (e, stackTrace) {
+          debugPrint("Exception caught in _handleSignup: $e");
+          debugPrint("Stack trace: $stackTrace");
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

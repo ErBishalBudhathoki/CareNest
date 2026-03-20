@@ -13,21 +13,39 @@ class CommunicationHubDashboard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CommunicationHubDashboard> createState() => _CommunicationHubDashboardState();
+  ConsumerState<CommunicationHubDashboard> createState() =>
+      _CommunicationHubDashboardState();
 }
 
-class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDashboard> {
+class _CommunicationHubDashboardState
+    extends ConsumerState<CommunicationHubDashboard> {
   int _selectedTab = 0;
+  String _selectedChannel = 'SMS';
+  String _selectedGroup = 'All Workers';
+
+  late final TextEditingController _messageController;
+  late final TextEditingController _broadcastController;
 
   @override
   void initState() {
     super.initState();
+    _messageController = TextEditingController();
+    _broadcastController = TextEditingController();
     if (widget.userId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(communicationViewModelProvider.notifier).loadConversations(widget.userId!);
+        ref
+            .read(communicationViewModelProvider.notifier)
+            .loadConversations(widget.userId!);
         ref.read(communicationViewModelProvider.notifier).loadTemplates();
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _broadcastController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,12 +71,35 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
           // Tab Selector
           Container(
             color: BauhausDesign.surfaceWhite,
-            child: Row(
-              children: [
-                _buildTab('INBOX', 0),
-                _buildTab('COMPOSE', 1),
-                _buildTab('BROADCAST', 2),
-              ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth < 520) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        _buildCompactTab('INBOX', 0),
+                        const SizedBox(width: 8),
+                        _buildCompactTab('COMPOSE', 1),
+                        const SizedBox(width: 8),
+                        _buildCompactTab('BROADCAST', 2),
+                      ],
+                    ),
+                  );
+                }
+
+                return Row(
+                  children: [
+                    _buildTab('INBOX', 0),
+                    _buildTab('COMPOSE', 1),
+                    _buildTab('BROADCAST', 2),
+                  ],
+                );
+              },
             ),
           ),
           // Content
@@ -82,22 +123,59 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: isSelected ? BauhausDesign.secondary : BauhausDesign.surfaceWhite,
+            color: isSelected
+                ? BauhausDesign.secondary
+                : BauhausDesign.surfaceWhite,
             border: Border(
               bottom: BorderSide(
-                color: isSelected ? BauhausDesign.secondary : BauhausDesign.neutral,
-                width: isSelected ? 3 : 1,
+                color: isSelected
+                    ? BauhausDesign.secondary
+                    : BauhausDesign.neutral,
+                width: isSelected ? 4 : 2,
               ),
+              right: index < 2
+                  ? const BorderSide(color: BauhausDesign.neutral, width: 2)
+                  : BorderSide.none,
             ),
           ),
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                  color: isSelected ? BauhausDesign.surfaceWhite : BauhausDesign.neutral,
-                  fontWeight: FontWeight.bold,
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: isSelected
+                      ? BauhausDesign.surfaceWhite
+                      : BauhausDesign.textDark.withOpacity(0.7),
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
                 ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactTab(String label, int index) {
+    final isSelected = _selectedTab == index;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedTab = index),
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 120),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color:
+              isSelected ? BauhausDesign.secondary : BauhausDesign.surfaceWhite,
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                color: isSelected
+                    ? BauhausDesign.surfaceWhite
+                    : BauhausDesign.textDark,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.1,
+              ),
         ),
       ),
     );
@@ -126,43 +204,57 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
         final conversation = state.conversations[index];
         return BauhausCard(
           child: ListTile(
+            contentPadding: const EdgeInsets.all(16),
             leading: Container(
-              padding: const EdgeInsets.all(12),
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary.withOpacity(0.1),
-                border: Border.all(color: BauhausDesign.secondary, width: 2),
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                boxShadow: const [BauhausDesign.shadowHardXs],
               ),
-              child: const Icon(Icons.person_outline, color: BauhausDesign.secondary),
+              child: const Icon(Icons.person_outline,
+                  color: BauhausDesign.secondary, size: 28),
             ),
             title: Text(
               conversation.participantName,
-              style: BauhausDesign.getTextTheme(context).titleMedium,
+              style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             subtitle: Text(
               conversation.lastMessage,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
+                    color: BauhausDesign.textDark.withOpacity(0.6),
                   ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             trailing: conversation.unreadCount > 0
                 ? Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: const BoxDecoration(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
                       color: BauhausDesign.primary,
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 1.5),
                     ),
                     child: Text(
                       '${conversation.unreadCount}',
-                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(
                             color: BauhausDesign.surfaceWhite,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w900,
                           ),
                     ),
                   )
-                : null,
+                : const Icon(Icons.chevron_right, color: BauhausDesign.neutral),
             onTap: () {
-              ref.read(communicationViewModelProvider.notifier).loadMessages(conversation.conversationId);
+              ref
+                  .read(communicationViewModelProvider.notifier)
+                  .loadMessages(conversation.conversationId);
               _showConversationDialog(context, conversation.participantName);
             },
           ),
@@ -172,9 +264,6 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
   }
 
   Widget _buildComposeTab(CommunicationState state) {
-    final messageController = TextEditingController();
-    String selectedChannel = 'SMS';
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -188,37 +277,25 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Channel',
-                    style: BauhausDesign.getTextTheme(context).titleMedium,
-                  ),
+                  BauhausSectionHeader(title: 'Select Channel'),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 12,
+                    runSpacing: 12,
                     children: ['SMS', 'Email', 'In-App'].map((channel) {
-                      return ChoiceChip(
-                        label: Text(channel),
-                        selected: selectedChannel == channel,
-                        onSelected: (selected) {
-                          if (selected) {
-                            setState(() => selectedChannel = channel);
-                          }
-                        },
+                      return BauhausChip(
+                        label: channel,
+                        isSelected: _selectedChannel == channel,
+                        variant: BauhausChipVariant.secondary,
+                        onTap: () => setState(() => _selectedChannel = channel),
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Message',
-                    style: BauhausDesign.getTextTheme(context).titleMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: messageController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type your message...',
-                      border: OutlineInputBorder(),
-                    ),
+                  const SizedBox(height: 32),
+                  BauhausTextField(
+                    controller: _messageController,
+                    label: 'Message',
+                    hintText: 'Type your message...',
                     maxLines: 5,
                   ),
                   const SizedBox(height: 24),
@@ -228,29 +305,37 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
                       onPressed: state.isSending
                           ? null
                           : () async {
-                              final message = messageController.text.trim();
+                              final message = _messageController.text.trim();
                               if (message.isNotEmpty) {
-                                final success = await ref.read(communicationViewModelProvider.notifier).sendMessage({
+                                final success = await ref
+                                    .read(
+                                        communicationViewModelProvider.notifier)
+                                    .sendMessage({
                                   'userId': widget.userId,
                                   'message': message,
-                                  'channel': selectedChannel,
+                                  'channel': _selectedChannel,
                                   'timestamp': DateTime.now().toIso8601String(),
                                 });
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(success ? 'Message sent!' : 'Failed to send message'),
-                                      backgroundColor: success ? BauhausDesign.success : BauhausDesign.error,
+                                      content: Text(success
+                                          ? 'Message sent!'
+                                          : 'Failed to send message'),
+                                      backgroundColor: success
+                                          ? BauhausDesign.success
+                                          : BauhausDesign.error,
                                     ),
                                   );
                                   if (success) {
-                                    messageController.clear();
+                                    _messageController.clear();
                                   }
                                 }
                               }
                             },
                       text: state.isSending ? 'SENDING...' : 'SEND MESSAGE',
                       icon: Icons.send,
+                      isFullWidth: true,
                     ),
                   ),
                 ],
@@ -267,24 +352,35 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
                 padding: const EdgeInsets.only(bottom: 12),
                 child: BauhausCard(
                   child: ListTile(
-                    leading: const Icon(Icons.description_outlined, color: BauhausDesign.warning),
+                    leading: const Icon(Icons.description_outlined,
+                        color: BauhausDesign.warning),
                     title: Text(
                       template.name,
-                      style: BauhausDesign.getTextTheme(context).titleSmall,
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleSmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     subtitle: Text(
                       template.content,
-                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.neutral,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark.withOpacity(0.6),
                           ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
+                    trailing: BauhausIconButton(
+                      icon: Icons.add_circle_outline,
                       onPressed: () {
-                        messageController.text = template.content;
+                        _messageController.text = template.content;
+                        setState(() {}); // Trigger sync
                       },
+                      variant: BauhausActionVariant.primary,
+                      isSmall: true,
                     ),
                   ),
                 ),
@@ -297,9 +393,6 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
   }
 
   Widget _buildBroadcastTab(CommunicationState state) {
-    final broadcastController = TextEditingController();
-    String selectedGroup = 'All Workers';
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -319,37 +412,53 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
                     color: BauhausDesign.warning,
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'Send to Group',
-                    style: BauhausDesign.getTextTheme(context).titleMedium,
-                  ),
+                  BauhausSectionHeader(title: 'Send to Group'),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    value: selectedGroup,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.surfaceWhite,
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 2),
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
                     ),
-                    items: ['All Workers', 'Active Workers', 'Managers', 'Clients'].map((group) {
-                      return DropdownMenuItem(value: group, child: Text(group));
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() => selectedGroup = value);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Message',
-                    style: BauhausDesign.getTextTheme(context).titleMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: broadcastController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type your broadcast message...',
-                      border: OutlineInputBorder(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButtonFormField<String>(
+                        value: _selectedGroup,
+                        dropdownColor: BauhausDesign.surfaceWhite,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium,
+                        decoration:
+                            const InputDecoration(border: InputBorder.none),
+                        items: [
+                          'All Workers',
+                          'Active Workers',
+                          'Managers',
+                          'Clients'
+                        ].map((group) {
+                          return DropdownMenuItem(
+                            value: group,
+                            child: Text(
+                              group,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium
+                                  ?.copyWith(color: BauhausDesign.textDark),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() => _selectedGroup = value);
+                          }
+                        },
+                      ),
                     ),
+                  ),
+                  const SizedBox(height: 32),
+                  BauhausTextField(
+                    controller: _broadcastController,
+                    label: 'Message',
+                    hintText: 'Type your broadcast message...',
                     maxLines: 5,
                   ),
                   const SizedBox(height: 24),
@@ -359,23 +468,30 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
                       onPressed: state.isSending
                           ? null
                           : () async {
-                              final message = broadcastController.text.trim();
+                              final message = _broadcastController.text.trim();
                               if (message.isNotEmpty) {
-                                final success = await ref.read(communicationViewModelProvider.notifier).broadcastMessage({
+                                final success = await ref
+                                    .read(
+                                        communicationViewModelProvider.notifier)
+                                    .broadcastMessage({
                                   'organizationId': widget.userId,
-                                  'group': selectedGroup,
+                                  'group': _selectedGroup,
                                   'message': message,
                                   'timestamp': DateTime.now().toIso8601String(),
                                 });
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(success ? 'Broadcast sent!' : 'Failed to send broadcast'),
-                                      backgroundColor: success ? BauhausDesign.success : BauhausDesign.error,
+                                      content: Text(success
+                                          ? 'Broadcast sent!'
+                                          : 'Failed to send broadcast'),
+                                      backgroundColor: success
+                                          ? BauhausDesign.success
+                                          : BauhausDesign.error,
                                     ),
                                   );
                                   if (success) {
-                                    broadcastController.clear();
+                                    _broadcastController.clear();
                                   }
                                 }
                               }
@@ -383,6 +499,7 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
                       text: state.isSending ? 'SENDING...' : 'SEND BROADCAST',
                       icon: Icons.send,
                       variant: BauhausActionVariant.warning,
+                      isFullWidth: true,
                     ),
                   ),
                 ],
@@ -400,27 +517,67 @@ class _CommunicationHubDashboardState extends ConsumerState<CommunicationHubDash
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(participantName),
+        backgroundColor: BauhausDesign.backgroundLight,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: BauhausDesign.neutral, width: 3),
+        ),
+        title: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: BauhausDesign.secondary,
+            border: Border(
+                bottom: BorderSide(color: BauhausDesign.neutral, width: 2)),
+          ),
+          child: Text(
+            participantName.toUpperCase(),
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                  color: BauhausDesign.surfaceWhite,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                ),
+          ),
+        ),
+        titlePadding: EdgeInsets.zero,
         content: SizedBox(
           width: double.maxFinite,
           height: 400,
           child: state.messages.isEmpty
-              ? const Center(child: Text('No messages'))
+              ? const Center(
+                  child: Text(
+                    'No messages',
+                    style: TextStyle(color: BauhausDesign.textDark),
+                  ),
+                )
               : ListView.builder(
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     final message = state.messages[index];
                     return ListTile(
-                      title: Text(message.message),
-                      subtitle: Text(message.sentAt),
+                      title: Text(
+                        message.message,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodyMedium
+                            ?.copyWith(color: BauhausDesign.textDark),
+                      ),
+                      subtitle: Text(
+                        message.sentAt,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodySmall
+                            ?.copyWith(
+                              color: BauhausDesign.textDark.withOpacity(0.7),
+                            ),
+                      ),
                     );
                   },
                 ),
         ),
         actions: [
-          TextButton(
+          BauhausActionButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CLOSE'),
+            text: 'CLOSE',
+            variant: BauhausActionVariant.primary,
+            isSmall: true,
           ),
         ],
       ),

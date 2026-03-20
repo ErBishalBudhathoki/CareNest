@@ -1,9 +1,20 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
+
+const bool _enableNotificationDebugLogs = bool.fromEnvironment(
+  'ENABLE_NOTIFICATION_DEBUG_LOGS',
+  defaultValue: false,
+);
+
+void _notifDebugLog(String message) {
+  if (kDebugMode && _enableNotificationDebugLogs) {
+    debugPrint(message);
+  }
+}
 
 class NotificationState {
   final List<NotificationModel> notifications;
@@ -61,7 +72,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   //           try {
   //             return NotificationModel.fromJson(jsonDecode(jsonStr));
   //           } catch (e) {
-  //             debugPrint('Error parsing app notification: $e');
+  //             _notifDebugLog('Error parsing app notification: $e');
   //             return null;
   //           }
   //         })
@@ -71,7 +82,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   //     // Load any new surface notifications from the temporary store.
   //     final surfaceNotificationsJson =
   //         prefs.getStringList(_surfaceStorageKey) ?? [];
-  //     debugPrint(
+  //     _notifDebugLog(
   //         'DEBUG_PROVIDER: Found ${surfaceNotificationsJson.length} surface notifications in storage.');
 
   //     final surfaceNotifications = surfaceNotificationsJson
@@ -80,7 +91,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   //             // The data from the surface handler is already a NotificationModel
   //             return NotificationModel.fromJson(jsonDecode(jsonStr));
   //           } catch (e) {
-  //             debugPrint('Error parsing surface notification: $e');
+  //             _notifDebugLog('Error parsing surface notification: $e');
   //             return null;
   //           }
   //         })
@@ -105,7 +116,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 
   //     final limitedNotifications = notifications.take(100).toList();
 
-  //     debugPrint(
+  //     _notifDebugLog(
   //         'DEBUG_PROVIDER: Final merged notifications count: ${limitedNotifications.length}');
 
   //     state = state.copyWith(
@@ -118,12 +129,12 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   //     // IMPORTANT: Clear the temporary surface store now that they've been merged.
   //     await _clearBackgroundNotifications();
 
-  //     debugPrint(
+  //     _notifDebugLog(
   //         'DEBUG_PROVIDER: Background notifications merged and cleared. Refresh complete.');
   //   } catch (e) {
   //     state = state.copyWith(
   //         isLoading: false, error: 'Failed to load notifications: $e');
-  //     debugPrint('Error in loadNotifications: $e');
+  //     _notifDebugLog('Error in loadNotifications: $e');
   //   }
   // }
 
@@ -159,7 +170,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
             try {
               return NotificationModel.fromJson(jsonDecode(jsonStr));
             } catch (e) {
-              debugPrint('Error parsing a stored app notification: $e');
+              _notifDebugLog('Error parsing a stored app notification: $e');
               return null;
             }
           })
@@ -169,7 +180,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       // 2. Load any new notifications from the temporary surface store.
       final surfaceNotificationsJson =
           prefs.getStringList('surface_notifications') ?? [];
-      debugPrint(
+      _notifDebugLog(
           'DEBUG_PROVIDER (After Reload): Found ${surfaceNotificationsJson.length} new surface notifications.');
 
       final surfaceNotifications = surfaceNotificationsJson
@@ -177,7 +188,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
             try {
               return NotificationModel.fromJson(jsonDecode(jsonStr));
             } catch (e) {
-              debugPrint('Error parsing a stored surface notification: $e');
+              _notifDebugLog('Error parsing a stored surface notification: $e');
               return null;
             }
           })
@@ -222,11 +233,11 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       // 10. Clean up the temporary surface notification store now that its contents have been processed.
       await _clearBackgroundNotifications();
 
-      debugPrint(
+      _notifDebugLog(
           'DEBUG_PROVIDER: Notification refresh complete. Final list count: ${limitedNotifications.length}');
     } catch (e) {
       // If any error occurs during the process, update the state to show an error message in the UI.
-      debugPrint('FATAL ERROR in loadNotifications: $e');
+      _notifDebugLog('FATAL ERROR in loadNotifications: $e');
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to load notifications: $e',
@@ -243,7 +254,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
           .toList();
       await prefs.setStringList(_storageKey, notificationsJson);
     } catch (e) {
-      debugPrint('Error saving notifications: $e');
+      _notifDebugLog('Error saving notifications: $e');
     }
   }
 
@@ -255,13 +266,13 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(notifications: limitedNotifications);
       await _saveNotifications();
     } catch (e) {
-      debugPrint('Error adding notification: $e');
+      _notifDebugLog('Error adding notification: $e');
     }
   }
 
   /// Public method to trigger a manual refresh (e.g., on app resume).
   void refresh() {
-    debugPrint('DEBUG_PROVIDER: Manual refresh triggered.');
+    _notifDebugLog('DEBUG_PROVIDER: Manual refresh triggered.');
     loadNotifications();
   }
 
@@ -270,9 +281,9 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_surfaceStorageKey);
-      debugPrint('Background notifications cleared after loading.');
+      _notifDebugLog('Background notifications cleared after loading.');
     } catch (e) {
-      debugPrint('Error clearing surface notifications: $e');
+      _notifDebugLog('Error clearing surface notifications: $e');
     }
   }
 

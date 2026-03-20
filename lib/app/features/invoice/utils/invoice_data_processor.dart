@@ -60,52 +60,26 @@ class InvoiceDataProcessor {
     }
 
     try {
-      if (_cachedBulkPricingData != null &&
-          _cachedOrganizationId == organizationId) {
-        final itemData = _cachedBulkPricingData![ndisItemNumber];
-        if (itemData != null) {
-          final dynamic customPriceRaw = itemData['customPrice'];
-          final dynamic fallbackPriceRaw = itemData['price'];
-          final String? source = itemData['source']?.toString();
-          final double? customPrice = customPriceRaw is num
-              ? customPriceRaw.toDouble()
-              : double.tryParse(customPriceRaw?.toString() ?? '');
-          final double? fallbackPrice = fallbackPriceRaw is num
-              ? fallbackPriceRaw.toDouble()
-              : double.tryParse(fallbackPriceRaw?.toString() ?? '');
-          debugPrint(
-              'InvoiceDataProcessor: Cached org pricing for $ndisItemNumber - custom: $customPrice, fallback price: $fallbackPrice, source: $source');
-
-          if (customPrice != null && customPrice > 0) {
-            debugPrint(
-                'InvoiceDataProcessor: Using org custom price: $customPrice');
-            return {
-              'price': customPrice,
-              'source': source ?? 'organization',
-            };
+      double? orgFallbackBaseRate;
+      Future<double?> readOrgFallbackBaseRate() async {
+        if (orgFallbackBaseRate != null) return orgFallbackBaseRate;
+        if (organizationId == null || organizationId.isEmpty) return null;
+        try {
+          final api = ref.read(apiMethodProvider);
+          final fb = await api.getFallbackBaseRate(organizationId);
+          if (fb != null && fb > 0) {
+            orgFallbackBaseRate = double.parse(fb.toStringAsFixed(2));
+          } else {
+            orgFallbackBaseRate = null;
           }
-
-          // Use organization fallback base rate from bulk data when available
-          if (fallbackPrice != null && fallbackPrice > 0) {
-            debugPrint(
-                'InvoiceDataProcessor: Using fallback base rate from bulk data: $fallbackPrice');
-            return {
-              'price': fallbackPrice,
-              'source': source ?? 'fallback-base-rate',
-            };
-          }
-
-          // Avoid trusting any other cached price; fetch standard price via API
-          debugPrint(
-              'InvoiceDataProcessor: Fetching base standard price via API');
-          final stdFromApi = await enhancedInvoiceService!
-              .getStandardPriceForItem(ndisItemNumber);
-          if (stdFromApi != null && stdFromApi > 0) {
-            return {'price': stdFromApi, 'source': 'standard'};
-          }
+        } catch (_) {
+          orgFallbackBaseRate = null;
         }
+        return orgFallbackBaseRate;
       }
 
+      // Priority 1: client-specific pricing when a client context is present.
+      // This must win over organization-level pricing.
       if (clientId != null && clientId.isNotEmpty && organizationId != null) {
         try {
           debugPrint(
@@ -150,10 +124,79 @@ class InvoiceDataProcessor {
         }
       }
 
+      // Priority 2: organization-level custom/fallback pricing cache.
+      if (_cachedBulkPricingData != null &&
+          _cachedOrganizationId == organizationId) {
+        final itemData = _cachedBulkPricingData![ndisItemNumber];
+        if (itemData != null) {
+          final dynamic customPriceRaw = itemData['customPrice'];
+          final dynamic fallbackPriceRaw = itemData['price'];
+          final String? source = itemData['source']?.toString();
+          final double? customPrice = customPriceRaw is num
+              ? customPriceRaw.toDouble()
+              : double.tryParse(customPriceRaw?.toString() ?? '');
+          final double? fallbackPrice = fallbackPriceRaw is num
+              ? fallbackPriceRaw.toDouble()
+              : double.tryParse(fallbackPriceRaw?.toString() ?? '');
+          debugPrint(
+              'InvoiceDataProcessor: Cached org pricing for $ndisItemNumber - custom: $customPrice, fallback price: $fallbackPrice, source: $source');
+
+          if (customPrice != null && customPrice > 0) {
+            debugPrint(
+                'InvoiceDataProcessor: Using org custom price: $customPrice');
+            return {
+              'price': customPrice,
+              'source': source ?? 'organization',
+            };
+          }
+
+          // Use organization fallback base rate from bulk data when available
+          if (fallbackPrice != null && fallbackPrice > 0) {
+            debugPrint(
+                'InvoiceDataProcessor: Using fallback base rate from bulk data: $fallbackPrice');
+            return {
+              'price': fallbackPrice,
+              'source': source ?? 'fallback-base-rate',
+            };
+          }
+
+          // Avoid trusting any other cached price; fetch standard price via API
+          debugPrint(
+              'InvoiceDataProcessor: Fetching base standard price via API');
+          final stdFromApi = await enhancedInvoiceService!
+              .getStandardPriceForItem(ndisItemNumber);
+          if (stdFromApi != null && stdFromApi > 0) {
+            return {'price': stdFromApi, 'source': 'standard'};
+          }
+
+          // If no per-item price is configured, use organization fallback base rate.
+          final fallback = await readOrgFallbackBaseRate();
+          if (fallback != null && fallback > 0) {
+            debugPrint(
+                'InvoiceDataProcessor: Using organization fallback base rate for $ndisItemNumber: $fallback');
+            return {
+              'price': fallback,
+              'source': 'fallback-base-rate',
+            };
+          }
+        }
+      }
+
       debugPrint(
           'InvoiceDataProcessor: No cached pricing found, using standard price fallback for $ndisItemNumber');
       final std =
           await enhancedInvoiceService!.getStandardPriceForItem(ndisItemNumber);
+      if (std == null || std <= 0) {
+        final fallback = await readOrgFallbackBaseRate();
+        if (fallback != null && fallback > 0) {
+          debugPrint(
+              'InvoiceDataProcessor: Using organization fallback base rate for $ndisItemNumber (no standard): $fallback');
+          return {
+            'price': fallback,
+            'source': 'fallback-base-rate',
+          };
+        }
+      }
       return {
         'price': std != null && std > 0 ? std : 0.0,
         'source': std != null && std > 0 ? 'standard' : 'missing',
@@ -476,9 +519,9 @@ class InvoiceDataProcessor {
           return false;
 
         // Check approval status
-        final status =
+        final approvalStatus =
             (expense['approvalStatus'] ?? '').toString().toLowerCase();
-        if (status != 'approved') return false;
+        if (approvalStatus != 'approved') return false;
 
         // Check if already processed
         final id = expense['_id']?.toString() ?? expense.hashCode.toString();
@@ -703,9 +746,23 @@ class InvoiceDataProcessor {
     clientData['employeeName'] =
         employeeName.isNotEmpty ? employeeName : 'Unknown Employee';
     clientData['employeeEmail'] = userEmail;
+    clientData['employeeId'] = (employeeUser?.id.isNotEmpty == true)
+        ? employeeUser!.id
+        : (employeeDetails?['id'] ??
+                employeeDetails?['_id'] ??
+                employeeDetails?['userId'] ??
+                doc['userId'])
+            ?.toString();
     clientData['providerABN'] = providerABN;
     // Preserve employee details for header rendering when employee invoice
     clientData['employeeDetails'] = {
+      'id': (employeeUser?.id.isNotEmpty == true)
+          ? employeeUser!.id
+          : (employeeDetails?['id'] ??
+                  employeeDetails?['_id'] ??
+                  employeeDetails?['userId'] ??
+                  doc['userId'])
+              ?.toString(),
       'name': employeeName,
       'email': userEmail,
       'address': employeeDetails?['address'] ??
@@ -1161,6 +1218,7 @@ class InvoiceDataProcessor {
       debugPrint('Data Processor: First raw expense: ${expenses.first}');
 
       final clientEmail = clientData['clientEmail'] as String;
+      final currentClientId = clientId?.toString() ?? '';
 
       // Filter expenses for this specific client
       final clientExpensesRaw = expenses.where((expense) {
@@ -1171,21 +1229,26 @@ class InvoiceDataProcessor {
         }
 
         // Check approval status
-        final status =
+        final approvalStatus =
             (expense['approvalStatus'] ?? '').toString().toLowerCase();
-        if (status != 'approved') return false;
+        if (approvalStatus != 'approved') return false;
 
         bool shouldInclude = false;
+        final expenseClientId = expense['clientId']?.toString() ?? '';
+        final expenseClientEmail =
+            (expense['clientEmail'] ?? '').toString().trim().toLowerCase();
+        final normalizedClientEmail = clientEmail.trim().toLowerCase();
 
-        // If expense has clientEmail field, filter by it
-        if (expense.containsKey('clientEmail')) {
-          if (expense['clientEmail'] == clientEmail) {
-            shouldInclude = true;
-          }
-        } else {
-          // Otherwise include all expenses (for backward compatibility)
-          // But only if we are not in employee mode (to avoid duplicates if we have logic there)
-          // Actually, legacy behavior was 'include all'.
+        // Prefer explicit client linkage by clientId, then clientEmail.
+        if (currentClientId.isNotEmpty &&
+            expenseClientId.isNotEmpty &&
+            expenseClientId == currentClientId) {
+          shouldInclude = true;
+        } else if (expenseClientEmail.isNotEmpty &&
+            expenseClientEmail == normalizedClientEmail) {
+          shouldInclude = true;
+        } else if (expenseClientId.isEmpty && expenseClientEmail.isEmpty) {
+          // Legacy payloads may not carry client linkage fields.
           shouldInclude = true;
         }
 

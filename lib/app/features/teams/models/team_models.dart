@@ -1,23 +1,48 @@
 
 class TeamMember {
   final String userId;
+  final String displayName; // populated from userId.firstName + lastName
+  final String email;       // populated from userId.email
   final String role;
   final String status;
   final DateTime joinedAt;
 
   const TeamMember({
     required this.userId,
+    this.displayName = '',
+    this.email = '',
     required this.role,
     this.status = 'active',
     required this.joinedAt,
   });
 
   factory TeamMember.fromJson(Map<String, dynamic> json) {
+    // userId can be a populated object {_id/id, firstName, lastName, email}
+    // or a plain string (when not populated)
+    final rawUserId = json['userId'];
+    final String userId;
+    String displayName = '';
+    String email = '';
+
+    if (rawUserId is Map<String, dynamic>) {
+      userId = (rawUserId['id'] ?? rawUserId['_id'] ?? '').toString();
+      final first = (rawUserId['firstName'] as String? ?? '').trim();
+      final last = (rawUserId['lastName'] as String? ?? '').trim();
+      displayName = [first, last].where((s) => s.isNotEmpty).join(' ');
+      email = (rawUserId['email'] as String? ?? '').trim();
+    } else {
+      userId = (rawUserId ?? '').toString();
+    }
+
     return TeamMember(
-      userId: json['userId'] as String,
-      role: json['role'] as String,
+      userId: userId,
+      displayName: displayName,
+      email: email,
+      role: json['role'] as String? ?? 'member',
       status: json['status'] as String? ?? 'active',
-      joinedAt: DateTime.parse(json['joinedAt'] as String),
+      joinedAt: DateTime.tryParse(
+              (json['joinedAt'] ?? json['createdAt'] ?? '') as String) ??
+          DateTime.now(),
     );
   }
 
@@ -52,10 +77,12 @@ class Team {
 
   factory Team.fromJson(Map<String, dynamic> json) {
     return Team(
-      id: json['_id'] as String?,
+      // backend toJSON transforms _id → id, but handle both defensively
+      id: (json['id'] ?? json['_id']) as String?,
       name: json['name'] as String,
-      ownerId: json['ownerId'] as String,
-      members: (json['members'] as List<dynamic>)
+      ownerId: (json['ownerId'] ?? json['managerId'] ?? '') as String,
+      // members may be absent on create; default to empty list
+      members: (json['members'] as List<dynamic>? ?? [])
           .map((e) => TeamMember.fromJson(e as Map<String, dynamic>))
           .toList(),
       settings: json['settings'] as Map<String, dynamic>? ?? {},
@@ -100,7 +127,7 @@ class EmergencyBroadcast {
 
   factory EmergencyBroadcast.fromJson(Map<String, dynamic> json) {
     return EmergencyBroadcast(
-      id: json['_id'] as String?,
+      id: (json['id'] ?? json['_id']) as String?,
       teamId: json['teamId'] as String,
       initiatorId: json['initiatorId'] as String,
       type: json['type'] as String,

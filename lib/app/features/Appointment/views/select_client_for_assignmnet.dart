@@ -1,11 +1,15 @@
 import 'package:carenest/app/features/Appointment/views/schedule_assignment.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class SelectClientForAssignment extends ConsumerStatefulWidget {
   final String userName;
@@ -15,7 +19,8 @@ class SelectClientForAssignment extends ConsumerStatefulWidget {
       {super.key, required this.userName, required this.userEmail});
 
   @override
-  ConsumerState<SelectClientForAssignment> createState() => _DropdownMenuState();
+  ConsumerState<SelectClientForAssignment> createState() =>
+      _DropdownMenuState();
 }
 
 class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
@@ -76,46 +81,77 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _returnToAdminDashboard() async {
+    final sharedPrefs = SharedPreferencesUtils();
+    await sharedPrefs.init();
+
+    final userEmail =
+        await sharedPrefs.getUserEmailFromSharedPreferences() ?? '';
+    final role = sharedPrefs.getRole() ?? UserRole.admin;
+    final organizationId = sharedPrefs.getOrganizationId() ?? '';
+    final organizationName = sharedPrefs.getString('organizationName') ?? '';
+    final organizationCode = sharedPrefs.getOrganizationCode() ?? '';
+
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      Routes.bottomNavBar,
+      (route) => false,
+      arguments: {
+        'email': userEmail,
+        'role': role,
+        'organizationId': organizationId,
+        'organizationName': organizationName,
+        'organizationCode': organizationCode,
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: BauhausDesign.backgroundLight,
-      appBar: _buildAppBar(context),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Column(
-          children: [
-            _buildSearchBar(),
-            Expanded(
-              child: FutureBuilder<List<Patient>>(
-                future: futureClientsData,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return _buildLoadingState();
-                  } else if (snapshot.hasError) {
-                    return _buildErrorState(snapshot.error.toString());
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return _buildEmptyState();
-                  } else {
-                    _allClients = snapshot.data!;
-                    if (_filteredClients.isEmpty && !_isSearching) {
-                      _filteredClients = _allClients;
+    return WillPopScope(
+      onWillPop: () async {
+        await _returnToAdminDashboard();
+        return false;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: BauhausDesign.backgroundLight,
+        appBar: _buildAppBar(context),
+        body: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Column(
+            children: [
+              _buildSearchBar(),
+              Expanded(
+                child: FutureBuilder<List<Patient>>(
+                  future: futureClientsData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return _buildLoadingState();
+                    } else if (snapshot.hasError) {
+                      return _buildErrorState(snapshot.error.toString());
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return _buildEmptyState();
+                    } else {
+                      _allClients = snapshot.data!;
+                      if (_filteredClients.isEmpty && !_isSearching) {
+                        _filteredClients = _allClients;
+                      }
+
+                      List<Patient> clientsToShow =
+                          _isSearching ? _filteredClients : _allClients;
+
+                      if (clientsToShow.isEmpty && _isSearching) {
+                        return _buildNoSearchResultsState();
+                      }
+
+                      return _buildClientsList(clientsToShow);
                     }
-
-                    List<Patient> clientsToShow =
-                        _isSearching ? _filteredClients : _allClients;
-
-                    if (clientsToShow.isEmpty && _isSearching) {
-                      return _buildNoSearchResultsState();
-                    }
-
-                    return _buildClientsList(clientsToShow);
-                  }
-                },
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -147,7 +183,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       ),
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.surfaceWhite),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: _returnToAdminDashboard,
       ),
     );
   }
@@ -173,6 +209,8 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           hintStyle: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
                 color: BauhausDesign.textMuted,
               ),
+          filled: false,
+          fillColor: Colors.transparent,
           prefixIcon: Icon(
             Icons.search,
             color: BauhausDesign.textMuted,
@@ -187,6 +225,10 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                 )
               : null,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: BauhausDesign.space4,
             vertical: BauhausDesign.space4,
@@ -325,6 +367,10 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                   builder: (context) => ScheduleAssignment(
                     userEmail: widget.userEmail,
                     clientEmail: client.clientEmail,
+                    clientId:
+                        (client.id != null && client.id!.trim().isNotEmpty)
+                            ? client.id
+                            : client.clientEmail,
                   ),
                 ),
               );

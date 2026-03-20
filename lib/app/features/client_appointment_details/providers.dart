@@ -9,8 +9,35 @@ final clientAppointmentRepositoryProvider =
   return ClientAppointmentRepository(ref.read(app_providers.apiMethodProvider));
 });
 
-final clientAppointmentDetailsViewModelProvider = ChangeNotifierProvider.family
-    .autoDispose<ClientAppointmentDetailsViewModel, String>((ref, clientId) {
-  final repository = ref.watch(clientAppointmentRepositoryProvider);
-  return ClientAppointmentDetailsViewModel(repository, clientId);
-});
+class ClientAppointmentDetailsParams {
+  final String clientId;
+  final String? clientEmail;
+
+  const ClientAppointmentDetailsParams({
+    required this.clientId,
+    this.clientEmail,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    return other is ClientAppointmentDetailsParams &&
+        other.clientId == clientId &&
+        other.clientEmail == clientEmail;
+  }
+
+  @override
+  int get hashCode => Object.hash(clientId, clientEmail);
+}
+
+final clientAppointmentDetailsViewModelProvider =
+    ChangeNotifierProvider.family.autoDispose<
+        ClientAppointmentDetailsViewModel, ClientAppointmentDetailsParams>(
+  (ref, params) {
+    final repository = ref.watch(clientAppointmentRepositoryProvider);
+    return ClientAppointmentDetailsViewModel(
+      repository,
+      params.clientId,
+      clientEmail: params.clientEmail,
+    );
+  },
+);

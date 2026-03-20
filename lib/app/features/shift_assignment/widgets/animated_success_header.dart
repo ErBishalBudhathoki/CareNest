@@ -161,13 +161,18 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
       ]),
       builder: (context, child) {
         return Container(
-          padding: const EdgeInsets.all(BauhausDesign.space6),
+          padding: const EdgeInsets.all(BauhausDesign.space3),
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceLight,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHardXs],
+          ),
           child: Column(
             children: [
               _buildSuccessIcon(),
-              const SizedBox(height: BauhausDesign.space6),
+              const SizedBox(height: BauhausDesign.space3),
               _buildTitle(),
-              const SizedBox(height: BauhausDesign.space4),
+              const SizedBox(height: BauhausDesign.space2),
               _buildDetails(),
               const SizedBox(height: BauhausDesign.space2),
               _buildSummary(),
@@ -186,11 +191,11 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
         Transform.scale(
           scale: _pulseAnimation.value,
           child: Container(
-            width: 120.0,
-            height: 120.0,
+            width: 80.0,
+            height: 80.0,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
               color: BauhausDesign.success.withOpacity(0.1),
+              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
             ),
           ),
         ),
@@ -200,10 +205,9 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
           child: Transform.rotate(
             angle: _iconRotationAnimation.value,
             child: Container(
-              width: 80.0,
-              height: 80.0,
+              width: 56.0,
+              height: 56.0,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
                 color: BauhausDesign.success,
                 border: Border.all(color: BauhausDesign.neutral, width: 3),
                 boxShadow: const [BauhausDesign.shadowHard],
@@ -211,7 +215,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
               child: const Icon(
                 Icons.check_rounded,
                 color: BauhausDesign.surfaceWhite,
-                size: 40.0,
+                size: 34.0,
               ),
             ),
           ),
@@ -251,7 +255,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
                 height: 8.0,
                 decoration: BoxDecoration(
                   color: colors[i % colors.length],
-                  shape: BoxShape.circle,
+                  border: Border.all(color: BauhausDesign.neutral, width: 1),
                 ),
               ),
             ),
@@ -293,7 +297,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
               value: widget.employeeName,
               color: BauhausDesign.info,
             ),
-            const SizedBox(height: BauhausDesign.space3),
+            const SizedBox(height: BauhausDesign.space2),
             _buildDetailRow(
               icon: Icons.business_outlined,
               label: AppLocalizations.of(context)!.client,
@@ -314,13 +318,12 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: BauhausDesign.space4, vertical: BauhausDesign.space3),
+          horizontal: BauhausDesign.space3, vertical: BauhausDesign.space2),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(
           color: color,
-          width: 1.5,
+          width: 2,
         ),
       ),
       child: Row(
@@ -329,7 +332,6 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(color: color),
             ),
             child: Icon(
@@ -378,8 +380,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
               horizontal: BauhausDesign.space4, vertical: BauhausDesign.space2),
           decoration: BoxDecoration(
             color: BauhausDesign.success.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-            border: Border.all(color: BauhausDesign.success),
+            border: Border.all(color: BauhausDesign.success, width: 1.5),
           ),
           child: Text(
             widget.assignmentSummary,

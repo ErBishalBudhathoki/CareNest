@@ -13,83 +13,59 @@ class TrainingComplianceHubView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(BauhausDesign.space4),
-                child: Column(
-                  children: [
-                    _buildNavCard(
-                      context,
-                      title: AppLocalizations.of(context)!.certificationsTitle,
-                      subtitle:
-                          AppLocalizations.of(context)!.certificationsSubtitle,
-                      icon: Icons.card_membership,
-                      color: BauhausDesign.primary,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const CertificationsView())),
-                    ),
-                    const SizedBox(height: BauhausDesign.space4),
-                    _buildNavCard(
-                      context,
-                      title: AppLocalizations.of(context)!.trainingModulesTitle,
-                      subtitle:
-                          AppLocalizations.of(context)!.trainingModulesSubtitle,
-                      icon: Icons.school,
-                      color: BauhausDesign.secondary,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const TrainingModulesView())),
-                    ),
-                    const SizedBox(height: BauhausDesign.space4),
-                    _buildNavCard(
-                      context,
-                      title: AppLocalizations.of(context)!
-                          .complianceChecklistsTitle,
-                      subtitle: AppLocalizations.of(context)!
-                          .complianceChecklistsSubtitle,
-                      icon: Icons.checklist,
-                      color: BauhausDesign.accent,
-                      textColor: BauhausDesign.textDark,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const ComplianceChecklistView())),
-                    ),
-                  ],
-                ),
+      appBar: AppBar(
+        backgroundColor: BauhausDesign.surfaceLight,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        title: Text(
+          AppLocalizations.of(context)!.trainingComplianceTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
               ),
-            ),
-          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(height: 2, color: BauhausDesign.neutral),
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border:
-            Border(bottom: BorderSide(color: BauhausDesign.neutral, width: 2)),
-      ),
-      child: Row(
+      body: ListView(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
-            onPressed: () => Navigator.pop(context),
+          _buildNavCard(
+            context,
+            title: AppLocalizations.of(context)!.certificationsTitle,
+            subtitle: AppLocalizations.of(context)!.certificationsSubtitle,
+            icon: Icons.card_membership,
+            color: BauhausDesign.primary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CertificationsView()),
+            ),
           ),
-          const SizedBox(width: BauhausDesign.space2),
-          Text(
-            AppLocalizations.of(context)!.trainingComplianceTitle,
-            style: BauhausDesign.getTextTheme(context).headlineLarge,
+          const SizedBox(height: BauhausDesign.space4),
+          _buildNavCard(
+            context,
+            title: AppLocalizations.of(context)!.trainingModulesTitle,
+            subtitle: AppLocalizations.of(context)!.trainingModulesSubtitle,
+            icon: Icons.school,
+            color: BauhausDesign.secondary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const TrainingModulesView()),
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space4),
+          _buildNavCard(
+            context,
+            title: AppLocalizations.of(context)!.complianceChecklistsTitle,
+            subtitle: AppLocalizations.of(context)!.complianceChecklistsSubtitle,
+            icon: Icons.checklist,
+            color: BauhausDesign.accent,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ComplianceChecklistView()),
+            ),
           ),
         ],
       ),
@@ -103,38 +79,71 @@ class TrainingComplianceHubView extends ConsumerWidget {
     required IconData icon,
     required Color color,
     required VoidCallback onTap,
-    Color textColor = Colors.white,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(BauhausDesign.space6),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: [BauhausDesign.shadowHard],
+          color: BauhausDesign.surfaceLight,
+          boxShadow: const [BauhausDesign.shadowHard],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 40, color: textColor),
-            const SizedBox(height: BauhausDesign.space4),
-            Text(
-              title,
-              style: BauhausDesign.getTextTheme(context)
-                  .displaySmall
-                  ?.copyWith(color: textColor),
-            ),
-            const SizedBox(height: BauhausDesign.space2),
-            Text(
-              subtitle,
-              style: BauhausDesign.getTextTheme(context)
-                  .bodyMedium
-                  ?.copyWith(color: textColor.withOpacity(0.9)),
-            ),
-          ],
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Container(
+                width: 10,
+                color: color,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(BauhausDesign.space4),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: color.withOpacity(0.14),
+                          border: Border.all(color: color, width: 2),
+                        ),
+                        child: Icon(icon, size: 22, color: color),
+                      ),
+                      const SizedBox(width: BauhausDesign.space3),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title.toUpperCase(),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .labelLarge
+                                  ?.copyWith(
+                                    color: BauhausDesign.textDark,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                            ),
+                            const SizedBox(height: BauhausDesign.space1),
+                            Text(
+                              subtitle,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodySmall
+                                  ?.copyWith(color: BauhausDesign.textMuted),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: BauhausDesign.space2),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: BauhausDesign.textDark,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

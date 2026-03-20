@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:signature/signature.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/service_confirmation_viewmodel.dart';
@@ -35,7 +34,9 @@ class _ServiceConfirmationViewState
   }
 
   void _loadChecklistTemplate() {
-    ref.read(serviceConfirmationViewModelProvider.notifier).getChecklistTemplate(
+    ref
+        .read(serviceConfirmationViewModelProvider.notifier)
+        .getChecklistTemplate(
           serviceType: 'home_care',
         );
   }
@@ -66,7 +67,7 @@ class _ServiceConfirmationViewState
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: state.isLoading
@@ -300,7 +301,9 @@ class _ServiceConfirmationViewState
                   });
                 },
                 icon: Icon(
-                  starNumber <= _selectedRating ? Icons.star : Icons.star_border,
+                  starNumber <= _selectedRating
+                      ? Icons.star
+                      : Icons.star_border,
                   color: AppColors.colorWarning,
                 ),
               );
@@ -524,11 +527,11 @@ class _ServiceConfirmationViewState
   Future<void> _submitConfirmation(state) async {
     // Validate signature
     if (_signatureController.isEmpty) {
-      Get.snackbar(
-        'Signature Required',
-        'Please provide your signature',
-        backgroundColor: AppColors.error,
-        colorText: Colors.white,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please provide your signature'),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
@@ -546,14 +549,14 @@ class _ServiceConfirmationViewState
     if (signatureData == null) return;
 
     // TODO: Submit confirmation with actual appointment data
-    Get.snackbar(
-      'Success',
-      'Service confirmation submitted successfully',
-      backgroundColor: AppColors.colorSuccess,
-      colorText: Colors.white,
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Service confirmation submitted successfully'),
+        backgroundColor: AppColors.colorSuccess,
+      ),
     );
 
-    Get.back();
+    Navigator.pop(context);
   }
 
   String _getRatingText(int rating) {

@@ -20,7 +20,7 @@ class ExpenseRepository {
       debugPrint(
           '=== EXPENSE REPO DEBUG: Fetching expenses for organizationId: $organizationId ===');
       final response = await _apiMethod.get(
-        'api/expenses/organization/$organizationId',
+        'expenses/organization/$organizationId',
       );
 
       debugPrint('=== EXPENSE REPO DEBUG: API Response: $response ===');
@@ -214,7 +214,7 @@ class ExpenseRepository {
 
       debugPrint('=== EXPENSE REPO DEBUG: Making POST request now... ===');
       final response = await _apiMethod.post(
-        'api/expenses/create',
+        'expenses/create',
         body: requestBody,
       );
       debugPrint('=== EXPENSE REPO DEBUG: API call completed ===');
@@ -234,10 +234,11 @@ class ExpenseRepository {
       debugPrint(
           '=== EXPENSE REPO DEBUG: Response success status: ${response['success']} ===');
 
-      if (response['statusCode'] == 201 && response['expenseId'] != null) {
+      final expenseId = response['expenseId'] ?? response['data']?['expenseId'];
+      if (response['statusCode'] == 201 && expenseId != null) {
         // Return the expense with the generated ID and uploaded file URLs
         final updatedExpense = expense.copyWith(
-          id: response['expenseId'],
+          id: expenseId.toString(),
           receiptUrl: uploadedReceiptUrl,
           receiptFiles: uploadedReceiptFiles,
           receiptPhotos: uploadedReceiptPhotos,
@@ -373,15 +374,26 @@ class ExpenseRepository {
       }
 
       final response = await _apiMethod.put(
-        'api/expenses/${expense.id}',
+        'expenses/${expense.id}',
         body: requestBody,
       );
+      if (response['statusCode'] == 200) {
+        final directExpense =
+            response['expense'] ?? response['data']?['expense'];
+        if (directExpense is Map<String, dynamic>) {
+          return ExpenseModel.fromJson(directExpense);
+        }
 
-      if (response['success'] == true && response['expense'] != null) {
-        return ExpenseModel.fromJson(response['expense']);
-      } else {
-        throw Exception(response['message'] ?? 'Failed to update expense');
+        final latest = await _apiMethod.get('expenses/${expense.id}');
+        final latestExpense = latest['expense'] ?? latest['data'];
+        if (latestExpense is Map<String, dynamic>) {
+          return ExpenseModel.fromJson(latestExpense);
+        }
+
+        return expense.copyWith(updatedAt: DateTime.now());
       }
+
+      throw Exception(response['message'] ?? 'Failed to update expense');
     } catch (e) {
       throw Exception('Error updating expense: $e');
     }
@@ -391,10 +403,10 @@ class ExpenseRepository {
   Future<bool> deleteExpense(String expenseId) async {
     try {
       final response = await _apiMethod.delete(
-        'api/expenses/$expenseId',
+        'expenses/$expenseId',
       );
 
-      if (response['success'] == true) {
+      if (response['success'] == true || response['statusCode'] == 200) {
         return true;
       } else {
         throw Exception(response['message'] ?? 'Failed to delete expense');
@@ -408,9 +420,11 @@ class ExpenseRepository {
   Future<bool> approveExpense(String expenseId, String approverEmail) async {
     try {
       final response = await _apiMethod.put(
-        'api/expenses/$expenseId/approval',
+        'expenses/$expenseId/approval',
         body: {
+          'status': 'approved',
           'approvalStatus': 'approved',
+          'approvedBy': approverEmail,
           'userEmail': approverEmail,
         },
       );
@@ -430,9 +444,11 @@ class ExpenseRepository {
   Future<bool> rejectExpense(String expenseId, String approverEmail) async {
     try {
       final response = await _apiMethod.put(
-        'api/expenses/$expenseId/approval',
+        'expenses/$expenseId/approval',
         body: {
+          'status': 'rejected',
           'approvalStatus': 'rejected',
+          'approvedBy': approverEmail,
           'userEmail': approverEmail,
         },
       );
@@ -451,15 +467,23 @@ class ExpenseRepository {
   /// Gets expense categories
   Future<List<String>> getExpenseCategories() async {
     try {
-      final response = await _apiMethod.get('api/expenses/categories');
-
-      if (response['success'] == true && response['categories'] != null) {
-        final List<dynamic> categoriesJson = response['categories'];
-        return categoriesJson.map((c) => c.toString()).toList();
-      } else {
-        throw Exception(
-            response['message'] ?? 'Failed to fetch expense categories');
+      final response = await _apiMethod.get('expenses/categories');
+      if (response['statusCode'] == 200) {
+        final dynamic categoriesRaw =
+            response['categories'] ?? response['data'];
+        if (categoriesRaw is List) {
+          return categoriesRaw.map((c) => c.toString()).toList();
+        }
+        if (categoriesRaw is Map<String, dynamic>) {
+          return categoriesRaw.values
+              .map((entry) => (entry is Map && entry['name'] != null)
+                  ? entry['name'].toString()
+                  : entry.toString())
+              .toList();
+        }
       }
+      throw Exception(
+          response['message'] ?? 'Failed to fetch expense categories');
     } catch (e) {
       throw Exception('Error fetching expense categories: $e');
     }
@@ -469,17 +493,20 @@ class ExpenseRepository {
   Future<List<ExpenseModel>> getRecurringExpenses(String organizationId) async {
     try {
       final response = await _apiMethod.get(
-        'api/recurring-expenses/organization/$organizationId',
+        'recurring-expenses/templates/$organizationId',
       );
 
-      if (response['success'] == true &&
-          response['recurringExpenses'] != null) {
-        final List<dynamic> expensesJson = response['recurringExpenses'];
+      if (response['statusCode'] == 200 && response['data'] is List<dynamic>) {
+        final List<dynamic> expensesJson = response['data'];
         return expensesJson.map((json) => ExpenseModel.fromJson(json)).toList();
-      } else {
-        throw Exception(
-            response['message'] ?? 'Failed to fetch recurring expenses');
       }
+
+      if (response['statusCode'] == 404) {
+        return [];
+      }
+
+      throw Exception(
+          response['message'] ?? 'Failed to fetch recurring expenses');
     } catch (e) {
       throw Exception('Error fetching recurring expenses: $e');
     }
@@ -490,7 +517,7 @@ class ExpenseRepository {
       String organizationId) async {
     try {
       final response = await _apiMethod.get(
-        'api/expenses/statistics/$organizationId',
+        'expenses/statistics/$organizationId',
       );
 
       if (response['success'] == true) {

@@ -15,6 +15,9 @@ class WorkerDashboardData {
   /// Next upcoming shift (could be today or in the future)
   final ShiftModel? nextShift;
 
+  /// Past assigned shifts (most recent first)
+  final List<ShiftModel> pastAssignedShifts;
+
   /// Recent expenses (last 3) submitted by the worker
   final List<ExpenseModel> recentExpenses;
 
@@ -25,6 +28,7 @@ class WorkerDashboardData {
     this.activeTimer,
     this.todayShifts = const [],
     this.nextShift,
+    this.pastAssignedShifts = const [],
     this.recentExpenses = const [],
     this.leaveBalances = const [],
   });
@@ -40,6 +44,7 @@ class WorkerDashboardData {
   ///     "activeTimer": {...} | null,
   ///     "todayShifts": [...],
   ///     "nextShift": {...} | null,
+  ///     "pastAssignedShifts": [...],
   ///     "recentExpenses": [...],
   ///     "leaveBalances": [...]
   ///   }
@@ -51,6 +56,7 @@ class WorkerDashboardData {
         activeTimer: json['activeTimer'] as Map<String, dynamic>?,
         todayShifts: _parseShiftList(json['todayShifts']),
         nextShift: _parseShift(json['nextShift']),
+        pastAssignedShifts: _parseShiftList(json['pastAssignedShifts']),
         recentExpenses: _parseExpenseList(json['recentExpenses']),
         leaveBalances: _parseLeaveBalances(json['leaveBalances']),
       );
@@ -150,6 +156,7 @@ class WorkerDashboardData {
   bool get hasActiveTimer => activeTimer != null;
   bool get hasTodayShifts => todayShifts.isNotEmpty;
   bool get hasNextShift => nextShift != null;
+  bool get hasPastAssignedShifts => pastAssignedShifts.isNotEmpty;
   bool get hasRecentExpenses => recentExpenses.isNotEmpty;
   bool get hasLeaveBalances => leaveBalances.isNotEmpty;
 

@@ -13,13 +13,14 @@ class EncryptDecrypt {
 
   static const _keyStorageKey = 'my_secure_key';
 
-  static Future<String?> generateEncryptionKey({int length = 32}) {
+  static Future<String?> generateEncryptionKey({int length = 32}) async {
     final random = Random.secure(); // Use secure random generator
     final values = List<int>.generate(length, (i) => random.nextInt(256));
-    final key = setSecureEncryptionKey(
-        base64UrlEncode(values)); // Encode as Base64 for readability
-    debugPrint('Generated Key for encryption is : $key');
-    return key; // Encode as Base64 for readability
+    final encodedKey =
+        base64UrlEncode(values); // Encode as Base64 for readability
+    final key = await setSecureEncryptionKey(encodedKey);
+    debugPrint('Encryption key generated and stored securely');
+    return key;
   }
 
   static Future<String?> setSecureEncryptionKey(String key) async {
@@ -42,10 +43,7 @@ class EncryptDecrypt {
     cipher.init(true, params);
 
     final encryptedBytes = cipher.process(Uint8List.fromList(plainText));
-    final encrypted = base64Encode(encryptedBytes);
-    debugPrint(
-        "Before password: $password and before key: $key\n Encrypted Password: $encrypted and Key: $key");
-    return encrypted;
+    return base64Encode(encryptedBytes);
   }
 
   // static String decryptPassword(String encryptedPassword, String key) {
@@ -74,7 +72,6 @@ class EncryptDecrypt {
     }
 
     try {
-      debugPrint("Encrypted Passwordss: $encryptedPassword and Keyss: $key");
       final keyBytes = utf8.encode(key);
       final encryptedBytes = base64Decode(encryptedPassword);
 
@@ -86,9 +83,7 @@ class EncryptDecrypt {
 
       final decryptedBytes = cipher.process(Uint8List.fromList(encryptedBytes));
       try {
-        final decryptedPassword = utf8.decode(decryptedBytes);
-        debugPrint('Decrypted Password: $decryptedPassword');
-        return decryptedPassword;
+        return utf8.decode(decryptedBytes);
       } catch (e) {
         debugPrint('Error decoding decrypted bytes: $e');
         return '';

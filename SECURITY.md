@@ -1,4 +1,11 @@
-# Security Guidelines for Invoice App
+# Security Guidelines for CareNest App
+
+## Supported Versions
+
+| Version | Supported          |
+| ------- | ------------------ |
+| main    | :white_check_mark: |
+| dev     | :white_check_mark: |
 
 ## Sensitive Files Protection
 
@@ -8,14 +15,13 @@ This project contains several sensitive files that should **never** be committed
 
 - `google-play-service-key.json` - Google Play API key for app deployment
 - `firebase-service-account.json` - Firebase service account credentials
-- `firebase-admin-config.js` - Firebase admin configuration
 - `google-services.json` - Firebase configuration for Android
 - `GoogleService-Info.plist` - Firebase configuration for iOS
 
 ### Environment Variables
 
 - `.env` - Contains sensitive API keys, passwords, and configuration
-- Any file matching `*.env.*` pattern
+- Any file matching `*.env.*` pattern (except `.env.example`)
 
 ### Keystores and Certificates
 
@@ -26,34 +32,59 @@ This project contains several sensitive files that should **never** be committed
 - `*.key` - Private key files
 - `*.mobileprovision` - iOS provisioning profiles
 
-## Handling Sensitive Information
+## Reporting a Vulnerability
 
-### For Local Development
+If you discover a security vulnerability:
 
-1. Create a `.env.example` file with placeholder values (no real credentials)
-2. Developers should copy `.env.example` to `.env` and add their own credentials
-3. Use environment-specific configuration for different environments (dev, staging, prod)
+1. **Do NOT** open a public issue
+2. Email security reports to: [security@example.com]
+3. Include: description, steps to reproduce, potential impact
 
-### For CI/CD
+### Response Timeline
 
-1. Store sensitive information in GitHub Secrets or other secure CI/CD variables
-2. Never print sensitive information in CI/CD logs
-3. Rotate credentials regularly
-
-### Firebase Configuration
-
-The `firebase_options.dart` file contains API keys that are considered public by Firebase. These keys are restricted by Firebase Security Rules and API restrictions, so they are safe to include in the repository. However, it's still a good practice to restrict these keys to your app's package name and apply proper security rules in Firebase.
+- **Acknowledgment**: Within 48 hours
+- **Initial Assessment**: Within 7 days
+- **Critical Fix**: Within 14 days
 
 ## Security Best Practices
 
-1. Use environment variables for sensitive configuration
-2. Implement proper authentication and authorization
-3. Encrypt sensitive data at rest and in transit
-4. Regularly update dependencies to patch security vulnerabilities
-5. Implement proper input validation to prevent injection attacks
-6. Use secure communication protocols (HTTPS)
-7. Implement proper error handling that doesn't expose sensitive information
+### For Contributors
 
-## Reporting Security Issues
+1. **Never commit secrets** - Use environment variables
+2. **Use `.env.example`** as a template, never commit actual `.env` files
+3. **Pre-commit hooks** are installed - they scan for accidental secret commits
+4. **Review PRs carefully** - Check for accidentally exposed credentials
 
-If you discover a security vulnerability, please send an email to [security@example.com](mailto:security@example.com) rather than opening a public issue.
+### Firebase Configuration
+
+The `firebase_options.dart` file reads API keys from `.env` file. These keys are:
+- Restricted by Firebase Security Rules
+- Restricted by package name/bundle ID
+- Safe to use but should be rotated if compromised
+
+## Security Features
+
+### Current Protections
+
+- ✅ Pre-commit hooks for secret detection
+- ✅ Trivy vulnerability scanning in CI/CD
+- ✅ Dependabot for dependency updates
+- ✅ CodeQL for code analysis
+- ✅ Obfuscated release builds
+- ✅ Signed APKs/AABs for Android
+
+### Branch Protection
+
+- Main branch requires PR reviews
+- Status checks must pass before merge
+- No force pushes to protected branches
+
+## Incident Response
+
+If a security incident occurs:
+
+1. **Rotate compromised credentials immediately**
+2. **Review git history for exposure**
+3. **Use `git filter-repo` to remove secrets from history**
+4. **Force push cleaned history**
+5. **Update all affected services with new credentials**

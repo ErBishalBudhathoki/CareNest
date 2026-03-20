@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:carenest/app/core/services/networking/dio_client.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
+import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 class AuthService {
@@ -45,6 +46,8 @@ class AuthService {
                 '',
           );
         }
+        await SessionTimeoutService(sharedPrefs: sharedPrefs)
+            .markSessionStarted();
 
         // Parse User
         return {
@@ -88,10 +91,12 @@ class AuthService {
       // Clear FlutterSecureStorage
       await _storage.deleteAll();
 
-      // Also clear SharedPreferencesUtils for consistency
+      // Also clear local session state and Firebase session.
       final sharedPrefs = await SharedPreferencesUtils.getInstance();
-      await sharedPrefs.clearAuthToken();
-      await sharedPrefs.clearAllUserData();
+      await SessionTimeoutService(sharedPrefs: sharedPrefs)
+          .logoutAndClearSession(
+        reason: 'auth_service_logout',
+      );
     }
   }
 

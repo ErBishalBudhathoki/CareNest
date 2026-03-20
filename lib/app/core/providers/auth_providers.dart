@@ -4,7 +4,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/features/auth/viewmodels/change_password_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/signup_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/forgot_password_viewmodel.dart';
@@ -12,7 +11,8 @@ import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart'
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // ==================== AUTH STATE ====================
 
@@ -135,14 +135,8 @@ final forgotPasswordViewModelProvider =
   );
 });
 
-// Change password view model provider with autoDispose
-final changePasswordViewModelProvider =
-    ChangeNotifierProvider.autoDispose<ChangePasswordViewModel>((ref) {
-  return ChangePasswordViewModel(ref);
-});
-
 // OTP verification view model provider with autoDispose
 final verifyOTPViewModelProvider =
     ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
-  return VerifyOTPViewModel(ref.read(apiMethodProvider));
+  return VerifyOTPViewModel();
 });

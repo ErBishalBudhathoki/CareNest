@@ -1,6 +1,6 @@
 import 'package:carenest/app/core/utils/Services/signup_result.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:carenest/app/services/firebase_auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/signup_model.dart';
 
@@ -13,9 +13,10 @@ class SignupViewModel extends ChangeNotifier {
   var ins;
   dynamic result;
   final ApiMethod apiMethod;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuthService _firebaseAuthService;
 
-  SignupViewModel(this.apiMethod);
+  SignupViewModel(this.apiMethod, {FirebaseAuthService? firebaseAuthService})
+      : _firebaseAuthService = firebaseAuthService ?? FirebaseAuthService();
 
   // Loading state property
   bool _isLoading = false;
@@ -147,22 +148,21 @@ class SignupViewModel extends ChangeNotifier {
                   "DEBUG: Extracted orgId: $_organizationId, orgCode: $_organizationCode, orgName: $_organizationName");
             }
 
-            // Step 2: Sign into Firebase using the customToken returned by backend
-            final customToken =
-                (success['data'] ?? success)['customToken']?.toString();
-            if (customToken != null && customToken.isNotEmpty) {
-              try {
-                debugPrint("DEBUG: Signing into Firebase with custom token...");
-                await _firebaseAuth.signInWithCustomToken(customToken);
-                debugPrint("DEBUG: Firebase sign-in successful");
-              } catch (e) {
-                // Non-fatal — user is registered, just couldn't auto-sign-in
-                debugPrint(
-                    "DEBUG: Firebase custom token sign-in failed (non-fatal): $e");
-              }
-            }
+            final signupEmail = model.emailController.text.trim();
+            String message =
+                'Account created. Check $signupEmail for a verification link before signing in.';
 
-            String message = success['message'] ?? "Signup successful";
+            try {
+              await _sendFirebaseVerificationEmail(
+                email: signupEmail,
+                password: model.passwordController.text.trim(),
+              );
+            } catch (verificationError) {
+              debugPrint(
+                  'DEBUG: Non-fatal verification email send failure: $verificationError');
+              message =
+                  'Account created. Please sign in and request email verification from Settings.';
+            }
             return SignupResult(
               success: true,
               title: "Success",
@@ -197,6 +197,24 @@ class SignupViewModel extends ChangeNotifier {
       }
     } finally {
       _setLoading(false);
+    }
+  }
+
+  Future<void> _sendFirebaseVerificationEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final credential = await _firebaseAuthService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (credential.user != null && credential.user!.emailVerified != true) {
+        await _firebaseAuthService.sendEmailVerification();
+      }
+    } finally {
+      await _firebaseAuthService.signOut();
     }
   }
 

@@ -88,7 +88,10 @@ class EnhancedAuthDialog {
   }
 
   /// Show password help dialog with detailed guidance
-  static Future<void> _showPasswordHelpDialog(BuildContext context) async {
+  static Future<void> _showPasswordHelpDialog(
+    BuildContext context, {
+    VoidCallback? onResetPassword,
+  }) async {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
@@ -100,12 +103,16 @@ class EnhancedAuthDialog {
         label: 'Reset Password',
         onPressed: () {
           Navigator.of(context).pop();
-          Navigator.pushNamed(context, '/forgotPassword');
+          if (onResetPassword != null) {
+            onResetPassword();
+          } else {
+            Navigator.pushNamed(context, '/forgotPassword');
+          }
         },
         style: _ActionStyle.primary,
       ),
       secondaryAction: _DialogAction(
-        label: 'Try Again',
+        label: 'Back',
         onPressed: () => Navigator.of(context).pop(),
         style: _ActionStyle.secondary,
       ),
@@ -117,6 +124,8 @@ class EnhancedAuthDialog {
     BuildContext context, {
     int? attemptCount,
     bool showPasswordHints = false,
+    VoidCallback? onResetPassword,
+    VoidCallback? onContactSupport,
   }) async {
     final String enhancedMessage = _buildProgressiveMessage(
       baseMessage: 'The password you entered is incorrect.',
@@ -134,10 +143,10 @@ class EnhancedAuthDialog {
       context: context,
       type: _DialogType.warning,
       icon: Icons.lock_outline,
-      title: 'Authentication Failed',
+      title: 'Wrong Password',
       message: enhancedMessage,
       primaryAction: _DialogAction(
-        label: 'Try Again',
+        label: 'Check Password',
         onPressed: () => Navigator.of(context).pop(),
         style: _ActionStyle.primary,
       ),
@@ -145,18 +154,36 @@ class EnhancedAuthDialog {
         label: 'Reset Password',
         onPressed: () {
           Navigator.of(context).pop();
-          Navigator.pushNamed(context, '/forgotPassword');
+          if (onResetPassword != null) {
+            onResetPassword();
+          } else {
+            Navigator.pushNamed(context, '/forgotPassword');
+          }
         },
         style: _ActionStyle.secondary,
         icon: Icons.key_outlined,
       ),
-      helpAction: attemptCount != null && attemptCount >= 2
-          ? _DialogAction(
-              label: 'Need Help?',
-              onPressed: () => _showPasswordHelpDialog(context),
-              style: _ActionStyle.text,
-            )
-          : null,
+      helpAction:
+          onContactSupport != null && attemptCount != null && attemptCount >= 2
+              ? _DialogAction(
+                  label: 'Get Support',
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onContactSupport();
+                  },
+                  style: _ActionStyle.text,
+                  icon: Icons.support_agent_outlined,
+                )
+              : attemptCount != null && attemptCount >= 2
+                  ? _DialogAction(
+                      label: 'Need Help?',
+                      onPressed: () => _showPasswordHelpDialog(
+                        context,
+                        onResetPassword: onResetPassword,
+                      ),
+                      style: _ActionStyle.text,
+                    )
+                  : null,
     );
   }
 
@@ -164,6 +191,8 @@ class EnhancedAuthDialog {
   static Future<void> showAccountNotFoundDialog(
     BuildContext context, {
     String? email,
+    VoidCallback? onCreateAccount,
+    VoidCallback? onContactSupport,
   }) async {
     return _showSemanticDialog(
       context: context,
@@ -172,25 +201,32 @@ class EnhancedAuthDialog {
       title: 'Account Not Found',
       message: _buildAccountNotFoundMessage(email),
       primaryAction: _DialogAction(
-        label: 'Create Account',
+        label: 'Check Email',
         style: _ActionStyle.primary,
-        icon: Icons.person_add_alt_1,
-        onPressed: () {
-          Navigator.of(context).pop();
-          Navigator.pushNamed(context, '/signup');
-        },
-      ),
-      secondaryAction: _DialogAction(
-        label: 'Try Different Email',
-        style: _ActionStyle.secondary,
         icon: Icons.edit_outlined,
         onPressed: () => Navigator.of(context).pop(),
       ),
+      secondaryAction: _DialogAction(
+        label: 'Create Account',
+        style: _ActionStyle.secondary,
+        icon: Icons.person_add_alt_1,
+        onPressed: () {
+          Navigator.of(context).pop();
+          if (onCreateAccount != null) {
+            onCreateAccount();
+          } else {
+            Navigator.pushNamed(context, '/signup');
+          }
+        },
+      ),
       helpAction: _DialogAction(
-        label: 'Forgot Email?',
+        label: 'Need Help?',
         style: _ActionStyle.text,
-        icon: Icons.help_outline,
-        onPressed: () => _showEmailRecoveryDialog(context),
+        icon: Icons.support_agent_outlined,
+        onPressed: () => _showEmailRecoveryDialog(
+          context,
+          onContactSupport: onContactSupport,
+        ),
       ),
     );
   }
@@ -204,7 +240,10 @@ class EnhancedAuthDialog {
         'Please check your email or create a new account.';
   }
 
-  static Future<void> _showEmailRecoveryDialog(BuildContext context) async {
+  static Future<void> _showEmailRecoveryDialog(
+    BuildContext context, {
+    VoidCallback? onContactSupport,
+  }) async {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
@@ -214,14 +253,18 @@ class EnhancedAuthDialog {
           '• Your most commonly used email addresses\n'
           '• Work or school email accounts\n'
           '• Email accounts linked to other services\n\n'
-          'Still can\'t find it? Contact our support team.',
+          'Still can\'t find it? '
+          '${onContactSupport != null ? 'Report this sign-in issue and our team will help.' : 'Try another email and sign in again.'}',
       primaryAction: _DialogAction(
-        label: 'Contact Support',
+        label:
+            onContactSupport != null ? 'Report Sign-In Issue' : 'Back to Login',
         style: _ActionStyle.primary,
-        icon: Icons.support_agent_outlined,
+        icon: onContactSupport != null
+            ? Icons.support_agent_outlined
+            : Icons.arrow_back_outlined,
         onPressed: () {
           Navigator.of(context).pop();
-          // Open support contact
+          onContactSupport?.call();
         },
       ),
       secondaryAction: _DialogAction(
@@ -310,6 +353,7 @@ class EnhancedAuthDialog {
     BuildContext context, {
     String? errorCode,
     VoidCallback? onRetry,
+    VoidCallback? onReportIssue,
   }) async {
     return _showSemanticDialog(
       context: context,
@@ -335,7 +379,14 @@ class EnhancedAuthDialog {
         label: 'Report Issue',
         style: _ActionStyle.text,
         icon: Icons.help_outline,
-        onPressed: () => _showErrorReportDialog(context, errorCode),
+        onPressed: () {
+          if (onReportIssue != null) {
+            Navigator.of(context).pop();
+            onReportIssue();
+            return;
+          }
+          _showErrorReportDialog(context, errorCode);
+        },
       ),
     );
   }
@@ -591,6 +642,257 @@ class EnhancedAuthDialog {
         style: _ActionStyle.primary,
         onPressed: () => Navigator.of(context).pop(),
       ),
+    );
+  }
+
+  /// Show dialog when sign-in credentials are invalid and exact cause is unknown
+  static Future<void> showInvalidCredentialsDialog(
+    BuildContext context, {
+    VoidCallback? onResetPassword,
+    VoidCallback? onContactSupport,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.warning,
+      icon: Icons.vpn_key_outlined,
+      title: 'Couldn\'t Sign You In',
+      message: 'The email or password you entered is incorrect. '
+          'Please check your details and try again.',
+      primaryAction: _DialogAction(
+        label: 'Edit Details',
+        style: _ActionStyle.primary,
+        icon: Icons.edit_outlined,
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      secondaryAction: _DialogAction(
+        label: 'Reset Password',
+        style: _ActionStyle.secondary,
+        icon: Icons.key_outlined,
+        onPressed: () {
+          Navigator.of(context).pop();
+          if (onResetPassword != null) {
+            onResetPassword();
+          } else {
+            Navigator.pushNamed(context, '/forgotPassword');
+          }
+        },
+      ),
+      helpAction: onContactSupport != null
+          ? _DialogAction(
+              label: 'Get Support',
+              style: _ActionStyle.text,
+              icon: Icons.support_agent_outlined,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onContactSupport();
+              },
+            )
+          : null,
+    );
+  }
+
+  /// Show dialog for temporary lock due to too many attempts
+  static Future<void> showTooManyAttemptsDialog(
+    BuildContext context, {
+    Duration lockoutDuration = const Duration(minutes: 15),
+    VoidCallback? onResetPassword,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.warning,
+      icon: Icons.timer_outlined,
+      title: 'Too Many Attempts',
+      message: 'For your security, sign-in is temporarily locked after '
+          'multiple failed attempts.\n\n'
+          'Please try again in ${lockoutDuration.inMinutes} minutes.',
+      primaryAction: _DialogAction(
+        label: 'I Understand',
+        style: _ActionStyle.primary,
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      secondaryAction: onResetPassword != null
+          ? _DialogAction(
+              label: 'Reset Password',
+              style: _ActionStyle.secondary,
+              icon: Icons.key_outlined,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onResetPassword();
+              },
+            )
+          : null,
+    );
+  }
+
+  /// Show dialog for unverified email addresses during login
+  static Future<void> showEmailNotVerifiedDialog(
+    BuildContext context, {
+    String? email,
+    VoidCallback? onResendEmail,
+    VoidCallback? onContactSupport,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.warning,
+      icon: Icons.mark_email_unread_outlined,
+      title: 'Email Verification Required',
+      message: email != null && email.isNotEmpty
+          ? 'We sent a verification link to $email. '
+              'Please open your inbox and verify your account before signing in.'
+          : 'Please verify your email address before signing in. '
+              'Check your inbox for a verification link.',
+      primaryAction: _DialogAction(
+        label: 'Got It',
+        style: _ActionStyle.primary,
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      secondaryAction: onResendEmail != null
+          ? _DialogAction(
+              label: 'Resend Email',
+              style: _ActionStyle.secondary,
+              icon: Icons.refresh_outlined,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onResendEmail();
+              },
+            )
+          : null,
+      helpAction: onContactSupport != null
+          ? _DialogAction(
+              label: 'Get Support',
+              style: _ActionStyle.text,
+              icon: Icons.support_agent_outlined,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onContactSupport();
+              },
+            )
+          : null,
+    );
+  }
+
+  /// Show dialog for suspended or disabled accounts
+  static Future<void> showAccountDisabledDialog(
+    BuildContext context, {
+    VoidCallback? onContactSupport,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.error,
+      icon: Icons.person_off_outlined,
+      title: 'Account Suspended',
+      message: 'Your account has been temporarily suspended. '
+          'This may be due to a security concern or policy violation.',
+      primaryAction: _DialogAction(
+        label: onContactSupport != null ? 'Contact Support' : 'Got It',
+        style: _ActionStyle.primary,
+        icon: onContactSupport != null
+            ? Icons.support_agent_outlined
+            : Icons.check,
+        onPressed: () {
+          Navigator.of(context).pop();
+          onContactSupport?.call();
+        },
+      ),
+      secondaryAction: onContactSupport != null
+          ? _DialogAction(
+              label: 'Later',
+              style: _ActionStyle.secondary,
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          : null,
+    );
+  }
+
+  /// Show dialog for weak password validation errors
+  static Future<void> showWeakPasswordDialog(
+    BuildContext context, {
+    VoidCallback? onFixPassword,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.warning,
+      icon: Icons.gpp_bad_outlined,
+      title: 'Strengthen Your Password',
+      message: 'Your password needs to be stronger for better security.\n\n'
+          '• At least 8 characters\n'
+          '• Uppercase and lowercase letters\n'
+          '• Numbers and special characters',
+      primaryAction: _DialogAction(
+        label: 'Create Stronger Password',
+        style: _ActionStyle.primary,
+        onPressed: () {
+          Navigator.of(context).pop();
+          onFixPassword?.call();
+        },
+      ),
+    );
+  }
+
+  /// Show dialog for existing account conflicts
+  static Future<void> showEmailAlreadyInUseDialog(
+    BuildContext context, {
+    String? email,
+    VoidCallback? onSignIn,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.info,
+      icon: Icons.person_outline,
+      title: 'Account Already Exists',
+      message: email != null && email.isNotEmpty
+          ? 'An account with "$email" already exists. Would you like to sign in?'
+          : 'This email address is already registered. Would you like to sign in?',
+      primaryAction: _DialogAction(
+        label: 'Try Different Email',
+        style: _ActionStyle.primary,
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      secondaryAction: _DialogAction(
+        label: 'Sign In',
+        style: _ActionStyle.secondary,
+        icon: Icons.login_outlined,
+        onPressed: () {
+          Navigator.of(context).pop();
+          onSignIn?.call();
+        },
+      ),
+    );
+  }
+
+  /// Show generic catch-all auth error dialog
+  static Future<void> showGenericErrorDialog(
+    BuildContext context, {
+    required String message,
+    VoidCallback? onRetry,
+    VoidCallback? onContactSupport,
+  }) async {
+    return _showSemanticDialog(
+      context: context,
+      type: _DialogType.error,
+      icon: Icons.error_outline,
+      title: 'Something Went Wrong',
+      message: message,
+      primaryAction: _DialogAction(
+        label: onRetry != null ? 'Try Again' : 'OK',
+        style: _ActionStyle.primary,
+        icon: onRetry != null ? Icons.refresh : Icons.check,
+        onPressed: () {
+          Navigator.of(context).pop();
+          onRetry?.call();
+        },
+      ),
+      secondaryAction: onContactSupport != null
+          ? _DialogAction(
+              label: 'Contact Support',
+              style: _ActionStyle.secondary,
+              icon: Icons.support_agent_outlined,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onContactSupport();
+              },
+            )
+          : null,
     );
   }
 

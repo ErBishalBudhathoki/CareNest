@@ -12,9 +12,21 @@ SENSITIVE_FILENAMES=(
   "GoogleService-Info.plist"
 )
 
-found_sensitive_files=false
+# Patterns to detect secrets in file contents
+SECRET_PATTERNS=(
+  'mongodb\+srv://[^:]+:[^@]+@'
+  'mongodb://[^:]+:[^@]+@'
+  'AIza[0-9A-Za-z\-_]{35}'
+  'AKIA[0-9A-Z]{16}'
+  'sk_live_[0-9a-zA-Z]{24,}'
+  'sk_test_[0-9a-zA-Z]{24,}'
+  'private_key.*:.*-----BEGIN'
+)
 
-echo "Scanning staged files for sensitive content..."
+found_sensitive_files=false
+found_secrets=false
+
+echo "🔒 Scanning staged files for sensitive content..."
 
 is_sensitive_env_file() {
   local base_name="$1"
@@ -64,16 +76,38 @@ for file in "${staged_files[@]}"; do
       found_sensitive_files=true
     fi
   done
+  
+  # Scan file contents for secrets (skip binary files and exceptions)
+  if [ -f "$file" ] && file "$file" | grep -q "text"; then
+    # Skip this script itself and example env files
+    if [[ "$base_name" == "check_sensitive_files.sh" ]] || [[ "$base_name" == ".env.example" ]] || [[ "$base_name" == ".env.development.example" ]]; then
+      continue
+    fi
+    
+    for pattern in "${SECRET_PATTERNS[@]}"; do
+      match=$(grep -E "$pattern" "$file" 2>/dev/null || true)
+      if [ -n "$match" ]; then
+        echo "----------------------------------------------------------------"
+        echo "ERROR: Potential secret found in $file"
+        echo "Pattern: $pattern"
+        echo "$match" | head -3
+        echo "----------------------------------------------------------------"
+        found_secrets=true
+      fi
+    done
+  fi
 done
 
-if [[ "$found_sensitive_files" = true ]]; then
+if [[ "$found_sensitive_files" = true ]] || [[ "$found_secrets" = true ]]; then
   echo ""
-  echo "ERROR: Aborting commit. Please unstage the sensitive files listed above."
+  echo "❌ Commit rejected. Issues found:"
+  [ "$found_sensitive_files" = true ] && echo "  - Sensitive files detected"
+  [ "$found_secrets" = true ] && echo "  - Potential secrets in code"
+  echo ""
   echo "You can unstage a file using: git reset HEAD <file>"
-  echo "Make sure these files are added to .gitignore."
-  echo "Refer to SENSITIVE_FILES_GUIDE.md for more information."
+  echo "To bypass (NOT RECOMMENDED): git commit --no-verify"
   exit 1
 fi
 
-echo "No sensitive files found in staged changes. Good to go!"
+echo "✅ No sensitive files or secrets found. Proceeding with commit."
 exit 0

@@ -23,17 +23,25 @@ class EarningsRepository {
     }
 
     if (!forceRefresh) {
-      final cached = await _cache.getCachedSummary(userEmail);
+      final cached = await _cache.getCachedSummary(
+        userEmail,
+        startDate: startDate,
+        endDate: endDate,
+      );
       if (cached != null) {
         return EarningsSummary.fromJson(cached);
       }
     }
 
-    final response =
-        await _apiMethod.get('api/earnings/summary/$userEmail$query');
+    final response = await _apiMethod.get('earnings/summary/$userEmail$query');
 
     if (response['success'] == true) {
-      await _cache.cacheSummary(userEmail, response['data']);
+      await _cache.cacheSummary(
+        userEmail,
+        response['data'],
+        startDate: startDate,
+        endDate: endDate,
+      );
       return EarningsSummary.fromJson(response['data']);
     } else {
       throw Exception(
@@ -49,7 +57,7 @@ class EarningsRepository {
     }
 
     final response =
-        await _apiMethod.get('api/earnings/projected/$userEmail$query');
+        await _apiMethod.get('earnings/projected/$userEmail$query');
 
     if (response['success'] == true) {
       return ProjectedEarnings.fromJson(response['data']);
@@ -66,8 +74,7 @@ class EarningsRepository {
     required String bucket,
   }) async {
     final query = '?startDate=$startDate&endDate=$endDate&bucket=$bucket';
-    final response =
-        await _apiMethod.get('api/earnings/history/$userEmail$query');
+    final response = await _apiMethod.get('earnings/history/$userEmail$query');
 
     if (response['success'] == true) {
       return EarningsPeriodHistory.fromJson(response['data']);
@@ -96,7 +103,9 @@ class EarningsRepository {
       String? payPoint,
       String? stream,
       String? employmentType,
-      List<String>? activeAllowances]) async {
+      List<String>? activeAllowances,
+      String? organizationId,
+      String? adminEmail]) async {
     final body = {'rate': rate, 'type': type};
 
     if (classificationLevel != null)
@@ -105,6 +114,12 @@ class EarningsRepository {
     if (stream != null) body['stream'] = stream;
     if (employmentType != null) body['employmentType'] = employmentType;
     if (activeAllowances != null) body['activeAllowances'] = activeAllowances;
+    if (organizationId != null && organizationId.trim().isNotEmpty) {
+      body['organizationId'] = organizationId.trim();
+    }
+    if (adminEmail != null && adminEmail.trim().isNotEmpty) {
+      body['adminEmail'] = adminEmail.trim();
+    }
 
     if (rates != null) {
       body['rates'] = {
@@ -120,7 +135,7 @@ class EarningsRepository {
     }
 
     final response = await _apiMethod.post(
-      'api/earnings/rate/$userEmail',
+      'earnings/rate/$userEmail',
       body: body,
     );
 

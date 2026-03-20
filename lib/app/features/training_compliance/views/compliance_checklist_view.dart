@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:carenest/app/features/training_compliance/models/compliance_checklist.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -70,9 +71,7 @@ class _ComplianceChecklistViewState
     final completedItems =
         checklist.userStatus?.itemsStatus.values.where((v) => v).length ?? 0;
 
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BauhausDesign.cardDecoration,
+    return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -101,7 +100,7 @@ class _ComplianceChecklistViewState
             valueColor: AlwaysStoppedAnimation<Color>(
                 isCompleted ? BauhausDesign.success : BauhausDesign.accent),
             minHeight: 8,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.zero,
           ),
           const SizedBox(height: BauhausDesign.space3),
           SizedBox(
@@ -179,16 +178,37 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
                 final itemId = item.id ?? item.text;
                 final isChecked = _itemsStatus[itemId] ?? false;
 
-                return CheckboxListTile(
-                  title: Text(item.text,
-                      style: BauhausDesign.getTextTheme(context).bodyLarge),
-                  value: isChecked,
-                  activeColor: BauhausDesign.success,
-                  onChanged: (val) {
-                    setState(() {
-                      _itemsStatus[itemId] = val ?? false;
-                    });
-                  },
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space2,
+                    vertical: BauhausDesign.space1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.surfaceLight,
+                    border: Border.all(
+                      color: BauhausDesign.neutral.withOpacity(0.15),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      BauhausCheckbox(
+                        value: isChecked,
+                        activeColor: BauhausDesign.success,
+                        onChanged: (val) {
+                          setState(() {
+                            _itemsStatus[itemId] = val ?? false;
+                          });
+                        },
+                      ),
+                      const SizedBox(width: BauhausDesign.space2),
+                      Expanded(
+                        child: Text(
+                          item.text,
+                          style: BauhausDesign.getTextTheme(context).bodyLarge,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

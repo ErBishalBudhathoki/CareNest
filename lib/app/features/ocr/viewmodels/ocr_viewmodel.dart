@@ -73,6 +73,7 @@ class OcrViewModel extends StateNotifier<OcrState> {
 
       // 3. Extract Text (On-device)
       final rawText = await _ocrService.extractText(state.scannedImage!);
+      _logOcrPreview(rawText);
 
       // 4. Parse (Backend)
       final ocrSource = Platform.isIOS ? 'apple_vision' : 'google_mlkit';
@@ -99,5 +100,12 @@ class OcrViewModel extends StateNotifier<OcrState> {
   void dispose() {
     _ocrService.dispose();
     super.dispose();
+  }
+
+  void _logOcrPreview(String rawText) {
+    final preview = rawText.trim();
+    const maxLen = 200;
+    final snippet = preview.length > maxLen ? preview.substring(0, maxLen) : preview;
+    debugPrint('OcrViewModel: OCR preview (len=${preview.length}): $snippet');
   }
 }

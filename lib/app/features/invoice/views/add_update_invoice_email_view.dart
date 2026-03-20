@@ -1,15 +1,14 @@
 import 'package:carenest/app/features/invoice/viewmodels/update_invoice_email_viewmodel.dart';
-import 'package:carenest/app/features/invoice/models/invoicing_email_model.dart';
 import 'package:carenest/app/shared/widgets/alert_dialog_widget.dart';
 import 'package:carenest/app/shared/widgets/popup_client_details.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class AddUpdateInvoicingEmailView extends ConsumerStatefulWidget {
   final String email;
@@ -36,9 +35,7 @@ class _AddUpdateInvoicingEmailViewState
   final _invoicingBusinessEmailController = TextEditingController();
   final _invoicingBusinessEmailPasswordController = TextEditingController();
 
-  // Separate notifiers for email and password visibility
-  final ValueNotifier<bool> _emailVisibilityNotifier =
-      ValueNotifier<bool>(false);
+  // Separate notifier for password visibility
   final ValueNotifier<bool> _passwordVisibilityNotifier =
       ValueNotifier<bool>(true); // Default to hidden
 
@@ -53,7 +50,6 @@ class _AddUpdateInvoicingEmailViewState
     //_invoicingBusinessNameController.dispose();
     _invoicingBusinessEmailController.dispose();
     _invoicingBusinessEmailPasswordController.dispose();
-    _emailVisibilityNotifier.dispose();
     _passwordVisibilityNotifier.dispose();
     super.dispose();
   }
@@ -62,7 +58,6 @@ class _AddUpdateInvoicingEmailViewState
   Widget build(BuildContext context) {
     //final size = MediaQuery.of(context).size;
     //final theme = Theme.of(context);
-    final model = InvoicingEmailModel();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -73,7 +68,8 @@ class _AddUpdateInvoicingEmailViewState
         foregroundColor: BauhausDesign.textDark,
         title: Text(
           'Add Invoicing Email Details',
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                color: BauhausDesign.textDark,
                 fontWeight: FontWeight.bold,
               ),
         ),
@@ -94,15 +90,16 @@ class _AddUpdateInvoicingEmailViewState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Organization Header Card
-              BauhausCard(
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space4),
+                decoration: _panelDecoration(),
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary,
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusMd),
+                        borderRadius: BorderRadius.zero,
                         border:
                             Border.all(color: BauhausDesign.neutral, width: 2),
                         boxShadow: const [BauhausDesign.shadowHardSm],
@@ -160,84 +157,103 @@ class _AddUpdateInvoicingEmailViewState
               ),
               const SizedBox(height: BauhausDesign.space4),
               // Email Field
-              BauhausCard(
+              Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
-                child: BauhausTextField(
-                  label: 'Email Address',
-                  controller: _invoicingBusinessEmailController,
-                  hintText: 'Enter your email address',
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Image.asset(
-                      'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
-                      width: 20,
-                      height: 20,
-                    ),
-                  ),
-                  suffixIcon: model.isValid
-                      ? Padding(
+                decoration: _panelDecoration(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFieldLabel('Email Address'),
+                    const SizedBox(height: BauhausDesign.space1),
+                    TextFormField(
+                      controller: _invoicingBusinessEmailController,
+                      keyboardType: TextInputType.emailAddress,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
+                      decoration: _squareInputDecoration(
+                        hintText: 'Enter your email address',
+                        prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Image.asset(
-                            'assets/icons/3D Icons/3dicons-shield-dynamic-color.png',
+                            'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
                             width: 20,
                             height: 20,
                           ),
-                        )
-                      : null,
-                  onChanged: (value) {
-                    model.isValidEmail(value);
-                    setState(() {}); // Rebuild to update suffix icon
-                  },
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter email';
-                    } else {
-                      if (!model.isValid) {
-                        return 'Please enter valid email';
-                      }
-                    }
-                    return null;
-                  },
+                        ),
+                        suffixIcon:
+                            _isValidEmail(_invoicingBusinessEmailController.text)
+                                ? Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Image.asset(
+                                      'assets/icons/3D Icons/3dicons-shield-dynamic-color.png',
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                                  )
+                                : null,
+                      ),
+                      onChanged: (_) => setState(() {}),
+                      validator: (value) {
+                        final email = (value ?? '').trim();
+                        if (email.isEmpty) {
+                          return 'Please enter email';
+                        }
+                        if (!_isValidEmail(email)) {
+                          return 'Please enter valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: BauhausDesign.space4),
               // Password Field
-              BauhausCard(
+              Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
+                decoration: _panelDecoration(),
                 child: ValueListenableBuilder<bool>(
                   valueListenable: _passwordVisibilityNotifier,
                   builder: (context, isHidden, child) {
-                    return BauhausTextField(
-                      label: 'App Password',
-                      controller: _invoicingBusinessEmailPasswordController,
-                      hintText: 'Enter your app password',
-                      obscureText: isHidden,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Image.asset(
-                          'assets/icons/3D Icons/3dicons-lock-dynamic-color.png',
-                          width: 20,
-                          height: 20,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFieldLabel('App Password'),
+                        const SizedBox(height: BauhausDesign.space1),
+                        TextFormField(
+                          controller: _invoicingBusinessEmailPasswordController,
+                          obscureText: isHidden,
+                          style: BauhausDesign.getTextTheme(context).bodyMedium,
+                          decoration: _squareInputDecoration(
+                            hintText: 'Enter your app password',
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(
+                                'assets/icons/3D Icons/3dicons-lock-dynamic-color.png',
+                                width: 20,
+                                height: 20,
+                              ),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                isHidden ? Icons.visibility_off : Icons.visibility,
+                                color: BauhausDesign.textMuted,
+                              ),
+                              onPressed: () {
+                                _passwordVisibilityNotifier.value = !isHidden;
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if ((value ?? '').isEmpty) {
+                              return 'Please enter email app password';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            _addUpdateInvoicingEmailViewController.email = value;
+                          },
                         ),
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          isHidden ? Icons.visibility_off : Icons.visibility,
-                          color: BauhausDesign.textMuted,
-                        ),
-                        onPressed: () {
-                          _passwordVisibilityNotifier.value = !isHidden;
-                        },
-                      ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter email app password';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        _addUpdateInvoicingEmailViewController.email = value;
-                      },
+                      ],
                     );
                   },
                 ),
@@ -249,8 +265,8 @@ class _AddUpdateInvoicingEmailViewState
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
                   color: BauhausDesign.info.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.info),
+                  borderRadius: BorderRadius.zero,
+                  border: Border.all(color: BauhausDesign.info, width: 2),
                 ),
                 child: Row(
                   children: [
@@ -276,43 +292,38 @@ class _AddUpdateInvoicingEmailViewState
               ),
               const SizedBox(height: BauhausDesign.space6),
               // Submit Button
-              BauhausActionButton(
-                text: 'Add Email Details',
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    showAlertDialog(context);
-                    Future.delayed(const Duration(seconds: 3), () async {
-                      if (!mounted) return;
-                      final response =
-                          await _addInvoicingEmailDetails(widget.email);
-                      if (!mounted) return;
-
-                      if (response ==
-                          'Invoicing email details added successfully') {
-                        if (kDebugMode) {
-                          print('Add button pressed');
-                        }
-                        Navigator.pop(_scaffoldKey.currentContext!);
-                        Navigator.of(_scaffoldKey.currentContext!,
-                                rootNavigator: true)
-                            .pop();
-                        popUpClientDetails(_scaffoldKey.currentContext!,
-                            "Success", "Invoicing email");
-                      } else {
-                        if (kDebugMode) {
-                          print('Error at business adding');
-                        }
-                        Navigator.pop(_scaffoldKey.currentContext!);
-                        Navigator.of(_scaffoldKey.currentContext!,
-                                rootNavigator: true)
-                            .pop();
-                        popUpClientDetails(_scaffoldKey.currentContext!,
-                            "Error", "Invoicing email");
-                      }
-                    });
-                  }
-                },
-                isFullWidth: true,
+              SizedBox(
+                width: double.infinity,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _submitForm,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space6,
+                        vertical: BauhausDesign.space3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: BauhausDesign.primary,
+                        borderRadius: BorderRadius.zero,
+                        border:
+                            Border.all(color: BauhausDesign.neutral, width: 2),
+                        boxShadow: const [BauhausDesign.shadowHardSm],
+                      ),
+                      child: Text(
+                        'Add Email Details',
+                        textAlign: TextAlign.center,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              color: BauhausDesign.surfaceWhite,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.4,
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -321,7 +332,102 @@ class _AddUpdateInvoicingEmailViewState
     );
   }
 
-  Future<dynamic> _addInvoicingEmailDetails(String email) async {
+  InputDecoration _squareInputDecoration({
+    required String hintText,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+  }) {
+    const border = OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
+    );
+
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: BauhausDesign.getTextTheme(context)
+          .bodyMedium
+          ?.copyWith(color: BauhausDesign.textMuted),
+      filled: true,
+      fillColor: BauhausDesign.surfaceWhite,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space3,
+      ),
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      border: border,
+      enabledBorder: border,
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: BauhausDesign.primary, width: 2),
+      ),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: BauhausDesign.error, width: 2),
+      ),
+      focusedErrorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: BauhausDesign.error, width: 2),
+      ),
+    );
+  }
+
+  Widget _buildFieldLabel(String text) {
+    return Text(
+      text,
+      style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
+          ),
+    );
+  }
+
+  BoxDecoration _panelDecoration() {
+    return const BoxDecoration(
+      color: BauhausDesign.surfaceWhite,
+      borderRadius: BorderRadius.zero,
+      border: Border.fromBorderSide(
+        BorderSide(color: BauhausDesign.neutral, width: 2),
+      ),
+      boxShadow: [BauhausDesign.shadowHardSm],
+    );
+  }
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    showAlertDialog(context);
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+
+    final result = await _addInvoicingEmailDetails(widget.email);
+    if (!mounted) return;
+
+    final isSuccess = result['success'] == true;
+    final detailsMessage = (result['message'] ?? '').toString().trim();
+
+    Navigator.pop(_scaffoldKey.currentContext!);
+    Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
+
+    popUpClientDetails(
+      _scaffoldKey.currentContext!,
+      isSuccess ? "Success" : "Error",
+      "Invoicing email",
+      detailMessage: detailsMessage.isNotEmpty
+          ? detailsMessage
+          : (isSuccess
+              ? 'Invoicing email details added successfully'
+              : 'Failed to add invoicing email details'),
+    );
+  }
+
+  bool _isValidEmail(String input) {
+    final email = input.trim();
+    if (email.isEmpty) return false;
+    return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email);
+  }
+
+  Future<Map<String, dynamic>> _addInvoicingEmailDetails(String email) async {
     var ins = await apiMethod.addUpdateInvoicingEmailDetail(
         email,
         widget.organizationName,
@@ -331,17 +437,46 @@ class _AddUpdateInvoicingEmailViewState
       print("Response: $ins");
     }
 
-    if (ins['message'] == 'Invoicing email details added successfully') {
+    final backendMessage = (ins['message'] ?? '').toString().trim();
+    final lowerMessage = backendMessage.toLowerCase();
+    final alreadyExists = lowerMessage.contains('already');
+    final unauthorized =
+        lowerMessage.contains('unauthorized') || lowerMessage.contains('401');
+
+    if (ins['success'] == true) {
       if (kDebugMode) {
         print("Details added Successful ");
       }
-      return ins['message'];
-    } else {
-      if (kDebugMode) {
-        print("Details added Failed");
-      }
-      //print("INS: " + ins);
-      return ins['message'];
+      return {
+        'success': true,
+        'message': backendMessage.isNotEmpty
+            ? backendMessage
+            : 'Invoicing email details added successfully',
+      };
     }
+
+    if (alreadyExists) {
+      return {
+        'success': false,
+        'message': 'Data already added for invoicing email',
+      };
+    }
+
+    if (unauthorized) {
+      return {
+        'success': false,
+        'message': 'Session expired or unauthorized. Please login again.',
+      };
+    }
+
+    if (kDebugMode) {
+      print("Details added Failed");
+    }
+    return {
+      'success': false,
+      'message': backendMessage.isNotEmpty
+          ? backendMessage
+          : 'Failed to add invoicing email details',
+    };
   }
 }

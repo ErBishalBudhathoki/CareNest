@@ -23,6 +23,7 @@ class VerifyOTPView extends ConsumerStatefulWidget {
 
 class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
   bool _isResending = false;
+  bool _isVerifying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +64,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
               const SizedBox(height: 60),
               _buildOTPSection(context, viewModel),
               const SizedBox(height: 40),
-              _buildVerifyButton(context, viewModel),
+              _buildVerifyButton(context),
               const SizedBox(height: 24),
               _buildResendSection(context),
             ],
@@ -102,7 +103,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         ),
         const SizedBox(height: 32),
         Text(
-          AppLocalizations.of(context)!.verifyOtpTitle,
+          'Enter reset code',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
                 color: BauhausDesign.textDark,
                 fontWeight: FontWeight.bold,
@@ -110,7 +111,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         ),
         const SizedBox(height: 12),
         Text(
-          AppLocalizations.of(context)!.weSentCode,
+          'We sent a 6-digit code to ${widget.email}.',
           style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
                 color: BauhausDesign.textMuted,
               ),
@@ -184,35 +185,13 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
     );
   }
 
-  Widget _buildVerifyButton(BuildContext context, dynamic viewModel) {
+  Widget _buildVerifyButton(BuildContext context) {
     return BauhausActionButton(
       text: AppLocalizations.of(context)!.verifyCode,
       icon: Iconsax.tick_circle,
-      isLoading: false,
+      isLoading: _isVerifying,
       isFullWidth: true,
-      onPressed: () async {
-        final enteredOtp = viewModel.pinController.text.trim();
-        if (enteredOtp.length != 6) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Please enter the 6-digit code.'),
-              backgroundColor: BauhausDesign.error,
-            ),
-          );
-          return;
-        }
-
-        if (!mounted) return;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (newContext) => ChangePasswordView(
-              resetEmail: widget.email,
-              resetOtp: enteredOtp,
-            ),
-          ),
-        );
-      },
+      onPressed: _isVerifying ? null : _continueToResetPassword,
     );
   }
 
@@ -227,35 +206,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         ),
         const SizedBox(height: 8),
         TextButton(
-          onPressed: _isResending
-              ? null
-              : () async {
-                  setState(() => _isResending = true);
-                  try {
-                    final response =
-                        await ref.read(apiMethodProvider).sendOTP(widget.email);
-                    if (!mounted) return;
-
-                    final success = response['success'] == true ||
-                        response['statusCode'] == 200;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          success
-                              ? AppLocalizations.of(context)!.verificationCodeSent
-                              : (response['message']?.toString() ??
-                                  AppLocalizations.of(context)!.somethingWentWrong),
-                        ),
-                        backgroundColor:
-                            success ? BauhausDesign.success : BauhausDesign.error,
-                      ),
-                    );
-                  } finally {
-                    if (mounted) {
-                      setState(() => _isResending = false);
-                    }
-                  }
-                },
+          onPressed: _isResending ? null : _resendOtp,
           style: TextButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
@@ -269,5 +220,65 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         ),
       ],
     );
+  }
+
+  Future<void> _continueToResetPassword() async {
+    final viewModel = ref.read(verifyOTPViewModelProvider);
+    final enteredOtp = viewModel.pinController.text.trim();
+    if (enteredOtp.length != 6) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter the 6-digit code.'),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isVerifying = true);
+    try {
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ChangePasswordView(
+            resetEmail: widget.email.trim(),
+            resetOtp: enteredOtp,
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isVerifying = false);
+      }
+    }
+  }
+
+  Future<void> _resendOtp() async {
+    setState(() => _isResending = true);
+    try {
+      final response =
+          await ref.read(apiMethodProvider).sendOTP(widget.email.trim());
+      if (!mounted) return;
+
+      final success =
+          response['success'] == true || response['statusCode'] == 200;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? 'Password reset code sent.'
+                : (response['message']?.toString() ??
+                    AppLocalizations.of(context)!.somethingWentWrong),
+          ),
+          backgroundColor:
+              success ? BauhausDesign.success : BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isResending = false);
+      }
+    }
   }
 }

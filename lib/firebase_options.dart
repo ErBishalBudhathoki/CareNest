@@ -4,18 +4,17 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform, debugPrint;
 import 'package:carenest/config/environment.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
-///
-/// Example:
-/// ```dart
-/// import 'firebase_options.dart';
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
 class DefaultFirebaseOptions {
+  static String _getEnv(String key, {String fallback = ''}) {
+    if (!dotenv.isInitialized) {
+      debugPrint('Warning: dotenv not initialized when reading $key');
+      return fallback;
+    }
+    return dotenv.env[key] ?? fallback;
+  }
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       throw UnsupportedError(
@@ -50,34 +49,31 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'REDACTED_GOOGLE_MAPS_API_KEY',
-    appId: '1:406509736623:android:73088e652df1e5346a3a5a',
+  static final FirebaseOptions web = FirebaseOptions(
+    apiKey: _getEnv('FIREBASE_WEB_API_KEY'),
+    appId: '1:406509736623:web:default',
     messagingSenderId: '406509736623',
     projectId: 'invoice-660f3',
     authDomain: 'invoice-660f3.firebaseapp.com',
     storageBucket: 'invoice-660f3.appspot.com',
   );
 
-  // Production flavor (com.bishal.invoice)
-  static const FirebaseOptions androidProduction = FirebaseOptions(
-    apiKey: 'REDACTED_GOOGLE_MAPS_API_KEY',
-    appId: '1:406509736623:android:73088e652df1e5346a3a5a',
-    messagingSenderId: '406509736623',
-    projectId: 'invoice-660f3',
-    storageBucket: 'invoice-660f3.appspot.com',
-  );
+  static FirebaseOptions get androidProduction => FirebaseOptions(
+        apiKey: _getEnv('FIREBASE_ANDROID_API_KEY'),
+        appId: '1:406509736623:android:73088e652df1e5346a3a5a',
+        messagingSenderId: '406509736623',
+        projectId: 'invoice-660f3',
+        storageBucket: 'invoice-660f3.appspot.com',
+      );
 
-  // Development flavor (com.bishal.invoice.dev)
-  static const FirebaseOptions androidDevelopment = FirebaseOptions(
-    apiKey: 'REDACTED_FIREBASE_API_KEY_1',
-    appId: '1:406509736623:android:a015207404bd0c726a3a5a',
-    messagingSenderId: '406509736623',
-    projectId: 'invoice-660f3',
-    storageBucket: 'invoice-660f3.appspot.com',
-  );
+  static FirebaseOptions get androidDevelopment => FirebaseOptions(
+        apiKey: _getEnv('FIREBASE_ANDROID_DEV_API_KEY'),
+        appId: '1:406509736623:android:a015207404bd0c726a3a5a',
+        messagingSenderId: '406509736623',
+        projectId: 'invoice-660f3',
+        storageBucket: 'invoice-660f3.appspot.com',
+      );
 
-  // Returns the correct Android options based on AppConfig.appFlavor
   static FirebaseOptions get android {
     final isDevelopment = AppConfig.appFlavor == Flavor.development;
     debugPrint(
@@ -91,15 +87,12 @@ class DefaultFirebaseOptions {
     return androidProduction;
   }
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'REDACTED_FIREBASE_API_KEY_2',
-    appId: '1:406509736623:ios:80ba46b45d8930db6a3a5a',
-    messagingSenderId: '406509736623',
-    projectId: 'invoice-660f3',
-    storageBucket: 'invoice-660f3.appspot.com',
-    iosBundleId: 'com.bishal.invoice',
-  );
-
-  // TODO: Add iOS Development options if available
-  // static const FirebaseOptions iosDevelopment = FirebaseOptions(...);
+  static FirebaseOptions get ios => FirebaseOptions(
+        apiKey: _getEnv('FIREBASE_IOS_API_KEY'),
+        appId: '1:406509736623:ios:80ba46b45d8930db6a3a5a',
+        messagingSenderId: '406509736623',
+        projectId: 'invoice-660f3',
+        storageBucket: 'invoice-660f3.appspot.com',
+        iosBundleId: 'com.bishal.invoice',
+      );
 }

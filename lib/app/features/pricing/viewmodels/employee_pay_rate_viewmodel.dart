@@ -21,18 +21,29 @@ class EmployeePayRateViewModel extends StateNotifier<EmployeePayRateState> {
   final String organizationId;
 
   EmployeePayRateViewModel(this._apiMethod, this.organizationId)
-      : super(EmployeePayRateState()) {
-    fetchEmployees();
-  }
+      : super(EmployeePayRateState());
 
-  Future<void> fetchEmployees() async {
-    state = EmployeePayRateState(isLoading: true);
+  Future<void> fetchEmployees({bool showLoading = true}) async {
+    if (showLoading) {
+      state = EmployeePayRateState(
+        isLoading: true,
+        employees: state.employees,
+      );
+    }
     try {
       final response =
           await _apiMethod.getOrganizationEmployees(organizationId);
       if (response['success'] == true) {
-        final List<dynamic> data = response['employees'];
-        final employees = data.map((e) => User.fromJson(e)).toList();
+        final List<dynamic> data =
+            response['employees'] as List<dynamic>? ?? [];
+        final employees = data
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .where(_isEmployeeRecord)
+            .map((e) => User.fromJson(e))
+            .toList()
+          ..sort(
+              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
         state = EmployeePayRateState(employees: employees, isLoading: false);
       } else {
         state = EmployeePayRateState(
@@ -42,6 +53,35 @@ class EmployeePayRateViewModel extends StateNotifier<EmployeePayRateState> {
     } catch (e) {
       state = EmployeePayRateState(isLoading: false, error: e.toString());
     }
+  }
+
+  bool _isEmployeeRecord(Map<String, dynamic> user) {
+    final roleTags = <String>{};
+
+    final role = user['role']?.toString().toLowerCase().trim();
+    if (role != null && role.isNotEmpty) roleTags.add(role);
+
+    final orgRole = user['organizationRole']?.toString().toLowerCase().trim();
+    if (orgRole != null && orgRole.isNotEmpty) roleTags.add(orgRole);
+
+    final roles = user['roles'];
+    if (roles is List) {
+      for (final entry in roles) {
+        final tag = entry.toString().toLowerCase().trim();
+        if (tag.isNotEmpty) roleTags.add(tag);
+      }
+    }
+
+    final clientId = user['clientId']?.toString().trim();
+    if (clientId != null && clientId.isNotEmpty) {
+      return false;
+    }
+
+    if (roleTags.contains('client')) {
+      return false;
+    }
+
+    return true;
   }
 }
 

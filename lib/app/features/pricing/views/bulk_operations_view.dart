@@ -1,6 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
+import 'package:carenest/app/features/pricing/providers/pricing_live_data_providers.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class BulkOperationsView extends ConsumerStatefulWidget {
@@ -19,433 +25,351 @@ class BulkOperationsView extends ConsumerStatefulWidget {
   ConsumerState<BulkOperationsView> createState() => _BulkOperationsViewState();
 }
 
-class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
-  int _selectedIndex = 0;
-  bool _isProcessing = false;
-  double _uploadProgress = 0.0;
-  final String _selectedOperation = 'import';
+class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
+    with SingleTickerProviderStateMixin {
+  static const Color _screenGray = Color(0xFFE3E3E3);
+  static const Color _inkBlack = Color(0xFF171717);
+  static const Color _accentRed = Color(0xFFE21F26);
+  static const Color _panelWhite = Color(0xFFF8F8F8);
+  static const Color _accentBlue = Color(0xFF0D62B3);
 
-  // Mock data for operation history
-  final List<Map<String, dynamic>> _operationHistory = [
-    {
-      'id': 'OP001',
-      'type': 'Import',
-      'description': 'NDIS Items Bulk Import',
-      'status': 'Completed',
-      'recordsProcessed': 150,
-      'recordsSuccessful': 148,
-      'recordsFailed': 2,
-      'startTime': '2024-01-15 10:30:00',
-      'endTime': '2024-01-15 10:32:15',
-      'fileName': 'ndis_items_2024.csv',
-      'initiatedBy': 'admin@example.com',
-    },
-    {
-      'id': 'OP002',
-      'type': 'Export',
-      'description': 'Service Rates Export',
-      'status': 'Completed',
-      'recordsProcessed': 75,
-      'recordsSuccessful': 75,
-      'recordsFailed': 0,
-      'startTime': '2024-01-14 15:45:00',
-      'endTime': '2024-01-14 15:45:30',
-      'fileName': 'service_rates_export.xlsx',
-      'initiatedBy': 'admin@example.com',
-    },
-    {
-      'id': 'OP003',
-      'type': 'Update',
-      'description': 'Bulk Price Update - Q1 2024',
-      'status': 'Failed',
-      'recordsProcessed': 200,
-      'recordsSuccessful': 180,
-      'recordsFailed': 20,
-      'startTime': '2024-01-13 09:15:00',
-      'endTime': '2024-01-13 09:18:45',
-      'fileName': 'price_updates_q1.csv',
-      'initiatedBy': 'admin@example.com',
-    },
-  ];
+  late final TabController _tabController;
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _percentageController =
+      TextEditingController(text: '5');
+  final TextEditingController _fixedRateController = TextEditingController();
+
+  bool _isProcessing = false;
+  String _bulkMode = 'percentage';
+  bool _showOnlyCustom = false;
+  final Set<String> _selectedItemNumbers = <String>{};
+  String _exportCsv = '';
+  String _lastImportSummary = '';
+
+  final List<_BulkEvent> _events = <_BulkEvent>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _searchController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    _percentageController.dispose();
+    _fixedRateController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _refreshAll() async {
+    ref.invalidate(pricingLiveRecordsProvider(widget.organizationId));
+    ref.invalidate(pricingOrgAnalyticsProvider(widget.organizationId));
+  }
+
+  List<Map<String, String>> _parseCsvRows(String raw) {
+    final lines = raw
+        .split(RegExp(r'\r?\n'))
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+
+    if (lines.length < 2) return const [];
+
+    final headers = lines.first.split(',').map((h) => h.trim()).toList();
+    final rows = <Map<String, String>>[];
+
+    for (final line in lines.skip(1)) {
+      final values = line.split(',').map((v) => v.trim()).toList();
+      if (values.isEmpty) continue;
+      final row = <String, String>{};
+      for (var i = 0; i < headers.length; i++) {
+        final header = headers[i];
+        row[header] = i < values.length ? values[i] : '';
+      }
+      rows.add(row);
+    }
+
+    return rows;
+  }
+
+  Future<void> _importCsv(List<PricingLiveRecord> records) async {
+    final l10n = AppLocalizations.of(context)!;
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: const ['csv'],
+      withData: true,
+    );
+
+    if (result == null || result.files.isEmpty) return;
+    final bytes = result.files.first.bytes;
+    if (bytes == null || bytes.isEmpty) return;
+
+    final csvText = utf8.decode(bytes, allowMalformed: true);
+    final rows = _parseCsvRows(csvText);
+    if (rows.isEmpty) {
+      _showSnackBar(l10n.errorOccurred, isError: true);
+      return;
+    }
+
+    final api = ref.read(app_providers.apiMethodProvider);
+    final nameByItem = {
+      for (final r in records) r.supportItemNumber: r.supportItemName,
+    };
+
+    setState(() => _isProcessing = true);
+    var success = 0;
+    var failed = 0;
+
+    for (final row in rows) {
+      final itemNumber =
+          (row['supportItemNumber'] ?? row['itemNumber'] ?? '').trim();
+      final priceRaw = row['customPrice'] ?? row['price'] ?? '';
+      final price = pricingToDouble(priceRaw);
+
+      if (itemNumber.isEmpty || price <= 0) {
+        failed++;
+        continue;
+      }
+
+      try {
+        final response = await api.saveAsCustomPricing(
+          widget.organizationId,
+          itemNumber,
+          price,
+          'fixed',
+          widget.adminEmail,
+          supportItemName: nameByItem[itemNumber] ?? itemNumber,
+        );
+        if (response['success'] == true) {
+          success++;
+        } else {
+          failed++;
+        }
+      } catch (_) {
+        failed++;
+      }
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _isProcessing = false;
+      _lastImportSummary =
+          'Imported ${rows.length} rows: $success success, $failed failed';
+      _events.insert(
+        0,
+        _BulkEvent(
+          action: 'CSV Import',
+          detail: _lastImportSummary,
+          successCount: success,
+          failedCount: failed,
+          timestamp: DateTime.now(),
+        ),
+      );
+    });
+
+    await _refreshAll();
+    _showSnackBar(
+        success > 0 ? l10n.importCompletedMsg('CSV') : l10n.errorOccurred,
+        isError: success == 0);
+  }
+
+  String _buildExportCsv(List<PricingLiveRecord> records) {
+    final customRecords = records.where((record) => record.isCustom).toList();
+    final buffer = StringBuffer();
+    buffer.writeln(
+      'supportItemNumber,supportItemName,customPrice,standardPrice,priceCap,source,updatedAt',
+    );
+
+    for (final record in customRecords) {
+      buffer.writeln(
+        '${record.supportItemNumber},'
+        '${record.supportItemName.replaceAll(',', ' ')},'
+        '${record.customPrice?.toStringAsFixed(2) ?? ''},'
+        '${record.standardPrice.toStringAsFixed(2)},'
+        '${record.priceCap?.toStringAsFixed(2) ?? ''},'
+        '${record.source},'
+        '${record.effectiveTimestamp?.toIso8601String() ?? ''}',
+      );
+    }
+
+    return buffer.toString();
+  }
+
+  Future<void> _generateExport(List<PricingLiveRecord> records) async {
+    final csv = _buildExportCsv(records);
+    setState(() {
+      _exportCsv = csv;
+      _events.insert(
+        0,
+        _BulkEvent(
+          action: 'CSV Export',
+          detail:
+              'Exported ${records.where((r) => r.isCustom).length} custom records',
+          successCount: records.where((r) => r.isCustom).length,
+          failedCount: 0,
+          timestamp: DateTime.now(),
+        ),
+      );
+    });
+  }
+
+  Future<void> _copyExportCsv() async {
+    final l10n = AppLocalizations.of(context)!;
+    if (_exportCsv.trim().isEmpty) {
+      _showSnackBar(l10n.exportComingSoon, isError: true);
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: _exportCsv));
+    _showSnackBar(l10n.exportDataQuickDesc);
+  }
+
+  Future<void> _applyBulkUpdate(List<PricingLiveRecord> records) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (_selectedItemNumbers.isEmpty) {
+      _showSnackBar(l10n.tipBulkActions, isError: true);
+      return;
+    }
+
+    final api = ref.read(app_providers.apiMethodProvider);
+    final selected = records
+        .where(
+            (record) => _selectedItemNumbers.contains(record.supportItemNumber))
+        .toList();
+
+    final percentage = pricingToDouble(_percentageController.text);
+    final fixedRate = pricingToDouble(_fixedRateController.text);
+
+    setState(() => _isProcessing = true);
+    var success = 0;
+    var failed = 0;
+
+    for (final record in selected) {
+      final base = record.customPrice ?? record.standardPrice;
+      final updatedPrice =
+          _bulkMode == 'fixed' ? fixedRate : (base * (1 + (percentage / 100)));
+
+      if (updatedPrice <= 0) {
+        failed++;
+        continue;
+      }
+
+      try {
+        final response = await api.saveAsCustomPricing(
+          widget.organizationId,
+          record.supportItemNumber,
+          updatedPrice,
+          'fixed',
+          widget.adminEmail,
+          supportItemName: record.supportItemName,
+        );
+
+        if (response['success'] == true) {
+          success++;
+        } else {
+          failed++;
+        }
+      } catch (_) {
+        failed++;
+      }
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _isProcessing = false;
+      _selectedItemNumbers.clear();
+      _events.insert(
+        0,
+        _BulkEvent(
+          action: 'Bulk Update',
+          detail:
+              'Processed ${selected.length} items (${_bulkMode == 'fixed' ? 'fixed' : 'percentage'})',
+          successCount: success,
+          failedCount: failed,
+          timestamp: DateTime.now(),
+        ),
+      );
+    });
+
+    await _refreshAll();
+    _showSnackBar(
+      success > 0
+          ? l10n.importCompletedMsg('Bulk update')
+          : l10n.importFailedMsg('No updates applied'),
+      isError: success == 0,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final recordsAsync =
+        ref.watch(pricingLiveRecordsProvider(widget.organizationId));
+    final analyticsAsync =
+        ref.watch(pricingOrgAnalyticsProvider(widget.organizationId));
+
+    final records = recordsAsync.valueOrNull ?? const <PricingLiveRecord>[];
+    final analytics = analyticsAsync.valueOrNull;
+    final isLoading = recordsAsync.isLoading || analyticsAsync.isLoading;
+
+    final customCount = records.where((record) => record.isCustom).length;
+    final pendingCount = records.where((record) => !record.isCustom).length;
+    final violations = analytics?.metrics.nonCompliantItems ?? 0;
+    final compliance = analytics?.metrics.complianceRate ??
+        (records.isEmpty ? 0.0 : (customCount / records.length) * 100);
+
+    final search = _searchController.text.trim().toLowerCase();
+    final filtered = records.where((record) {
+      if (_showOnlyCustom && !record.isCustom) return false;
+      if (search.isEmpty) return true;
+      return record.supportItemNumber.toLowerCase().contains(search) ||
+          record.supportItemName.toLowerCase().contains(search);
+    }).toList();
+
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            //_buildHeader(),
-            _buildModernHeader(),
-            _buildStatsOverview(),
-            _buildNavigationTabs(),
-            Expanded(
-              child: _buildContent(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModernHeader() {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isSmallScreen = constraints.maxWidth < 600;
-            return Padding(
-              padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new,
-                            size: 20,
-                          ),
-                          color: const Color(0xFF475569),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.bulkOperationsTitle,
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 24 : 28,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF0F172A),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            if (!isSmallScreen) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .bulkOperationsDesc,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ]
-                          ],
-                        ),
-                      ),
-                      if (!isSmallScreen)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF10B981),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                AppLocalizations.of(context)!.systemActive,
-                                style: TextStyle(
-                                  color: Color(0xFF10B981),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                  if (isSmallScreen) ...[
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .bulkOperationsSmallDesc,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF10B981),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                AppLocalizations.of(context)!.systemActive,
-                                style: TextStyle(
-                                  color: Color(0xFF10B981),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ]
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 20,
-                  ),
-                  color: const Color(0xFF475569),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
+      backgroundColor: _screenGray,
+      body: RefreshIndicator(
+        onRefresh: _refreshAll,
+        color: BauhausDesign.primary,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(child: _buildHeader(l10n)),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+              sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Bulk Operations',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
+                    _buildStats(
+                      l10n: l10n,
+                      isLoading: isLoading,
+                      total: records.length,
+                      custom: customCount,
+                      pending: pendingCount,
+                      compliance: compliance,
+                      violations: violations,
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTabs(l10n),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.60,
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildImportTab(l10n, records),
+                          _buildExportTab(l10n, records),
+                          _buildBulkTab(l10n, filtered, records),
+                          _buildHistoryTab(l10n, records),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Import and export data in batch operations',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF10B981),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    const Text(
-                      'System Active',
-                      style: TextStyle(
-                        color: Color(0xFF10B981),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildActionButton(
-          icon: Icons.refresh,
-          onPressed: _refreshData,
-          tooltip: AppLocalizations.of(context)!.refreshAction,
-        ),
-        const SizedBox(width: 8),
-        _buildActionButton(
-          icon: Icons.help_outline,
-          onPressed: _showHelp,
-          tooltip: AppLocalizations.of(context)!.helpAction,
-        ),
-        const SizedBox(width: 8),
-        ElevatedButton.icon(
-          onPressed: _showBulkOperationDialog,
-          icon: const Icon(Icons.add, size: 16),
-          label: Text(
-            AppLocalizations.of(context)!.newAction,
-            style: TextStyle(fontSize: 12),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6366F1),
-            foregroundColor: Colors.white,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required VoidCallback onPressed,
-    required String tooltip,
-  }) {
-    return Tooltip(
-      message: tooltip,
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-        ),
-        child: IconButton(
-          onPressed: onPressed,
-          icon: Icon(icon, size: 16, color: const Color(0xFF64748B)),
-          padding: EdgeInsets.zero,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatsOverview() {
-    final completedOps =
-        _operationHistory.where((op) => op['status'] == 'Completed').length;
-    final failedOps =
-        _operationHistory.where((op) => op['status'] == 'Failed').length;
-    final totalRecords = _operationHistory.fold<int>(
-        0, (sum, op) => sum + (op['recordsProcessed'] as int));
-    final successfulRecords = _operationHistory.fold<int>(
-        0, (sum, op) => sum + (op['recordsSuccessful'] as int));
-    final successRate = totalRecords > 0
-        ? ((successfulRecords / totalRecords) * 100).toStringAsFixed(1)
-        : '0';
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 160,
-              child: _buildStatCard(
-                title: AppLocalizations.of(context)!.totalOperations,
-                value: '${_operationHistory.length}',
-                icon: Icons.analytics_outlined,
-                color: const Color(0xFF6366F1),
-                surfaceColor: const Color(0xFFF0F0FF),
-              ),
-            ),
-            const SizedBox(width: 16),
-            SizedBox(
-              width: 160,
-              child: _buildStatCard(
-                title: AppLocalizations.of(context)!.completedOps,
-                value: '$completedOps',
-                icon: Icons.check_circle_outline,
-                color: const Color(0xFF10B981),
-                surfaceColor: const Color(0xFFF0FDF4),
-              ),
-            ),
-            const SizedBox(width: 16),
-            SizedBox(
-              width: 160,
-              child: _buildStatCard(
-                title: AppLocalizations.of(context)!.failedOps,
-                value: '$failedOps',
-                icon: Icons.error_outline,
-                color: const Color(0xFFEF4444),
-                surfaceColor: const Color(0xFFFEE2E2),
-              ),
-            ),
-            const SizedBox(width: 16),
-            SizedBox(
-              width: 160,
-              child: _buildStatCard(
-                title: AppLocalizations.of(context)!.successRate,
-                value: '$successRate%',
-                icon: Icons.trending_up,
-                color: const Color(0xFFF59E0B),
-                surfaceColor: const Color(0xFFFFFBEB),
               ),
             ),
           ],
@@ -454,1429 +378,750 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView> {
     );
   }
 
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-    required Color surfaceColor,
-  }) {
+  Widget _buildHeader(AppLocalizations l10n) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 100),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: surfaceColor,
-              borderRadius: BorderRadius.circular(6),
+      color: _screenGray,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
+          child: Container(
+            color: _screenGray,
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: _panelWhite,
+                          border: Border.all(color: _inkBlack, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back,
+                          size: 18,
+                          color: _inkBlack,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        l10n.bulkOperationsTitle,
+                        style: BauhausDesign.getTextTheme(context)
+                            .headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: _inkBlack,
+                              letterSpacing: 0.4,
+                            ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: _refreshAll,
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: _accentBlue,
+                          border: Border.all(color: _inkBlack, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.refresh,
+                          size: 18,
+                          color: BauhausDesign.surfaceWhite,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.bulkOperationsDesc,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              color: _inkBlack,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _accentRed,
+                        border: Border.all(color: _inkBlack, width: 2),
+                      ),
+                      child: Text(
+                        l10n.systemActive.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.surfaceWhite,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.6,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Divider(color: _inkBlack, height: 1, thickness: 1),
+              ],
             ),
-            child: Icon(icon, color: color, size: 16),
           ),
-          const SizedBox(height: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E293B),
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF64748B),
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildNavigationTabs() {
-    final tabs = [
+  Widget _buildStats({
+    required AppLocalizations l10n,
+    required bool isLoading,
+    required int total,
+    required int custom,
+    required int pending,
+    required double compliance,
+    required int violations,
+  }) {
+    final List<Map<String, Object>> stats = [
       {
-        'title': AppLocalizations.of(context)!.tabImport,
-        'subtitle': AppLocalizations.of(context)!.tabDataSubtitle,
-        'icon': Icons.upload_file_outlined
+        'title': l10n.totalOperations,
+        'value': isLoading ? '--' : total.toString(),
+        'color': BauhausDesign.secondary,
+        'icon': Icons.inventory_2_outlined,
       },
       {
-        'title': AppLocalizations.of(context)!.tabExport,
-        'subtitle': AppLocalizations.of(context)!.tabDataSubtitle,
-        'icon': Icons.download_outlined
+        'title': l10n.activeRatesLabel,
+        'value': isLoading ? '--' : custom.toString(),
+        'color': BauhausDesign.success,
+        'icon': Icons.check_circle_outline,
       },
       {
-        'title': AppLocalizations.of(context)!.tabBulk,
-        'subtitle': AppLocalizations.of(context)!.tabUpdatesSubtitle,
-        'icon': Icons.edit_outlined
+        'title': l10n.pendingUpdatesLabel,
+        'value': isLoading ? '--' : pending.toString(),
+        'color': BauhausDesign.warning,
+        'icon': Icons.pending_actions_outlined,
       },
       {
-        'title': AppLocalizations.of(context)!.tabHistory,
-        'subtitle': '',
-        'icon': Icons.history_outlined
+        'title': l10n.moduleMetricCompliance,
+        'value': isLoading ? '--' : '${compliance.toStringAsFixed(1)}%',
+        'color': violations > 0 ? BauhausDesign.warning : BauhausDesign.info,
+        'icon': Icons.verified_outlined,
       },
     ];
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isCompact = constraints.maxWidth < 600;
-
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeOutCubic,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(6),
-            child: Row(
-              children: tabs.asMap().entries.map((entry) {
-                final index = entry.key;
-                final tab = entry.value;
-                final isSelected = _selectedIndex == index;
-
-                return Expanded(
-                  child: _AnimatedTabItem(
-                    isSelected: isSelected,
-                    isCompact: isCompact,
-                    tab: tab,
-                    onTap: () {
-                      setState(() => _selectedIndex = index);
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          );
-        },
+    return GridView.builder(
+      shrinkWrap: true,
+      primary: false,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: stats.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        mainAxisExtent: 88,
       ),
-    );
-  }
-
-  Widget _AnimatedTabItem({
-    required bool isSelected,
-    required bool isCompact,
-    required Map<String, dynamic> tab,
-    required VoidCallback onTap,
-  }) {
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: isSelected ? 300 : 200),
-      curve: isSelected ? Curves.elasticOut : Curves.easeOutCubic,
-      tween: Tween(begin: 0.0, end: isSelected ? 1.0 : 0.0),
-      builder: (context, animationValue, child) {
-        return GestureDetector(
-          onTap: onTap,
-          child: MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOutCubic,
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              padding: EdgeInsets.symmetric(
-                vertical: isCompact ? 10 : 14,
-                horizontal: 8,
-              ),
-              transform: Matrix4.identity()
-                ..scale(1.0 + (animationValue * 0.02))
-                ..translate(0.0, -animationValue * 1.0),
-              decoration: BoxDecoration(
-                color: Color.lerp(
-                  Colors.transparent,
-                  Colors.white,
-                  animationValue,
+      itemBuilder: (context, index) {
+        final stat = stats[index];
+        return Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _panelWhite,
+            border: Border.all(color: _inkBlack, width: 2),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: stat['color'] as Color,
+                  border: Border.all(color: _inkBlack, width: 2),
                 ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8 + (4 * animationValue),
-                    offset: Offset(0, 2 + (2 * animationValue)),
-                  ),
-                  BoxShadow(
-                    color: const Color(0xFF6366F1).withOpacity(0.1),
-                    blurRadius: 12 + (8 * animationValue),
-                    offset: Offset(0, 4 + (4 * animationValue)),
-                  ),
-                ],
-                border: animationValue > 0
-                    ? Border.all(
-                        color: Color.lerp(
-                          Colors.transparent,
-                          const Color(0xFF6366F1).withOpacity(0.1),
-                          animationValue,
-                        )!,
-                        width: animationValue,
-                      )
-                    : null,
+                child: Icon(stat['icon'] as IconData,
+                    size: 12, color: BauhausDesign.surfaceWhite),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: isSelected ? 400 : 250),
-                    curve: isSelected ? Curves.elasticOut : Curves.easeOutCubic,
-                    tween: Tween(begin: 0.0, end: isSelected ? 1.0 : 0.0),
-                    builder: (context, iconAnimationValue, child) {
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOutCubic,
-                        padding: const EdgeInsets.all(6),
-                        transform: Matrix4.identity()
-                          ..scale(1.0 + (iconAnimationValue * 0.1))
-                          ..rotateZ(iconAnimationValue * 0.05),
-                        decoration: BoxDecoration(
-                          color: Color.lerp(
-                            Colors.transparent,
-                            const Color(0xFF6366F1).withOpacity(0.1),
-                            iconAnimationValue,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          transitionBuilder: (child, animation) {
-                            return ScaleTransition(
-                              scale: animation,
-                              child: FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              ),
-                            );
-                          },
-                          child: Icon(
-                            tab['icon'] as IconData,
-                            key: ValueKey(isSelected),
-                            size: isCompact ? 16 : 18,
-                            color: Color.lerp(
-                              const Color(0xFF64748B),
-                              const Color(0xFF6366F1),
-                              iconAnimationValue,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: 6,
-                    child: const SizedBox(),
-                  ),
-                  TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: isSelected ? 350 : 200),
-                    curve: Curves.easeOutCubic,
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    builder: (context, textAnimationValue, child) {
-                      return AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: textAnimationValue,
-                        child: Transform.translate(
-                          offset: Offset(0, (1 - textAnimationValue) * 5),
-                          child: Column(
-                            children: [
-                              AnimatedDefaultTextStyle(
-                                duration: const Duration(milliseconds: 250),
-                                curve: Curves.easeOutCubic,
-                                style: TextStyle(
-                                  fontSize: isCompact ? 11 : 12,
-                                  fontWeight: isSelected
-                                      ? FontWeight.w700
-                                      : FontWeight.w600,
-                                  color: Color.lerp(
-                                    const Color(0xFF1E293B),
-                                    const Color(0xFF6366F1),
-                                    animationValue,
-                                  ),
-                                  height: 1.2,
-                                ),
-                                child: Text(
-                                  tab['title'] as String,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              if ((tab['subtitle'] as String).isNotEmpty)
-                                AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeOutCubic,
-                                  transform: Matrix4.identity()
-                                    ..scale(1.0 + (animationValue * 0.05)),
-                                  child: AnimatedDefaultTextStyle(
-                                    duration: const Duration(milliseconds: 250),
-                                    curve: Curves.easeOutCubic,
-                                    style: TextStyle(
-                                      fontSize: isCompact ? 10 : 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color.lerp(
-                                        const Color(0xFF64748B),
-                                        const Color(0xFF6366F1)
-                                            .withOpacity(0.1),
-                                        animationValue,
-                                      ),
-                                      height: 1.1,
-                                    ),
-                                    child: Text(
-                                      tab['subtitle'] as String,
-                                      textAlign: TextAlign.center,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      stat['value'] as String,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelLarge
+                          ?.copyWith(
+                              color: _inkBlack, fontWeight: FontWeight.w900),
+                    ),
+                    Text(
+                      stat['title'] as String,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(color: BauhausDesign.textMuted),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildContent() {
-    switch (_selectedIndex) {
-      case 0:
-        return _buildImportTab();
-      case 1:
-        return _buildExportTab();
-      case 2:
-        return _buildBulkUpdatesTab();
-      case 3:
-        return _buildHistoryTab();
-      default:
-        return _buildImportTab();
-    }
+  Widget _buildTabs(AppLocalizations l10n) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: TabBar(
+        controller: _tabController,
+        indicator: const BoxDecoration(color: _inkBlack),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorPadding: EdgeInsets.zero,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        labelColor: BauhausDesign.surfaceWhite,
+        unselectedLabelColor: _inkBlack,
+        labelStyle: BauhausDesign.getTextTheme(context)
+            .labelSmall
+            ?.copyWith(fontWeight: FontWeight.w900),
+        tabs: [
+          Tab(text: l10n.tabImport),
+          Tab(text: l10n.tabExport),
+          Tab(text: l10n.tabBulk),
+          Tab(text: l10n.tabHistory),
+        ],
+      ),
+    );
   }
 
-  Widget _buildImportTab() {
-    return LayoutBuilder(builder: (context, constraints) {
-      final isSmallScreen = constraints.maxWidth < 600;
-      return SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.importDataTitle,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
+  Widget _buildImportTab(
+      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    return ListView(
+      primary: false,
+      padding: const EdgeInsets.only(top: 0),
+      children: [
+        _buildPanel(
+          title: l10n.importDataTitle,
+          subtitle: l10n.importDataDesc,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPrimaryButton(
+                label: l10n.importDataQuickAction,
+                onTap: _isProcessing ? null : () => _importCsv(records),
               ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              AppLocalizations.of(context)!.importDataDesc,
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF64748B),
-              ),
-            ),
-            const SizedBox(height: 24),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 1.15,
-              children: [
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.ndisItemsCardTitle,
-                  subtitle: AppLocalizations.of(context)!.ndisItemsCardSubtitle,
-                  value: '1,247',
-                  unit: AppLocalizations.of(context)!.itemsUnit,
-                  icon: Icons.list_alt,
-                  color: const Color(0xFF6366F1),
-                  onTap: () => _handleImport('ndis_items'),
-                ),
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.serviceRatesCardTitle,
-                  subtitle:
-                      AppLocalizations.of(context)!.serviceRatesCardSubtitle,
-                  value: '89',
-                  unit: AppLocalizations.of(context)!.ratesUnit,
-                  icon: Icons.rate_review,
-                  color: const Color(0xFF10B981),
-                  onTap: () => _handleImport('service_rates'),
-                ),
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.priceUpdatesCardTitle,
-                  subtitle:
-                      AppLocalizations.of(context)!.priceUpdatesCardSubtitle,
-                  value: '342',
-                  unit: AppLocalizations.of(context)!.updatesUnit,
-                  icon: Icons.trending_up,
-                  color: const Color(0xFFF59E0B),
-                  onTap: () => _handleImport('price_updates'),
-                ),
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.regionalRatesCardTitle,
-                  subtitle:
-                      AppLocalizations.of(context)!.regionalRatesCardSubtitle,
-                  value: '15',
-                  unit: AppLocalizations.of(context)!.regionsUnit,
-                  icon: Icons.location_on,
-                  color: const Color(0xFF8B5CF6),
-                  onTap: () => _handleImport('regional_rates'),
-                ),
-              ],
-            ),
-            if (_isProcessing) ...[
-              const SizedBox(height: 24),
-              _buildProgressIndicator(),
-            ],
-            const SizedBox(height: 24),
-            _buildTemplateDownloads(),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildModernImportCard({
-    required String title,
-    required String subtitle,
-    required String value,
-    required String unit,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 36,
-                  height: 26,
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 18,
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: const Color(0xFF64748B),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: color,
-                        height: 1.0,
-                      ),
-                      maxLines: 1,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
+              const SizedBox(height: 4),
+              if (_isProcessing) const LinearProgressIndicator(minHeight: 2),
+              if (_lastImportSummary.isNotEmpty) ...[
+                const SizedBox(height: 4),
                 Text(
-                  unit,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF64748B),
-                  ),
+                  _lastImportSummary,
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodySmall
+                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
                 ),
               ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1E293B),
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 10,
-                color: Color(0xFF64748B),
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProgressIndicator() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.upload,
-                  color: Color(0xFF6366F1),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.processingImportMsg,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      AppLocalizations.of(context)!
-                          .completeMsg((_uploadProgress * 100).toInt()),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
-          const SizedBox(height: 16),
-          LinearProgressIndicator(
-            value: _uploadProgress,
-            backgroundColor: const Color(0xFFE2E8F0),
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6366F1)),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildTemplateDownloads() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+  Widget _buildExportTab(
+      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    return ListView(
+      primary: false,
+      padding: const EdgeInsets.only(top: 0),
+      children: [
+        _buildPanel(
+          title: l10n.exportDataTitle,
+          subtitle: l10n.exportDataDesc,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildPrimaryButton(
+                      label: l10n.exportDataQuickAction,
+                      onTap: () => _generateExport(records),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildSecondaryButton(
+                      label: l10n.dashboardViewAll,
+                      onTap: _copyExportCsv,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
               Container(
+                height: 280,
+                width: double.infinity,
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF0F0FF),
-                  borderRadius: BorderRadius.circular(8),
+                  color: BauhausDesign.surfaceWhite,
+                  border: Border.all(color: _inkBlack, width: 2),
                 ),
-                child: const Icon(
-                  Icons.file_download_outlined,
-                  color: Color(0xFF6366F1),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.downloadTemplatesTitle,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      AppLocalizations.of(context)!.downloadTemplatesDesc,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF64748B),
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    _exportCsv.isEmpty ? l10n.moduleNoDataYet : _exportCsv,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(color: _inkBlack),
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final cardWidth = (constraints.maxWidth - 16) / 2;
-              return Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                children: [
-                  SizedBox(
-                    width: cardWidth,
-                    height: 120,
-                    child: _buildModernTemplateCard(
-                      AppLocalizations.of(context)!.ndisTemplateTitle,
-                      AppLocalizations.of(context)!.ndisTemplateDesc,
-                      Icons.medical_services_outlined,
-                      'ndis_template',
-                      const Color(0xFF10B981),
-                    ),
-                  ),
-                  SizedBox(
-                    width: cardWidth,
-                    height: 120,
-                    child: _buildModernTemplateCard(
-                      AppLocalizations.of(context)!.ratesTemplateTitle,
-                      AppLocalizations.of(context)!.ratesTemplateDesc,
-                      Icons.attach_money_outlined,
-                      'rates_template',
-                      const Color(0xFF6366F1),
-                    ),
-                  ),
-                  SizedBox(
-                    width: cardWidth,
-                    height: 120,
-                    child: _buildModernTemplateCard(
-                      AppLocalizations.of(context)!.updatesTemplateTitle,
-                      AppLocalizations.of(context)!.updatesTemplateDesc,
-                      Icons.trending_up_outlined,
-                      'updates_template',
-                      const Color(0xFFF59E0B),
-                    ),
-                  ),
-                  SizedBox(
-                    width: cardWidth,
-                    height: 120,
-                    child: _buildModernTemplateCard(
-                      AppLocalizations.of(context)!.regionalTemplateTitle,
-                      AppLocalizations.of(context)!.regionalTemplateDesc,
-                      Icons.location_on_outlined,
-                      'regional_template',
-                      const Color(0xFFEF4444),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildModernTemplateCard(
-    String title,
-    String description,
-    IconData icon,
-    String template,
-    Color accentColor,
+  Widget _buildBulkTab(
+    AppLocalizations l10n,
+    List<PricingLiveRecord> filtered,
+    List<PricingLiveRecord> allRecords,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _downloadTemplate(template),
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: accentColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Icon(
-                        icon,
-                        color: accentColor,
-                        size: 16,
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Icon(
-                        Icons.download,
-                        color: const Color(0xFF64748B),
-                        size: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E293B),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Expanded(
-                  child: Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Color(0xFF64748B),
-                      height: 1.2,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTemplateButton(String title, String template) {
-    return OutlinedButton.icon(
-      onPressed: () => _downloadTemplate(template),
-      icon: const Icon(Icons.download, size: 16),
-      label: Text(title),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: const Color(0xFF6366F1),
-        side: const BorderSide(color: Color(0xFFE2E8F0)),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExportTab() {
-    return LayoutBuilder(builder: (context, constraints) {
-      final isSmallScreen = constraints.maxWidth < 600;
-      return SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.exportDataTitle,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              AppLocalizations.of(context)!.exportDataDesc,
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF64748B),
-              ),
-            ),
-            const SizedBox(height: 24),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 1.15,
-              children: [
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.allPricingDataTitle,
-                  subtitle:
-                      AppLocalizations.of(context)!.allPricingDataSubtitle,
-                  value: '1,247',
-                  unit: AppLocalizations.of(context)!.recordsUnit,
-                  icon: Icons.storage,
-                  color: const Color(0xFF6366F1),
-                  onTap: () => _handleExport('all_data'),
-                ),
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.ndisItemsOnlyTitle,
-                  subtitle: AppLocalizations.of(context)!.ndisItemsOnlySubtitle,
-                  value: '89',
-                  unit: AppLocalizations.of(context)!.itemsUnit,
-                  icon: Icons.list_alt,
-                  color: const Color(0xFF10B981),
-                  onTap: () => _handleExport('ndis_only'),
-                ),
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.serviceRatesCardTitle,
-                  subtitle:
-                      AppLocalizations.of(context)!.serviceRatesCardSubtitle,
-                  value: '342',
-                  unit: AppLocalizations.of(context)!.ratesUnit,
-                  icon: Icons.rate_review,
-                  color: const Color(0xFFF59E0B),
-                  onTap: () => _handleExport('service_rates'),
-                ),
-                _buildModernImportCard(
-                  title: AppLocalizations.of(context)!.regionalDataTitle,
-                  subtitle: AppLocalizations.of(context)!.regionalDataSubtitle,
-                  value: '15',
-                  unit: AppLocalizations.of(context)!.regionsUnit,
-                  icon: Icons.location_on,
-                  color: const Color(0xFF8B5CF6),
-                  onTap: () => _handleExport('regional_data'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildBulkUpdatesTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.bulkUpdatesTitle,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            AppLocalizations.of(context)!.bulkUpdatesDesc,
-            style: TextStyle(
-              fontSize: 14,
-              color: Color(0xFF64748B),
-            ),
-          ),
-          const SizedBox(height: 24),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final crossAxisCount = constraints.maxWidth > 600 ? 4 : 2;
-              final childAspectRatio = 1.2;
-
-              return GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: childAspectRatio,
-                children: [
-                  _buildModernImportCard(
-                    title: AppLocalizations.of(context)!.priceAdjustmentTitle,
-                    subtitle:
-                        AppLocalizations.of(context)!.priceAdjustmentSubtitle,
-                    value: AppLocalizations.of(context)!.tabBulk,
-                    unit: AppLocalizations.of(context)!.updatesUnit,
-                    icon: Icons.trending_up,
-                    color: const Color(0xFF3B82F6),
-                    onTap: () => _handleBulkUpdate('price_adjustment'),
-                  ),
-                  _buildModernImportCard(
-                    title: AppLocalizations.of(context)!.regionalUpdatesTitle,
-                    subtitle:
-                        AppLocalizations.of(context)!.regionalUpdatesSubtitle,
-                    value: 'Region',
-                    unit: AppLocalizations.of(context)!.basedUnit,
-                    icon: Icons.location_on,
-                    color: const Color(0xFF10B981),
-                    onTap: () => _handleBulkUpdate('regional_updates'),
-                  ),
-                  _buildModernImportCard(
-                    title: AppLocalizations.of(context)!.categoryUpdatesTitle,
-                    subtitle:
-                        AppLocalizations.of(context)!.categoryUpdatesSubtitle,
-                    value: 'Category',
-                    unit: AppLocalizations.of(context)!.wideUnit,
-                    icon: Icons.category,
-                    color: const Color(0xFF8B5CF6),
-                    onTap: () => _handleBulkUpdate('category_updates'),
-                  ),
-                  _buildModernImportCard(
-                    title: AppLocalizations.of(context)!.statusChangesTitle,
-                    subtitle:
-                        AppLocalizations.of(context)!.statusChangesSubtitle,
-                    value: 'Status',
-                    unit: AppLocalizations.of(context)!.toggleUnit,
-                    icon: Icons.toggle_on,
-                    color: const Color(0xFFF59E0B),
-                    onTap: () => _handleBulkUpdate('status_changes'),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHistoryTab() {
-    return Column(
+    return ListView(
+      primary: false,
+      padding: const EdgeInsets.only(top: 0),
       children: [
-        Container(
-          padding: const EdgeInsets.all(24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        _buildPanel(
+          title: l10n.bulkUpdatesTitle,
+          subtitle: l10n.bulkUpdatesDesc,
+          child: Column(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.operationHistoryTitle,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
-                    ),
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: l10n.searchHistoryHint,
+                  prefixIcon: const Icon(Icons.search, color: _inkBlack),
+                  isDense: true,
+                  filled: true,
+                  fillColor: BauhausDesign.surfaceWhite,
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                    borderSide: BorderSide(color: _inkBlack, width: 2),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    AppLocalizations.of(context)!.operationHistoryDesc,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF64748B),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                    borderSide: BorderSide(color: _inkBlack, width: 2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSimpleModeDropdown(),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: _bulkMode == 'fixed'
+                          ? _fixedRateController
+                          : _percentageController,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      decoration: InputDecoration(
+                        hintText:
+                            _bulkMode == 'fixed' ? 'Fixed rate' : 'Percent',
+                        isDense: true,
+                        filled: true,
+                        fillColor: BauhausDesign.surfaceWhite,
+                        enabledBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          borderSide: BorderSide(color: _inkBlack, width: 2),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          borderSide: BorderSide(color: _inkBlack, width: 2),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _showOnlyCustom,
+                    onChanged: (value) {
+                      setState(() => _showOnlyCustom = value ?? false);
+                    },
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
                     ),
-                  ],
+                    side: const BorderSide(color: _inkBlack, width: 2),
+                  ),
+                  Expanded(
+                    child: Text(
+                      l10n.pricingFilterCustom,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                              color: _inkBlack, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  Text(
+                    '${_selectedItemNumbers.length} ${l10n.employeesSelected}',
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(color: BauhausDesign.textMuted),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              _buildPrimaryButton(
+                label: l10n.bulkUpdatesQuickAction,
+                onTap:
+                    _isProcessing ? null : () => _applyBulkUpdate(allRecords),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        ...filtered.take(80).map(
+              (record) => Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _panelWhite,
+                  border: Border.all(color: _inkBlack, width: 2),
                 ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _refreshData,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: _selectedItemNumbers
+                          .contains(record.supportItemNumber),
+                      onChanged: (selected) {
+                        setState(() {
+                          if (selected == true) {
+                            _selectedItemNumbers.add(record.supportItemNumber);
+                          } else {
+                            _selectedItemNumbers
+                                .remove(record.supportItemNumber);
+                          }
+                        });
+                      },
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      side: const BorderSide(color: _inkBlack, width: 2),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.refresh,
-                            size: 16,
-                            color: const Color(0xFF6366F1),
-                          ),
-                          const SizedBox(width: 8),
                           Text(
-                            AppLocalizations.of(context)!.refreshAction,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF6366F1),
-                            ),
+                            '${record.supportItemNumber} · ${record.supportItemName}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(
+                                    color: _inkBlack,
+                                    fontWeight: FontWeight.w900),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Current: \$${(record.customPrice ?? record.standardPrice).toStringAsFixed(2)} · Cap: ${record.priceCap?.toStringAsFixed(2) ?? '-'}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+      ],
+    );
+  }
+
+  Widget _buildHistoryTab(
+      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    final timeline = records
+        .where((record) => record.isCustom && record.effectiveTimestamp != null)
+        .take(20)
+        .toList();
+
+    return ListView(
+      primary: false,
+      padding: const EdgeInsets.only(top: 0),
+      children: [
+        _buildPanel(
+          title: l10n.operationHistoryTitle,
+          subtitle: l10n.operationHistoryDesc,
+          child: _events.isEmpty
+              ? Text(
+                  l10n.moduleNoTrackedChanges,
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodySmall
+                      ?.copyWith(color: BauhausDesign.textMuted),
+                )
+              : Column(
+                  children: _events
+                      .take(12)
+                      .map(
+                        (event) => _buildHistoryRow(
+                          title: event.action,
+                          detail: event.detail,
+                          summary:
+                              '${event.successCount} ok / ${event.failedCount} failed',
+                          time: event.timestamp,
+                        ),
+                      )
+                      .toList(),
+                ),
         ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            itemCount: _operationHistory.length,
-            itemBuilder: (context, index) {
-              final operation = _operationHistory[index];
-              return _buildHistoryCard(operation);
-            },
-          ),
+        const SizedBox(height: 4),
+        _buildPanel(
+          title: l10n.priceHistoryTitle,
+          subtitle: l10n.trackPricingChanges,
+          child: timeline.isEmpty
+              ? Text(
+                  l10n.moduleNoTrackedChanges,
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodySmall
+                      ?.copyWith(color: BauhausDesign.textMuted),
+                )
+              : Column(
+                  children: timeline
+                      .map(
+                        (record) => _buildHistoryRow(
+                          title: record.supportItemNumber,
+                          detail: record.supportItemName,
+                          summary:
+                              '\$${record.customPrice?.toStringAsFixed(2) ?? '-'} · ${record.source}',
+                          time: record.effectiveTimestamp!,
+                        ),
+                      )
+                      .toList(),
+                ),
         ),
       ],
     );
   }
 
-  Widget _buildHistoryCard(Map<String, dynamic> operation) {
-    final isCompleted = operation['status'] == 'Completed';
-    final isFailed = operation['status'] == 'Failed';
-    final statusColor = isCompleted
-        ? const Color(0xFF10B981)
-        : isFailed
-            ? const Color(0xFFEF4444)
-            : const Color(0xFFF59E0B);
-    final statusBgColor = isCompleted
-        ? const Color(0xFFF0FDF4)
-        : isFailed
-            ? const Color(0xFFFEF2F2)
-            : const Color(0xFFFFFBEB);
+  Widget _buildHistoryRow({
+    required String title,
+    required String detail,
+    required String summary,
+    required DateTime time,
+  }) {
+    final stamp =
+        '${time.year}-${time.month.toString().padLeft(2, '0')}-${time.day.toString().padLeft(2, '0')} ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: _inkBlack, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      operation['description'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${operation['type']} • ${operation['fileName']}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: statusBgColor,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  operation['status'],
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: statusColor,
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            title,
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildOperationStat(
-                  AppLocalizations.of(context)!.processedLabel,
-                  '${operation['recordsProcessed']}',
-                  const Color(0xFF6366F1),
-                ),
-              ),
-              Expanded(
-                child: _buildOperationStat(
-                  AppLocalizations.of(context)!.successfulLabel,
-                  '${operation['recordsSuccessful']}',
-                  const Color(0xFF10B981),
-                ),
-              ),
-              Expanded(
-                child: _buildOperationStat(
-                  AppLocalizations.of(context)!.failedOps,
-                  '${operation['recordsFailed']}',
-                  const Color(0xFFEF4444),
-                ),
-              ),
-              Expanded(
-                child: _buildOperationStat(
-                  AppLocalizations.of(context)!.durationLabel,
-                  _calculateDuration(
-                      operation['startTime'], operation['endTime']),
-                  const Color(0xFFF59E0B),
-                ),
-              ),
-            ],
+          Text(
+            detail,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(color: BauhausDesign.textMuted),
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${AppLocalizations.of(context)!.startedLabel}: ${operation['startTime']}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF94A3B8),
-                ),
-              ),
-              Text(
-                '${AppLocalizations.of(context)!.byLabel}: ${operation['initiatedBy']}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF94A3B8),
-                ),
-              ),
-            ],
+          const SizedBox(height: 2),
+          Text(
+            summary,
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
+          ),
+          Text(
+            stamp,
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildOperationStat(String label, String value, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Color(0xFF64748B),
-            fontWeight: FontWeight.w500,
+  Widget _buildPanel({
+    required String title,
+    required String subtitle,
+    required Widget child,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: BauhausDesign.getTextTheme(context)
+                .labelLarge
+                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: color,
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: BauhausDesign.getTextTheme(context)
+                .labelSmall
+                ?.copyWith(color: BauhausDesign.textMuted),
           ),
-        ),
-      ],
-    );
-  }
-
-  String _calculateDuration(String startTime, String endTime) {
-    try {
-      final start = DateTime.parse(startTime.replaceAll(' ', 'T'));
-      final end = DateTime.parse(endTime.replaceAll(' ', 'T'));
-      final duration = end.difference(start);
-
-      if (duration.inMinutes > 0) {
-        return '${duration.inMinutes}m ${duration.inSeconds % 60}s';
-      } else {
-        return '${duration.inSeconds}s';
-      }
-    } catch (e) {
-      return 'N/A';
-    }
-  }
-
-  void _handleImport(String type) async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['csv', 'xlsx', 'xls'],
-      );
-
-      if (result != null) {
-        setState(() {
-          _isProcessing = true;
-          _uploadProgress = 0.0;
-        });
-
-        // Simulate upload progress
-        for (int i = 0; i <= 100; i += 10) {
-          await Future.delayed(const Duration(milliseconds: 200));
-          setState(() {
-            _uploadProgress = i / 100;
-          });
-        }
-
-        setState(() {
-          _isProcessing = false;
-        });
-
-        _showSnackBar(AppLocalizations.of(context)!.importCompletedMsg(type));
-      }
-    } catch (e) {
-      setState(() {
-        _isProcessing = false;
-      });
-      _showSnackBar(
-          AppLocalizations.of(context)!.importFailedMsg(e.toString()));
-    }
-  }
-
-  void _handleExport(String type) {
-    _showSnackBar(AppLocalizations.of(context)!.exportingMsg(type));
-  }
-
-  void _handleBulkUpdate(String type) {
-    _showSnackBar(AppLocalizations.of(context)!.initiatingMsg(type));
-  }
-
-  void _downloadTemplate(String template) {
-    _showSnackBar(AppLocalizations.of(context)!.downloadingMsg(template));
-  }
-
-  void _refreshData() {
-    _showSnackBar(AppLocalizations.of(context)!.dataRefreshedSuccess);
-  }
-
-  void _showHelp() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.bulkOperationsHelpTitle),
-        content: SizedBox(
-          width: 400,
-          height: 300,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${AppLocalizations.of(context)!.importDataTitle}:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text('• ${AppLocalizations.of(context)!.importDataQuickDesc}'),
-                Text(
-                    '• ${AppLocalizations.of(context)!.downloadTemplatesDesc}'),
-                SizedBox(height: 16),
-                Text(
-                  '${AppLocalizations.of(context)!.exportDataTitle}:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text('• ${AppLocalizations.of(context)!.exportDataQuickDesc}'),
-                SizedBox(height: 16),
-                Text(
-                  '${AppLocalizations.of(context)!.bulkUpdatesTitle}:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text('• ${AppLocalizations.of(context)!.bulkUpdatesQuickDesc}'),
-                SizedBox(height: 16),
-                Text(
-                  '${AppLocalizations.of(context)!.operationHistoryTitle}:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text('• ${AppLocalizations.of(context)!.operationHistoryDesc}'),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.closeAction),
-          ),
+          const SizedBox(height: 4),
+          child,
         ],
       ),
     );
   }
 
-  void _showBulkOperationDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.quickActionsTitle),
-        content: SizedBox(
-          width: 300,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading:
-                    const Icon(Icons.upload_file, color: Color(0xFF6366F1)),
-                title:
-                    Text(AppLocalizations.of(context)!.importDataQuickAction),
-                subtitle:
-                    Text(AppLocalizations.of(context)!.importDataQuickDesc),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() => _selectedIndex = 0);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.download, color: Color(0xFF10B981)),
-                title:
-                    Text(AppLocalizations.of(context)!.exportDataQuickAction),
-                subtitle:
-                    Text(AppLocalizations.of(context)!.exportDataQuickDesc),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() => _selectedIndex = 1);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.edit, color: Color(0xFFF59E0B)),
-                title:
-                    Text(AppLocalizations.of(context)!.bulkUpdatesQuickAction),
-                subtitle:
-                    Text(AppLocalizations.of(context)!.bulkUpdatesQuickDesc),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() => _selectedIndex = 2);
-                },
-              ),
-            ],
-          ),
+  Widget _buildSimpleModeDropdown() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _bulkMode,
+          isExpanded: true,
+          items: [
+            DropdownMenuItem(value: 'percentage', child: Text(l10n.percentage)),
+            const DropdownMenuItem(value: 'fixed', child: Text('Fixed Rate')),
+          ],
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                _bulkMode = value;
+              });
+            }
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.closeAction),
-          ),
-        ],
       ),
     );
   }
 
-  void _showSnackBar(String message) {
+  Widget _buildPrimaryButton({
+    required String label,
+    required VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: BoxDecoration(
+          color:
+              onTap == null ? BauhausDesign.textMuted : BauhausDesign.primary,
+          border: Border.all(color: _inkBlack, width: 2),
+        ),
+        child: Text(
+          label.toUpperCase(),
+          textAlign: TextAlign.center,
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.4,
+              ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSecondaryButton({
+    required String label,
+    required VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: BoxDecoration(
+          color: BauhausDesign.surfaceWhite,
+          border: Border.all(color: _inkBlack, width: 2),
+        ),
+        child: Text(
+          label.toUpperCase(),
+          textAlign: TextAlign.center,
+          style: BauhausDesign.getTextTheme(context)
+              .labelSmall
+              ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+        ),
+      ),
+    );
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
       ),
     );
   }
+}
+
+class _BulkEvent {
+  final String action;
+  final String detail;
+  final int successCount;
+  final int failedCount;
+  final DateTime timestamp;
+
+  const _BulkEvent({
+    required this.action,
+    required this.detail,
+    required this.successCount,
+    required this.failedCount,
+    required this.timestamp,
+  });
 }

@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:carenest/app/features/earnings/repositories/earnings_repository.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -52,6 +53,16 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
   User? _selectedUser;
   bool _isSaving = false;
   String? _rateWarning; // To show validation warning
+  void Function(VoidCallback fn)? _dialogSetState;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _refreshEmployees(showLoading: true);
+    });
+  }
 
   @override
   void dispose() {
@@ -66,6 +77,22 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
     super.dispose();
   }
 
+  Future<void> _refreshEmployees({bool showLoading = false}) async {
+    await ref
+        .read(employeePayRateViewModelProvider(widget.organizationId).notifier)
+        .fetchEmployees(showLoading: showLoading);
+  }
+
+  void _updateUi(VoidCallback updates) {
+    final localSetState = _dialogSetState;
+    if (localSetState != null) {
+      localSetState(updates);
+      return;
+    }
+    if (!mounted) return;
+    setState(updates);
+  }
+
   void _selectUser(User user) {
     setState(() {
       _selectedUser = user;
@@ -73,15 +100,8 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           user.payRate != 0.0 ? user.payRate.toString() : '';
       _payType = user.payType ?? 'Hourly';
 
-      // Validate and set Stream
-      if (user.stream != null &&
-          SchadsRateConstants.streams.contains(user.stream)) {
-        _selectedStream = user.stream;
-      } else {
-        _selectedStream = null;
-      }
+      _selectedStream = _normalizeStream(user.stream);
 
-      // Validate and set Level
       _selectedLevel = null;
       if (_selectedStream != null && user.classificationLevel != null) {
         final levels =
@@ -91,7 +111,6 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
         }
       }
 
-      // Validate and set Pay Point
       _selectedPayPoint = null;
       if (_selectedStream != null &&
           _selectedLevel != null &&
@@ -106,7 +125,6 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       _selectedEmploymentType = user.employmentType ?? 'Permanent';
       _selectedAllowances = user.activeAllowances ?? [];
 
-      // Load detailed rates if available, otherwise 0
       final rates = user.detailedRates;
       _saturdayRateController.text = rates?.saturdayRate.toString() ?? '';
       _sundayRateController.text = rates?.sundayRate.toString() ?? '';
@@ -114,26 +132,36 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           rates?.publicHolidayRate.toString() ?? '';
       _overtimeRateController.text = rates?.overtimeRate.toString() ?? '';
       _overtimeRate2Controller.text = rates?.overtimeRate2.toString() ?? '';
-      _eveningShiftRateController.text = rates?.eveningShiftRate.toString() ?? '';
+      _eveningShiftRateController.text =
+          rates?.eveningShiftRate.toString() ?? '';
       _nightShiftRateController.text = rates?.nightShiftRate.toString() ?? '';
 
-      // Auto-calculate if rates are missing OR if they are zero (incomplete data)
       bool hasZeroRates = false;
       if (rates != null) {
-        if (rates.saturdayRate <= 0 || rates.sundayRate <= 0) {
+        if ((rates.saturdayRate ?? 0) <= 0 || (rates.sundayRate ?? 0) <= 0) {
           hasZeroRates = true;
         }
       }
 
       if ((rates == null || hasZeroRates) && user.payRate > 0) {
         debugPrint('Detailed rates missing or zero, auto-calculating...');
-        // Defer calculation to ensure controllers are set
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _calculateSchadsRates();
         });
       }
     });
     _showEditDialog();
+  }
+
+  String? _normalizeStream(String? stream) {
+    if (stream == null) return null;
+    final trimmed = stream.trim();
+    if (trimmed.isEmpty) return null;
+    final lower = trimmed.toLowerCase();
+    for (final option in SchadsRateConstants.streams) {
+      if (option.toLowerCase() == lower) return option;
+    }
+    return trimmed;
   }
 
   // Auto-fill logic based on SCHADS multipliers
@@ -179,14 +207,14 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       // Casual Afternoon = Perm Base * (1 + 0.25 + 0.125) = Perm Base * 1.375 = (Casual Base / 1.25) * 1.375 = 1.1 * Casual Base
       // Casual Night = Perm Base * (1 + 0.25 + 0.15) = Perm Base * 1.4 = (Casual Base / 1.25) * 1.4 = 1.12 * Casual Base
       // Casual OT: Often same as Sat (1.75 of Perm) -> 1.4 * Casual Base
-      
+
       satMult = 1.75 / 1.25; // 1.4
       sunMult = 2.25 / 1.25; // 1.8
       phMult = 2.75 / 1.25; // 2.2
-      
+
       eveningMult = 1.375 / 1.25; // 1.1
       nightMult = 1.40 / 1.25; // 1.12
-      
+
       ot1Mult = 1.75 / 1.25; // 1.4
       ot2Mult = 2.25 / 1.25; // 1.8 (After 2h is 225% of Perm)
     }
@@ -198,8 +226,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
     _overtimeRate2Controller.text = (base * ot2Mult).toStringAsFixed(2);
     _eveningShiftRateController.text = (base * eveningMult).toStringAsFixed(2);
     _nightShiftRateController.text = (base * nightMult).toStringAsFixed(2);
-    
-    debugPrint('Rates calculated: Sat=${_saturdayRateController.text}, Sun=${_sundayRateController.text}');
+
+    debugPrint(
+        'Rates calculated: Sat=${_saturdayRateController.text}, Sun=${_sundayRateController.text}');
   }
 
   Future<void> _saveRate() async {
@@ -225,7 +254,8 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           overtimeRate: double.tryParse(_overtimeRateController.text) ?? 0,
           overtimeRate2: double.tryParse(_overtimeRate2Controller.text) ?? 0,
           nightShiftRate: double.tryParse(_nightShiftRateController.text) ?? 0,
-          eveningShiftRate: double.tryParse(_eveningShiftRateController.text) ?? 0);
+          eveningShiftRate:
+              double.tryParse(_eveningShiftRateController.text) ?? 0);
 
       await repository.setPayRate(
           _selectedUser!.email,
@@ -236,7 +266,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           _selectedPayPoint,
           _selectedStream,
           _selectedEmploymentType,
-          _selectedAllowances);
+          _selectedAllowances,
+          widget.organizationId,
+          widget.adminEmail);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -246,8 +278,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
         );
       }
 
-      // Force refresh the list
-      ref.invalidate(employeePayRateViewModelProvider(widget.organizationId));
+      await _refreshEmployees(showLoading: false);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -273,14 +304,14 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           finalRate = rate * 1.25;
         }
 
-        setState(() {
+        _updateUi(() {
           _baseRateController.text = finalRate.toStringAsFixed(2);
           _rateWarning = null;
         });
         _calculateSchadsRates();
       }
     }
-    
+
     // Ensure we always recalculate if employment type changes, even if we didn't find a base rate
     // This fixes the issue where changing to "Casual" didn't update penalties if classification was incomplete
     _calculateSchadsRates();
@@ -300,12 +331,12 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
         }
 
         if (current < minRate) {
-          setState(() {
+          _updateUi(() {
             _rateWarning = AppLocalizations.of(context)!
                 .rateBelowAwardWarning(minRate.toStringAsFixed(2));
           });
         } else {
-          setState(() {
+          _updateUi(() {
             _rateWarning = null;
           });
         }
@@ -314,364 +345,400 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
   }
 
   void _showEditDialog() {
+    if (_selectedUser == null) return;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        backgroundColor: BauhausDesign.surfaceLight,
-        titlePadding: EdgeInsets.zero,
-        title: Container(
-          padding: const EdgeInsets.all(16),
-          color: BauhausDesign.primary,
+      builder: (dialogContext) {
+        final size = MediaQuery.of(dialogContext).size;
+        return StatefulBuilder(
+          builder: (dialogContext, dialogSetState) {
+            _dialogSetState = dialogSetState;
+            return Dialog(
+              insetPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              backgroundColor: Colors.transparent,
+              child: Container(
+                width: math.min(size.width * 0.95, 960),
+                height: math.min(size.height * 0.95, 840),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.surfaceLight,
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: BauhausDesign.neutral, offset: Offset(4, 4))
+                  ],
+                ),
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildPayRateDialogHeader(dialogContext),
+                    const SizedBox(height: 16),
+                    Expanded(child: _buildPayRateForm(dialogContext)),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(dialogContext).pop(),
+                          child: Text(
+                            AppLocalizations.of(dialogContext)!
+                                .cancelAction
+                                .toUpperCase(),
+                            style: GoogleFonts.oswald(
+                                color: BauhausDesign.neutral),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: BauhausDesign.secondary,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero),
+                          ),
+                          onPressed: _saveRate,
+                          child: Text(
+                            AppLocalizations.of(dialogContext)!
+                                .saveRatesAction
+                                .toUpperCase(),
+                            style: GoogleFonts.oswald(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    ).then((_) {
+      _dialogSetState = null;
+    });
+  }
+
+  Widget _buildPayRateDialogHeader(BuildContext dialogContext) {
+    final l10n = AppLocalizations.of(dialogContext)!;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
           child: Text(
-            AppLocalizations.of(context)!
-                .setPayRatesTitle(_selectedUser!.name.toUpperCase()),
-            style: GoogleFonts.oswald(color: Colors.white, fontSize: 20),
+            l10n.setPayRatesTitle(_selectedUser!.name.toUpperCase()),
+            style: GoogleFonts.oswald(
+                color: BauhausDesign.textDark,
+                fontSize: 22,
+                fontWeight: FontWeight.bold),
           ),
         ),
-        content: SizedBox(
-          width: 500,
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle(AppLocalizations.of(context)!
-                      .classificationEmploymentSection
-                      .toUpperCase()),
-                  // Stream Dropdown
-                  DropdownButtonFormField<String>(
-                    value: _selectedStream,
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          tooltip: l10n.cancelAction,
+        )
+      ],
+    );
+  }
+
+  Widget _buildPayRateForm(BuildContext dialogContext) {
+    final l10n = AppLocalizations.of(dialogContext)!;
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle(
+                l10n.classificationEmploymentSection.toUpperCase()),
+            DropdownButtonFormField<String>(
+              value: _selectedStream,
+              decoration: InputDecoration(
+                labelText: l10n.streamLabel,
+                border:
+                    const OutlineInputBorder(borderRadius: BorderRadius.zero),
+                filled: true,
+                fillColor: BauhausDesign.surfaceLight,
+              ),
+              isExpanded: true,
+              items: SchadsRateConstants.streams.map((s) {
+                return DropdownMenuItem(
+                  value: s,
+                  child: Text(s,
+                      style: GoogleFonts.inter(color: BauhausDesign.textDark)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                _updateUi(() {
+                  _selectedStream = _normalizeStream(val);
+                  _selectedLevel = null;
+                  _selectedPayPoint = null;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: _selectedEmploymentType,
+              decoration: InputDecoration(
+                labelText: l10n.employmentTypeLabel,
+                border:
+                    const OutlineInputBorder(borderRadius: BorderRadius.zero),
+                filled: true,
+                fillColor: BauhausDesign.surfaceLight,
+              ),
+              items: SchadsRateConstants.employmentTypes.map((t) {
+                return DropdownMenuItem(
+                  value: t,
+                  child: Text(t,
+                      style: GoogleFonts.inter(color: BauhausDesign.textDark)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                _updateUi(() {
+                  _selectedEmploymentType = val;
+                });
+                _updateRateFromClassification();
+              },
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedLevel,
                     decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.streamLabel,
+                      helperText: _selectedStream == null
+                          ? l10n.selectStreamFirstHint
+                          : null,
+                      labelText: l10n.levelLabel,
                       border: const OutlineInputBorder(
                           borderRadius: BorderRadius.zero),
                       filled: true,
                       fillColor: BauhausDesign.surfaceLight,
                     ),
                     isExpanded: true,
-                    items: SchadsRateConstants.streams.map((s) {
-                      return DropdownMenuItem(
-                        value: s,
-                        child: Text(s,
-                            style: GoogleFonts.inter(
-                                color: BauhausDesign.textDark)),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        _selectedStream = val;
-                        _selectedLevel = null;
-                        _selectedPayPoint = null;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Employment Type Dropdown
-                  DropdownButtonFormField<String>(
-                    value: _selectedEmploymentType,
-                    decoration: InputDecoration(
-                      labelText:
-                          AppLocalizations.of(context)!.employmentTypeLabel,
-                      border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.zero),
-                      filled: true,
-                      fillColor: BauhausDesign.surfaceLight,
-                    ),
-                    items: SchadsRateConstants.employmentTypes.map((t) {
-                      return DropdownMenuItem(
-                        value: t,
-                        child: Text(t,
-                            style: GoogleFonts.inter(
-                                color: BauhausDesign.textDark)),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        _selectedEmploymentType = val;
-                      });
-                      _updateRateFromClassification();
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: _selectedLevel,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.levelLabel,
-                            border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.zero),
-                            filled: true,
-                            fillColor: BauhausDesign.surfaceLight,
-                          ),
-                          isExpanded: true, // Fix hit test area
-                          items: _selectedStream == null
-                              ? []
-                              : (SchadsRateConstants
-                                          .levelsForStream[_selectedStream!] ??
-                                      [])
-                                  .map((level) {
-                                  return DropdownMenuItem(
-                                    value: level,
-                                    child: Text(level,
-                                        style: GoogleFonts.inter(
-                                            color: BauhausDesign.textDark),
-                                        overflow: TextOverflow.ellipsis),
-                                  );
-                                }).toList(),
-                          onChanged: (val) {
-                            setState(() {
+                    items: _selectedStream == null
+                        ? []
+                        : (SchadsRateConstants
+                                    .levelsForStream[_selectedStream!] ??
+                                [])
+                            .map((level) {
+                            return DropdownMenuItem(
+                              value: level,
+                              child: Text(level,
+                                  style: GoogleFonts.inter(
+                                      color: BauhausDesign.textDark),
+                                  overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList(),
+                    onChanged: _selectedStream == null
+                        ? null
+                        : (val) {
+                            _updateUi(() {
                               _selectedLevel = val;
                               _selectedPayPoint = null;
                               _rateWarning = null;
                             });
                           },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: _selectedPayPoint,
-                          decoration: InputDecoration(
-                            labelText:
-                                AppLocalizations.of(context)!.payPointLabel,
-                            border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.zero),
-                            filled: true,
-                            fillColor: BauhausDesign.surfaceLight,
-                          ),
-                          isExpanded: true, // Fix hit test area
-                          items: (_selectedStream == null ||
-                                  _selectedLevel == null)
-                              ? []
-                              : SchadsRateConstants.getPayPoints(
-                                      _selectedStream!, _selectedLevel!)
-                                  .map((pp) {
-                                  return DropdownMenuItem(
-                                    value: pp,
-                                    child: Text(pp,
-                                        style: GoogleFonts.inter(
-                                            color: BauhausDesign.textDark),
-                                        overflow: TextOverflow.ellipsis),
-                                  );
-                                }).toList(),
-                          onChanged: (val) {
-                            setState(() {
-                              _selectedPayPoint = val;
-                            });
-                            _updateRateFromClassification();
-                          },
-                        ),
-                      ),
-                    ],
                   ),
-                  const SizedBox(height: 16),
-
-                  if (_rateWarning != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        color: Colors.red.withOpacity(0.1),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.warning,
-                                color: Colors.red, size: 16),
-                            const SizedBox(width: 8),
-                            Expanded(
-                                child: Text(_rateWarning!,
-                                    style: GoogleFonts.inter(
-                                        color: Colors.red, fontSize: 12))),
-                          ],
-                        ),
-                      ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedPayPoint,
+                    decoration: InputDecoration(
+                      helperText:
+                          (_selectedStream == null || _selectedLevel == null)
+                              ? l10n.selectLevelFirstHint
+                              : null,
+                      labelText: l10n.payPointLabel,
+                      border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.zero),
+                      filled: true,
+                      fillColor: BauhausDesign.surfaceLight,
                     ),
-
-                  _buildSectionTitle(AppLocalizations.of(context)!
-                      .baseRateSection
-                      .toUpperCase()),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2, // Give text field more space
-                        child: _buildTextField(
-                          controller: _baseRateController,
-                          label:
-                              AppLocalizations.of(context)!.baseRateHourlyLabel,
-                          onChanged: (_) => _calculateSchadsRates(),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        flex: 1, // Restrict dropdown width
-                        child: DropdownButtonFormField<String>(
-                          value: _payType,
-                          decoration: InputDecoration(
-                            labelText:
-                                AppLocalizations.of(context)!.payTypeLabel,
-                            border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.zero),
-                            filled: true,
-                            fillColor: BauhausDesign.surfaceLight,
-                          ),
-                          style: GoogleFonts.inter(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          dropdownColor: BauhausDesign.surfaceLight,
-                          isExpanded: true, // Prevent overflow
-                          items: [
-                            DropdownMenuItem(
-                                value: 'Hourly',
-                                child: Text(
-                                  AppLocalizations.of(context)!.hourlyLabel,
+                    isExpanded: true,
+                    items: (_selectedStream == null || _selectedLevel == null)
+                        ? []
+                        : SchadsRateConstants.getPayPoints(
+                                _selectedStream!, _selectedLevel!)
+                            .map((pp) {
+                            return DropdownMenuItem(
+                              value: pp,
+                              child: Text(pp,
                                   style: GoogleFonts.inter(
                                       color: BauhausDesign.textDark),
-                                  overflow: TextOverflow.ellipsis,
-                                )),
-                            DropdownMenuItem(
-                                value: 'Salary',
-                                child: Text(
-                                  AppLocalizations.of(context)!
-                                      .salaryLabel, // Shortened label to fit
-                                  style: GoogleFonts.inter(
-                                      color: BauhausDesign.textDark),
-                                  overflow: TextOverflow.ellipsis,
-                                )),
-                          ],
-                          onChanged: (val) => setState(() => _payType = val!),
-                        ),
-                      ),
-                    ],
+                                  overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList(),
+                    onChanged:
+                        (_selectedStream == null || _selectedLevel == null)
+                            ? null
+                            : (val) {
+                                _updateUi(() {
+                                  _selectedPayPoint = val;
+                                });
+                                _updateRateFromClassification();
+                              },
                   ),
-                  const SizedBox(height: 16),
-
-                  _buildSectionTitle(AppLocalizations.of(context)!
-                      .penaltyRatesSection
-                      .toUpperCase()),
-                  Row(
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (_rateWarning != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.red.withOpacity(0.1),
+                  child: Row(
                     children: [
+                      const Icon(Icons.warning, color: Colors.red, size: 16),
+                      const SizedBox(width: 8),
                       Expanded(
-                          child: _buildTextField(
-                              controller: _saturdayRateController,
-                              label: AppLocalizations.of(context)!
-                                  .saturdayPenaltyLabel)),
-                      const SizedBox(width: 16),
-                      Expanded(
-                          child: _buildTextField(
-                              controller: _sundayRateController,
-                              label: AppLocalizations.of(context)!
-                                  .sundayPenaltyLabel)),
+                          child: Text(_rateWarning!,
+                              style: GoogleFonts.inter(
+                                  color: Colors.red, fontSize: 12))),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: _buildTextField(
-                              controller: _publicHolidayRateController,
-                              label: AppLocalizations.of(context)!
-                                  .publicHolidayPenaltyLabel)),
-                      const SizedBox(width: 16),
-                      Expanded(child: Container()),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Evening and Night Shift Row
-                  Row(
-                    children: [
-                      Expanded(
-                          child: _buildTextField(
-                              controller: _eveningShiftRateController,
-                              label: 'Evening Shift')),
-                      const SizedBox(width: 16),
-                      Expanded(
-                          child: _buildTextField(
-                              controller: _nightShiftRateController,
-                              label: 'Night Shift')),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-                  _buildSectionTitle(AppLocalizations.of(context)!
-                      .overtimeSection
-                      .toUpperCase()),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: _buildTextField(
-                              controller: _overtimeRateController,
-                              label: AppLocalizations.of(context)!
-                                  .overtimeFirst2hLabel)),
-                      const SizedBox(width: 16),
-                      Expanded(
-                          child: _buildTextField(
-                              controller: _overtimeRate2Controller,
-                              label: AppLocalizations.of(context)!
-                                  .overtimeAfter2hLabel)),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-                  _buildSectionTitle(AppLocalizations.of(context)!
-                      .allowancesSection
-                      .toUpperCase()),
-                  ...SchadsRateConstants.allowances.keys.map((allowance) {
-                    final isSelected = _selectedAllowances.contains(allowance);
-                    final rate = SchadsRateConstants.allowances[allowance];
-                    return CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(allowance,
-                          style: GoogleFonts.inter(
-                              color: BauhausDesign.textDark, fontSize: 14)),
-                      subtitle: Text('\$${rate?.toStringAsFixed(2)}',
-                          style: GoogleFonts.inter(
-                              color: BauhausDesign.neutral, fontSize: 12)),
-                      value: isSelected,
-                      activeColor: BauhausDesign.primary,
-                      onChanged: (val) {
-                        setState(() {
-                          if (val == true) {
-                            _selectedAllowances.add(allowance);
-                          } else {
-                            _selectedAllowances.remove(allowance);
-                          }
-                        });
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                    );
-                  }),
-                ],
+                ),
               ),
+            _buildSectionTitle(l10n.baseRateSection.toUpperCase()),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: _buildTextField(
+                    controller: _baseRateController,
+                    label: l10n.baseRateHourlyLabel,
+                    onChanged: (_) => _calculateSchadsRates(),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  flex: 1,
+                  child: DropdownButtonFormField<String>(
+                    value: _payType,
+                    decoration: InputDecoration(
+                      labelText: l10n.payTypeLabel,
+                      border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.zero),
+                      filled: true,
+                      fillColor: BauhausDesign.surfaceLight,
+                    ),
+                    style: GoogleFonts.inter(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w500),
+                    dropdownColor: BauhausDesign.surfaceLight,
+                    isExpanded: true,
+                    items: [
+                      DropdownMenuItem(
+                          value: 'Hourly',
+                          child: Text(
+                            l10n.hourlyLabel,
+                            style: GoogleFonts.inter(
+                                color: BauhausDesign.textDark),
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                      DropdownMenuItem(
+                          value: 'Salary',
+                          child: Text(
+                            l10n.salaryLabel,
+                            style: GoogleFonts.inter(
+                                color: BauhausDesign.textDark),
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                    ],
+                    onChanged: (val) => _updateUi(() => _payType = val!),
+                  ),
+                ),
+              ],
             ),
-          ),
+            const SizedBox(height: 16),
+            _buildSectionTitle(l10n.penaltyRatesSection.toUpperCase()),
+            Row(
+              children: [
+                Expanded(
+                    child: _buildTextField(
+                        controller: _saturdayRateController,
+                        label: l10n.saturdayPenaltyLabel)),
+                const SizedBox(width: 16),
+                Expanded(
+                    child: _buildTextField(
+                        controller: _sundayRateController,
+                        label: l10n.sundayPenaltyLabel)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                    child: _buildTextField(
+                        controller: _publicHolidayRateController,
+                        label: l10n.publicHolidayPenaltyLabel)),
+                const SizedBox(width: 16),
+                Expanded(child: Container()),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                    child: _buildTextField(
+                        controller: _eveningShiftRateController,
+                        label: l10n.eveningShiftLabel)),
+                const SizedBox(width: 16),
+                Expanded(
+                    child: _buildTextField(
+                        controller: _nightShiftRateController,
+                        label: l10n.nightShiftLabel)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle(l10n.overtimeSection.toUpperCase()),
+            Row(
+              children: [
+                Expanded(
+                    child: _buildTextField(
+                        controller: _overtimeRateController,
+                        label: l10n.overtimeFirst2hLabel)),
+                const SizedBox(width: 16),
+                Expanded(
+                    child: _buildTextField(
+                        controller: _overtimeRate2Controller,
+                        label: l10n.overtimeAfter2hLabel)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle(l10n.allowancesSection.toUpperCase()),
+            ...SchadsRateConstants.allowances.keys.map((allowance) {
+              final isSelected = _selectedAllowances.contains(allowance);
+              final rate = SchadsRateConstants.allowances[allowance];
+              return CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(allowance,
+                    style: GoogleFonts.inter(
+                        color: BauhausDesign.textDark, fontSize: 14)),
+                subtitle: Text('\$${rate?.toStringAsFixed(2)}',
+                    style: GoogleFonts.inter(
+                        color: BauhausDesign.neutral, fontSize: 12)),
+                value: isSelected,
+                activeColor: BauhausDesign.primary,
+                onChanged: (val) {
+                  _updateUi(() {
+                    if (val == true) {
+                      _selectedAllowances.add(allowance);
+                    } else {
+                      _selectedAllowances.remove(allowance);
+                    }
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              );
+            }),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-                AppLocalizations.of(context)!.cancelAction.toUpperCase(),
-                style: GoogleFonts.oswald(color: BauhausDesign.neutral)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: BauhausDesign.secondary,
-              shape:
-                  const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            ),
-            onPressed: _saveRate,
-            child: Text(
-                AppLocalizations.of(context)!.saveRatesAction.toUpperCase(),
-                style: GoogleFonts.oswald(color: Colors.white)),
-          ),
-        ],
       ),
     );
   }
@@ -752,18 +819,23 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                           color: BauhausDesign.primary))
                   : employeeState.error != null
                       ? Center(child: Text('Error: ${employeeState.error}'))
-                      : ListView.separated(
-                          padding: const EdgeInsets.all(BauhausDesign.space4),
-                          itemCount: employeeState.employees.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: BauhausDesign.space4),
-                          itemBuilder: (context, index) {
-                            final user = employeeState.employees[index];
-                            return _EmployeeCard(
-                              user: user,
-                              onTap: () => _selectUser(user),
-                            );
-                          },
+                      : RefreshIndicator(
+                          onRefresh: () =>
+                              _refreshEmployees(showLoading: false),
+                          child: ListView.separated(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(BauhausDesign.space4),
+                            itemCount: employeeState.employees.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: BauhausDesign.space4),
+                            itemBuilder: (context, index) {
+                              final user = employeeState.employees[index];
+                              return _EmployeeCard(
+                                user: user,
+                                onTap: () => _selectUser(user),
+                              );
+                            },
+                          ),
                         ),
             ),
           ],

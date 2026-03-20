@@ -29,7 +29,7 @@ class BusinessModel {
 
   factory BusinessModel.fromJson(Map<String, dynamic> json) {
     return BusinessModel(
-      id: json['_id'],
+      id: (json['_id'] ?? json['id'])?.toString(),
       businessName: json['businessName'] ?? '',
       businessEmail: json['businessEmail'] ?? '',
       businessPhone: json['businessPhone'] ?? '',
@@ -37,8 +37,8 @@ class BusinessModel {
       businessCity: json['businessCity'] ?? '',
       businessState: json['businessState'] ?? '',
       businessZip: json['businessZip'] ?? '',
-      organizationId: json['organizationId'],
-      createdBy: json['createdBy'],
+      organizationId: json['organizationId']?.toString(),
+      createdBy: json['createdBy']?.toString(),
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,

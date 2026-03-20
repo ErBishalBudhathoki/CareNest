@@ -1,7 +1,10 @@
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/admin/utils/employee_invoice_payload.dart';
 import 'package:carenest/app/features/admin/utils/employee_invoice_validation.dart';
+import 'package:carenest/app/features/admin/viewmodels/bank_details_viewmodel.dart';
+import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_date_range_picker.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer_io.dart';
@@ -9,6 +12,7 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/config/environment.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -174,7 +178,8 @@ class _EmployeeInvoiceGenerationViewState
 
   void _updateSelectedEmployee(
     String email,
-    _EmployeeInvoiceEmployeeState Function(_EmployeeInvoiceEmployeeState) update,
+    _EmployeeInvoiceEmployeeState Function(_EmployeeInvoiceEmployeeState)
+        update,
   ) {
     final current = _selectedEmployeesByEmail[email];
     if (current == null) return;
@@ -260,8 +265,8 @@ class _EmployeeInvoiceGenerationViewState
         _updateSelectedEmployee(employeeEmail, (e) {
           final selectedEmail = e.selectedClientEmail;
           final validSelected = selectedEmail.isEmpty ||
-              list.any((c) =>
-                  (c['clientEmail']?.toString() ?? '') == selectedEmail);
+              list.any(
+                  (c) => (c['clientEmail']?.toString() ?? '') == selectedEmail);
           return e.copyWith(
             clients: list,
             isLoadingClients: false,
@@ -282,11 +287,13 @@ class _EmployeeInvoiceGenerationViewState
 
   Future<void> _fetchEmployeeBankDetails(String employeeEmail) async {
     if (!_selectedEmployeesByEmail.containsKey(employeeEmail)) return;
-    _updateSelectedEmployee(employeeEmail, (e) => e.copyWith(
-          isLoadingBankDetails: true,
-          bankDetails: null,
-          bankDetailsError: '',
-        ));
+    _updateSelectedEmployee(
+        employeeEmail,
+        (e) => e.copyWith(
+              isLoadingBankDetails: true,
+              bankDetails: null,
+              bankDetailsError: '',
+            ));
 
     try {
       final resp = await _api.getBankDetailsForUserEmail(
@@ -307,25 +314,36 @@ class _EmployeeInvoiceGenerationViewState
             ? 'Employee bank details are incomplete. Please update them before generating.'
             : '';
 
-        _updateSelectedEmployee(employeeEmail, (e) => e.copyWith(
-              bankDetails: data,
-              bankDetailsError: error,
-              isLoadingBankDetails: false,
-            ));
+        _updateSelectedEmployee(
+            employeeEmail,
+            (e) => e.copyWith(
+                  bankDetails: data,
+                  bankDetailsError: error,
+                  isLoadingBankDetails: false,
+                ));
         return;
       }
 
-      _updateSelectedEmployee(employeeEmail, (e) => e.copyWith(
-            isLoadingBankDetails: false,
-            bankDetailsError: resp['message']?.toString() ??
-                'Failed to load employee bank details',
-          ));
+      _updateSelectedEmployee(
+          employeeEmail,
+          (e) => e.copyWith(
+                isLoadingBankDetails: false,
+                bankDetailsError: _friendlyBankDetailsError(
+                  resp['message']?.toString(),
+                  employeeName: e.name.isNotEmpty ? e.name : e.email,
+                ),
+              ));
     } catch (e) {
       if (!_selectedEmployeesByEmail.containsKey(employeeEmail)) return;
-      _updateSelectedEmployee(employeeEmail, (s) => s.copyWith(
-            isLoadingBankDetails: false,
-            bankDetailsError: 'Error loading bank details: $e',
-          ));
+      _updateSelectedEmployee(
+          employeeEmail,
+          (s) => s.copyWith(
+                isLoadingBankDetails: false,
+                bankDetailsError: _friendlyBankDetailsError(
+                  e.toString(),
+                  employeeName: s.name.isNotEmpty ? s.name : s.email,
+                ),
+              ));
     }
   }
 
@@ -379,28 +397,33 @@ class _EmployeeInvoiceGenerationViewState
 
   List<String> _extractReceiptUrlsFromInvoice(Map<String, dynamic> invoice) {
     final List<String> urls = [];
+    String mapToDownloadUrl(String value) {
+      final resolved = AppConfig.resolveResourceUrl(value);
+      if (AppConfig.isPrivateR2StorageUrl(resolved)) {
+        return AppConfig.buildFilesProxyUrl(resolved);
+      }
+      return AppConfig.buildFilesDownloadUrl(resolved);
+    }
+
     final expenses = invoice['expenses'] as List<dynamic>? ?? [];
     for (final exp in expenses) {
       if (exp is! Map<String, dynamic>) continue;
       final direct = exp['receiptUrl']?.toString() ?? '';
       if (direct.isNotEmpty) {
-        urls.add(AppConfig.buildFilesDownloadUrl(
-            AppConfig.resolveResourceUrl(direct)));
+        urls.add(mapToDownloadUrl(direct));
       }
       final files = exp['receiptFiles'] as List<dynamic>? ?? [];
       for (final f in files) {
         final u = f?.toString() ?? '';
         if (u.isNotEmpty) {
-          urls.add(AppConfig.buildFilesDownloadUrl(
-              AppConfig.resolveResourceUrl(u)));
+          urls.add(mapToDownloadUrl(u));
         }
       }
       final photos = exp['receiptPhotos'] as List<dynamic>? ?? [];
       for (final p in photos) {
         final u = p?.toString() ?? '';
         if (u.isNotEmpty) {
-          urls.add(AppConfig.buildFilesDownloadUrl(
-              AppConfig.resolveResourceUrl(u)));
+          urls.add(mapToDownloadUrl(u));
         }
       }
     }
@@ -409,6 +432,8 @@ class _EmployeeInvoiceGenerationViewState
   }
 
   Future<void> _generate() async {
+    HapticFeedback.selectionClick();
+
     final validation = _validationResult;
     if (!validation.isValid) {
       _showSnackBar(validation.message, isError: true);
@@ -432,6 +457,8 @@ class _EmployeeInvoiceGenerationViewState
       organizationId: widget.organizationId,
       employees: inputs,
     );
+
+    _showSnackBar('Generating invoice PDFs...');
 
     setState(() {
       _isGenerating = true;
@@ -459,10 +486,11 @@ class _EmployeeInvoiceGenerationViewState
         invoiceType: 'employee',
         applyMinEngagement: _applyMinEngagement,
       );
+      final uniquePaths = _dedupePdfPaths(paths);
 
       final invoices = service.invoices;
-        final results = <_GeneratedPdfResult>[];
-      for (int i = 0; i < paths.length; i++) {
+      final results = <_GeneratedPdfResult>[];
+      for (int i = 0; i < uniquePaths.length; i++) {
         final dynamic rawInvoice = i < invoices.length ? invoices[i] : null;
         final invoice = rawInvoice is Map
             ? Map<String, dynamic>.from(rawInvoice)
@@ -470,7 +498,12 @@ class _EmployeeInvoiceGenerationViewState
         final List<String> receipts = _includeExpenses
             ? _extractReceiptUrlsFromInvoice(invoice)
             : const <String>[];
-        results.add(_GeneratedPdfResult(pdfPath: paths[i], receiptUrls: receipts));
+        results.add(
+          _GeneratedPdfResult(
+            pdfPath: uniquePaths[i],
+            receiptUrls: receipts,
+          ),
+        );
       }
 
       setState(() {
@@ -483,14 +516,84 @@ class _EmployeeInvoiceGenerationViewState
         return;
       }
 
-      _showSnackBar('Generated ${paths.length} invoice PDF(s).');
+      HapticFeedback.lightImpact();
+      _showSnackBar('Generated ${uniquePaths.length} invoice PDF(s).');
     } catch (e) {
+      final errorText = _friendlyGenerateError(e);
       setState(() {
         _isGenerating = false;
-        _generateError = e.toString();
+        _generateError = errorText;
       });
-      _showSnackBar('Failed to generate invoices: $e', isError: true);
+      _showSnackBar(errorText, isError: true);
     }
+  }
+
+  bool _isBankDetailsMissingMessage(String text) {
+    final lower = text.toLowerCase();
+    return lower.contains('bank details not found') ||
+        lower.contains('bank details are not set') ||
+        lower.contains('bank_details_not_set') ||
+        (lower.contains('route not found') && lower.contains('getbankdetails'));
+  }
+
+  String _friendlyBankDetailsError(String? raw,
+      {required String employeeName}) {
+    final original = (raw ?? '').trim();
+    final fallback =
+        '$employeeName bank details are not set yet. Set now to continue, or choose later.';
+    if (original.isEmpty) return fallback;
+
+    if (_isBankDetailsMissingMessage(original)) return fallback;
+
+    final lower = original.toLowerCase();
+    if (lower.contains('/api/') || lower.contains('route not found')) {
+      return fallback;
+    }
+    if (lower.contains('failed to load bank details')) {
+      return fallback;
+    }
+    return original;
+  }
+
+  String _friendlyGenerateError(Object error) {
+    final message = error.toString();
+    final lower = message.toLowerCase();
+
+    if (message.contains('BANK_DETAILS_NOT_FOUND') ||
+        message.contains('BANK_DETAILS_REQUIRED') ||
+        _isBankDetailsMissingMessage(message)) {
+      return 'Bank details are missing. Set bank details first, then generate invoices again.';
+    }
+
+    if (lower.contains('/api/') && lower.contains('route not found')) {
+      return 'A required service route was unavailable. Please try again.';
+    }
+
+    return 'Failed to generate invoices: $message';
+  }
+
+  Future<void> _openBankDetailsAndReturn(String employeeEmail) async {
+    if (!mounted) return;
+    await Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (_) => const BankDetailsView(
+          scope: BankDetailsScope.personal,
+        ),
+      ),
+    );
+    if (!mounted) return;
+
+    await _fetchEmployeeBankDetails(employeeEmail);
+    final refreshed = _selectedEmployeesByEmail[employeeEmail];
+    final stillMissing =
+        refreshed != null && refreshed.bankDetailsError.isNotEmpty;
+
+    _showSnackBar(
+      stillMissing
+          ? 'Bank details are still missing for this employee.'
+          : 'Bank details updated. Continue invoice generation.',
+      isError: stillMissing,
+    );
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
@@ -512,6 +615,19 @@ class _EmployeeInvoiceGenerationViewState
         margin: const EdgeInsets.all(BauhausDesign.space4),
       ),
     );
+  }
+
+  List<String> _dedupePdfPaths(List<String> paths) {
+    final seen = <String>{};
+    final deduped = <String>[];
+    for (final path in paths) {
+      final normalized = path.trim();
+      if (normalized.isEmpty) continue;
+      if (seen.add(normalized)) {
+        deduped.add(normalized);
+      }
+    }
+    return deduped;
   }
 
   @override
@@ -542,10 +658,11 @@ class _EmployeeInvoiceGenerationViewState
           children: [
             Text(
               'Employee Invoice',
-              style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w800,
-                  ),
+              style:
+                  BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
             ),
             Text(
               widget.organizationName ?? '',
@@ -657,7 +774,8 @@ class _EmployeeInvoiceGenerationViewState
                   foregroundColor: BauhausDesign.textDark,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                    side: const BorderSide(
+                        color: BauhausDesign.neutral, width: 2),
                   ),
                 ),
                 child: const Text('Retry'),
@@ -709,7 +827,7 @@ class _EmployeeInvoiceGenerationViewState
   static const double _neoBorderWidth = 2.5;
 
   Widget _buildSelectionPanel() {
-    // Determine height based on content or fixed height if needed. 
+    // Determine height based on content or fixed height if needed.
     // The design looks like a full-height card.
     return Container(
       margin: const EdgeInsets.only(right: 8, bottom: 8),
@@ -736,7 +854,7 @@ class _EmployeeInvoiceGenerationViewState
             decoration: const BoxDecoration(
               color: _neoBlack,
               boxShadow: [
-                 BoxShadow(
+                BoxShadow(
                   color: _neoWhite,
                   offset: Offset(4, 4),
                   blurRadius: 0,
@@ -759,7 +877,7 @@ class _EmployeeInvoiceGenerationViewState
           _buildSectionHeader('EMPLOYEES'),
           const SizedBox(height: 16),
           _buildEmployeesList(),
-          
+
           const SizedBox(height: 32),
 
           // 3) Selected Employees Section
@@ -795,9 +913,9 @@ class _EmployeeInvoiceGenerationViewState
 
   Widget _buildEmployeesList() {
     return Container(
-      // Fixed height or flexible? Design implies a list. 
+      // Fixed height or flexible? Design implies a list.
       // Keeping height constraint but updating style.
-      height: 260, 
+      height: 260,
       decoration: BoxDecoration(
         color: _neoWhite,
         border: Border.all(color: _neoBlack, width: _neoBorderWidth),
@@ -814,8 +932,8 @@ class _EmployeeInvoiceGenerationViewState
           final name = ('$first $last').trim().isNotEmpty
               ? ('$first $last').trim()
               : email;
-          final isSelected = email.isNotEmpty &&
-              _selectedEmployeesByEmail.containsKey(email);
+          final isSelected =
+              email.isNotEmpty && _selectedEmployeesByEmail.containsKey(email);
 
           return InkWell(
             onTap: () => _toggleEmployee(e),
@@ -917,88 +1035,91 @@ class _EmployeeInvoiceGenerationViewState
           Padding(
             padding: const EdgeInsets.only(left: 6),
             child: Theme(
-              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              data:
+                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
-                  tilePadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                tilePadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                collapsedIconColor: _neoBlack,
+                iconColor: _neoBlack,
+                title: Text(
+                  (employee.name.isNotEmpty ? employee.name : employee.email)
+                      .toUpperCase(),
+                  style: GoogleFonts.oswald(
+                    color: _neoBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
                   ),
-                  collapsedIconColor: _neoBlack,
-                  iconColor: _neoBlack,
-                  title: Text(
-                    (employee.name.isNotEmpty ? employee.name : employee.email).toUpperCase(),
-                    style: GoogleFonts.oswald(
-                      color: _neoBlack,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                ),
+                subtitle: Text(
+                  employee.email,
+                  style: GoogleFonts.robotoMono(
+                    color: _neoBlack.withOpacity(0.6),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
-                  subtitle: Text(
-                    employee.email,
-                    style: GoogleFonts.robotoMono(
-                      color: _neoBlack.withOpacity(0.6),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (employee.isLoadingClients || employee.isLoadingBankDetails)
-                        const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: _neoBlack,
-                          ),
-                        )
-                      else if (!isValid)
-                        const Icon(Icons.error_outline_rounded,
-                            color: _neoRed, size: 24)
-                      else
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: _neoGreen,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: _neoBlack, width: 1.5),
-                          ),
-                          child: const Icon(Icons.check,
-                              color: _neoWhite, size: 16),
-                        ),
-                      const SizedBox(width: 12),
-                      const Icon(Icons.expand_more, color: _neoBlack),
-                    ],
-                  ),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Divider(color: _neoBlack, thickness: 1),
-                          const SizedBox(height: 16),
-                          _buildEmployeeClientModeToggle(employee),
-                          const SizedBox(height: 16),
-                          _buildEmployeeClientsList(employee),
-                          if (hasClientSelectionError) ...[
-                            const SizedBox(height: 16),
-                            _buildNeoErrorBox(
-                                'Select a client for ${employee.name} (specific-client mode).'),
-                          ],
-                          if (hasBankError) ...[
-                            const SizedBox(height: 16),
-                            _buildNeoErrorBox(employee.bankDetailsError),
-                          ],
-                        ],
+                    if (employee.isLoadingClients ||
+                        employee.isLoadingBankDetails)
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: _neoBlack,
+                        ),
+                      )
+                    else if (!isValid)
+                      const Icon(Icons.error_outline_rounded,
+                          color: _neoRed, size: 24)
+                    else
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: _neoGreen,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _neoBlack, width: 1.5),
+                        ),
+                        child:
+                            const Icon(Icons.check, color: _neoWhite, size: 16),
                       ),
-                    ),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.expand_more, color: _neoBlack),
                   ],
                 ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Divider(color: _neoBlack, thickness: 1),
+                        const SizedBox(height: 16),
+                        _buildEmployeeClientModeToggle(employee),
+                        const SizedBox(height: 16),
+                        _buildEmployeeClientsList(employee),
+                        if (hasClientSelectionError) ...[
+                          const SizedBox(height: 16),
+                          _buildNeoErrorBox(
+                              'Select a client for ${employee.name} (specific-client mode).'),
+                        ],
+                        if (hasBankError) ...[
+                          const SizedBox(height: 16),
+                          _buildBankDetailsErrorBox(employee),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
           Positioned(
             left: 0,
             top: 0,
@@ -1013,7 +1134,8 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  Widget _buildEmployeeClientModeToggle(_EmployeeInvoiceEmployeeState employee) {
+  Widget _buildEmployeeClientModeToggle(
+      _EmployeeInvoiceEmployeeState employee) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -1111,7 +1233,8 @@ class _EmployeeInvoiceGenerationViewState
   }
 
   Widget _buildEmployeeClientsList(_EmployeeInvoiceEmployeeState employee) {
-    if (employee.isLoadingClients) return _buildNeoHintBox('LOADING CLIENTS...');
+    if (employee.isLoadingClients)
+      return _buildNeoHintBox('LOADING CLIENTS...');
     if (employee.clients.isEmpty) {
       return _buildNeoHintBox('NO CLIENTS FOUND.');
     }
@@ -1153,15 +1276,20 @@ class _EmployeeInvoiceGenerationViewState
                         Text(
                           (name.isNotEmpty ? name : 'UNKNOWN').toUpperCase(),
                           style: GoogleFonts.oswald(
-                            color: isDisabled ? _neoBlack.withOpacity(0.4) : _neoBlack,
+                            color: isDisabled
+                                ? _neoBlack.withOpacity(0.4)
+                                : _neoBlack,
                             fontSize: 14,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                            fontWeight:
+                                isSelected ? FontWeight.w700 : FontWeight.w500,
                           ),
                         ),
                         Text(
                           email,
                           style: GoogleFonts.robotoMono(
-                            color: isDisabled ? _neoBlack.withOpacity(0.3) : _neoBlack.withOpacity(0.6),
+                            color: isDisabled
+                                ? _neoBlack.withOpacity(0.3)
+                                : _neoBlack.withOpacity(0.6),
                             fontSize: 10,
                           ),
                         ),
@@ -1176,7 +1304,8 @@ class _EmployeeInvoiceGenerationViewState
                         shape: BoxShape.circle,
                         border: Border.all(color: _neoBlack, width: 1.5),
                       ),
-                      child: const Icon(Icons.check, color: _neoWhite, size: 12),
+                      child:
+                          const Icon(Icons.check, color: _neoWhite, size: 12),
                     ),
                 ],
               ),
@@ -1234,6 +1363,94 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
+  Widget _buildBankDetailsErrorBox(_EmployeeInvoiceEmployeeState employee) {
+    final text = employee.bankDetailsError;
+    final showActions = _isBankDetailsMissingMessage(text);
+
+    if (!showActions) return _buildNeoErrorBox(text);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: _neoRed,
+        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.error_outline, color: _neoWhite, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  text,
+                  style: GoogleFonts.robotoMono(
+                    color: _neoWhite,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: () => _openBankDetailsAndReturn(employee.email),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _neoWhite,
+                      border: Border.all(color: _neoBlack, width: 1.5),
+                    ),
+                    child: Text(
+                      'SET NOW',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.oswald(
+                        color: _neoBlack,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: InkWell(
+                  onTap: () => _showSnackBar(
+                    'You can set bank details later from Bank Details.',
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _neoRed.withOpacity(0.6),
+                      border: Border.all(color: _neoWhite, width: 1.5),
+                    ),
+                    child: Text(
+                      'LATER',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.oswald(
+                        color: _neoWhite,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   static const Color _neoYellow = Color(0xFFFFC107);
   static const Color _neoBeige = Color(0xFFF0F0E8);
 
@@ -1268,10 +1485,10 @@ class _EmployeeInvoiceGenerationViewState
             ),
           ),
           Container(height: _neoBorderWidth, color: _neoBlack),
-          
+
           // Selection Summary
           _buildNeoSelectionSummary(),
-          
+
           // Invoice Options Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -1286,16 +1503,16 @@ class _EmployeeInvoiceGenerationViewState
               ),
             ),
           ),
-          
+
           // Options List
           _buildNeoOptionsList(),
-          
+
           // Date Range (Red Box)
           _buildNeoDateRange(),
-          
+
           // Bank Details
           _buildNeoBankDetails(),
-          
+
           Container(height: _neoBorderWidth, color: _neoBlack),
 
           // Generate Section
@@ -1325,7 +1542,7 @@ class _EmployeeInvoiceGenerationViewState
   Widget _buildNeoSelectionSummary() {
     final selected = _selectedEmployeesByEmail.values.toList()
       ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    
+
     return Container(
       color: _neoWhite,
       padding: const EdgeInsets.all(20),
@@ -1372,9 +1589,9 @@ class _EmployeeInvoiceGenerationViewState
                   : (e.selectedClientEmail.isNotEmpty
                       ? e.selectedClientEmail
                       : 'No client selected');
-              
+
               final bulletColor = index % 2 == 0 ? _neoBlue : _neoRed;
-              
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
@@ -1391,11 +1608,13 @@ class _EmployeeInvoiceGenerationViewState
                           children: [
                             TextSpan(
                               text: e.name,
-                              style: const TextStyle(fontWeight: FontWeight.w700),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w700),
                             ),
                             TextSpan(
                               text: ': $clientLabel',
-                              style: TextStyle(color: _neoBlack.withOpacity(0.7)),
+                              style:
+                                  TextStyle(color: _neoBlack.withOpacity(0.7)),
                             ),
                           ],
                         ),
@@ -1438,11 +1657,11 @@ class _EmployeeInvoiceGenerationViewState
               : (v) => setState(() => _includeTax = v),
         ),
         if (_includeTax) ...[
-           Container(height: 1, color: _neoBlack),
-           Container(
-             color: _neoBeige,
-             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-             child: Row(
+          Container(height: 1, color: _neoBlack),
+          Container(
+            color: _neoBeige,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Row(
               children: [
                 Expanded(
                   child: Text(
@@ -1458,20 +1677,25 @@ class _EmployeeInvoiceGenerationViewState
                   width: 100,
                   child: TextFormField(
                     initialValue: (_taxRate * 100).toStringAsFixed(1),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    style: GoogleFonts.robotoMono(fontSize: 14, fontWeight: FontWeight.w700),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    style: GoogleFonts.robotoMono(
+                        fontSize: 14, fontWeight: FontWeight.w700),
                     decoration: InputDecoration(
                       suffixText: '%',
                       filled: true,
                       fillColor: _neoWhite,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide: const BorderSide(color: _neoBlack, width: 1.5),
+                        borderSide:
+                            const BorderSide(color: _neoBlack, width: 1.5),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide: const BorderSide(color: _neoBlack, width: 1.5),
+                        borderSide:
+                            const BorderSide(color: _neoBlack, width: 1.5),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
@@ -1487,7 +1711,7 @@ class _EmployeeInvoiceGenerationViewState
                 ),
               ],
             ),
-           ),
+          ),
         ],
       ],
     );
@@ -1543,7 +1767,8 @@ class _EmployeeInvoiceGenerationViewState
                 children: [
                   AnimatedAlign(
                     duration: const Duration(milliseconds: 200),
-                    alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+                    alignment:
+                        value ? Alignment.centerRight : Alignment.centerLeft,
                     child: Container(
                       width: 24,
                       height: 24,
@@ -1657,100 +1882,103 @@ class _EmployeeInvoiceGenerationViewState
             Container(height: 1, color: _neoBlack),
             // Re-use existing bank details list logic but simplified/styled if needed
             // For now, using the logic from original code but wrapping in padding
-             _buildBankDetailsList(),
+            _buildBankDetailsList(),
           ],
         ),
       ),
     );
   }
-  
-  Widget _buildBankDetailsList() {
-      final selected = _selectedEmployeesByEmail.values.toList();
-      return Column(
-        children: selected.asMap().entries.map((entry) {
-          final index = entry.key;
-          final e = entry.value;
-          final bank = e.bankDetails;
-          final isLast = index == selected.length - 1;
 
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            decoration: isLast 
-                ? null 
-                : const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: _neoBlack, width: 1.5),
-                    ),
+  Widget _buildBankDetailsList() {
+    final selected = _selectedEmployeesByEmail.values.toList();
+    return Column(
+      children: selected.asMap().entries.map((entry) {
+        final index = entry.key;
+        final e = entry.value;
+        final bank = e.bankDetails;
+        final isLast = index == selected.length - 1;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          decoration: isLast
+              ? null
+              : const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: _neoBlack, width: 1.5),
                   ),
-            child: SizedBox(
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                ),
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  e.name.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.oswald(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: _neoBlack,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (bank == null)
                   Text(
-                    e.name.toUpperCase(),
+                    'No bank details found',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.oswald(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                    style: GoogleFonts.robotoMono(
+                        color: _neoRed, fontWeight: FontWeight.w500),
+                  )
+                else ...[
+                  Text(
+                    'Bank: ${bank['bankName']}',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono(
+                      fontSize: 12,
                       color: _neoBlack,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  if (bank == null)
-                     Text(
-                       'No bank details found',
-                       textAlign: TextAlign.center,
-                       style: GoogleFonts.robotoMono(color: _neoRed, fontWeight: FontWeight.w500),
-                     )
-                  else ...[
-                     Text(
-                       'Bank: ${bank['bankName']}',
-                       textAlign: TextAlign.center,
-                       style: GoogleFonts.robotoMono(
-                         fontSize: 12,
-                         color: _neoBlack,
-                         fontWeight: FontWeight.w500,
-                       ),
-                     ),
-                     const SizedBox(height: 4),
-                     Text(
-                       'BSB: ${bank['bsb']}',
-                       textAlign: TextAlign.center,
-                       style: GoogleFonts.robotoMono(
-                         fontSize: 12,
-                         color: _neoBlack,
-                         fontWeight: FontWeight.w500,
-                       ),
-                     ),
-                     const SizedBox(height: 4),
-                     Text(
-                       'ACC: ${bank['accountNumber']}',
-                       textAlign: TextAlign.center,
-                       style: GoogleFonts.robotoMono(
-                         fontSize: 12,
-                         color: _neoBlack,
-                         fontWeight: FontWeight.w500,
-                       ),
-                     ),
-                  ],
-                  if (!isLast) ...[
-                    const SizedBox(height: 24),
-                    Container(
-                      width: 100, // Short divider line
-                      height: 1.5,
+                  const SizedBox(height: 4),
+                  Text(
+                    'BSB: ${bank['bsb']}',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono(
+                      fontSize: 12,
                       color: _neoBlack,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'ACC: ${bank['accountNumber']}',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono(
+                      fontSize: 12,
+                      color: _neoBlack,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ],
-              ),
+                if (!isLast) ...[
+                  const SizedBox(height: 24),
+                  Container(
+                    width: 100, // Short divider line
+                    height: 1.5,
+                    color: _neoBlack,
+                  ),
+                ],
+              ],
             ),
-          );
-        }).toList(),
-      );
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _buildNeoGenerateSection() {
+    final canGenerate = _selectedEmployeesByEmail.isNotEmpty && !_isGenerating;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1765,12 +1993,12 @@ class _EmployeeInvoiceGenerationViewState
         ),
         const SizedBox(height: 12),
         InkWell(
-          onTap: _selectedEmployeesByEmail.isEmpty ? null : _generate,
+          onTap: canGenerate ? _generate : null,
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-              color: _neoRed,
+              color: canGenerate ? _neoRed : _neoBlack.withOpacity(0.35),
               border: Border.all(color: _neoBlack, width: _neoBorderWidth),
               boxShadow: const [
                 BoxShadow(
@@ -1783,8 +2011,19 @@ class _EmployeeInvoiceGenerationViewState
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                if (_isGenerating) ...[
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      color: _neoWhite,
+                      strokeWidth: 2.2,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
                 Text(
-                  'GENERATE PDF',
+                  _isGenerating ? 'GENERATING PDF...' : 'GENERATE PDF',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.oswald(
                     color: _neoWhite,
@@ -1794,12 +2033,25 @@ class _EmployeeInvoiceGenerationViewState
                     height: 1.2,
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Icon(Icons.arrow_forward, color: _neoWhite),
+                if (!_isGenerating) ...[
+                  const SizedBox(width: 12),
+                  const Icon(Icons.arrow_forward, color: _neoWhite),
+                ],
               ],
             ),
           ),
         ),
+        if (_isGenerating) ...[
+          const SizedBox(height: 10),
+          Text(
+            'Building invoices and generating PDFs. Please wait...',
+            style: GoogleFonts.robotoMono(
+              color: _neoBlack.withOpacity(0.7),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -1853,21 +2105,22 @@ class _EmployeeInvoiceGenerationViewState
               final item = _generatedResults[index];
               final path = item.pdfPath;
               final name = path.split('/').last;
-              
+
               String sizeStr = '0.0 KB';
               try {
                 final file = File(path);
                 if (file.existsSync()) {
                   final bytes = file.lengthSync();
                   if (bytes >= 1024 * 1024) {
-                     sizeStr = '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+                    sizeStr =
+                        '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
                   } else {
-                     sizeStr = '${(bytes / 1024).toStringAsFixed(1)} KB';
+                    sizeStr = '${(bytes / 1024).toStringAsFixed(1)} KB';
                   }
                 }
               } catch (_) {}
-              
-              final size = sizeStr; 
+
+              final size = sizeStr;
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),

@@ -26,6 +26,25 @@ class TeamRepository {
     }
   }
 
+  Future<List<TeamMember>> getOrganizationUsers() async {
+    final response = await _apiMethod.get('api/user/getUsers/');
+
+    if (response['success'] == true) {
+      final List<dynamic> list = response['users'] ?? [];
+      // we map raw user objects to TeamMember so we can reuse the display name logic
+      return list.map((e) {
+        return TeamMember.fromJson({
+          'userId': e,
+          'role': e['role'] ?? 'member', 
+          'status': 'active',
+          'joinedAt': e['createdAt'] ?? DateTime.now().toIso8601String(),
+        });
+      }).toList();
+    } else {
+      throw Exception(response['message'] ?? 'Failed to fetch organization users');
+    }
+  }
+
   Future<Team> createTeam(String name) async {
     final response = await _apiMethod.post(
       'api/teams',

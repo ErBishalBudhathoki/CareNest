@@ -6,6 +6,49 @@ class CareIntelligenceRepository {
 
   CareIntelligenceRepository(this._apiMethod);
 
+  Map<String, dynamic>? _asMap(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    return null;
+  }
+
+  Map<String, dynamic>? _extractMapPayload(
+    Map<String, dynamic> response, {
+    List<String> keys = const [],
+  }) {
+    final fromData = _asMap(response['data']);
+    if (fromData != null) return fromData;
+
+    for (final key in keys) {
+      final fromKey = _asMap(response[key]);
+      if (fromKey != null) return fromKey;
+    }
+
+    return null;
+  }
+
+  List<dynamic>? _extractListPayload(
+    Map<String, dynamic> response, {
+    List<String> keys = const [],
+  }) {
+    final fromData = response['data'];
+    if (fromData is List) return fromData;
+
+    for (final key in keys) {
+      final value = response[key];
+      if (value is List) return value;
+    }
+
+    return null;
+  }
+
+  double? _asDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return null;
+  }
+
   // ============================================================================
   // Care Intelligence Methods
   // ============================================================================
@@ -20,14 +63,19 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final reportData = _extractMapPayload(response, keys: ['report']);
+      if (response['success'] == true && reportData != null) {
         return {
           'success': true,
-          'report': IntelligenceReport.fromJson(response['data']),
+          'report': IntelligenceReport.fromJson(reportData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to generate intelligence report'};
+      return {
+        'success': false,
+        'message':
+            response['message'] ?? 'Failed to generate intelligence report'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -47,14 +95,18 @@ class CareIntelligenceRepository {
         endDate: endDate,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final patternData = _extractMapPayload(response, keys: ['patterns']);
+      if (response['success'] == true && patternData != null) {
         return {
           'success': true,
-          'patterns': CarePatterns.fromJson(response['data']),
+          'patterns': CarePatterns.fromJson(patternData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze care patterns'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze care patterns'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -72,14 +124,31 @@ class CareIntelligenceRepository {
         horizon: horizon,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      Map<String, dynamic>? predictionData =
+          _extractMapPayload(response, keys: ['predictions']);
+      if (predictionData == null) {
+        final predictions = response['predictions'];
+        if (predictions is List || response['summary'] != null) {
+          predictionData = {
+            if (predictions is List) 'predictions': predictions,
+            if (response['summary'] != null) 'summary': response['summary'],
+          };
+        }
+      }
+
+      if (response['success'] == true &&
+          predictionData != null &&
+          predictionData.isNotEmpty) {
         return {
           'success': true,
-          'predictions': response['data'],
+          'predictions': predictionData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict care needs'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict care needs'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -95,14 +164,19 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final optimizationData =
+          _extractMapPayload(response, keys: ['optimization']);
+      if (response['success'] == true && optimizationData != null) {
         return {
           'success': true,
-          'optimization': response['data'],
+          'optimization': optimizationData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to optimize care delivery'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to optimize care delivery'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -118,14 +192,18 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final insightsData = _extractMapPayload(response, keys: ['insights']);
+      if (response['success'] == true && insightsData != null) {
         return {
           'success': true,
-          'insights': response['data'],
+          'insights': insightsData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to generate insights'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to generate insights'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -145,14 +223,19 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final assessmentData =
+          _extractMapPayload(response, keys: ['assessment', 'risks']);
+      if (response['success'] == true && assessmentData != null) {
         return {
           'success': true,
-          'assessment': RiskAssessment.fromJson(response['data']),
+          'assessment': RiskAssessment.fromJson(assessmentData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict risks'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict risks'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -168,14 +251,19 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final fallsData =
+          _extractMapPayload(response, keys: ['fallsRisk', 'assessment']);
+      if (response['success'] == true && fallsData != null) {
         return {
           'success': true,
-          'fallsRisk': FallsRiskAssessment.fromJson(response['data']),
+          'fallsRisk': FallsRiskAssessment.fromJson(fallsData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict falls risk'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict falls risk'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -191,14 +279,22 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final behaviorData = _extractMapPayload(response,
+          keys: ['behaviorPrediction', 'prediction']);
+      if (response['success'] == true && behaviorData != null) {
         return {
           'success': true,
-          'behaviorPrediction': BehaviorEscalationPrediction.fromJson(response['data']),
+          'behaviorPrediction': BehaviorEscalationPrediction.fromJson(
+            behaviorData,
+          ),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict behavior escalation'};
+      return {
+        'success': false,
+        'message':
+            response['message'] ?? 'Failed to predict behavior escalation'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -214,14 +310,20 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final healthData = _extractMapPayload(response,
+          keys: ['healthPrediction', 'prediction']);
+      if (response['success'] == true && healthData != null) {
         return {
           'success': true,
-          'healthPrediction': response['data'],
+          'healthPrediction': healthData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict health deterioration'};
+      return {
+        'success': false,
+        'message':
+            response['message'] ?? 'Failed to predict health deterioration'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -237,14 +339,19 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final medicationRiskData =
+          _extractMapPayload(response, keys: ['medicationRisk', 'risk']);
+      if (response['success'] == true && medicationRiskData != null) {
         return {
           'success': true,
-          'medicationRisk': response['data'],
+          'medicationRisk': medicationRiskData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict medication risk'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict medication risk'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -264,14 +371,18 @@ class CareIntelligenceRepository {
         endDate: endDate,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final trendData = _extractMapPayload(response, keys: ['trends']);
+      if (response['success'] == true && trendData != null) {
         return {
           'success': true,
-          'trends': response['data'],
+          'trends': trendData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze risk trends'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze risk trends'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -293,14 +404,19 @@ class CareIntelligenceRepository {
         preferences: preferences,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final carePlanData =
+          _extractMapPayload(response, keys: ['carePlan', 'plan']);
+      if (response['success'] == true && carePlanData != null) {
         return {
           'success': true,
-          'carePlan': CarePlan.fromJson(response['data']),
+          'carePlan': CarePlan.fromJson(carePlanData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to generate care plan'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to generate care plan'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -318,17 +434,24 @@ class CareIntelligenceRepository {
         outcomeAreas: outcomeAreas,
       );
 
-      if (response['success'] == true && response['data'] != null) {
-        final data = response['data'];
+      List<dynamic>? goals = _extractListPayload(response, keys: ['goals']);
+      if (goals == null) {
+        final data = _extractMapPayload(response, keys: []);
+        goals = data?['goals'] as List?;
+      }
+
+      if (response['success'] == true && goals != null) {
         return {
           'success': true,
-          'goals': (data['goals'] as List)
-              .map((g) => SmartGoal.fromJson(g))
-              .toList(),
+          'goals':
+              goals.map((goal) => SmartGoal.fromJson(_asMap(goal)!)).toList(),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to generate goals'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to generate goals'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -344,17 +467,26 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
-        final data = response['data'];
+      List<dynamic>? recommendations =
+          _extractListPayload(response, keys: ['recommendations']);
+      if (recommendations == null) {
+        final data = _extractMapPayload(response, keys: []);
+        recommendations = data?['recommendations'] as List?;
+      }
+
+      if (response['success'] == true && recommendations != null) {
         return {
           'success': true,
-          'recommendations': (data['recommendations'] as List)
-              .map((r) => ServiceRecommendation.fromJson(r))
+          'recommendations': recommendations
+              .map((item) => ServiceRecommendation.fromJson(_asMap(item)!))
               .toList(),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to recommend services'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to recommend services'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -372,14 +504,21 @@ class CareIntelligenceRepository {
         progressData: progressData,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final adaptedPlanData = _extractMapPayload(
+        response,
+        keys: ['adaptedPlan', 'carePlan', 'plan'],
+      );
+      if (response['success'] == true && adaptedPlanData != null) {
         return {
           'success': true,
-          'adaptedPlan': CarePlan.fromJson(response['data']),
+          'adaptedPlan': CarePlan.fromJson(adaptedPlanData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to adapt care plan'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to adapt care plan'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -397,14 +536,18 @@ class CareIntelligenceRepository {
         progressUpdate: progressUpdate,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final progressData = _extractMapPayload(response, keys: ['progress']);
+      if (response['success'] == true && progressData != null) {
         return {
           'success': true,
-          'progress': response['data'],
+          'progress': progressData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to track goal progress'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to track goal progress'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -422,14 +565,19 @@ class CareIntelligenceRepository {
         condition: condition,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final recommendationData =
+          _extractMapPayload(response, keys: ['recommendations']);
+      if (response['success'] == true && recommendationData != null) {
         return {
           'success': true,
-          'recommendations': response['data'],
+          'recommendations': recommendationData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to generate recommendations'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to generate recommendations'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -451,14 +599,18 @@ class CareIntelligenceRepository {
         incidentData: incidentData,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final incidentPayload = _extractMapPayload(response, keys: ['incident']);
+      if (response['success'] == true && incidentPayload != null) {
         return {
           'success': true,
-          'incident': Incident.fromJson(response['data']),
+          'incident': Incident.fromJson(incidentPayload),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to report incident'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to report incident'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -474,14 +626,18 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final analysisData = _extractMapPayload(response, keys: ['analysis']);
+      if (response['success'] == true && analysisData != null) {
         return {
           'success': true,
-          'analysis': RootCauseAnalysis.fromJson(response['data']),
+          'analysis': RootCauseAnalysis.fromJson(analysisData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze root cause'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze root cause'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -499,14 +655,24 @@ class CareIntelligenceRepository {
         endDate: endDate,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final patternData = _extractMapPayload(response, keys: ['patterns']);
+      if (response['success'] == true && patternData != null) {
+        final normalized = Map<String, dynamic>.from(patternData);
+        normalized['timeframe'] = normalized['timeframe'] ??
+            ((startDate != null && endDate != null)
+                ? '$startDate to $endDate'
+                : 'last_30_days');
+
         return {
           'success': true,
-          'patterns': IncidentPatterns.fromJson(response['data']),
+          'patterns': IncidentPatterns.fromJson(normalized),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to detect patterns'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to detect patterns'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -522,14 +688,18 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final predictionData = _extractMapPayload(response, keys: ['prediction']);
+      if (response['success'] == true && predictionData != null) {
         return {
           'success': true,
-          'prediction': response['data'],
+          'prediction': predictionData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict recurrence'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict recurrence'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -545,14 +715,20 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final actionsData =
+          _extractMapPayload(response, keys: ['actions', 'actionPlan']);
+      if (response['success'] == true && actionsData != null) {
         return {
           'success': true,
-          'actions': response['data'],
+          'actions': actionsData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to generate corrective actions'};
+      return {
+        'success': false,
+        'message':
+            response['message'] ?? 'Failed to generate corrective actions'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -574,18 +750,26 @@ class CareIntelligenceRepository {
         medications: medications,
       );
 
-      if (response['success'] == true && response['data'] != null) {
-        final data = response['data'];
+      final interactionData = _extractMapPayload(response, keys: []);
+      final interactionsList =
+          _extractListPayload(response, keys: ['interactions']) ??
+              interactionData?['interactions'] as List?;
+
+      if (response['success'] == true && interactionsList != null) {
+        final source = interactionData ?? response;
         return {
           'success': true,
-          'interactions': (data['interactions'] as List)
-              .map((i) => DrugInteraction.fromJson(i))
+          'interactions': interactionsList
+              .map((item) => DrugInteraction.fromJson(_asMap(item)!))
               .toList(),
-          'safetyScore': data['safetyScore'],
+          'safetyScore': _asDouble(source['safetyScore']),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to check interactions'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to check interactions'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -605,14 +789,18 @@ class CareIntelligenceRepository {
         endDate: endDate,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final complianceData = _extractMapPayload(response, keys: ['compliance']);
+      if (response['success'] == true && complianceData != null) {
         return {
           'success': true,
-          'compliance': MedicationCompliance.fromJson(response['data']),
+          'compliance': MedicationCompliance.fromJson(complianceData),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to track compliance'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to track compliance'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -628,17 +816,23 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
-        final data = response['data'];
+      final data = _extractMapPayload(response, keys: []);
+      final alerts = _extractListPayload(response, keys: ['alerts']) ??
+          (data?['alerts'] as List?);
+
+      if (response['success'] == true && alerts != null) {
         return {
           'success': true,
-          'alerts': (data['alerts'] as List)
-              .map((a) => MedicationAlert.fromJson(a))
+          'alerts': alerts
+              .map((item) => MedicationAlert.fromJson(_asMap(item)!))
               .toList(),
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to get alerts'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to get alerts'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -654,14 +848,19 @@ class CareIntelligenceRepository {
         organizationId: organizationId,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final scheduleData =
+          _extractMapPayload(response, keys: ['schedule', 'optimization']);
+      if (response['success'] == true && scheduleData != null) {
         return {
           'success': true,
-          'schedule': response['data'],
+          'schedule': scheduleData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to optimize schedule'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to optimize schedule'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -679,14 +878,18 @@ class CareIntelligenceRepository {
         sideEffectData: sideEffectData,
       );
 
-      if (response['success'] == true && response['data'] != null) {
+      final monitoringData = _extractMapPayload(response, keys: ['monitoring']);
+      if (response['success'] == true && monitoringData != null) {
         return {
           'success': true,
-          'monitoring': response['data'],
+          'monitoring': monitoringData,
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to monitor side effects'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to monitor side effects'
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }

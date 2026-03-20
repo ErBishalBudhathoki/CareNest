@@ -1,4 +1,5 @@
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/constants/bauhaus_design.dart';
@@ -24,8 +25,8 @@ class MileageTrackerView extends ConsumerWidget {
             content: Text(
               error,
               style: textTheme.bodyMedium?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
-                  ),
+                color: BauhausDesign.surfaceWhite,
+              ),
             ),
             backgroundColor: BauhausDesign.error,
           ),
@@ -73,7 +74,8 @@ class MileageTrackerView extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: BauhausDesign.textDark, size: 20),
+                  const Icon(Icons.info_outline,
+                      color: BauhausDesign.textDark, size: 20),
                   const SizedBox(width: BauhausDesign.space3),
                   Text(
                     'Reimbursement Rate: \$0.99 / km', // Dynamic in future
@@ -90,6 +92,7 @@ class MileageTrackerView extends ConsumerWidget {
             // 1. Tracker Card
             TrackerCard(
               isTracking: viewModel.isTracking,
+              trackingStartTime: viewModel.trackingStartTime,
               onToggle: () => _handleToggle(context, viewModel),
             ),
 
@@ -148,12 +151,15 @@ class MileageTrackerView extends ConsumerWidget {
       barrierDismissible: false,
       builder: (context) => _EndTripDialog(
         distance: distance,
+        clients: viewModel.assignableClients,
         onSubmit: (withClient, clientId) async {
           final success = await viewModel.submitTrip(
-              'Start', 'End'); // Locations would ideally come from controller
+            withClient: withClient,
+            clientId: clientId,
+          );
           if (context.mounted) {
-            Navigator.pop(context);
             if (success) {
+              Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -177,10 +183,12 @@ class MileageTrackerView extends ConsumerWidget {
 
 class _EndTripDialog extends StatefulWidget {
   final double distance;
+  final List<Map<String, String>> clients;
   final Function(bool, String?) onSubmit;
 
   const _EndTripDialog({
     required this.distance,
+    required this.clients,
     required this.onSubmit,
   });
 
@@ -206,7 +214,9 @@ class _EndTripDialogState extends State<_EndTripDialog> {
           children: [
             Text(
               'Trip Complete',
-              style: BauhausDesign.getTextTheme(context).headlineSmall,
+              style: BauhausDesign.getTextTheme(context)
+                  .headlineSmall
+                  ?.copyWith(color: BauhausDesign.textDark),
             ),
             const SizedBox(height: BauhausDesign.space4),
             Text(
@@ -226,32 +236,42 @@ class _EndTripDialogState extends State<_EndTripDialog> {
                           ),
                 ),
                 const Spacer(),
-                Switch(
+                BauhausSwitch(
                   value: _isWithClient,
                   onChanged: (val) => setState(() => _isWithClient = val),
-                  activeColor: BauhausDesign.primary,
+                  variant: BauhausSwitchVariant.primary,
                 ),
               ],
             ),
 
             if (_isWithClient) ...[
               const SizedBox(height: BauhausDesign.space4),
-              DropdownButtonFormField<String>(
-                value: _selectedClientId,
-                decoration: BauhausDesign.inputDecoration('Select Client'),
-                dropdownColor: BauhausDesign.surfaceWhite,
-                items: ['John Doe', 'Jane Smith']
-                    .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(
-                            e,
-                            style:
-                                BauhausDesign.getTextTheme(context).bodyMedium,
-                          ),
-                        ))
-                    .toList(),
-                onChanged: (val) => setState(() => _selectedClientId = val),
-              ),
+              if (widget.clients.isEmpty)
+                Text(
+                  'No assigned clients found for this account.',
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodySmall
+                      ?.copyWith(color: BauhausDesign.textMuted),
+                )
+              else
+                DropdownButtonFormField<String>(
+                  value: _selectedClientId,
+                  decoration: BauhausDesign.inputDecoration('Select Client'),
+                  dropdownColor: BauhausDesign.surfaceWhite,
+                  items: widget.clients
+                      .map((client) => DropdownMenuItem(
+                            value: client['id'],
+                            child: Text(
+                              client['name'] ??
+                                  client['id'] ??
+                                  'Unknown Client',
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium,
+                            ),
+                          ))
+                      .toList(),
+                  onChanged: (val) => setState(() => _selectedClientId = val),
+                ),
             ],
 
             const SizedBox(height: BauhausDesign.space8),

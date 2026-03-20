@@ -9,14 +9,22 @@ rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
     project.evaluationDependsOn(':app')
-    
-    // Fix for "source value 8 is obsolete" warnings
-    project.plugins.withId("com.android.base") {
-        android {
-            compileOptions {
-                sourceCompatibility JavaVersion.VERSION_17
-                targetCompatibility JavaVersion.VERSION_17
-            }
+
+    // Suppress obsolete javac source/target option warnings from third-party plugins.
+    project.tasks.withType(JavaCompile).configureEach {
+        options.warnings = false
+        options.deprecation = false
+        if (!options.compilerArgs.contains('-Xlint:none')) {
+            options.compilerArgs.add('-Xlint:none')
+        }
+        if (!options.compilerArgs.contains('-Xlint:-options')) {
+            options.compilerArgs.add('-Xlint:-options')
+        }
+        if (!options.compilerArgs.contains('-Xlint:-deprecation')) {
+            options.compilerArgs.add('-Xlint:-deprecation')
+        }
+        if (!options.compilerArgs.contains('-Xlint:-unchecked')) {
+            options.compilerArgs.add('-Xlint:-unchecked')
         }
     }
 }

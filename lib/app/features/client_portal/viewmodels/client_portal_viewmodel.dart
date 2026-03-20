@@ -8,6 +8,8 @@ final clientPortalViewModelProvider =
   return ClientPortalViewModel(repository);
 });
 
+const Object _stateUnset = Object();
+
 class ClientPortalState {
   final bool isLoading;
   final String? error;
@@ -29,16 +31,20 @@ class ClientPortalState {
     bool? isLoading,
     String? error,
     ClientDashboard? dashboard,
-    WorkerLocation? workerLocation,
-    AppointmentStatus? appointmentStatus,
+    Object? workerLocation = _stateUnset,
+    Object? appointmentStatus = _stateUnset,
     List<ServiceHistory>? serviceHistory,
   }) {
     return ClientPortalState(
       isLoading: isLoading ?? this.isLoading,
       error: error,
       dashboard: dashboard ?? this.dashboard,
-      workerLocation: workerLocation ?? this.workerLocation,
-      appointmentStatus: appointmentStatus ?? this.appointmentStatus,
+      workerLocation: identical(workerLocation, _stateUnset)
+          ? this.workerLocation
+          : workerLocation as WorkerLocation?,
+      appointmentStatus: identical(appointmentStatus, _stateUnset)
+          ? this.appointmentStatus
+          : appointmentStatus as AppointmentStatus?,
       serviceHistory: serviceHistory ?? this.serviceHistory,
     );
   }
@@ -71,26 +77,38 @@ class ClientPortalViewModel extends StateNotifier<ClientPortalState> {
   /// Get real-time worker location
   Future<void> getWorkerLocation(String appointmentId) async {
     try {
-      final response = await _repository.getWorkerLocation(appointmentId: appointmentId);
+      final response =
+          await _repository.getWorkerLocation(appointmentId: appointmentId);
       if (response['success'] == true && response['data'] != null) {
         final location = WorkerLocation.fromJson(response['data']);
-        state = state.copyWith(workerLocation: location);
+        state = state.copyWith(workerLocation: location, error: null);
+      } else {
+        state = state.copyWith(
+          workerLocation: null,
+          error: response['message'] ?? 'Location is currently unavailable',
+        );
       }
     } catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(workerLocation: null, error: e.toString());
     }
   }
 
   /// Get appointment status with ETA
   Future<void> getAppointmentStatus(String appointmentId) async {
     try {
-      final response = await _repository.getAppointmentStatus(appointmentId: appointmentId);
+      final response =
+          await _repository.getAppointmentStatus(appointmentId: appointmentId);
       if (response['success'] == true && response['data'] != null) {
         final status = AppointmentStatus.fromJson(response['data']);
-        state = state.copyWith(appointmentStatus: status);
+        state = state.copyWith(appointmentStatus: status, error: null);
+      } else {
+        state = state.copyWith(
+          appointmentStatus: null,
+          error: response['message'] ?? 'Unable to load appointment status',
+        );
       }
     } catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(appointmentStatus: null, error: e.toString());
     }
   }
 
@@ -98,7 +116,11 @@ class ClientPortalViewModel extends StateNotifier<ClientPortalState> {
   Future<bool> sendMessage(Map<String, dynamic> messageData) async {
     try {
       final response = await _repository.sendMessage(messageData: messageData);
-      return response['success'] == true;
+      final success = response['success'] == true;
+      state = state.copyWith(
+        error: success ? null : response['message'] ?? 'Failed to send message',
+      );
+      return success;
     } catch (e) {
       state = state.copyWith(error: e.toString());
       return false;
@@ -108,8 +130,15 @@ class ClientPortalViewModel extends StateNotifier<ClientPortalState> {
   /// Submit service feedback
   Future<bool> submitFeedback(Map<String, dynamic> feedbackData) async {
     try {
-      final response = await _repository.submitFeedback(feedbackData: feedbackData);
-      return response['success'] == true;
+      final response =
+          await _repository.submitFeedback(feedbackData: feedbackData);
+      final success = response['success'] == true;
+      state = state.copyWith(
+        error: success
+            ? null
+            : response['message'] ?? 'Failed to submit service feedback',
+      );
+      return success;
     } catch (e) {
       state = state.copyWith(error: e.toString());
       return false;
@@ -117,23 +146,40 @@ class ClientPortalViewModel extends StateNotifier<ClientPortalState> {
   }
 
   /// Load service history
-  Future<void> loadServiceHistory(String clientId) async {
-    state = state.copyWith(isLoading: true, error: null);
+  Future<void> loadServiceHistory(
+    String clientId, {
+    bool silent = false,
+    int? limit,
+  }) async {
+    if (silent) {
+      state = state.copyWith(error: null);
+    } else {
+      state = state.copyWith(isLoading: true, error: null);
+    }
     try {
-      final response = await _repository.getServiceHistory(clientId: clientId);
+      final response = await _repository.getServiceHistory(
+        clientId: clientId,
+        limit: limit,
+      );
       if (response['success'] == true && response['data'] != null) {
         final history = (response['data'] as List)
             .map((item) => ServiceHistory.fromJson(item))
             .toList();
-        state = state.copyWith(isLoading: false, serviceHistory: history);
+        state = state.copyWith(
+          isLoading: silent ? state.isLoading : false,
+          serviceHistory: history,
+        );
       } else {
         state = state.copyWith(
-          isLoading: false,
+          isLoading: silent ? state.isLoading : false,
           error: response['message'] ?? 'Failed to load service history',
         );
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+        isLoading: silent ? state.isLoading : false,
+        error: e.toString(),
+      );
     }
   }
 }

@@ -112,6 +112,20 @@ This index provides a guide to all documentation created for the Invoice Generat
 
 ---
 
+### 6. **docs/app_check.md** ⭐ SECURITY
+**Purpose**: App Check provider selection, debug token behavior, and verification steps  
+**Audience**: Developers, DevOps, security reviewers  
+**Length**: ~70 lines  
+**Key Sections**:
+- Provider selection by flavor
+- Debug token allowlist workflow
+- Runtime behavior
+- Verification checklist
+
+**When to Read**: When configuring App Check or diagnosing 403 App Check failures
+
+---
+
 ## 🗺️ Reading Guide by Role
 
 ### For Project Managers

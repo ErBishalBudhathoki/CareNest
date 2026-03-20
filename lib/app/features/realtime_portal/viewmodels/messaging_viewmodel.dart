@@ -95,8 +95,14 @@ class MessagingViewModel extends StateNotifier<MessagingState> {
     required String conversationId,
     int? limit,
     DateTime? before,
+    bool silent = false,
   }) async {
-    state = state.copyWith(isLoading: true, error: null);
+    final wasLoading = state.isLoading;
+    if (silent) {
+      state = state.copyWith(error: null);
+    } else {
+      state = state.copyWith(isLoading: true, error: null);
+    }
 
     try {
       final messages = await _repository.getMessages(
@@ -106,13 +112,13 @@ class MessagingViewModel extends StateNotifier<MessagingState> {
       );
 
       state = state.copyWith(
-        isLoading: false,
+        isLoading: silent ? wasLoading : false,
         messages: messages,
       );
     } catch (e) {
       debugPrint('Error getting messages: $e');
       state = state.copyWith(
-        isLoading: false,
+        isLoading: silent ? wasLoading : false,
         error: e.toString(),
       );
     }
@@ -261,4 +267,3 @@ final messagingViewModelProvider =
   final repository = RealtimePortalRepository(apiMethod);
   return MessagingViewModel(repository);
 });
-

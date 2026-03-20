@@ -8,6 +8,7 @@ class CustomAppBar extends StatelessWidget {
   final String firstName;
   final String lastName;
   final Uint8List? photoData;
+  final String? imageUrl;
 
   const CustomAppBar({
     super.key,
@@ -15,12 +16,13 @@ class CustomAppBar extends StatelessWidget {
     required this.firstName,
     required this.lastName,
     this.photoData,
+    this.imageUrl,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       color: theme.colorScheme.surface,
       child: AppBar(
@@ -30,8 +32,8 @@ class CustomAppBar extends StatelessWidget {
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: theme.colorScheme.surface,
-          statusBarIconBrightness: theme.brightness == Brightness.light 
-              ? Brightness.dark 
+          statusBarIconBrightness: theme.brightness == Brightness.light
+              ? Brightness.dark
               : Brightness.light,
           statusBarBrightness: theme.brightness,
         ),
@@ -54,7 +56,10 @@ class CustomAppBar extends StatelessWidget {
               child: ClipOval(
                 child: CircleAvatar(
                   radius: 25.0,
-                  child: ProfileImageWidget(photoData: photoData),
+                  child: ProfileImageWidget(
+                    photoData: photoData,
+                    imageUrl: imageUrl,
+                  ),
                 ),
               ),
             ),

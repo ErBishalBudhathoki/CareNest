@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/services/invoice_management_service.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // State class for invoice detail
 class InvoiceDetailState {
   final InvoiceListModel? invoice;
   final bool isLoading;
   final String? error;
+  final String? warning;
   final bool isSharing;
   final bool isDeleting;
 
@@ -15,6 +17,7 @@ class InvoiceDetailState {
     this.invoice,
     this.isLoading = false,
     this.error,
+    this.warning,
     this.isSharing = false,
     this.isDeleting = false,
   });
@@ -23,6 +26,7 @@ class InvoiceDetailState {
     InvoiceListModel? invoice,
     bool? isLoading,
     String? error,
+    String? warning,
     bool? isSharing,
     bool? isDeleting,
   }) {
@@ -30,13 +34,14 @@ class InvoiceDetailState {
       invoice: invoice ?? this.invoice,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
+      warning: warning ?? this.warning,
       isSharing: isSharing ?? this.isSharing,
       isDeleting: isDeleting ?? this.isDeleting,
     );
   }
 
   InvoiceDetailState clearError() {
-    return copyWith(error: null);
+    return copyWith(error: null, warning: null);
   }
 }
 
@@ -47,10 +52,14 @@ class InvoiceDetailViewModel extends StateNotifier<InvoiceDetailState> {
   InvoiceDetailViewModel(this._invoiceService)
       : super(const InvoiceDetailState());
 
+  void setInitialInvoice(InvoiceListModel invoice) {
+    state = state.copyWith(invoice: invoice, error: null, warning: null);
+  }
+
   // Load invoice details
   Future<void> loadInvoiceDetails(
       String invoiceId, String organizationId) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, error: null, warning: null);
 
     try {
       final result = await _invoiceService.getInvoiceDetails(
@@ -63,14 +72,34 @@ class InvoiceDetailViewModel extends StateNotifier<InvoiceDetailState> {
         state = state.copyWith(
           invoice: invoice,
           isLoading: false,
+          error: null,
+          warning: null,
         );
       } else {
+        final message = result['message'] ?? 'Failed to load invoice details';
+        if (state.invoice != null) {
+          state = state.copyWith(
+            isLoading: false,
+            warning: '$message. Showing cached invoice data.',
+            error: null,
+          );
+          return;
+        }
         state = state.copyWith(
           isLoading: false,
-          error: result['message'] ?? 'Failed to load invoice details',
+          error: message,
         );
       }
     } catch (e) {
+      if (state.invoice != null) {
+        state = state.copyWith(
+          isLoading: false,
+          warning:
+              'Failed to refresh invoice details. Showing cached invoice data.',
+          error: null,
+        );
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to load invoice details: ${e.toString()}',
@@ -86,6 +115,7 @@ class InvoiceDetailViewModel extends StateNotifier<InvoiceDetailState> {
       await _invoiceService.shareInvoice(
         invoiceId: invoiceId,
         organizationId: organizationId,
+        shareMethod: 'link',
       );
 
       state = state.copyWith(isSharing: false);
@@ -138,5 +168,6 @@ final invoiceDetailViewModelProvider =
 
 // Provider for invoice service
 final invoiceManagementServiceProvider = Provider<InvoiceManagementService>(
-  (ref) => InvoiceManagementService(apiMethod: ref.read(app_providers.apiMethodProvider)),
+  (ref) => InvoiceManagementService(
+      apiMethod: ref.read(app_providers.apiMethodProvider)),
 );
