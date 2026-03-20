@@ -52,6 +52,7 @@ import 'package:carenest/app/features/scheduling/views/auto_schedule_dashboard.d
 import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
 import 'package:carenest/app/features/compliance/views/compliance_automation_dashboard.dart';
 import 'package:carenest/app/features/expenses/views/smart_expense_dashboard.dart';
+import 'package:carenest/app/features/expenses/views/quick_expense_capture_view.dart';
 import 'package:carenest/app/features/payroll/views/advanced_payroll_dashboard.dart';
 import 'package:carenest/app/features/communication/views/communication_hub_dashboard.dart';
 import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dashboard.dart';
@@ -313,6 +314,23 @@ class _AdminDashboardViewControllerState
     );
   }
 
+  void _openScanInvoice() {
+    final orgId = widget.organizationId;
+    if (orgId == null || orgId.isEmpty) {
+      _showSnackBar('Organization ID is required', isError: true);
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => QuickExpenseCaptureView(
+          adminEmail: widget.email,
+          organizationId: orgId,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -327,6 +345,14 @@ class _AdminDashboardViewControllerState
     }
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openScanInvoice,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        icon: const Icon(Icons.document_scanner_outlined),
+        label: const Text('Scan Invoice'),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
         children: [
           CustomScrollView(
@@ -471,6 +497,40 @@ class _AdminDashboardViewControllerState
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
+                                                GestureDetector(
+                                                  onTap: _openScanInvoice,
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: BauhausDesign
+                                                          .surfaceWhite,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              BauhausDesign
+                                                                  .radiusMd),
+                                                      border: Border.all(
+                                                        color: BauhausDesign
+                                                            .neutral,
+                                                        width: 2,
+                                                      ),
+                                                      boxShadow: const [
+                                                        BauhausDesign
+                                                            .shadowHardSm,
+                                                      ],
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons
+                                                          .document_scanner_outlined,
+                                                      color: BauhausDesign
+                                                          .neutral,
+                                                      size: 20,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                    width:
+                                                        BauhausDesign.space4),
                                                 Consumer(
                                                   builder:
                                                       (context, ref, child) {
@@ -1339,6 +1399,13 @@ class _AdminDashboardViewControllerState
                         organizationId: widget.organizationId,
                       )),
             ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.document_scanner_outlined),
+            title: 'Scan Invoice',
+            subtitle: 'Quick receipt capture',
+            color: BauhausDesign.warning,
+            onTap: _openScanInvoice,
           ),
           CommandAction(
             icon: const Icon(Icons.payments_outlined),

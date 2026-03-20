@@ -6,6 +6,31 @@ class RealtimePortalRepository {
 
   RealtimePortalRepository(this._apiMethod);
 
+  String _toIsoString(dynamic value) {
+    if (value == null) return DateTime.now().toIso8601String();
+    if (value is String && value.trim().isNotEmpty) return value;
+    if (value is DateTime) return value.toIso8601String();
+    final parsed = DateTime.tryParse(value.toString());
+    return (parsed ?? DateTime.now()).toIso8601String();
+  }
+
+  Map<String, dynamic> _normalizeMessage(Map<String, dynamic> input) {
+    final map = Map<String, dynamic>.from(input);
+    map['id'] = (map['id'] ?? map['_id'] ?? '').toString();
+    map['timestamp'] = _toIsoString(map['timestamp']);
+    return map;
+  }
+
+  Map<String, dynamic> _normalizeConversation(Map<String, dynamic> input) {
+    final map = Map<String, dynamic>.from(input);
+    map['id'] = (map['id'] ?? map['_id'] ?? '').toString();
+    map['createdAt'] = _toIsoString(map['createdAt']);
+    if (map['lastMessageAt'] != null) {
+      map['lastMessageAt'] = _toIsoString(map['lastMessageAt']);
+    }
+    return map;
+  }
+
   // ============================================================================
   // Real-Time Tracking Methods
   // ============================================================================
@@ -122,7 +147,9 @@ class RealtimePortalRepository {
       );
 
       if (response['success'] == true && response['data'] != null) {
-        return SecureMessage.fromJson(response['data']);
+        return SecureMessage.fromJson(
+          _normalizeMessage(Map<String, dynamic>.from(response['data'] as Map)),
+        );
       }
 
       throw Exception(response['message'] ?? 'Failed to send message');
@@ -146,7 +173,18 @@ class RealtimePortalRepository {
 
       if (response['success'] == true && response['data'] != null) {
         final messages = response['data'] as List;
-        return messages.map((m) => SecureMessage.fromJson(m)).toList();
+        final parsedMessages = messages
+            .whereType<Map>()
+            .map(
+              (m) => SecureMessage.fromJson(
+                _normalizeMessage(Map<String, dynamic>.from(m)),
+              ),
+            )
+            .toList();
+
+        // UI expects chronological order (oldest -> newest).
+        parsedMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        return parsedMessages;
       }
 
       throw Exception(response['message'] ?? 'Failed to get messages');
@@ -171,7 +209,11 @@ class RealtimePortalRepository {
       );
 
       if (response['success'] == true && response['data'] != null) {
-        return MessageThread.fromJson(response['data']);
+        return MessageThread.fromJson(
+          _normalizeConversation(
+            Map<String, dynamic>.from(response['data'] as Map),
+          ),
+        );
       }
 
       throw Exception(response['message'] ?? 'Failed to create conversation');
@@ -191,7 +233,14 @@ class RealtimePortalRepository {
 
       if (response['success'] == true && response['data'] != null) {
         final conversations = response['data'] as List;
-        return conversations.map((c) => MessageThread.fromJson(c)).toList();
+        return conversations
+            .whereType<Map>()
+            .map(
+              (c) => MessageThread.fromJson(
+                _normalizeConversation(Map<String, dynamic>.from(c)),
+              ),
+            )
+            .toList();
       }
 
       throw Exception(response['message'] ?? 'Failed to get conversations');
@@ -407,4 +456,3 @@ class RealtimePortalRepository {
     }
   }
 }
-

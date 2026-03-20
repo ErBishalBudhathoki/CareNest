@@ -90,7 +90,11 @@ class TimerService extends ChangeNotifier {
   }
 
   /// Start timer with user and client context
-  Future<bool> startTimer(String userEmail, String clientEmail) async {
+  Future<bool> startTimer(
+    String userEmail,
+    String clientEmail, {
+    DateTime? startTime,
+  }) async {
     // Check if another timer is running
     if (_isRunning &&
         (_activeUserEmail != userEmail || _activeClientEmail != clientEmail)) {
@@ -102,9 +106,9 @@ class TimerService extends ChangeNotifier {
     _activeUserEmail = userEmail;
     _activeClientEmail = clientEmail;
     currentTimerClientEmail = clientEmail;
-    _startTime = DateTime.now();
+    _startTime = startTime ?? DateTime.now();
     _isRunning = true;
-    _elapsedSeconds = 0;
+    _elapsedSeconds = DateTime.now().difference(_startTime).inSeconds;
 
     // Save to persistent storage
     await _saveTimerState();

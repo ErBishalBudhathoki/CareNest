@@ -22,6 +22,12 @@ class BauhausLogoutDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final headerForeground =
+        ThemeData.estimateBrightnessForColor(BauhausDesign.error) ==
+                Brightness.dark
+            ? BauhausDesign.textLight
+            : BauhausDesign.textDark;
+
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -63,7 +69,7 @@ class BauhausLogoutDialog extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.warning_amber_rounded,
-                    color: BauhausDesign.textDark,
+                    color: headerForeground,
                     size: 28,
                   ),
                   const SizedBox(width: 12),
@@ -73,7 +79,7 @@ class BauhausLogoutDialog extends StatelessWidget {
                       style: GoogleFonts.oswald(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
+                        color: headerForeground,
                         letterSpacing: 0.5,
                       ),
                     ),

@@ -29,34 +29,44 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.surfaceLight,
+        elevation: 0,
         title: Text(
           'OFFLINE MODE',
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                color: BauhausDesign.textDark,
                 fontWeight: FontWeight.bold,
               ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(
+            height: 2,
+            color: BauhausDesign.neutral,
+          ),
+        ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              children: [
-                Icon(
-                  _isOnline ? Icons.cloud_done : Icons.cloud_off,
-                  color: _isOnline
-                      ? BauhausDesign.success
-                      : BauhausDesign.warning,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  _isOnline ? 'ONLINE' : 'OFFLINE',
-                  style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                        color: BauhausDesign.surfaceWhite,
-                      ),
-                ),
-              ],
+            padding: const EdgeInsets.only(right: BauhausDesign.space4),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space2,
+                vertical: BauhausDesign.space1,
+              ),
+              decoration: BoxDecoration(
+                color: _isOnline ? BauhausDesign.success : BauhausDesign.warning,
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                boxShadow: const [BauhausDesign.shadowHardSm],
+              ),
+              child: Text(
+                _isOnline ? 'ONLINE' : 'OFFLINE',
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      color: _isOnline
+                          ? BauhausDesign.surfaceWhite
+                          : BauhausDesign.textDark,
+                    ),
+              ),
             ),
           ),
         ],
@@ -64,17 +74,17 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
       body: _isLoading
           ? const Center(child: BauhausLoadingState())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(BauhausDesign.space4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Stats Cards
                   _buildStatsSection(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: BauhausDesign.space6),
 
                   // Feature Cards
                   BauhausSectionHeader(title: 'SYNC TOOLS'),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: BauhausDesign.space3),
 
                   _buildFeatureCard(
                     title: 'Sync Now',
@@ -84,7 +94,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                     onTap: _syncNow,
                     enabled: _isOnline && _queuedItems > 0,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: BauhausDesign.space3),
 
                   _buildFeatureCard(
                     title: 'View Queue',
@@ -93,7 +103,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                     color: BauhausDesign.secondary,
                     onTap: _viewQueue,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: BauhausDesign.space3),
 
                   _buildFeatureCard(
                     title: 'Resolve Conflicts',
@@ -103,7 +113,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                     onTap: _resolveConflicts,
                     enabled: _conflicts > 0,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: BauhausDesign.space3),
 
                   _buildFeatureCard(
                     title: 'Download Data',
@@ -124,7 +134,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         BauhausSectionHeader(title: 'SYNC STATUS'),
-        const SizedBox(height: 16),
+        const SizedBox(height: BauhausDesign.space3),
         Row(
           children: [
             Expanded(
@@ -135,7 +145,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                 color: BauhausDesign.warning,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: _buildStatCard(
                 label: 'Synced Today',
@@ -146,7 +156,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: BauhausDesign.space3),
         Row(
           children: [
             Expanded(
@@ -157,7 +167,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                 color: _conflicts > 0 ? BauhausDesign.error : BauhausDesign.neutral,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: _buildStatCard(
                 label: 'Last Sync',
@@ -180,7 +190,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
   }) {
     return BauhausCard(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -194,7 +204,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                 Icon(icon, color: color, size: 20),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: BauhausDesign.space2),
             Text(
               value,
               style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
@@ -222,7 +232,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
         child: InkWell(
           onTap: enabled ? onTap : null,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(BauhausDesign.space5),
             child: Row(
               children: [
                 Container(
@@ -234,7 +244,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                   ),
                   child: Icon(icon, color: color, size: 24),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: BauhausDesign.space4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +255,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                             .titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: BauhausDesign.space1),
                       Text(
                         description,
                         style: BauhausDesign.getTextTheme(context).bodySmall,

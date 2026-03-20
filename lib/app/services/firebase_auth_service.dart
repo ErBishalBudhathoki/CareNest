@@ -106,6 +106,32 @@ class FirebaseAuthService {
     }
   }
 
+  /// Validate a Firebase password reset action code.
+  Future<void> verifyPasswordResetCode({required String code}) async {
+    try {
+      await _auth.verifyPasswordResetCode(code);
+      debugPrint('✅ Password reset code verified');
+    } on FirebaseAuthException catch (e) {
+      debugPrint(
+          '❌ Password reset code verification error: ${e.code} - ${e.message}');
+      throw _handleAuthException(e);
+    }
+  }
+
+  /// Complete password reset using Firebase action code.
+  Future<void> confirmPasswordReset({
+    required String code,
+    required String newPassword,
+  }) async {
+    try {
+      await _auth.confirmPasswordReset(code: code, newPassword: newPassword);
+      debugPrint('✅ Password reset confirmed');
+    } on FirebaseAuthException catch (e) {
+      debugPrint('❌ Confirm password reset error: ${e.code} - ${e.message}');
+      throw _handleAuthException(e);
+    }
+  }
+
   /// Send email verification
   Future<void> sendEmailVerification() async {
     try {
@@ -211,7 +237,18 @@ class FirebaseAuthService {
 
   /// Handle Firebase Auth exceptions and convert to user-friendly messages
   Exception _handleAuthException(FirebaseAuthException e) {
+    final rawMessage = e.message ?? '';
+    final lowerMessage = rawMessage.toLowerCase();
     String message;
+
+    if (lowerMessage
+            .contains('requests from this android client application') &&
+        lowerMessage.contains('are blocked')) {
+      message = 'This app build is blocked by Firebase security settings. '
+          'Ask admin to allow com.bishal.invoice.dev in Firebase '
+          '(App Check + API key Android restrictions with debug SHA).';
+      return Exception(message);
+    }
 
     switch (e.code) {
       case 'weak-password':
@@ -247,8 +284,16 @@ class FirebaseAuthService {
       case 'invalid-credential':
         message = 'Invalid credentials. Please check your email and password.';
         break;
+      case 'invalid-action-code':
+        message = 'This reset link is invalid or has already been used.';
+        break;
+      case 'expired-action-code':
+        message = 'This reset link has expired. Please request a new one.';
+        break;
       default:
-        message = e.message ?? 'Authentication failed. Please try again.';
+        message = rawMessage.isNotEmpty
+            ? rawMessage
+            : 'Authentication failed. Please try again.';
     }
 
     return Exception(message);

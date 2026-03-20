@@ -8,6 +8,8 @@ import 'package:carenest/app/features/invoice/services/invoice_pdf_generator_ser
 import 'package:carenest/app/features/invoice/services/invoice_email_service.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_data_processor.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 // Removed unused: import 'package:carenest/app/core/providers/invoice_providers.dart';
 // Removed unused: import 'package:carenest/app/features/invoice/repositories/invoice_repository.dart';
 
@@ -42,6 +44,7 @@ class MockAppLocalizations extends Mock implements AppLocalizations {
 class StubApiMethod extends Mock implements ApiMethod {
   Map<String, dynamic>? bulkReturn;
   List<Map<String, dynamic>>? priceHistoryReturn;
+  double? fallbackBaseRateReturn;
 
   @override
   Future<Map<String, dynamic>?> getBulkPricingLookup(
@@ -54,6 +57,11 @@ class StubApiMethod extends Mock implements ApiMethod {
   Future<List<Map<String, dynamic>>?> getPriceHistory(
       String ndisItemNumber, String clientId) async {
     return priceHistoryReturn ?? <Map<String, dynamic>>[];
+  }
+
+  @override
+  Future<double?> getFallbackBaseRate(String organizationId) async {
+    return fallbackBaseRateReturn;
   }
 
   @override
@@ -104,6 +112,20 @@ void main() {
   late EnhancedInvoiceService invoiceService;
   late MockApiMethod mockApiMethod;
 
+  FakeRef buildFakeRef({
+    required ApiMethod apiMethod,
+    required StateController<InvoiceGenerationState> stateCtrl,
+    required StateController<String> errorCtrl,
+  }) {
+    return FakeRef({
+      invoiceGenerationStateProvider.notifier: stateCtrl,
+      invoiceGenerationErrorProvider.notifier: errorCtrl,
+      invoiceGenerationStateProvider: InvoiceGenerationState.initial,
+      invoiceGenerationErrorProvider: '',
+      app_providers.apiMethodProvider: apiMethod,
+    });
+  }
+
   setUp(() {
     mockApiMethod = MockApiMethod();
     // Initialize state controllers we want the service to update
@@ -111,14 +133,11 @@ void main() {
         StateController<InvoiceGenerationState>(InvoiceGenerationState.initial);
     final errorCtrl = StateController<String>('');
 
-    // Map provider.notifier lookups to our controllers
-    fakeRef = FakeRef({
-      invoiceGenerationStateProvider.notifier: stateCtrl,
-      invoiceGenerationErrorProvider.notifier: errorCtrl,
-      // In case tests read the providers (not the notifiers)
-      invoiceGenerationStateProvider: InvoiceGenerationState.initial,
-      invoiceGenerationErrorProvider: '',
-    });
+    fakeRef = buildFakeRef(
+      apiMethod: mockApiMethod,
+      stateCtrl: stateCtrl,
+      errorCtrl: errorCtrl,
+    );
 
     invoiceService = EnhancedInvoiceService(fakeRef, mockApiMethod);
   });
@@ -409,6 +428,15 @@ void main() {
           },
         }
         ..priceHistoryReturn = <Map<String, dynamic>>[];
+      final stateCtrl = StateController<InvoiceGenerationState>(
+        InvoiceGenerationState.initial,
+      );
+      final errorCtrl = StateController<String>('');
+      fakeRef = buildFakeRef(
+        apiMethod: stubApi,
+        stateCtrl: stateCtrl,
+        errorCtrl: errorCtrl,
+      );
       invoiceService = EnhancedInvoiceService(fakeRef, stubApi);
 
       final processedData = {
@@ -454,11 +482,12 @@ void main() {
         l10n: MockAppLocalizations(),
       );
 
-      // Item 1 should have price applied from bulk, clamped and rounded.
+      // Item 1 should have organization-level price applied from bulk,
+      // clamped and rounded.
       final li0 = (processedData['clients'] as List).first['lineItems'][0]
           as Map<String, dynamic>;
       expect(li0['price'], 65.17);
-      expect(li0['pricingSource'], 'Organization fallback base rate');
+      expect(li0['pricingSource'], 'Organization-wide custom price');
       expect(li0['exceedsPriceCap'], isFalse);
       expect(li0['total'], 162.93); // 65.17 * 2.5 rounded to 2 decimals
 
@@ -480,6 +509,15 @@ void main() {
           },
         }
         ..priceHistoryReturn = <Map<String, dynamic>>[];
+      final stateCtrl = StateController<InvoiceGenerationState>(
+        InvoiceGenerationState.initial,
+      );
+      final errorCtrl = StateController<String>('');
+      fakeRef = buildFakeRef(
+        apiMethod: stubApi2,
+        stateCtrl: stateCtrl,
+        errorCtrl: errorCtrl,
+      );
       invoiceService = EnhancedInvoiceService(fakeRef, stubApi2);
 
       final processedData = {

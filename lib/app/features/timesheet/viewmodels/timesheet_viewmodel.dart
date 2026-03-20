@@ -5,9 +5,10 @@ import 'package:carenest/app/features/timesheet/services/timesheet_pdf_service.d
 
 // Provider for the current week's start date
 final timesheetDateProvider = StateProvider<DateTime>((ref) {
-  // Start on Monday of the current week (or Sunday depending on locale, let's pick Monday)
+  // Start on Monday of the current week at 00:00 local time.
   final now = DateTime.now();
-  return now.subtract(Duration(days: now.weekday - 1));
+  final monday = now.subtract(Duration(days: now.weekday - 1));
+  return DateTime(monday.year, monday.month, monday.day);
 });
 
 // Provider for the Timesheet ViewModel
@@ -63,9 +64,10 @@ class TimesheetViewModel
       if (entry.timeWorked != null) {
         final parts = entry.timeWorked!.split(':');
         if (parts.length == 3) {
-          totalSeconds += int.parse(parts[0]) * 3600 +
-              int.parse(parts[1]) * 60 +
-              int.parse(parts[2]);
+          final h = int.tryParse(parts[0]) ?? 0;
+          final m = int.tryParse(parts[1]) ?? 0;
+          final s = int.tryParse(parts[2]) ?? 0;
+          totalSeconds += (h * 3600) + (m * 60) + s;
         }
       } else if (entry.totalHours != null) {
         // Handle numeric total hours if any
@@ -85,18 +87,17 @@ class TimesheetViewModel
     return state.maybeWhen(
       data: (entries) async {
         try {
-            final endDate = _startDate.add(const Duration(days: 6));
-            final service = TimesheetPdfService();
-            final path = await service.generateTimesheetPdf(
-                entries: entries,
-                startDate: _startDate,
-                endDate: endDate,
-                userEmail: _email,
-                totalHours: weeklyTotal
-            );
-            return path;
+          final endDate = _startDate.add(const Duration(days: 6));
+          final service = TimesheetPdfService();
+          final path = await service.generateTimesheetPdf(
+              entries: entries,
+              startDate: _startDate,
+              endDate: endDate,
+              userEmail: _email,
+              totalHours: weeklyTotal);
+          return path;
         } catch (e) {
-            return null;
+          return null;
         }
       },
       orElse: () => null,

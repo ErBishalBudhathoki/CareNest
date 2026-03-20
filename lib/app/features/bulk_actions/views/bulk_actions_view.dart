@@ -34,9 +34,18 @@ class _BulkActionsViewState extends State<BulkActionsView>
         foregroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
+          labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+          indicatorSize: TabBarIndicatorSize.tab,
           indicatorColor: Colors.white,
+          physics: const BouncingScrollPhysics(),
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
+          labelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.3,
+          ),
           tabs: const [
             Tab(text: 'TIMESHEETS'),
             Tab(text: 'INVOICES'),
@@ -80,18 +89,11 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
         // Action Bar
         Container(
           padding: const EdgeInsets.all(16),
-          color: Colors.grey[200],
-          child: Row(
-            children: [
-              Text(
-                '${_selectedTimesheets.length} selected',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
+          color: BauhausDesign.surfaceOffWhite,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 900;
+              final approveButton = ElevatedButton.icon(
                 onPressed: _selectedTimesheets.isEmpty
                     ? null
                     : () => _approveTimesheets(),
@@ -101,9 +103,8 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
                   backgroundColor: BauhausDesign.success,
                   foregroundColor: Colors.white,
                 ),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
+              );
+              final rejectButton = ElevatedButton.icon(
                 onPressed: _selectedTimesheets.isEmpty
                     ? null
                     : () => _rejectTimesheets(),
@@ -113,8 +114,60 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
                   backgroundColor: BauhausDesign.error,
                   foregroundColor: Colors.white,
                 ),
-              ),
-            ],
+              );
+
+              if (isCompact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${_selectedTimesheets.length} selected',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        approveButton,
+                        rejectButton,
+                      ],
+                    ),
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${_selectedTimesheets.length} selected',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Flexible(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.end,
+                      children: [
+                        approveButton,
+                        rejectButton,
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
         // Timesheet List
@@ -282,20 +335,13 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
         // Action Bar
         Container(
           padding: const EdgeInsets.all(16),
-          color: Colors.grey[200],
+          color: BauhausDesign.surfaceOffWhite,
           child: Column(
             children: [
-              Row(
-                children: [
-                  Text(
-                    '${_selectedAppointments.length} selected',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Spacer(),
-                  ElevatedButton.icon(
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isCompact = constraints.maxWidth < 900;
+                  final previewButton = ElevatedButton.icon(
                     onPressed: _selectedAppointments.isEmpty
                         ? null
                         : () => _previewInvoices(),
@@ -305,9 +351,8 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
                       backgroundColor: BauhausDesign.secondary,
                       foregroundColor: Colors.white,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
+                  );
+                  final generateButton = ElevatedButton.icon(
                     onPressed: _selectedAppointments.isEmpty
                         ? null
                         : () => _generateInvoices(),
@@ -317,8 +362,60 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
                       backgroundColor: BauhausDesign.primary,
                       foregroundColor: Colors.white,
                     ),
-                  ),
-                ],
+                  );
+
+                  if (isCompact) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${_selectedAppointments.length} selected',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            previewButton,
+                            generateButton,
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${_selectedAppointments.length} selected',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Flexible(
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.end,
+                          children: [
+                            previewButton,
+                            generateButton,
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 8),
               CheckboxListTile(
@@ -455,41 +552,82 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
         // Action Bar
         Container(
           padding: const EdgeInsets.all(16),
-          color: Colors.grey[200],
-          child: Row(
-            children: [
-              Text(
-                '${_assignments.length} shifts to assign',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: _assignments.isEmpty
-                    ? null
-                    : () => _getSuggestions(),
+          color: BauhausDesign.surfaceOffWhite,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 900;
+              final suggestButton = ElevatedButton.icon(
+                onPressed:
+                    _assignments.isEmpty ? null : () => _getSuggestions(),
                 icon: const Icon(Icons.lightbulb, size: 20),
                 label: const Text('SUGGEST'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.secondary,
                   foregroundColor: Colors.white,
                 ),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
-                onPressed: _assignments.isEmpty
-                    ? null
-                    : () => _assignShifts(),
+              );
+              final assignButton = ElevatedButton.icon(
+                onPressed: _assignments.isEmpty ? null : () => _assignShifts(),
                 icon: const Icon(Icons.assignment_turned_in, size: 20),
                 label: const Text('ASSIGN'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
                   foregroundColor: Colors.white,
                 ),
-              ),
-            ],
+              );
+
+              if (isCompact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${_assignments.length} shifts to assign',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        suggestButton,
+                        assignButton,
+                      ],
+                    ),
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${_assignments.length} shifts to assign',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Flexible(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.end,
+                      children: [
+                        suggestButton,
+                        assignButton,
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
         // Shift List
@@ -692,32 +830,54 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
           const SizedBox(height: 24),
 
           // Actions
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: _canSend() ? () => _sendMessages() : null,
-                  icon: const Icon(Icons.send),
-                  label: const Text('SEND NOW'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: BauhausDesign.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 520;
+              final sendButton = ElevatedButton.icon(
+                onPressed: _canSend() ? () => _sendMessages() : null,
+                icon: const Icon(Icons.send),
+                label: const Text('SEND NOW'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: BauhausDesign.primary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(48),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 14,
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _canSend() ? () => _scheduleMessages() : null,
-                  icon: const Icon(Icons.schedule),
-                  label: const Text('SCHEDULE'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.all(16),
+              );
+              final scheduleButton = OutlinedButton.icon(
+                onPressed: _canSend() ? () => _scheduleMessages() : null,
+                icon: const Icon(Icons.schedule),
+                label: const Text('SCHEDULE'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 14,
                   ),
                 ),
-              ),
-            ],
+              );
+
+              if (isCompact) {
+                return Column(
+                  children: [
+                    SizedBox(width: double.infinity, child: sendButton),
+                    const SizedBox(height: 12),
+                    SizedBox(width: double.infinity, child: scheduleButton),
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: sendButton),
+                  const SizedBox(width: 16),
+                  Expanded(child: scheduleButton),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -737,7 +897,7 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: BauhausDesign.neutral),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Column(

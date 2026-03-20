@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart'; // For DateUtils
 
@@ -17,45 +20,186 @@ class NDISMatcher {
 
   NDISMatcher({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
 
+  Map<String, dynamic> _normalizeSupportItem(Map<String, dynamic> itemData) {
+    if (itemData.containsKey('Support Item Number')) {
+      return Map<String, dynamic>.from(itemData);
+    }
+
+    String asString(dynamic value) => value == null ? '' : value.toString();
+    bool toBool(dynamic value) {
+      if (value is bool) return value;
+      final normalized = value?.toString().trim().toLowerCase();
+      return normalized == 'true' ||
+          normalized == 'yes' ||
+          normalized == 'y' ||
+          normalized == '1';
+    }
+
+    Map<String, dynamic> supportCategory = {};
+    if (itemData['supportCategory'] is Map) {
+      supportCategory =
+          Map<String, dynamic>.from(itemData['supportCategory'] as Map);
+    }
+
+    Map<String, dynamic> registrationGroup = {};
+    if (itemData['registrationGroup'] is Map) {
+      registrationGroup =
+          Map<String, dynamic>.from(itemData['registrationGroup'] as Map);
+    }
+
+    Map<String, dynamic> priceCaps = {};
+    if (itemData['priceCaps'] is Map) {
+      priceCaps = Map<String, dynamic>.from(itemData['priceCaps'] as Map);
+    }
+
+    Map<String, dynamic> standardPrices = {};
+    if (priceCaps['standard'] is Map) {
+      standardPrices =
+          Map<String, dynamic>.from(priceCaps['standard'] as Map).map(
+        (key, value) => MapEntry(key.toString().trim().toUpperCase(), value),
+      );
+    }
+
+    Map<String, dynamic> highIntensityPrices = {};
+    if (priceCaps['highIntensity'] is Map) {
+      highIntensityPrices = Map<String, dynamic>.from(
+        priceCaps['highIntensity'] as Map,
+      ).map(
+        (key, value) => MapEntry(key.toString().trim().toUpperCase(), value),
+      );
+    }
+
+    dynamic resolveRegionalPrice(String stateCode) {
+      final code = stateCode.trim().toUpperCase();
+      return standardPrices[code] ?? itemData[code] ?? itemData[' $code '];
+    }
+
+    return {
+      'Support Item Number':
+          asString(itemData['supportItemNumber'] ?? itemData['itemNumber']),
+      'Support Item Name':
+          asString(itemData['supportItemName'] ?? itemData['itemName']),
+      'Support Category Number': asString(
+        itemData['supportCategoryNumber'] ?? supportCategory['number'],
+      ),
+      'Support Category Name':
+          asString(itemData['supportCategoryName'] ?? supportCategory['name']),
+      'Registration Group Number': asString(
+        itemData['registrationGroupNumber'] ?? registrationGroup['number'],
+      ),
+      'Registration Group Name': asString(
+        itemData['registrationGroupName'] ?? registrationGroup['name'],
+      ),
+      'Unit': asString(itemData['unit']),
+      'Quote': toBool(itemData['quoteRequired'] ?? itemData['isQuotable'])
+          ? 'Yes'
+          : 'No',
+      'Type': asString(
+        itemData['Type'] ??
+            itemData['supportType'] ??
+            itemData['type'] ??
+            itemData['Support Type'] ??
+            'Price Limited Supports',
+      ),
+      'Start date': asString(itemData['startDate']),
+      'End Date': asString(itemData['endDate']),
+      'Support Category Number (PACE)':
+          asString(itemData['supportCategoryNumberPACE']),
+      'Support Category Name (PACE)':
+          asString(itemData['supportCategoryNamePACE']),
+      'Non-Face-to-Face Support Provision': asString(
+        itemData['nonFaceToFaceSupport'] ??
+            itemData['rules']?['allowNonFaceToFace'],
+      ),
+      'Provider Travel': asString(
+        itemData['providerTravel'] ?? itemData['rules']?['allowProviderTravel'],
+      ),
+      'Short Notice Cancellations.': asString(
+        itemData['shortNoticeCancellations'] ??
+            itemData['rules']?['allowShortNoticeCancellation'],
+      ),
+      'NDIA Requested Reports': asString(
+        itemData['ndiaRequestedReports'] ??
+            itemData['rules']?['ndiaRequiresQuote'],
+      ),
+      'Irregular SIL Supports': asString(
+        itemData['irregularSILSupports'] ??
+            itemData['rules']?['isIrregularSupport'],
+      ),
+      ' ACT ': resolveRegionalPrice('ACT'),
+      ' NSW ': resolveRegionalPrice('NSW'),
+      ' NT ': resolveRegionalPrice('NT'),
+      ' QLD ': resolveRegionalPrice('QLD'),
+      ' SA ': resolveRegionalPrice('SA'),
+      ' TAS ': resolveRegionalPrice('TAS'),
+      ' VIC ': resolveRegionalPrice('VIC'),
+      ' WA ': resolveRegionalPrice('WA'),
+      ' Remote ': resolveRegionalPrice('REMOTE'),
+      ' Very Remote ': resolveRegionalPrice('VERY REMOTE'),
+      'P01': itemData['P01'] ?? highIntensityPrices['P01'],
+      'P02': itemData['P02'] ?? highIntensityPrices['P02'],
+    };
+  }
+
+  Future<List<NDISItem>> _loadFromBundledAsset() async {
+    try {
+      log.warning(
+          "NDISMatcher: Falling back to bundled asset assets/ndis_support_items.json.");
+      final payload =
+          await rootBundle.loadString('assets/ndis_support_items.json');
+      final decoded = jsonDecode(payload);
+      if (decoded is! List) {
+        log.warning("NDISMatcher: Bundled asset payload is not a list.");
+        return [];
+      }
+
+      final loadedItems = decoded
+          .whereType<Map>()
+          .map((raw) => NDISItem.fromJson(Map<String, dynamic>.from(raw)))
+          .where((item) => item.itemNumber.isNotEmpty)
+          .toList();
+
+      log.info(
+          "NDISMatcher: Loaded ${loadedItems.length} NDIS items from bundled asset.");
+      return loadedItems;
+    } catch (e, s) {
+      log.severe("NDISMatcher: Failed loading bundled NDIS asset.", e, s);
+      return [];
+    }
+  }
+
   Future<void> loadItems({bool forceReload = false}) async {
     if (_isLoaded && !forceReload) return;
     log.info("NDISMatcher: Loading items from database...");
     try {
-      // Load NDIS items from database instead of JSON file
       final List<Map<String, dynamic>> supportItemsData =
           await _apiMethod.getAllSupportItems();
 
       if (supportItemsData.isEmpty) {
         log.warning("NDISMatcher: No support items found in database.");
-        items = [];
+        items = await _loadFromBundledAsset();
         _isLoaded = true;
         return;
       }
 
-      // Convert database items to NDISItem objects
-      items = supportItemsData.map((itemData) {
-        // Map database fields to NDISItem expected format
-        final mappedData = {
-          'Support Item Number': itemData['supportItemNumber'] ?? '',
-          'Support Item Name': itemData['supportItemName'] ?? '',
-          'Support Category Number': itemData['supportCategoryNumber'] ?? '',
-          'Support Category Name': itemData['supportCategoryName'] ?? '',
-          'Registration Group Number':
-              itemData['registrationGroupNumber'] ?? '',
-          'Registration Group Name': itemData['registrationGroupName'] ?? '',
-          'Unit': itemData['unit'] ?? '',
-          'Quote Required': itemData['quoteRequired'] ?? false,
-          'Support Type': itemData['supportType'] ?? '',
-        };
-        return NDISItem.fromJson(mappedData);
-      }).toList();
+      items = supportItemsData
+          .map(_normalizeSupportItem)
+          .map((itemData) => NDISItem.fromJson(itemData))
+          .where((item) => item.itemNumber.isNotEmpty)
+          .toList();
+
+      if (items.isEmpty) {
+        log.warning(
+            "NDISMatcher: Database returned support items but none could be parsed. Falling back to bundled asset.");
+        items = await _loadFromBundledAsset();
+      }
 
       _isLoaded = true;
-      log.info(
-          "NDISMatcher: Successfully loaded ${items.length} NDIS items from database.");
+      log.info("NDISMatcher: Successfully loaded ${items.length} NDIS items.");
     } catch (e, s) {
       log.severe("NDISMatcher: Failed to load NDIS items from database.", e, s);
-      rethrow; // Or handle more gracefully
+      items = await _loadFromBundledAsset();
+      _isLoaded = true;
     }
   }
 

@@ -10,11 +10,13 @@ class TeamViewModel extends ChangeNotifier {
 
   List<Team> _teams = [];
   List<EmergencyBroadcast> _activeBroadcasts = [];
+  List<TeamMember> _availableUsers = [];
   bool _isLoading = false;
   String? _errorMessage;
 
   List<Team> get teams => _teams;
   List<EmergencyBroadcast> get activeBroadcasts => _activeBroadcasts;
+  List<TeamMember> get availableUsers => _availableUsers;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -23,7 +25,12 @@ class TeamViewModel extends ChangeNotifier {
   Future<void> loadMyTeams() async {
     _setLoading(true);
     try {
-      _teams = await _repository.getMyTeams();
+      final teamsFuture = _repository.getMyTeams();
+      final usersFuture = _repository.getOrganizationUsers();
+      
+      final results = await Future.wait([teamsFuture, usersFuture]);
+      _teams = results[0] as List<Team>;
+      _availableUsers = results[1] as List<TeamMember>;
     } catch (e) {
       _setError(e.toString());
     } finally {
@@ -96,7 +103,16 @@ class TeamViewModel extends ChangeNotifier {
 
   // --- Helpers ---
 
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
   void _setLoading(bool value) {
+    if (_isDisposed) return;
     _isLoading = value;
     _errorMessage = null;
     notifyListeners();

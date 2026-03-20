@@ -94,53 +94,63 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
   }
 
   Widget _buildStatsSection() {
+    final stats = [
+      _ExpenseStatItem(
+        label: 'Scanned',
+        value: '$_scannedReceipts',
+        icon: Icons.receipt_outlined,
+        color: BauhausDesign.primary,
+      ),
+      _ExpenseStatItem(
+        label: 'Auto-Categorized',
+        value: '$_autoCategorized',
+        icon: Icons.auto_awesome_outlined,
+        color: BauhausDesign.secondary,
+      ),
+      _ExpenseStatItem(
+        label: 'Violations',
+        value: '$_policyViolations',
+        icon: Icons.warning_outlined,
+        color: BauhausDesign.warning,
+      ),
+      _ExpenseStatItem(
+        label: 'Total',
+        value: '\$${_totalAmount.toStringAsFixed(2)}',
+        icon: Icons.attach_money_outlined,
+        color: BauhausDesign.success,
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         BauhausSectionHeader(title: 'EXPENSE OVERVIEW'),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                label: 'Scanned',
-                value: '$_scannedReceipts',
-                icon: Icons.receipt_outlined,
-                color: BauhausDesign.primary,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                label: 'Auto-Categorized',
-                value: '$_autoCategorized',
-                icon: Icons.auto_awesome_outlined,
-                color: BauhausDesign.secondary,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                label: 'Violations',
-                value: '$_policyViolations',
-                icon: Icons.warning_outlined,
-                color: BauhausDesign.warning,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                label: 'Total',
-                value: '\$${_totalAmount.toStringAsFixed(2)}',
-                icon: Icons.attach_money_outlined,
-                color: BauhausDesign.success,
-              ),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final columns = constraints.maxWidth >= 860 ? 2 : 1;
+            final cardWidth = columns == 1
+                ? constraints.maxWidth
+                : (constraints.maxWidth - 16) / 2;
+
+            return Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: stats
+                  .map(
+                    (stat) => SizedBox(
+                      width: cardWidth,
+                      child: _buildStatCard(
+                        label: stat.label,
+                        value: stat.value,
+                        icon: stat.icon,
+                        color: stat.color,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            );
+          },
         ),
       ],
     );
@@ -163,7 +173,10 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
               children: [
                 Text(
                   label.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(context).labelSmall,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                 ),
                 Icon(icon, color: color, size: 20),
               ],
@@ -171,10 +184,11 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
             const SizedBox(height: 8),
             Text(
               value,
-              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style:
+                  BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
             ),
           ],
         ),
@@ -194,9 +208,10 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 500;
+              final leadingIcon = Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
@@ -204,12 +219,23 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
                   border: Border.all(color: color, width: 2),
                 ),
                 child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
+              );
+
+              if (isCompact) {
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        leadingIcon,
+                        const Spacer(),
+                        const Icon(
+                          Icons.arrow_forward,
+                          color: BauhausDesign.textDark,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     Text(
                       title.toUpperCase(),
                       style: BauhausDesign.getTextTheme(context)
@@ -219,13 +245,51 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: BauhausDesign.getTextTheme(context).bodySmall,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                          ),
                     ),
                   ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward, color: BauhausDesign.textDark),
-            ],
+                );
+              }
+
+              return Row(
+                children: [
+                  leadingIcon,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title.toUpperCase(),
+                          style: BauhausDesign.getTextTheme(context)
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          description,
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodySmall
+                              ?.copyWith(
+                                color: BauhausDesign.textDark,
+                              ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward,
+                      color: BauhausDesign.textDark),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -255,4 +319,18 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
       const SnackBar(content: Text('Calculating mileage...')),
     );
   }
+}
+
+class _ExpenseStatItem {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  _ExpenseStatItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 }

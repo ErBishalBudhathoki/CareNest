@@ -22,7 +22,8 @@ class AdminMileageDashboard extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'MILEAGE ADMIN',
-          style: textTheme.displaySmall?.copyWith(color: BauhausDesign.textDark),
+          style:
+              textTheme.displaySmall?.copyWith(color: BauhausDesign.textDark),
         ),
         backgroundColor: BauhausDesign.surfaceLight,
         elevation: 0,
@@ -45,11 +46,65 @@ class AdminMileageDashboard extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(
+              BauhausDesign.space4,
+              BauhausDesign.space4,
+              BauhausDesign.space4,
+              0,
+            ),
+            padding: const EdgeInsets.all(BauhausDesign.space3),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceLight,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardSm],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.local_shipping,
+                    color: BauhausDesign.secondary),
+                const SizedBox(width: BauhausDesign.space3),
+                Expanded(
+                  child: Text(
+                    'Trips to review',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space2,
+                    vertical: BauhausDesign.space1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.warning,
+                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                  ),
+                  child: Text(
+                    '${viewModel.pendingTripsCount}',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
           // Header / Stats / Filters
           Container(
-            padding: const EdgeInsets.all(BauhausDesign.space4),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: BauhausDesign.neutral, width: 2)),
+            margin:
+                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding: const EdgeInsets.all(BauhausDesign.space3),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceLight,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardSm],
             ),
             child: Row(
               children: [
@@ -58,7 +113,9 @@ class AdminMileageDashboard extends ConsumerWidget {
                     value: viewModel.filterStatus,
                     items: const ['ALL', 'PENDING', 'APPROVED', 'REJECTED'],
                     onChanged: (val) {
-                      if (val != null) ref.read(adminMileageViewModelProvider).setFilter(val);
+                      if (val != null) {
+                        ref.read(adminMileageViewModelProvider).setFilter(val);
+                      }
                     },
                     label: 'Status',
                   ),
@@ -81,14 +138,17 @@ class AdminMileageDashboard extends ConsumerWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const MileageSettingsView()),
+                            MaterialPageRoute(
+                                builder: (_) => const MileageSettingsView()),
                           );
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
                           decoration: BoxDecoration(
                             color: BauhausDesign.accent,
-                            border: Border.all(color: BauhausDesign.neutral, width: 2),
+                            border: Border.all(
+                                color: BauhausDesign.neutral, width: 2),
                             boxShadow: const [BauhausDesign.shadowHardSm],
                           ),
                           child: Row(
@@ -102,7 +162,8 @@ class AdminMileageDashboard extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Icon(Icons.edit, size: 14, color: BauhausDesign.textDark),
+                              const Icon(Icons.edit,
+                                  size: 14, color: BauhausDesign.textDark),
                             ],
                           ),
                         ),
@@ -113,76 +174,164 @@ class AdminMileageDashboard extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: BauhausDesign.space3),
           // Trip List
           Expanded(
             child: viewModel.isLoading
-                ? const Center(child: CircularProgressIndicator(color: BauhausDesign.primary))
-                : viewModel.filteredTrips.isEmpty
+                ? const Center(
+                    child:
+                        CircularProgressIndicator(color: BauhausDesign.primary))
+                : viewModel.error != null
                     ? Center(
                         child: Text(
-                          'NO TRIPS FOUND',
-                          style: textTheme.headlineLarge?.copyWith(color: BauhausDesign.neutral),
+                          viewModel.error!,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: BauhausDesign.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(BauhausDesign.space4),
-                        itemCount: viewModel.filteredTrips.length,
-                        itemBuilder: (context, index) {
-                          final trip = viewModel.filteredTrips[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => TripReviewScreen(tripId: trip.id),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                decoration: BauhausDesign.cardDecoration,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                                  child: Row(
-                                    children: [
-                                      // Status Indicator
-                                      Container(
-                                        width: 16,
-                                        height: 16,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.rectangle, // Square for Bauhaus
-                                          color: _getStatusColor(trip.status),
-                                          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-                                        ),
+                    : viewModel.filteredTrips.isEmpty
+                        ? Center(
+                            child: Text(
+                              'NO TRIPS FOUND',
+                              style: textTheme.headlineLarge
+                                  ?.copyWith(color: BauhausDesign.neutral),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(
+                              BauhausDesign.space4,
+                              0,
+                              BauhausDesign.space4,
+                              BauhausDesign.space4,
+                            ),
+                            itemCount: viewModel.filteredTrips.length,
+                            itemBuilder: (context, index) {
+                              final trip = viewModel.filteredTrips[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: BauhausDesign.space3),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            TripReviewScreen(tripId: trip.id),
                                       ),
-                                      const SizedBox(width: BauhausDesign.space4),
-                                      // Details
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${trip.employee?.firstName ?? 'Unknown'} ${trip.employee?.lastName ?? ''}',
-                                              style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: BauhausDesign.surfaceLight,
+                                      borderRadius: BorderRadius.circular(
+                                          BauhausDesign.radiusSm),
+                                      border: Border.all(
+                                          color: BauhausDesign.neutral,
+                                          width: 2),
+                                      boxShadow: const [
+                                        BauhausDesign.shadowHardSm
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(
+                                          BauhausDesign.space4),
+                                      child: Row(
+                                        children: [
+                                          // Status Indicator
+                                          Container(
+                                            width: 16,
+                                            height: 16,
+                                            decoration: BoxDecoration(
+                                              shape:
+                                                  BoxShape.rectangle, // Square
+                                              color:
+                                                  _getStatusColor(trip.status),
+                                              border: Border.all(
+                                                  color: BauhausDesign.neutral,
+                                                  width: 1.5),
                                             ),
-                                            Text(
-                                              '${trip.distance} mi • ${trip.tripType.replaceAll('_', ' ')}',
-                                              style: textTheme.bodyMedium,
+                                          ),
+                                          const SizedBox(
+                                              width: BauhausDesign.space4),
+                                          // Details
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${trip.employee?.firstName ?? 'Unknown'} ${trip.employee?.lastName ?? ''}',
+                                                  style: textTheme.bodyLarge
+                                                      ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: BauhausDesign
+                                                              .textDark),
+                                                ),
+                                                Text(
+                                                  '${trip.distance} mi • ${trip.tripType.replaceAll('_', ' ')}',
+                                                  style: textTheme.bodyMedium
+                                                      ?.copyWith(
+                                                    color:
+                                                        BauhausDesign.textMuted,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                    height:
+                                                        BauhausDesign.space2),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal:
+                                                            BauhausDesign
+                                                                .space2,
+                                                        vertical: BauhausDesign
+                                                            .space1,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: _getStatusColor(
+                                                                trip.status)
+                                                            .withOpacity(0.18),
+                                                        border: Border.all(
+                                                          color: BauhausDesign
+                                                              .neutral,
+                                                          width: 1.2,
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        trip.status,
+                                                        style: textTheme
+                                                            .labelSmall
+                                                            ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: BauhausDesign
+                                                              .textDark,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                          // Action Icon
+                                          const Icon(Icons.chevron_right,
+                                              color: BauhausDesign.neutral,
+                                              size: 28),
+                                        ],
                                       ),
-                                      // Action Icon
-                                      const Icon(Icons.chevron_right, color: BauhausDesign.neutral, size: 28),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                              );
+                            },
+                          ),
           ),
         ],
       ),

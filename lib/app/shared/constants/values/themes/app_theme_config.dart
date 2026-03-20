@@ -281,6 +281,7 @@ class AppThemeConfig {
     return ThemeData(
       useMaterial3: true,
       fontFamily: primaryFontFamily,
+      splashFactory: InkRipple.splashFactory,
 
       // Color scheme
       colorScheme: ColorScheme.fromSeed(
@@ -365,6 +366,7 @@ class AppThemeConfig {
     return ThemeData(
       useMaterial3: true,
       fontFamily: primaryFontFamily,
+      splashFactory: InkRipple.splashFactory,
 
       // Color scheme
       colorScheme: ColorScheme.fromSeed(

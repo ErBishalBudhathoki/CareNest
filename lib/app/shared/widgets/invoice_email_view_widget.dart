@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class InvoiceEmailViewWidget extends StatefulWidget {
   //final List<Widget> myWidgets;
@@ -20,7 +18,7 @@ class _InvoiceEmailViewWidgetState extends State<InvoiceEmailViewWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: context.height * 0.40,
+      height: MediaQuery.of(context).size.height * 0.40,
       child: Column(
         children: [
           // Todo: Add the page view here for invoice email View

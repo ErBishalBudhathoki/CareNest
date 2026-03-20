@@ -1,16 +1,13 @@
 import 'package:carenest/app/features/business/viewmodels/add_business_viewmodel.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
-import 'package:carenest/app/shared/widgets/popup_client_details.dart';
-import 'package:carenest/app/shared/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// View for adding business details
-/// Handles all UI logic and user interactions following MVVM pattern
-
+/// Handles UI interactions using the existing viewmodel flow.
 class AddBusinessDetails extends ConsumerStatefulWidget {
   const AddBusinessDetails({super.key});
 
@@ -27,7 +24,12 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
   final _businessCityController = TextEditingController();
   final _businessStateController = TextEditingController();
   final _businessZipController = TextEditingController();
-  final ValueNotifier<bool> textVisibleNotifier = ValueNotifier<bool>(false);
+
+  bool _isProcessingDialogVisible = false;
+
+  bool _isCompactLayout(BuildContext context) {
+    return MediaQuery.of(context).size.width < 390;
+  }
 
   @override
   void dispose() {
@@ -38,97 +40,130 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
     _businessCityController.dispose();
     _businessStateController.dispose();
     _businessZipController.dispose();
-    textVisibleNotifier.dispose();
     super.dispose();
   }
 
-  /// Handles status changes from ViewModel and updates UI accordingly
-  void _handleStatusChange(BuildContext context, AddBusinessStatus status,
-      AddBusinessViewModel viewModel) {
-    // Check if widget is still mounted before handling status changes
+  Color _contentColorOn(Color background) {
+    return ThemeData.estimateBrightnessForColor(background) == Brightness.dark
+        ? BauhausDesign.surfaceWhite
+        : BauhausDesign.textDark;
+  }
+
+  void _dismissProcessingDialogIfVisible() {
+    if (!mounted || !_isProcessingDialogVisible) return;
+    Navigator.of(context, rootNavigator: true).maybePop();
+    _isProcessingDialogVisible = false;
+  }
+
+  /// Handles status changes from ViewModel and updates UI accordingly.
+  void _handleStatusChange(
+    BuildContext context,
+    AddBusinessStatus status,
+    AddBusinessViewModel viewModel,
+  ) {
     if (!mounted) return;
 
     switch (status) {
-      case AddBusinessStatus.success:
-        // Close any open dialog if possible
-        if (Navigator.canPop(context)) {
-          Navigator.of(context).pop();
+      case AddBusinessStatus.processing:
+        if (!_isProcessingDialogVisible) {
+          _showProcessingDialog(context);
         }
+        break;
+      case AddBusinessStatus.success:
+        _dismissProcessingDialogIfVisible();
         _handleSuccess(context, viewModel);
         break;
       case AddBusinessStatus.error:
-        // Close any open dialog if possible
-        if (Navigator.canPop(context)) {
-          Navigator.of(context).pop();
-        }
+        _dismissProcessingDialogIfVisible();
         _handleError(context, viewModel);
         break;
       case AddBusinessStatus.idle:
-        // Do nothing for idle state
-        break;
-      case AddBusinessStatus.processing:
-        // TODO: Handle this case.
         break;
     }
   }
 
-  /// Shows processing dialog
+  /// Shows processing dialog.
   void _showProcessingDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    _isProcessingDialogVisible = true;
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+          side: const BorderSide(
+            color: BauhausDesign.neutral,
+            width: BauhausDesign.borderThick,
+          ),
+        ),
         backgroundColor: BauhausDesign.surfaceWhite,
         content: Row(
           children: [
-            CircularProgressIndicator(color: BauhausDesign.primary),
-            SizedBox(width: BauhausDesign.space4),
-            Text(l10n.addingBusinessMessage,
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
+            const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                color: BauhausDesign.primary,
+              ),
+            ),
+            const SizedBox(width: BauhausDesign.space3),
+            Expanded(
+              child: Text(
+                l10n.addingBusinessMessage,
+                style: BauhausDesign.getTextTheme(dialogContext).bodyMedium,
+              ),
+            ),
           ],
         ),
       ),
-    );
+    ).then((_) {
+      _isProcessingDialogVisible = false;
+    });
   }
 
-  /// Handles success state
+  /// Handles success state.
   void _handleSuccess(BuildContext context, AddBusinessViewModel viewModel) {
-    // Check if context is still mounted before showing dialog
     if (!mounted) return;
 
     final l10n = AppLocalizations.of(context)!;
-
-    // Show success dialog first, then navigate back when user clicks OK
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
+      builder: (dialogContext) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+            side: const BorderSide(
+              color: BauhausDesign.neutral,
+              width: BauhausDesign.borderThick,
+            ),
+          ),
           backgroundColor: BauhausDesign.surfaceWhite,
-          title: Text(l10n.success,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      )),
+          title: Text(
+            l10n.success.toUpperCase(),
+            style: BauhausDesign.getTextTheme(dialogContext)
+                .headlineSmall
+                ?.copyWith(fontWeight: FontWeight.w900),
+          ),
           content: Text(
             l10n.businessAddedSuccess,
-            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  height: 1.5,
-                  fontWeight: FontWeight.w800,
-                ),
+            style:
+                BauhausDesign.getTextTheme(dialogContext).bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
           ),
           actions: [
             BauhausActionButton(
+              text: l10n.ok.toUpperCase(),
+              variant: BauhausActionVariant.primary,
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Close dialog
-                // Check if the original context is still valid before navigating
+                Navigator.of(dialogContext).pop();
                 if (mounted && Navigator.canPop(context)) {
-                  Navigator.of(context).pop(); // Go back to previous screen
+                  Navigator.of(context).pop();
                 }
               },
-              text: l10n.ok,
-              variant: BauhausActionVariant.primary,
-            )
+            ),
           ],
         );
       },
@@ -136,107 +171,103 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
     viewModel.resetStatus();
   }
 
-  /// Handles error state
+  /// Handles error state.
   void _handleError(BuildContext context, AddBusinessViewModel viewModel) {
     final l10n = AppLocalizations.of(context)!;
-    Navigator.of(context, rootNavigator: true).maybePop();
     final errorMessage = viewModel.errorMessage ?? l10n.businessAddFailed;
-    popUpClientDetails(context, "error", "Business");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+        backgroundColor: BauhausDesign.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        ),
+      ),
+    );
     viewModel.resetStatus();
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
     final viewModel = ref.watch(addBusinessViewModelProvider);
     final l10n = AppLocalizations.of(context)!;
+    final isCompact = _isCompactLayout(context);
+    final horizontalPadding =
+        isCompact ? BauhausDesign.space3 : BauhausDesign.space4;
+    final sectionSpacing =
+        isCompact ? BauhausDesign.space3 : BauhausDesign.space4;
+
     return ValueListenableBuilder<AddBusinessStatus>(
       valueListenable: viewModel.addBusinessStatus,
       builder: (context, status, _) {
-        // Handle status changes with proper UI responses
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _handleStatusChange(context, status, viewModel);
         });
+
+        final isSubmitting = status == AddBusinessStatus.processing;
         return Scaffold(
           backgroundColor: BauhausDesign.backgroundLight,
           appBar: AppBar(
             elevation: 0,
-            backgroundColor: BauhausDesign.surfaceWhite,
-            surfaceTintColor: Colors.transparent,
-            foregroundColor: BauhausDesign.textDark,
-            iconTheme: IconThemeData(
-              color: BauhausDesign.textDark,
-            ),
+            backgroundColor: BauhausDesign.secondary,
+            foregroundColor: BauhausDesign.surfaceWhite,
             title: Text(
-              l10n.addBusinessTitle,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textDark,
-                      ),
+              l10n.addBusinessTitle.toUpperCase(),
+              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: BauhausDesign.surfaceWhite,
+                    letterSpacing: 1.0,
+                  ),
             ),
             centerTitle: true,
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(
+                height: 1,
+                color: BauhausDesign.neutral,
+              ),
+            ),
           ),
-          body: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(BauhausDesign.space6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header Section
-                  BauhausCard(
-                    padding: EdgeInsets.all(BauhausDesign.space6),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.business_rounded,
-                          size: 48,
-                          color: BauhausDesign.primary,
-                        ),
-                        SizedBox(height: BauhausDesign.space3),
-                        Text(
-                          l10n.newBusinessTitle,
-                          style: BauhausDesign.getTextTheme(context)
-                              .headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: BauhausDesign.primary,
-                              ),
-                        ),
-                        SizedBox(height: BauhausDesign.space2),
-                        Text(
-                          l10n.addBusinessDesc,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  horizontalPadding,
+                  horizontalPadding,
+                  isCompact ? BauhausDesign.space6 : BauhausDesign.space8,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeroCard(context, l10n, isCompact: isCompact),
+                    SizedBox(height: sectionSpacing),
+                    _buildBusinessInfoSection(context, l10n,
+                        isCompact: isCompact),
+                    SizedBox(height: sectionSpacing),
+                    _buildContactInfoSection(context, l10n,
+                        isCompact: isCompact),
+                    SizedBox(height: sectionSpacing),
+                    _buildAddressInfoSection(context, l10n,
+                        isCompact: isCompact),
+                    SizedBox(
+                        height: isCompact
+                            ? BauhausDesign.space5
+                            : BauhausDesign.space6),
+                    _buildActionButtons(
+                      context,
+                      l10n,
+                      viewModel,
+                      isSubmitting,
+                      isCompact: isCompact,
                     ),
-                  ),
-                  SizedBox(height: BauhausDesign.space8),
-                  _buildSectionHeader(context, l10n.businessInformation,
-                      Icons.business_rounded),
-                  SizedBox(height: BauhausDesign.space4),
-                  _buildBusinessInfoSection(context, theme, l10n),
-                  SizedBox(height: BauhausDesign.space8),
-                  _buildSectionHeader(context, l10n.contactInformation,
-                      Icons.contact_mail_rounded),
-                  SizedBox(height: BauhausDesign.space4),
-                  _buildContactInfoSection(context, theme, l10n),
-                  SizedBox(height: BauhausDesign.space8),
-                  _buildSectionHeader(context, l10n.addressInformation,
-                      Icons.location_on_rounded),
-                  SizedBox(height: BauhausDesign.space4),
-                  _buildAddressInfoSection(context, theme, l10n),
-                  SizedBox(height: BauhausDesign.space10),
-                  _buildSubmitButton(viewModel, theme, context, l10n),
-                  SizedBox(height: BauhausDesign.space6),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -245,255 +276,482 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
     );
   }
 
-  Widget _buildSectionHeader(
-      BuildContext context, String title, IconData icon) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(BauhausDesign.space2),
-          decoration: BoxDecoration(
-            color: BauhausDesign.primary,
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+  Widget _buildHeroCard(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    const heroColor = BauhausDesign.secondary;
+    final foreground = _contentColorOn(heroColor);
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: heroColor,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHard],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(
+              isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: isCompact ? 40 : 44,
+                  height: isCompact ? 40 : 44,
+                  decoration: BoxDecoration(
+                    color: foreground.withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                    border: Border.all(color: BauhausDesign.neutral),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.business_rounded,
+                    color: foreground,
+                    size: isCompact ? 22 : 24,
+                  ),
+                ),
+                SizedBox(
+                    width: isCompact
+                        ? BauhausDesign.space2
+                        : BauhausDesign.space3),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.newBusinessTitle.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context)
+                            .titleLarge
+                            ?.copyWith(
+                              color: foreground,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.8,
+                            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: BauhausDesign.space1),
+                      Text(
+                        l10n.addBusinessDesc,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodySmall
+                            ?.copyWith(
+                              color: foreground.withOpacity(0.92),
+                            ),
+                        maxLines: isCompact ? 3 : 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: BauhausDesign.surfaceWhite,
-          ),
-        ),
-        SizedBox(width: BauhausDesign.space3),
-        Text(
-          title,
-          style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: BauhausDesign.textDark,
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal:
+                  isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+              vertical: isCompact ? BauhausDesign.space2 : BauhausDesign.space3,
+            ),
+            decoration: const BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border(
+                top: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
+            ),
+            child: Text(
+              'ENTER BUSINESS DETAILS',
+              style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                    color: BauhausDesign.secondary,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color accentColor,
+    required List<Widget> children,
+    required bool isCompact,
+  }) {
+    final iconForeground = _contentColorOn(accentColor);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 8,
+            decoration: BoxDecoration(
+              color: accentColor,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(BauhausDesign.radiusLg - 2),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(
+              isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: isCompact ? 32 : 36,
+                      height: isCompact ? 32 : 36,
+                      decoration: BoxDecoration(
+                        color: accentColor,
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        border: Border.all(color: BauhausDesign.neutral),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        icon,
+                        size: isCompact ? 16 : 18,
+                        color: iconForeground,
+                      ),
+                    ),
+                    SizedBox(
+                        width: isCompact
+                            ? BauhausDesign.space2
+                            : BauhausDesign.space3),
+                    Expanded(
+                      child: Text(
+                        title.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.8,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height:
+                      isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+                ),
+                ...children,
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBusinessInfoSection(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    return _buildSectionCard(
+      context,
+      title: l10n.businessInformation,
+      icon: Icons.business_center_outlined,
+      accentColor: BauhausDesign.primary,
+      isCompact: isCompact,
+      children: [
+        BauhausTextField(
+          label: l10n.businessName.toUpperCase(),
+          hintText: l10n.businessName,
+          controller: _businessNameController,
+          prefixIcon: const Icon(Icons.business_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) return l10n.businessNameRequired;
+            return null;
+          },
         ),
       ],
     );
   }
 
-  Widget _buildBusinessInfoSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
-    return BauhausCard(
-      padding: EdgeInsets.all(BauhausDesign.space5),
-      child: Column(
-        children: [
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.businessName,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.businessNameRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.business_outlined,
-            suffixIconData: null,
-            controller: _businessNameController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _businessNameController.text = value!;
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildContactInfoSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
-    return BauhausCard(
-      padding: EdgeInsets.all(BauhausDesign.space5),
-      child: Column(
-        children: [
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.businessEmail,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.businessEmailRequired;
-              }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                  .hasMatch(value)) {
-                return l10n.emailInvalid;
-              }
-              return null;
-            },
-            prefixIconData: Icons.email_outlined,
-            suffixIconData: null,
-            controller: _businessEmailController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _businessEmailController.text = value!;
-            },
-          ),
-          SizedBox(height: BauhausDesign.space4),
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.businessPhone,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.businessPhoneRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.phone_outlined,
-            suffixIconData: null,
-            controller: _businessPhoneController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _businessPhoneController.text = value!;
-            },
-          ),
-        ],
-      ),
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    return _buildSectionCard(
+      context,
+      title: l10n.contactInformation,
+      icon: Icons.contact_mail_outlined,
+      accentColor: BauhausDesign.secondary,
+      isCompact: isCompact,
+      children: [
+        BauhausTextField(
+          label: l10n.businessEmail.toUpperCase(),
+          hintText: l10n.businessEmail,
+          keyboardType: TextInputType.emailAddress,
+          controller: _businessEmailController,
+          prefixIcon: const Icon(Icons.email_outlined, size: 20),
+          validator: (value) {
+            final email = (value ?? '').trim();
+            if (email.isEmpty) return l10n.businessEmailRequired;
+            if (!RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+              return l10n.emailInvalid;
+            }
+            return null;
+          },
+        ),
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        BauhausTextField(
+          label: l10n.businessPhone.toUpperCase(),
+          hintText: l10n.businessPhone,
+          keyboardType: TextInputType.phone,
+          controller: _businessPhoneController,
+          prefixIcon: const Icon(Icons.phone_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) return l10n.businessPhoneRequired;
+            return null;
+          },
+        ),
+      ],
     );
   }
 
   Widget _buildAddressInfoSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
-    return BauhausCard(
-      padding: EdgeInsets.all(BauhausDesign.space5),
-      child: Column(
-        children: [
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.businessAddress,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.businessAddressRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.home_outlined,
-            suffixIconData: null,
-            controller: _businessAddressController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _businessAddressController.text = value!;
-            },
-          ),
-          SizedBox(height: BauhausDesign.space4),
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isCompact,
+  }) {
+    return _buildSectionCard(
+      context,
+      title: l10n.addressInformation,
+      icon: Icons.location_on_outlined,
+      accentColor: BauhausDesign.accent,
+      isCompact: isCompact,
+      children: [
+        BauhausTextField(
+          label: l10n.addressLine1.toUpperCase(),
+          hintText: l10n.businessAddress,
+          controller: _businessAddressController,
+          prefixIcon: const Icon(Icons.home_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) {
+              return l10n.businessAddressRequired;
+            }
+            return null;
+          },
+        ),
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        if (isCompact)
+          Column(
+            children: [
+              BauhausTextField(
+                label: l10n.city.toUpperCase(),
+                hintText: l10n.city,
+                controller: _businessCityController,
+                prefixIcon: const Icon(Icons.location_city_outlined, size: 20),
+                validator: (value) {
+                  if ((value ?? '').trim().isEmpty) return l10n.cityRequired;
+                  return null;
+                },
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              BauhausTextField(
+                label: l10n.state.toUpperCase(),
+                hintText: l10n.state,
+                controller: _businessStateController,
+                prefixIcon: const Icon(Icons.map_outlined, size: 20),
+                validator: (value) {
+                  if ((value ?? '').trim().isEmpty) return l10n.stateRequired;
+                  return null;
+                },
+              ),
+            ],
+          )
+        else
           Row(
             children: [
               Expanded(
-                flex: 2,
-                child: TextFieldWidget(
-                  suffixIconClickable: false,
-                  obscureTextNotifier: textVisibleNotifier,
+                flex: 7,
+                child: BauhausTextField(
+                  label: l10n.city.toUpperCase(),
                   hintText: l10n.city,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return l10n.cityRequired;
-                    }
-                    return null;
-                  },
-                  prefixIconData: Icons.location_city_outlined,
-                  suffixIconData: null,
                   controller: _businessCityController,
-                  onChanged: (value) {},
-                  onSaved: (value) {
-                    _businessCityController.text = value!;
+                  prefixIcon:
+                      const Icon(Icons.location_city_outlined, size: 20),
+                  validator: (value) {
+                    if ((value ?? '').trim().isEmpty) return l10n.cityRequired;
+                    return null;
                   },
                 ),
               ),
-              SizedBox(width: BauhausDesign.space3),
+              const SizedBox(width: BauhausDesign.space3),
               Expanded(
-                child: TextFieldWidget(
-                  suffixIconClickable: false,
-                  obscureTextNotifier: textVisibleNotifier,
+                flex: 8,
+                child: BauhausTextField(
+                  label: l10n.state.toUpperCase(),
                   hintText: l10n.state,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return l10n.stateRequired;
-                    }
-                    return null;
-                  },
-                  prefixIconData: Icons.map_outlined,
-                  suffixIconData: null,
                   controller: _businessStateController,
-                  onChanged: (value) {},
-                  onSaved: (value) {
-                    _businessStateController.text = value!;
+                  prefixIcon: const Icon(Icons.map_outlined, size: 20),
+                  validator: (value) {
+                    if ((value ?? '').trim().isEmpty) return l10n.stateRequired;
+                    return null;
                   },
                 ),
               ),
             ],
           ),
-          SizedBox(height: BauhausDesign.space4),
-          TextFieldWidget(
-            suffixIconClickable: false,
-            obscureTextNotifier: textVisibleNotifier,
-            hintText: l10n.zipCodeHint,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return l10n.zipCodeRequired;
-              }
-              return null;
-            },
-            prefixIconData: Icons.code_outlined,
-            suffixIconData: null,
-            controller: _businessZipController,
-            onChanged: (value) {},
-            onSaved: (value) {
-              _businessZipController.text = value!;
-            },
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        BauhausTextField(
+          label: l10n.postcodeLabel.toUpperCase(),
+          hintText: l10n.zipCodeHint,
+          keyboardType: TextInputType.number,
+          controller: _businessZipController,
+          prefixIcon: const Icon(Icons.code_outlined, size: 20),
+          validator: (value) {
+            if ((value ?? '').trim().isEmpty) return l10n.zipCodeRequired;
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons(
+    BuildContext context,
+    AppLocalizations l10n,
+    AddBusinessViewModel viewModel,
+    bool isSubmitting, {
+    required bool isCompact,
+  }) {
+    if (isCompact) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          BauhausActionButton(
+            text: l10n.addBusinessButton.toUpperCase(),
+            variant: BauhausActionVariant.primary,
+            icon: Icons.check_rounded,
+            isLoading: isSubmitting,
+            onPressed: isSubmitting
+                ? null
+                : () => _handleSubmit(context, viewModel, l10n),
+            isFullWidth: true,
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          BauhausActionButton(
+            text: l10n.cancelButton.toUpperCase(),
+            isOutlined: true,
+            onPressed: isSubmitting ? null : () => Navigator.of(context).pop(),
+            isFullWidth: true,
           ),
         ],
-      ),
+      );
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: BauhausActionButton(
+            text: l10n.cancelButton.toUpperCase(),
+            isOutlined: true,
+            onPressed: isSubmitting ? null : () => Navigator.of(context).pop(),
+            isFullWidth: true,
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space3),
+        Expanded(
+          child: BauhausActionButton(
+            text: l10n.addBusinessButton.toUpperCase(),
+            variant: BauhausActionVariant.primary,
+            icon: Icons.check_rounded,
+            isLoading: isSubmitting,
+            onPressed: isSubmitting
+                ? null
+                : () => _handleSubmit(context, viewModel, l10n),
+            isFullWidth: true,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildSubmitButton(AddBusinessViewModel viewModel, ThemeData theme,
-      BuildContext context, AppLocalizations l10n) {
-    return SizedBox(
-      width: double.infinity,
-      child: BauhausActionButton(
-        text: l10n.addBusinessButton,
-        variant: BauhausActionVariant.primary,
-        onPressed: () => _handleSubmit(context, viewModel, l10n),
-      ),
-    );
-  }
-
-  /// Handles form submission with validation and confirmation
-  void _handleSubmit(BuildContext context, AddBusinessViewModel viewModel,
-      AppLocalizations l10n) {
+  /// Handles form submission with validation and confirmation.
+  void _handleSubmit(
+    BuildContext context,
+    AddBusinessViewModel viewModel,
+    AppLocalizations l10n,
+  ) {
     if (_formKey.currentState!.validate()) {
       _showConfirmationDialog(context, viewModel, l10n);
     }
   }
 
-  /// Shows confirmation dialog before submitting
-  void _showConfirmationDialog(BuildContext context,
-      AddBusinessViewModel viewModel, AppLocalizations l10n) {
+  /// Shows confirmation dialog before submitting.
+  void _showConfirmationDialog(
+    BuildContext context,
+    AddBusinessViewModel viewModel,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (dialogContext) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+            side: const BorderSide(
+              color: BauhausDesign.neutral,
+              width: BauhausDesign.borderThick,
+            ),
+          ),
           backgroundColor: BauhausDesign.surfaceWhite,
-          title: Text(l10n.addBusinessTitle,
-              style: BauhausDesign.getTextTheme(context).headlineSmall),
-          content: Text(l10n.confirmAddBusiness,
-              style: BauhausDesign.getTextTheme(context).bodyMedium),
+          title: Text(
+            l10n.addBusinessTitle.toUpperCase(),
+            style: BauhausDesign.getTextTheme(dialogContext)
+                .headlineMedium
+                ?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          content: Text(
+            l10n.confirmAddBusiness,
+            style: BauhausDesign.getTextTheme(dialogContext).bodyMedium,
+          ),
           actions: [
             BauhausActionButton(
-              onPressed: () => Navigator.of(context).pop(),
-              text: l10n.cancelButton,
+              text: l10n.cancelButton.toUpperCase(),
               variant: BauhausActionVariant.ghost,
+              onPressed: () => Navigator.of(dialogContext).pop(),
             ),
             BauhausActionButton(
+              text: l10n.addBusinessButton.toUpperCase(),
+              variant: BauhausActionVariant.primary,
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
                 _submitBusinessData(viewModel);
               },
-              text: l10n.addBusinessButton,
-              variant: BauhausActionVariant.primary,
             ),
           ],
         );
@@ -501,16 +759,16 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
     );
   }
 
-  /// Submits business data to ViewModel
+  /// Submits business data to ViewModel.
   void _submitBusinessData(AddBusinessViewModel viewModel) {
     final businessData = {
-      'businessName': _businessNameController.text,
-      'businessEmail': _businessEmailController.text,
-      'businessPhone': _businessPhoneController.text,
-      'businessAddress': _businessAddressController.text,
-      'businessCity': _businessCityController.text,
-      'businessState': _businessStateController.text,
-      'businessZip': _businessZipController.text,
+      'businessName': _businessNameController.text.trim(),
+      'businessEmail': _businessEmailController.text.trim(),
+      'businessPhone': _businessPhoneController.text.trim(),
+      'businessAddress': _businessAddressController.text.trim(),
+      'businessCity': _businessCityController.text.trim(),
+      'businessState': _businessStateController.text.trim(),
+      'businessZip': _businessZipController.text.trim(),
     };
     viewModel.addBusiness(businessData);
   }
