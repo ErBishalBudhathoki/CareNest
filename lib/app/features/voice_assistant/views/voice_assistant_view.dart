@@ -135,7 +135,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       return;
     }
 
-    if (command.actionType == 'navigate' && command.canOpenRoute) {
+    if (command.executed &&
+        command.actionType == 'navigate' &&
+        command.canOpenRoute) {
       await _openSuggestedRoute(command);
       return;
     }
@@ -452,6 +454,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
 
   Widget _buildCommandCard(VoiceCommand command) {
     final preview = _buildResultPreview(command);
+    final showOpenInAppButton =
+        command.canOpenRoute &&
+        !(command.detectedIntent == 'assignment_manage' && !command.executed);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -568,7 +573,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                     .toList(),
               ),
             ],
-            if (command.canOpenRoute) ...[
+            if (showOpenInAppButton) ...[
               const SizedBox(height: 12),
               Align(
                 alignment: Alignment.centerLeft,
@@ -827,6 +832,12 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     final missingFields = (data['missingFields'] as List<dynamic>? ?? const [])
         .map((item) => item.toString())
         .toList();
+    final candidates = data['candidates'] is Map
+        ? Map<String, dynamic>.from(data['candidates'] as Map)
+        : const <String, dynamic>{};
+    final ndisCandidates = (candidates['ndisItems'] as List<dynamic>? ?? const [])
+        .map((item) => Map<String, dynamic>.from(item as Map))
+        .toList();
 
     final summaryTiles = <Widget>[
       if (employee.isNotEmpty)
@@ -877,7 +888,98 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                 ),
           ),
         ],
+        if (missingFields.length == 1 &&
+            missingFields.first == 'ndisItem' &&
+            ndisCandidates.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text(
+            'Select the NDIS support item to continue',
+            style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+          const SizedBox(height: 8),
+          ...ndisCandidates.map(_buildNdisCandidateTile),
+        ],
       ],
+    );
+  }
+
+  Widget _buildNdisCandidateTile(Map<String, dynamic> item) {
+    final itemNumber = item['itemNumber']?.toString().trim() ?? '';
+    final itemName = item['itemName']?.toString().trim() ?? 'NDIS Item';
+    final subtitle = [
+      item['description']?.toString().trim(),
+      item['unit']?.toString().trim().isNotEmpty == true
+          ? 'Unit ${item['unit']}'
+          : null,
+    ].whereType<String>().where((value) => value.isNotEmpty).join(' • ');
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        onTap: () => _processCommand('Use NDIS item $itemNumber'),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceLight,
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            border: Border.all(color: BauhausDesign.neutral),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      itemName,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      itemNumber,
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    if (subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: BauhausDesign.getTextTheme(context)
+                            .bodySmall
+                            ?.copyWith(color: BauhausDesign.textMuted),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              OutlinedButton(
+                onPressed: () => _processCommand('Use NDIS item $itemNumber'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: BauhausDesign.textDark,
+                  side: const BorderSide(color: BauhausDesign.neutral),
+                ),
+                child: const Text('Select'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
