@@ -26,7 +26,12 @@ class BusinessListViewModel extends ChangeNotifier {
       _status = BusinessListStatus.loading;
       notifyListeners();
 
-      final organizationId = _ref.read(organizationIdProvider);
+      var organizationId = _ref.read(organizationIdProvider);
+      if (organizationId == null || organizationId.isEmpty) {
+        final prefs = _ref.read(sharedPreferencesProvider);
+        await prefs.init();
+        organizationId = prefs.getOrganizationId();
+      }
 
       if (organizationId == null || organizationId.isEmpty) {
         _status = BusinessListStatus.error;
@@ -56,6 +61,58 @@ class BusinessListViewModel extends ChangeNotifier {
 
   void refresh() {
     loadBusinesses();
+  }
+
+  Future<Map<String, dynamic>> updateBusiness({
+    required String businessId,
+    required String businessName,
+    required String businessEmail,
+    required String businessPhone,
+    required String businessAddress,
+    required String businessCity,
+    required String businessState,
+    required String businessZip,
+    required String userEmail,
+    required String organizationId,
+  }) async {
+    final response = await _apiMethod.updateBusiness(
+      businessId: businessId,
+      businessName: businessName,
+      businessEmail: businessEmail,
+      businessPhone: businessPhone,
+      businessAddress: businessAddress,
+      businessCity: businessCity,
+      businessState: businessState,
+      businessZip: businessZip,
+      userEmail: userEmail,
+      organizationId: organizationId,
+    );
+
+    if (response['success'] == true) {
+      await loadBusinesses();
+      return response;
+    }
+
+    throw Exception(response['message'] ?? 'Failed to update business');
+  }
+
+  Future<Map<String, dynamic>> deleteBusiness({
+    required String businessId,
+    required String userEmail,
+    required String organizationId,
+  }) async {
+    final response = await _apiMethod.deleteBusiness(
+      businessId: businessId,
+      userEmail: userEmail,
+      organizationId: organizationId,
+    );
+
+    if (response['success'] == true) {
+      await loadBusinesses();
+      return response;
+    }
+
+    throw Exception(response['message'] ?? 'Failed to delete business');
   }
 }
 

@@ -1,3 +1,6 @@
+import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
+import 'package:carenest/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
@@ -11,6 +14,8 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
+  final SessionTimeoutService _sessionTimeoutService = SessionTimeoutService();
+
   @override
   void initState() {
     super.initState();
@@ -18,32 +23,88 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    // Wait for a minimum splash duration to show your branding.
     await Future.delayed(const Duration(seconds: 2));
 
-    // The manual call to load surface notifications has been removed.
-    // The NotificationNotifier now handles its own loading in its constructor,
-    // which is more robust and simplifies the startup logic here.
-
-    // Check if a deep link was handled to prevent double navigation.
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (!main.isDeepLinkHandled() && mounted) {
-      // Check if user is already logged in.
       final sharedPrefs = SharedPreferencesUtils();
       await sharedPrefs.init();
 
       final userEmail = await sharedPrefs.getUserEmailFromSharedPreferences();
+      final role = sharedPrefs.getRole();
 
-      if (userEmail != null && userEmail.isNotEmpty) {
-        // User is logged in, but we need to verify they have a proper session.
-        // Instead of auto-navigating to home, redirect to login for proper authentication.
-        Navigator.of(context).pushReplacementNamed('/login');
+      if (userEmail != null && userEmail.isNotEmpty && role != null) {
+        final isValidSession = await _validateAuthSession();
+
+        if (!isValidSession) {
+          debugPrint('⚠️ Auth session invalid/expired, redirecting to login');
+          if (mounted) {
+            Navigator.of(context).pushReplacementNamed('/login');
+          }
+          return;
+        }
+
+        if (!mounted) return;
+
+        if (role == UserRole.admin) {
+          Navigator.of(context).pushReplacementNamed(
+            Routes.bottomNavBar,
+            arguments: {
+              'email': userEmail,
+              'role': UserRole.admin,
+              'organizationId': sharedPrefs.getOrganizationId(),
+              'organizationName': sharedPrefs.getString('organizationName'),
+              'organizationCode': sharedPrefs.getOrganizationCode(),
+            },
+          );
+        } else if (role == UserRole.client) {
+          final clientId = sharedPrefs.getString('clientId') ?? '';
+          if (clientId.isEmpty) {
+            debugPrint(
+                '⚠️ Missing clientId for client session, forcing re-login');
+            await _sessionTimeoutService.logoutAndClearSession(
+              reason: 'missing_client_id_on_splash',
+            );
+            if (!mounted) return;
+            Navigator.of(context).pushReplacementNamed(Routes.login);
+            return;
+          }
+
+          Navigator.of(context).pushReplacementNamed(
+            Routes.clientDashboard,
+            arguments: {'email': userEmail, 'clientId': clientId},
+          );
+        } else {
+          Navigator.of(context).pushReplacementNamed(
+            Routes.bottomNavBar,
+            arguments: {
+              'email': userEmail,
+              'role': UserRole.normal,
+              'organizationId': sharedPrefs.getOrganizationId(),
+              'organizationName': sharedPrefs.getString('organizationName'),
+              'organizationCode': sharedPrefs.getOrganizationCode(),
+            },
+          );
+        }
       } else {
-        // User not logged in, navigate to login.
+        await _sessionTimeoutService.logoutAndClearSession(
+          reason: 'missing_local_session_state_on_splash',
+        );
+        if (!mounted) return;
         Navigator.of(context).pushReplacementNamed('/login');
       }
     }
+  }
+
+  Future<bool> _validateAuthSession() async {
+    final isValid = await _sessionTimeoutService.isSessionValid();
+    if (!isValid) {
+      await _sessionTimeoutService.logoutAndClearSession(
+        reason: 'startup_session_validation_failed_or_expired',
+      );
+    }
+    return isValid;
   }
 
   @override

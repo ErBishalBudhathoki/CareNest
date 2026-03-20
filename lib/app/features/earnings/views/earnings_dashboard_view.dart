@@ -731,7 +731,15 @@ class EarningsDashboardView extends ConsumerWidget {
                         const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
                   lineTouchData: LineTouchData(
-                    getTouchedSpotIndicator: (barData, spotIndexes) => [],
+                    getTouchedSpotIndicator: (barData, spotIndexes) => spotIndexes
+                        .map((index) => TouchedSpotIndicatorData(
+                              FlLine(
+                                  color: Colors.white24,
+                                  strokeWidth: 1),
+                              const FlDotData(show: false),
+                            ))
+                        .toList(),
+                    touchSpotThreshold: 30,
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (_) => Colors.white70,
                       getTooltipItems: (spots) => spots

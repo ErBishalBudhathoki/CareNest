@@ -1,19 +1,18 @@
 import 'dart:typed_data';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
+import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
 import 'package:carenest/app/features/organization/views/organization_details_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
-import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/routes/app_pages.dart';
+import 'package:carenest/app/services/firebase_auth_service.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
-import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/security/views/api_usage_dashboard_view.dart';
 import 'package:carenest/app/features/pricing/views/pricing_analytics_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -21,6 +20,7 @@ import 'package:carenest/app/features/settings/views/date_format_settings_view.d
 import 'package:carenest/app/features/photo/views/photo_upload_view.dart';
 import 'package:carenest/app/features/feedback/views/feedback_form_view.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
+import 'package:carenest/app/features/settings/widgets/bauhaus_settings_widgets.dart';
 
 /// Modernized Settings View using Bauhaus Design System
 class SettingsView extends ConsumerStatefulWidget {
@@ -30,6 +30,7 @@ class SettingsView extends ConsumerStatefulWidget {
   final String userEmail;
   final String userName;
   final Uint8List? photoData;
+  final String? imageUrl;
   final VoidCallback? onPhotoUpdated;
 
   const SettingsView({
@@ -40,6 +41,7 @@ class SettingsView extends ConsumerStatefulWidget {
     required this.userEmail,
     required this.userName,
     this.photoData,
+    this.imageUrl,
     this.onPhotoUpdated,
   });
 
@@ -48,17 +50,25 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
+
   // App version info
   String _version = '';
   String _buildNumber = '';
   // Local photo data to show immediate updates
   Uint8List? _currentPhotoData;
+  bool _isEmailVerified = false;
+  bool _isEmailVerificationLoading = false;
 
   @override
   void initState() {
     super.initState();
     _currentPhotoData = widget.photoData;
     _initPackageInfo();
+    _isEmailVerified = _firebaseAuthService.currentUser?.emailVerified ?? false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshEmailVerificationStatus(showFeedback: false);
+    });
   }
 
   // --- Owner-only secret gesture state ---
@@ -113,6 +123,87 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     }
   }
 
+  Future<void> _openEmployeeDashboardMode() async {
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          backgroundColor: BauhausDesign.surfaceLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          ),
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: BauhausDesign.primary,
+                ),
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.loadingDashboard,
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodyMedium
+                      ?.copyWith(color: BauhausDesign.textDark),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      await apiMethod
+          .getInitData(widget.userEmail)
+          .timeout(const Duration(seconds: 8));
+    } catch (e) {
+      debugPrint('Employee dashboard warmup failed: $e');
+    } finally {
+      if (mounted && Navigator.of(context, rootNavigator: true).canPop()) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+    }
+
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.bottomNavBar,
+      arguments: {
+        'email': widget.userEmail,
+        'role': UserRole.normal,
+        'organizationId': widget.organizationId,
+        'organizationName': widget.organizationName,
+        'organizationCode': widget.organizationCode,
+      },
+    );
+  }
+
+  void _openAdminDashboardMode() {
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.bottomNavBar,
+      arguments: {
+        'email': widget.userEmail,
+        'role': UserRole.admin,
+        'organizationId': widget.organizationId,
+        'organizationName': widget.organizationName,
+        'organizationCode': widget.organizationCode,
+      },
+    );
+  }
+
   void _showLogoutConfirmation() {
     showDialog(
       context: context,
@@ -147,15 +238,34 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    final userRole = ref.watch(userRoleProvider);
+    final isClient = userRole == UserRole.client;
+
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       body: CustomScrollView(
         slivers: [
-          _buildUserProfileHeader(),
+          SliverToBoxAdapter(
+            child: BauhausSettingsHeader(
+              title: AppLocalizations.of(context)!.settingsTitle,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _buildUserProfileCard(),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space4,
+                vertical: BauhausDesign.space2,
+              ),
+              child: _buildQuickActionsStrip(),
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space4,
-              vertical: BauhausDesign.space6,
+              vertical: BauhausDesign.space4,
             ),
             sliver: SliverList(
               delegate: SliverChildListDelegate(
@@ -188,14 +298,48 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           );
                         },
                       ),
+                      _buildSettingsItem(
+                        icon: _isEmailVerified
+                            ? Icons.verified_user_outlined
+                            : Icons.mark_email_unread_outlined,
+                        color: _isEmailVerified
+                            ? BauhausDesign.success
+                            : BauhausDesign.warning,
+                        title: _isEmailVerified
+                            ? 'Email verified'
+                            : 'Verify email',
+                        subtitle: _isEmailVerificationLoading
+                            ? 'Checking verification status...'
+                            : _isEmailVerified
+                                ? 'Your email is verified'
+                                : 'Send a verification link to your email',
+                        onTap: _handleEmailVerificationAction,
+                      ),
                     ],
                   ),
+                  if (!isClient)
+                    _buildSettingsSection(
+                      title: AppLocalizations.of(context)!.teamSection,
+                      items: [
+                        _buildSettingsItem(
+                          icon: Icons.groups_outlined,
+                          color: BauhausDesign.info,
+                          title:
+                              AppLocalizations.of(context)!.teamDashboardTitle,
+                          subtitle: AppLocalizations.of(context)!
+                              .teamDashboardSubtitle,
+                          onTap: () {
+                            Navigator.pushNamed(context, Routes.teamDashboard);
+                          },
+                        ),
+                      ],
+                    ),
                   _buildSettingsSection(
                     title: AppLocalizations.of(context)!.organizationSection,
                     items: [
                       _buildSettingsItem(
                         icon: Icons.business_center_outlined,
-                        color: const Color(0xFF8B5CF6), // Purple
+                        color: BauhausDesign.secondary,
                         title:
                             AppLocalizations.of(context)!.organizationDetails,
                         subtitle: widget.organizationName ??
@@ -216,6 +360,33 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       ),
                     ],
                   ),
+                  if (!isClient)
+                    _buildSettingsSection(
+                      title: AppLocalizations.of(context)!.workerSection,
+                      items: [
+                        _buildSettingsItem(
+                          icon: Icons.dashboard_outlined,
+                          color: BauhausDesign.secondary,
+                          title: AppLocalizations.of(context)!.workerDashboardTitle,
+                          subtitle: AppLocalizations.of(context)!
+                              .workerDashboardSubtitle,
+                          onTap: () {
+                            Navigator.pushNamed(context, Routes.workerDashboard);
+                          },
+                        ),
+                        _buildSettingsItem(
+                          icon: Icons.history_outlined,
+                          color: BauhausDesign.primary,
+                          title:
+                              AppLocalizations.of(context)!.workerShiftHistoryTitle,
+                          subtitle: AppLocalizations.of(context)!
+                              .workerShiftHistorySubtitle,
+                          onTap: () {
+                            Navigator.pushNamed(context, Routes.workerShiftHistory);
+                          },
+                        ),
+                      ],
+                    ),
                   _buildSettingsSection(
                     title: AppLocalizations.of(context)!.appSettingsSection,
                     items: [
@@ -247,7 +418,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       ),
                       _buildSettingsItem(
                         icon: Icons.palette_outlined,
-                        color: const Color(0xFFEC4899), // Pink
+                        color: BauhausDesign.info,
                         title: AppLocalizations.of(context)!.themeTitle,
                         subtitle: AppLocalizations.of(context)!.themeSubtitle,
                         onTap: () {
@@ -280,25 +451,21 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       title: AppLocalizations.of(context)!.ownerToolsSection,
                       items: [
                         _buildSettingsItem(
+                          icon: Icons.badge_outlined,
+                          color: BauhausDesign.secondary,
+                          title:
+                              AppLocalizations.of(context)!.employeeOptionTitle,
+                          subtitle: AppLocalizations.of(context)!
+                              .employeeTrackingDesc,
+                          onTap: _openEmployeeDashboardMode,
+                        ),
+                        _buildSettingsItem(
                           icon: Icons.admin_panel_settings_outlined,
                           color: BauhausDesign.primary,
                           title: AppLocalizations.of(context)!.adminDashboard,
                           subtitle: AppLocalizations.of(context)!
                               .adminDashboardSubtitle,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AdminDashboardView(
-                                  email: widget.userEmail,
-                                  photoData: widget.photoData,
-                                  organizationId: widget.organizationId,
-                                  organizationName: widget.organizationName,
-                                  organizationCode: widget.organizationCode,
-                                ),
-                              ),
-                            );
-                          },
+                          onTap: _openAdminDashboardMode,
                         ),
                         _buildSettingsItem(
                           icon: Icons.shield_outlined,
@@ -321,7 +488,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                             (widget.organizationName ?? '').isNotEmpty)
                           _buildSettingsItem(
                             icon: Icons.trending_up_outlined,
-                            color: const Color(0xFF8B5CF6),
+                            color: BauhausDesign.secondary,
                             title:
                                 AppLocalizations.of(context)!.pricingAnalytics,
                             subtitle: AppLocalizations.of(context)!
@@ -395,112 +562,135 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 
-  Widget _buildUserProfileHeader() {
+  Widget _buildUserProfileCard() {
     final photoState = ref.watch(photoDataProvider);
     final displayPhoto = photoState.photoData ?? _currentPhotoData;
 
-    return SliverAppBar(
-      expandedHeight: 240,
-      pinned: true,
-      backgroundColor: BauhausDesign.surfaceWhite,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Background gradient
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    BauhausDesign.primary.withOpacity(0.1),
-                    BauhausDesign.backgroundLight,
-                  ],
-                ),
-              ),
+    return BauhausProfileCard(
+      userName: _resolveDisplayName(),
+      userEmail: widget.userEmail,
+      photoData: displayPhoto,
+      imageUrl: widget.imageUrl,
+      isEmailVerified: _isEmailVerified,
+      onPhotoTap: () async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PhotoUploadScreen(
+              email: widget.userEmail,
             ),
-            // Profile content
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: BauhausDesign.space8),
-                Hero(
-                  tag: 'profile-image',
-                  child: GestureDetector(
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PhotoUploadScreen(
-                            email: widget.userEmail,
-                          ),
-                        ),
-                      );
+          ),
+        );
 
-                      if (mounted) {
-                        ref.read(photoDataProvider.notifier).fetchPhotoData(
-                            widget.userEmail,
-                            forceRefresh: true);
-                        if (widget.onPhotoUpdated != null) {
-                          widget.onPhotoUpdated!();
-                        }
-                      }
-                    },
-                    child: Stack(
-                      children: [
-                        ProfileImageWidget(
-                          photoData: displayPhoto,
-                          size: 100,
-                          borderWidth: 4,
-                          borderColor: BauhausDesign.surfaceWhite,
-                          elevation: 8,
-                          shadowColor: Colors.black12,
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(BauhausDesign.space2),
-                            decoration: BoxDecoration(
-                              color: BauhausDesign.primary,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: BauhausDesign.surfaceWhite, width: 2),
-                              boxShadow: const [BauhausDesign.shadowSoft],
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt,
-                              size: 16,
-                              color: BauhausDesign.surfaceWhite,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+        if (mounted) {
+          ref
+              .read(photoDataProvider.notifier)
+              .fetchPhotoData(widget.userEmail, forceRefresh: true);
+          if (widget.onPhotoUpdated != null) {
+            widget.onPhotoUpdated!();
+          }
+        }
+      },
+    );
+  }
+
+  String _resolveDisplayName() {
+    final explicitName = widget.userName.trim();
+    if (explicitName.isNotEmpty) return explicitName;
+
+    final firebaseName = _firebaseAuthService.currentUser?.displayName?.trim();
+    if (firebaseName != null && firebaseName.isNotEmpty) return firebaseName;
+
+    final emailPrefix = widget.userEmail.trim().split('@').first;
+    return emailPrefix.isNotEmpty ? emailPrefix : 'User';
+  }
+
+  Widget _buildQuickActionsStrip() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildQuickActionButton(
+            icon: Icons.business_center_outlined,
+            label: 'ORG',
+            color: BauhausDesign.secondary,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrganizationDetailsView(
+                    organizationId: widget.organizationId,
+                    organizationName: widget.organizationName,
+                    organizationCode: widget.organizationCode,
+                    userEmail: widget.userEmail,
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space4),
-                Text(
-                  widget.userName,
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineMedium
-                      ?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
-                      ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space3),
+        Expanded(
+          child: _buildQuickActionButton(
+            icon: Icons.lock_outline,
+            label: 'PASSWORD',
+            color: BauhausDesign.success,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChangePasswordView(),
                 ),
-                const SizedBox(height: BauhausDesign.space1),
-                Text(
-                  widget.userEmail,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
-                ),
-              ],
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space3),
+        Expanded(
+          child: _buildQuickActionButton(
+            icon: Icons.logout,
+            label: 'LOGOUT',
+            color: BauhausDesign.error,
+            onTap: _showLogoutConfirmation,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final foregroundColor =
+        ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+            ? BauhausDesign.textLight
+            : BauhausDesign.textDark;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: BauhausDesign.space3,
+          horizontal: BauhausDesign.space2,
+        ),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          boxShadow: const [BauhausDesign.shadowHardSm],
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: foregroundColor, size: 18),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    color: foregroundColor,
+                    letterSpacing: 0.6,
+                  ),
             ),
           ],
         ),
@@ -516,42 +706,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: BauhausDesign.space2,
-            top: BauhausDesign.space6,
-            bottom: BauhausDesign.space3,
-          ),
-          child: Text(
-            title,
-            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isDangerZone
-                      ? BauhausDesign.error
-                      : BauhausDesign.textMuted,
-                  letterSpacing: 0.5,
-                ),
-          ),
+        BauhausSectionTitle(
+          title: title,
+          isDangerZone: isDangerZone,
         ),
-        BauhausCard(
-          padding: EdgeInsets.zero,
-          borderColor:
-              isDangerZone ? BauhausDesign.error.withOpacity(0.3) : null,
-          child: Column(
-            children: List.generate(items.length, (index) {
-              return Column(
-                children: [
-                  items[index],
-                  if (index < items.length - 1)
-                    Divider(
-                      height: 1,
-                      color: BauhausDesign.neutral.withOpacity(0.5),
-                    ),
-                ],
-              );
-            }),
-          ),
-        ),
+        ...items,
       ],
     );
   }
@@ -563,74 +722,168 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: BauhausDesign.space4,
-            vertical: BauhausDesign.space4,
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                ),
-                child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(width: BauhausDesign.space4),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyLarge
-                          ?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
-                          ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: BauhausDesign.space2),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
-                color: BauhausDesign.neutral,
-              ),
-            ],
-          ),
-        ),
-      ),
+    return BauhausSettingsTile(
+      icon: icon,
+      title: title,
+      subtitle: subtitle,
+      onTap: onTap,
+      iconColor: color,
     );
   }
 
   Future<void> _performLogout(BuildContext context) async {
     final sharedPrefs = SharedPreferencesUtils();
-    await sharedPrefs.init();
-    await sharedPrefs.clearAuthToken();
-    await sharedPrefs.clear();
+    await SessionTimeoutService(sharedPrefs: sharedPrefs).logoutAndClearSession(
+      reason: 'manual_logout_from_settings',
+    );
     if (!mounted) return;
 
     Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
       Routes.login,
       (route) => false,
+    );
+  }
+
+  Future<void> _handleEmailVerificationAction() async {
+    if (_isEmailVerificationLoading) return;
+
+    setState(() {
+      _isEmailVerificationLoading = true;
+    });
+
+    try {
+      await _firebaseAuthService.reloadUser();
+      final user = _firebaseAuthService.currentUser;
+
+      if (user == null) {
+        _showSettingsSnackBar(
+          'Please sign in again to manage email verification.',
+          isError: true,
+        );
+        return;
+      }
+
+      final signedInEmail = user.email?.trim().toLowerCase();
+      final targetEmail = widget.userEmail.trim().toLowerCase();
+      if (signedInEmail == null || signedInEmail != targetEmail) {
+        _showSettingsSnackBar(
+          'Signed-in account does not match this profile. Please sign in again.',
+          isError: true,
+        );
+        return;
+      }
+
+      if (user.emailVerified) {
+        if (mounted) {
+          setState(() {
+            _isEmailVerified = true;
+          });
+        }
+        await _syncEmailVerificationToBackend(user.uid);
+        _showSettingsSnackBar('Email is already verified.');
+        return;
+      }
+
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.resendEmailVerificationOtp(targetEmail);
+      final isSuccess =
+          response['success'] == true || response['statusCode'] == 200;
+
+      if (!isSuccess) {
+        final message = response['message']?.toString() ??
+            'Failed to send verification link.';
+        _showSettingsSnackBar(message, isError: true);
+        return;
+      }
+
+      _showSettingsSnackBar(
+        response['message']?.toString() ??
+            'Verification link sent. Open the link from your email.',
+      );
+    } catch (e) {
+      _showSettingsSnackBar('Failed to send verification link: $e',
+          isError: true);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isEmailVerificationLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _refreshEmailVerificationStatus(
+      {bool showFeedback = true}) async {
+    if (_isEmailVerificationLoading) return;
+
+    setState(() {
+      _isEmailVerificationLoading = true;
+    });
+
+    try {
+      await _firebaseAuthService.reloadUser();
+      final user = _firebaseAuthService.currentUser;
+
+      if (user == null) {
+        if (showFeedback) {
+          _showSettingsSnackBar('Please sign in again to verify your email.',
+              isError: true);
+        }
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          _isEmailVerified = user.emailVerified;
+        });
+      }
+
+      if (user.emailVerified) {
+        await _syncEmailVerificationToBackend(user.uid);
+        if (showFeedback) {
+          _showSettingsSnackBar('Email verified successfully.');
+        }
+      } else if (showFeedback) {
+        _showSettingsSnackBar(
+          'Email is not verified yet. Request a verification link and open it from your inbox.',
+        );
+      }
+    } catch (e) {
+      if (showFeedback) {
+        _showSettingsSnackBar('Failed to check email verification: $e',
+            isError: true);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isEmailVerificationLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _syncEmailVerificationToBackend(String firebaseUid) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      final response =
+          await apiMethod.syncEmailVerificationStatus(firebaseUid: firebaseUid);
+      if (response['success'] != true) {
+        debugPrint(
+            'Email verification sync skipped/failed: ${response['message']}');
+      }
+    } catch (e) {
+      debugPrint('Email verification sync exception: $e');
+    }
+  }
+
+  void _showSettingsSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
+      ),
     );
   }
 }

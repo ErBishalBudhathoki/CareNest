@@ -55,7 +55,6 @@ class TripListItem extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: BauhausDesign.neutral.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),
               child: Text(
@@ -118,7 +117,6 @@ class TripListItem extends StatelessWidget {
       height: 32,
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
-        shape: BoxShape.circle,
         border: Border.all(color: color, width: 1.5),
       ),
       child: Icon(

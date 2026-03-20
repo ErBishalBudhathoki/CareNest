@@ -68,16 +68,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionHeader(l10n.leaveTracker), // Using leaveTracker as header or "Current Balances" if specific key exists? "Current Balances" isn't in l10n.
-              // Let's use hardcoded "Current Balances" for now if not in l10n or add it.
-              // Actually, I should check l10n keys.
-              // l10n.earningsDashboard has "Earnings Dashboard".
-              // I'll stick to "Current Balances" hardcoded if I can't find a key, or use a generic one.
-              // Reverting to "Current Balances" string but maybe I should have added it.
-              // I will leave existing strings as is unless they map clearly.
-              // The user asked to "make sure to use applocalisation".
-              // I'll try to use l10n for new things and replace existing if obvious.
-              _buildSectionHeader(l10n.currentBalances), 
+              _buildSectionHeader(l10n.currentBalances),
               const SizedBox(height: BauhausDesign.space4),
               balancesAsync.when(
                 data: (balances) => Column(
@@ -210,8 +201,8 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: accentColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(color: accentColor.withOpacity(0.5), width: 1),
+              boxShadow: const [BauhausDesign.shadowHardSm],
             ),
             child: Text(
               "${hours.toStringAsFixed(2)} hrs",
@@ -241,7 +232,11 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                           fontWeight: FontWeight.bold,
                         ),
               ),
-              TextButton(
+              BauhausActionButton(
+                text: "Change Date",
+                isSmall: true,
+                variant: BauhausActionVariant.neutral,
+                isOutlined: true,
                 onPressed: () async {
                   final picked = await showDatePicker(
                     context: context,
@@ -254,8 +249,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                     viewModel.loadForecast(_forecastTargetDate);
                   }
                 },
-                child: const Text("Change Date"),
-              )
+              ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space2),

@@ -39,6 +39,68 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   late Animation<double> _actionButtonAnimation;
   bool _showShifts = false;
 
+  BoxDecoration _panelDecoration({
+    Color color = BauhausDesign.surfaceLight,
+    Color borderColor = BauhausDesign.neutral,
+    double borderWidth = 2,
+  }) {
+    return BoxDecoration(
+      color: color,
+      border: Border.all(color: borderColor, width: borderWidth),
+      boxShadow: const [BauhausDesign.shadowHardXs],
+    );
+  }
+
+  Widget _squareActionButton({
+    required String text,
+    required IconData icon,
+    required VoidCallback? onPressed,
+    Color backgroundColor = BauhausDesign.primary,
+    Color textColor = BauhausDesign.surfaceLight,
+    bool outlined = false,
+  }) {
+    final bg = outlined ? BauhausDesign.surfaceLight : backgroundColor;
+    final fg = outlined ? BauhausDesign.textDark : textColor;
+    final border = outlined ? BauhausDesign.neutral : BauhausDesign.neutral;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: bg,
+        border: Border.all(color: border, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: BauhausDesign.space3,
+              horizontal: BauhausDesign.space4,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 18, color: fg),
+                const SizedBox(width: BauhausDesign.space2),
+                Flexible(
+                  child: Text(
+                    text,
+                    overflow: TextOverflow.ellipsis,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelLarge
+                        ?.copyWith(color: fg, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -150,7 +212,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.assignmentComplete,
-              style: BauhausDesign.getTextTheme(context).displaySmall,
+              style: BauhausDesign.getTextTheme(context)
+                  .displaySmall
+                  ?.copyWith(color: BauhausDesign.textDark),
               textAlign: TextAlign.center,
             ),
           ),
@@ -191,13 +255,12 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const CircularProgressIndicator(color: BauhausDesign.primary),
-          const SizedBox(height: BauhausDesign.space4),
+          const SizedBox(height: BauhausDesign.space3),
           Text(
             AppLocalizations.of(context)!.processingAssignment,
-            style: TextStyle(
-              color: BauhausDesign.textMuted,
-              fontSize: 16.0,
-            ),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
           ),
         ],
       ),
@@ -207,7 +270,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   Widget _buildErrorState() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space6),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: BauhausErrorState(
           message: _viewModel.error!,
           onRetry: () {
@@ -233,7 +296,12 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     final assignment = _viewModel.assignment!;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+      padding: const EdgeInsets.fromLTRB(
+        BauhausDesign.space4,
+        BauhausDesign.space2,
+        BauhausDesign.space4,
+        BauhausDesign.space3,
+      ),
       child: Column(
         children: [
           // Success Header
@@ -246,23 +314,23 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
             onAnimationComplete: _onHeaderAnimationComplete,
           ),
 
-          const SizedBox(height: BauhausDesign.space6),
+          const SizedBox(height: BauhausDesign.space3),
 
           // Summary Stats
           _buildSummaryStats(),
 
-          const SizedBox(height: BauhausDesign.space6),
+          const SizedBox(height: BauhausDesign.space2_5),
 
           // Shifts Section
           if (_showShifts) ...[
             _buildShiftsHeader(),
-            const SizedBox(height: BauhausDesign.space4),
+            const SizedBox(height: BauhausDesign.space5),
             _buildShiftsList(),
-            const SizedBox(height: BauhausDesign.space4),
+            const SizedBox(height: BauhausDesign.space5),
             _buildActionButtons()
           ],
 
-          const SizedBox(height: BauhausDesign.space6), // Bottom padding
+          const SizedBox(height: BauhausDesign.space2),
         ],
       ),
     );
@@ -272,8 +340,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     return AnimatedOpacity(
       opacity: _showShifts ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 800),
-      child: BauhausCard(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
+      child: Container(
+        padding: const EdgeInsets.all(BauhausDesign.space3),
+        decoration: _panelDecoration(),
         child: Row(
           children: [
             Expanded(
@@ -287,7 +356,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
             ),
             Container(
               width: 2,
-              height: 40.0,
+              height: 34.0,
               color: BauhausDesign.neutral.withOpacity(0.3),
             ),
             Expanded(
@@ -311,6 +380,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     required Color color,
   }) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: color, size: 24.0),
         const SizedBox(height: BauhausDesign.space2),
@@ -318,17 +388,22 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           value,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: color,
+                color: BauhausDesign.textDark,
               ),
         ),
         const SizedBox(height: BauhausDesign.space1),
         Text(
           label,
+          maxLines: 2,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
                 color: BauhausDesign.textMuted,
                 fontWeight: FontWeight.w500,
+                height: 1.2,
               ),
         ),
+        const SizedBox(height: BauhausDesign.space0_5),
       ],
     );
   }
@@ -336,18 +411,30 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   Widget _buildShiftsHeader() {
     return Row(
       children: [
-        const Icon(
-          Icons.list_alt_rounded,
-          color: BauhausDesign.primary,
-          size: 24.0,
-        ),
-        const SizedBox(width: BauhausDesign.space2),
-        Text(
-          AppLocalizations.of(context)!.assignedShifts,
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: BauhausDesign.space3,
+            vertical: BauhausDesign.space2,
+          ),
+          decoration: _panelDecoration(),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.list_alt_rounded,
                 color: BauhausDesign.primary,
+                size: 20.0,
               ),
+              const SizedBox(width: BauhausDesign.space2),
+              Text(
+                AppLocalizations.of(context)!.assignedShifts,
+                style:
+                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: BauhausDesign.textDark,
+                        ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -358,14 +445,22 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
 
     return ListView.builder(
       shrinkWrap: true,
+      primary: false,
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: assignment.totalShifts,
       itemBuilder: (context, index) {
-        return AnimatedShiftCard(
-          shiftDetails: _viewModel.getShiftDetails(index),
-          index: index,
-          delay: Duration(milliseconds: 200 * index),
-          onTap: () => _showShiftDetails(index),
+        final isLast = index == assignment.totalShifts - 1;
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: isLast ? 0 : BauhausDesign.space1,
+          ),
+          child: AnimatedShiftCard(
+            shiftDetails: _viewModel.getShiftDetails(index),
+            index: index,
+            delay: Duration.zero,
+            onTap: () => _showShiftDetails(index),
+          ),
         );
       },
     );
@@ -376,33 +471,27 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     return AnimatedBuilder(
       animation: _actionButtonController,
       builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, 50.0 * (1.0 - _actionButtonAnimation.value)),
-          child: Opacity(
-            opacity: _actionButtonAnimation.value.clamp(0.0, 1.0),
-            child: BauhausCard(
-              padding: const EdgeInsets.all(BauhausDesign.space6),
-              child: Column(
-                children: [
-                  // Primary action button
-                  BauhausActionButton(
-                    text: AppLocalizations.of(context)!.goToDashboard,
-                    onPressed: _goToDashboard,
-                    icon: Icons.dashboard_rounded,
-                    variant: BauhausActionVariant.primary,
-                    isFullWidth: true,
-                  ),
-                  const SizedBox(height: BauhausDesign.space4),
-                  // Secondary action button
-                  BauhausActionButton(
-                    text: AppLocalizations.of(context)!.viewAllAssignments,
-                    onPressed: _viewAssignments,
-                    icon: Icons.assignment_rounded,
-                    variant: BauhausActionVariant.secondary,
-                    isFullWidth: true,
-                  ),
-                ],
-              ),
+        return Opacity(
+          opacity: _actionButtonAnimation.value.clamp(0.0, 1.0),
+          child: Container(
+            padding: const EdgeInsets.all(BauhausDesign.space2),
+            decoration: _panelDecoration(),
+            child: Column(
+              children: [
+                _squareActionButton(
+                  text: AppLocalizations.of(context)!.goToDashboard,
+                  onPressed: _goToDashboard,
+                  icon: Icons.dashboard_rounded,
+                  backgroundColor: BauhausDesign.primary,
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                _squareActionButton(
+                  text: AppLocalizations.of(context)!.viewAllAssignments,
+                  onPressed: _viewAssignments,
+                  icon: Icons.assignment_rounded,
+                  outlined: true,
+                ),
+              ],
             ),
           ),
         );
@@ -432,21 +521,21 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
+              const Icon(Icons.check_circle, color: BauhausDesign.success),
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 AppLocalizations.of(context)!.assignmentDetailsCopied,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.surfaceWhite,
+                      color: BauhausDesign.textDark,
                     ),
               ),
             ],
           ),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: BauhausDesign.success,
+          backgroundColor: BauhausDesign.surfaceLight,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+            borderRadius: BorderRadius.zero,
+            side: const BorderSide(color: BauhausDesign.success, width: 2),
           ),
         ),
       );
@@ -460,11 +549,11 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
       context: context,
       isScrollControlled: true,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(BauhausDesign.space6),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         decoration: const BoxDecoration(
           color: BauhausDesign.surfaceLight,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(BauhausDesign.radiusLg),
+          border: Border(
+            top: BorderSide(color: BauhausDesign.neutral, width: 2),
           ),
         ),
         child: Column(
@@ -476,9 +565,9 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                 Text(
                   AppLocalizations.of(context)!.shiftIndexDetails(index + 1),
                   style:
-                      BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.primary,
+                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: BauhausDesign.textDark,
                           ),
                 ),
                 const Spacer(),
@@ -488,11 +577,11 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                 ),
               ],
             ),
-            const SizedBox(height: BauhausDesign.space4),
+            const SizedBox(height: BauhausDesign.space2),
             ...shiftDetails.entries.map(
               (entry) => Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: BauhausDesign.space2),
+                    const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
                 child: Row(
                   children: [
                     Text(
@@ -517,7 +606,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                 ),
               ),
             ),
-            const SizedBox(height: BauhausDesign.space4),
+            const SizedBox(height: BauhausDesign.space2),
           ],
         ),
       ),
@@ -546,7 +635,8 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
   }
 
   void _goToDashboard() async {
-    // Navigate back to bottom navigation with dashboard/home tab
+    // Navigate back to bottom navigation with dashboard/home tab.
+    // Clear stack to avoid returning to splash/assignment flow on back.
     final sharedPrefs = SharedPreferencesUtils();
     await sharedPrefs.init();
 
@@ -557,8 +647,8 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
     final organizationCode = sharedPrefs.getString('organizationCode');
 
     Navigator.of(context).pushNamedAndRemoveUntil(
-      Routes.admin,
-      (route) => true,
+      Routes.bottomNavBar,
+      (route) => false,
       arguments: {
         'email': userEmail ?? widget.userEmail,
         'role': userRole ?? UserRole.normal,

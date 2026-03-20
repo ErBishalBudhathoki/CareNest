@@ -6573,12 +6573,22 @@ class ApiMethod extends ChangeNotifier {
   Future<Map<String, dynamic>> parseReceiptText(String rawText,
       {String source = 'google_mlkit'}) async {
     try {
-      final endpoint = 'expenses/parse-receipt';
       final body = {
         'rawText': rawText,
         'source': source,
       };
-      return await post(endpoint, body: body);
+      final primary = await post('expenses/parse-receipt', body: body);
+      if (primary['success'] == true) {
+        return primary;
+      }
+      final statusCode = primary['statusCode'];
+      final message = '${primary['message'] ?? ''} ${primary['details'] ?? ''}';
+      final looksMissing =
+          statusCode == 404 || message.contains('Route not found');
+      if (looksMissing) {
+        return await post('ocr/parse', body: body);
+      }
+      return primary;
     } catch (e) {
       debugPrint('Error parsing receipt text: $e');
       return {'success': false, 'message': e.toString()};

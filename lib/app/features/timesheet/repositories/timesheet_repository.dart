@@ -4,6 +4,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/features/timesheet/models/timesheet_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 final timesheetRepositoryProvider = Provider(
     (ref) => TimesheetRepository(ref.read(app_providers.apiMethodProvider)));
@@ -19,17 +20,29 @@ class TimesheetRepository {
     required DateTime endDate,
   }) async {
     try {
+      final sharedPrefs = SharedPreferencesUtils();
+      await sharedPrefs.init();
+      final organizationId = sharedPrefs.getString('organizationId');
+      if (organizationId == null || organizationId.trim().isEmpty) {
+        throw Exception('Organization context missing for timesheet request');
+      }
+
       final response = await _apiMethod.post(
-        'getWorkedTime',
+        'timesheets/list',
         body: {
           'email': email,
           'startDate': startDate.toIso8601String(),
           'endDate': endDate.toIso8601String(),
+          'organizationId': organizationId,
         },
       );
 
       if (response['success'] == true && response['data'] != null) {
-        final List<dynamic> data = response['data'];
+        final rawData = response['data'];
+        if (rawData is! List) {
+          return [];
+        }
+        final List<dynamic> data = rawData;
         return data.map((json) => TimesheetEntry.fromJson(json)).toList();
       } else {
         debugPrint('Failed to fetch timesheets: ${response['message']}');

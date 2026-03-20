@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
+enum BauhausSwitchVariant {
+  primary,
+  secondary,
+  neutral,
+}
+
 class BauhausSwitch extends StatefulWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
   final String? activeText;
   final String? inactiveText;
+  final BauhausSwitchVariant variant;
+  final bool enabled;
 
   const BauhausSwitch({
     super.key,
@@ -13,15 +21,41 @@ class BauhausSwitch extends StatefulWidget {
     required this.onChanged,
     this.activeText,
     this.inactiveText,
+    this.variant = BauhausSwitchVariant.primary,
+    this.enabled = true,
   });
 
   @override
   State<BauhausSwitch> createState() => _BauhausSwitchState();
 }
 
-class _BauhausSwitchState extends State<BauhausSwitch> with SingleTickerProviderStateMixin {
+class _BauhausSwitchState extends State<BauhausSwitch>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+
+  Color get _activeColor {
+    switch (widget.variant) {
+      case BauhausSwitchVariant.primary:
+        return BauhausDesign.primary;
+      case BauhausSwitchVariant.secondary:
+        return BauhausDesign.secondary;
+      case BauhausSwitchVariant.neutral:
+        return BauhausDesign.neutral;
+    }
+  }
+
+  Color get _inactiveColor => BauhausDesign.surfaceWhite;
+
+  Color get _trackBorderColor {
+    if (!widget.enabled) return BauhausDesign.neutral.withOpacity(0.3);
+    return BauhausDesign.neutral;
+  }
+
+  Color get _thumbBorderColor {
+    if (!widget.enabled) return BauhausDesign.neutral.withOpacity(0.5);
+    return BauhausDesign.neutral;
+  }
 
   @override
   void initState() {
@@ -57,7 +91,7 @@ class _BauhausSwitchState extends State<BauhausSwitch> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => widget.onChanged(!widget.value),
+      onTap: widget.enabled ? () => widget.onChanged(!widget.value) : null,
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
@@ -67,13 +101,13 @@ class _BauhausSwitchState extends State<BauhausSwitch> with SingleTickerProvider
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: Color.lerp(
-                BauhausDesign.surfaceWhite,
-                BauhausDesign.primary,
+                _inactiveColor,
+                _activeColor,
                 _animation.value,
               ),
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              borderRadius: BorderRadius.zero,
               border: Border.all(
-                color: BauhausDesign.neutral,
+                color: _trackBorderColor,
                 width: 2.0,
               ),
             ),
@@ -82,15 +116,17 @@ class _BauhausSwitchState extends State<BauhausSwitch> with SingleTickerProvider
                 AnimatedAlign(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut,
-                  alignment: widget.value ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: widget.value
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceWhite,
-                      borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                      borderRadius: BorderRadius.zero,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: _thumbBorderColor,
                         width: 2.0,
                       ),
                       boxShadow: const [

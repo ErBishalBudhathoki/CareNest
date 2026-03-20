@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 class InvoiceManagementService {
   final ApiMethod _apiMethod;
 
-  InvoiceManagementService({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
+  InvoiceManagementService({required ApiMethod apiMethod})
+      : _apiMethod = apiMethod;
 
   /// Get list of invoices for an organization
   Future<Map<String, dynamic>> getInvoicesList({
@@ -38,7 +39,7 @@ class InvoiceManagementService {
           .map((e) => '${e.key}=${Uri.encodeComponent(e.value)}')
           .join('&');
 
-      final url = '/api/invoices?$queryString';
+      final url = 'invoices?$queryString';
       debugPrint('DEBUG: Making API call to: $url');
       debugPrint('DEBUG: Query params: $queryParams');
 
@@ -88,7 +89,7 @@ class InvoiceManagementService {
   }) async {
     try {
       final result = await _apiMethod
-          .get('/api/invoices/$invoiceId?organizationId=$organizationId');
+          .get('invoices/$invoiceId?organizationId=$organizationId');
       return result;
     } catch (e) {
       return {
@@ -102,12 +103,14 @@ class InvoiceManagementService {
   Future<Map<String, dynamic>> shareInvoice({
     required String invoiceId,
     required String organizationId,
+    String shareMethod = 'link',
   }) async {
     try {
       final result = await _apiMethod.post(
-        '/api/invoices/$invoiceId/share',
+        'invoices/$invoiceId/share',
         body: {
           'organizationId': organizationId,
+          'shareMethod': shareMethod,
         },
       );
       return result;
@@ -126,7 +129,7 @@ class InvoiceManagementService {
   }) async {
     try {
       final result = await _apiMethod.post(
-        '/api/invoices/$invoiceId/share/pdf',
+        'invoices/$invoiceId/share/pdf',
         body: {
           'organizationId': organizationId,
         },
@@ -149,7 +152,7 @@ class InvoiceManagementService {
   }) async {
     try {
       final result = await _apiMethod.post(
-        '/api/invoices/$invoiceId/share/email',
+        'invoices/$invoiceId/share/email',
         body: {
           'organizationId': organizationId,
           'recipientEmail': recipientEmail,
@@ -173,7 +176,7 @@ class InvoiceManagementService {
   }) async {
     try {
       final result = await _apiMethod.post(
-        '/api/invoices/$invoiceId/share/whatsapp',
+        'invoices/$invoiceId/share/whatsapp',
         body: {
           'organizationId': organizationId,
           'phoneNumber': phoneNumber,
@@ -195,7 +198,7 @@ class InvoiceManagementService {
   }) async {
     try {
       final result = await _apiMethod
-          .delete('/api/invoices/$invoiceId?organizationId=$organizationId');
+          .delete('invoices/$invoiceId?organizationId=$organizationId');
       return result;
     } catch (e) {
       return {
@@ -210,8 +213,7 @@ class InvoiceManagementService {
     required String organizationId,
   }) async {
     try {
-      final result = await _apiMethod
-          .get('/api/invoices/stats?organizationId=$organizationId');
+      final result = await _apiMethod.get('invoices/stats/$organizationId');
       return result;
     } catch (e) {
       return {

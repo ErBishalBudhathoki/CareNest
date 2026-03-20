@@ -122,7 +122,7 @@ class FinancialTrendChart extends StatelessWidget {
                             ),
                             BarChartRodData(
                               toY: metric.laborCost,
-                              color: BauhausDesign.error,
+                              color: BauhausDesign.secondary,
                               width: 12,
                               borderRadius: BorderRadius.zero,
                             ),
@@ -138,7 +138,7 @@ class FinancialTrendChart extends StatelessWidget {
             children: [
               _LegendItem(color: BauhausDesign.primary, label: 'REVENUE'),
               const SizedBox(width: 16),
-              _LegendItem(color: BauhausDesign.error, label: 'LABOR COST'),
+              _LegendItem(color: BauhausDesign.secondary, label: 'LABOR COST'),
             ],
           ),
         ],

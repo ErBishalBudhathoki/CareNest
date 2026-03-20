@@ -23,7 +23,8 @@ class InvoiceListView extends ConsumerStatefulWidget {
   ConsumerState<InvoiceListView> createState() => _InvoiceListViewState();
 }
 
-class _InvoiceListViewState extends ConsumerState<InvoiceListView> with SingleTickerProviderStateMixin {
+class _InvoiceListViewState extends ConsumerState<InvoiceListView>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
@@ -35,7 +36,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> with SingleTi
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadInvoices();
     });
@@ -50,9 +51,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> with SingleTi
   void _loadInvoices() {
     final invoiceType = _tabController.index == 0 ? 'client' : 'employee';
     ref.read(invoiceListViewModelProvider.notifier).loadInvoices(
-      widget.organizationId,
-      invoiceType: invoiceType,
-    );
+          widget.organizationId,
+          invoiceType: invoiceType,
+        );
   }
 
   @override
@@ -96,9 +97,10 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> with SingleTi
                 unselectedLabelColor: BauhausDesign.textMuted,
                 indicatorColor: BauhausDesign.primary,
                 indicatorWeight: 4,
-                labelStyle: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                labelStyle:
+                    BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
                 unselectedLabelStyle:
                     BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                           fontWeight: FontWeight.w600,
@@ -206,7 +208,8 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> with SingleTi
                       value: _statusFilter,
                       isExpanded: true,
                       dropdownColor: BauhausDesign.surfaceWhite,
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: BauhausDesign.textDark),
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                          color: BauhausDesign.textDark),
                       items: [
                         DropdownMenuItem(
                             value: 'all', child: Text(l10n.statusAll)),
@@ -446,6 +449,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView> with SingleTi
       arguments: {
         'invoiceId': invoice.id,
         'organizationId': widget.organizationId,
+        'invoiceData': invoice.toJson(),
       },
     );
   }

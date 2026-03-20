@@ -92,20 +92,28 @@ DateTime? _parseTime(String timeStr) {
   if (timeStr.contains(' at ')) {
     timeStr = timeStr.split(' at ')[0].trim();
   }
+  timeStr = timeStr.replaceAll(RegExp(r'\s+'), ' ');
+  timeStr = timeStr.replaceAllMapped(
+    RegExp(r'\b(am|pm)\b', caseSensitive: false),
+    (match) => match.group(0)!.toUpperCase(),
+  );
   
-  // Try standard formats
-  try {
-    return DateFormat.jm().parse(timeStr); // 6:00 AM
-  } catch (_) {}
-  
-  try {
-    return DateFormat.Hm().parse(timeStr); // 18:00
-  } catch (_) {}
-
-  try {
-    return DateFormat.Hms().parse(timeStr); // 18:00:00
-  } catch (_) {}
+  // Parse strictly to avoid lenient mismatches like "05:00 PM" -> 05:00.
+  const patterns = <String>[
+    'h:mm a',
+    'hh:mm a',
+    'h:mma',
+    'hh:mma',
+    'H:mm',
+    'HH:mm',
+    'H:mm:ss',
+    'HH:mm:ss',
+  ];
+  for (final pattern in patterns) {
+    try {
+      return DateFormat(pattern).parseStrict(timeStr);
+    } catch (_) {}
+  }
 
   return null;
 }
-

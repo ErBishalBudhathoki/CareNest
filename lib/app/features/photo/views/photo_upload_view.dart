@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import '../../../services/system_ui_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -141,23 +142,29 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
     });
 
     try {
-      final response =
-          await _apiMethod.uploadPhoto(context, widget.email, _imageFile!);
+      final response = await _apiMethod.uploadPhoto(widget.email, _imageFile!);
 
-      if (response['statusCode'] == 200) {
-        // Success
+      final isSuccess =
+          response['success'] == true || response['statusCode'] == 200;
+
+      if (isSuccess) {
+        // Instant UI update with local image bytes
+        final localBytes = await _imageFile!.readAsBytes();
+        ref.read(photoDataProvider.notifier).updatePhotoData(localBytes);
+        await SharedPreferencesUtils().setPhoto(localBytes, widget.email);
+
         _showSnackBar(
           message: "Photo uploaded successfully",
           backgroundColor: BauhausDesign.success,
         );
 
-        // Force refresh the photo provider to update UI everywhere
-        // This will trigger the network fetch in PhotoDataNotifier
-        await ref
+        // Non-blocking background refresh to sync with server
+        // (won't overwrite local data on failure)
+        ref
             .read(photoDataProvider.notifier)
             .fetchPhotoData(widget.email, forceRefresh: true);
 
-        // Optionally pop after delay
+        // Pop after delay
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) Navigator.pop(context);
         });

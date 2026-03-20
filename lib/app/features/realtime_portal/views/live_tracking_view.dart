@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/realtime_tracking_viewmodel.dart';
@@ -37,13 +36,17 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
 
     // Listen for location updates
     _wsService.onLocationUpdate = (location) {
-      ref.read(realtimeTrackingViewModelProvider.notifier).handleLocationUpdate(location);
+      ref
+          .read(realtimeTrackingViewModelProvider.notifier)
+          .handleLocationUpdate(location);
       _updateMarker(location.latitude, location.longitude);
     };
 
     // Listen for geofence events
     _wsService.onGeofenceEvent = (event) {
-      ref.read(realtimeTrackingViewModelProvider.notifier).handleGeofenceEvent(event);
+      ref
+          .read(realtimeTrackingViewModelProvider.notifier)
+          .handleGeofenceEvent(event);
       _showGeofenceAlert(event.event);
     };
   }
@@ -89,13 +92,28 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
         break;
     }
 
-    Get.snackbar(
-      'Location Update',
-      message,
-      icon: Icon(icon, color: Colors.white),
-      backgroundColor: color,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(icon, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Location Update',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(message),
+                ],
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: color,
+        duration: const Duration(seconds: 3),
+      ),
     );
   }
 
@@ -125,7 +143,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: [
           if (state.isTracking)
@@ -162,7 +180,8 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                   flex: 2,
                   child: GoogleMap(
                     initialCameraPosition: const CameraPosition(
-                      target: LatLng(37.7749, -122.4194), // Default: San Francisco
+                      target:
+                          LatLng(37.7749, -122.4194), // Default: San Francisco
                       zoom: 14,
                     ),
                     markers: _markers,
@@ -221,7 +240,8 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.access_time, color: AppColors.colorPrimary, size: 32),
+                  Icon(Icons.access_time,
+                      color: AppColors.colorPrimary, size: 32),
                   const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,7 +345,8 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
   }) {
     return Row(
       children: [
-        Icon(icon, color: Color(0xFF666666), size: 20), // BauhausDesign.textMuted
+        Icon(icon,
+            color: Color(0xFF666666), size: 20), // BauhausDesign.textMuted
         const SizedBox(width: 12),
         Text(
           label,

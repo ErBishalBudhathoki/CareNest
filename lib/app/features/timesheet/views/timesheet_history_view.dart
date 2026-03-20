@@ -117,7 +117,9 @@ class TimesheetHistoryView extends ConsumerWidget {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.historyTitle,
-                  style: BauhausDesign.getTextTheme(context).displaySmall,
+                  style: BauhausDesign.getTextTheme(context)
+                      .displaySmall
+                      ?.copyWith(color: BauhausDesign.textDark),
                 ),
                 const Spacer(),
               ],
@@ -161,9 +163,10 @@ class TimesheetHistoryView extends ConsumerWidget {
       if (e.timeWorked != null) {
         final parts = e.timeWorked!.split(':');
         if (parts.length == 3) {
-          totalSeconds += int.parse(parts[0]) * 3600 +
-              int.parse(parts[1]) * 60 +
-              int.parse(parts[2]);
+          final hPart = int.tryParse(parts[0]) ?? 0;
+          final mPart = int.tryParse(parts[1]) ?? 0;
+          final sPart = int.tryParse(parts[2]) ?? 0;
+          totalSeconds += (hPart * 3600) + (mPart * 60) + sPart;
         }
       }
     }
@@ -193,15 +196,16 @@ class TimesheetHistoryView extends ConsumerWidget {
                     horizontal: BauhausDesign.space2,
                     vertical: BauhausDesign.space1),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary,
+                  color: BauhausDesign.backgroundLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
+                  border: Border.all(color: BauhausDesign.neutral),
                 ),
                 child: Text(
                   totalStr,
                   style:
                       BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.surfaceWhite,
+                            color: BauhausDesign.textDark,
                             fontFamily: 'monospace',
                           ),
                 ),
@@ -212,7 +216,7 @@ class TimesheetHistoryView extends ConsumerWidget {
           Text(
             AppLocalizations.of(context)!.shiftsCount(entries.length),
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: BauhausDesign.textDark,
                 ),
           ),
           const SizedBox(height: BauhausDesign.space3),
@@ -233,7 +237,7 @@ class TimesheetHistoryView extends ConsumerWidget {
                 style:
                     BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.primary,
+                          color: BauhausDesign.textDark,
                         ),
               ),
             ),

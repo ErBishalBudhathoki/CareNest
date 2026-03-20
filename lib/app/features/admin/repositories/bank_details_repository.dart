@@ -18,18 +18,11 @@ class BankDetailsRepository {
     required String bsb,
     required String accountNumber,
   }) async {
-    // Assuming ApiMethod.saveBankDetails uses post('saveBankDetails', ...)
-    // If not, we should use generic post here to be consistent.
-    // I'll use generic post to 'saveBankDetails' which maps to backend route.
-
-    final response = await _apiMethod.post(
-      'saveBankDetails',
-      body: {
-        'bankName': bankName,
-        'accountName': accountName,
-        'bsb': bsb,
-        'accountNumber': accountNumber,
-      },
+    final response = await _apiMethod.saveBankDetails(
+      bankName: bankName,
+      accountName: accountName,
+      bsb: bsb,
+      accountNumber: accountNumber,
     );
 
     if (response['success'] == true || response['statusCode'] == 201) {
@@ -40,7 +33,7 @@ class BankDetailsRepository {
   }
 
   Future<Map<String, dynamic>?> getBankDetails() async {
-    final response = await _apiMethod.get('getBankDetails');
+    final response = await _apiMethod.getBankDetails();
 
     if (response['success'] == true || response['statusCode'] == 200) {
       return response['data'];

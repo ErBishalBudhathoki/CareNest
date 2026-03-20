@@ -41,6 +41,10 @@ class BauhausAppointmentCard extends StatelessWidget {
     // Schedule parsing
     String date = 'Unknown Date';
     String time = 'Unknown Time';
+    final shiftStatus = appointment['_shiftStatus']?.toString();
+    final showShiftStatusBadge =
+        shiftStatus == 'in_progress' || shiftStatus == 'overdue';
+    final isOverdue = shiftStatus == 'overdue';
 
     if (appointment['schedule'] != null &&
         appointment['schedule'] is List &&
@@ -99,6 +103,10 @@ class BauhausAppointmentCard extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
+                    if (showShiftStatusBadge) ...[
+                      _buildShiftStatusBadge(context, isOverdue),
+                      const SizedBox(width: BauhausDesign.space2),
+                    ],
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space1),
                       decoration: BoxDecoration(
@@ -150,6 +158,37 @@ class BauhausAppointmentCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildShiftStatusBadge(BuildContext context, bool isOverdue) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space2,
+        vertical: BauhausDesign.space1,
+      ),
+      decoration: BoxDecoration(
+        color: isOverdue ? BauhausDesign.error : BauhausDesign.success,
+        border: Border.all(
+          color: BauhausDesign.textDark,
+          width: 2,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: BauhausDesign.textDark,
+            offset: Offset(2, 2),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Text(
+        isOverdue ? 'OVERDUE' : 'IN PROGRESS',
+        style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: BauhausDesign.surfaceWhite,
+              letterSpacing: 0.4,
+            ),
       ),
     );
   }

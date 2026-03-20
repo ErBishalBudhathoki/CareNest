@@ -157,26 +157,7 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () {
-                // Navigate to Add Expense with pre-filled data
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddExpenseView(
-                      adminEmail: widget.adminEmail,
-                      organizationId: widget.organizationId,
-                      initialCategory: 'Office',
-                      initialReceiptFilePaths: _capturedImage != null ? [ _capturedImage!.path ] : null,
-                      initialTitle: _ocrResult?.merchant,
-                      initialAmount: _ocrResult?.totalAmount,
-                      initialDate: (_ocrResult?.date.isNotEmpty ?? false)
-                          ? DateTime.tryParse(_ocrResult!.date)
-                          : null,
-                      initialDescription: _ocrResult?.rawText,
-                    ),
-                  ),
-                );
-              },
+              onPressed: _navigateToAddExpenseFromState,
               style: ElevatedButton.styleFrom(
                 backgroundColor: BauhausTheme.black,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
@@ -203,24 +184,31 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     setState(() {
       _isProcessing = true;
     });
+    File? imageFile;
+    String rawText = '';
     try {
       final hasPermission = await _ensureCameraPermission();
       if (!hasPermission) {
-        setState(() {
-          _isProcessing = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isProcessing = false;
+          });
+        }
         return;
       }
       final File? picked = await _ocrService.pickImage(ImageSource.camera);
       if (picked == null) {
-        setState(() {
-          _isProcessing = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isProcessing = false;
+          });
+        }
         return;
       }
       final File? cropped = await _ocrService.cropImage(picked);
-      final File imageFile = cropped ?? picked;
-      final rawText = await _ocrService.extractText(imageFile);
+      imageFile = cropped ?? picked;
+      rawText = await _ocrService.extractText(imageFile);
+      _logOcrPreview(rawText, 'camera');
       final source = Platform.isIOS ? 'apple_vision' : 'google_mlkit';
       final parsed = await _api.parseReceiptText(rawText, source: source);
       if (parsed['success'] == true) {
@@ -247,16 +235,39 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
           rawText: rawText,
         );
       }
+      final parsedTotal = _ocrResult?.totalAmount;
+      final correctedTotal = _deriveBestTotal(rawText, parsedTotal);
+      final resolvedTotal = _resolveTotal(parsedTotal, correctedTotal);
+      if (resolvedTotal != null && resolvedTotal > 0) {
+        _ocrResult = _withUpdatedTotal(_ocrResult, resolvedTotal, rawText);
+        debugPrint(
+          'QuickExpenseCaptureView: totals parsed=$parsedTotal derived=$correctedTotal resolved=$resolvedTotal',
+        );
+      }
       _capturedImage = XFile(imageFile.path);
-      setState(() {
-        _isCapturing = false;
-      });
-    } catch (_) {
-      setState(() {});
+      await _navigateToAddExpense(imageFile: imageFile, ocrResult: _ocrResult);
+      return;
+    } catch (e) {
+      debugPrint('QuickExpenseCaptureView: camera scan failed: $e');
+      if (imageFile != null) {
+        _ocrResult ??= OcrResult(
+          merchant: '',
+          date: '',
+          totalAmount: 0.0,
+          currency: 'USD',
+          items: const [],
+          rawText: rawText,
+        );
+        _capturedImage = XFile(imageFile.path);
+        await _navigateToAddExpense(imageFile: imageFile, ocrResult: _ocrResult);
+        return;
+      }
     } finally {
-      setState(() {
-        _isProcessing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
 
@@ -429,17 +440,22 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     setState(() {
       _isProcessing = true;
     });
+    File? imageFile;
+    String rawText = '';
     try {
       final File? picked = await _ocrService.pickImage(ImageSource.gallery);
       if (picked == null) {
-        setState(() {
-          _isProcessing = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isProcessing = false;
+          });
+        }
         return;
       }
       final File? cropped = await _ocrService.cropImage(picked);
-      final File imageFile = cropped ?? picked;
-      final rawText = await _ocrService.extractText(imageFile);
+      imageFile = cropped ?? picked;
+      rawText = await _ocrService.extractText(imageFile);
+      _logOcrPreview(rawText, 'gallery');
       final source = Platform.isIOS ? 'apple_vision' : 'google_mlkit';
       final parsed = await _api.parseReceiptText(rawText, source: source);
       if (parsed['success'] == true) {
@@ -466,16 +482,287 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
           rawText: rawText,
         );
       }
+      final parsedTotal = _ocrResult?.totalAmount;
+      final correctedTotal = _deriveBestTotal(rawText, parsedTotal);
+      final resolvedTotal = _resolveTotal(parsedTotal, correctedTotal);
+      if (resolvedTotal != null && resolvedTotal > 0) {
+        _ocrResult = _withUpdatedTotal(_ocrResult, resolvedTotal, rawText);
+        debugPrint(
+          'QuickExpenseCaptureView: totals parsed=$parsedTotal derived=$correctedTotal resolved=$resolvedTotal',
+        );
+      }
       _capturedImage = XFile(imageFile.path);
-      setState(() {
-        _isCapturing = false;
-      });
-    } catch (_) {
-      setState(() {});
+      await _navigateToAddExpense(imageFile: imageFile, ocrResult: _ocrResult);
+      return;
+    } catch (e) {
+      debugPrint('QuickExpenseCaptureView: gallery scan failed: $e');
+      if (imageFile != null) {
+        _ocrResult ??= OcrResult(
+          merchant: '',
+          date: '',
+          totalAmount: 0.0,
+          currency: 'USD',
+          items: const [],
+          rawText: rawText,
+        );
+        _capturedImage = XFile(imageFile.path);
+        await _navigateToAddExpense(imageFile: imageFile, ocrResult: _ocrResult);
+        return;
+      }
     } finally {
-      setState(() {
-        _isProcessing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
+
+  Future<void> _navigateToAddExpenseFromState() async {
+    final image = _capturedImage;
+    if (image == null) {
+      return;
+    }
+    await _navigateToAddExpense(imageFile: File(image.path), ocrResult: _ocrResult);
+  }
+
+  Future<void> _navigateToAddExpense({
+    required File imageFile,
+    required OcrResult? ocrResult,
+  }) async {
+    if (!mounted) return;
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddExpenseView(
+          adminEmail: widget.adminEmail,
+          organizationId: widget.organizationId,
+          initialCategory: 'Office',
+          initialReceiptFilePaths: [imageFile.path],
+          initialTitle: ocrResult?.merchant,
+          initialAmount: ocrResult?.totalAmount,
+          initialDate: _parseOcrDate(ocrResult?.date),
+          initialDescription: ocrResult?.rawText,
+        ),
+      ),
+    );
+    if (!mounted) return;
+    Navigator.pop(context, result);
+  }
+
+  void _logOcrPreview(String rawText, String source) {
+    final preview = rawText.trim();
+    const maxLen = 200;
+    final snippet = preview.length > maxLen ? preview.substring(0, maxLen) : preview;
+    debugPrint(
+      'QuickExpenseCaptureView: OCR preview ($source, len=${preview.length}): $snippet',
+    );
+  }
+
+  OcrResult _withUpdatedTotal(OcrResult? base, double total, String rawText) {
+    return OcrResult(
+      merchant: base?.merchant ?? '',
+      date: base?.date ?? '',
+      totalAmount: total,
+      currency: base?.currency ?? 'USD',
+      items: base?.items ?? const [],
+      rawText: base?.rawText.isNotEmpty == true ? base!.rawText : rawText,
+    );
+  }
+
+  double? _deriveBestTotal(String rawText, double? parsedTotal) {
+    final lines = rawText.split('\n');
+    final candidates = <_AmountCandidate>[];
+    for (var i = 0; i < lines.length; i++) {
+      final lower = lines[i].toLowerCase();
+      final score = _scoreLineForTotal(lower);
+      if (score == null) continue;
+      final bestNear = _selectAmountNearLine(lines, i, score, parsedTotal);
+      if (bestNear != null) {
+        candidates.add(bestNear);
+      }
+    }
+
+    if (candidates.isNotEmpty) {
+      candidates.sort((a, b) => b.score.compareTo(a.score));
+      return candidates.first.value;
+    }
+
+    final allAmounts = <double>[];
+    for (var i = 0; i < lines.length; i++) {
+      final lower = lines[i].toLowerCase();
+      if (_shouldIgnoreLineForTotal(lower)) continue;
+      for (final hit in _extractAmounts(lines[i], i)) {
+        if (hit.value > 0) allAmounts.add(hit.value);
+      }
+    }
+
+    if (allAmounts.isEmpty) {
+      return parsedTotal;
+    }
+    allAmounts.sort();
+    return allAmounts.last;
+  }
+
+  _AmountCandidate? _selectAmountNearLine(
+    List<String> lines,
+    int index,
+    int baseScore,
+    double? parsedTotal,
+  ) {
+    final windowEnd = (index + 20).clamp(0, lines.length);
+    final candidates = <double>[];
+    for (var i = index; i < windowEnd; i++) {
+      final lower = lines[i].toLowerCase();
+      if (_shouldIgnoreLineForTotal(lower)) continue;
+      for (final hit in _extractAmounts(lines[i], i)) {
+        if (hit.value > 0) {
+          candidates.add(hit.value);
+        }
+      }
+    }
+    if (candidates.isEmpty) {
+      return null;
+    }
+    candidates.sort();
+    if (parsedTotal != null && parsedTotal > 0) {
+      final cap = parsedTotal * 3.0;
+      final capped = candidates.where((value) => value <= cap).toList();
+      if (capped.isNotEmpty) {
+        capped.sort();
+        return _AmountCandidate(capped.last, baseScore);
+      }
+    }
+    return _AmountCandidate(candidates.last, baseScore);
+  }
+
+  List<_AmountHit> _extractAmounts(String line, int index) {
+    final regex = RegExp(
+      r'(?<!\d)(?:[$€£]|AUD|USD|NZD|GBP|EUR)?\s*-?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})',
+      caseSensitive: false,
+    );
+    final matches = regex.allMatches(line);
+    final hits = <_AmountHit>[];
+    for (final match in matches) {
+      final token = match.group(0);
+      if (token == null) continue;
+      final value = _parseAmount(token);
+      if (value == null) continue;
+      hits.add(_AmountHit(value, index, line));
+    }
+    return hits;
+  }
+
+  double? _parseAmount(String token) {
+    var cleaned = token.replaceAll(RegExp(r'[^\d,.\-()]'), '');
+    if (cleaned.isEmpty) return null;
+    final isNegative =
+        cleaned.contains('-') || (cleaned.startsWith('(') && cleaned.endsWith(')'));
+    cleaned = cleaned.replaceAll('-', '');
+    cleaned = cleaned.replaceAll('(', '');
+    cleaned = cleaned.replaceAll(')', '');
+
+    final hasDot = cleaned.contains('.');
+    final hasComma = cleaned.contains(',');
+    if (hasDot && hasComma) {
+      final lastDot = cleaned.lastIndexOf('.');
+      final lastComma = cleaned.lastIndexOf(',');
+      final decimalSep = lastDot > lastComma ? '.' : ',';
+      final thousandSep = decimalSep == '.' ? ',' : '.';
+      cleaned = cleaned.replaceAll(thousandSep, '');
+      cleaned = cleaned.replaceAll(decimalSep, '.');
+      final value = double.tryParse(cleaned);
+      if (value == null) return null;
+      return isNegative ? -value : value;
+    }
+
+    if (hasComma) {
+      final lastComma = cleaned.lastIndexOf(',');
+      final decimals = cleaned.length - lastComma - 1;
+      if (decimals == 2) {
+        cleaned = cleaned.replaceAll('.', '');
+        cleaned = cleaned.replaceAll(',', '.');
+      } else {
+        cleaned = cleaned.replaceAll(',', '');
+      }
+      final value = double.tryParse(cleaned);
+      if (value == null) return null;
+      return isNegative ? -value : value;
+    }
+
+    final value = double.tryParse(cleaned);
+    if (value == null) return null;
+    return isNegative ? -value : value;
+  }
+
+  int? _scoreLineForTotal(String lower) {
+    if (lower.contains('invoice total')) return 100;
+    if (lower.contains('grand total')) return 95;
+    if (lower.contains('amount due') || lower.contains('amount payable')) return 90;
+    if (lower.contains('balance due') || lower.contains('total due')) return 85;
+    if (lower.contains('total') && !lower.contains('subtotal')) return 80;
+    if (lower.contains('subtotal') || lower.contains('sub total')) return 30;
+    return null;
+  }
+
+  bool _shouldIgnoreLineForTotal(String lower) {
+    return lower.contains('change') ||
+        lower.contains('cash') ||
+        lower.contains('tender') ||
+        lower.contains('paid') ||
+        lower.contains('round') ||
+        lower.contains('gst') ||
+        lower.contains('vat') ||
+        lower.contains('tax') ||
+        lower.contains('discount');
+  }
+
+  double? _resolveTotal(double? parsed, double? derived) {
+    if (parsed == null || parsed <= 0) return derived;
+    if (derived == null || derived <= 0) return parsed;
+    if (derived > parsed * 3.0) return parsed;
+    return derived;
+  }
+
+  DateTime? _parseOcrDate(String? value) {
+    if (value == null) return null;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+
+    final direct = DateTime.tryParse(trimmed);
+    if (direct != null) return direct;
+
+    final match = RegExp(r'(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})')
+        .firstMatch(trimmed);
+    if (match != null) {
+      final part1 = int.tryParse(match.group(1) ?? '');
+      final part2 = int.tryParse(match.group(2) ?? '');
+      var year = int.tryParse(match.group(3) ?? '');
+      if (part1 == null || part2 == null || year == null) return null;
+      if (year < 100) year += 2000;
+
+      final dayFirst = part1 > 12 || part2 <= 12;
+      final day = dayFirst ? part1 : part2;
+      final month = dayFirst ? part2 : part1;
+      if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+      return DateTime(year, month, day);
+    }
+
+    return null;
+  }
+}
+
+class _AmountHit {
+  final double value;
+  final int lineIndex;
+  final String line;
+
+  _AmountHit(this.value, this.lineIndex, this.line);
+}
+
+class _AmountCandidate {
+  final double value;
+  final int score;
+
+  _AmountCandidate(this.value, this.score);
 }

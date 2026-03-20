@@ -8,13 +8,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/client_appointment_details/models/client_detail_model.dart';
 
 class ClientAppointmentDetailsView extends ConsumerWidget {
-  final String clientId;
+  final String? clientId;
+  final String? clientEmail;
 
-  const ClientAppointmentDetailsView({super.key, required this.clientId});
+  const ClientAppointmentDetailsView({
+    super.key,
+    this.clientId,
+    this.clientEmail,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(clientAppointmentDetailsViewModelProvider(clientId));
+    final params = ClientAppointmentDetailsParams(
+      clientId: clientId ?? '',
+      clientEmail: clientEmail,
+    );
+    final viewModel =
+        ref.watch(clientAppointmentDetailsViewModelProvider(params));
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,

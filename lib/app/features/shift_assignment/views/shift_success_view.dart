@@ -26,19 +26,18 @@ class ShiftSuccessView extends StatelessWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: _buildBauhausAppBar(context),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Success Header
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(BauhausDesign.space4),
+              padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
                 color: BauhausDesign.success.withOpacity(0.1),
                 border: Border.all(color: BauhausDesign.success, width: 2),
-                boxShadow: const [BauhausDesign.shadowHard],
+                boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: Row(
                 children: [
@@ -68,16 +67,14 @@ class ShiftSuccessView extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: BauhausDesign.space6),
-
-            // Assignment Details Card
+            const SizedBox(height: BauhausDesign.space3),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(BauhausDesign.space4),
+              padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceLight,
                 border: Border.all(color: BauhausDesign.neutral, width: 2),
-                boxShadow: const [BauhausDesign.shadowHard],
+                boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,9 +100,7 @@ class ShiftSuccessView extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: BauhausDesign.space6),
-
-            // Assigned Shifts Header
+            const SizedBox(height: BauhausDesign.space3),
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: BauhausDesign.space3,
@@ -113,7 +108,8 @@ class ShiftSuccessView extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: BauhausDesign.textDark,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: Text(
                 AppLocalizations.of(context)!.assignedShifts.toUpperCase(),
@@ -125,17 +121,15 @@ class ShiftSuccessView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: BauhausDesign.space3),
-
-            // Shift Details
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
-                  boxShadow: const [BauhausDesign.shadowHard],
-                ),
-                child: ShiftDetailsWidget(shiftData: shiftData),
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 220),
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceLight,
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                boxShadow: const [BauhausDesign.shadowHardXs],
               ),
+              child: ShiftDetailsWidget(shiftData: shiftData),
             ),
           ],
         ),
@@ -150,7 +144,7 @@ class ShiftSuccessView extends StatelessWidget {
         decoration: const BoxDecoration(
           color: BauhausDesign.surfaceLight,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 4),
+            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
           ),
         ),
         child: SafeArea(

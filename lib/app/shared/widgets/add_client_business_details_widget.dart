@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 class AddClientDetailsWidget extends StatefulWidget {
@@ -22,7 +20,7 @@ class _AddClientDetailsWidgetState extends State<AddClientDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: context.height * 0.40,
+      height: MediaQuery.of(context).size.height * 0.40,
       child: Column(
         children: [
           Expanded(

@@ -12,8 +12,15 @@ import 'dart:io';
 /// Attaches device context and sends to Crashlytics.
 class FeedbackFormView extends StatefulWidget {
   final String? userEmail;
+  final String? initialTitle;
+  final String? initialDescription;
 
-  const FeedbackFormView({super.key, this.userEmail});
+  const FeedbackFormView({
+    super.key,
+    this.userEmail,
+    this.initialTitle,
+    this.initialDescription,
+  });
 
   @override
   State<FeedbackFormView> createState() => _FeedbackFormViewState();
@@ -25,6 +32,13 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
   final _descriptionController = TextEditingController();
   bool _isSubmitting = false;
   bool _submitted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController.text = widget.initialTitle ?? '';
+    _descriptionController.text = widget.initialDescription ?? '';
+  }
 
   @override
   void dispose() {
@@ -339,12 +353,14 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () => CrashlyticsService.instance.forceCrashForTesting(),
+                  onPressed: () =>
+                      CrashlyticsService.instance.forceCrashForTesting(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: BauhausDesign.error,
                     foregroundColor: BauhausDesign.surfaceWhite,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusMd),
                     ),
                   ),
                   child: const Text(

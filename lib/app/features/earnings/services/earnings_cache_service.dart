@@ -8,12 +8,32 @@ class EarningsCacheService {
   static const String _taxConfigKey = 'tax_config';
   static const Duration _defaultCacheDuration = Duration(minutes: 30);
 
+  String _summaryCacheKey(
+    String userEmail, {
+    String? startDate,
+    String? endDate,
+  }) {
+    if (startDate != null && endDate != null) {
+      return '$_summaryKeyPrefix$userEmail${startDate}_$endDate';
+    }
+    return '$_summaryKeyPrefix$userEmail';
+  }
+
   // --- Summary ---
 
-  Future<void> cacheSummary(String userEmail, Map<String, dynamic> data) async {
+  Future<void> cacheSummary(
+    String userEmail,
+    Map<String, dynamic> data, {
+    String? startDate,
+    String? endDate,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final key = '$_summaryKeyPrefix$userEmail';
+      final key = _summaryCacheKey(
+        userEmail,
+        startDate: startDate,
+        endDate: endDate,
+      );
       final cacheEntry = {
         'timestamp': DateTime.now().toIso8601String(),
         'data': data,
@@ -24,10 +44,18 @@ class EarningsCacheService {
     }
   }
 
-  Future<Map<String, dynamic>?> getCachedSummary(String userEmail) async {
+  Future<Map<String, dynamic>?> getCachedSummary(
+    String userEmail, {
+    String? startDate,
+    String? endDate,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final key = '$_summaryKeyPrefix$userEmail';
+      final key = _summaryCacheKey(
+        userEmail,
+        startDate: startDate,
+        endDate: endDate,
+      );
       final jsonString = prefs.getString(key);
       
       if (jsonString == null) return null;

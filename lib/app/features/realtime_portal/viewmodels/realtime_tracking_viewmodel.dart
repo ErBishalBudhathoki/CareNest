@@ -4,6 +4,8 @@ import 'package:carenest/app/features/realtime_portal/models/realtime_portal_mod
 import 'package:carenest/app/features/realtime_portal/repositories/realtime_portal_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
+const _realtimeTrackingNoChange = Object();
+
 /// State for real-time tracking
 class RealtimeTrackingState {
   final bool isLoading;
@@ -26,20 +28,28 @@ class RealtimeTrackingState {
 
   RealtimeTrackingState copyWith({
     bool? isLoading,
-    String? error,
-    TrackingSession? activeSession,
-    LiveLocation? liveLocation,
+    Object? error = _realtimeTrackingNoChange,
+    Object? activeSession = _realtimeTrackingNoChange,
+    Object? liveLocation = _realtimeTrackingNoChange,
     List<GeofenceEvent>? geofenceEvents,
-    AppointmentStatus? appointmentStatus,
+    Object? appointmentStatus = _realtimeTrackingNoChange,
     bool? isTracking,
   }) {
     return RealtimeTrackingState(
       isLoading: isLoading ?? this.isLoading,
-      error: error,
-      activeSession: activeSession ?? this.activeSession,
-      liveLocation: liveLocation ?? this.liveLocation,
+      error: identical(error, _realtimeTrackingNoChange)
+          ? this.error
+          : error as String?,
+      activeSession: identical(activeSession, _realtimeTrackingNoChange)
+          ? this.activeSession
+          : activeSession as TrackingSession?,
+      liveLocation: identical(liveLocation, _realtimeTrackingNoChange)
+          ? this.liveLocation
+          : liveLocation as LiveLocation?,
       geofenceEvents: geofenceEvents ?? this.geofenceEvents,
-      appointmentStatus: appointmentStatus ?? this.appointmentStatus,
+      appointmentStatus: identical(appointmentStatus, _realtimeTrackingNoChange)
+          ? this.appointmentStatus
+          : appointmentStatus as AppointmentStatus?,
       isTracking: isTracking ?? this.isTracking,
     );
   }
@@ -48,8 +58,7 @@ class RealtimeTrackingState {
 class RealtimeTrackingViewModel extends StateNotifier<RealtimeTrackingState> {
   final RealtimePortalRepository _repository;
 
-  RealtimeTrackingViewModel(this._repository)
-      : super(RealtimeTrackingState());
+  RealtimeTrackingViewModel(this._repository) : super(RealtimeTrackingState());
 
   /// Start tracking session
   Future<void> startTracking({
@@ -188,4 +197,3 @@ final realtimeTrackingViewModelProvider =
   final repository = RealtimePortalRepository(apiMethod);
   return RealtimeTrackingViewModel(repository);
 });
-

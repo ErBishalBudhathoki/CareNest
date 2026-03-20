@@ -6,7 +6,7 @@ class BauhausActionCard extends StatelessWidget {
   final String description;
   final IconData icon;
   final Color baseColor; // The primary color for this card theme
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final String actionLabel;
 
   const BauhausActionCard({
@@ -21,6 +21,11 @@ class BauhausActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEnabled = onTap != null;
+    final actionColor = isEnabled ? baseColor : BauhausDesign.neutral;
+    final actionTextColor =
+        isEnabled ? BauhausDesign.surfaceWhite : BauhausDesign.surfaceLight;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -51,15 +56,15 @@ class BauhausActionCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space2),
                       decoration: BoxDecoration(
-                        color: baseColor.withOpacity(0.2), // Light tint
+                        color: actionColor.withOpacity(0.2), // Light tint
                         border: Border.all(
-                          color: baseColor, // Bold color border
+                          color: actionColor, // Bold color border
                           width: 2,
                         ),
                       ),
                       child: Icon(
                         icon,
-                        color: baseColor, // Bold color icon
+                        color: actionColor, // Bold color icon
                         size: 24,
                       ),
                     ),
@@ -95,7 +100,7 @@ class BauhausActionCard extends StatelessWidget {
                       vertical: BauhausDesign.space2,
                     ),
                     decoration: BoxDecoration(
-                      color: baseColor,
+                      color: actionColor,
                       border: Border.all(
                         color: BauhausDesign.textDark,
                         width: 2,
@@ -114,8 +119,7 @@ class BauhausActionCard extends StatelessWidget {
                           .labelMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign
-                                .surfaceWhite, // White text on bold color
+                            color: actionTextColor,
                           ),
                     ),
                   ),

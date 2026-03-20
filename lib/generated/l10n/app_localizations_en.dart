@@ -1658,7 +1658,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pendingUpdates => 'Pending Updates';
 
   @override
-  String get permissionCamera => "Camera access is required to scan receipts for your organization's expenses.";
+  String get permissionCamera =>
+      'Camera access is required to scan receipts for your organization\'s expenses.';
 
   @override
   String get permissionRequired => 'PERMISSION REQUIRED';
@@ -6754,6 +6755,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workerDashboardTitle => 'WORKER DASHBOARD';
+
+  @override
+  String get workerDashboardSubtitle => 'Access your shifts and tasks';
+
+  @override
+  String get workerSection => 'Worker';
+
+  @override
+  String get workerShiftHistoryTitle => 'SHIFT HISTORY';
+
+  @override
+  String get workerShiftHistorySubtitle =>
+      'View your past shifts and timesheets';
+
+  @override
+  String get teamDashboardTitle => 'TEAM COORDINATION';
+
+  @override
+  String get teamDashboardSubtitle => 'Manage teams and emergency broadcasts';
+
+  @override
+  String get teamSection => 'Teams';
 
   @override
   String get nextShiftCaps => 'NEXT SHIFT';

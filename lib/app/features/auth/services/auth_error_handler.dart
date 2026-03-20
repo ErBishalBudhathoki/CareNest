@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/features/feedback/views/feedback_form_view.dart';
+import 'package:carenest/backend/api_method.dart';
 
 /// Comprehensive error handling service for authentication
 /// Handles all possible edge cases with user-friendly feedback
@@ -47,13 +48,17 @@ class AuthErrorHandler {
         await _showNetworkErrorDialog(context, onRetry);
         break;
       case AuthErrorType.serverError:
-        await _showServerErrorDialog(context, onRetry);
+        await _showServerErrorDialog(context, onRetry, userEmail);
         break;
       case AuthErrorType.accountLocked:
-        await _showAccountLockedDialog(context, userEmail);
+        await _showAccountLockedDialog(context, userEmail, onForgotPassword);
         break;
       case AuthErrorType.sessionTimeout:
         await _showSessionTimeoutDialog(context, onRetry);
+        break;
+      case AuthErrorType.invalidCredentials:
+        await _showInvalidCredentialsDialog(
+            context, userEmail, onForgotPassword);
         break;
       case AuthErrorType.invalidInput:
         await _showInvalidInputDialog(context, errorMessage);
@@ -65,7 +70,7 @@ class AuthErrorHandler {
         await _showEmailNotVerifiedDialog(context, userEmail);
         break;
       case AuthErrorType.accountDisabled:
-        await _showAccountDisabledDialog(context);
+        await _showAccountDisabledDialog(context, userEmail);
         break;
       case AuthErrorType.weakPassword:
         await _showWeakPasswordDialog(context);
@@ -75,7 +80,8 @@ class AuthErrorHandler {
         break;
       case AuthErrorType.unknown:
       default:
-        await _showGenericErrorDialog(context, errorMessage, onRetry);
+        await _showGenericErrorDialog(
+            context, errorMessage, onRetry, userEmail);
         break;
     }
   }
@@ -127,6 +133,10 @@ class AuthErrorHandler {
           return AuthErrorType.serverError;
         case 'SESSION_TIMEOUT':
           return AuthErrorType.sessionTimeout;
+        case 'INVALID_CREDENTIAL':
+        case 'INVALID_CREDENTIALS':
+        case 'INVALID_LOGIN_CREDENTIALS':
+          return AuthErrorType.invalidCredentials;
         case 'INVALID_INPUT':
           return AuthErrorType.invalidInput;
       }
@@ -154,15 +164,22 @@ class AuthErrorHandler {
 
     // Authentication specific errors
     if (lowerMessage.contains('wrong-password') ||
-        lowerMessage.contains('incorrect password') ||
-        lowerMessage.contains('invalid-credential')) {
+        lowerMessage.contains('incorrect password')) {
       return AuthErrorType.incorrectPassword;
     }
 
     if (lowerMessage.contains('user-not-found') ||
         lowerMessage.contains('account not found') ||
-        lowerMessage.contains('no user record')) {
+        lowerMessage.contains('no user record') ||
+        lowerMessage.contains('no account found') ||
+        lowerMessage.contains('user does not exist')) {
       return AuthErrorType.userNotFound;
+    }
+
+    if (lowerMessage.contains('invalid-credential') ||
+        lowerMessage.contains('invalid credential') ||
+        lowerMessage.contains('invalid email or password')) {
+      return AuthErrorType.invalidCredentials;
     }
 
     if (lowerMessage.contains('too-many-requests') ||
@@ -213,7 +230,15 @@ class AuthErrorHandler {
     String? email,
     VoidCallback? onForgotPassword,
   ) async {
-    await EnhancedAuthDialog.showIncorrectPasswordDialog(context);
+    await EnhancedAuthDialog.showIncorrectPasswordDialog(
+      context,
+      onResetPassword: onForgotPassword,
+      onContactSupport: () => _launchSupport(
+        context,
+        userEmail: email,
+        supportReason: 'I could not sign in because my password was rejected.',
+      ),
+    );
   }
 
   /// Show user not found dialog
@@ -222,7 +247,17 @@ class AuthErrorHandler {
     String? email,
     VoidCallback? onCreateAccount,
   ) async {
-    await EnhancedAuthDialog.showAccountNotFoundDialog(context);
+    await EnhancedAuthDialog.showAccountNotFoundDialog(
+      context,
+      email: email,
+      onCreateAccount: onCreateAccount,
+      onContactSupport: () => _launchSupport(
+        context,
+        userEmail: email,
+        supportReason:
+            'I could not sign in because my account email was not found.',
+      ),
+    );
   }
 
   /// Show network error dialog
@@ -230,25 +265,40 @@ class AuthErrorHandler {
     BuildContext context,
     VoidCallback? onRetry,
   ) async {
-    await EnhancedAuthDialog.showNetworkErrorDialog(context);
+    await EnhancedAuthDialog.showNetworkErrorDialog(
+      context,
+      onRetry: onRetry,
+    );
   }
 
   /// Show server error dialog
   static Future<void> _showServerErrorDialog(
     BuildContext context,
     VoidCallback? onRetry,
+    String? email,
   ) async {
-    await EnhancedAuthDialog.showServerErrorDialog(context);
+    await EnhancedAuthDialog.showServerErrorDialog(
+      context,
+      onRetry: onRetry,
+      onReportIssue: () => _launchSupport(
+        context,
+        userEmail: email,
+        supportReason:
+            'I could not sign in due to a server error while authenticating.',
+      ),
+    );
   }
 
   /// Show account locked dialog
   static Future<void> _showAccountLockedDialog(
     BuildContext context,
     String? email,
+    VoidCallback? onResetPassword,
   ) async {
     await EnhancedAuthDialog.showAccountLockedDialog(
       context,
       lockoutDuration: const Duration(minutes: 15), // Default lockout time
+      onResetPassword: onResetPassword,
     );
   }
 
@@ -257,7 +307,28 @@ class AuthErrorHandler {
     BuildContext context,
     VoidCallback? onRetry,
   ) async {
-    await EnhancedAuthDialog.showSessionTimeoutDialog(context);
+    await EnhancedAuthDialog.showSessionTimeoutDialog(
+      context,
+      onLogin: onRetry,
+    );
+  }
+
+  /// Show dialog when sign-in credentials are invalid but exact field is unknown
+  static Future<void> _showInvalidCredentialsDialog(
+    BuildContext context,
+    String? email,
+    VoidCallback? onForgotPassword,
+  ) async {
+    await EnhancedAuthDialog.showInvalidCredentialsDialog(
+      context,
+      onResetPassword: onForgotPassword,
+      onContactSupport: () => _launchSupport(
+        context,
+        userEmail: email,
+        supportReason:
+            'I could not sign in because my credentials were rejected.',
+      ),
+    );
   }
 
   /// Show invalid input dialog
@@ -275,79 +346,9 @@ class AuthErrorHandler {
 
   /// Show too many attempts dialog
   static Future<void> _showTooManyAttemptsDialog(BuildContext context) async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: AppColors.colorWarning.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.timer_outlined,
-                    color: AppColors.colorWarning,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Too Many Attempts',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'For your security, we\'ve temporarily locked your account after multiple failed attempts. Please wait 15 minutes before trying again.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'I Understand',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    await EnhancedAuthDialog.showTooManyAttemptsDialog(
+      context,
+      lockoutDuration: const Duration(minutes: 15),
     );
   }
 
@@ -356,286 +357,38 @@ class AuthErrorHandler {
     BuildContext context,
     String? email,
   ) async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: AppColors.colorWarning.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.mark_email_unread_outlined,
-                    color: AppColors.colorWarning,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Email Verification Required',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  email != null
-                      ? 'We sent a verification link to $email. Please check your inbox and click the link to verify your account.'
-                      : 'Please verify your email address before signing in. Check your inbox for a verification link.',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _resendVerificationEmail(email);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.colorPrimary,
-                          side: BorderSide(color: AppColors.colorPrimary),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Resend Email',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Got It',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    await EnhancedAuthDialog.showEmailNotVerifiedDialog(
+      context,
+      email: email,
+      onResendEmail: () => _resendVerificationEmail(context, email),
+      onContactSupport: () => _launchSupport(
+        context,
+        userEmail: email,
+        supportReason:
+            'I cannot sign in because my email verification is not working.',
+      ),
     );
   }
 
   /// Show account disabled dialog
-  static Future<void> _showAccountDisabledDialog(BuildContext context) async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.person_off_outlined,
-                    color: AppColors.error,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Account Suspended',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Your account has been temporarily suspended. This may be due to a security concern or policy violation. Our support team can help restore your access.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black54,
-                          side: const BorderSide(color: Colors.black26),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Later',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _launchSupport();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Contact Support',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+  static Future<void> _showAccountDisabledDialog(
+    BuildContext context,
+    String? userEmail,
+  ) async {
+    await EnhancedAuthDialog.showAccountDisabledDialog(
+      context,
+      onContactSupport: () => _launchSupport(
+        context,
+        userEmail: userEmail,
+        supportReason:
+            'My account appears to be disabled and I need support to restore access.',
+      ),
     );
   }
 
   /// Show weak password dialog
   static Future<void> _showWeakPasswordDialog(BuildContext context) async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: AppColors.colorWarning.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.gpp_bad_outlined,
-                    color: AppColors.colorWarning,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Strengthen Your Password',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Your password needs to be stronger for better security. Please include:\n\n• At least 8 characters\n• Uppercase and lowercase letters\n• Numbers and special characters',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Create Stronger Password',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    await EnhancedAuthDialog.showWeakPasswordDialog(context);
   }
 
   /// Show email already in use dialog
@@ -643,105 +396,9 @@ class AuthErrorHandler {
     BuildContext context,
     String? email,
   ) async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: AppColors.colorInfo.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.person_outline,
-                    color: AppColors.colorInfo,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Account Already Exists',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  email != null
-                      ? 'An account with email "$email" already exists. Would you like to sign in instead?'
-                      : 'This email address is already registered with us. Would you like to sign in instead?',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.colorPrimary,
-                          side: BorderSide(color: AppColors.colorPrimary),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Try Different Email',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          // Navigate to login screen
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Sign In',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    await EnhancedAuthDialog.showEmailAlreadyInUseDialog(
+      context,
+      email: email,
     );
   }
 
@@ -750,146 +407,83 @@ class AuthErrorHandler {
     BuildContext context,
     String errorMessage,
     VoidCallback? onRetry,
+    String? userEmail,
   ) async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.error_outline,
-                    color: AppColors.error,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Something Went Wrong',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  errorMessage.isNotEmpty
-                      ? errorMessage
-                      : 'An unexpected error occurred. Please try again or contact support if the problem persists.',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                if (onRetry != null)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            onRetry();
-                          },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.colorPrimary,
-                            side: BorderSide(color: AppColors.colorPrimary),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Try Again',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            _launchSupport();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Contact Support',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _launchSupport();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Contact Support',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
+    await EnhancedAuthDialog.showGenericErrorDialog(
+      context,
+      message: errorMessage.isNotEmpty
+          ? errorMessage
+          : 'An unexpected error occurred. Please try again or contact support if the problem persists.',
+      onRetry: onRetry,
+      onContactSupport: () => _launchSupport(
+        context,
+        userEmail: userEmail,
+        supportReason:
+            'I encountered an unexpected sign-in error and need help.',
+      ),
     );
   }
 
   /// Launch support contact
-  static void _launchSupport() {
-    // TODO: Implement support contact functionality
-    // This could open email, phone, or in-app support
-    print('Launching support contact...');
+  static Future<void> _launchSupport(
+    BuildContext context, {
+    String? userEmail,
+    String? supportReason,
+  }) async {
+    await Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute<void>(
+        builder: (_) => FeedbackFormView(
+          userEmail: userEmail,
+          initialTitle: 'Sign-in issue',
+          initialDescription: supportReason ?? 'I need help signing in.',
+        ),
+      ),
+    );
   }
 
   /// Resend verification email
-  static void _resendVerificationEmail(String? email) {
-    // TODO: Implement resend verification email functionality
-    print('Resending verification email to: $email');
+  static Future<void> _resendVerificationEmail(
+    BuildContext context,
+    String? email,
+  ) async {
+    final targetEmail = email?.trim().toLowerCase();
+
+    try {
+      if (targetEmail == null || targetEmail.isEmpty) {
+        throw Exception('Please enter a valid email and try again.');
+      }
+
+      final response =
+          await ApiMethod().resendEmailVerificationOtp(targetEmail);
+      final isSuccess =
+          response['success'] == true || response['statusCode'] == 200;
+
+      if (!isSuccess) {
+        throw Exception(
+          response['message']?.toString() ??
+              'Failed to send verification link.',
+        );
+      }
+
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(
+            content: Text(
+              response['message']?.toString() ??
+                  'Verification link sent to $targetEmail.',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      await EnhancedAuthDialog.showErrorDialog(
+        context,
+        title: 'Resend Failed',
+        message: e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
   }
 
   /// Check network connectivity
@@ -948,6 +542,7 @@ class AuthErrorHandler {
 enum AuthErrorType {
   incorrectPassword,
   userNotFound,
+  invalidCredentials,
   networkError,
   serverError,
   accountLocked,

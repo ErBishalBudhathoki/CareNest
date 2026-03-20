@@ -29,7 +29,6 @@ import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
 import 'package:carenest/app/features/offline/views/offline_sync_dashboard.dart';
 import 'package:carenest/app/features/compliance/views/compliance_automation_dashboard.dart';
 import 'package:carenest/app/features/expenses/views/smart_expense_dashboard.dart';
-import 'package:carenest/app/features/client_portal/views/client_portal_dashboard.dart';
 import 'package:carenest/app/features/payroll/views/advanced_payroll_dashboard.dart';
 import 'package:carenest/app/features/communication/views/communication_hub_dashboard.dart';
 import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dashboard.dart';
@@ -97,7 +96,7 @@ class AppPages {
     const ComplianceAutomationDashboard(),
     const SmartExpenseDashboard(),
     // Phase 4 Views
-    const ClientPortalDashboard(),
+    const ClientDashboardView(),
     const AdvancedPayrollDashboard(),
     const CommunicationHubDashboard(),
     // Phase 7 Views - Real-Time Client Portal

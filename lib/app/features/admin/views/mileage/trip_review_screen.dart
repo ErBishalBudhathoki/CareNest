@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/admin/viewmodels/admin_mileage_view_model.dart';
+import 'package:carenest/app/shared/widgets/platform_map_widget.dart';
 
 class TripReviewScreen extends ConsumerStatefulWidget {
   final String tripId;
@@ -41,6 +42,13 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       (t) => t.id == widget.tripId,
       orElse: () => throw Exception('Trip not found'),
     );
+    final rawTrip = viewModel.rawTripsById[trip.id];
+    final routePoints = _extractRoutePoints(rawTrip, trip);
+    final startPoint = routePoints.isNotEmpty ? routePoints.first : null;
+    final endPoint = routePoints.isNotEmpty ? routePoints.last : null;
+    final status =
+        _normalizeStatus(trip.status, rawTrip?['adminApprovalStatus']);
+    final updatedAt = _tryParseDate(rawTrip?['updatedAt']?.toString());
 
     // Initialize controllers if not editing and values differ (simple sync)
     if (!_isEditing) {
@@ -87,20 +95,62 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Map Placeholder (Geometric)
-            Container(
-              height: 200,
-              decoration: BauhausDesign.cardDecoration.copyWith(
-                color: BauhausDesign.neutral.withOpacity(0.1),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              child: Container(
+                height: 220,
+                decoration: BoxDecoration(
+                  color: BauhausDesign.surfaceLight,
+                  border: Border.all(
+                    color: BauhausDesign.neutral,
+                    width: BauhausDesign.borderThick,
+                  ),
+                ),
+                child: routePoints.length >= 2
+                    ? PlatformMapWidget(
+                        center: endPoint!,
+                        zoom: 14,
+                        routePoints: routePoints,
+                        startMarker: startPoint,
+                        endMarker: endPoint,
+                        showMyLocation: false,
+                      )
+                    : Container(
+                        color: BauhausDesign.neutral.withOpacity(0.08),
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.map,
+                                size: 48, color: BauhausDesign.neutral),
+                            const SizedBox(height: 8),
+                            Text('MAP VISUALIZATION',
+                                style: textTheme.labelLarge),
+                            const SizedBox(height: 4),
+                            Text(
+                              'No tracked route data on this trip',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: BauhausDesign.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
               ),
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.map, size: 48, color: BauhausDesign.neutral),
-                  const SizedBox(height: 8),
-                  Text('MAP VISUALIZATION', style: textTheme.labelLarge),
-                ],
+            ),
+            const SizedBox(height: BauhausDesign.space2),
+            if (routePoints.length >= 2)
+              Text(
+                'Tracked route points: ${routePoints.length}',
+                style: textTheme.bodySmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
               ),
+            const SizedBox(height: BauhausDesign.space6),
+            _buildDecisionBanner(
+              context,
+              status: status,
+              updatedAt: updatedAt,
             ),
             const SizedBox(height: BauhausDesign.space6),
 
@@ -171,26 +221,56 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                 children: [
                   Expanded(
                     child: BauhausButton(
-                      text: 'REJECT',
+                      text: status == 'REJECTED' ? 'MARK REJECTED' : 'REJECT',
                       backgroundColor: BauhausDesign.primary, // Red
-                      onPressed: () {
-                        ref
+                      onPressed: () async {
+                        final success = await ref
                             .read(adminMileageViewModelProvider)
                             .updateTripStatus(trip.id, 'REJECTED');
-                        Navigator.pop(context);
+                        if (!mounted) return;
+                        if (success) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Trip rejected successfully'),
+                            ),
+                          );
+                        } else {
+                          final message =
+                              ref.read(adminMileageViewModelProvider).error ??
+                                  'Failed to reject trip';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(message)),
+                          );
+                        }
                       },
                     ),
                   ),
                   const SizedBox(width: BauhausDesign.space4),
                   Expanded(
                     child: BauhausButton(
-                      text: 'APPROVE',
+                      text: status == 'APPROVED' ? 'MARK APPROVED' : 'APPROVE',
                       backgroundColor: BauhausDesign.secondary, // Blue
-                      onPressed: () {
-                        ref
+                      onPressed: () async {
+                        final success = await ref
                             .read(adminMileageViewModelProvider)
                             .updateTripStatus(trip.id, 'APPROVED');
-                        Navigator.pop(context);
+                        if (!mounted) return;
+                        if (success) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Trip approved successfully'),
+                            ),
+                          );
+                        } else {
+                          final message =
+                              ref.read(adminMileageViewModelProvider).error ??
+                                  'Failed to approve trip';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(message)),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -213,5 +293,155 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
             ),
       ),
     );
+  }
+
+  Widget _buildDecisionBanner(
+    BuildContext context, {
+    required String status,
+    DateTime? updatedAt,
+  }) {
+    final textTheme = BauhausDesign.getTextTheme(context);
+    final statusColor = _getStatusColor(status);
+    String decisionText;
+    if (status == 'APPROVED') {
+      decisionText = 'Decision: Approved';
+    } else if (status == 'REJECTED') {
+      decisionText = 'Decision: Rejected';
+    } else {
+      decisionText = 'Decision: Pending';
+    }
+    final subtitle = updatedAt == null
+        ? 'No decision timestamp available'
+        : 'Updated: ${updatedAt.toLocal().toString().split('.').first}';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(
+              color: statusColor,
+              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+            ),
+          ),
+          const SizedBox(width: BauhausDesign.space3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  decisionText,
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: BauhausDesign.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _normalizeStatus(String? status, dynamic rawStatus) {
+    final value = (status ?? rawStatus ?? 'PENDING').toString().toUpperCase();
+    if (value == 'APPROVED' || value == 'REJECTED' || value == 'PENDING') {
+      return value;
+    }
+    return 'PENDING';
+  }
+
+  DateTime? _tryParseDate(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return DateTime.tryParse(value);
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'APPROVED':
+        return BauhausDesign.secondary;
+      case 'REJECTED':
+        return BauhausDesign.primary;
+      case 'PENDING':
+      default:
+        return BauhausDesign.accent;
+    }
+  }
+
+  List<LatLng> _extractRoutePoints(
+      Map<String, dynamic>? tripData, dynamic tripModel) {
+    final points = <LatLng>[];
+
+    final route = tripData?['routePath'];
+    if (route is List) {
+      for (final item in route) {
+        final point = _parseCoordinateObject(item);
+        if (point != null) {
+          points.add(point);
+        }
+      }
+    }
+
+    if (points.length >= 2) {
+      return _dedupeSequential(points);
+    }
+
+    final startPoint = _parseCoordinateObject(tripData?['startCoordinates']) ??
+        _tryParseCoordinateString(tripModel.startLocation as String?);
+    final endPoint = _parseCoordinateObject(tripData?['endCoordinates']) ??
+        _tryParseCoordinateString(tripModel.endLocation as String?);
+
+    if (startPoint != null) points.add(startPoint);
+    if (endPoint != null) points.add(endPoint);
+
+    return _dedupeSequential(points);
+  }
+
+  LatLng? _parseCoordinateObject(dynamic value) {
+    if (value is! Map) return null;
+    final map = Map<String, dynamic>.from(value);
+    final lat = double.tryParse(map['lat']?.toString() ?? '');
+    final lng = double.tryParse(map['lng']?.toString() ?? '');
+    if (lat == null || lng == null) return null;
+    return LatLng(lat, lng);
+  }
+
+  LatLng? _tryParseCoordinateString(String? value) {
+    if (value == null) return null;
+    final parts = value.split(',');
+    if (parts.length != 2) return null;
+    final lat = double.tryParse(parts[0].trim());
+    final lng = double.tryParse(parts[1].trim());
+    if (lat == null || lng == null) return null;
+    return LatLng(lat, lng);
+  }
+
+  List<LatLng> _dedupeSequential(List<LatLng> points) {
+    if (points.isEmpty) return points;
+    final deduped = <LatLng>[points.first];
+    for (final point in points.skip(1)) {
+      final previous = deduped.last;
+      if (previous.latitude != point.latitude ||
+          previous.longitude != point.longitude) {
+        deduped.add(point);
+      }
+    }
+    return deduped;
   }
 }

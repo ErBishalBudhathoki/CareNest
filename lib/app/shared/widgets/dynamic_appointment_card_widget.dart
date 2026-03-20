@@ -1,11 +1,11 @@
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -520,7 +520,7 @@ class _DynamicAppointmentCardWidgetState
         } else if (snapshot.hasError) {
           print(snapshot.error);
           return Container(
-            height: context.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.35,
             margin: const EdgeInsets.symmetric(horizontal: _spacingMd),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(_spacingLg),
@@ -575,7 +575,7 @@ class _DynamicAppointmentCardWidgetState
           );
         }
         return Container(
-          height: context.height * 0.35,
+          height: MediaQuery.of(context).size.height * 0.35,
           margin: const EdgeInsets.symmetric(horizontal: _spacingMd),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(_spacingLg),

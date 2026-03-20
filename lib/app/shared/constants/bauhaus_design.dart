@@ -36,8 +36,10 @@ class BauhausDesign {
 
   // ==================== SPACING ====================
   // 4pt Grid System
+  static const double space0_5 = 2.0;
   static const double space1 = 4.0; // xs
   static const double space2 = 8.0; // sm
+  static const double space2_5 = 10.0; // between sm and md
   static const double space3 = 12.0;
   static const double space4 = 16.0; // md
   static const double space5 = 20.0;
@@ -47,14 +49,19 @@ class BauhausDesign {
   static const double space12 = 48.0;
   static const double space16 = 64.0;
 
+  // Layout heights
+  static const double appBarCompactHeight = 54.0;
+  static const double appBarExpandedHeight = 120.0;
+  static const double panelPlaceholderHeight = 400.0;
+
   // ==================== BORDER RADIUS ====================
-  static const double radiusXs = 2.0;
-  static const double radiusSm = 4.0;
-  static const double radiusMd = 12.0; // Default
-  static const double radiusLg = 16.0;
-  static const double radiusXl = 24.0;
-  static const double radiusFull = 999.0;
-  static const double radiusPill = 999.0; // Alias for radiusFull
+  static const double radiusXs = 0.0;
+  static const double radiusSm = 0.0;
+  static const double radiusMd = 0.0;
+  static const double radiusLg = 0.0;
+  static const double radiusXl = 0.0;
+  static const double radiusFull = 0.0;
+  static const double radiusPill = 0.0;
 
   // Border widths
   static const double borderThin = 1.0;
@@ -69,6 +76,7 @@ class BauhausDesign {
   static const double fontLg = 16.0; // Large
   static const double fontXl = 18.0; // Extra large
   static const double fontXxl = 20.0; // Display
+  static const double iconMd = 18.0;
 
   // ==================== SHADOWS ====================
   static const Color shadowColor = Color(0xFF000000);
@@ -115,6 +123,102 @@ class BauhausDesign {
     offset: Offset(0, 2),
     spreadRadius: 0,
   );
+
+  // ==================== NEO-BAUHAUS TOKENS ====================
+  static const Color neoInk = Color(0xFF3B342A);
+  static const Color neoPaper = surfaceWhite;
+  static const Color neoSignal = info;
+  static const Color neoDanger = primary;
+  static const Color neoHighlight = accent;
+
+  static const double neoBorderWidth = 2.5;
+  static const double neoInnerBorderWidth = 1.5;
+
+  static const BoxShadow shadowNeoCard = BoxShadow(
+    color: neoInk,
+    offset: Offset(8, 8),
+    blurRadius: 0,
+    spreadRadius: 0,
+  );
+
+  static const BoxShadow shadowNeoButton = BoxShadow(
+    color: neoInk,
+    offset: Offset(4, 4),
+    blurRadius: 0,
+    spreadRadius: 0,
+  );
+
+  static BoxDecoration neoCardDecoration({Color? backgroundColor}) {
+    return BoxDecoration(
+      color: backgroundColor ?? neoPaper,
+      border:
+          Border.all(color: neoInk.withOpacity(0.78), width: neoBorderWidth),
+      boxShadow: [
+        BoxShadow(
+          color: neoInk.withOpacity(0.48),
+          offset: const Offset(8, 8),
+          blurRadius: 0,
+          spreadRadius: 0,
+        ),
+      ],
+    );
+  }
+
+  static BoxDecoration neoPanelDecoration({Color? backgroundColor}) {
+    return BoxDecoration(
+      color: backgroundColor ?? neoPaper,
+      border: Border.all(
+        color: neoInk.withOpacity(0.58),
+        width: neoInnerBorderWidth,
+      ),
+    );
+  }
+
+  static BoxDecoration neoSectionHeaderDecoration({
+    Color? backgroundColor,
+    bool lightShadow = false,
+  }) {
+    return BoxDecoration(
+      color: backgroundColor ?? neoSignal,
+      boxShadow: [
+        BoxShadow(
+          color: lightShadow ? neoPaper : neoInk,
+          offset: const Offset(4, 4),
+          blurRadius: 0,
+        ),
+      ],
+    );
+  }
+
+  static TextStyle neoHeadingStyle(
+    BuildContext context, {
+    Color? color,
+    double fontSize = 16,
+    FontWeight fontWeight = FontWeight.w700,
+    double letterSpacing = 1.0,
+  }) {
+    return (getTextTheme(context).headlineMedium ?? const TextStyle()).copyWith(
+      color: color ?? neoPaper,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+    );
+  }
+
+  static TextStyle neoMonoStyle(
+    BuildContext context, {
+    Color? color,
+    double fontSize = 12,
+    FontWeight fontWeight = FontWeight.w600,
+    double letterSpacing = 0.0,
+  }) {
+    return GoogleFonts.robotoMono(
+      color: color ?? textDark,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+    );
+  }
 
   // ==================== TYPOGRAPHY ====================
   static TextTheme getTextTheme(BuildContext context) {

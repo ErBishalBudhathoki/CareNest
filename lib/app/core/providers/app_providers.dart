@@ -5,7 +5,6 @@ import 'package:carenest/app/features/business/viewmodels/add_business_viewmodel
 import 'package:carenest/app/core/services/timer_service.dart';
 import 'dart:typed_data';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/features/auth/viewmodels/change_password_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/signup_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/forgot_password_viewmodel.dart';
@@ -151,13 +150,9 @@ class PhotoDataNotifier extends StateNotifier<PhotoDataState> {
       }
     } catch (e) {
       debugPrint("Error in fetchPhotoData: $e");
-      // If network fails and we have cached data, we are good (isLoading set to false)
-      // If no cache, show error
-      if (state.photoData == null) {
-        state = state.copyWith(error: e.toString(), isLoading: false);
-      } else {
-        state = state.copyWith(isLoading: false); // Keep cached data
-      }
+      // Never overwrite existing valid photo data on a failed network fetch.
+      // Just stop loading and keep whatever we already have (cached/local).
+      state = state.copyWith(isLoading: false);
     }
     debugPrint("=== PhotoDataNotifier.fetchPhotoData completed ===");
   }
@@ -373,7 +368,18 @@ class UserRoleNotifier extends StateNotifier<UserRole> {
 
 final bankDetailsViewModelProvider =
     ChangeNotifierProvider.autoDispose<BankDetailsViewModel>((ref) {
-  return BankDetailsViewModel(apiMethod: ref.read(apiMethodProvider));
+  return BankDetailsViewModel(
+    apiMethod: ref.read(apiMethodProvider),
+    scope: BankDetailsScope.personal,
+  );
+});
+
+final scopedBankDetailsViewModelProvider = ChangeNotifierProvider.autoDispose
+    .family<BankDetailsViewModel, BankDetailsScope>((ref, scope) {
+  return BankDetailsViewModel(
+    apiMethod: ref.read(apiMethodProvider),
+    scope: scope,
+  );
 });
 
 final loginViewModelProvider =
@@ -398,14 +404,9 @@ final forgotPasswordViewModelProvider =
   );
 });
 
-final changePasswordViewModelProvider =
-    ChangeNotifierProvider.autoDispose<ChangePasswordViewModel>((ref) {
-  return ChangePasswordViewModel(ref);
-});
-
 final verifyOTPViewModelProvider =
     ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
-  return VerifyOTPViewModel(ref.read(apiMethodProvider));
+  return VerifyOTPViewModel();
 });
 
 final addBusinessViewModelProvider =

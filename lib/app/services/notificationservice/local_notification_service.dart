@@ -10,6 +10,7 @@ import 'package:carenest/app/features/notifications/models/notification_model.da
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  static const int _maxNotificationId = 0x7fffffff; // 32-bit signed max
 
   Future<void> initialize({bool requestPermissions = true}) async {
     debugPrint('DEBUG_LOCAL_NOTIF: Initializing LocalNotificationService...');
@@ -120,8 +121,7 @@ class LocalNotificationService {
         iOS: iosDetails,
       );
 
-      final notificationId = int.tryParse(notificationModel.id) ??
-          (notificationModel.id.hashCode & 0x7fffffff);
+      final notificationId = _toSafeNotificationId(notificationModel.id);
 
       debugPrint('\n--- NOTIFICATION DISPLAY CALL ---');
       debugPrint('Final Notification ID: $notificationId');
@@ -157,6 +157,20 @@ class LocalNotificationService {
       debugPrint('DEBUG_LOCAL_NOTIF: ❌ Error creating notification: $e');
       rethrow;
     }
+  }
+
+  int _toSafeNotificationId(String rawId) {
+    final trimmed = rawId.trim();
+    if (trimmed.isEmpty) return 1;
+
+    final parsedInt = int.tryParse(trimmed);
+    if (parsedInt != null) {
+      final normalized = parsedInt.abs() % _maxNotificationId;
+      return normalized == 0 ? 1 : normalized;
+    }
+
+    final hashed = trimmed.hashCode & _maxNotificationId;
+    return hashed == 0 ? 1 : hashed;
   }
 
   String _getChannelName(String channelId) {

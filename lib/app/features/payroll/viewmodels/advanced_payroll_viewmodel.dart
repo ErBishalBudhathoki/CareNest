@@ -3,7 +3,8 @@ import 'package:carenest/app/features/payroll/repositories/advanced_payroll_repo
 import 'package:carenest/app/features/payroll/models/advanced_payroll_models.dart';
 
 final advancedPayrollViewModelProvider =
-    StateNotifierProvider<AdvancedPayrollViewModel, AdvancedPayrollState>((ref) {
+    StateNotifierProvider<AdvancedPayrollViewModel, AdvancedPayrollState>(
+        (ref) {
   final repository = ref.watch(advancedPayrollRepositoryProvider);
   return AdvancedPayrollViewModel(repository);
 });
@@ -50,21 +51,25 @@ class AdvancedPayrollViewModel extends StateNotifier<AdvancedPayrollState> {
   AdvancedPayrollViewModel(this._repository) : super(AdvancedPayrollState());
 
   /// Calculate payroll with award rates and penalties
-  Future<void> calculatePayroll(Map<String, dynamic> payrollData) async {
+  Future<bool> calculatePayroll(Map<String, dynamic> payrollData) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _repository.calculatePayroll(payrollData: payrollData);
+      final response =
+          await _repository.calculatePayroll(payrollData: payrollData);
       if (response['success'] == true && response['data'] != null) {
         final calculation = PayrollCalculation.fromJson(response['data']);
         state = state.copyWith(isLoading: false, calculation: calculation);
+        return true;
       } else {
         state = state.copyWith(
           isLoading: false,
           error: response['message'] ?? 'Failed to calculate payroll',
         );
+        return false;
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
     }
   }
 
@@ -72,7 +77,8 @@ class AdvancedPayrollViewModel extends StateNotifier<AdvancedPayrollState> {
   Future<void> getPayslip(String userId, String period) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _repository.getPayslip(userId: userId, period: period);
+      final response =
+          await _repository.getPayslip(userId: userId, period: period);
       if (response['success'] == true && response['data'] != null) {
         final payslip = Payslip.fromJson(response['data']);
         state = state.copyWith(isLoading: false, payslip: payslip);
@@ -95,8 +101,16 @@ class AdvancedPayrollViewModel extends StateNotifier<AdvancedPayrollState> {
         organizationId: organizationId,
         period: period,
       );
-      state = state.copyWith(isLoading: false);
-      return response['success'] == true;
+      final success = response['success'] == true;
+      state = state.copyWith(
+        isLoading: false,
+        error: success
+            ? null
+            : (response['message'] ??
+                response['error'] ??
+                'Failed to generate payslips'),
+      );
+      return success;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       return false;
@@ -129,9 +143,18 @@ class AdvancedPayrollViewModel extends StateNotifier<AdvancedPayrollState> {
   Future<bool> exportPayrollData(Map<String, dynamic> exportData) async {
     state = state.copyWith(isExporting: true, error: null);
     try {
-      final response = await _repository.exportPayrollData(exportData: exportData);
-      state = state.copyWith(isExporting: false);
-      return response['success'] == true;
+      final response =
+          await _repository.exportPayrollData(exportData: exportData);
+      final success = response['success'] == true;
+      state = state.copyWith(
+        isExporting: false,
+        error: success
+            ? null
+            : (response['message'] ??
+                response['error'] ??
+                'Failed to export payroll data'),
+      );
+      return success;
     } catch (e) {
       state = state.copyWith(isExporting: false, error: e.toString());
       return false;
