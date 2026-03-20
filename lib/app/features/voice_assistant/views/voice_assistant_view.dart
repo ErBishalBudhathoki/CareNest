@@ -213,6 +213,18 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           organizationId: assignmentOrganizationId.isEmpty
               ? (organizationId.isEmpty ? null : organizationId)
               : assignmentOrganizationId,
+          initialDate: navigationContext['date']?.toString(),
+          initialStartTime: navigationContext['startTime']?.toString(),
+          initialEndTime: navigationContext['endTime']?.toString(),
+          initialBreakValue: navigationContext['breakValue']?.toString(),
+          initialHighIntensity: navigationContext['highIntensity'] is bool
+              ? navigationContext['highIntensity'] as bool
+              : null,
+          initialNdisItem: navigationContext['ndisItem'] is Map
+              ? Map<String, dynamic>.from(
+                  navigationContext['ndisItem'] as Map,
+                )
+              : null,
         );
         break;
       case 'admin_dashboard':
@@ -486,8 +498,37 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                     backgroundColor: BauhausDesign.surfaceLight,
                     foregroundColor: BauhausDesign.textDark,
                   ),
+                _buildStatusChip(
+                  label:
+                      command.executionMode == 'agent' ? 'Agent' : 'Fallback',
+                  backgroundColor: command.executionMode == 'agent'
+                      ? BauhausDesign.secondary.withOpacity(0.12)
+                      : BauhausDesign.neutral.withOpacity(0.3),
+                  foregroundColor: BauhausDesign.textDark,
+                ),
               ],
             ),
+            if (command.executionMode == 'agent' ||
+                (command.agentModel != null &&
+                    command.agentModel!.isNotEmpty) ||
+                command.toolCalls.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(
+                [
+                  if (command.executionMode == 'agent') 'Mode: agent',
+                  if (command.executionMode != 'agent') 'Mode: fallback_rule',
+                  if (command.agentModel != null &&
+                      command.agentModel!.isNotEmpty)
+                    'Model: ${command.agentModel}',
+                  if (command.toolCalls.isNotEmpty)
+                    'Tools: ${command.toolCalls.join(', ')}',
+                ].join('  •  '),
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                      color: BauhausDesign.textMuted,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ],
             if (command.responseText.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(

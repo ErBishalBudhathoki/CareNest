@@ -13,6 +13,9 @@ class VoiceCommand {
   final String? suggestedRoute;
   final List<String> suggestions;
   final Map<String, dynamic>? resultData;
+  final String executionMode;
+  final String? agentModel;
+  final List<String> toolCalls;
   final String source;
   final String language;
   final String? errorMessage;
@@ -32,6 +35,9 @@ class VoiceCommand {
     this.suggestedRoute,
     required this.suggestions,
     this.resultData,
+    required this.executionMode,
+    this.agentModel,
+    required this.toolCalls,
     required this.source,
     required this.language,
     this.errorMessage,
@@ -74,6 +80,9 @@ class VoiceCommand {
       suggestedRoute: _stringOrNull(json['suggestedRoute']),
       suggestions: _stringList(json['suggestions']),
       resultData: rawResultData == null ? null : _asMap(rawResultData),
+      executionMode: _stringOrNull(json['executionMode']) ?? 'fallback_rule',
+      agentModel: _stringOrNull(json['agentModel']),
+      toolCalls: _stringList(json['toolCalls']),
       source: _stringOrNull(json['source']) ?? 'text',
       language: _stringOrNull(json['language']) ?? 'en-US',
       errorMessage: _stringOrNull(json['errorMessage']),
@@ -96,6 +105,9 @@ class VoiceCommand {
       'suggestedRoute': suggestedRoute,
       'suggestions': suggestions,
       'resultData': resultData,
+      'executionMode': executionMode,
+      'agentModel': agentModel,
+      'toolCalls': toolCalls,
       'source': source,
       'language': language,
       'errorMessage': errorMessage,
