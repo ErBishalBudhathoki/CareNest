@@ -71,6 +71,9 @@ import 'package:carenest/app/features/care_intelligence/views/medication_managem
 import 'package:carenest/app/features/care_intelligence/views/behavior_support_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/health_monitoring_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/outcome_tracking_view.dart';
+import 'package:carenest/app/features/worker/views/worker_dashboard_view.dart';
+import 'package:carenest/app/features/worker/views/worker_shift_history_view.dart';
+import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
 // But we need to IMPORT it explicitly here to use it in MaterialApp.
 
@@ -725,6 +728,9 @@ class MyApp extends ConsumerWidget {
           Routes.behaviorSupport: (context) => const BehaviorSupportView(),
           Routes.healthMonitoring: (context) => const HealthMonitoringView(),
           Routes.outcomeTracking: (context) => const OutcomeTrackingView(),
+          Routes.workerDashboard: (context) => const WorkerDashboardView(),
+          Routes.workerShiftHistory: (context) => const WorkerShiftHistoryView(),
+          Routes.teamDashboard: (context) => const TeamDashboardView(),
         },
       ),
     );

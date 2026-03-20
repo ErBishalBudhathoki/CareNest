@@ -8,16 +8,20 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 class AdminMileageViewModel extends ChangeNotifier {
   final ApiMethod _apiMethod;
   List<Trip> _trips = [];
+  Map<String, Map<String, dynamic>> _rawTripsById = {};
   bool _isLoading = false;
   String? _error;
 
   // Filter state
-  String _filterStatus = 'ALL'; // 'ALL', 'PENDING', 'APPROVED', 'REJECTED'
+  String _filterStatus = 'PENDING'; // 'ALL', 'PENDING', 'APPROVED', 'REJECTED'
 
   List<Trip> get trips => _trips;
+  Map<String, Map<String, dynamic>> get rawTripsById => _rawTripsById;
   bool get isLoading => _isLoading;
   String? get error => _error;
   String get filterStatus => _filterStatus;
+  int get pendingTripsCount =>
+      _trips.where((trip) => trip.status == 'PENDING').length;
 
   List<Trip> get filteredTrips {
     if (_filterStatus == 'ALL') return _trips;
@@ -29,8 +33,9 @@ class AdminMileageViewModel extends ChangeNotifier {
   }
 
   void setFilter(String status) {
+    if (_filterStatus == status) return;
     _filterStatus = status;
-    notifyListeners();
+    fetchTrips();
   }
 
   Future<void> fetchTrips() async {
@@ -40,7 +45,7 @@ class AdminMileageViewModel extends ChangeNotifier {
 
     try {
       // Using GET with query params if filters needed
-      String endpoint = 'api/trips';
+      String endpoint = 'trips';
       if (_filterStatus != 'ALL') {
         endpoint += '?status=$_filterStatus';
       }
@@ -49,7 +54,23 @@ class AdminMileageViewModel extends ChangeNotifier {
 
       if (response != null && response['success'] == true) {
         final List<dynamic> data = response['data'];
-        _trips = data.map((json) => Trip.fromJson(json)).toList();
+        _rawTripsById = {};
+        for (final item in data) {
+          if (item is! Map) continue;
+          final map = Map<String, dynamic>.from(item);
+          final id = (map['_id'] ?? map['id'])?.toString();
+          if (id != null && id.isNotEmpty) {
+            _rawTripsById[id] = map;
+          }
+        }
+        _trips = data.whereType<Map>().map((json) {
+          final map = Map<String, dynamic>.from(json);
+          map['status'] =
+              (map['status'] ?? map['adminApprovalStatus'] ?? 'PENDING')
+                  .toString()
+                  .toUpperCase();
+          return Trip.fromJson(map);
+        }).toList();
       } else {
         _error = response['message'] ?? 'Failed to fetch trips';
       }
@@ -64,17 +85,23 @@ class AdminMileageViewModel extends ChangeNotifier {
   Future<bool> updateTripStatus(String tripId, String status) async {
     try {
       final response = await _apiMethod.patch(
-        'api/trips/$tripId',
+        'trips/$tripId/status',
         body: {'status': status},
       );
 
       if (response != null && response['success'] == true) {
-        // Optimistic update
+        // Optimistic update for immediate UI feedback
         final index = _trips.indexWhere((t) => t.id == tripId);
         if (index != -1) {
           _trips[index] = _trips[index].copyWith(status: status);
+          if (_rawTripsById[tripId] != null) {
+            _rawTripsById[tripId]!['status'] = status;
+            _rawTripsById[tripId]!['adminApprovalStatus'] = status;
+          }
           notifyListeners();
         }
+        // Re-sync list from backend to avoid stale status/filter mismatches.
+        await fetchTrips();
         return true;
       }
       return false;
@@ -89,7 +116,7 @@ class AdminMileageViewModel extends ChangeNotifier {
       String tripId, double distance, String? clientId) async {
     try {
       final response = await _apiMethod.patch(
-        'api/trips/$tripId',
+        'trips/$tripId',
         body: {
           'distance': distance,
           'clientId': clientId,

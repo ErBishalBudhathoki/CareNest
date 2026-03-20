@@ -106,6 +106,11 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? BauhausDesign.textLight : BauhausDesign.textDark;
+    final hintColor =
+        isDark ? BauhausDesign.textLight.withOpacity(0.4) : BauhausDesign.textMuted;
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: BauhausDesign.surfaceLight,
@@ -141,14 +146,19 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 child: TextField(
                   maxLines: null,
+                  minLines: null,
+                  expands: true,
+                  textAlignVertical: TextAlignVertical.top,
                   controller: _notesController,
-                  style: BauhausDesign.getTextTheme(context).bodyMedium,
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodyMedium
+                      ?.copyWith(color: textColor),
                   decoration: InputDecoration(
                     hintText: 'Add notes...',
                     hintStyle: BauhausDesign.getTextTheme(context)
                         .bodyMedium
                         ?.copyWith(
-                          color: BauhausDesign.textMuted,
+                          color: hintColor,
                         ),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,

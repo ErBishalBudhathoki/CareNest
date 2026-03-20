@@ -11,12 +11,31 @@ final currentUserProvider = FutureProvider<User?>((ref) async {
 
   // Try fetching from API first
   try {
-    final response = await apiMethod.get('api/auth/me');
+    final response = await apiMethod.get('auth/profile');
 
-    if (response['success'] == true &&
-        response['data'] != null &&
-        response['data']['user'] != null) {
-      return User.fromJson(response['data']['user']);
+    if (response['success'] == true) {
+      final dynamic data = response['data'];
+
+      // /auth/profile returns user object in `data`
+      if (data is Map<String, dynamic>) {
+        return User.fromJson(data);
+      }
+
+      // Backward compatible guard for nested user payload
+      if (data is Map &&
+          data['user'] != null &&
+          data['user'] is Map<String, dynamic>) {
+        return User.fromJson(data['user'] as Map<String, dynamic>);
+      }
+    }
+
+    // Secondary fallback for environments exposing only v2 me endpoint
+    final v2Response = await apiMethod.get('auth/v2/me');
+    if (v2Response['success'] == true) {
+      final dynamic v2User = v2Response['user'] ?? v2Response['data'];
+      if (v2User is Map<String, dynamic>) {
+        return User.fromJson(v2User);
+      }
     }
 
     debugPrint(

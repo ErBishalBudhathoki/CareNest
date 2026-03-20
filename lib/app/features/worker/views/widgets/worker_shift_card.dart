@@ -21,21 +21,35 @@ class WorkerShiftCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             color: BauhausTheme.blue,
             width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${_formatTime(shift.startTime)} - ${_formatTime(shift.endTime)}',
-                  style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white),
+                  _formatDate(shift.startTime),
+                  style: BauhausTheme.labelStyle
+                      .copyWith(color: BauhausTheme.white),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(color: BauhausTheme.white),
-                  child: Text(
-                    shift.status.value.toUpperCase(),
-                    style: BauhausTheme.labelStyle,
-                  ),
-                )
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${_formatTime(shift.startTime)} - ${_formatTime(shift.endTime)}',
+                      style: BauhausTheme.subHeaderStyle
+                          .copyWith(color: BauhausTheme.white),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration:
+                          const BoxDecoration(color: BauhausTheme.white),
+                      child: Text(
+                        shift.status.value.toUpperCase(),
+                        style: BauhausTheme.labelStyle,
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
           ),
@@ -47,15 +61,18 @@ class WorkerShiftCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.person, color: BauhausTheme.black, size: 20),
+                    const Icon(Icons.person,
+                        color: BauhausTheme.black, size: 20),
                     const SizedBox(width: 8),
-                    Text(shift.clientName ?? 'Unknown Client', style: BauhausTheme.subHeaderStyle),
+                    Text(shift.clientName ?? 'Unknown Client',
+                        style: BauhausTheme.subHeaderStyle),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(Icons.location_on, color: BauhausTheme.black, size: 20),
+                    const Icon(Icons.location_on,
+                        color: BauhausTheme.black, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -75,5 +92,9 @@ class WorkerShiftCard extends StatelessWidget {
 
   String _formatTime(DateTime dt) {
     return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _formatDate(DateTime dt) {
+    return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
   }
 }

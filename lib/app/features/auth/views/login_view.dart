@@ -2,7 +2,6 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 
 import 'package:carenest/app/features/auth/widgets/auth_loading_indicator.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-import 'package:carenest/app/features/auth/widgets/debug_login_helper.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_liquid_animation.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
@@ -361,9 +360,6 @@ class _LoginViewState extends ConsumerState<LoginView>
 
             // Trust footer
             _buildTrustFooter(isSmallScreen),
-
-            // Debug helper (only visible in debug mode)
-            const DebugLoginHelper(),
           ],
         ),
       ),

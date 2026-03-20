@@ -5,8 +5,15 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BusinessNameDropdown extends ConsumerStatefulWidget {
   final Function(String) onChanged;
+  final String? initialValue;
+  final String? organizationId;
 
-  const BusinessNameDropdown({super.key, required this.onChanged});
+  const BusinessNameDropdown({
+    super.key,
+    required this.onChanged,
+    this.initialValue,
+    this.organizationId,
+  });
 
   @override
   _BusinessNameDropdownState createState() => _BusinessNameDropdownState();
@@ -24,20 +31,35 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
 
   Future<void> _loadBusinessNames() async {
     final apiMethod = ref.read(apiMethodProvider);
-    final businessNameList = await apiMethod.getBusinessNameList();
+    final businessNameList = await apiMethod.getBusinessNameList(
+      organizationId: widget.organizationId,
+    );
 
-    if (businessNameList != null) {
-      setState(() {
-        _businessNameList = businessNameList;
-        _businessNameList.insert(0, {'businessName': 'Select Business Name'});
-      });
-    }
+    final initial = widget.initialValue?.trim() ?? '';
+    String selected = _selectedBusinessName;
+
+    setState(() {
+      _businessNameList = List<dynamic>.from(businessNameList);
+      _businessNameList.insert(0, {'businessName': 'Select Business Name'});
+
+      if (initial.isNotEmpty) {
+        final hasInitial = _businessNameList
+            .any((item) => item['businessName']?.toString() == initial);
+        if (!hasInitial) {
+          _businessNameList.insert(1, {'businessName': initial});
+        }
+        selected = initial;
+      }
+
+      _selectedBusinessName = selected;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      constraints: const BoxConstraints(minHeight: 56),
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
@@ -47,7 +69,10 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
         ),
         boxShadow: BauhausDesign.shadowSm,
       ),
-      padding: EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+      padding: EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space2,
+      ),
       child: Center(
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
@@ -59,6 +84,7 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
                     ? _businessNameList[0]['businessName']
                     : null,
             isExpanded: true,
+            itemHeight: 56,
             icon: Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
             iconSize: 24,
             elevation: 4,

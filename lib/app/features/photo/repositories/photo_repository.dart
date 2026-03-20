@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final photoRepositoryProvider = Provider<PhotoRepository>((ref) {
@@ -28,18 +27,12 @@ class PhotoRepository {
   }
 
   /// Upload user photo
-  /// [context] - BuildContext for showing feedback (required by ApiMethod)
   /// [email] - User email
   /// [imageFile] - Image file to upload
   /// Returns the uploaded photo URL
-  Future<String> uploadUserPhoto(
-      BuildContext context, String email, File imageFile) async {
+  Future<String> uploadUserPhoto(String email, File imageFile) async {
     try {
-      final response = await _apiMethod.uploadPhoto(
-        context,
-        email,
-        imageFile,
-      );
+      final response = await _apiMethod.uploadPhoto(email, imageFile);
 
       if (response['success'] == true) {
         return response['photoUrl'] ?? '';

@@ -12,10 +12,12 @@ class EnhancedPredictiveInsightsView extends ConsumerStatefulWidget {
   const EnhancedPredictiveInsightsView({super.key});
 
   @override
-  ConsumerState<EnhancedPredictiveInsightsView> createState() => _EnhancedPredictiveInsightsViewState();
+  ConsumerState<EnhancedPredictiveInsightsView> createState() =>
+      _EnhancedPredictiveInsightsViewState();
 }
 
-class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredictiveInsightsView>
+class _EnhancedPredictiveInsightsViewState
+    extends ConsumerState<EnhancedPredictiveInsightsView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -43,7 +45,9 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: BauhausDesign.primary),
-            onPressed: () => ref.read(predictiveInsightsViewModelProvider.notifier).fetchAllPredictions(),
+            onPressed: () => ref
+                .read(predictiveInsightsViewModelProvider.notifier)
+                .fetchAllPredictions(),
           ),
         ],
       ),
@@ -53,6 +57,10 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
             color: BauhausDesign.surfaceWhite,
             child: TabBar(
               controller: _tabController,
+              isScrollable: true,
+              labelPadding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space3,
+              ),
               labelColor: BauhausDesign.primary,
               unselectedLabelColor: BauhausDesign.textMuted,
               indicatorColor: BauhausDesign.primary,
@@ -72,11 +80,14 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
           ),
           Expanded(
             child: state.isLoading
-                ? const BauhausLoadingState(message: 'Generating predictions...')
+                ? const BauhausLoadingState(
+                    message: 'Generating predictions...')
                 : state.error != null
                     ? BauhausErrorState(
                         description: state.error!,
-                        onRetry: () => ref.read(predictiveInsightsViewModelProvider.notifier).fetchAllPredictions(),
+                        onRetry: () => ref
+                            .read(predictiveInsightsViewModelProvider.notifier)
+                            .fetchAllPredictions(),
                       )
                     : TabBarView(
                         controller: _tabController,
@@ -105,7 +116,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
     final trendColor = isUp ? BauhausDesign.success : BauhausDesign.warning;
     final trendIcon = isUp ? Icons.trending_up : Icons.trending_down;
     final growthRate = firstMetric.predictedRevenue > 0
-        ? (lastMetric.predictedRevenue - firstMetric.predictedRevenue) / firstMetric.predictedRevenue
+        ? (lastMetric.predictedRevenue - firstMetric.predictedRevenue) /
+            firstMetric.predictedRevenue
         : 0.0;
 
     return SingleChildScrollView(
@@ -157,7 +169,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                     ),
                     decoration: BoxDecoration(
                       color: trendColor,
-                      border: Border.all(color: BauhausDesign.neutral, width: 2),
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 2),
                     ),
                     child: Text(
                       '${(growthRate * 100).abs().toStringAsFixed(1)}%',
@@ -184,7 +197,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
           const SizedBox(height: BauhausDesign.space3),
           ...state.revenueForecast.map((item) {
             final date = DateTime.tryParse(item.date);
-            final dateStr = date != null ? DateFormat('MMM yyyy').format(date) : item.date;
+            final dateStr =
+                date != null ? DateFormat('MMM yyyy').format(date) : item.date;
 
             return Padding(
               padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -230,7 +244,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: _getConfidenceColor(item.confidence).withOpacity(0.1),
+                            color: _getConfidenceColor(item.confidence)
+                                .withOpacity(0.1),
                             border: Border.all(
                               color: _getConfidenceColor(item.confidence),
                               width: 1,
@@ -306,7 +321,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                     color: BauhausDesign.warning.withOpacity(0.1),
                     border: Border.all(color: BauhausDesign.warning, width: 2),
                   ),
-                  child: const Icon(Icons.warning_amber, color: BauhausDesign.warning, size: 32),
+                  child: const Icon(Icons.warning_amber,
+                      color: BauhausDesign.warning, size: 32),
                 ),
                 const SizedBox(width: BauhausDesign.space4),
                 Expanded(
@@ -348,7 +364,7 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
           const SizedBox(height: BauhausDesign.space3),
           ...sortedPredictions.map((prediction) {
             final riskColor = _getRiskColor(prediction.riskLevel);
-            
+
             return Padding(
               padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
               child: BauhausCard(
@@ -366,7 +382,9 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                           ),
                           child: Center(
                             child: Text(
-                              prediction.workerName.substring(0, 1).toUpperCase(),
+                              prediction.workerName
+                                  .substring(0, 1)
+                                  .toUpperCase(),
                               style: GoogleFonts.inter(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
@@ -405,7 +423,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                           ),
                           decoration: BoxDecoration(
                             color: riskColor,
-                            border: Border.all(color: BauhausDesign.neutral, width: 2),
+                            border: Border.all(
+                                color: BauhausDesign.neutral, width: 2),
                           ),
                           child: Text(
                             '${prediction.churnScore.toStringAsFixed(0)}%',
@@ -424,7 +443,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceOffWhite,
-                          border: Border.all(color: BauhausDesign.neutral, width: 1),
+                          border: Border.all(
+                              color: BauhausDesign.neutral, width: 1),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,31 +458,33 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                               ),
                             ),
                             const SizedBox(height: BauhausDesign.space1),
-                            ...prediction.factors.take(3).map((factor) => Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 4,
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: riskColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      factor.description,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 11,
-                                        color: BauhausDesign.textDark,
+                            ...prediction.factors
+                                .take(3)
+                                .map((factor) => Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 4,
+                                            height: 4,
+                                            decoration: BoxDecoration(
+                                              color: riskColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              factor.description,
+                                              style: GoogleFonts.inter(
+                                                fontSize: 11,
+                                                color: BauhausDesign.textDark,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
+                                    )),
                           ],
                         ),
                       ),
@@ -473,11 +495,13 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.info.withOpacity(0.1),
-                          border: Border.all(color: BauhausDesign.info, width: 1),
+                          border:
+                              Border.all(color: BauhausDesign.info, width: 1),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.lightbulb_outline, size: 16, color: BauhausDesign.info),
+                            const Icon(Icons.lightbulb_outline,
+                                size: 16, color: BauhausDesign.info),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -525,32 +549,26 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
           const SizedBox(height: BauhausDesign.space3),
           ...state.demandForecast.map((forecast) {
             final dateStr = DateFormat('EEE, MMM d').format(forecast.date);
-            
+
             return Padding(
               padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
               child: BauhausCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          dateStr,
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
-                          ),
-                        ),
-                        Container(
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final badge = Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: BauhausDesign.space3,
                             vertical: BauhausDesign.space2,
                           ),
                           decoration: BoxDecoration(
                             color: BauhausDesign.primary,
-                            border: Border.all(color: BauhausDesign.neutral, width: 2),
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
                           ),
                           child: Text(
                             '${forecast.predictedAppointments.toStringAsFixed(0)} appointments',
@@ -560,8 +578,45 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                               color: BauhausDesign.surfaceWhite,
                             ),
                           ),
-                        ),
-                      ],
+                        );
+
+                        if (constraints.maxWidth < 460) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dateStr,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: BauhausDesign.textDark,
+                                ),
+                              ),
+                              const SizedBox(height: BauhausDesign.space2),
+                              badge,
+                            ],
+                          );
+                        }
+
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                dateStr,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: BauhausDesign.textDark,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: BauhausDesign.space2),
+                            badge,
+                          ],
+                        );
+                      },
                     ),
                     if (forecast.peakHours.isNotEmpty) ...[
                       const SizedBox(height: BauhausDesign.space2),
@@ -579,11 +634,13 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.info.withOpacity(0.1),
-                          border: Border.all(color: BauhausDesign.info, width: 1),
+                          border:
+                              Border.all(color: BauhausDesign.info, width: 1),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline, size: 16, color: BauhausDesign.info),
+                            const Icon(Icons.info_outline,
+                                size: 16, color: BauhausDesign.info),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -611,7 +668,7 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
   // Compliance Risk Tab
   Widget _buildComplianceRiskTab(PredictiveInsightsState state) {
     final risk = state.complianceRisk;
-    
+
     if (risk == null) {
       return const Center(child: Text('No compliance data available'));
     }
@@ -636,7 +693,9 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                         border: Border.all(color: riskColor, width: 2),
                       ),
                       child: Icon(
-                        risk.riskLevel == 'low' ? Icons.check_circle : Icons.warning_amber,
+                        risk.riskLevel == 'low'
+                            ? Icons.check_circle
+                            : Icons.warning_amber,
                         color: riskColor,
                         size: 32,
                       ),
@@ -672,7 +731,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                       ),
                       decoration: BoxDecoration(
                         color: riskColor,
-                        border: Border.all(color: BauhausDesign.neutral, width: 2),
+                        border:
+                            Border.all(color: BauhausDesign.neutral, width: 2),
                       ),
                       child: Text(
                         risk.riskLevel.toUpperCase(),
@@ -687,16 +747,37 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                   ],
                 ),
                 const SizedBox(height: BauhausDesign.space3),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildComplianceStat('Issues', risk.issues.length.toString()),
-                    _buildComplianceStat('At-Risk Workers', risk.workerRisks.length.toString()),
-                    _buildComplianceStat(
-                      'Next Audit',
-                      DateFormat('MMM d').format(risk.nextAudit),
-                    ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final stats = [
+                      _buildComplianceStat(
+                          'Issues', risk.issues.length.toString()),
+                      _buildComplianceStat(
+                        'At-Risk Workers',
+                        risk.workerRisks.length.toString(),
+                      ),
+                      _buildComplianceStat(
+                        'Next Audit',
+                        DateFormat('MMM d').format(risk.nextAudit),
+                      ),
+                    ];
+
+                    if (constraints.maxWidth < 560) {
+                      return Wrap(
+                        spacing: BauhausDesign.space4,
+                        runSpacing: BauhausDesign.space3,
+                        alignment: WrapAlignment.center,
+                        children: stats
+                            .map((stat) => SizedBox(width: 108, child: stat))
+                            .toList(),
+                      );
+                    }
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: stats,
+                    );
+                  },
                 ),
               ],
             ),
@@ -715,7 +796,7 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
             const SizedBox(height: BauhausDesign.space3),
             ...risk.issues.map((issue) {
               final severityColor = _getSeverityColor(issue.severity);
-              
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
                 child: BauhausCard(
@@ -771,7 +852,8 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
                         ),
                         decoration: BoxDecoration(
                           color: severityColor,
-                          border: Border.all(color: BauhausDesign.neutral, width: 1),
+                          border: Border.all(
+                              color: BauhausDesign.neutral, width: 1),
                         ),
                         child: Text(
                           issue.severity.toUpperCase(),
@@ -807,10 +889,13 @@ class _EnhancedPredictiveInsightsViewState extends ConsumerState<EnhancedPredict
         ),
         Text(
           label,
+          textAlign: TextAlign.center,
           style: GoogleFonts.inter(
             fontSize: 11,
             color: BauhausDesign.textMuted,
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

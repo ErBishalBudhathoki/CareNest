@@ -30,6 +30,7 @@ class InvoiceRepository {
     String? clientEmail,
     String? startDate,
     String? endDate,
+    String? invoiceType,
   }) async {
     final result = await _apiMethod.getInvoiceData(
       includeExpenses: includeExpenses,
@@ -37,6 +38,7 @@ class InvoiceRepository {
       clientEmail: clientEmail,
       startDate: startDate,
       endDate: endDate,
+      invoiceType: invoiceType,
     );
 
     debugPrint(

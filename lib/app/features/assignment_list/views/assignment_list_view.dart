@@ -1,4 +1,3 @@
-import 'package:carenest/app/shared/widgets/enhanced_3d_assignment_card.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/assignment_list/views/edit_assignment_view.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,8 @@ import 'package:carenest/app/features/assignment_list/viewmodels/assignment_list
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:intl/intl.dart';
 
@@ -26,151 +26,331 @@ class AssignmentListView extends ConsumerStatefulWidget {
 }
 
 class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  BoxDecoration _panelDecoration({
+    Color color = BauhausDesign.surfaceLight,
+    Color borderColor = BauhausDesign.neutral,
+    double borderWidth = 2,
+  }) {
+    return BoxDecoration(
+      color: color,
+      border: Border.all(color: borderColor, width: borderWidth),
+      boxShadow: const [BauhausDesign.shadowHardXs],
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    // Load assignments when the widget is first built.
-    // Use addPostFrameCallback to ensure the context and ref are available.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(assignmentListViewModelProvider.notifier)
           .loadOrganizationAssignments(widget.organizationId);
     });
+
+    _searchController.addListener(() {
+      final query = _searchController.text.trim();
+      if (query != _searchQuery) {
+        setState(() {
+          _searchQuery = query;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, dynamic>> _getFilteredAssignments(
+      List<Map<String, dynamic>> assignments) {
+    if (_searchQuery.isEmpty) return assignments;
+
+    final query = _searchQuery.toLowerCase();
+    return assignments.where((assignment) {
+      final userEmail =
+          (assignment['userEmail'] ?? '').toString().toLowerCase();
+      final clientEmail =
+          (assignment['clientEmail'] ?? '').toString().toLowerCase();
+      final assignmentId = (assignment['_id'] ?? '').toString().toLowerCase();
+
+      final scheduleArray = assignment['schedule'] as List<dynamic>? ?? [];
+      final scheduleText = scheduleArray
+          .map((item) =>
+              '${item['date'] ?? ''} ${item['startTime'] ?? ''} ${item['endTime'] ?? ''}')
+          .join(' ')
+          .toLowerCase();
+
+      return userEmail.contains(query) ||
+          clientEmail.contains(query) ||
+          assignmentId.contains(query) ||
+          scheduleText.contains(query);
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch the provider to get the current state and rebuild on changes.
     final state = ref.watch(assignmentListViewModelProvider);
-    // Read the notifier to call methods without rebuilding the widget.
     final viewModel = ref.read(assignmentListViewModelProvider.notifier);
+    final filteredAssignments = _getFilteredAssignments(state.assignments);
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceLight,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral, width: 2.0),
-              boxShadow: const [BauhausDesign.shadowHardXs],
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(state, viewModel),
+            Expanded(
+              child: _buildBody(state, viewModel, filteredAssignments),
             ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back,
-                  size: 18, color: BauhausDesign.neutral),
-              onPressed: () => Navigator.of(context).pop(),
-              padding: EdgeInsets.zero,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(
+      AssignmentListState state, AssignmentListViewModel viewModel) {
+    final filteredAssignments = _getFilteredAssignments(state.assignments);
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        BauhausDesign.space4,
+        BauhausDesign.space3,
+        BauhausDesign.space4,
+        BauhausDesign.space3,
+      ),
+      decoration: const BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        border: Border(
+          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              BauhausIconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icons.arrow_back,
+                variant: BauhausActionVariant.neutral,
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.assignmentList.toUpperCase(),
+                  style: BauhausDesign.getTextTheme(context)
+                      .headlineMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+              BauhausIconButton(
+                onPressed: () =>
+                    viewModel.refreshAssignments(widget.organizationId),
+                icon: Icons.refresh,
+                variant: BauhausActionVariant.neutral,
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          Container(
+            padding: const EdgeInsets.all(BauhausDesign.space3),
+            decoration: _panelDecoration(),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildHeaderStat(
+                    title: AppLocalizations.of(context)!.assignments,
+                    value: '${state.assignments.length}',
+                    icon: Icons.assignment_outlined,
+                    color: BauhausDesign.secondary,
+                  ),
+                ),
+                Container(
+                  width: 2,
+                  height: 42,
+                  color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                ),
+                Expanded(
+                  child: _buildHeaderStat(
+                    title: AppLocalizations.of(context)!.totalHours,
+                    value: viewModel.getTotalHours().toStringAsFixed(1),
+                    icon: Icons.schedule,
+                    color: BauhausDesign.primary,
+                  ),
+                ),
+                if (_searchQuery.isNotEmpty) ...[
+                  Container(
+                    width: 2,
+                    height: 42,
+                    color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                  ),
+                  Expanded(
+                    child: _buildHeaderStat(
+                      title: 'Filtered',
+                      value: '${filteredAssignments.length}',
+                      icon: Icons.filter_alt,
+                      color: BauhausDesign.success,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-        ),
-        title: Text(
-          AppLocalizations.of(context)!.assignments.toUpperCase(),
-          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: BauhausDesign.surfaceLight,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
-        ),
-        centerTitle: true,
+          const SizedBox(height: BauhausDesign.space3),
+          Container(
+            decoration: _panelDecoration(),
+            padding:
+                const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.search,
+                  color: BauhausDesign.textMuted,
+                  size: 18,
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodyMedium
+                        ?.copyWith(color: BauhausDesign.textDark),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Search by employee, client, date, or ID',
+                      hintStyle: BauhausDesign.getTextTheme(context)
+                          .bodyMedium
+                          ?.copyWith(color: BauhausDesign.textMuted),
+                    ),
+                  ),
+                ),
+                if (_searchQuery.isNotEmpty)
+                  InkWell(
+                    onTap: () {
+                      _searchController.clear();
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(BauhausDesign.space1),
+                      child: Icon(
+                        Icons.close,
+                        color: BauhausDesign.textMuted,
+                        size: 18,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
-      body: _buildBody(state, viewModel),
+    );
+  }
+
+  Widget _buildHeaderStat({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space1),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: color),
+              const SizedBox(width: BauhausDesign.space1),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelSmall
+                      ?.copyWith(color: BauhausDesign.textMuted),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space1),
+          Text(
+            value,
+            style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildBody(
-      AssignmentListState state, AssignmentListViewModel viewModel) {
+    AssignmentListState state,
+    AssignmentListViewModel viewModel,
+    List<Map<String, dynamic>> filteredAssignments,
+  ) {
     if (state.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const BauhausLoadingState();
     }
 
     if (state.errorMessage.isNotEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: BauhausDesign.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.errorLoadingAssignments,
-              style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                    color: BauhausDesign.error,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              state.errorMessage,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () =>
-                  viewModel.loadOrganizationAssignments(widget.organizationId),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: BauhausDesign.primary,
-                foregroundColor: BauhausDesign.surfaceLight,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                ),
-              ),
-              child: const Text('Retry'),
-            ),
-          ],
+      return Padding(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        child: BauhausErrorState(
+          title: AppLocalizations.of(context)!.errorLoadingAssignments,
+          description: state.errorMessage,
+          onRetry: () =>
+              viewModel.loadOrganizationAssignments(widget.organizationId),
         ),
       );
     }
 
     if (state.assignments.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.assignment_outlined,
-              size: 64,
-              color: BauhausDesign.neutral,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.noAssignmentsFound,
-              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                    color: BauhausDesign.textLight,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.noAssignmentsMessage,
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.neutral,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+      return Padding(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        child: BauhausEmptyState(
+          title: AppLocalizations.of(context)!.noAssignmentsFound,
+          message: AppLocalizations.of(context)!.noAssignmentsMessage,
+          icon: Icons.assignment_outlined,
+          onAction: () =>
+              viewModel.loadOrganizationAssignments(widget.organizationId),
+          actionLabel: AppLocalizations.of(context)!.retryButton,
+        ),
+      );
+    }
+
+    if (filteredAssignments.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        child: BauhausEmptyState(
+          title: 'No Matching Assignments',
+          message: 'Try a different search term.',
+          icon: Icons.search_off,
+          onAction: () => _searchController.clear(),
+          actionLabel: 'Clear Search',
         ),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () =>
-          viewModel.loadOrganizationAssignments(widget.organizationId),
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: state.assignments.length,
+      onRefresh: () => viewModel.refreshAssignments(widget.organizationId),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        itemCount: filteredAssignments.length,
+        separatorBuilder: (_, __) =>
+            const SizedBox(height: BauhausDesign.space3),
         itemBuilder: (context, index) {
-          final assignment = state.assignments[index];
+          final assignment = filteredAssignments[index];
           return _buildAssignmentCard(assignment, context);
         },
       ),
@@ -180,27 +360,38 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
   Widget _buildAssignmentCard(
       Map<String, dynamic> assignment, BuildContext context) {
     try {
-      return Enhanced3DAssignmentCard(
+      return EnhancedAssignmentCard(
         assignment: assignment,
         onEdit: () => _showEditDialog(context, assignment),
-        employeeName: null, // Will be loaded from assignment data
-        clientName: null, // Will be loaded from assignment data
       );
     } catch (e, stackTrace) {
       debugPrint('Error building assignment card: $e\n$stackTrace');
-      return Card(
-        color: BauhausDesign.error.withValues(alpha: 0.1),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Icon(Icons.error, color: BauhausDesign.error),
-              const SizedBox(height: 8),
-              Text('Error displaying assignment',
-                  style: TextStyle(color: BauhausDesign.error)),
-              Text(e.toString(), style: TextStyle(fontSize: 10)),
-            ],
-          ),
+      return Container(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        decoration: _panelDecoration(
+          color: BauhausDesign.error.withValues(alpha: 0.08),
+          borderColor: BauhausDesign.error,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.error_outline, color: BauhausDesign.error),
+            const SizedBox(height: BauhausDesign.space2),
+            Text(
+              'Error displaying assignment',
+              style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                    color: BauhausDesign.error,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: BauhausDesign.space1),
+            Text(
+              e.toString(),
+              style: BauhausDesign.getTextTheme(context)
+                  .labelSmall
+                  ?.copyWith(color: BauhausDesign.textMuted),
+            ),
+          ],
         ),
       );
     }
@@ -230,15 +421,29 @@ class EnhancedAssignmentCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<EnhancedAssignmentCard> createState() => _EnhancedAssignmentCardState();
+  ConsumerState<EnhancedAssignmentCard> createState() =>
+      _EnhancedAssignmentCardState();
 }
 
-class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard> {
+class _EnhancedAssignmentCardState
+    extends ConsumerState<EnhancedAssignmentCard> {
   late final ApiMethod _apiMethod;
   Patient? clientDetails;
   Map<String, dynamic>? employeeDetails;
   bool isLoadingDetails = false;
   bool showFullDetails = false;
+
+  BoxDecoration _panelDecoration({
+    Color color = BauhausDesign.surfaceLight,
+    Color borderColor = BauhausDesign.neutral,
+    double borderWidth = 2,
+  }) {
+    return BoxDecoration(
+      color: color,
+      border: Border.all(color: borderColor, width: borderWidth),
+      boxShadow: const [BauhausDesign.shadowHardXs],
+    );
+  }
 
   @override
   void initState() {
@@ -279,9 +484,8 @@ class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard>
 
   @override
   Widget build(BuildContext context) {
-    final String userEmail = widget.assignment['userEmail'] ?? 'Unknown User';
-    final String clientEmail =
-        widget.assignment['clientEmail'] ?? 'Unknown Client';
+    final String userEmail = widget.assignment['userEmail'] ?? '';
+    final String clientEmail = widget.assignment['clientEmail'] ?? '';
 
     final List<dynamic> scheduleArray = widget.assignment['schedule'] ?? [];
     final List<dynamic> dateList = scheduleArray.isNotEmpty
@@ -301,170 +505,327 @@ class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard>
             .map((item) => item['highIntensity'] as bool? ?? false)
             .toList()
         : List<bool>.filled(dateList.length, false);
+
+    final shiftCount =
+        scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length;
     final String createdAt = widget.assignment['createdAt'] ?? '';
 
-    return BauhausCard(
-      margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
-      padding: const EdgeInsets.all(BauhausDesign.space4),
+    final employeeFullName =
+        ('${employeeDetails?['firstName'] ?? ''} ${employeeDetails?['lastName'] ?? ''}')
+            .trim();
+    final employeeName = employeeFullName.isNotEmpty
+        ? employeeFullName
+        : _getDisplayName(userEmail, AppLocalizations.of(context)!.employee);
+
+    final clientFullName =
+        ('${clientDetails?.clientFirstName ?? ''} ${clientDetails?.clientLastName ?? ''}')
+            .trim();
+    final clientName = clientFullName.isNotEmpty
+        ? clientFullName
+        : _getDisplayName(clientEmail, AppLocalizations.of(context)!.client);
+
+    return Container(
+      decoration: _panelDecoration(),
+      padding: const EdgeInsets.all(BauhausDesign.space3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Employee: ${(employeeDetails?["firstName"] ?? "") + " " + (employeeDetails?["lastName"] ?? "")}'
-                              .trim()
-                              .isEmpty
-                          ? _getDisplayName(userEmail)
-                          : '${(employeeDetails?["firstName"] ?? "") + " " + (employeeDetails?["lastName"] ?? "")}'
-                              .trim(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textLight,
-                          ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Client: ${clientDetails?.clientFirstName ?? ''} ${clientDetails?.clientLastName ?? _getDisplayName(clientEmail)}',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.neutral,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: BauhausDesign.primary.withOpacity(0.1),
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
-                    ),
-                    child: Text(
-                      '${scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length} Shift${(scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length) != 1 ? 's' : ''}',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: widget.onEdit,
-                    icon: const Icon(Icons.edit),
-                    iconSize: 20,
-                    color: BauhausDesign.primary,
-                  ),
-                ],
-              ),
-            ],
+          _buildHeader(employeeName, clientName, shiftCount),
+          const SizedBox(height: BauhausDesign.space3),
+          _buildMetaRow(createdAt, startTimeList, endTimeList, breakList),
+          const SizedBox(height: BauhausDesign.space3),
+          _buildShiftPreview(
+            dateList,
+            startTimeList,
+            endTimeList,
+            breakList,
+            highIntensityList,
+            shiftCount,
           ),
-          const SizedBox(height: 16),
-          if (showFullDetails) ..._buildDetailedInfo(),
-          TextButton.icon(
-            onPressed: () {
-              setState(() {
-                showFullDetails = !showFullDetails;
-              });
-            },
-            icon: Icon(
-              showFullDetails ? Icons.expand_less : Icons.expand_more,
-              size: 16,
-            ),
-            label: Text(
-              showFullDetails ? 'Show Less Details' : 'Show More Details',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          if (dateList.isNotEmpty) ...[
-            Text(
-              AppLocalizations.of(context)!.shiftDetails,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textLight,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            ...List.generate(
-              (scheduleArray.isNotEmpty
-                          ? scheduleArray.length
-                          : dateList.length) >
-                      3
-                  ? 3
-                  : (scheduleArray.isNotEmpty
-                      ? scheduleArray.length
-                      : dateList.length),
-              (shiftIndex) => _buildShiftRow(
-                dateList.length > shiftIndex
-                    ? dateList[shiftIndex]?.toString() ?? ''
-                    : '',
-                startTimeList.length > shiftIndex
-                    ? startTimeList[shiftIndex]?.toString() ?? ''
-                    : '',
-                endTimeList.length > shiftIndex
-                    ? endTimeList[shiftIndex]?.toString() ?? ''
-                    : '',
-                breakList.length > shiftIndex
-                    ? breakList[shiftIndex]?.toString() ?? ''
-                    : '',
-                highIntensityList.length > shiftIndex
-                    ? highIntensityList[shiftIndex] as bool
-                    : false,
-              ),
-            ),
-            if ((scheduleArray.isNotEmpty
-                    ? scheduleArray.length
-                    : dateList.length) >
-                3)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  'and ${(scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length) - 3} more shift${(scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length) - 3 != 1 ? 's' : ''}...',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            fontStyle: FontStyle.italic,
-                            color: BauhausDesign.neutral,
-                          ),
-                ),
-              ),
+          const SizedBox(height: BauhausDesign.space3),
+          _buildDetailsToggle(),
+          if (showFullDetails) ...[
+            const SizedBox(height: BauhausDesign.space3),
+            ..._buildDetailedInfo(),
           ],
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(String employeeName, String clientName, int shiftCount) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Created: ${_formatDate(createdAt)}',
-                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                      color: BauhausDesign.neutral,
-                    ),
+              _buildLabeledValue(
+                AppLocalizations.of(context)!.employee,
+                employeeName,
+                icon: Icons.person_outline,
               ),
-              Text(
-                'Total Hours: ${_calculateTotalHours(startTimeList, endTimeList, breakList)}',
-                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.primary,
-                    ),
+              const SizedBox(height: BauhausDesign.space2),
+              _buildLabeledValue(
+                AppLocalizations.of(context)!.client,
+                clientName,
+                icon: Icons.business_outlined,
               ),
             ],
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space2),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space3,
+                vertical: BauhausDesign.space1,
+              ),
+              decoration: _panelDecoration(
+                color: BauhausDesign.surfaceLight,
+                borderColor: BauhausDesign.primary,
+                borderWidth: 2,
+              ),
+              child: Text(
+                '$shiftCount Shift${shiftCount == 1 ? '' : 's'}',
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      fontSize: BauhausDesign.fontMd,
+                      color: BauhausDesign.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ),
+            const SizedBox(height: BauhausDesign.space2),
+            Container(
+              decoration: _panelDecoration(),
+              child: InkWell(
+                onTap: widget.onEdit,
+                child: Padding(
+                  padding: const EdgeInsets.all(BauhausDesign.space2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.edit,
+                          size: 16, color: BauhausDesign.primary),
+                      const SizedBox(width: BauhausDesign.space1),
+                      Text(
+                        AppLocalizations.of(context)!.edit,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelLarge
+                            ?.copyWith(
+                              fontSize: BauhausDesign.fontSm,
+                              color: BauhausDesign.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLabeledValue(String label, String value,
+      {required IconData icon}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: BauhausDesign.textMuted),
+        const SizedBox(width: BauhausDesign.space1),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label.toUpperCase(),
+                style: BauhausDesign.getTextTheme(context)
+                    .labelSmall
+                    ?.copyWith(color: BauhausDesign.textMuted),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style:
+                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w700,
+                        ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetaRow(String createdAt, List<dynamic> startTimeList,
+      List<dynamic> endTimeList, List<dynamic> breakList) {
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space2),
+      decoration: _panelDecoration(
+        color: BauhausDesign.backgroundLight,
+        borderColor: BauhausDesign.neutral.withValues(alpha: 0.4),
+        borderWidth: 1.5,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_today,
+                    size: 14, color: BauhausDesign.textMuted),
+                const SizedBox(width: BauhausDesign.space1),
+                Expanded(
+                  child: Text(
+                    '${AppLocalizations.of(context)!.createdLabel}: ${_formatDate(createdAt)}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelSmall
+                        ?.copyWith(color: BauhausDesign.textMuted),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: BauhausDesign.space2),
+          Text(
+            '${AppLocalizations.of(context)!.totalHours}: ${_calculateTotalHours(startTimeList, endTimeList, breakList)}',
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.w700,
+                ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShiftPreview(
+    List<dynamic> dateList,
+    List<dynamic> startTimeList,
+    List<dynamic> endTimeList,
+    List<dynamic> breakList,
+    List<dynamic> highIntensityList,
+    int shiftCount,
+  ) {
+    if (dateList.isEmpty) {
+      return Text(
+        AppLocalizations.of(context)!.noAssignmentData,
+        style: BauhausDesign.getTextTheme(context)
+            .bodyMedium
+            ?.copyWith(color: BauhausDesign.textMuted),
+      );
+    }
+
+    final previewCount = shiftCount > 3 ? 3 : shiftCount;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.schedule,
+                size: 16, color: BauhausDesign.secondary),
+            const SizedBox(width: BauhausDesign.space1),
+            Text(
+              AppLocalizations.of(context)!.shiftDetails,
+              style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: BauhausDesign.space2),
+        ...List.generate(
+          previewCount,
+          (index) => Padding(
+            padding: EdgeInsets.only(
+              bottom: index == previewCount - 1 ? 0 : BauhausDesign.space2,
+            ),
+            child: _buildShiftRow(
+              dateList.length > index ? dateList[index]?.toString() ?? '' : '',
+              startTimeList.length > index
+                  ? startTimeList[index]?.toString() ?? ''
+                  : '',
+              endTimeList.length > index
+                  ? endTimeList[index]?.toString() ?? ''
+                  : '',
+              breakList.length > index
+                  ? breakList[index]?.toString() ?? ''
+                  : '',
+              highIntensityList.length > index
+                  ? highIntensityList[index] as bool
+                  : false,
+            ),
+          ),
+        ),
+        if (shiftCount > 3) ...[
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            'and ${shiftCount - 3} more shift${shiftCount - 3 == 1 ? '' : 's'}',
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildDetailsToggle() {
+    return Container(
+      decoration: _panelDecoration(
+        color: showFullDetails
+            ? BauhausDesign.primary
+            : BauhausDesign.surfaceLight,
+        borderColor:
+            showFullDetails ? BauhausDesign.neutral : BauhausDesign.neutral,
+      ),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            showFullDetails = !showFullDetails;
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: BauhausDesign.space3,
+            vertical: BauhausDesign.space2,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                showFullDetails ? Icons.expand_less : Icons.expand_more,
+                size: 18,
+                color: showFullDetails
+                    ? BauhausDesign.surfaceLight
+                    : BauhausDesign.textDark,
+              ),
+              const SizedBox(width: BauhausDesign.space1),
+              Text(
+                showFullDetails ? 'Hide Details' : 'Show Details',
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                      color: showFullDetails
+                          ? BauhausDesign.surfaceLight
+                          : BauhausDesign.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -472,59 +833,52 @@ class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard>
   List<Widget> _buildDetailedInfo() {
     return [
       if (isLoadingDetails)
-        const Center(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: CircularProgressIndicator(),
-          ),
+        const Padding(
+          padding: EdgeInsets.all(BauhausDesign.space3),
+          child: BauhausLoadingState(showMessage: false),
         )
       else ...[
         _buildInfoSection(
-          'Client Information',
+          AppLocalizations.of(context)!.clientInformationTitle,
           [
             if (clientDetails != null) ...[
-              _buildInfoRow('Name',
-                  '${clientDetails!.clientFirstName} ${clientDetails!.clientLastName}'),
+              _buildInfoRow(
+                'Name',
+                '${clientDetails!.clientFirstName} ${clientDetails!.clientLastName}',
+              ),
               _buildInfoRow('Email', clientDetails!.clientEmail),
-              _buildInfoRow('Phone',
-                  clientDetails!.clientPhone ?? 'Phone Number Not Provided'),
-              _buildInfoRow('Address',
-                  '${clientDetails!.clientAddress}, ${clientDetails!.clientCity}, ${clientDetails!.clientState} ${clientDetails!.clientZip}'),
+              _buildInfoRow(
+                'Phone',
+                clientDetails!.clientPhone ?? 'Phone Number Not Provided',
+              ),
+              _buildInfoRow(
+                'Address',
+                '${clientDetails!.clientAddress}, ${clientDetails!.clientCity}, ${clientDetails!.clientState} ${clientDetails!.clientZip}',
+              ),
             ] else ...[
               _buildInfoRow('Email', widget.assignment['clientEmail'] ?? ''),
-              Text('Additional client details not available',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
-                      ?.copyWith(
-                          fontStyle: FontStyle.italic,
-                          color: BauhausDesign.neutral)),
+              _buildInfoRow(
+                  'Details', 'Additional client details not available'),
             ],
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: BauhausDesign.space3),
         _buildInfoSection(
           'Employee Information',
           [
             if (employeeDetails != null) ...[
               _buildInfoRow('Email', employeeDetails!['email'] ?? ''),
-              Text('Additional employee details available via user management',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
-                      ?.copyWith(
-                          fontStyle: FontStyle.italic,
-                          color: BauhausDesign.neutral)),
+              _buildInfoRow(
+                'Details',
+                'Additional employee details available via user management',
+              ),
             ] else ...[
               _buildInfoRow('Email', widget.assignment['userEmail'] ?? ''),
-              Text('Additional employee details not available',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
-                      ?.copyWith(
-                          fontStyle: FontStyle.italic,
-                          color: BauhausDesign.neutral)),
+              _buildInfoRow(
+                  'Details', 'Additional employee details not available'),
             ],
           ],
         ),
-        const SizedBox(height: 16),
       ],
     ];
   }
@@ -532,22 +886,22 @@ class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard>
   Widget _buildInfoSection(String title, List<Widget> children) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
-      decoration: BoxDecoration(
+      decoration: _panelDecoration(
         color: BauhausDesign.backgroundLight,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral.withOpacity(0.1)),
+        borderColor: BauhausDesign.neutral.withValues(alpha: 0.3),
+        borderWidth: 1.5,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.neutral,
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w700,
                 ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: BauhausDesign.space2),
           ...children,
         ],
       ),
@@ -555,30 +909,31 @@ class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard>
   }
 
   Widget _buildInfoRow(String label, String value) {
+    final hasValue = value.trim().isNotEmpty;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.only(bottom: BauhausDesign.space1),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 80,
+            width: 84,
             child: Text(
               '$label:',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: BauhausDesign.neutral.withValues(alpha: 0.7),
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    color: BauhausDesign.textMuted,
+                    fontWeight: FontWeight.w700,
                   ),
             ),
           ),
           Expanded(
             child: Text(
-              value.isNotEmpty ? value : 'Not provided',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: value.isNotEmpty
-                        ? BauhausDesign.neutral
-                        : BauhausDesign.neutral.withValues(alpha: 0.5),
-                    fontStyle:
-                        value.isNotEmpty ? FontStyle.normal : FontStyle.italic,
+              hasValue ? value : 'Not provided',
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: hasValue
+                        ? BauhausDesign.textDark
+                        : BauhausDesign.textMuted,
+                    fontStyle: hasValue ? FontStyle.normal : FontStyle.italic,
                   ),
             ),
           ),
@@ -589,46 +944,141 @@ class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard>
 
   Widget _buildShiftRow(String date, String startTime, String endTime,
       String breakTime, bool isHighIntensity) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
+    final dateValue = _formatShiftDate(date);
+    final timeValue =
+        '${_toInlineValue(startTime)} - ${_toInlineValue(endTime)}';
+    final breakValue = _toInlineValue(breakTime).isEmpty
+        ? AppLocalizations.of(context)!.unknown
+        : _toInlineValue(breakTime);
+
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space2),
+      decoration: _panelDecoration(
+        color: BauhausDesign.backgroundLight,
+        borderColor: BauhausDesign.neutral.withValues(alpha: 0.3),
+        borderWidth: 1.5,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              _formatShiftDate(date),
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textLight,
-                  ),
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.calendar_today_outlined,
+                size: 14,
+                color: BauhausDesign.secondary,
+              ),
+              const SizedBox(width: BauhausDesign.space1),
+              Text(
+                '${AppLocalizations.of(context)!.dateLabel}: ',
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      color: BauhausDesign.textMuted,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              Expanded(
+                child: Text(
+                  dateValue,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                            fontSize: BauhausDesign.fontMd,
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              '$startTime - $endTime',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textLight,
-                  ),
-            ),
+          const SizedBox(height: BauhausDesign.space1),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.schedule,
+                size: 14,
+                color: BauhausDesign.secondary,
+              ),
+              const SizedBox(width: BauhausDesign.space1),
+              Text(
+                '${AppLocalizations.of(context)!.startLabel} - ${AppLocalizations.of(context)!.endLabel}: ',
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      color: BauhausDesign.textMuted,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              Expanded(
+                child: Text(
+                  timeValue,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                            fontSize: BauhausDesign.fontMd,
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Break: $breakTime',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
+          const SizedBox(height: BauhausDesign.space1),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.coffee_outlined,
+                size: 14,
+                color: BauhausDesign.secondary,
+              ),
+              const SizedBox(width: BauhausDesign.space1),
+              Text(
+                '${AppLocalizations.of(context)!.breakLabel}: ',
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                      color: BauhausDesign.textMuted,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              Expanded(
+                child: Text(
+                  breakValue,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                            fontSize: BauhausDesign.fontMd,
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
+                ),
+              ),
+              if (isHighIntensity)
+                Container(
+                  margin: const EdgeInsets.only(left: BauhausDesign.space1),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space1,
+                    vertical: 2,
                   ),
-            ),
+                  decoration: _panelDecoration(
+                    color: BauhausDesign.primary.withValues(alpha: 0.1),
+                    borderColor: BauhausDesign.primary,
+                    borderWidth: 1.5,
+                  ),
+                  child: const Icon(
+                    Icons.fitness_center,
+                    size: 12,
+                    color: BauhausDesign.primary,
+                  ),
+                ),
+            ],
           ),
-          if (isHighIntensity)
-            Icon(Icons.fitness_center, size: 16, color: BauhausDesign.primary),
         ],
       ),
     );
   }
 
-  String _getDisplayName(String email) {
-    if (email.isEmpty) return 'Unknown';
+  String _toInlineValue(String value) {
+    return value.replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+
+  String _getDisplayName(String email, String fallback) {
+    if (email.isEmpty) return fallback;
     final parts = email.split('@');
     if (parts.isNotEmpty) {
       return parts[0].replaceAll('.', ' ').replaceAll('_', ' ');
@@ -637,21 +1087,21 @@ class _EnhancedAssignmentCardState extends ConsumerState<EnhancedAssignmentCard>
   }
 
   String _formatDate(String dateString) {
-    if (dateString.isEmpty) return 'Unknown';
+    if (dateString.isEmpty) return AppLocalizations.of(context)!.unknown;
     try {
       final date = DateTime.parse(dateString);
       return DateFormat('MMM dd, yyyy').format(date);
-    } catch (e) {
+    } catch (_) {
       return dateString;
     }
   }
 
   String _formatShiftDate(String dateString) {
-    if (dateString.isEmpty) return 'Unknown';
+    if (dateString.isEmpty) return AppLocalizations.of(context)!.unknown;
     try {
       final date = DateTime.parse(dateString);
-      return DateFormat('MMM dd').format(date);
-    } catch (e) {
+      return DateFormat('EEE, MMM dd').format(date);
+    } catch (_) {
       return dateString;
     }
   }

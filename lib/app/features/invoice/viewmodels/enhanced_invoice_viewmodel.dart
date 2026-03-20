@@ -53,7 +53,12 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
   }) async {
     try {
       // Update local state
-      state = state.copyWith(isLoading: true, errorMessage: '');
+      state = state.copyWith(
+        isLoading: true,
+        errorMessage: '',
+        generatedPdfPaths: const [],
+      );
+      ref.read(generatedInvoicePathsProvider.notifier).state = const [];
       taxRate ??= 0.0;
       final l10n = AppLocalizations.of(context)!;
       // Validate date range if provided
@@ -114,6 +119,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
         invoiceType: invoiceType,
         recurrence: recurrence,
       );
+      final dedupedPdfPaths = _dedupePdfPaths(pdfPaths);
 
       // Extract validation summary and items exceeding price cap from the invoices
       Map<String, dynamic> validationSummary = {};
@@ -154,7 +160,7 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
       // Update state with generated invoices and validation data
       state = state.copyWith(
         isLoading: false,
-        generatedPdfPaths: pdfPaths,
+        generatedPdfPaths: dedupedPdfPaths,
         invoices: _invoiceService.invoices,
         validationSummary: validationSummary,
         itemsExceedingPriceCap: itemsExceedingPriceCap,
@@ -166,9 +172,9 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
           : InvoiceGenerationState.completed;
 
       // Store generated paths in provider
-      ref.read(generatedInvoicePathsProvider.notifier).state = pdfPaths;
+      ref.read(generatedInvoicePathsProvider.notifier).state = dedupedPdfPaths;
 
-      return pdfPaths;
+      return dedupedPdfPaths;
     } catch (e) {
       final errorMessage = e.toString();
       state = state.copyWith(isLoading: false, errorMessage: errorMessage);
@@ -180,6 +186,19 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
 
       return [];
     }
+  }
+
+  List<String> _dedupePdfPaths(List<String> paths) {
+    final seen = <String>{};
+    final deduped = <String>[];
+    for (final path in paths) {
+      final normalized = path.trim();
+      if (normalized.isEmpty) continue;
+      if (seen.add(normalized)) {
+        deduped.add(normalized);
+      }
+    }
+    return deduped;
   }
 
   /// Send invoice emails with enhanced error handling

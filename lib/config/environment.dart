@@ -112,16 +112,79 @@ class AppConfig {
     String resourceUrl, {
     String? baseUrlOverride,
   }) {
+    final normalizedResource = resolveResourceUrl(
+      resourceUrl,
+      baseUrlOverride: baseUrlOverride,
+    );
+    final resourceUri = Uri.tryParse(normalizedResource);
+    if (resourceUri == null) return normalizedResource;
+
+    final isAbsoluteHttp =
+        (resourceUri.scheme == 'http' || resourceUri.scheme == 'https') &&
+            resourceUri.host.isNotEmpty;
+    if (!isAbsoluteHttp) return normalizedResource;
+
     final normalizedBaseUrl = normalizeBaseUrl(baseUrlOverride);
     final baseUri = Uri.parse(normalizedBaseUrl);
 
+    final isExternalHost =
+        resourceUri.host.toLowerCase() != baseUri.host.toLowerCase();
+    final isStaticUploadPath = resourceUri.path.startsWith('/uploads/');
+    final isPrivateR2ApiHost = isPrivateR2StorageHost(resourceUri.host);
+
+    // Private R2 API URLs require server-side credentials. Route them via
+    // authenticated API proxy.
+    if (isPrivateR2ApiHost) {
+      return buildFilesProxyUrl(
+        resourceUri.toString(),
+        baseUrlOverride: baseUrlOverride,
+      );
+    }
+
+    // External public hosts and direct static uploads should open directly.
+    if (isExternalHost || isStaticUploadPath) {
+      return resourceUri.toString();
+    }
+
+    return buildFilesProxyUrl(
+      resourceUri.toString(),
+      baseUrlOverride: baseUrlOverride,
+    );
+  }
+
+  static bool isPrivateR2StorageHost(String? host) {
+    final normalized = (host ?? '').trim().toLowerCase();
+    if (normalized.isEmpty) return false;
+    return normalized == 'r2.cloudflarestorage.com' ||
+        normalized.contains('.r2.cloudflarestorage.com');
+  }
+
+  static bool isPrivateR2StorageUrl(String? url) {
+    final parsed = Uri.tryParse((url ?? '').trim());
+    if (parsed == null) return false;
+    return isPrivateR2StorageHost(parsed.host);
+  }
+
+  static String buildFilesProxyUrl(
+    String resourceUrl, {
+    String? baseUrlOverride,
+  }) {
+    final normalizedResource = resolveResourceUrl(
+      resourceUrl,
+      baseUrlOverride: baseUrlOverride,
+    );
+    final resourceUri = Uri.tryParse(normalizedResource);
+    if (resourceUri == null) return normalizedResource;
+
+    final normalizedBaseUrl = normalizeBaseUrl(baseUrlOverride);
+    final baseUri = Uri.parse(normalizedBaseUrl);
     final path = baseUri.path;
     final endsWithApi = path.endsWith('/api/') || path.endsWith('/api');
     final endpointUri = endsWithApi
         ? baseUri.resolve('files/download')
         : baseUri.resolve('api/files/download');
 
-    return '$endpointUri?url=${Uri.encodeComponent(resourceUrl)}';
+    return '$endpointUri?url=${Uri.encodeComponent(resourceUri.toString())}';
   }
 
   static String resolveResourceUrl(

@@ -55,16 +55,15 @@ class NavBarWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final apiMethod = ref.read(apiMethodProvider);
     final theme = Theme.of(context);
-    
+
     debugPrint("Navbar widget photo data: $photoData");
     return Consumer(
       builder: (context, ref, _) {
         final photoDataState = ref.watch(photoDataProvider);
         final currentPhotoData = photoDataState.photoData ?? photoData;
-        debugPrint(
-            'NavBarWidget - Photo data from provider: ${photoDataState.photoData != null ? 'length ${photoDataState.photoData!.length}' : 'null'}');
-        debugPrint(
-            'NavBarWidget - Using photo data: ${currentPhotoData != null ? 'length ${currentPhotoData.length}' : 'null'}');
+        final sharedPrefs = ref.watch(sharedPreferencesUtilsProvider);
+        final currentImageUrl = sharedPrefs.getString('profilePic') ??
+            sharedPrefs.getString('photoUrl');
 
         return SizedBox(
           width: MediaQuery.of(context).size.width *
@@ -84,19 +83,23 @@ class NavBarWidget extends ConsumerWidget {
                       if (organizationName != null)
                         Text(
                           'Org: $organizationName',
-                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                              ),
                         ),
                       if (organizationCode != null)
                         Text(
                           'Code: $organizationCode',
-                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.white70, // Keep specific visual
-                          ),
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.white70, // Keep specific visual
+                              ),
                         ),
                     ],
                   ),
@@ -104,6 +107,7 @@ class NavBarWidget extends ConsumerWidget {
                     child: ClipOval(
                       child: ProfileImageWidget(
                         photoData: currentPhotoData,
+                        imageUrl: currentImageUrl,
                         size: 55.0,
                       ),
                     ),
@@ -284,7 +288,8 @@ class NavBarWidget extends ConsumerWidget {
     return role.toString();
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, ThemeData theme, ApiMethod apiMethod) {
+  void _showDeleteConfirmationDialog(
+      BuildContext context, ThemeData theme, ApiMethod apiMethod) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

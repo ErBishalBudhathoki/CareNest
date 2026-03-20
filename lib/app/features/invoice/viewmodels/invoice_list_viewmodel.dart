@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/services/invoice_management_service.dart';
 
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // State class for invoice list
 class InvoiceListState {
@@ -117,17 +118,17 @@ class InvoiceListViewModel extends StateNotifier<InvoiceListState> {
         // Update local state
         final updatedInvoices = state.invoices.map((invoice) {
           if (invoice.id == invoiceId) {
-            // We need to create a copy with new status. 
+            // We need to create a copy with new status.
             // Assuming InvoiceListModel has copyWith or we re-fetch.
             // Since InvoiceListModel is likely immutable and might not have copyWith exposed cleanly,
             // we will reload the list for simplicity and data consistency.
-            return invoice; 
+            return invoice;
           }
           return invoice;
         }).toList();
-        
+
         // Actually, let's just reload to get fresh data
-        loadInvoices(organizationId); 
+        loadInvoices(organizationId);
       } else {
         state = state.copyWith(
           error: result['message'] ?? 'Failed to update payment status',
@@ -145,11 +146,13 @@ class InvoiceListViewModel extends StateNotifier<InvoiceListState> {
       final result = await _invoiceService.shareInvoice(
         invoiceId: invoiceId,
         organizationId: organizationId,
+        shareMethod: 'link',
       );
 
       if (result['success'] != true) {
         state = state.copyWith(
-          error: result['message'] ?? 'Failed to share invoice',
+          error:
+              result['message'] ?? result['error'] ?? 'Failed to share invoice',
         );
       }
       // On success, you might want to show a success message or update the UI
@@ -208,7 +211,8 @@ class InvoiceListViewModel extends StateNotifier<InvoiceListState> {
 // Provider for the invoice management service
 final invoiceManagementServiceProvider =
     Provider<InvoiceManagementService>((ref) {
-  return InvoiceManagementService(apiMethod: ref.read(app_providers.apiMethodProvider));
+  return InvoiceManagementService(
+      apiMethod: ref.read(app_providers.apiMethodProvider));
 });
 
 // Provider for the invoice list view model

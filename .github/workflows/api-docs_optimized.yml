@@ -25,6 +25,7 @@ permissions:
 env:
   NODE_VERSION: '20'
   DOCKER_REGISTRY: 'ghcr.io'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   # Security Scanning
@@ -324,54 +325,21 @@ jobs:
           path: sbom.spdx.json
 
   # Deploy Documentation
+  # Disabled: Using Cloud Run - no SSH access available
+  # To enable, set up SSH_PRIVATE_KEY, SERVER_HOST, SERVER_USER secrets
+  # and configure a VM or docs server
   deploy-docs:
     name: Deploy Documentation
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [build-docs, generate-sdk]
-    if: |
-      (github.ref == 'refs/heads/main' && github.event_name == 'push') ||
-      (github.event.inputs.deploy_docs == 'true')
+    if: false  # Disabled - no SSH server available
     environment:
       name: documentation
       url: https://docs.carenest.com
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Deploy via SSH
-        if: ${{ secrets.SSH_PRIVATE_KEY }}
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-        run: |
-          # Setup SSH key
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          
-          # Add host to known_hosts
-          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
-          
-          # Deploy
-          ssh -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST << 'ENDSSH'
-            cd /opt/carenest/docs
-            docker-compose pull
-            docker-compose up -d --remove-orphans
-            docker-compose logs --tail=50
-          ENDSSH
-          
-          # Cleanup
-          rm -f ~/.ssh/deploy_key
-
-      - name: Verify deployment
-        run: |
-          # Wait for deployment to be ready
-          sleep 10
-          
-          # Check if docs are accessible
-          curl -f https://docs.carenest.com/health || echo "::warning::Docs not accessible"
+      - name: Deployment disabled
+        run: echo "Deployment disabled - using Cloud Run (no SSH access)"
 
   # Generate Documentation Metrics
   documentation-metrics:
@@ -393,77 +361,57 @@ jobs:
 
       - name: Generate comprehensive metrics
         run: |
-          node -e "
-            const yaml = require('js-yaml');
-            const fs = require('fs');
-            
-            const spec = yaml.load(fs.readFileSync('backend/docs/api/openapi.yaml', 'utf8'));
-            
-            const paths = Object.keys(spec.paths || {});
-            const schemas = Object.keys(spec.components?.schemas || {});
-            const tags = spec.tags || [];
-            
-            // Count methods
-            let methodCounts = { GET: 0, POST: 0, PUT: 0, DELETE: 0, PATCH: 0 };
-            paths.forEach(path => {
-              Object.keys(spec.paths[path]).forEach(method => {
-                const m = method.toUpperCase();
-                if (methodCounts.hasOwnProperty(m)) methodCounts[m]++;
-              });
+          cat > /tmp/metrics.js << 'SCRIPT'
+          const yaml = require("js-yaml");
+          const fs = require("fs");
+          
+          const spec = yaml.load(fs.readFileSync("backend/docs/api/openapi.yaml", "utf8"));
+          
+          const paths = Object.keys(spec.paths || {});
+          const schemas = Object.keys(spec.components?.schemas || {});
+          const tags = spec.tags || [];
+          
+          let methodCounts = { GET: 0, POST: 0, PUT: 0, DELETE: 0, PATCH: 0 };
+          paths.forEach(path => {
+            Object.keys(spec.paths[path]).forEach(method => {
+              const m = method.toUpperCase();
+              if (methodCounts.hasOwnProperty(m)) methodCounts[m]++;
             });
-            
-            // Count documented vs undocumented
-            let documented = 0, undocumented = 0;
-            paths.forEach(path => {
-              Object.values(spec.paths[path]).forEach(op => {
-                if (op.description || op.summary) documented++;
-                else undocumented++;
-              });
+          });
+          
+          let documented = 0, undocumented = 0;
+          paths.forEach(path => {
+            Object.values(spec.paths[path]).forEach(op => {
+              if (op.description || op.summary) documented++;
+              else undocumented++;
             });
-            
-            const metrics = {
-              version: spec.info.version,
-              title: spec.info.title,
-              totalEndpoints: paths.length,
-              totalSchemas: schemas.length,
-              totalTags: tags.length,
-              methodBreakdown: methodCounts,
-              documentationCoverage: {
-                documented,
-                undocumented,
-                percentage: ((documented / (documented + undocumented)) * 100).toFixed(2) + '%'
-              },
-              timestamp: new Date().toISOString()
-            };
-            
-            console.log('📊 Documentation Metrics:');
-            console.log(JSON.stringify(metrics, null, 2));
-            
-            fs.writeFileSync('metrics.json', JSON.stringify(metrics, null, 2));
-            
-            // Create summary
-            const summary = \`## 📊 API Documentation Metrics
-
-**Version:** \${metrics.version}
-**Total Endpoints:** \${metrics.totalEndpoints}
-**Total Schemas:** \${metrics.totalSchemas}
-
-### Method Breakdown
-- GET: \${methodCounts.GET}
-- POST: \${methodCounts.POST}
-- PUT: \${methodCounts.PUT}
-- DELETE: \${methodCounts.DELETE}
-- PATCH: \${methodCounts.PATCH}
-
-### Documentation Coverage
-- Documented: \${documented} (\${metrics.documentationCoverage.percentage})
-- Undocumented: \${undocumented}
-
-\${undocumented > 0 ? '⚠️ **Warning:** Some endpoints lack documentation' : '✅ All endpoints documented'}
-\`;
-            
-            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
-          "
+          });
+          
+          const metrics = {
+            version: spec.info.version,
+            title: spec.info.title,
+            totalEndpoints: paths.length,
+            totalSchemas: schemas.length,
+            totalTags: tags.length,
+            methodBreakdown: methodCounts,
+            documentationCoverage: {
+              documented,
+              undocumented,
+              percentage: ((documented / (documented + undocumented)) * 100).toFixed(2) + "%"
+            },
+            timestamp: new Date().toISOString()
+          };
+          
+          console.log("Documentation Metrics:");
+          console.log(JSON.stringify(metrics, null, 2));
+          
+          fs.writeFileSync("metrics.json", JSON.stringify(metrics, null, 2));
+          
+          const summary = `## Documentation Metrics\n\n**Version:** ${metrics.version}\n**Total Endpoints:** ${metrics.totalEndpoints}\n**Total Schemas:** ${metrics.totalSchemas}\n\n### Method Breakdown\n- GET: ${methodCounts.GET}\n- POST: ${methodCounts.POST}\n- PUT: ${methodCounts.PUT}\n- DELETE: ${methodCounts.DELETE}\n- PATCH: ${methodCounts.PATCH}\n\n### Documentation Coverage\n- Documented: ${documented} (${metrics.documentationCoverage.percentage})\n- Undocumented: ${undocumented}\n\n${undocumented > 0 ? "Warning: Some endpoints lack documentation" : "All endpoints documented"}\n`;
+          
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          SCRIPT
+          node /tmp/metrics.js
 
       - name: Upload metrics
         uses: actions/upload-artifact@v4
@@ -562,16 +510,16 @@ jobs:
   notify-completion:
     name: Notify on Completion
     runs-on: ubuntu-latest
-    needs: [security-scan, validate-spec, api-tests, generate-sdk, build-docs, deploy-docs, create-release]
+    needs: [security-scan, validate-spec, api-tests, generate-sdk, build-docs, create-release]
     if: always()
     steps:
       - name: Send Slack notification
-        if: ${{ secrets.SLACK_WEBHOOK_URL }}
         uses: slackapi/slack-github-action@v1
+        if: env.SLACK_WEBHOOK_URL != ''
         with:
           payload: |
             {
-              "text": "${{ needs.security-scan.result == 'failure' || needs.validate-spec.result == 'failure' || needs.api-tests.result == 'failure' ? '❌' : '✅' }} API Documentation CI/CD",
+              "text": "${{ (needs.security-scan.result == 'failure' || needs.validate-spec.result == 'failure' || needs.api-tests.result == 'failure') && 'X' || 'OK' }} API Documentation CI/CD",
               "blocks": [
                 {
                   "type": "section",

@@ -7,7 +7,6 @@ import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
-import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
@@ -62,11 +61,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
   bool isDataFetched = false;
 
   // Bank details state
-  bool _useAdminBankDetails = false;
-  final SharedPreferencesUtils _prefs = SharedPreferencesUtils();
   bool _bankDetailsLoading = false;
   bool _hasBankDetails = false;
-  String? _bankDetailsError;
   Map<String, dynamic>? _bankDetails;
 
   @override
@@ -94,7 +90,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
         isDataFetched = true;
       }
       await _loadEmployeeBankDetails();
-      await _loadUseAdminPreference();
 
       setState(() {
         _appointmentDataFuture = getAppointmentData();
@@ -107,7 +102,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Future<void> _loadEmployeeBankDetails() async {
     setState(() {
       _bankDetailsLoading = true;
-      _bankDetailsError = null;
     });
     try {
       final apiMethod = ref.read(apiMethodProvider);
@@ -120,40 +114,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
       } else {
         setState(() {
           _hasBankDetails = false;
-          _bankDetailsError = (response['message']?.toString());
         });
       }
     } catch (e) {
       setState(() {
         _hasBankDetails = false;
-        _bankDetailsError = 'Error loading bank details: $e';
       });
     } finally {
       setState(() {
         _bankDetailsLoading = false;
       });
-    }
-  }
-
-  Future<void> _loadUseAdminPreference() async {
-    try {
-      await _prefs.init();
-      final stored =
-          _prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
-      if (stored != null) {
-        setState(() => _useAdminBankDetails = stored);
-      }
-    } catch (e) {
-      debugPrint('Failed to load useAdminBankDetails preference: $e');
-    }
-  }
-
-  Future<void> _persistUseAdminPreference(bool value) async {
-    try {
-      await _prefs.setBool(
-          SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
-    } catch (e) {
-      debugPrint('Failed to persist useAdminBankDetails preference: $e');
     }
   }
 
@@ -792,109 +762,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                 AppLocalizations.of(context)!.bankingPayouts),
                         const SizedBox(height: 16),
 
-                        // Styled Bank Configuration Panel (The Admin/Employee Toggle)
-                        BauhausCard(
-                          child: Column(
-                            children: [
-                              // Header
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 16),
-                                decoration: BoxDecoration(
-                                  color: BauhausDesign.primary.withOpacity(0.1),
-                                  border: const Border(
-                                      bottom: BorderSide(
-                                          color: BauhausDesign.textDark,
-                                          width: 2)),
-                                ),
-                                child: Text(
-                                  AppLocalizations.of(context)!
-                                      .selectBankDetails
-                                      .toUpperCase(),
-                                  style: BauhausDesign.getTextTheme(context)
-                                      .titleMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ),
-                              // Content
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    if (!_hasBankDetails)
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        margin:
-                                            const EdgeInsets.only(bottom: 16),
-                                        decoration: BoxDecoration(
-                                          color: BauhausDesign.neutral
-                                              .withOpacity(0.1),
-                                          border: Border.all(
-                                              color: BauhausDesign.neutral),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.info_outline,
-                                                size: 20,
-                                                color: BauhausDesign.neutral),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: Text(
-                                                AppLocalizations.of(context)!
-                                                    .bankDetailsNotSet,
-                                                style:
-                                                    BauhausDesign.getTextTheme(
-                                                            context)
-                                                        .bodySmall,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                    // Custom Radio Options
-                                    _buildBauhausRadioOption(
-                                      label: AppLocalizations.of(context)!
-                                          .employeeBankDetails,
-                                      subLabel: AppLocalizations.of(context)!
-                                          .employeeBankDetailsDesc,
-                                      value: false,
-                                      groupValue: _useAdminBankDetails,
-                                      onChanged: (val) async {
-                                        setState(
-                                            () => _useAdminBankDetails = false);
-                                        await _persistUseAdminPreference(false);
-                                      },
-                                    ),
-                                    const Divider(
-                                        height: 24,
-                                        thickness: 1,
-                                        color: BauhausDesign.neutral),
-                                    _buildBauhausRadioOption(
-                                      label: AppLocalizations.of(context)!
-                                          .adminBankDetails,
-                                      subLabel: AppLocalizations.of(context)!
-                                          .adminBankDetailsDesc,
-                                      value: true,
-                                      groupValue: _useAdminBankDetails,
-                                      onChanged: (val) async {
-                                        setState(
-                                            () => _useAdminBankDetails = true);
-                                        await _persistUseAdminPreference(true);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
                         // Employee Bank Details Card (View/Edit)
                         _buildBauhausEmployeeBankCard(),
 
@@ -907,80 +774,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBauhausRadioOption({
-    required String label,
-    required String subLabel,
-    required bool value,
-    required bool groupValue,
-    required Function(bool?) onChanged,
-  }) {
-    final isSelected = value == groupValue;
-    return GestureDetector(
-      onTap: () => onChanged(value),
-      child: Container(
-        color: Colors.transparent,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Custom Radio Circle
-            Container(
-              width: 20,
-              height: 20,
-              margin: const EdgeInsets.only(top: 2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected
-                      ? BauhausDesign.primary
-                      : BauhausDesign.neutral,
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? Center(
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: const BoxDecoration(
-                            color: BauhausDesign.primary,
-                            shape: BoxShape.circle),
-                      ),
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isSelected
-                              ? BauhausDesign.textDark
-                              : BauhausDesign.neutral,
-                        ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subLabel,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.neutral,
-                            ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -1094,7 +887,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                               },
                               icon: Icons.edit,
                               text: AppLocalizations.of(context)!
-                                  .updateBankDetails
+                                  .editButton
                                   .toUpperCase(),
                             ),
                           ),
