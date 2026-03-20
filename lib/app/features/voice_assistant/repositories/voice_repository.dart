@@ -13,10 +13,16 @@ class VoiceRepository {
 
   VoiceRepository(this._apiMethod);
 
-  Future<VoiceCommand> processCommand(String text) async {
+  Future<VoiceCommand> processCommand(
+    String text, {
+    Map<String, dynamic>? context,
+  }) async {
     final response = await _apiMethod.post(
       'api/voice/command',
-      body: {'commandText': text},
+      body: {
+        'commandText': text,
+        if (context != null) 'context': context,
+      },
     );
 
     if (response['success'] == true) {
