@@ -38,7 +38,6 @@ class VoiceCommand {
   });
 
   bool get canOpenRoute =>
-      executed &&
       suggestedRoute != null &&
       suggestedRoute!.isNotEmpty &&
       suggestedRoute != 'voice_assistant';
