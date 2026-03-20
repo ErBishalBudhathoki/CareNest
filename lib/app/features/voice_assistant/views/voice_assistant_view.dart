@@ -1,3 +1,5 @@
+import 'package:carenest/app/features/Appointment/views/schedule_assignment.dart';
+import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
@@ -146,6 +148,10 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
   Future<void> _openSuggestedRoute(VoiceCommand command) async {
     final suggestedRoute = command.suggestedRoute;
     if (suggestedRoute == null || suggestedRoute.isEmpty) return;
+    final routeData = command.resultData ?? const <String, dynamic>{};
+    final navigationContext = routeData['navigationContext'] is Map
+        ? Map<String, dynamic>.from(routeData['navigationContext'] as Map)
+        : const <String, dynamic>{};
 
     await _prefs.init();
     final organizationId = _prefs.getOrganizationId() ?? '';
@@ -181,6 +187,33 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
         break;
       case 'notification_center':
         destination = const NotificationListView();
+        break;
+      case 'assign_c2e':
+        destination = const AssignC2E();
+        break;
+      case 'assignment_schedule':
+        final assignmentUserEmail =
+            navigationContext['userEmail']?.toString().trim() ?? '';
+        final clientEmail =
+            navigationContext['clientEmail']?.toString().trim() ?? '';
+        final clientId = navigationContext['clientId']?.toString().trim();
+        final assignmentOrganizationId =
+            navigationContext['organizationId']?.toString().trim() ?? '';
+        if (assignmentUserEmail.isEmpty || clientEmail.isEmpty) {
+          _showSnackBar(
+            'Employee and client context are required for assignment.',
+            isError: true,
+          );
+          return;
+        }
+        destination = ScheduleAssignment(
+          userEmail: assignmentUserEmail,
+          clientEmail: clientEmail,
+          clientId: (clientId == null || clientId.isEmpty) ? null : clientId,
+          organizationId: assignmentOrganizationId.isEmpty
+              ? (organizationId.isEmpty ? null : organizationId)
+              : assignmentOrganizationId,
+        );
         break;
       case 'admin_dashboard':
         if (userEmail.isEmpty) {
@@ -229,6 +262,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       appBar: AppBar(
         title: const Text('Voice Assistant'),
         backgroundColor: BauhausDesign.surfaceLight,
+        foregroundColor: BauhausDesign.textDark,
         surfaceTintColor: Colors.transparent,
       ),
       body: Column(
@@ -283,6 +317,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             'App-scoped assistant',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
+                  color: BauhausDesign.textDark,
                 ),
           ),
           const SizedBox(height: 8),
@@ -297,7 +332,13 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             children: capabilities
                 .map(
                   (capability) => Chip(
-                    label: Text(capability),
+                    label: Text(
+                      capability,
+                      style: const TextStyle(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     backgroundColor: BauhausDesign.surfaceLight,
                     side: const BorderSide(color: BauhausDesign.neutral),
                   ),
@@ -416,6 +457,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             Text(
               '"${command.commandText}"',
               style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
+                    color: BauhausDesign.textDark,
                     fontWeight: FontWeight.w800,
                   ),
             ),
@@ -465,7 +507,15 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                 children: command.suggestions
                     .map(
                       (suggestion) => ActionChip(
-                        label: Text(suggestion),
+                        label: Text(
+                          suggestion,
+                          style: const TextStyle(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        backgroundColor: BauhausDesign.surfaceLight,
+                        side: const BorderSide(color: BauhausDesign.neutral),
                         onPressed: () {
                           _controller.text = suggestion;
                           _controller.selection = TextSelection.collapsed(
@@ -485,6 +535,10 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                   onPressed: () => _openSuggestedRoute(command),
                   icon: const Icon(Icons.open_in_new),
                   label: const Text('Open in app'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: BauhausDesign.textDark,
+                    side: const BorderSide(color: BauhausDesign.neutral),
+                  ),
                 ),
               ),
             ],
@@ -609,6 +663,8 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                 fontWeight: FontWeight.w700,
               ),
         );
+      case 'assignment_manage':
+        return _buildAssignmentPreview(data);
       default:
         return null;
     }
@@ -628,6 +684,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+                  color: BauhausDesign.textDark,
                   fontWeight: FontWeight.w900,
                 ),
           ),
@@ -710,6 +767,79 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     );
   }
 
+  Widget _buildAssignmentPreview(Map<String, dynamic> data) {
+    final draft = data['assignmentDraft'] is Map
+        ? Map<String, dynamic>.from(data['assignmentDraft'] as Map)
+        : const <String, dynamic>{};
+    final employee = draft['employee'] is Map
+        ? Map<String, dynamic>.from(draft['employee'] as Map)
+        : const <String, dynamic>{};
+    final client = draft['client'] is Map
+        ? Map<String, dynamic>.from(draft['client'] as Map)
+        : const <String, dynamic>{};
+    final schedule = draft['schedule'] is Map
+        ? Map<String, dynamic>.from(draft['schedule'] as Map)
+        : const <String, dynamic>{};
+    final ndisItem = draft['ndisItem'] is Map
+        ? Map<String, dynamic>.from(draft['ndisItem'] as Map)
+        : const <String, dynamic>{};
+    final missingFields = (data['missingFields'] as List<dynamic>? ?? const [])
+        .map((item) => item.toString())
+        .toList();
+
+    final summaryTiles = <Widget>[
+      if (employee.isNotEmpty)
+        _previewTile(
+          title: employee['name']?.toString() ??
+              employee['email']?.toString() ??
+              'Employee',
+          subtitle: employee['email']?.toString() ?? '',
+        ),
+      if (client.isNotEmpty)
+        _previewTile(
+          title: client['name']?.toString() ??
+              client['email']?.toString() ??
+              'Client',
+          subtitle: client['email']?.toString() ?? '',
+        ),
+      if (schedule.isNotEmpty &&
+          ((schedule['date']?.toString().isNotEmpty ?? false) ||
+              (schedule['startTime']?.toString().isNotEmpty ?? false) ||
+              (schedule['endTime']?.toString().isNotEmpty ?? false)))
+        _previewTile(
+          title: schedule['date']?.toString().isNotEmpty == true
+              ? schedule['date'].toString()
+              : 'Schedule',
+          subtitle: [
+            schedule['startTime']?.toString(),
+            schedule['endTime']?.toString(),
+          ].whereType<String>().where((value) => value.isNotEmpty).join(' - '),
+        ),
+      if (ndisItem.isNotEmpty)
+        _previewTile(
+          title: ndisItem['itemNumber']?.toString() ?? 'NDIS Item',
+          subtitle: ndisItem['itemName']?.toString() ?? '',
+        ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (summaryTiles.isNotEmpty) _buildPreviewList(summaryTiles),
+        if (missingFields.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            'Missing: ${missingFields.join(', ')}',
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+        ],
+      ],
+    );
+  }
+
   Widget _previewTile({
     required String title,
     required String subtitle,
@@ -727,6 +857,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
                   fontWeight: FontWeight.w800,
                 ),
           ),
