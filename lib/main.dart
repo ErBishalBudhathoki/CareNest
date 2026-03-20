@@ -71,6 +71,7 @@ import 'package:carenest/app/features/care_intelligence/views/medication_managem
 import 'package:carenest/app/features/care_intelligence/views/behavior_support_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/health_monitoring_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/outcome_tracking_view.dart';
+import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view.dart';
 import 'package:carenest/app/features/worker/views/worker_dashboard_view.dart';
 import 'package:carenest/app/features/worker/views/worker_shift_history_view.dart';
 import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
@@ -716,6 +717,7 @@ class MyApp extends ConsumerWidget {
           Routes.bankDetails: (context) => const BankDetailsView(),
           Routes.adminRequests: (context) => const AdminRequestsDashboardView(),
           Routes.mileageTracker: (context) => const MileageTrackerView(),
+          Routes.voiceAssistant: (context) => const VoiceAssistantView(),
           // Care Intelligence Routes
           Routes.careIntelligence: (context) =>
               const CareIntelligenceDashboard(),
@@ -729,7 +731,8 @@ class MyApp extends ConsumerWidget {
           Routes.healthMonitoring: (context) => const HealthMonitoringView(),
           Routes.outcomeTracking: (context) => const OutcomeTrackingView(),
           Routes.workerDashboard: (context) => const WorkerDashboardView(),
-          Routes.workerShiftHistory: (context) => const WorkerShiftHistoryView(),
+          Routes.workerShiftHistory: (context) =>
+              const WorkerShiftHistoryView(),
           Routes.teamDashboard: (context) => const TeamDashboardView(),
         },
       ),

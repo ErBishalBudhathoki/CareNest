@@ -444,3 +444,7 @@ next\ step.md
 .github/skills
 docs/
 .env.example
+
+# Local test/runtime caches
+jest_dx/
+node-compile-cache/
