@@ -90,7 +90,7 @@ android {
         
         production {
             dimension "environment"
-            resValue "string", "app_name", "CareNest"
+            resValue "string", "app_name", "Carenest"
         }
     }
 

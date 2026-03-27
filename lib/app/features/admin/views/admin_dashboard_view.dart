@@ -349,12 +349,14 @@ class _AdminDashboardViewControllerState
     }
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: _openVoiceAssistant,
         backgroundColor: BauhausDesign.primary,
         foregroundColor: BauhausDesign.surfaceWhite,
-        icon: const Icon(Icons.keyboard_voice_outlined),
-        label: const Text('Voice Assistant'),
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        tooltip: 'Voice Assistant',
+        child: const Icon(Icons.keyboard_voice_outlined),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
