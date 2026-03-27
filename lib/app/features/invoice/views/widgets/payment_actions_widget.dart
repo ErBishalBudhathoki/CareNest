@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 import '../../models/invoice_model.dart';
+import '../../models/payment_info.dart';
 import '../../viewmodels/payment_viewmodel.dart';
 
 class PaymentActionsWidget extends ConsumerWidget {
@@ -17,8 +18,9 @@ class PaymentActionsWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final payment = invoice.payment;
-    final balanceDue = payment?.balanceDue ?? invoice.totalAmount;
-    final isPaid = payment?.status == 'paid';
+    final paymentStatus = payment?.status.toLowerCase() ?? 'pending';
+    final balanceDue = _resolveBalanceDue(payment);
+    final isPaid = paymentStatus == 'paid' || balanceDue <= 0;
 
     return Container(
       decoration: BauhausTheme.blockDecoration,
@@ -40,7 +42,8 @@ class PaymentActionsWidget extends ConsumerWidget {
               Text('Balance Due', style: BauhausTheme.bodyStyle),
               Text(
                 '\$${balanceDue.toStringAsFixed(2)}',
-                style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.red),
+                style:
+                    BauhausTheme.headerStyle.copyWith(color: BauhausTheme.red),
               ),
             ],
           ),
@@ -56,7 +59,8 @@ class PaymentActionsWidget extends ConsumerWidget {
                       // Trigger Stripe Payment Flow
                       // ref.read(paymentViewModelProvider.notifier).createPaymentIntent(...)
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Starting Payment Flow...')),
+                        const SnackBar(
+                            content: Text('Starting Payment Flow...')),
                       );
                     },
                   ),
@@ -80,7 +84,8 @@ class PaymentActionsWidget extends ConsumerWidget {
             child: TextButton(
               onPressed: () => _showCreditNoteDialog(context, ref),
               child: Text('Issue Credit Note',
-                  style: BauhausTheme.labelStyle.copyWith(decoration: TextDecoration.underline)),
+                  style: BauhausTheme.labelStyle
+                      .copyWith(decoration: TextDecoration.underline)),
             ),
           ),
           if (payment?.transactions.isNotEmpty ?? false) ...[
@@ -92,8 +97,10 @@ class PaymentActionsWidget extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(t.date.toString().split(' ')[0], style: BauhausTheme.bodyStyle),
-                      Text('\$${t.amount.toStringAsFixed(2)} (${t.method})', style: BauhausTheme.bodyStyle),
+                      Text(t.date.toString().split(' ')[0],
+                          style: BauhausTheme.bodyStyle),
+                      Text('\$${t.amount.toStringAsFixed(2)} (${t.method})',
+                          style: BauhausTheme.bodyStyle),
                     ],
                   ),
                 )),
@@ -103,11 +110,40 @@ class PaymentActionsWidget extends ConsumerWidget {
     );
   }
 
+  double _resolveBalanceDue(PaymentInfo? payment) {
+    if (payment == null) {
+      return invoice.totalAmount;
+    }
+
+    final status = payment.status.toLowerCase();
+    final derivedBalance = (invoice.totalAmount - payment.paidAmount)
+        .clamp(0.0, invoice.totalAmount);
+
+    if (status == 'paid') {
+      return 0.0;
+    }
+
+    if (payment.balanceDue > 0) {
+      return payment.balanceDue.clamp(0.0, invoice.totalAmount);
+    }
+
+    if (derivedBalance > 0) {
+      return derivedBalance;
+    }
+
+    if (status == 'pending' || status == 'overdue') {
+      return invoice.totalAmount;
+    }
+
+    return 0.0;
+  }
+
   Widget _buildStatusBadge(String status) {
     Color color;
     switch (status.toLowerCase()) {
       case 'paid':
-        color = Colors.green; // Or Bauhaus green if defined, using generic for now
+        color =
+            Colors.green; // Or Bauhaus green if defined, using generic for now
         break;
       case 'partial':
         color = BauhausTheme.yellow;
@@ -202,7 +238,8 @@ class PaymentActionsWidget extends ConsumerWidget {
                   'originalInvoiceId': invoiceId,
                   'amount': amount,
                   'reason': reasonController.text,
-                  'creditNoteNumber': 'CN-${DateTime.now().millisecondsSinceEpoch}',
+                  'creditNoteNumber':
+                      'CN-${DateTime.now().millisecondsSinceEpoch}',
                   'organizationId': 'ORG-123', // TODO: Get from provider
                 });
                 Navigator.pop(context);
@@ -242,7 +279,8 @@ class _BauhausButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: BauhausTheme.bodyStyle.copyWith(color: textColor, fontWeight: FontWeight.w900),
+          style: BauhausTheme.bodyStyle
+              .copyWith(color: textColor, fontWeight: FontWeight.w900),
         ),
       ),
     );
