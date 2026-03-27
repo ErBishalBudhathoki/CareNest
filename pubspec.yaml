@@ -38,7 +38,7 @@ dependencies:
   cloud_firestore: ^5.4.0
   download: ^1.0.0
   path_provider: ^2.1.5
-  google_mlkit_text_recognition: ^0.13.0
+  google_mlkit_text_recognition: ^0.15.1
   flutter_secure_storage: ^9.2.2
   # document_file_save_plus: ^2.0.0
   file_picker: ^10.2.0
@@ -132,6 +132,12 @@ dev_dependencies:
   # Screenshot comparison
   screenshot: ^2.3.0
 
+dependency_overrides:
+  google_mlkit_commons:
+    path: third_party/google_mlkit_commons
+  google_mlkit_text_recognition:
+    path: third_party/google_mlkit_text_recognition
+
 flutter:
   generate: true
   assets:
@@ -155,6 +161,7 @@ flutter:
     - assets/lottieAnimationJSON/warning.json
     - assets/ndis_support_items.json
     - assets/icons/
+    - assets/icons/ic_launcher.png
   uses-material-design: true
   fonts:
     - family: Lato
@@ -165,22 +172,22 @@ flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/icons/app_icon.svg"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/icons/app_icon_foreground.svg"
+  image_path: "assets/icons/ic_launcher_clean.png"
+  adaptive_icon_background: "#1A5874"
+  adaptive_icon_foreground: "assets/icons/ic_launcher_foreground_clean.png"
   
   # Development flavor configuration
   development:
     android: true
     ios: true
-    image_path: "assets/icons/app_icon_dev.svg"
-    adaptive_icon_background: "#E1F5FE"
-    adaptive_icon_foreground: "assets/icons/app_icon_foreground_dev.svg"
+    image_path: "assets/icons/ic_launcher_clean.png"
+    adaptive_icon_background: "#1A5874"
+    adaptive_icon_foreground: "assets/icons/ic_launcher_foreground_clean.png"
     
   # Production flavor configuration
   production:
     android: true
     ios: true
-    image_path: "assets/icons/app_icon.svg"
-    adaptive_icon_background: "#FFFFFF"
-    adaptive_icon_foreground: "assets/icons/app_icon_foreground.svg"
+    image_path: "assets/icons/ic_launcher_clean.png"
+    adaptive_icon_background: "#1A5874"
+    adaptive_icon_foreground: "assets/icons/ic_launcher_foreground_clean.png"
