@@ -27,6 +27,7 @@ import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
 import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/auth/utils/deep_link_state.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/themes/app_themes.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
@@ -253,6 +254,7 @@ void _handleIncomingDeepLink(Uri uri) {
   if (_isDuplicateDeepLink(uri)) return;
   _handleDeepLink(uri);
   _deepLinkHandled = true;
+  DeepLinkState.handled = true;
 }
 
 bool _isDuplicateDeepLink(Uri uri) {

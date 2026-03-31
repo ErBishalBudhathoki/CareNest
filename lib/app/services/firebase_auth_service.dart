@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:carenest/config/environment.dart';
 
 /// Firebase Authentication Service
 /// Handles all Firebase Auth operations and App Check token management
@@ -139,7 +141,20 @@ class FirebaseAuthService {
       if (user == null) throw Exception('No user signed in');
 
       if (!user.emailVerified) {
-        await user.sendEmailVerification();
+        final projectId = Firebase.app().options.projectId;
+        final isDev = AppConfig.appFlavor == Flavor.development;
+        final bundleId =
+            isDev ? 'com.bishal.invoice.dev' : 'com.bishal.invoice';
+
+        final actionCodeSettings = ActionCodeSettings(
+          url: 'https://$projectId.firebaseapp.com/email-verified',
+          handleCodeInApp: true,
+          iOSBundleId: bundleId,
+          androidPackageName: bundleId,
+          androidInstallApp: true,
+          androidMinimumVersion: '1',
+        );
+        await user.sendEmailVerification(actionCodeSettings);
         debugPrint('✅ Verification email sent to: ${user.email}');
       }
     } on FirebaseAuthException catch (e) {
@@ -244,9 +259,10 @@ class FirebaseAuthService {
     if (lowerMessage
             .contains('requests from this android client application') &&
         lowerMessage.contains('are blocked')) {
-      message = 'This app build is blocked by Firebase security settings. '
-          'Ask admin to allow com.bishal.invoice.dev in Firebase '
-          '(App Check + API key Android restrictions with debug SHA).';
+      message = 'This app build is blocked by Firebase/Google Cloud security settings. '
+          'Ensure the signing SHA fingerprint for this build is added to '
+          'the API key restrictions in Google Cloud Console, and the app '
+          'is registered in Firebase App Check.';
       return Exception(message);
     }
 
