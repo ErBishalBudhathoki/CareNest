@@ -1,6 +1,7 @@
 import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../../env.dart';
 
@@ -28,12 +29,14 @@ class DeepLinkHandler {
 
   static const String _signupPath = '/signup';
   static const String _firebaseResetPasswordMode = 'resetPassword';
+  static const String _firebaseVerifyEmailMode = 'verifyEmail';
   static const String _defaultUniversalHost = 'bishalbudhathoki.tech';
 
   // Additional supported domains for backward compatibility
   static const List<String> _supportedDomains = [
     'bishalbudhathoki.tech',
     'bishalbudhathoki.com',
+    'careservices.page.link',
   ];
 
   static String get _universalHost {
@@ -63,10 +66,13 @@ class DeepLinkHandler {
       return;
     }
 
-    // Handle Firebase reset-password action links.
-    final resetCode = _extractFirebaseResetCode(uri);
-    if (resetCode != null && resetCode.isNotEmpty) {
-      _navigateToFirebaseResetPassword(resetCode);
+    final firebaseAction = _extractFirebaseAction(uri);
+    if (firebaseAction != null) {
+      if (firebaseAction.key == _firebaseResetPasswordMode) {
+        _navigateToFirebaseResetPassword(firebaseAction.value);
+      } else if (firebaseAction.key == _firebaseVerifyEmailMode) {
+        _handleFirebaseEmailVerification(firebaseAction.value);
+      }
       return;
     }
 
@@ -88,9 +94,13 @@ class DeepLinkHandler {
 
   /// Handles custom scheme deep links (com.bishal.invoice://)
   static void _handleCustomSchemeLink(Uri uri) {
-    final resetCode = _extractFirebaseResetCode(uri);
-    if (resetCode != null && resetCode.isNotEmpty) {
-      _navigateToFirebaseResetPassword(resetCode);
+    final firebaseAction = _extractFirebaseAction(uri);
+    if (firebaseAction != null) {
+      if (firebaseAction.key == _firebaseResetPasswordMode) {
+        _navigateToFirebaseResetPassword(firebaseAction.value);
+      } else if (firebaseAction.key == _firebaseVerifyEmailMode) {
+        _handleFirebaseEmailVerification(firebaseAction.value);
+      }
       return;
     }
 
@@ -117,13 +127,14 @@ class DeepLinkHandler {
     return uri.pathSegments.any((segment) => segment.toLowerCase() == 'signup');
   }
 
-  static String? _extractFirebaseResetCode(Uri uri) {
+  static MapEntry<String, String>? _extractFirebaseAction(Uri uri) {
     final mode = uri.queryParameters['mode']?.trim();
     final oobCode = uri.queryParameters['oobCode']?.trim();
-    if (mode == _firebaseResetPasswordMode &&
+    if ((mode == _firebaseResetPasswordMode ||
+            mode == _firebaseVerifyEmailMode) &&
         oobCode != null &&
         oobCode.isNotEmpty) {
-      return oobCode;
+      return MapEntry(mode!, oobCode);
     }
 
     // Some dynamic links embed the real action URL in a "link" query param.
@@ -133,10 +144,11 @@ class DeepLinkHandler {
         final nestedUri = Uri.parse(nestedLink);
         final nestedMode = nestedUri.queryParameters['mode']?.trim();
         final nestedCode = nestedUri.queryParameters['oobCode']?.trim();
-        if (nestedMode == _firebaseResetPasswordMode &&
+        if ((nestedMode == _firebaseResetPasswordMode ||
+                nestedMode == _firebaseVerifyEmailMode) &&
             nestedCode != null &&
             nestedCode.isNotEmpty) {
-          return nestedCode;
+          return MapEntry(nestedMode!, nestedCode);
         }
       } catch (_) {
         // Ignore malformed nested links and continue.
@@ -183,6 +195,55 @@ class DeepLinkHandler {
         builder: (_) => ChangePasswordView(firebaseOobCode: oobCode),
       ),
     );
+  }
+
+  static Future<void> _handleFirebaseEmailVerification(String oobCode) async {
+    final navState = navigatorKey.currentState;
+    if (navState == null) {
+      debugPrint(
+          'DeepLinkHandler: navigator not ready, cannot route to email verification yet');
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.applyActionCode(oobCode);
+      await FirebaseAuth.instance.currentUser?.reload();
+
+      navState.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+      _showSnackBar(
+        'Email verified successfully. You can now sign in.',
+        backgroundColor: Colors.green,
+      );
+    } on FirebaseAuthException catch (e) {
+      debugPrint(
+          'DeepLinkHandler: email verification failed: ${e.code} - ${e.message}');
+      navState.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+      _showSnackBar(
+        e.message ?? 'This verification link is invalid or has expired.',
+        backgroundColor: Colors.red,
+      );
+    } catch (e) {
+      debugPrint('DeepLinkHandler: email verification failed: $e');
+      navState.pushNamedAndRemoveUntil(Routes.login, (route) => false);
+      _showSnackBar(
+        'Failed to verify email. Please request a new verification email.',
+        backgroundColor: Colors.red,
+      );
+    }
+  }
+
+  static void _showSnackBar(String message, {required Color backgroundColor}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = navigatorKey.currentContext;
+      if (context == null) return;
+      final messenger = ScaffoldMessenger.maybeOf(context);
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: backgroundColor,
+        ),
+      );
+    });
   }
 
   /// Public method to navigate to signup (can be used by other parts of the app)
