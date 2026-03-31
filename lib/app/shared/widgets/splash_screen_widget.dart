@@ -1,10 +1,10 @@
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
+import 'package:carenest/app/features/auth/utils/deep_link_state.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
-import 'package:carenest/main.dart' as main;
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -27,7 +27,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
     await Future.delayed(const Duration(milliseconds: 500));
 
-    if (!main.isDeepLinkHandled() && mounted) {
+    if (!DeepLinkState.handled && mounted) {
       final sharedPrefs = SharedPreferencesUtils();
       await sharedPrefs.init();
 
@@ -110,6 +110,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,

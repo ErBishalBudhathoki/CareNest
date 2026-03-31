@@ -4,6 +4,7 @@ import 'package:carenest/app/features/business/views/add_business_details_view.d
 import 'package:carenest/app/features/business/views/business_list_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:carenest/app/features/invoice/views/automatic_invoice_generation_view.dart';
+import 'package:carenest/app/services/app_check/app_check_provider_resolver.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.dart';
@@ -29,6 +30,7 @@ import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
 import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/auth/utils/deep_link_state.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/themes/app_themes.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
@@ -261,38 +263,56 @@ Future<void> _initializeAppCheck() async {
   final isDevelopmentFlavor = AppConfig.appFlavor == Flavor.development;
 
   if (!kIsWeb && Platform.isIOS) {
-    debugPrint('⚠️ Running on iOS - Skipping App Check initialization');
-    debugPrint(
-        'Note: App Check requires physical iOS device and Apple Developer account');
-    debugPrint(
-        'Recommendation: Disable APP_CHECK_ENFORCEMENT in backend for iOS requests');
-    debugPrint('=== END APP CHECK INITIALIZATION (SKIPPED FOR IOS) ===\n');
+    debugPrint('⚠️ Running on iOS - App Check handled natively (App Attest)');
+    debugPrint('=== END APP CHECK INITIALIZATION ===\n');
     return;
   }
 
   try {
+    final androidSelection =
+        await AppCheckProviderResolver.resolveAndroidSelection();
+
     await FirebaseAppCheck.instance.activate(
       webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
-      androidProvider: isDevelopmentFlavor
-          ? AndroidProvider.debug
-          : AndroidProvider.playIntegrity,
+      androidProvider: androidSelection.provider,
       appleProvider:
           isDevelopmentFlavor ? AppleProvider.debug : AppleProvider.appAttest,
     );
 
     debugPrint('✅ App Check activated successfully');
+    debugPrint('Android Provider: ${androidSelection.label}');
+    debugPrint('Android Provider Reason: ${androidSelection.reason}');
     debugPrint(
-        'Android Provider: ${isDevelopmentFlavor ? "Debug" : "Play Integrity"}');
-    debugPrint('iOS Provider: ${isDevelopmentFlavor ? "Debug" : "App Attest"}');
+        'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}');
 
-    // Test App Check token generation
+    if (androidSelection.provider == AndroidProvider.debug) {
+      debugPrint('');
+      debugPrint('╔══════════════════════════════════════════════════════════╗');
+      debugPrint('║        FIREBASE APP CHECK — DEBUG TOKEN INFO             ║');
+      debugPrint('╠══════════════════════════════════════════════════════════╣');
+      debugPrint('║ Fixed token set via AndroidManifest meta-data:           ║');
+      debugPrint('║   cce8603d-dd78-4514-bb50-ff39a08e6f7b                  ║');
+      debugPrint('║                                                          ║');
+      debugPrint('║ If you see a 403 error, register this token at:          ║');
+      debugPrint('║  Firebase Console → App Check → Apps →                  ║');
+      debugPrint('║  Android (com.bishal.invoice) → Manage debug tokens      ║');
+      debugPrint('╚══════════════════════════════════════════════════════════╝');
+      debugPrint('');
+    }
+
+    // Force-fetch token to verify Firebase Console registration worked.
     try {
-      final token = await FirebaseAppCheck.instance.getToken();
-      if (token != null) {
-        debugPrint('✅ App Check token generated successfully');
-        debugPrint('Token preview: ${token.substring(0, 20)}...');
+      final token = await FirebaseAppCheck.instance.getToken(true);
+      if (token != null && token.isNotEmpty) {
+        debugPrint('✅ App Check token obtained successfully');
       } else {
-        debugPrint('⚠️ App Check token is null');
+        debugPrint('⚠️ App Check token was null or empty');
+      }
+    } on FirebaseException catch (e) {
+      debugPrint('❌ Error getting App Check token: ${e.message}');
+      if (androidSelection.provider == AndroidProvider.debug) {
+        debugPrint(
+            '   → Register cce8603d-dd78-4514-bb50-ff39a08e6f7b in Firebase Console');
       }
     } catch (e) {
       debugPrint('❌ Error getting App Check token: $e');
@@ -302,8 +322,8 @@ Future<void> _initializeAppCheck() async {
   } catch (e) {
     debugPrint('❌ App Check initialization failed: $e');
     debugPrint('=== END APP CHECK INITIALIZATION (WITH ERROR) ===\n');
-    // Don't rethrow - allow app to continue without App Check
-    // Backend will handle missing App Check token based on APP_CHECK_ENFORCEMENT setting
+    // Non-fatal — app continues without App Check.
+    // Play Store installs use Play Integrity; sideloaded debug token must be registered.
   }
 }
 
@@ -343,6 +363,7 @@ void _handleIncomingDeepLink(Uri uri) {
   if (_isDuplicateDeepLink(uri)) return;
   _handleDeepLink(uri);
   _deepLinkHandled = true;
+  DeepLinkState.handled = true;
 }
 
 bool _isDuplicateDeepLink(Uri uri) {

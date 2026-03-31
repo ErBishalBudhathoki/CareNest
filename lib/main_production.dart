@@ -4,6 +4,7 @@ import 'package:carenest/app/features/business/views/add_business_details_view.d
 import 'package:carenest/app/features/business/views/business_list_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:carenest/app/features/invoice/views/automatic_invoice_generation_view.dart';
+import 'package:carenest/app/services/app_check/app_check_provider_resolver.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.dart';
@@ -27,6 +28,7 @@ import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
 import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/auth/utils/deep_link_state.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/themes/app_themes.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
@@ -208,15 +210,74 @@ Future<void> _initializeFirebase() async {
 }
 
 Future<void> _initializeAppCheck() async {
+  debugPrint('\n=== APP CHECK INITIALIZATION STARTED ===');
+  debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+  debugPrint('Environment: ${AppConfig.flavorName}');
+
   if (!kIsWeb && Platform.isIOS) {
-    debugPrint('⚠️ Running on iOS - Skipping App Check initialization');
+    // iOS uses App Attest via native config — skip Flutter-side activation.
+    debugPrint('⚠️ Running on iOS - App Check handled natively (App Attest)');
+    debugPrint('=== END APP CHECK INITIALIZATION ===\n');
     return;
   }
-  await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
-    androidProvider: AndroidProvider.playIntegrity,
-    appleProvider: AppleProvider.appAttest,
-  );
+
+  final androidSelection =
+      await AppCheckProviderResolver.resolveAndroidSelection();
+
+  try {
+    await FirebaseAppCheck.instance.activate(
+      webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
+      androidProvider: androidSelection.provider,
+      appleProvider: AppleProvider.appAttest,
+    );
+    debugPrint('✅ App Check activated successfully');
+  } catch (e) {
+    debugPrint('⚠️ App Check activation warning: $e');
+    // Non-fatal — app continues; Play Store installs will use Play Integrity.
+  }
+
+  debugPrint('Android Provider: ${androidSelection.label}');
+  debugPrint('Android Provider Reason: ${androidSelection.reason}');
+  debugPrint(
+      'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}');
+
+  if (androidSelection.provider == AndroidProvider.debug) {
+    debugPrint('');
+    debugPrint('╔══════════════════════════════════════════════════════════╗');
+    debugPrint('║        FIREBASE APP CHECK — DEBUG TOKEN INFO             ║');
+    debugPrint('╠══════════════════════════════════════════════════════════╣');
+    debugPrint('║ Fixed token set via AndroidManifest meta-data:           ║');
+    debugPrint('║   cce8603d-dd78-4514-bb50-ff39a08e6f7b                ║');
+    debugPrint('║                                                          ║');
+    debugPrint('║ If you see a 403 error:                                  ║');
+    debugPrint('║  → Go to Firebase Console                                ║');
+    debugPrint('║  → App Check → Apps → Android (com.bishal.invoice)       ║');
+    debugPrint('║  → ⋮ Manage debug tokens → Add debug token               ║');
+    debugPrint('║  → Paste: cce8603d-dd78-4514-bb50-ff39a08e6f7b        ║');
+    debugPrint('╚══════════════════════════════════════════════════════════╝');
+    debugPrint('');
+  }
+
+  // Attempt to obtain a token to verify activation worked.
+  try {
+    final token = await FirebaseAppCheck.instance.getToken(true);
+    if (token != null && token.isNotEmpty) {
+      debugPrint('✅ App Check token obtained successfully (${token.substring(0, 20)}...)');
+    } else {
+      debugPrint('⚠️ App Check token was null or empty');
+    }
+  } on FirebaseException catch (e) {
+    if (androidSelection.provider == AndroidProvider.debug) {
+      debugPrint('❌ Error getting App Check token: ${e.message}');
+      debugPrint('   → Ensure the debug token above is registered in Firebase Console.');
+    } else {
+      debugPrint('❌ Error getting App Check token: ${e.message}');
+    }
+  } catch (e) {
+    debugPrint('❌ Error getting App Check token: $e');
+  }
+
+  debugPrint('=== END APP CHECK INITIALIZATION ===\n');
 }
 
 Future<void> _initializeDeepLinks() async {
@@ -255,6 +316,7 @@ void _handleIncomingDeepLink(Uri uri) {
   if (_isDuplicateDeepLink(uri)) return;
   _handleDeepLink(uri);
   _deepLinkHandled = true;
+  DeepLinkState.handled = true;
 }
 
 bool _isDuplicateDeepLink(Uri uri) {
