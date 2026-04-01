@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
 import 'package:carenest/app/features/organization/views/organization_edit_view.dart';
@@ -119,6 +120,185 @@ class _OrganizationDetailsViewState
         lowerMessage.contains('authentication failed') ||
         lowerMessage.contains('token expired') ||
         lowerMessage.contains('session expired');
+  }
+
+  String? _normalizedString(dynamic value) {
+    final text = value?.toString().trim() ?? '';
+    if (text.isEmpty || text.toLowerCase() == 'null') {
+      return null;
+    }
+    return text;
+  }
+
+  Map<String, dynamic> get _contactDetailsMap =>
+      _toStringDynamicMap(_organization?['contactDetails']);
+
+  String? get _organizationContactEmail => _normalizedString(
+        _organization?['organizationEmail'] ?? _contactDetailsMap['email'],
+      );
+
+  String? get _ownerEmail =>
+      _normalizedString(_organization?['ownerEmail'] ?? widget.userEmail);
+
+  bool get _ownerEmailVerified {
+    final backendValue = _organization?['ownerEmailVerified'];
+    if (backendValue is bool) {
+      return backendValue;
+    }
+
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentEmail = _normalizedString(currentUser?.email);
+    final ownerEmail = _ownerEmail;
+
+    return currentUser?.emailVerified == true &&
+        currentEmail != null &&
+        ownerEmail != null &&
+        currentEmail.toLowerCase() == ownerEmail.toLowerCase();
+  }
+
+  bool get _organizationVerified {
+    final backendValue = _organization?['isVerified'];
+    if (backendValue is bool) {
+      return backendValue;
+    }
+    return _ownerEmailVerified;
+  }
+
+  String get _organizationVerificationTitle {
+    if (_organizationVerified) {
+      return 'ORGANIZATION VERIFIED';
+    }
+    return 'ORGANIZATION VERIFICATION PENDING';
+  }
+
+  String get _organizationVerificationMessage {
+    final orgEmail = _organizationContactEmail;
+    final ownerEmail = _ownerEmail;
+    final ownerLabel = ownerEmail ?? 'the owner/admin email';
+
+    if (_organizationVerified) {
+      if (orgEmail == null) {
+        return 'This organization is verified through the owner/admin account. Add a dedicated organization email if you want a separate public contact address.';
+      }
+
+      if (ownerEmail != null &&
+          orgEmail.toLowerCase() == ownerEmail.toLowerCase()) {
+        return 'This organization is verified because the organization email matches the verified owner/admin login.';
+      }
+
+      return 'This organization is verified through the owner/admin account. The public contact email can be different from the login email.';
+    }
+
+    if (orgEmail == null) {
+      return 'No dedicated organization email is set yet. Verify $ownerLabel in Settings or add an organization contact email in Edit Details.';
+    }
+
+    return 'The organization contact email is separate from the owner/admin login. Organization verification currently follows $ownerLabel, so verify that account in Settings.';
+  }
+
+  Widget _buildVerificationCallout() {
+    final isVerified = _organizationVerified;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+      padding: const EdgeInsets.all(BauhausDesign.space3),
+      decoration: BoxDecoration(
+        color: isVerified
+            ? BauhausDesign.success.withOpacity(0.12)
+            : BauhausDesign.accent.withOpacity(0.18),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardXs],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                isVerified
+                    ? Icons.verified_user_rounded
+                    : Icons.mark_email_unread_outlined,
+                color: BauhausDesign.neutral,
+                size: 18,
+              ),
+              const SizedBox(width: BauhausDesign.space2),
+              Expanded(
+                child: Text(
+                  _organizationVerificationTitle,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                            color: BauhausDesign.neutral,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.8,
+                          ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space2,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: isVerified
+                      ? BauhausDesign.success
+                      : BauhausDesign.surfaceWhite,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: BauhausDesign.neutral),
+                ),
+                child: Text(
+                  isVerified
+                      ? l10n.verified.toUpperCase()
+                      : l10n.unverified.toUpperCase(),
+                  style:
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            color: BauhausDesign.neutral,
+                            fontWeight: FontWeight.w900,
+                          ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            _organizationVerificationMessage,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.neutral,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: _navigateToEdit,
+              icon: const Icon(Icons.edit_outlined, size: 16),
+              label: Text(
+                (_organizationContactEmail == null
+                        ? 'SET ORGANIZATION EMAIL'
+                        : 'EDIT CONTACT DETAILS')
+                    .toUpperCase(),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: BauhausDesign.neutral,
+                backgroundColor: BauhausDesign.surfaceWhite,
+                side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space3,
+                  vertical: BauhausDesign.space2,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(BauhausDesign.radiusMd),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadOrganization({bool forceRefresh = false}) async {
@@ -731,12 +911,18 @@ $appLink
                         iconBackgroundColor:
                             BauhausDesign.secondary.withOpacity(0.1),
                         children: [
+                          _buildVerificationCallout(),
                           _buildDetailRow(
                             context,
-                            AppLocalizations.of(context)!
-                                .emailLabel
-                                .toUpperCase(),
-                            contact['email'] ?? l10n.notSet,
+                            'ORGANIZATION EMAIL',
+                            _organizationContactEmail ?? l10n.notSet,
+                            isEmail: true,
+                            showCopy: true,
+                          ),
+                          _buildDetailRow(
+                            context,
+                            'OWNER / ADMIN EMAIL',
+                            _ownerEmail ?? l10n.notSet,
                             isEmail: true,
                             showCopy: true,
                           ),
@@ -1011,7 +1197,7 @@ $appLink
     required String subtitle,
   }) {
     final l10n = AppLocalizations.of(context)!;
-    final isVerified = _organization?['isVerified'] == true;
+    final isVerified = _organizationVerified;
     final logoUrl = _organization?['logoUrl']?.toString();
 
     return Container(
