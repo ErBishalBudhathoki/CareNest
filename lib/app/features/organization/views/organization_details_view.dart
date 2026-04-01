@@ -1017,9 +1017,9 @@ $appLink
                         key: _contactKey,
                         title: AppLocalizations.of(context)!.contactDetails,
                         icon: Icons.contact_phone_outlined,
-                        iconColor: BauhausDesign.secondary, // Or purple/accent
+                        iconColor: BauhausDesign.accent,
                         iconBackgroundColor:
-                            BauhausDesign.secondary.withOpacity(0.1),
+                            BauhausDesign.accent.withOpacity(0.16),
                         children: [
                           _buildVerificationCallout(),
                           _buildDetailRow(
