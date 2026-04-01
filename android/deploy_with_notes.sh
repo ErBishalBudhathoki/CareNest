@@ -89,29 +89,31 @@ if [[ "$MAJOR_UPDATE" == "true" ]]; then
   ./update_version.sh --current-version
 fi
 
-# Generate release notes if they don't exist
-VERSION_NAME=$(grep "^version:" ../pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
-RELEASE_NOTES_FILE="release_notes_${VERSION_NAME}.txt"
+if [[ "$DEPLOY_PRODUCTION" == "true" ]]; then
+  # Generate release notes if they don't exist
+  VERSION_NAME=$(grep "^version:" ../pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+  RELEASE_NOTES_FILE="release_notes_${VERSION_NAME}.txt"
 
-if [[ ! -f "$RELEASE_NOTES_FILE" ]]; then
-  echo "\nGenerating release notes template..."
-  ./update_version.sh --release-notes
-  echo "Release notes template created: $RELEASE_NOTES_FILE"
+  if [[ ! -f "$RELEASE_NOTES_FILE" ]]; then
+    echo "\nGenerating release notes template..."
+    ./update_version.sh --release-notes
+    echo "Release notes template created: $RELEASE_NOTES_FILE"
+  fi
+
+  echo "================================================================"
+  echo "  PLEASE EDIT THE RELEASE NOTES FILE NOW: $RELEASE_NOTES_FILE"
+  echo "  The file has been created/found. Please add your changes."
+  echo "================================================================"
+
+  # Try to open the file based on OS
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+      open -t "$RELEASE_NOTES_FILE" 2>/dev/null || true
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      xdg-open "$RELEASE_NOTES_FILE" 2>/dev/null || nano "$RELEASE_NOTES_FILE" || true
+  fi
+
+  read -p "Press Enter to continue with deployment after editing release notes (or Ctrl+C to cancel)..."
 fi
-
-echo "================================================================"
-echo "  PLEASE EDIT THE RELEASE NOTES FILE NOW: $RELEASE_NOTES_FILE"
-echo "  The file has been created/found. Please add your changes."
-echo "================================================================"
-
-# Try to open the file based on OS
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    open -t "$RELEASE_NOTES_FILE" 2>/dev/null || true
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    xdg-open "$RELEASE_NOTES_FILE" 2>/dev/null || nano "$RELEASE_NOTES_FILE" || true
-fi
-
-read -p "Press Enter to continue with deployment after editing release notes (or Ctrl+C to cancel)..."
 
 echo "Proceeding with deployment..."
 
