@@ -1326,11 +1326,12 @@ class ApiMethod extends ChangeNotifier {
     try {
       debugPrint('${_baseUrl}initData/$email');
 
-      // Get the authorization token
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = <String, String>{
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
+      debugPrint(
+          '=== API METHOD DEBUG: initData headers (Authorization: ${headers.containsKey('Authorization')}, AppCheck: ${headers.containsKey('X-Firebase-AppCheck')}) ===');
 
       final response = await http.get(
         Uri.parse('${_baseUrl}initData/$email'),
@@ -3728,6 +3729,17 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>> sendOrganizationContactVerification(
+      String organizationId) async {
+    try {
+      return await post(
+        'organization/$organizationId/contact-email/send-verification',
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   Future<List<String>> checkHolidaysSingle(List<String> workedDateList) async {
     try {
       final response = await http.post(
@@ -3831,8 +3843,7 @@ class ApiMethod extends ChangeNotifier {
     }
 
     if (response.statusCode != 200) {
-      debugPrint(
-          'Failed to load profile photo: ${response.statusCode}');
+      debugPrint('Failed to load profile photo: ${response.statusCode}');
       return null;
     }
 

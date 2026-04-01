@@ -49,6 +49,7 @@ class _OrganizationDetailsViewState
   late final ApiMethod _api;
   final ScrollController _scrollController = ScrollController();
   bool _loading = false;
+  bool _sendingOrganizationVerification = false;
   Map<String, dynamic>? _organization;
   String _selectedTab = 'General';
   latlong2.LatLng? _organizationLocation;
@@ -140,6 +141,25 @@ class _OrganizationDetailsViewState
   String? get _ownerEmail =>
       _normalizedString(_organization?['ownerEmail'] ?? widget.userEmail);
 
+  bool get _hasDedicatedOrganizationEmail => _organizationContactEmail != null;
+
+  bool get _organizationEmailVerified {
+    final backendValue = _contactDetailsMap['emailVerified'];
+    if (backendValue is bool) {
+      return backendValue;
+    }
+    return false;
+  }
+
+  DateTime? get _organizationVerificationSentAt {
+    final rawValue = _contactDetailsMap['emailVerificationSentAt'];
+    final text = _normalizedString(rawValue);
+    if (text == null) {
+      return null;
+    }
+    return DateTime.tryParse(text);
+  }
+
   bool get _ownerEmailVerified {
     final backendValue = _organization?['ownerEmailVerified'];
     if (backendValue is bool) {
@@ -186,14 +206,78 @@ class _OrganizationDetailsViewState
         return 'This organization is verified because the organization email matches the verified owner/admin login.';
       }
 
-      return 'This organization is verified through the owner/admin account. The public contact email can be different from the login email.';
+      return 'This organization has its own verified contact email. You can use a different public email from the owner/admin login.';
     }
 
     if (orgEmail == null) {
-      return 'No dedicated organization email is set yet. Verify $ownerLabel in Settings or add an organization contact email in Edit Details.';
+      return 'No dedicated organization email is set yet. Add an organization contact email in Edit Details to enable separate organization verification.';
     }
 
-    return 'The organization contact email is separate from the owner/admin login. Organization verification currently follows $ownerLabel, so verify that account in Settings.';
+    if (ownerEmail != null && orgEmail.toLowerCase() == ownerEmail.toLowerCase()) {
+      return 'This organization email matches the owner/admin login. Verifying the owner account will also verify the organization.';
+    }
+
+    final sentAt = _organizationVerificationSentAt;
+    if (sentAt != null) {
+      return 'A verification email was already sent to $orgEmail on ${_formatDate(sentAt.toIso8601String())}. Use resend if it did not arrive.';
+    }
+
+    return 'The organization contact email is separate from the owner/admin login. Send a verification email to confirm $orgEmail as the public organization address.';
+  }
+
+  Future<void> _sendOrganizationVerificationEmail() async {
+    final organizationId = widget.organizationId;
+    if (organizationId == null || _sendingOrganizationVerification) {
+      return;
+    }
+
+    setState(() => _sendingOrganizationVerification = true);
+    try {
+      final response =
+          await _api.sendOrganizationContactVerification(organizationId);
+      if (!mounted) return;
+
+      final success = response['success'] == true;
+      final message = (response['message'] ?? '').toString().trim();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message.isNotEmpty
+                ? message
+                : success
+                    ? 'Organization verification email sent.'
+                    : 'Failed to send organization verification email.',
+            style: BauhausDesign.getTextTheme(context)
+                .bodyMedium
+                ?.copyWith(color: BauhausDesign.surfaceWhite),
+          ),
+          backgroundColor:
+              success ? BauhausDesign.success : BauhausDesign.warning,
+        ),
+      );
+
+      if (success) {
+        await _loadOrganization(forceRefresh: true);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Failed to send organization verification email.',
+            style: BauhausDesign.getTextTheme(context)
+                .bodyMedium
+                ?.copyWith(color: BauhausDesign.surfaceWhite),
+          ),
+          backgroundColor: BauhausDesign.warning,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _sendingOrganizationVerification = false);
+      }
+    }
   }
 
   Widget _buildVerificationCallout() {
@@ -270,31 +354,64 @@ class _OrganizationDetailsViewState
                 ),
           ),
           const SizedBox(height: BauhausDesign.space3),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: OutlinedButton.icon(
-              onPressed: _navigateToEdit,
-              icon: const Icon(Icons.edit_outlined, size: 16),
-              label: Text(
-                (_organizationContactEmail == null
-                        ? 'SET ORGANIZATION EMAIL'
-                        : 'EDIT CONTACT DETAILS')
-                    .toUpperCase(),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: BauhausDesign.neutral,
-                backgroundColor: BauhausDesign.surfaceWhite,
-                side: const BorderSide(color: BauhausDesign.neutral, width: 2),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BauhausDesign.space3,
-                  vertical: BauhausDesign.space2,
+          Wrap(
+            spacing: BauhausDesign.space2,
+            runSpacing: BauhausDesign.space2,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _navigateToEdit,
+                icon: const Icon(Icons.edit_outlined, size: 16),
+                label: Text(
+                  (_organizationContactEmail == null
+                          ? 'SET ORGANIZATION EMAIL'
+                          : 'EDIT CONTACT DETAILS')
+                      .toUpperCase(),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(BauhausDesign.radiusMd),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: BauhausDesign.neutral,
+                  backgroundColor: BauhausDesign.surfaceWhite,
+                  side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space3,
+                    vertical: BauhausDesign.space2,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(BauhausDesign.radiusMd),
+                  ),
                 ),
               ),
-            ),
+              if (_hasDedicatedOrganizationEmail && !_organizationEmailVerified)
+                FilledButton.icon(
+                  onPressed: _sendingOrganizationVerification
+                      ? null
+                      : _sendOrganizationVerificationEmail,
+                  icon: Icon(
+                    _organizationVerificationSentAt == null
+                        ? Icons.mark_email_read_outlined
+                        : Icons.refresh_rounded,
+                    size: 16,
+                  ),
+                  label: Text(
+                    (_organizationVerificationSentAt == null
+                            ? 'SEND VERIFICATION'
+                            : 'RESEND VERIFICATION')
+                        .toUpperCase(),
+                  ),
+                  style: FilledButton.styleFrom(
+                    foregroundColor: BauhausDesign.surfaceWhite,
+                    backgroundColor: BauhausDesign.neutral,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space3,
+                      vertical: BauhausDesign.space2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusMd),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
