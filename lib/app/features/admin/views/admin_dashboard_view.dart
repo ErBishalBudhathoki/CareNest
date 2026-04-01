@@ -24,6 +24,7 @@ import 'package:carenest/app/features/expenses/views/expense_management_view.dar
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:carenest/app/features/earnings/views/earnings_dashboard_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,6 +60,7 @@ import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dash
 import 'package:carenest/app/features/workforce_optimization/views/workforce_optimization_dashboard.dart';
 import 'package:carenest/app/features/care_intelligence/views/care_intelligence_dashboard.dart';
 import 'package:carenest/app/features/financial_intelligence/views/financial_intelligence_dashboard.dart';
+import 'package:carenest/config/environment.dart';
 
 class AdminDashboardView extends ConsumerStatefulWidget {
   final String email;
@@ -277,6 +279,117 @@ class _AdminDashboardViewControllerState
     return '\$${numValue.toStringAsFixed(2)}';
   }
 
+  bool get _hasConfiguredInvoicingEmail {
+    return key != null && key != 'add' && key != 'error';
+  }
+
+  Future<void> _showEmailSettingsRequiredSheet({
+    required String workflowName,
+  }) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Container(
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceWhite,
+                border: Border.all(
+                  color: BauhausDesign.neutral,
+                  width: 2,
+                ),
+                boxShadow: const [BauhausDesign.shadowHard],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: BauhausDesign.warning.withOpacity(0.12),
+                        border: Border.all(
+                          color: BauhausDesign.warning,
+                          width: 2,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.email_outlined,
+                        color: BauhausDesign.warning,
+                        size: 26,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Complete email setup first',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: BauhausDesign.textDark,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '$workflowName needs your organization invoicing mailbox before the workflow can send invoices and delivery updates.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            height: 1.4,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: BauhausDesign.backgroundLight,
+                        border: Border.all(
+                          color: BauhausDesign.neutral.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        'Next step: Configuration & Finance > Email Settings',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: BauhausDesign.textDark,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          Navigator.of(sheetContext).pop();
+                          await _navigateToEmailSettings();
+                        },
+                        icon: const Icon(Icons.settings_outlined),
+                        label: const Text('Configure Email Settings'),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        child: const Text('Not now'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<String> _checkEmailKey(String email) async {
     try {
       final response = await _apiMethod.checkInvoicingEmailKey(email);
@@ -381,8 +494,12 @@ class _AdminDashboardViewControllerState
   }
 
   Widget _buildEnhancedHeaderSliver() {
-    final firstName = getInitialData['firstName'] ?? 'Test';
-    final lastName = getInitialData['lastName'] ?? 'User';
+    final apiFirstName = getInitialData['firstName']?.toString().trim() ?? '';
+    final apiLastName = getInitialData['lastName']?.toString().trim() ?? '';
+    final storedName = _sharedPrefs.getName()?.trim() ?? '';
+    final displayName = '$apiFirstName $apiLastName'.trim().isNotEmpty
+        ? '$apiFirstName $apiLastName'.trim()
+        : (storedName.isNotEmpty ? storedName : 'Test User');
     final photoDataState = ref.watch(photoDataProvider);
     final displayPhoto = photoDataState.photoData ?? widget.photoData;
 
@@ -632,8 +749,7 @@ class _AdminDashboardViewControllerState
                                                             SettingsView(
                                                           userEmail:
                                                               widget.email,
-                                                          userName:
-                                                              '$firstName $lastName',
+                                                          userName: displayName,
                                                           photoData:
                                                               photoDataState
                                                                   .photoData,
@@ -693,7 +809,7 @@ class _AdminDashboardViewControllerState
                                           child: Opacity(
                                             opacity: value,
                                             child: Text(
-                                              '$firstName $lastName',
+                                              displayName,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: BauhausDesign.getTextTheme(
@@ -1146,6 +1262,7 @@ class _AdminDashboardViewControllerState
 
   Widget _buildQuickActionsSliver() {
     final l10n = AppLocalizations.of(context)!;
+    final needsEmailSetup = !_hasConfiguredInvoicingEmail;
 
     final categories = <CommandCategory>[
       // Invoice Management
@@ -1153,34 +1270,57 @@ class _AdminDashboardViewControllerState
         title: 'Invoice Operations',
         headerIcon: Icons.receipt_long_rounded,
         accentColor: BauhausDesign.primary,
+        setupBannerTitle:
+            needsEmailSetup ? 'Complete invoicing email setup to unlock this tab' : null,
+        setupBannerSubtitle: needsEmailSetup
+            ? 'Connect your organization mailbox once, then invoice creation, employee invoicing, and automatic delivery workflows will be ready to use.'
+            : null,
+        setupBannerActionLabel: needsEmailSetup ? 'SET UP NOW' : null,
+        onSetupBannerTap: needsEmailSetup ? _navigateToEmailSettings : null,
         actions: [
           CommandAction(
             icon: const Icon(Icons.add_circle_outline_rounded),
             title: l10n.addClientButton,
-            subtitle: 'Generate invoice for selected employees',
+            subtitle: needsEmailSetup
+                ? 'Setup required: configure invoicing email first'
+                : 'Generate invoice for selected employees',
             color: BauhausDesign.primary,
             onTap: _navigateToEmployeeSelection,
+            statusLabel: needsEmailSetup ? 'SETUP' : null,
+            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
             icon: const Icon(Icons.person_outline_rounded),
             title: 'Employee Invoice',
-            subtitle: 'Individual employee invoicing',
+            subtitle: needsEmailSetup
+                ? 'Setup required: configure invoicing email first'
+                : 'Individual employee invoicing',
             color: BauhausDesign.secondary,
             onTap: _navigateToEmployeeInvoice,
+            statusLabel: needsEmailSetup ? 'SETUP' : null,
+            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
             icon: const Icon(Icons.auto_awesome_rounded),
             title: 'Auto Invoices',
-            subtitle: 'Automatic invoice generation',
+            subtitle: needsEmailSetup
+                ? 'Setup required: configure invoicing email first'
+                : 'Automatic invoice generation',
             color: BauhausDesign.accent,
             onTap: _navigateToAutomaticInvoiceGeneration,
+            statusLabel: needsEmailSetup ? 'SETUP' : null,
+            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
             icon: const Icon(Icons.dashboard_customize_rounded),
             title: 'Enhanced Invoice',
-            subtitle: 'Advanced invoicing features',
+            subtitle: needsEmailSetup
+                ? 'Setup required: configure invoicing email first'
+                : 'Advanced invoicing features',
             color: BauhausDesign.success,
             onTap: _navigateToEnhancedInvoice,
+            statusLabel: needsEmailSetup ? 'SETUP' : null,
+            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
             icon: const Icon(Icons.list_alt_rounded),
@@ -1558,13 +1698,14 @@ class _AdminDashboardViewControllerState
             color: BauhausDesign.success,
             onTap: () => _navigateToClientPricingReview(),
           ),
-          CommandAction(
-            icon: const Icon(Icons.security_rounded),
-            title: l10n.apiUsageDashboard,
-            subtitle: l10n.apiUsageDashboardDesc,
-            color: BauhausDesign.primary,
-            onTap: _navigateToApiUsageDashboard,
-          ),
+          if (!kReleaseMode && !AppConfig.isProduction)
+            CommandAction(
+              icon: const Icon(Icons.security_rounded),
+              title: l10n.apiUsageDashboard,
+              subtitle: l10n.apiUsageDashboardDesc,
+              color: BauhausDesign.primary,
+              onTap: _navigateToApiUsageDashboard,
+            ),
           CommandAction(
             icon: const Icon(Icons.download_rounded),
             title: 'Payroll Export',
@@ -1664,7 +1805,7 @@ class _AdminDashboardViewControllerState
   }
 
   void _navigateToEmployeeSelection() {
-    if (key != null && key != 'add' && key != 'error') {
+    if (_hasConfiguredInvoicingEmail) {
       debugPrint("in employee selection");
       Navigator.of(context, rootNavigator: true).pushNamed(
         Routes.employeeSelection,
@@ -1675,15 +1816,14 @@ class _AdminDashboardViewControllerState
         },
       );
     } else {
-      _showSnackBar(
-        AppLocalizations.of(context)!.configureEmailSettingsFirst,
-        isError: true,
+      _showEmailSettingsRequiredSheet(
+        workflowName: AppLocalizations.of(context)!.addClientButton,
       );
     }
   }
 
   void _navigateToEmployeeInvoice() {
-    if (key != null && key != 'add' && key != 'error') {
+    if (_hasConfiguredInvoicingEmail) {
       debugPrint("in employee invoice");
       Navigator.of(context, rootNavigator: true).pushNamed(
         Routes.employeeInvoice,
@@ -1694,15 +1834,14 @@ class _AdminDashboardViewControllerState
         },
       );
     } else {
-      _showSnackBar(
-        'Please configure Email Settings first.',
-        isError: true,
+      _showEmailSettingsRequiredSheet(
+        workflowName: 'Employee Invoice',
       );
     }
   }
 
   void _navigateToAutomaticInvoiceGeneration() {
-    if (key != null && key != 'add' && key != 'error') {
+    if (_hasConfiguredInvoicingEmail) {
       debugPrint("in automatic invoice generation");
       Navigator.of(context, rootNavigator: true).pushNamed(
         Routes.automaticInvoiceGeneration,
@@ -1715,15 +1854,14 @@ class _AdminDashboardViewControllerState
         },
       );
     } else {
-      _showSnackBar(
-        'Please configure Email Settings first.',
-        isError: true,
+      _showEmailSettingsRequiredSheet(
+        workflowName: 'Auto Invoices',
       );
     }
   }
 
   void _navigateToEnhancedInvoice() {
-    if (key != null && key != 'add' && key != 'error') {
+    if (_hasConfiguredInvoicingEmail) {
       debugPrint("in enhanced invoice");
       Navigator.push(
         context,
@@ -1736,9 +1874,8 @@ class _AdminDashboardViewControllerState
         ),
       );
     } else {
-      _showSnackBar(
-        'Please configure Email Settings first.',
-        isError: true,
+      _showEmailSettingsRequiredSheet(
+        workflowName: 'Enhanced Invoice',
       );
     }
   }
@@ -1806,7 +1943,7 @@ class _AdminDashboardViewControllerState
   Future<void> _navigateToEmailSettings() async {
     final currentKey = await _checkEmailKey(widget.email);
     if (currentKey == 'add' || currentKey == 'error') {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => AddUpdateInvoicingEmailView(
@@ -1817,7 +1954,7 @@ class _AdminDashboardViewControllerState
         ),
       );
     } else {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (c) => InvoicingEmailView(
@@ -1828,6 +1965,13 @@ class _AdminDashboardViewControllerState
         ),
       );
     }
+
+    if (!mounted) return;
+    final refreshedKey = await _checkEmailKey(widget.email);
+    if (!mounted) return;
+    setState(() {
+      key = refreshedKey;
+    });
   }
 
   void _navigateToPricingManagement() {
