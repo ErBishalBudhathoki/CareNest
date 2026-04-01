@@ -1,0 +1,4 @@
+appId: com.bishal.invoice.dev
+---
+- launchApp:
+    clearState: true
