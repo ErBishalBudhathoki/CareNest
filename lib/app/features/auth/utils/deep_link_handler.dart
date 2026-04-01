@@ -3,48 +3,47 @@ import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../../../env.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Deep Link Handler
 /// Handles deep links for the application, particularly for organization signup links
 class DeepLinkHandler {
   static const String _customScheme = 'com.bishal.invoice';
-  static String get _baseUrl {
-    final baseUrlValue = env['baseUrl']!;
-    // If baseUrl is a custom scheme, use default universal host for share links.
-    if (baseUrlValue.contains(_customScheme)) {
-      return _defaultUniversalHost;
-    }
-
-    // Otherwise, try to parse as URL and extract host
-    try {
-      final parsed = Uri.parse(baseUrlValue);
-      if (parsed.host.isNotEmpty) return parsed.host;
-      return baseUrlValue;
-    } catch (e) {
-      // Fallback to the original value if parsing fails
-      return baseUrlValue;
-    }
-  }
-
   static const String _signupPath = '/signup';
   static const String _firebaseResetPasswordMode = 'resetPassword';
   static const String _firebaseVerifyEmailMode = 'verifyEmail';
-  static const String _defaultUniversalHost = 'bishalbudhathoki.tech';
+  static const String _fallbackUniversalHost = 'bishalbudhathoki.com';
+
+  static String? get _configuredUniversalHost {
+    if (!dotenv.isInitialized) return null;
+
+    final rawValue = dotenv.env['UNIVERSAL_LINK_HOST']?.trim();
+    if (rawValue == null || rawValue.isEmpty) return null;
+
+    try {
+      final normalizedValue =
+          rawValue.contains('://') ? rawValue : 'https://$rawValue';
+      final parsed = Uri.parse(normalizedValue);
+      final host = parsed.host.trim().toLowerCase();
+      return host.isEmpty ? null : host;
+    } catch (_) {
+      return null;
+    }
+  }
 
   // Additional supported domains for backward compatibility
-  static const List<String> _supportedDomains = [
-    'bishalbudhathoki.tech',
-    'bishalbudhathoki.com',
-    'careservices.page.link',
-  ];
+  static List<String> get _supportedDomains {
+    final configuredHost = _configuredUniversalHost;
+    return {
+      'bishalbudhathoki.tech',
+      'bishalbudhathoki.com',
+      'careservices.page.link',
+      if (configuredHost != null) configuredHost,
+    }.toList();
+  }
 
   static String get _universalHost {
-    final host = _baseUrl.toLowerCase();
-    if (_supportedDomains.contains(host)) {
-      return host;
-    }
-    return _defaultUniversalHost;
+    return _configuredUniversalHost ?? _fallbackUniversalHost;
   }
 
   /// Handles incoming deep links
@@ -76,7 +75,7 @@ class DeepLinkHandler {
       return;
     }
 
-    // Handle universal/app links (https://bishalbudhathoki.tech/signup?orgCode=...)
+    // Handle universal/app links (https://bishalbudhathoki.com/signup?orgCode=...)
     if ((uri.scheme == 'https' || uri.scheme == 'http') &&
         _supportedDomains.contains(uri.host) &&
         _isSignupPath(uri)) {
