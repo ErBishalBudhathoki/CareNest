@@ -131,6 +131,19 @@ assets/images/she_with_phone.png
 
 # Environment files
 .env
+
+# Additional local generated clutter present in this repo
+flutter_tools.*/
+swift-generated-sources/
+_Users_bishal_.swiftpm.lock
+skills-SkoyZo/
+app-store-screenshots/.next/
+third_party/**/.gradle/
+assets/icons/app_icon.png
+assets/icons/app_icon_dev.png
+assets/icons/app_icon_foreground.png
+assets/icons/app_icon_foreground_dev.png
+assets/icons/ic_launcher1.png
 .env.*
 !.env.example
 
@@ -230,6 +243,10 @@ libos/
 
 # Gemini CLI config folder
 .gemini/
+
+# Local mobile automation workspace
+.maestro/
+
 # Dependencies
 node_modules/
 npm-debug.log*
@@ -448,3 +465,5 @@ docs/
 # Local test/runtime caches
 jest_dx/
 node-compile-cache/
+.snapai.google-api-key
+.venv-cairosvg/

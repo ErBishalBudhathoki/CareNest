@@ -11,6 +11,8 @@ class CommandAction {
   final String subtitle;
   final Color color;
   final VoidCallback onTap;
+  final String? statusLabel;
+  final Color? statusColor;
 
   const CommandAction({
     required this.icon,
@@ -18,6 +20,8 @@ class CommandAction {
     required this.subtitle,
     required this.color,
     required this.onTap,
+    this.statusLabel,
+    this.statusColor,
   });
 }
 
@@ -27,12 +31,20 @@ class CommandCategory {
   final IconData headerIcon;
   final Color accentColor;
   final List<CommandAction> actions;
+  final String? setupBannerTitle;
+  final String? setupBannerSubtitle;
+  final String? setupBannerActionLabel;
+  final VoidCallback? onSetupBannerTap;
 
   const CommandCategory({
     required this.title,
     required this.headerIcon,
     required this.accentColor,
     required this.actions,
+    this.setupBannerTitle,
+    this.setupBannerSubtitle,
+    this.setupBannerActionLabel,
+    this.onSetupBannerTap,
   });
 }
 
@@ -429,7 +441,7 @@ class _BauhausCategoryCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space3,
-              vertical: BauhausDesign.space2,
+              vertical: 4,
             ),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.8),
@@ -449,6 +461,92 @@ class _BauhausCategoryCard extends StatelessWidget {
               ),
             ),
           ),
+          if (category.setupBannerTitle != null &&
+              category.setupBannerSubtitle != null)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(BauhausDesign.space3),
+              decoration: BoxDecoration(
+                color: BauhausDesign.warning.withOpacity(0.08),
+                border: Border(
+                  bottom: BorderSide(
+                    color: BauhausDesign.warning.withOpacity(0.35),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.warning.withOpacity(0.14),
+                      border: Border.all(
+                        color: BauhausDesign.warning,
+                        width: 1.5,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.settings_suggest_outlined,
+                      size: 18,
+                      color: BauhausDesign.warning,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          category.setupBannerTitle!,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: BauhausDesign.textDark,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          category.setupBannerSubtitle!,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: BauhausDesign.textMuted,
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (category.onSetupBannerTap != null &&
+                      category.setupBannerActionLabel != null)
+                    TextButton(
+                      onPressed: category.onSetupBannerTap,
+                      style: TextButton.styleFrom(
+                        foregroundColor: BauhausDesign.warning,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: BauhausDesign.space2,
+                          vertical: BauhausDesign.space1,
+                        ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        category.setupBannerActionLabel!,
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           _buildActionGrid(context),
         ],
       ),
@@ -467,10 +565,17 @@ class _BauhausCategoryCard extends StatelessWidget {
     final childAspectRatio = crossAxisCount == 1 ? 2.8 : 1.18;
 
     return Padding(
-      padding: const EdgeInsets.all(BauhausDesign.space3),
+      padding: const EdgeInsets.fromLTRB(
+        BauhausDesign.space3,
+        4,
+        BauhausDesign.space3,
+        BauhausDesign.space3,
+      ),
       child: GridView.builder(
         shrinkWrap: true,
+        primary: false,
         physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           mainAxisSpacing: BauhausDesign.space3,
@@ -543,21 +648,50 @@ class _BauhausGridActionCard extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    Container(
-                      width: 24,
-                      height: 24,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: BauhausDesign.backgroundLight,
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 1),
+                    if (action.statusLabel != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: BauhausDesign.space2,
+                          vertical: BauhausDesign.space1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: (action.statusColor ?? BauhausDesign.warning)
+                              .withOpacity(0.12),
+                          border: Border.all(
+                            color:
+                                action.statusColor ?? BauhausDesign.warning,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          action.statusLabel!,
+                          style: GoogleFonts.inter(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color:
+                                action.statusColor ?? BauhausDesign.warning,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      )
+                    else
+                      Container(
+                        width: 24,
+                        height: 24,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.backgroundLight,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: BauhausDesign.textDark,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 14,
-                        color: BauhausDesign.textDark,
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: BauhausDesign.space2),
