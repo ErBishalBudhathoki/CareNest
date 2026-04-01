@@ -16,6 +16,55 @@
 default_platform(:android)
 
 platform :android do
+  def project_root
+    File.expand_path("../..", __dir__)
+  end
+
+  def android_root
+    File.join(project_root, "android")
+  end
+
+  def production_aab_relative_path
+    File.join("..", "build", "app", "outputs", "bundle",
+      "productionRelease", "app-production-release.aab")
+  end
+
+  def production_aab_absolute_path
+    File.expand_path(production_aab_relative_path, android_root)
+  end
+
+  def load_flutter_properties
+    properties_file = File.join(project_root, "android", "local.properties")
+    properties = {}
+
+    if File.exist?(properties_file)
+      File.readlines(properties_file).each do |line|
+        key, value = line.strip.split('=', 2)
+        properties[key] = value if key && value
+      end
+    end
+
+    properties
+  end
+
+  def ensure_changelog(version_name, version_code, default_message)
+    release_notes_file = File.join(project_root, "android",
+      "release_notes_#{version_name}.txt")
+
+    if File.exist?(release_notes_file)
+      UI.message "Found release notes file: #{release_notes_file}"
+      release_notes = File.read(release_notes_file)
+    else
+      UI.message "Release notes file not found at #{release_notes_file}, using default."
+      release_notes = default_message
+    end
+
+    metadata_dir = File.join(__dir__, "metadata", "android", "en-US")
+    changelog_dir = File.join(metadata_dir, "changelogs")
+    FileUtils.mkdir_p(changelog_dir)
+    File.write(File.join(changelog_dir, "#{version_code}.txt"), release_notes)
+  end
+
   desc "Increment version code"
   lane :increment_version_code do
     # Read current version from local.properties
@@ -75,89 +124,38 @@ platform :android do
   lane :deploy_development do
     # Build the production AAB (development track uses production flavor)
     sh "cd .. && flutter build appbundle --flavor production -t lib/main_production.dart --release"
-    
-    # Read version info from local.properties
-    properties_file = "../local.properties"
-    properties = {}
-    
-    if File.exist?(properties_file)
-      File.readlines(properties_file).each do |line|
-        key, value = line.strip.split('=', 2)
-        properties[key] = value if key && value
-      end
+
+    Dir.chdir(project_root) do
+      upload_to_play_store(
+        track: 'internal',
+        package_name: 'com.bishal.invoice',
+        aab: production_aab_relative_path,
+        skip_upload_metadata: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true
+      )
     end
-    
-    version_name = properties['flutter.versionName'] || '1.0'
-    version_code = properties['flutter.versionCode'] || '1'
-    
-    # Generate release notes from file if exists
-    release_notes_file = "../release_notes_#{version_name}.txt"
-    if File.exist?(release_notes_file)
-      UI.message "Found release notes file: #{release_notes_file}"
-      release_notes = File.read(release_notes_file)
-    else
-      UI.message "Release notes file not found at #{release_notes_file}, using default."
-      release_notes = "Development build #{version_name} (#{version_code})\n\nAutomated build for internal testing."
-    end
-    
-    # Create metadata directory if it doesn't exist
-    metadata_dir = "metadata/android/en-US"
-    FileUtils.mkdir_p(metadata_dir)
-    FileUtils.mkdir_p("#{metadata_dir}/changelogs")
-    
-    # Write changelog
-    File.write("#{metadata_dir}/changelogs/#{version_code}.txt", release_notes)
-    
-    upload_to_play_store(
-      track: 'internal',
-      aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true
-    )
   end
 
   desc "Deploy production build to production track"
   lane :deploy_production do
     # Build the production AAB
     sh "cd .. && flutter build appbundle --flavor production -t lib/main_production.dart --release"
-    
-    # Read version info from local.properties
-    properties_file = "../local.properties"
-    properties = {}
-    
-    if File.exist?(properties_file)
-      File.readlines(properties_file).each do |line|
-        key, value = line.strip.split('=', 2)
-        properties[key] = value if key && value
-      end
-    end
-    
+
+    properties = load_flutter_properties
     version_name = properties['flutter.versionName'] || '1.0'
     version_code = properties['flutter.versionCode'] || '1'
-    
-    # Generate release notes from file if exists
-    release_notes_file = "../release_notes_#{version_name}.txt"
-    if File.exist?(release_notes_file)
-      UI.message "Found release notes file: #{release_notes_file}"
-      release_notes = File.read(release_notes_file)
-    else
-      UI.message "Release notes file not found at #{release_notes_file}, using default."
-      release_notes = "Production release #{version_name} (#{version_code})\n\nStable release for production."
-    end
-    
-    # Create metadata directory if it doesn't exist
-    metadata_dir = "metadata/android/en-US"
-    changelog_dir = "#{metadata_dir}/changelogs"
-    FileUtils.mkdir_p(changelog_dir)
-    
-    # Write changelog
-    File.write("#{changelog_dir}/#{version_code}.txt", release_notes)
+
+    ensure_changelog(
+      version_name,
+      version_code,
+      "Production release #{version_name} (#{version_code})\n\nStable release for production."
+    )
     
     upload_to_play_store(
       track: 'production',
       package_name: 'com.bishal.invoice',
-      aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
+      aab: production_aab_relative_path,
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true
@@ -168,84 +166,27 @@ platform :android do
   lane :deploy_internal do
     # Build the production AAB (internal uses production flavor)
     sh "cd .. && flutter build appbundle --flavor production -t lib/main_production.dart --release"
-    
-    # Read version info from local.properties
-    properties_file = "../local.properties"
-    properties = {}
-    
-    if File.exist?(properties_file)
-      File.readlines(properties_file).each do |line|
-        key, value = line.strip.split('=', 2)
-        properties[key] = value if key && value
-      end
+
+    Dir.chdir(project_root) do
+      upload_to_play_store(
+        track: 'internal',
+        package_name: 'com.bishal.invoice',
+        aab: production_aab_relative_path,
+        skip_upload_metadata: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true
+      )
     end
-    
-    version_name = properties['flutter.versionName'] || '1.0'
-    version_code = properties['flutter.versionCode'] || '1'
-    
-    # Generate release notes from file if exists
-    release_notes_file = "../release_notes_#{version_name}.txt"
-    if File.exist?(release_notes_file)
-      UI.message "Found release notes file: #{release_notes_file}"
-      release_notes = File.read(release_notes_file)
-    else
-      UI.message "Release notes file not found at #{release_notes_file}, using default."
-      release_notes = "Internal build #{version_name} (#{version_code})\n\nInternal testing build."
-    end
-    
-    # Create metadata directory if it doesn't exist
-    metadata_dir = "metadata/android/en-US"
-    changelog_dir = "#{metadata_dir}/changelogs"
-    FileUtils.mkdir_p(changelog_dir)
-    
-    # Write changelog
-    File.write("#{changelog_dir}/#{version_code}.txt", release_notes)
-    
-    upload_to_play_store(
-      track: 'internal',
-      aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true
-    )
   end
 
   desc "Upload existing production AAB to internal testing"
   lane :upload_internal_aab do
-    aab_path = '../build/app/outputs/bundle/productionRelease/app-production-release.aab'
-    UI.user_error!("AAB not found at #{aab_path}. Build it first.") unless File.exist?(aab_path)
-
-    # Read version info from local.properties
-    properties_file = "../local.properties"
-    properties = {}
-
-    if File.exist?(properties_file)
-      File.readlines(properties_file).each do |line|
-        key, value = line.strip.split('=', 2)
-        properties[key] = value if key && value
-      end
-    end
-
-    version_name = properties['flutter.versionName'] || '1.0'
-    version_code = properties['flutter.versionCode'] || '1'
-
-    release_notes_file = "../release_notes_#{version_name}.txt"
-    if File.exist?(release_notes_file)
-      UI.message "Found release notes file: #{release_notes_file}"
-      release_notes = File.read(release_notes_file)
-    else
-      UI.message "Release notes file not found at #{release_notes_file}, using default."
-      release_notes = "Internal build #{version_name} (#{version_code})\n\nInternal testing build."
-    end
-
-    metadata_dir = "metadata/android/en-US"
-    changelog_dir = "#{metadata_dir}/changelogs"
-    FileUtils.mkdir_p(changelog_dir)
-    File.write("#{changelog_dir}/#{version_code}.txt", release_notes)
+    UI.user_error!("AAB not found at #{production_aab_relative_path}. Build it first.") unless File.exist?(production_aab_absolute_path)
 
     upload_to_play_store(
       track: 'internal',
-      aab: aab_path,
+      package_name: 'com.bishal.invoice',
+      aab: production_aab_relative_path,
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true
@@ -254,35 +195,17 @@ platform :android do
 
   desc "Upload existing production AAB to production track"
   lane :upload_production_aab do
-    aab_path = '../build/app/outputs/bundle/productionRelease/app-production-release.aab'
-    UI.user_error!("AAB not found at #{aab_path}. Build it first.") unless File.exist?(aab_path)
+    UI.user_error!("AAB not found at #{production_aab_relative_path}. Build it first.") unless File.exist?(production_aab_absolute_path)
 
-    properties_file = "../local.properties"
-    properties = {}
-
-    if File.exist?(properties_file)
-      File.readlines(properties_file).each do |line|
-        key, value = line.strip.split('=', 2)
-        properties[key] = value if key && value
-      end
-    end
-
+    properties = load_flutter_properties
     version_name = properties['flutter.versionName'] || '1.0'
     version_code = properties['flutter.versionCode'] || '1'
 
-    release_notes_file = "../release_notes_#{version_name}.txt"
-    if File.exist?(release_notes_file)
-      UI.message "Found release notes file: #{release_notes_file}"
-      release_notes = File.read(release_notes_file)
-    else
-      UI.message "Release notes file not found at #{release_notes_file}, using default."
-      release_notes = "Production release #{version_name} (#{version_code})\n\nStable release for production."
-    end
-
-    metadata_dir = "metadata/android/en-US"
-    changelog_dir = "#{metadata_dir}/changelogs"
-    FileUtils.mkdir_p(changelog_dir)
-    File.write("#{changelog_dir}/#{version_code}.txt", release_notes)
+    ensure_changelog(
+      version_name,
+      version_code,
+      "Production release #{version_name} (#{version_code})\n\nStable release for production."
+    )
 
     upload_to_play_store(
       track: 'production',
