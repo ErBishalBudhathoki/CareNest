@@ -246,6 +246,8 @@ libos/
 
 # Local mobile automation workspace
 .maestro/
+/app-store-screenshots/
+/test.yaml
 
 # Dependencies
 node_modules/
