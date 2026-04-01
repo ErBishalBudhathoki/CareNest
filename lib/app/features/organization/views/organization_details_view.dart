@@ -181,48 +181,40 @@ class _OrganizationDetailsViewState
     if (backendValue is bool) {
       return backendValue;
     }
-    return _ownerEmailVerified;
+    return _organizationEmailVerified;
   }
 
-  String get _organizationVerificationTitle {
+  String _organizationVerificationTitle(AppLocalizations l10n) {
     if (_organizationVerified) {
-      return 'ORGANIZATION VERIFIED';
+      return l10n.organizationVerifiedTitle;
     }
-    return 'ORGANIZATION VERIFICATION PENDING';
+    return l10n.organizationVerificationPendingTitle;
   }
 
-  String get _organizationVerificationMessage {
+  String _organizationVerificationMessage(AppLocalizations l10n) {
     final orgEmail = _organizationContactEmail;
-    final ownerEmail = _ownerEmail;
-    final ownerLabel = ownerEmail ?? 'the owner/admin email';
 
     if (_organizationVerified) {
       if (orgEmail == null) {
-        return 'This organization is verified through the owner/admin account. Add a dedicated organization email if you want a separate public contact address.';
+        return l10n.organizationVerificationNeedsEmailMessage;
       }
 
-      if (ownerEmail != null &&
-          orgEmail.toLowerCase() == ownerEmail.toLowerCase()) {
-        return 'This organization is verified because the organization email matches the verified owner/admin login.';
-      }
-
-      return 'This organization has its own verified contact email. You can use a different public email from the owner/admin login.';
+      return l10n.organizationVerificationVerifiedMessage(orgEmail);
     }
 
     if (orgEmail == null) {
-      return 'No dedicated organization email is set yet. Add an organization contact email in Edit Details to enable separate organization verification.';
-    }
-
-    if (ownerEmail != null && orgEmail.toLowerCase() == ownerEmail.toLowerCase()) {
-      return 'This organization email matches the owner/admin login. Verifying the owner account will also verify the organization.';
+      return l10n.organizationVerificationNeedsEmailMessage;
     }
 
     final sentAt = _organizationVerificationSentAt;
     if (sentAt != null) {
-      return 'A verification email was already sent to $orgEmail on ${_formatDate(sentAt.toIso8601String())}. Use resend if it did not arrive.';
+      return l10n.organizationVerificationSentMessage(
+        orgEmail,
+        _formatDate(sentAt.toIso8601String()),
+      );
     }
 
-    return 'The organization contact email is separate from the owner/admin login. Send a verification email to confirm $orgEmail as the public organization address.';
+    return l10n.organizationVerificationPendingMessage(orgEmail);
   }
 
   Future<void> _sendOrganizationVerificationEmail() async {
@@ -246,8 +238,10 @@ class _OrganizationDetailsViewState
             message.isNotEmpty
                 ? message
                 : success
-                    ? 'Organization verification email sent.'
-                    : 'Failed to send organization verification email.',
+                    ? AppLocalizations.of(context)!
+                        .organizationVerificationSentSuccess
+                    : AppLocalizations.of(context)!
+                        .organizationVerificationSentFailure,
             style: BauhausDesign.getTextTheme(context)
                 .bodyMedium
                 ?.copyWith(color: BauhausDesign.surfaceWhite),
@@ -265,7 +259,7 @@ class _OrganizationDetailsViewState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Failed to send organization verification email.',
+            AppLocalizations.of(context)!.organizationVerificationSentFailure,
             style: BauhausDesign.getTextTheme(context)
                 .bodyMedium
                 ?.copyWith(color: BauhausDesign.surfaceWhite),
@@ -311,7 +305,7 @@ class _OrganizationDetailsViewState
               const SizedBox(width: BauhausDesign.space2),
               Expanded(
                 child: Text(
-                  _organizationVerificationTitle,
+                  _organizationVerificationTitle(l10n),
                   style:
                       BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                             color: BauhausDesign.neutral,
@@ -347,7 +341,7 @@ class _OrganizationDetailsViewState
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
-            _organizationVerificationMessage,
+            _organizationVerificationMessage(l10n),
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                   color: BauhausDesign.neutral,
                   fontWeight: FontWeight.w700,
@@ -363,21 +357,21 @@ class _OrganizationDetailsViewState
                 icon: const Icon(Icons.edit_outlined, size: 16),
                 label: Text(
                   (_organizationContactEmail == null
-                          ? 'SET ORGANIZATION EMAIL'
-                          : 'EDIT CONTACT DETAILS')
+                          ? l10n.setOrganizationEmail
+                          : l10n.editContactDetails)
                       .toUpperCase(),
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: BauhausDesign.neutral,
                   backgroundColor: BauhausDesign.surfaceWhite,
-                  side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                  side:
+                      const BorderSide(color: BauhausDesign.neutral, width: 2),
                   padding: const EdgeInsets.symmetric(
                     horizontal: BauhausDesign.space3,
                     vertical: BauhausDesign.space2,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(BauhausDesign.radiusMd),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   ),
                 ),
               ),
@@ -394,13 +388,13 @@ class _OrganizationDetailsViewState
                   ),
                   label: Text(
                     (_organizationVerificationSentAt == null
-                            ? 'SEND VERIFICATION'
-                            : 'RESEND VERIFICATION')
+                            ? l10n.sendVerification
+                            : l10n.resendVerification)
                         .toUpperCase(),
                   ),
                   style: FilledButton.styleFrom(
-                    foregroundColor: BauhausDesign.surfaceWhite,
-                    backgroundColor: BauhausDesign.neutral,
+                    foregroundColor: BauhausDesign.neutral,
+                    backgroundColor: BauhausDesign.accent,
                     padding: const EdgeInsets.symmetric(
                       horizontal: BauhausDesign.space3,
                       vertical: BauhausDesign.space2,
@@ -943,8 +937,7 @@ $appLink
                   child: _buildHeroSection(
                     name: name,
                     code: code,
-                    subtitle:
-                        '${l10n.enterprisePlan} • ID: ${_organization?['id']?.toString().substring(0, 4) ?? '...'}',
+                    subtitle: l10n.enterprisePlan,
                   ),
                 ),
 
@@ -1031,14 +1024,14 @@ $appLink
                           _buildVerificationCallout(),
                           _buildDetailRow(
                             context,
-                            'ORGANIZATION EMAIL',
+                            l10n.organizationEmailLabel.toUpperCase(),
                             _organizationContactEmail ?? l10n.notSet,
                             isEmail: true,
                             showCopy: true,
                           ),
                           _buildDetailRow(
                             context,
-                            'OWNER / ADMIN EMAIL',
+                            l10n.ownerAdminEmailLabel.toUpperCase(),
                             _ownerEmail ?? l10n.notSet,
                             isEmail: true,
                             showCopy: true,
