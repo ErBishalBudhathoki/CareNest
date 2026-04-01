@@ -84,6 +84,7 @@ service-account.json
 /scripts/
 scripts/
 !/android/deploy_internal_minor.sh
+!/android/deploy_with_notes.sh
 
 # Uploads directory
 uploads/
