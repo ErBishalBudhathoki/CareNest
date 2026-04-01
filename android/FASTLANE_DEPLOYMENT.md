@@ -2,114 +2,126 @@
 
 ## Overview
 
-This guide explains how to deploy the Invoice app to Google Play using Fastlane with release notes.
+This project now has two verified Android release flows:
+
+- Internal testing: bump minor version, build production AAB, upload to Play internal testing
+- Production release: bump version, build production AAB, review release notes, upload to Play production
+
+The production flavor always builds from:
+
+```bash
+lib/main_production.dart
+```
 
 ## Prerequisites
 
-- Fastlane installed and configured
-- Google Play Service Account key (JSON) in `android/fastlane/google-play-service-key.json`
-- Flutter project built with release AAB
+- Fastlane installed locally
+- Google Play service account key at `android/fastlane/google-play-service-key.json`
+- Valid Android signing config
+- Run commands from the `android/` directory unless noted otherwise
 
-## Deployment Process
+## Internal Testing
 
-### 1. Update Version and Generate Release Notes
+### One-shot internal flow
 
-Before deploying, update the app version and generate release notes:
+This is the preferred internal testing command:
 
 ```bash
-# Navigate to the android directory
-cd android
+./deploy_internal_minor.sh
+```
 
-# Check current version
+It performs exactly 3 steps:
+
+1. `./update_version.sh --minor`
+2. `flutter build appbundle --flavor production -t lib/main_production.dart --release`
+3. `fastlane android upload_internal_aab`
+
+Notes:
+
+- Internal testing does **not** require release notes editing
+- Fastlane uses a default internal changelog when needed
+- This flow was tested end to end successfully against Google Play internal testing
+
+### Upload-only internal flow
+
+If the AAB is already built and you do **not** want another version bump:
+
+```bash
+fastlane android upload_internal_aab
+```
+
+If Bundler is configured correctly on your machine, you can also use:
+
+```bash
+bundle exec fastlane android upload_internal_aab
+```
+
+## Production Release
+
+### Trusted production flow
+
+Use:
+
+```bash
+./deploy_with_notes.sh --minor --production
+```
+
+This flow:
+
+1. bumps the version
+2. generates or reuses release notes
+3. pauses for release notes editing
+4. builds the production AAB
+5. uploads that built AAB to Google Play production
+
+Production releases still preserve release notes/changelog behavior.
+
+### Production upload-only flow
+
+If the AAB is already built and notes are already prepared:
+
+```bash
+fastlane android upload_production_aab
+```
+
+## Versioning
+
+Version format is:
+
+```bash
+MAJOR.MINOR.PATCH+VERSION_CODE
+```
+
+Example:
+
+```bash
+4.2.6+48
+```
+
+Rules:
+
+- `--minor` increments patch and version code
+- `--major` increments minor, resets patch, and increments version code
+- Google Play requires an integer `versionCode`, so values like `45.1` are not valid
+
+## Verified Fixes
+
+The release tooling was updated and verified for:
+
+- production build uses `-t lib/main_production.dart`
+- internal upload no longer requires release notes
+- production upload still supports release notes
+- Fastlane resolves the AAB path correctly for Play uploads
+- internal upload lane includes `package_name: com.bishal.invoice`
+
+## Common Commands
+
+```bash
+cd android
 ./update_version.sh --current-version
-
-# For minor updates (increments by 0.1)
 ./update_version.sh --minor
-
-# For major updates (increments by 1.0)
-./update_version.sh --major
-
-# Generate release notes template
-./update_version.sh --release-notes
+./deploy_internal_minor.sh
+./deploy_with_notes.sh --minor --production
+fastlane android upload_internal_aab
+fastlane android upload_production_aab
 ```
-
-### 2. Edit Release Notes
-
-The release notes template is generated at `android/release_notes_YYYY.MM.DD.txt`. Edit this file to include details about your release:
-
-```
-# Release Notes for Invoice App - Version YYYY.MM.DD
-
-## New Features
-- Added new payment method
-- Improved invoice template selection
-
-## Bug Fixes
-- Fixed crash when opening large invoices
-- Resolved issue with tax calculation
-
-## Improvements
-- Faster loading of invoice history
-- Reduced app size
-
-## Other Changes
-- Updated dependencies
-- Improved error messages
-```
-
-### 3. Build the App
-
-Build the app using Flutter:
-
-```bash
-# For production release
-flutter build appbundle --flavor production --release
-```
-
-### 4. Deploy with Fastlane
-
-Deploy to Google Play using Fastlane:
-
-```bash
-# Navigate to the android directory
-cd android
-
-# Deploy to production
-fastlane deploy_production
-
-# Or deploy to internal testing
-fastlane deploy_development
-```
-
-Fastlane will automatically:
-1. Increment the version code
-2. Find and use the release notes file based on the current version name
-3. Create a metadata directory with changelogs for Google Play
-4. Upload the AAB to Google Play with the release notes
-
-## Troubleshooting
-
-### Release Notes Not Found
-
-If the release notes file is not found, Fastlane will use a default message: "Bug fixes and performance improvements". To ensure your release notes are used:
-
-1. Make sure the release notes file is named correctly: `release_notes_YYYY.MM.DD.txt`
-2. Verify the version name in `local.properties` matches the date in the filename
-3. Ensure the file is in the `android` directory
-
-Note: Fastlane now creates a metadata directory with changelogs automatically during deployment. The release notes from your file will be copied to the appropriate changelog file for Google Play.
-
-### Version Code Issues
-
-If you encounter version code conflicts with Google Play:
-
-1. Check the current version on Google Play Console
-2. Update your local version code to match or exceed it:
-   ```bash
-   # Edit local.properties manually or use the update_version.sh script
-   ```
-
-## Additional Resources
-
-- [Fastlane Documentation](https://docs.fastlane.tools)
-- [Google Play Publishing API](https://developers.google.com/android-publisher)

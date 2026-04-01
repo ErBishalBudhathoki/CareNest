@@ -1,102 +1,118 @@
 # App Versioning and Deployment Automation
 
-This directory contains scripts to automate the versioning and deployment process for app releases. The scripts handle version code increments, version name updates, release notes generation, and deployment to Google Play.
+This directory contains the Android release scripts used for Google Play internal testing and production releases.
 
-## How to Use
+## Current Version Format
 
-### View Current Version
+The app uses standard Flutter semver plus Android build code:
 
-To check the current version code and version name:
+```bash
+MAJOR.MINOR.PATCH+VERSION_CODE
+```
+
+Example:
+
+```bash
+4.2.6+48
+```
+
+Important:
+
+- `versionName` is `MAJOR.MINOR.PATCH`
+- `versionCode` is the integer after `+`
+- Google Play only accepts integer version codes
+
+## Version Script
+
+### Show current version
 
 ```bash
 ./update_version.sh --current-version
 ```
 
-### Minor Version Update
-
-For minor updates (increments version code by 0.1):
+### Minor update
 
 ```bash
 ./update_version.sh --minor
 ```
 
-When the decimal part reaches 1.0, the integer part will automatically increment by 1.
+Behavior:
 
-### Major Version Update
+- increments patch
+- increments version code
 
-For major updates (increments version code by 1):
+Example:
+
+```bash
+4.2.5+47 -> 4.2.6+48
+```
+
+### Major update
 
 ```bash
 ./update_version.sh --major
 ```
 
-### Generate Release Notes Template
+Behavior:
 
-To generate a release notes template for the current version:
+- increments minor
+- resets patch to `0`
+- increments version code
 
-```bash
-./update_version.sh --release-notes
-```
-
-This will create a file named `release_notes_YYYY.MM.DD.txt` with sections for new features, bug fixes, improvements, and other changes.
-
-## Version Management
-
-- **Version Code**: Format X.Y where:
-  - X: Integer part that increases with major updates or when Y reaches 1.0
-  - Y: Decimal part that increases by 0.1 with each minor update
-- **Version Name**: Set to the current date in YYYY.MM.DD format
-
-Note: Only the integer part (X) is used for the actual Android version code in the Play Store, as Android requires integer version codes.
-
-## Deployment with Fastlane
-
-A deployment script is provided to automate the process of updating versions, generating release notes, and deploying to Google Play:
+Example:
 
 ```bash
-./deploy_with_notes.sh [options]
+4.2.6+48 -> 4.3.0+49
 ```
 
-### Options
+## Internal Testing Release
 
-- `--minor`: Perform a minor version update (0.1 increment)
-- `--major`: Perform a major version update (1.0 increment)
-- `--development`: Deploy to internal testing track
-- `--production`: Deploy to production track
-- `--skip-build`: Skip the Flutter build step
-
-### Example Usage
+Preferred command:
 
 ```bash
-# Minor update and deploy to production
-./deploy_with_notes.sh --minor --production
-
-# Major update and deploy to internal testing
-./deploy_with_notes.sh --major --development
+./deploy_internal_minor.sh
 ```
 
-### Detailed Documentation
+This runs:
 
-For more detailed information about the deployment process, see [FASTLANE_DEPLOYMENT.md](./FASTLANE_DEPLOYMENT.md).
+1. minor version bump
+2. production AAB build
+3. internal Play upload
 
-## Manual Deployment Process
+Internal testing does not require manual release notes.
 
-If you prefer to deploy manually instead of using the automated script, follow these steps:
+If the bundle is already built:
 
-1. Run the appropriate version update command (--minor or --major)
-2. Generate release notes with --release-notes
-3. Fill in the release notes template
-4. Build the app bundle with `flutter build appbundle --flavor production --release`
-5. Deploy to Google Play Store with `fastlane deploy_production`
+```bash
+fastlane android upload_internal_aab
+```
 
-Alternatively, use the automated script which combines all these steps:
+## Production Release
+
+Preferred command:
 
 ```bash
 ./deploy_with_notes.sh --minor --production
 ```
 
-## Notes
+Production release still includes the release-notes editing step.
 
-- The script automatically updates the `local.properties` file with the new version information
-- Version code must always be higher than the previous release on Google Play Store
-- The version name is automatically set to the current date
+If the bundle is already built and notes are already ready:
+
+```bash
+fastlane android upload_production_aab
+```
+
+## Build Command
+
+Production bundles are built with:
+
+```bash
+flutter build appbundle --flavor production -t lib/main_production.dart --release
+```
+
+## Documentation
+
+For full deployment details, see:
+
+- [FASTLANE_DEPLOYMENT.md](./FASTLANE_DEPLOYMENT.md)
