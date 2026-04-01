@@ -209,4 +209,46 @@ platform :android do
       skip_upload_screenshots: true
     )
   end
+
+  desc "Upload existing production AAB to internal testing"
+  lane :upload_internal_aab do
+    aab_path = '../build/app/outputs/bundle/productionRelease/app-production-release.aab'
+    UI.user_error!("AAB not found at #{aab_path}. Build it first.") unless File.exist?(aab_path)
+
+    # Read version info from local.properties
+    properties_file = "../local.properties"
+    properties = {}
+
+    if File.exist?(properties_file)
+      File.readlines(properties_file).each do |line|
+        key, value = line.strip.split('=', 2)
+        properties[key] = value if key && value
+      end
+    end
+
+    version_name = properties['flutter.versionName'] || '1.0'
+    version_code = properties['flutter.versionCode'] || '1'
+
+    release_notes_file = "../release_notes_#{version_name}.txt"
+    if File.exist?(release_notes_file)
+      UI.message "Found release notes file: #{release_notes_file}"
+      release_notes = File.read(release_notes_file)
+    else
+      UI.message "Release notes file not found at #{release_notes_file}, using default."
+      release_notes = "Internal build #{version_name} (#{version_code})\n\nInternal testing build."
+    end
+
+    metadata_dir = "metadata/android/en-US"
+    changelog_dir = "#{metadata_dir}/changelogs"
+    FileUtils.mkdir_p(changelog_dir)
+    File.write("#{changelog_dir}/#{version_code}.txt", release_notes)
+
+    upload_to_play_store(
+      track: 'internal',
+      aab: aab_path,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
 end

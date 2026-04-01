@@ -83,6 +83,7 @@ service-account.json
 /ios/*.sh
 /scripts/
 scripts/
+!/android/deploy_internal_minor.sh
 
 # Uploads directory
 uploads/
