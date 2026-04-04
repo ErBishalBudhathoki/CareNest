@@ -1,6 +1,7 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/client/providers/client_provider.dart';
+import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/business_name_dropdown_widget.dart';
@@ -1320,6 +1321,15 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                   ),
                 ],
               ),
+              SizedBox(height: BauhausDesign.space3),
+              BauhausActionButton(
+                text: 'Family Access',
+                icon: Icons.family_restroom_outlined,
+                variant: BauhausActionVariant.warning,
+                isSmall: true,
+                isFullWidth: true,
+                onPressed: () => _openFamilyAccess(client),
+              ),
             ],
             if (!isHistoryMode && !client.isActivated) ...[
               SizedBox(height: BauhausDesign.space4),
@@ -1389,6 +1399,28 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
           ),
         ),
       ],
+    );
+  }
+
+  void _openFamilyAccess(Patient client) {
+    final clientId = client.id?.trim();
+    if (clientId == null || clientId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Client ID is missing. Unable to open Family Access.'),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FamilyManagementView(
+          clientId: clientId,
+          clientName: client.displayName,
+        ),
+      ),
     );
   }
 }

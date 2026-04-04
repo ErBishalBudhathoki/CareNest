@@ -91,7 +91,9 @@ bool _isEmployeeRecord(Map<String, dynamic> user) {
 
   final clientId = user['clientId']?.toString().trim();
   if (clientId != null && clientId.isNotEmpty) return false;
-  if (roleTags.contains('client')) return false;
+  if (roleTags.contains('client') || roleTags.contains('family')) {
+    return false;
+  }
   return true;
 }
 
