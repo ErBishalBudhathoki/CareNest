@@ -2,6 +2,7 @@ import 'package:carenest/app/features/client_portal/models/client_portal_models.
 import 'package:carenest/app/features/client_portal/viewmodels/client_invoice_viewmodel.dart';
 import 'package:carenest/app/features/client_portal/viewmodels/client_portal_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/views/secure_messaging_view.dart';
+import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/platform_map_widget.dart';
@@ -219,19 +220,19 @@ class _ClientPortalDashboardBodyState
             : RefreshIndicator(
                 color: BauhausDesign.primary,
                 backgroundColor: BauhausDesign.surfaceWhite,
-                    onRefresh: () async {
-                      if (widget.clientId != null) {
-                        await ref
-                            .read(clientPortalViewModelProvider.notifier)
-                            .loadDashboard(widget.clientId!);
-                        await ref
-                            .read(clientPortalViewModelProvider.notifier)
-                            .loadServiceHistory(
-                              widget.clientId!,
-                              silent: true,
-                            );
-                      }
-                    },
+                onRefresh: () async {
+                  if (widget.clientId != null) {
+                    await ref
+                        .read(clientPortalViewModelProvider.notifier)
+                        .loadDashboard(widget.clientId!);
+                    await ref
+                        .read(clientPortalViewModelProvider.notifier)
+                        .loadServiceHistory(
+                          widget.clientId!,
+                          silent: true,
+                        );
+                  }
+                },
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -242,6 +243,8 @@ class _ClientPortalDashboardBodyState
                         _buildHeader(context),
                         const SizedBox(height: BauhausDesign.space6),
                       ],
+                      _buildFamilyAccessSection(context),
+                      const SizedBox(height: BauhausDesign.space6),
                       _buildTodayAppointmentsSection(
                           context, todayAppointments),
                       const SizedBox(height: BauhausDesign.space6),
@@ -277,6 +280,125 @@ class _ClientPortalDashboardBodyState
     }
 
     return SafeArea(child: content);
+  }
+
+  Widget _buildFamilyAccessSection(BuildContext context) {
+    final hasClientContext =
+        widget.clientId != null && widget.clientId!.trim().isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const BauhausSectionHeader(
+          title: 'FAMILY ACCESS',
+          subtitle: 'Control what approved family members can see and do',
+        ),
+        const SizedBox(height: BauhausDesign.space3),
+        BauhausCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space3),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.warning.withOpacity(0.14),
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      border: Border.all(
+                        color: BauhausDesign.warning.withOpacity(0.35),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.family_restroom_outlined,
+                      size: 24,
+                      color: BauhausDesign.warning,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Share visibility without losing control',
+                          style: BauhausDesign.getTextTheme(context)
+                              .headlineMedium,
+                        ),
+                        const SizedBox(height: BauhausDesign.space1),
+                        Text(
+                          'Invite family members, manage permissions, and decide who can view appointments, messages, location, and service approvals.',
+                          style: BauhausDesign.getTextTheme(context)
+                              .bodyMedium
+                              ?.copyWith(color: BauhausDesign.textMuted),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              Wrap(
+                spacing: BauhausDesign.space2,
+                runSpacing: BauhausDesign.space2,
+                children: [
+                  _buildFamilyFeatureChip(context, 'Appointments'),
+                  _buildFamilyFeatureChip(context, 'Messages'),
+                  _buildFamilyFeatureChip(context, 'Location'),
+                  _buildFamilyFeatureChip(context, 'Approvals'),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              BauhausActionButton(
+                onPressed: hasClientContext
+                    ? () {
+                        Navigator.of(context).pushNamed(
+                          Routes.familyManagement,
+                          arguments: {
+                            'clientId': widget.clientId,
+                          },
+                        );
+                      }
+                    : null,
+                text: hasClientContext
+                    ? 'MANAGE FAMILY ACCESS'
+                    : 'CLIENT REQUIRED',
+                icon:
+                    hasClientContext ? Icons.arrow_forward : Icons.info_outline,
+                variant: BauhausActionVariant.warning,
+                isFullWidth: true,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFamilyFeatureChip(BuildContext context, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space3,
+        vertical: BauhausDesign.space2,
+      ),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+        border: Border.all(
+          color: BauhausDesign.neutral,
+          width: 1.2,
+        ),
+      ),
+      child: Text(
+        label,
+        style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
+      ),
+    );
   }
 
   Widget _buildHeader(BuildContext context) {

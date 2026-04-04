@@ -149,6 +149,43 @@ class FamilyAccessViewModel extends StateNotifier<FamilyAccessState> {
     }
   }
 
+  Future<void> updateMemberStatus({
+    required String memberId,
+    required String clientId,
+    required String status,
+    String? updatedBy,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final updatedMember = await _repository.updateFamilyMemberStatus(
+        clientId: clientId,
+        memberId: memberId,
+        status: status,
+        updatedBy: updatedBy,
+      );
+
+      final updatedMembers = state.members.map((member) {
+        if (member.id == memberId) {
+          return updatedMember;
+        }
+        return member;
+      }).toList();
+
+      state = state.copyWith(
+        isLoading: false,
+        members: updatedMembers,
+        selectedMember: updatedMember,
+      );
+    } catch (e) {
+      debugPrint('Error updating family member status: $e');
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
   /// Get access audit log
   Future<void> getAccessLog({
     required String clientId,
@@ -182,28 +219,9 @@ class FamilyAccessViewModel extends StateNotifier<FamilyAccessState> {
     state = state.copyWith(selectedMember: member);
   }
 
-  /// Remove family member
-  void removeMember(String memberId) {
-    final updatedMembers = state.members
-        .where((member) => member.id != memberId)
-        .toList();
-    state = state.copyWith(members: updatedMembers);
-  }
-
-  /// Update member status
-  void updateMemberStatus(String memberId, String status) {
-    final updatedMembers = state.members.map((member) {
-      if (member.id == memberId) {
-        return member.copyWith(status: status);
-      }
-      return member;
-    }).toList();
-
-    state = state.copyWith(members: updatedMembers);
-  }
-
   /// Toggle permission
-  void togglePermission(String memberId, String clientId, String updatedBy, String permissionName) {
+  void togglePermission(String memberId, String clientId, String updatedBy,
+      String permissionName) {
     final member = state.members.firstWhere((m) => m.id == memberId);
     final currentPermissions = member.permissions;
 
@@ -278,7 +296,7 @@ class FamilyAccessViewModel extends StateNotifier<FamilyAccessState> {
     try {
       final member = state.members.firstWhere((m) => m.id == memberId);
       final permissions = member.permissions;
-      
+
       switch (permissionName) {
         case 'viewAppointments':
           return permissions.viewAppointments;

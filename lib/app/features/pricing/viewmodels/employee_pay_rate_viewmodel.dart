@@ -77,7 +77,7 @@ class EmployeePayRateViewModel extends StateNotifier<EmployeePayRateState> {
       return false;
     }
 
-    if (roleTags.contains('client')) {
+    if (roleTags.contains('client') || roleTags.contains('family')) {
       return false;
     }
 

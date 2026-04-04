@@ -50,6 +50,7 @@ import 'package:carenest/app/features/home/views/home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
@@ -246,14 +247,12 @@ Future<void> _initializeAppCheck() async {
     debugPrint('╔══════════════════════════════════════════════════════════╗');
     debugPrint('║        FIREBASE APP CHECK — DEBUG TOKEN INFO             ║');
     debugPrint('╠══════════════════════════════════════════════════════════╣');
-    debugPrint('║ Fixed token set via AndroidManifest meta-data:           ║');
-    debugPrint('║   cce8603d-dd78-4514-bb50-ff39a08e6f7b                ║');
+    debugPrint('║ Firebase SDK generates a random debug token for you.     ║');
+    debugPrint('║ To find it, use adb logcat and search for:               ║');
+    debugPrint('║ "DebugAppCheckProvider"                                  ║');
     debugPrint('║                                                          ║');
-    debugPrint('║ If you see a 403 error:                                  ║');
-    debugPrint('║  → Go to Firebase Console                                ║');
-    debugPrint('║  → App Check → Apps → Android (com.bishal.invoice)       ║');
-    debugPrint('║  → ⋮ Manage debug tokens → Add debug token               ║');
-    debugPrint('║  → Paste: cce8603d-dd78-4514-bb50-ff39a08e6f7b        ║');
+    debugPrint('║ Once you find the token in your native logs, add it to:  ║');
+    debugPrint('║ Firebase Console → App Check → Manage debug tokens       ║');
     debugPrint('╚══════════════════════════════════════════════════════════╝');
     debugPrint('');
   }
@@ -269,7 +268,7 @@ Future<void> _initializeAppCheck() async {
   } on FirebaseException catch (e) {
     if (androidSelection.provider == AndroidProvider.debug) {
       debugPrint('❌ Error getting App Check token: ${e.message}');
-      debugPrint('   → Ensure the debug token above is registered in Firebase Console.');
+      debugPrint('   → Ensure the debug token from logcat is registered in Firebase Console.');
     } else {
       debugPrint('❌ Error getting App Check token: ${e.message}');
     }
@@ -468,6 +467,16 @@ class MyApp extends ConsumerWidget {
                 {};
             final clientId = arguments['clientId'] as String?;
             return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.familyManagement: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return FamilyManagementView(
               clientId:
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
             );

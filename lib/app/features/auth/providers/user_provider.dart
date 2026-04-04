@@ -6,6 +6,22 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter/foundation.dart';
 
+void _debugLogResolvedUserRole(
+  String source,
+  Map<String, dynamic> payload,
+  User user,
+) {
+  debugPrint(
+    '🔎 currentUserProvider[$source]: '
+    'role=${payload['role']}, '
+    'roles=${payload['roles']}, '
+    'organizationRole=${payload['organizationRole']}, '
+    'clientId=${payload['clientId']}, '
+    'resolvedRole=${user.role}, '
+    'normalizedRoles=${user.roles}',
+  );
+}
+
 final currentUserProvider = FutureProvider<User?>((ref) async {
   final apiMethod = ref.read(app_providers.apiMethodProvider);
 
@@ -18,14 +34,19 @@ final currentUserProvider = FutureProvider<User?>((ref) async {
 
       // /auth/profile returns user object in `data`
       if (data is Map<String, dynamic>) {
-        return User.fromJson(data);
+        final user = User.fromJson(data);
+        _debugLogResolvedUserRole('auth/profile', data, user);
+        return user;
       }
 
       // Backward compatible guard for nested user payload
       if (data is Map &&
           data['user'] != null &&
           data['user'] is Map<String, dynamic>) {
-        return User.fromJson(data['user'] as Map<String, dynamic>);
+        final userData = data['user'] as Map<String, dynamic>;
+        final user = User.fromJson(userData);
+        _debugLogResolvedUserRole('auth/profile.user', userData, user);
+        return user;
       }
     }
 
@@ -34,7 +55,9 @@ final currentUserProvider = FutureProvider<User?>((ref) async {
     if (v2Response['success'] == true) {
       final dynamic v2User = v2Response['user'] ?? v2Response['data'];
       if (v2User is Map<String, dynamic>) {
-        return User.fromJson(v2User);
+        final user = User.fromJson(v2User);
+        _debugLogResolvedUserRole('auth/v2/me', v2User, user);
+        return user;
       }
     }
 

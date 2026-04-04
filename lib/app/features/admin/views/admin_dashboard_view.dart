@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
+import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/holiday/views/holiday_list_view.dart';
 import 'package:carenest/app/shared/constants/values/strings/asset_strings.dart';
 import 'package:carenest/app/features/invoice/views/add_update_invoice_email_view.dart';
@@ -309,75 +310,202 @@ class _AdminDashboardViewControllerState
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: BauhausDesign.warning.withOpacity(0.12),
-                        border: Border.all(
-                          color: BauhausDesign.warning,
-                          width: 2,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: BauhausDesign.warning,
+                              border: Border.all(
+                                color: BauhausDesign.neutral,
+                                width: 2,
+                              ),
+                            ),
+                            child: Text(
+                              'SETUP REQUIRED',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge
+                                  ?.copyWith(
+                                    color: BauhausDesign.textDark,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.1,
+                                  ),
+                            ),
+                          ),
                         ),
-                      ),
-                      child: const Icon(
-                        Icons.email_outlined,
-                        color: BauhausDesign.warning,
-                        size: 26,
-                      ),
+                        const SizedBox(width: 10),
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: BauhausDesign.primary,
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
+                            boxShadow: const [BauhausDesign.shadowHardSm],
+                          ),
+                          child: const Icon(
+                            Icons.email_outlined,
+                            color: BauhausDesign.surfaceWhite,
+                            size: 26,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'Complete email setup first',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: BauhausDesign.textDark,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                color: BauhausDesign.textDark,
+                                height: 1.05,
+                              ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '$workflowName needs your organization invoicing mailbox before the workflow can send invoices and delivery updates.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            height: 1.4,
-                          ),
-                    ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: BauhausDesign.backgroundLight,
                         border: Border.all(
-                          color: BauhausDesign.neutral.withOpacity(0.2),
-                          width: 1,
+                          color: BauhausDesign.neutral,
+                          width: 2,
                         ),
                       ),
-                      child: Text(
-                        'Next step: Configuration & Finance > Email Settings',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: BauhausDesign.textDark,
-                            ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$workflowName needs your organization invoicing mailbox before the workflow can send invoices and delivery updates.',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: BauhausDesign.textDark,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.35,
+                                ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 10,
+                                height: 10,
+                                margin: const EdgeInsets.only(top: 4),
+                                decoration: BoxDecoration(
+                                  color: BauhausDesign.accent,
+                                  border: Border.all(
+                                    color: BauhausDesign.neutral,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  'Next step: Configuration & Finance -> Email Settings',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        color: BauhausDesign.textMuted,
+                                        height: 1.3,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          Navigator.of(sheetContext).pop();
-                          await _navigateToEmailSettings();
-                        },
-                        icon: const Icon(Icons.settings_outlined),
-                        label: const Text('Configure Email Settings'),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: SizedBox(
+                            height: 52,
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                Navigator.of(sheetContext).pop();
+                                await _navigateToEmailSettings();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: BauhausDesign.primary,
+                                foregroundColor: BauhausDesign.surfaceWhite,
+                                elevation: 0,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                  side: BorderSide(
+                                    color: BauhausDesign.neutral,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              icon: const Icon(Icons.settings_outlined),
+                              label: const Text(
+                                'SET UP NOW',
+                                style: TextStyle(fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: SizedBox(
+                            height: 52,
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.of(sheetContext).pop(),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: BauhausDesign.textDark,
+                                side: const BorderSide(
+                                  color: BauhausDesign.neutral,
+                                  width: 2,
+                                ),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                              ),
+                              child: const Text(
+                                'LATER',
+                                style: TextStyle(fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
-                    SizedBox(
+                    Container(
                       width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(sheetContext).pop(),
-                        child: const Text('Not now'),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: BauhausDesign.success.withOpacity(0.08),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Text(
+                        'Once configured, this workflow unlocks immediately when you return.',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.w700,
+                              height: 1.3,
+                            ),
                       ),
                     ),
                   ],
@@ -1270,8 +1398,9 @@ class _AdminDashboardViewControllerState
         title: 'Invoice Operations',
         headerIcon: Icons.receipt_long_rounded,
         accentColor: BauhausDesign.primary,
-        setupBannerTitle:
-            needsEmailSetup ? 'Complete invoicing email setup to unlock this tab' : null,
+        setupBannerTitle: needsEmailSetup
+            ? 'Complete invoicing email setup to unlock this tab'
+            : null,
         setupBannerSubtitle: needsEmailSetup
             ? 'Connect your organization mailbox once, then invoice creation, employee invoicing, and automatic delivery workflows will be ready to use.'
             : null,
@@ -1407,6 +1536,13 @@ class _AdminDashboardViewControllerState
                 .pushNamed(Routes.adminRequests),
           ),
           CommandAction(
+            icon: const Icon(Icons.groups_rounded),
+            title: 'Client List',
+            subtitle: 'Manage clients, activation status, and setup emails',
+            color: BauhausDesign.primary,
+            onTap: _navigateToClientList,
+          ),
+          CommandAction(
             icon: const Icon(Icons.celebration_rounded),
             title: l10n.holidayList,
             subtitle: l10n.holidayListDesc,
@@ -1453,8 +1589,8 @@ class _AdminDashboardViewControllerState
           ),
           CommandAction(
             icon: const Icon(Icons.person_add_alt_1_rounded),
-            title: 'Onboarding',
-            subtitle: 'Review pending onboardings',
+            title: 'Staff Onboarding',
+            subtitle: 'Review pending employee onboardings',
             color: BauhausDesign.success,
             onTap: () => Navigator.push(
               context,
@@ -2040,6 +2176,15 @@ class _AdminDashboardViewControllerState
           organizationId: widget.organizationId ?? '',
           userEmail: widget.email,
         ),
+      ),
+    );
+  }
+
+  void _navigateToClientList() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ClientListView(),
       ),
     );
   }

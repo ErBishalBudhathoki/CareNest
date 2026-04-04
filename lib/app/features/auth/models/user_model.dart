@@ -44,6 +44,9 @@ class User {
   late final String phone;
   late final String? profilePic;
   late final UserRole role;
+  late final List<String> roles;
+  late final String? organizationRole;
+  late final List<String> organizationPermissions;
   late final String? jobRole;
   late final double payRate;
   late final RatesModel? detailedRates;
@@ -64,6 +67,9 @@ class User {
     required this.phone,
     this.profilePic,
     required this.role,
+    this.roles = const [],
+    this.organizationRole,
+    this.organizationPermissions = const [],
     this.jobRole,
     this.payRate = 0.0,
     this.detailedRates,
@@ -77,11 +83,16 @@ class User {
     this.permissions = const [],
   });
 
-  static UserRole _parseRole(dynamic role) {
-    final roleStr = role?.toString().toLowerCase();
-    if (roleStr == 'admin') return UserRole.admin;
-    if (roleStr == 'client') return UserRole.client;
-    return UserRole.normal;
+  bool get hasAdminAccess {
+    return role == UserRole.admin ||
+        roles.any(UserRoleResolver.isAdminTag) ||
+        UserRoleResolver.isAdminTag(organizationRole);
+  }
+
+  bool get usesClientPortal {
+    return role == UserRole.client ||
+        roles.any(UserRoleResolver.isClientTag) ||
+        UserRoleResolver.isClientTag(organizationRole);
   }
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -102,6 +113,14 @@ class User {
         organizationId = json['organizationId'].toString();
       }
 
+      final roleTags = UserRoleResolver.collectRoleTags(
+        role: json['role'],
+        roles: json['roles'],
+        organizationRole: json['organizationRole'],
+      );
+
+      final clientId = json['clientId']?.toString();
+
       return User(
         id: (json['id'] ?? json['_id'] ?? json['userId'])?.toString() ?? '',
         organizationId: organizationId,
@@ -109,7 +128,18 @@ class User {
         email: json['email']?.toString() ?? '',
         phone: json['phone']?.toString() ?? '',
         profilePic: (json['profilePic'] ?? json['photoUrl'])?.toString(),
-        role: _parseRole(json['role']),
+        role: UserRoleResolver.resolve(
+          role: json['role'],
+          roles: json['roles'],
+          organizationRole: json['organizationRole'],
+          clientId: clientId,
+        ),
+        roles: roleTags,
+        organizationRole: json['organizationRole']?.toString(),
+        organizationPermissions: (json['organizationPermissions'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            const [],
         jobRole: json['jobRole']?.toString(),
         payRate: (json['payRate'] as num?)?.toDouble() ?? 0.0,
         detailedRates:

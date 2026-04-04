@@ -9,6 +9,7 @@ import 'package:carenest/app/features/realtime_portal/viewmodels/service_confirm
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -1006,6 +1007,17 @@ class _RealtimePortalDashboardState
 
   void _openModule(BuildContext context, String route) {
     try {
+      if (route == Routes.familyManagement) {
+        Navigator.pushNamed(
+          context,
+          route,
+          arguments: {
+            'clientId': _activeClientId,
+          },
+        );
+        return;
+      }
+
       Navigator.pushNamed(context, route);
     } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1112,18 +1124,19 @@ class _RealtimePortalDashboardState
         : null;
 
     return [
-      _PortalModuleTileData(
-        module: _modules[0],
-        status: trackingState.liveLocation != null
-            ? 'Session active'
-            : 'No active session',
-        detail: trackingState.liveLocation != null
-            ? 'Updated ${_formatRelative(trackingState.liveLocation?.timestamp)}'
-            : 'Awaiting worker location updates.',
-        badgeColor: trackingState.liveLocation != null
-            ? BauhausDesign.success
-            : BauhausDesign.warning,
-      ),
+      if (!kReleaseMode)
+        _PortalModuleTileData(
+          module: _modules[0],
+          status: trackingState.liveLocation != null
+              ? 'Session active'
+              : 'No active session',
+          detail: trackingState.liveLocation != null
+              ? 'Updated ${_formatRelative(trackingState.liveLocation?.timestamp)}'
+              : 'Awaiting worker location updates.',
+          badgeColor: trackingState.liveLocation != null
+              ? BauhausDesign.success
+              : BauhausDesign.warning,
+        ),
       _PortalModuleTileData(
         module: _modules[1],
         status: trackingState.appointmentStatus != null

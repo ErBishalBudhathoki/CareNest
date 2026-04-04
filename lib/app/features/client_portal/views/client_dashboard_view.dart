@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
@@ -66,6 +67,15 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
     );
   }
 
+  void _openFamilyAccess(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      Routes.familyManagement,
+      arguments: {
+        'clientId': widget.clientId,
+      },
+    );
+  }
+
   Widget _buildHeader(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
@@ -121,6 +131,15 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                   ],
                 ),
               ),
+              BauhausActionButton(
+                onPressed: () => _openFamilyAccess(context),
+                text: 'Family',
+                icon: Icons.family_restroom_outlined,
+                variant: BauhausActionVariant.secondary,
+                isOutlined: true,
+                isSmall: true,
+              ),
+              const SizedBox(width: BauhausDesign.space2),
               BauhausIconButton(
                 onPressed: () async {
                   await SessionTimeoutService().logoutAndClearSession(
@@ -280,7 +299,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Are you sure you want to request account deletion?',
+                    'Are you sure you want to start account deletion?',
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -292,17 +311,20 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
                       color: BauhausDesign.neoHighlight.withOpacity(0.1),
-                      border: Border.all(color: BauhausDesign.neoHighlight, width: 2),
-                      borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                      border: Border.all(
+                          color: BauhausDesign.neoHighlight, width: 2),
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.info_outline, color: BauhausDesign.neoHighlight, size: 20),
+                        const Icon(Icons.info_outline,
+                            color: BauhausDesign.neoHighlight, size: 20),
                         const SizedBox(width: BauhausDesign.space2),
                         Expanded(
                           child: Text(
-                            'Your data will be preserved for 90 days after approval before being permanently deleted.',
+                            'After approval, your account is deactivated and records required for payroll, tax, audit, and care obligations are retained for up to 90 days before permanent deletion.',
                             style: GoogleFonts.spaceMono(
                               fontSize: 13,
                               color: BauhausDesign.textDark,
@@ -332,11 +354,16 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                       : () async {
                           setState(() => isLoading = true);
                           try {
-                            final orgId = ref.read(app_providers.organizationIdProvider);
-                            final currentUser = FirebaseAuth.instance.currentUser;
+                            final orgId =
+                                ref.read(app_providers.organizationIdProvider);
+                            final currentUser =
+                                FirebaseAuth.instance.currentUser;
 
-                            if (orgId == null || orgId.isEmpty || currentUser == null) {
-                              throw Exception('Missing organization or user context');
+                            if (orgId == null ||
+                                orgId.isEmpty ||
+                                currentUser == null) {
+                              throw Exception(
+                                  'Missing organization or user context');
                             }
 
                             final request = RequestModel(
@@ -345,19 +372,29 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                               type: 'ACCOUNT_DELETION',
                               status: RequestStatus.pending,
                               details: {
-                                'reason': 'Client requested account deletion via portal',
+                                'reason':
+                                    'Client requested account deletion via portal with 90-day retention',
+                                'retentionDays': 90,
+                                'retentionReason':
+                                    'Payroll, tax, audit, and care-service record obligations',
+                                'deactivateOnApproval': true,
                                 'requestedAt': DateTime.now().toIso8601String(),
                               },
                             );
 
-                            await ref.read(requestRepositoryProvider).createRequest(request, currentUser.email ?? '');
+                            await ref
+                                .read(requestRepositoryProvider)
+                                .createRequest(
+                                    request, currentUser.email ?? '');
 
                             if (!context.mounted) return;
                             Navigator.of(context).pop();
-                            
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Account deletion request submitted.'),
+                                content: Text(
+                                  'Deletion requested. After approval, the account is deactivated and required records are retained for up to 90 days before permanent deletion.',
+                                ),
                                 backgroundColor: BauhausDesign.primary,
                               ),
                             );

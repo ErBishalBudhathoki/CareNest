@@ -191,7 +191,12 @@ class LoginViewModel extends ChangeNotifier {
 
       if (response['success'] == true) {
         final userData = response['data'] ?? response;
-        final role = (userData['role'] ?? 'user').toString();
+        final resolvedRole = UserRoleResolver.resolve(
+          role: userData['role'],
+          roles: userData['roles'],
+          organizationRole: userData['organizationRole'],
+          clientId: userData['clientId']?.toString(),
+        );
         final clientId = userData['clientId']?.toString() ?? '';
 
         // Save user data locally
@@ -203,13 +208,13 @@ class LoginViewModel extends ChangeNotifier {
         await _sharedPrefs.setString('clientId', clientId);
         await _sharedPrefs.setString(
             'organizationId', userData['organizationId'] ?? '');
-        await _sharedPrefs.setString('role', role);
+        await _sharedPrefs.setRole(resolvedRole);
         await _sharedPrefs.setString(
             'organizationName', userData['organizationName'] ?? '');
         await _sharedPrefs.setString(
             'organizationCode', userData['organizationCode'] ?? '');
 
-        if (role == 'client' && clientId.isEmpty) {
+        if (resolvedRole == UserRole.client && clientId.isEmpty) {
           throw Exception(
               'Client account is not linked yet. Please contact support.');
         }
@@ -291,9 +296,14 @@ class LoginViewModel extends ChangeNotifier {
 
   void _navigateBasedOnRole(
       BuildContext context, Map<String, dynamic> userData) {
-    final role = userData['role'] ?? 'user';
+    final resolvedRole = UserRoleResolver.resolve(
+      role: userData['role'],
+      roles: userData['roles'],
+      organizationRole: userData['organizationRole'],
+      clientId: userData['clientId']?.toString(),
+    );
 
-    if (role == 'admin' || role == 'superadmin') {
+    if (resolvedRole == UserRole.admin) {
       Navigator.pushReplacementNamed(
         context,
         Routes.bottomNavBar,
@@ -305,7 +315,7 @@ class LoginViewModel extends ChangeNotifier {
           'organizationCode': userData['organizationCode'],
         },
       );
-    } else if (role == 'client') {
+    } else if (resolvedRole == UserRole.client) {
       final clientId = userData['clientId']?.toString() ?? '';
       Navigator.pushReplacementNamed(
         context,
