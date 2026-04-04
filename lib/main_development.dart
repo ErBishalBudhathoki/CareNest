@@ -48,6 +48,7 @@ import 'package:carenest/app/features/home/views/home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
@@ -404,6 +405,16 @@ class MyApp extends ConsumerWidget {
                 {};
             final clientId = arguments['clientId'] as String?;
             return ClientDashboardView(
+              clientId:
+                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.familyManagement: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return FamilyManagementView(
               clientId:
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
             );

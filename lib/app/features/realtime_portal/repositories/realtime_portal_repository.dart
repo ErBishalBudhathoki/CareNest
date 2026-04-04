@@ -430,6 +430,31 @@ class RealtimePortalRepository {
     }
   }
 
+  /// Update family member status
+  Future<FamilyMember> updateFamilyMemberStatus({
+    required String clientId,
+    required String memberId,
+    required String status,
+    String? updatedBy,
+  }) async {
+    try {
+      final response = await _apiMethod.updateFamilyMemberStatus(
+        clientId: clientId,
+        memberId: memberId,
+        status: status,
+        updatedBy: updatedBy,
+      );
+
+      if (response['success'] == true && response['data'] != null) {
+        return FamilyMember.fromJson(response['data']);
+      }
+
+      throw Exception(response['message'] ?? 'Failed to update family member');
+    } catch (e) {
+      throw Exception('Error updating family member status: $e');
+    }
+  }
+
   /// Get access log
   Future<List<AccessAuditLog>> getAccessLog({
     required String clientId,

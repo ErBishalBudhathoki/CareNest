@@ -1103,7 +1103,9 @@ class ApiMethod extends ChangeNotifier {
 
         final clientId = map['clientId']?.toString().trim();
         if (clientId != null && clientId.isNotEmpty) return false;
-        if (roleTags.contains('client')) return false;
+        if (roleTags.contains('client') || roleTags.contains('family')) {
+          return false;
+        }
         return true;
       }).toList();
 
@@ -5579,18 +5581,25 @@ class ApiMethod extends ChangeNotifier {
           }
 
           if (userMap.isNotEmpty) {
-            final role = userMap['role'] ??
-                (userMap['roles'] is List &&
-                        (userMap['roles'] as List).isNotEmpty
-                    ? (userMap['roles'] as List).first
-                    : null);
-            UserRole roleEnum =
-                role == 'admin' ? UserRole.admin : UserRole.normal;
-            debugPrint("secureLogin role: $roleEnum $role");
+            final resolvedRole = UserRoleResolver.resolve(
+              role: userMap['role'],
+              roles: userMap['roles'],
+              organizationRole: userMap['organizationRole'],
+              clientId: userMap['clientId']?.toString(),
+            );
+            final roleTags = UserRoleResolver.collectRoleTags(
+              role: userMap['role'],
+              roles: userMap['roles'],
+              organizationRole: userMap['organizationRole'],
+            );
+            debugPrint(
+                "secureLogin role: $resolvedRole tags=$roleTags organizationRole=${userMap['organizationRole']}");
 
             // Save user email and organization ID to SharedPreferences
             SharedPreferences prefs = await SharedPreferences.getInstance();
             await prefs.setString('userEmail', email);
+            await prefs.setString(
+                'role', resolvedRole.toString().split('.').last);
             if (userMap['organizationId'] != null) {
               await prefs.setString(
                   'organizationId', userMap['organizationId']);
@@ -5605,7 +5614,7 @@ class ApiMethod extends ChangeNotifier {
             return {
               'success': true,
               'message': data['message'] ?? 'Login successful',
-              'role': role,
+              'role': resolvedRole.toString().split('.').last,
               'user': userMap,
               'token': tokenCandidate,
             };
@@ -7854,6 +7863,24 @@ class ApiMethod extends ChangeNotifier {
         'clientId': clientId,
         'memberId': memberId,
         'permissions': permissions,
+        'updatedBy': updatedBy,
+      },
+    );
+  }
+
+  /// Update family member status
+  Future<Map<String, dynamic>> updateFamilyMemberStatus({
+    required String clientId,
+    required String memberId,
+    required String status,
+    String? updatedBy,
+  }) async {
+    return await put(
+      'realtime-portal/family/status',
+      body: {
+        'clientId': clientId,
+        'memberId': memberId,
+        'status': status,
         'updatedBy': updatedBy,
       },
     );

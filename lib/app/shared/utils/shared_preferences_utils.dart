@@ -54,14 +54,14 @@ class SharedPreferencesUtils {
 
   Future<void> init() async {
     if (_sharedPreferences != null) return;
-    
+
     // Prevent race conditions with multiple concurrent init calls
     if (_initCompleter != null) {
       return _initCompleter!.future;
     }
-    
+
     _initCompleter = Completer<void>();
-    
+
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
       _initCompleter!.complete();
@@ -173,9 +173,7 @@ class SharedPreferencesUtils {
     if (roleString == null) {
       return null;
     }
-    return UserRole.values.firstWhere(
-        (e) => e.toString().split('.').last == roleString,
-        orElse: () => UserRole.normal);
+    return UserRoleResolver.resolve(role: roleString);
   }
 
   setUserData({required String email, required UserRole role}) {
@@ -329,7 +327,8 @@ class SharedPreferencesUtils {
     if (normalized != 'light' &&
         normalized != 'dark' &&
         normalized != 'system') {
-      debugPrint('⚠️ Invalid theme preference: $preference, defaulting to system');
+      debugPrint(
+          '⚠️ Invalid theme preference: $preference, defaulting to system');
       await _sharedPreferences!.setString(kThemePreferenceKey, 'system');
       return;
     }

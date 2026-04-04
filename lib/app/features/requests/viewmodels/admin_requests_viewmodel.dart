@@ -4,7 +4,6 @@ import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
-import 'package:carenest/app/features/auth/models/user_role.dart';
 
 final adminRequestsViewModelProvider = StateNotifierProvider.autoDispose<
     AdminRequestsViewModel, AsyncValue<List<RequestModel>>>((ref) {
@@ -31,7 +30,7 @@ class AdminRequestsViewModel
                 ? AsyncValue.error(error, StackTrace.current)
                 : const AsyncValue.loading())) {
     if (_user != null) {
-      if (_user!.role == UserRole.admin) {
+      if (_user!.hasAdminAccess) {
         fetchRequests();
       } else {
         state = AsyncValue.error('Unauthorized', StackTrace.current);
@@ -42,9 +41,9 @@ class AdminRequestsViewModel
   }
 
   Future<void> fetchRequests() async {
-    if (_user == null || _user!.role != UserRole.admin) {
+    if (_user == null || !_user!.hasAdminAccess) {
       debugPrint(
-          'AdminRequestsViewModel: Unauthorized or no user. Role: ${_user?.role}');
+          'AdminRequestsViewModel: Unauthorized or no user. Role: ${_user?.role}, roles: ${_user?.roles}, organizationRole: ${_user?.organizationRole}');
       return;
     }
     try {
@@ -62,7 +61,7 @@ class AdminRequestsViewModel
 
   Future<bool> updateRequestStatus(String requestId, String status,
       {String? reason}) async {
-    if (_user == null || _user!.role != UserRole.admin) return false;
+    if (_user == null || !_user!.hasAdminAccess) return false;
 
     try {
       final success = await _repository
