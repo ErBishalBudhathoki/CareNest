@@ -404,7 +404,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                             width: buttonWidth,
                             child: BauhausActionButton(
                               text: 'Cancel',
-                              variant: BauhausActionVariant.neutral,
+                              backgroundColor: BauhausDesign.surfaceOffWhite,
+                              textColor: BauhausDesign.textDark,
+                              isFullWidth: true,
                               isSmall: true,
                               onPressed: () =>
                                   Navigator.of(dialogContext).pop(),
@@ -421,6 +423,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                   ? null
                                   : Icons.send_rounded,
                               variant: BauhausActionVariant.warning,
+                              isFullWidth: true,
                               isSmall: true,
                               isLoading: inviteState.isInviting,
                               onPressed: inviteState.isInviting
@@ -466,17 +469,23 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                             ),
                           );
 
-                          return Align(
-                            alignment: Alignment.centerRight,
-                            child: Wrap(
-                              spacing: BauhausDesign.space3,
-                              runSpacing: BauhausDesign.space3,
-                              alignment: WrapAlignment.end,
+                          if (isCompact) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 cancelButton,
+                                const SizedBox(height: BauhausDesign.space4),
                                 sendInviteButton,
                               ],
-                            ),
+                            );
+                          }
+
+                          return Row(
+                            children: [
+                              Expanded(child: cancelButton),
+                              const SizedBox(width: BauhausDesign.space4),
+                              Expanded(child: sendInviteButton),
+                            ],
                           );
                         },
                       ),
