@@ -277,16 +277,16 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           return Dialog(
             backgroundColor: Colors.transparent,
             insetPadding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 560),
+              constraints: const BoxConstraints(maxWidth: 640),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(color: BauhausDesign.neutral, width: 2),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
-              padding: const EdgeInsets.all(BauhausDesign.space6),
+              padding: const EdgeInsets.all(BauhausDesign.space5),
               child: Form(
                 key: formKey,
                 child: SingleChildScrollView(
@@ -391,70 +391,90 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         },
                       ),
                       const SizedBox(height: BauhausDesign.space5),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: BauhausActionButton(
-                              text: 'Cancel',
-                              variant: BauhausActionVariant.neutral,
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(),
-                            ),
-                          ),
-                          const SizedBox(width: BauhausDesign.space3),
-                          Expanded(
-                            child: BauhausActionButton(
-                              text: inviteState.isInviting
-                                  ? 'Sending...'
-                                  : 'Send Invite',
-                              icon: inviteState.isInviting
-                                  ? null
-                                  : Icons.send_rounded,
-                              variant: BauhausActionVariant.warning,
-                              isLoading: inviteState.isInviting,
-                              onPressed: inviteState.isInviting
-                                  ? null
-                                  : () async {
-                                      if (!(formKey.currentState?.validate() ??
-                                          false)) {
-                                        return;
-                                      }
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final sendInviteButton = BauhausActionButton(
+                            text: inviteState.isInviting
+                                ? 'Sending...'
+                                : 'Send Invite',
+                            icon: inviteState.isInviting
+                                ? null
+                                : Icons.send_rounded,
+                            variant: BauhausActionVariant.warning,
+                            isLoading: inviteState.isInviting,
+                            onPressed: inviteState.isInviting
+                                ? null
+                                : () async {
+                                    if (!(formKey.currentState?.validate() ??
+                                        false)) {
+                                      return;
+                                    }
 
-                                      final actorEmail =
-                                          await _resolveActorEmail();
-                                      await ref
-                                          .read(familyAccessViewModelProvider
-                                              .notifier)
-                                          .inviteFamilyMember(
-                                            clientId: clientId,
-                                            invitedBy: actorEmail,
-                                            email: emailController.text.trim(),
-                                            name: nameController.text.trim(),
-                                            relationship: selectedRelationship,
-                                            role: selectedRole,
-                                            permissions: draftPermissions,
-                                          );
-
-                                      final updatedState = ref
-                                          .read(familyAccessViewModelProvider);
-                                      if (updatedState.error != null) {
-                                        _showSnackBar(
-                                          updatedState.error!,
-                                          isError: true,
+                                    final actorEmail =
+                                        await _resolveActorEmail();
+                                    await ref
+                                        .read(familyAccessViewModelProvider
+                                            .notifier)
+                                        .inviteFamilyMember(
+                                          clientId: clientId,
+                                          invitedBy: actorEmail,
+                                          email: emailController.text.trim(),
+                                          name: nameController.text.trim(),
+                                          relationship: selectedRelationship,
+                                          role: selectedRole,
+                                          permissions: draftPermissions,
                                         );
-                                        return;
-                                      }
 
-                                      if (!mounted) return;
-                                      Navigator.of(dialogContext).pop();
-                                      await _loadFamilyMembers();
+                                    final updatedState =
+                                        ref.read(familyAccessViewModelProvider);
+                                    if (updatedState.error != null) {
                                       _showSnackBar(
-                                        'Invitation sent to ${emailController.text.trim()}',
+                                        updatedState.error!,
+                                        isError: true,
                                       );
-                                    },
-                            ),
-                          ),
-                        ],
+                                      return;
+                                    }
+
+                                    if (!mounted) return;
+                                    Navigator.of(dialogContext).pop();
+                                    await _loadFamilyMembers();
+                                    _showSnackBar(
+                                      'Invitation sent to ${emailController.text.trim()}',
+                                    );
+                                  },
+                          );
+
+                          if (constraints.maxWidth < 420) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                BauhausActionButton(
+                                  text: 'Cancel',
+                                  variant: BauhausActionVariant.neutral,
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(),
+                                ),
+                                const SizedBox(height: BauhausDesign.space3),
+                                sendInviteButton,
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: BauhausActionButton(
+                                  text: 'Cancel',
+                                  variant: BauhausActionVariant.neutral,
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(),
+                                ),
+                              ),
+                              const SizedBox(width: BauhausDesign.space3),
+                              Expanded(child: sendInviteButton),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -596,16 +616,16 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           return Dialog(
             backgroundColor: Colors.transparent,
             insetPadding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 560),
+              constraints: const BoxConstraints(maxWidth: 640),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(color: BauhausDesign.neutral, width: 2),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
-              padding: const EdgeInsets.all(BauhausDesign.space6),
+              padding: const EdgeInsets.all(BauhausDesign.space5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -635,50 +655,71 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                     ),
                   ),
                   const SizedBox(height: BauhausDesign.space5),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: BauhausActionButton(
-                          text: 'Cancel',
-                          variant: BauhausActionVariant.neutral,
-                          onPressed: () => Navigator.of(dialogContext).pop(),
-                        ),
-                      ),
-                      const SizedBox(width: BauhausDesign.space3),
-                      Expanded(
-                        child: BauhausActionButton(
-                          text: 'Save',
-                          icon: Icons.save_outlined,
-                          variant: BauhausActionVariant.secondary,
-                          onPressed: () async {
-                            final actorEmail = await _resolveActorEmail();
-                            await ref
-                                .read(familyAccessViewModelProvider.notifier)
-                                .updatePermissions(
-                                  memberId: member.id,
-                                  clientId: clientId,
-                                  updatedBy: actorEmail,
-                                  permissions: draftPermissions,
-                                );
-
-                            final updatedState =
-                                ref.read(familyAccessViewModelProvider);
-                            if (updatedState.error != null) {
-                              _showSnackBar(
-                                updatedState.error!,
-                                isError: true,
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final saveButton = BauhausActionButton(
+                        text: 'Save',
+                        icon: Icons.save_outlined,
+                        variant: BauhausActionVariant.secondary,
+                        onPressed: () async {
+                          final actorEmail = await _resolveActorEmail();
+                          await ref
+                              .read(familyAccessViewModelProvider.notifier)
+                              .updatePermissions(
+                                memberId: member.id,
+                                clientId: clientId,
+                                updatedBy: actorEmail,
+                                permissions: draftPermissions,
                               );
-                              return;
-                            }
 
-                            if (!mounted) return;
-                            Navigator.of(dialogContext).pop();
+                          final updatedState =
+                              ref.read(familyAccessViewModelProvider);
+                          if (updatedState.error != null) {
                             _showSnackBar(
-                                'Permissions updated for ${member.name}');
-                          },
-                        ),
-                      ),
-                    ],
+                              updatedState.error!,
+                              isError: true,
+                            );
+                            return;
+                          }
+
+                          if (!mounted) return;
+                          Navigator.of(dialogContext).pop();
+                          _showSnackBar(
+                              'Permissions updated for ${member.name}');
+                        },
+                      );
+
+                      if (constraints.maxWidth < 420) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            BauhausActionButton(
+                              text: 'Cancel',
+                              variant: BauhausActionVariant.neutral,
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
+                            ),
+                            const SizedBox(height: BauhausDesign.space3),
+                            saveButton,
+                          ],
+                        );
+                      }
+
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: BauhausActionButton(
+                              text: 'Cancel',
+                              variant: BauhausActionVariant.neutral,
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
+                            ),
+                          ),
+                          const SizedBox(width: BauhausDesign.space3),
+                          Expanded(child: saveButton),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -699,16 +740,17 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           context: context,
           builder: (dialogContext) => Dialog(
             backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 480),
+              constraints: const BoxConstraints(maxWidth: 560),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(color: BauhausDesign.neutral, width: 2),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
-              padding: const EdgeInsets.all(BauhausDesign.space6),
+              padding: const EdgeInsets.all(BauhausDesign.space5),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -728,31 +770,50 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         ?.copyWith(color: BauhausDesign.textMuted),
                   ),
                   const SizedBox(height: BauhausDesign.space5),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: BauhausActionButton(
-                          text: 'Cancel',
-                          variant: BauhausActionVariant.neutral,
-                          onPressed: () =>
-                              Navigator.of(dialogContext).pop(false),
-                        ),
-                      ),
-                      const SizedBox(width: BauhausDesign.space3),
-                      Expanded(
-                        child: BauhausActionButton(
-                          text: isDeactivate ? 'Deactivate' : 'Reactivate',
-                          icon: isDeactivate
-                              ? Icons.block_rounded
-                              : Icons.restart_alt_rounded,
-                          variant: isDeactivate
-                              ? BauhausActionVariant.error
-                              : BauhausActionVariant.success,
-                          onPressed: () =>
-                              Navigator.of(dialogContext).pop(true),
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final confirmButton = BauhausActionButton(
+                        text: isDeactivate ? 'Deactivate' : 'Reactivate',
+                        icon: isDeactivate
+                            ? Icons.block_rounded
+                            : Icons.restart_alt_rounded,
+                        variant: isDeactivate
+                            ? BauhausActionVariant.error
+                            : BauhausActionVariant.success,
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                      );
+
+                      if (constraints.maxWidth < 420) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            BauhausActionButton(
+                              text: 'Cancel',
+                              variant: BauhausActionVariant.neutral,
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(false),
+                            ),
+                            const SizedBox(height: BauhausDesign.space3),
+                            confirmButton,
+                          ],
+                        );
+                      }
+
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: BauhausActionButton(
+                              text: 'Cancel',
+                              variant: BauhausActionVariant.neutral,
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(false),
+                            ),
+                          ),
+                          const SizedBox(width: BauhausDesign.space3),
+                          Expanded(child: confirmButton),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
