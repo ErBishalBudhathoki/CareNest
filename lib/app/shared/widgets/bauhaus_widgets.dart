@@ -124,9 +124,8 @@ class BauhausStatCard extends StatelessWidget {
               ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12);
 
           if (isCompact) {
-            final valueStyle =
-                BauhausDesign.getTextTheme(context).titleLarge ??
-                    const TextStyle(fontSize: 18);
+            final valueStyle = BauhausDesign.getTextTheme(context).titleLarge ??
+                const TextStyle(fontSize: 18);
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +193,8 @@ class BauhausStatCard extends StatelessWidget {
                           (iconColor ?? BauhausDesign.primary).withOpacity(0.1),
                       borderRadius:
                           BorderRadius.circular(BauhausDesign.radiusSm),
-                      border: Border.all(color: BauhausDesign.neutral, width: 1),
+                      border:
+                          Border.all(color: BauhausDesign.neutral, width: 1),
                     ),
                     child: Icon(
                       icon,
@@ -788,9 +788,7 @@ class BauhausActionButton extends StatelessWidget {
           ),
         ),
       ),
-    )
-        .animate(target: onPressed != null ? 1 : 0)
-        .scale(begin: const Offset(1, 1), end: const Offset(1.02, 1.02));
+    );
   }
 }
 
