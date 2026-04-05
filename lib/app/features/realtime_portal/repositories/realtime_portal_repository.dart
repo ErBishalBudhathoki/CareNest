@@ -95,6 +95,14 @@ class RealtimePortalRepository {
     return map;
   }
 
+  String _cleanErrorMessage(Object error) {
+    var message = error.toString().trim();
+    while (message.startsWith('Exception: ')) {
+      message = message.substring('Exception: '.length).trim();
+    }
+    return message;
+  }
+
   // ============================================================================
   // Real-Time Tracking Methods
   // ============================================================================
@@ -447,9 +455,13 @@ class RealtimePortalRepository {
         );
       }
 
-      throw Exception(response['message'] ?? 'Failed to invite family member');
+      throw Exception(
+        response['error']?.toString() ??
+            response['message']?.toString() ??
+            'Failed to invite family member',
+      );
     } catch (e) {
-      throw Exception('Error inviting family member: $e');
+      throw Exception(_cleanErrorMessage(e));
     }
   }
 
