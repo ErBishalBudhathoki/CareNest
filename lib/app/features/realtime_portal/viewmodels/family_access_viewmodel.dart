@@ -50,6 +50,14 @@ class FamilyAccessViewModel extends StateNotifier<FamilyAccessState> {
 
   FamilyAccessViewModel(this._repository) : super(FamilyAccessState());
 
+  String _cleanErrorMessage(Object error) {
+    var message = error.toString().trim();
+    while (message.startsWith('Exception: ')) {
+      message = message.substring('Exception: '.length).trim();
+    }
+    return message;
+  }
+
   /// Invite family member
   Future<void> inviteFamilyMember({
     required String clientId,
@@ -81,7 +89,7 @@ class FamilyAccessViewModel extends StateNotifier<FamilyAccessState> {
       debugPrint('Error inviting family member: $e');
       state = state.copyWith(
         isInviting: false,
-        error: e.toString(),
+        error: _cleanErrorMessage(e),
       );
     }
   }
