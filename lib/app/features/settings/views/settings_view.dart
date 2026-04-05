@@ -8,6 +8,7 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/services/firebase_auth_service.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,8 +20,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:carenest/app/features/settings/views/date_format_settings_view.dart';
 import 'package:carenest/app/features/photo/views/photo_upload_view.dart';
 import 'package:carenest/app/features/feedback/views/feedback_form_view.dart';
+import 'package:carenest/app/features/requests/models/request_model.dart';
+import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
 import 'package:carenest/app/features/settings/widgets/bauhaus_settings_widgets.dart';
+import 'package:carenest/config/environment.dart';
 
 /// Modernized Settings View using Bauhaus Design System
 class SettingsView extends ConsumerStatefulWidget {
@@ -59,6 +63,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Uint8List? _currentPhotoData;
   bool _isEmailVerified = false;
   bool _isEmailVerificationLoading = false;
+  bool _isDeletingAccount = false;
 
   @override
   void initState() {
@@ -81,6 +86,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   void _handleSecretTap() {
+    final canOpenSecurityDashboard = !kReleaseMode && !AppConfig.isProduction;
+
     final now = DateTime.now();
     if (_lastTapTime == null ||
         now.difference(_lastTapTime!) > const Duration(seconds: 1)) {
@@ -91,7 +98,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
     if (_secretTapCount >= 7) {
       _secretTapCount = 0;
-      if (_isOwner) {
+      if (_isOwner && canOpenSecurityDashboard) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -228,18 +235,100 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         content: AppLocalizations.of(context)!.deleteAccountConfirmMessage,
         confirmText: AppLocalizations.of(context)!.deleteButton,
         confirmColor: BauhausDesign.error,
-        confirmAction: () {
+        confirmAction: () async {
           Navigator.pop(context);
-          // TODO: Add delete account logic
+          await _deleteAccount();
         },
       ),
     );
+  }
+
+  Future<void> _deleteAccount() async {
+    if (_isDeletingAccount) return;
+
+    setState(() {
+      _isDeletingAccount = true;
+    });
+
+    try {
+      final submitted = await _submitAccountDeletionRequest();
+      if (!submitted || !mounted) return;
+      _showSettingsSnackBar(
+        'Deletion requested. You have been signed out. After approval, the account is deactivated and records required for payroll, tax, audit, and care obligations are retained for up to 90 days before permanent deletion.',
+      );
+      await Future.delayed(const Duration(milliseconds: 900));
+      if (!mounted) return;
+      await _performLogout(context);
+    } catch (e) {
+      _showSettingsSnackBar(
+        'Failed to start account deletion: $e',
+        isError: true,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDeletingAccount = false;
+        });
+      }
+    }
+  }
+
+  Future<bool> _submitAccountDeletionRequest() async {
+    final currentUser = _firebaseAuthService.currentUser;
+    final organizationId =
+        widget.organizationId ?? ref.read(organizationIdProvider);
+
+    if (currentUser == null ||
+        organizationId == null ||
+        organizationId.isEmpty) {
+      if (!mounted) return false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.somethingWentWrong),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+      return false;
+    }
+
+    try {
+      final request = RequestModel(
+        organizationId: organizationId,
+        userId: currentUser.uid,
+        type: 'ACCOUNT_DELETION',
+        status: RequestStatus.pending,
+        details: {
+          'reason':
+              'User initiated account deletion from settings with 90-day retention',
+          'email': widget.userEmail,
+          'retentionDays': 90,
+          'retentionReason':
+              'Payroll, tax, audit, and care-service record obligations',
+          'deactivateOnApproval': true,
+          'requestedAt': DateTime.now().toIso8601String(),
+        },
+      );
+
+      await ref
+          .read(requestRepositoryProvider)
+          .createRequest(request, widget.userEmail);
+      return true;
+    } catch (e) {
+      _showSettingsSnackBar(
+        'Failed to start account deletion: $e',
+        isError: true,
+      );
+      return false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final userRole = ref.watch(userRoleProvider);
     final isClient = userRole == UserRole.client;
+    final isProductionFlavor = AppConfig.isProduction;
+    final showSecurityDashboard = !kReleaseMode && !isProductionFlavor;
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -364,25 +453,29 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     _buildSettingsSection(
                       title: AppLocalizations.of(context)!.workerSection,
                       items: [
-                        _buildSettingsItem(
-                          icon: Icons.dashboard_outlined,
-                          color: BauhausDesign.secondary,
-                          title: AppLocalizations.of(context)!.workerDashboardTitle,
-                          subtitle: AppLocalizations.of(context)!
-                              .workerDashboardSubtitle,
-                          onTap: () {
-                            Navigator.pushNamed(context, Routes.workerDashboard);
-                          },
-                        ),
+                        if (!isProductionFlavor)
+                          _buildSettingsItem(
+                            icon: Icons.dashboard_outlined,
+                            color: BauhausDesign.secondary,
+                            title: AppLocalizations.of(context)!
+                                .workerDashboardTitle,
+                            subtitle: AppLocalizations.of(context)!
+                                .workerDashboardSubtitle,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, Routes.workerDashboard);
+                            },
+                          ),
                         _buildSettingsItem(
                           icon: Icons.history_outlined,
                           color: BauhausDesign.primary,
-                          title:
-                              AppLocalizations.of(context)!.workerShiftHistoryTitle,
+                          title: AppLocalizations.of(context)!
+                              .workerShiftHistoryTitle,
                           subtitle: AppLocalizations.of(context)!
                               .workerShiftHistorySubtitle,
                           onTap: () {
-                            Navigator.pushNamed(context, Routes.workerShiftHistory);
+                            Navigator.pushNamed(
+                                context, Routes.workerShiftHistory);
                           },
                         ),
                       ],
@@ -467,23 +560,24 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               .adminDashboardSubtitle,
                           onTap: _openAdminDashboardMode,
                         ),
-                        _buildSettingsItem(
-                          icon: Icons.shield_outlined,
-                          color: BauhausDesign.success,
-                          title:
-                              AppLocalizations.of(context)!.securityDashboard,
-                          subtitle: AppLocalizations.of(context)!
-                              .securityDashboardSubtitle,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ApiUsageDashboardView(),
-                              ),
-                            );
-                          },
-                        ),
+                        if (showSecurityDashboard)
+                          _buildSettingsItem(
+                            icon: Icons.shield_outlined,
+                            color: BauhausDesign.success,
+                            title:
+                                AppLocalizations.of(context)!.securityDashboard,
+                            subtitle: AppLocalizations.of(context)!
+                                .securityDashboardSubtitle,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ApiUsageDashboardView(),
+                                ),
+                              );
+                            },
+                          ),
                         if ((widget.organizationId ?? '').isNotEmpty &&
                             (widget.organizationName ?? '').isNotEmpty)
                           _buildSettingsItem(
@@ -784,22 +878,30 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         return;
       }
 
-      final apiMethod = ref.read(apiMethodProvider);
-      final response = await apiMethod.resendEmailVerificationOtp(targetEmail);
-      final isSuccess =
-          response['success'] == true || response['statusCode'] == 200;
+      try {
+        await _firebaseAuthService.sendEmailVerification();
+        _showSettingsSnackBar(
+          'Verification link sent. Open the link from your email.',
+        );
+      } catch (_) {
+        final apiMethod = ref.read(apiMethodProvider);
+        final response =
+            await apiMethod.resendEmailVerificationOtp(targetEmail);
+        final isSuccess =
+            response['success'] == true || response['statusCode'] == 200;
 
-      if (!isSuccess) {
-        final message = response['message']?.toString() ??
-            'Failed to send verification link.';
-        _showSettingsSnackBar(message, isError: true);
-        return;
+        if (!isSuccess) {
+          final message = response['message']?.toString() ??
+              'Failed to send verification link.';
+          _showSettingsSnackBar(message, isError: true);
+          return;
+        }
+
+        _showSettingsSnackBar(
+          response['message']?.toString() ??
+              'Verification link sent. Open the link from your email.',
+        );
       }
-
-      _showSettingsSnackBar(
-        response['message']?.toString() ??
-            'Verification link sent. Open the link from your email.',
-      );
     } catch (e) {
       _showSettingsSnackBar('Failed to send verification link: $e',
           isError: true);
