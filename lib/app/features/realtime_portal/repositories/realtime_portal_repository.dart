@@ -31,6 +31,70 @@ class RealtimePortalRepository {
     return map;
   }
 
+  Map<String, dynamic> _normalizeFamilyPermissions(
+      Map<String, dynamic>? input) {
+    final map = Map<String, dynamic>.from(input ?? const {});
+    return {
+      'viewAppointments': map['viewAppointments'] == true,
+      'viewDocuments': map['viewDocuments'] == true,
+      'viewInvoices': map['viewInvoices'] == true,
+      'editProfile': map['editProfile'] == true,
+      'approveServices': map['approveServices'] == true,
+      'manageFamily': map['manageFamily'] == true,
+      'viewMessages': map['viewMessages'] == true,
+      'sendMessages': map['sendMessages'] == true,
+      'viewLocation': map['viewLocation'] == true,
+      'receiveNotifications': map['receiveNotifications'] == true,
+    };
+  }
+
+  Map<String, dynamic> _normalizeFamilyMember(Map<String, dynamic> input) {
+    final map = Map<String, dynamic>.from(input);
+    map['id'] = (map['id'] ?? map['_id'] ?? '').toString();
+    map['userId'] = (map['userId'] ?? '').toString();
+    map['clientId'] = (map['clientId'] ?? '').toString();
+    map['name'] = (map['name'] ?? '').toString();
+    map['email'] = (map['email'] ?? '').toString();
+    map['relationship'] = (map['relationship'] ?? 'family').toString();
+    map['role'] = (map['role'] ?? 'family').toString();
+    map['status'] = (map['status'] ?? 'pending').toString();
+    map['joinedAt'] = _toIsoString(map['joinedAt']);
+    if (map['updatedAt'] != null) {
+      map['updatedAt'] = _toIsoString(map['updatedAt']);
+    }
+    map['permissions'] = _normalizeFamilyPermissions(
+      map['permissions'] is Map<String, dynamic>
+          ? map['permissions'] as Map<String, dynamic>
+          : map['permissions'] is Map
+              ? Map<String, dynamic>.from(map['permissions'] as Map)
+              : null,
+    );
+    return map;
+  }
+
+  Map<String, dynamic> _normalizeFamilyInvitation(Map<String, dynamic> input) {
+    final map = Map<String, dynamic>.from(input);
+    map['id'] = (map['id'] ?? map['_id'] ?? '').toString();
+    map['clientId'] = (map['clientId'] ?? '').toString();
+    map['invitedBy'] = (map['invitedBy'] ?? '').toString();
+    map['email'] = (map['email'] ?? '').toString();
+    map['name'] = (map['name'] ?? '').toString();
+    map['relationship'] = (map['relationship'] ?? 'family').toString();
+    map['role'] = (map['role'] ?? 'family').toString();
+    map['status'] = (map['status'] ?? 'pending').toString();
+    map['invitedAt'] = _toIsoString(map['invitedAt']);
+    map['expiresAt'] = _toIsoString(map['expiresAt']);
+    map['token'] = (map['token'] ?? '').toString();
+    map['permissions'] = _normalizeFamilyPermissions(
+      map['permissions'] is Map<String, dynamic>
+          ? map['permissions'] as Map<String, dynamic>
+          : map['permissions'] is Map
+              ? Map<String, dynamic>.from(map['permissions'] as Map)
+              : null,
+    );
+    return map;
+  }
+
   // ============================================================================
   // Real-Time Tracking Methods
   // ============================================================================
@@ -376,7 +440,11 @@ class RealtimePortalRepository {
       );
 
       if (response['success'] == true && response['data'] != null) {
-        return FamilyInvitation.fromJson(response['data']);
+        return FamilyInvitation.fromJson(
+          _normalizeFamilyInvitation(
+            Map<String, dynamic>.from(response['data'] as Map),
+          ),
+        );
       }
 
       throw Exception(response['message'] ?? 'Failed to invite family member');
@@ -396,7 +464,14 @@ class RealtimePortalRepository {
 
       if (response['success'] == true && response['data'] != null) {
         final members = response['data'] as List;
-        return members.map((m) => FamilyMember.fromJson(m)).toList();
+        return members
+            .whereType<Map>()
+            .map(
+              (m) => FamilyMember.fromJson(
+                _normalizeFamilyMember(Map<String, dynamic>.from(m)),
+              ),
+            )
+            .toList();
       }
 
       throw Exception(response['message'] ?? 'Failed to get family members');
@@ -421,7 +496,11 @@ class RealtimePortalRepository {
       );
 
       if (response['success'] == true && response['data'] != null) {
-        return FamilyMember.fromJson(response['data']);
+        return FamilyMember.fromJson(
+          _normalizeFamilyMember(
+            Map<String, dynamic>.from(response['data'] as Map),
+          ),
+        );
       }
 
       throw Exception(response['message'] ?? 'Failed to update permissions');
@@ -446,7 +525,11 @@ class RealtimePortalRepository {
       );
 
       if (response['success'] == true && response['data'] != null) {
-        return FamilyMember.fromJson(response['data']);
+        return FamilyMember.fromJson(
+          _normalizeFamilyMember(
+            Map<String, dynamic>.from(response['data'] as Map),
+          ),
+        );
       }
 
       throw Exception(response['message'] ?? 'Failed to update family member');
