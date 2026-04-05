@@ -34,7 +34,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   @override
   void initState() {
     super.initState();
-    _loadFamilyMembers();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _loadFamilyMembers();
+    });
   }
 
   Future<void> _loadFamilyMembers() async {
