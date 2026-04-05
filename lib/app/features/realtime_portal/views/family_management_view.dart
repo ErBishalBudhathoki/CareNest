@@ -5,6 +5,7 @@ import 'package:carenest/app/features/realtime_portal/models/realtime_portal_mod
 import 'package:carenest/app/features/realtime_portal/viewmodels/family_access_viewmodel.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +26,7 @@ class FamilyManagementView extends ConsumerStatefulWidget {
 }
 
 class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
-  DropdownMenuItem<String> _buildRelationshipOption(
+  DropdownMenuItem<String> _buildDropdownOption(
     String value,
     String label,
   ) {
@@ -354,13 +355,13 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         label: 'Relationship',
                         value: selectedRelationship,
                         items: [
-                          _buildRelationshipOption('guardian', 'Guardian'),
-                          _buildRelationshipOption('spouse', 'Spouse'),
-                          _buildRelationshipOption('parent', 'Parent'),
-                          _buildRelationshipOption('sibling', 'Sibling'),
-                          _buildRelationshipOption('child', 'Child'),
-                          _buildRelationshipOption('family', 'Family'),
-                          _buildRelationshipOption('other', 'Other'),
+                          _buildDropdownOption('guardian', 'Guardian'),
+                          _buildDropdownOption('spouse', 'Spouse'),
+                          _buildDropdownOption('parent', 'Parent'),
+                          _buildDropdownOption('sibling', 'Sibling'),
+                          _buildDropdownOption('child', 'Child'),
+                          _buildDropdownOption('family', 'Family'),
+                          _buildDropdownOption('other', 'Other'),
                         ],
                         onChanged: (value) {
                           setDialogState(
@@ -371,13 +372,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       _buildSelectField(
                         label: 'Access Role',
                         value: selectedRole,
-                        items: const [
-                          DropdownMenuItem(
-                              value: 'family', child: Text('Family')),
-                          DropdownMenuItem(
-                              value: 'guardian', child: Text('Guardian')),
-                          DropdownMenuItem(
-                              value: 'viewer', child: Text('Viewer')),
+                        items: [
+                          _buildDropdownOption('family', 'Family'),
+                          _buildDropdownOption('guardian', 'Guardian'),
+                          _buildDropdownOption('viewer', 'Viewer'),
                         ],
                         onChanged: (value) {
                           setDialogState(() {
@@ -541,18 +539,35 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     required ValueChanged<FamilyPermissions> onChanged,
   }) {
     Widget tile(String label, bool value, FamilyPermissions nextValue) {
-      return SwitchListTile.adaptive(
-        contentPadding: EdgeInsets.zero,
-        dense: true,
-        title: Text(
-          label,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+      return Container(
+        margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
+        padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space3,
+          vertical: BauhausDesign.space2,
         ),
-        value: value,
-        activeColor: BauhausDesign.primary,
-        onChanged: (_) => onChanged(nextValue),
+        decoration: BoxDecoration(
+          color: BauhausDesign.surfaceWhite,
+          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+            const SizedBox(width: BauhausDesign.space3),
+            BauhausSwitch(
+              value: value,
+              variant: BauhausSwitchVariant.primary,
+              onChanged: (_) => onChanged(nextValue),
+            ),
+          ],
+        ),
       );
     }
 
