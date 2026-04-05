@@ -1077,7 +1077,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           children: [
             Text(
               'Family Access',
-              style: BauhausDesign.getTextTheme(context).titleLarge,
+              style: BauhausDesign.getTextTheme(context)
+                  .titleLarge
+                  ?.copyWith(color: BauhausDesign.textDark),
             ),
             if ((widget.clientName ?? '').trim().isNotEmpty)
               Text(
