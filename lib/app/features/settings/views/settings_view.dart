@@ -878,30 +878,22 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         return;
       }
 
-      try {
-        await _firebaseAuthService.sendEmailVerification();
-        _showSettingsSnackBar(
-          'Verification link sent. Open the link from your email.',
-        );
-      } catch (_) {
-        final apiMethod = ref.read(apiMethodProvider);
-        final response =
-            await apiMethod.resendEmailVerificationOtp(targetEmail);
-        final isSuccess =
-            response['success'] == true || response['statusCode'] == 200;
+      final apiMethod = ref.read(apiMethodProvider);
+      final response = await apiMethod.resendEmailVerificationOtp(targetEmail);
+      final isSuccess =
+          response['success'] == true || response['statusCode'] == 200;
 
-        if (!isSuccess) {
-          final message = response['message']?.toString() ??
-              'Failed to send verification link.';
-          _showSettingsSnackBar(message, isError: true);
-          return;
-        }
-
-        _showSettingsSnackBar(
-          response['message']?.toString() ??
-              'Verification link sent. Open the link from your email.',
-        );
+      if (!isSuccess) {
+        final message = response['message']?.toString() ??
+            'Failed to send verification link.';
+        _showSettingsSnackBar(message, isError: true);
+        return;
       }
+
+      _showSettingsSnackBar(
+        response['message']?.toString() ??
+            'Verification link sent. Open the link from your email.',
+      );
     } catch (e) {
       _showSettingsSnackBar('Failed to send verification link: $e',
           isError: true);
