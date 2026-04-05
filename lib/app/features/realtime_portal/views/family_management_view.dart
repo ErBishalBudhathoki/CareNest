@@ -25,6 +25,22 @@ class FamilyManagementView extends ConsumerStatefulWidget {
 }
 
 class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
+  DropdownMenuItem<String> _buildRelationshipOption(
+    String value,
+    String label,
+  ) {
+    return DropdownMenuItem(
+      value: value,
+      child: Text(
+        label,
+        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
+            ),
+      ),
+    );
+  }
+
   String? get _resolvedClientId {
     final clientId = widget.clientId?.trim();
     if (clientId == null || clientId.isEmpty) return null;
@@ -337,21 +353,14 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       _buildSelectField(
                         label: 'Relationship',
                         value: selectedRelationship,
-                        items: const [
-                          DropdownMenuItem(
-                              value: 'guardian', child: Text('Guardian')),
-                          DropdownMenuItem(
-                              value: 'spouse', child: Text('Spouse')),
-                          DropdownMenuItem(
-                              value: 'parent', child: Text('Parent')),
-                          DropdownMenuItem(
-                              value: 'sibling', child: Text('Sibling')),
-                          DropdownMenuItem(
-                              value: 'child', child: Text('Child')),
-                          DropdownMenuItem(
-                              value: 'family', child: Text('Family')),
-                          DropdownMenuItem(
-                              value: 'other', child: Text('Other')),
+                        items: [
+                          _buildRelationshipOption('guardian', 'Guardian'),
+                          _buildRelationshipOption('spouse', 'Spouse'),
+                          _buildRelationshipOption('parent', 'Parent'),
+                          _buildRelationshipOption('sibling', 'Sibling'),
+                          _buildRelationshipOption('child', 'Child'),
+                          _buildRelationshipOption('family', 'Family'),
+                          _buildRelationshipOption('other', 'Other'),
                         ],
                         onChanged: (value) {
                           setDialogState(
