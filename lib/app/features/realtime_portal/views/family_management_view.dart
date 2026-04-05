@@ -393,86 +393,87 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       const SizedBox(height: BauhausDesign.space5),
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          final sendInviteButton = BauhausActionButton(
-                            text: inviteState.isInviting
-                                ? 'Sending...'
-                                : 'Send Invite',
-                            icon: inviteState.isInviting
-                                ? null
-                                : Icons.send_rounded,
-                            variant: BauhausActionVariant.warning,
-                            isLoading: inviteState.isInviting,
-                            onPressed: inviteState.isInviting
-                                ? null
-                                : () async {
-                                    if (!(formKey.currentState?.validate() ??
-                                        false)) {
-                                      return;
-                                    }
+                          final isCompact = constraints.maxWidth < 420;
+                          final buttonWidth =
+                              isCompact ? double.infinity : 168.0;
 
-                                    final actorEmail =
-                                        await _resolveActorEmail();
-                                    await ref
-                                        .read(familyAccessViewModelProvider
-                                            .notifier)
-                                        .inviteFamilyMember(
-                                          clientId: clientId,
-                                          invitedBy: actorEmail,
-                                          email: emailController.text.trim(),
-                                          name: nameController.text.trim(),
-                                          relationship: selectedRelationship,
-                                          role: selectedRole,
-                                          permissions: draftPermissions,
-                                        );
-
-                                    final updatedState =
-                                        ref.read(familyAccessViewModelProvider);
-                                    if (updatedState.error != null) {
-                                      _showSnackBar(
-                                        updatedState.error!,
-                                        isError: true,
-                                      );
-                                      return;
-                                    }
-
-                                    if (!mounted) return;
-                                    Navigator.of(dialogContext).pop();
-                                    await _loadFamilyMembers();
-                                    _showSnackBar(
-                                      'Invitation sent to ${emailController.text.trim()}',
-                                    );
-                                  },
+                          final cancelButton = SizedBox(
+                            width: buttonWidth,
+                            child: BauhausActionButton(
+                              text: 'Cancel',
+                              variant: BauhausActionVariant.neutral,
+                              isSmall: true,
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
+                            ),
                           );
 
-                          if (constraints.maxWidth < 420) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                          final sendInviteButton = SizedBox(
+                            width: buttonWidth,
+                            child: BauhausActionButton(
+                              text: inviteState.isInviting
+                                  ? 'Sending...'
+                                  : 'Send Invite',
+                              icon: inviteState.isInviting
+                                  ? null
+                                  : Icons.send_rounded,
+                              variant: BauhausActionVariant.warning,
+                              isSmall: true,
+                              isLoading: inviteState.isInviting,
+                              onPressed: inviteState.isInviting
+                                  ? null
+                                  : () async {
+                                      if (!(formKey.currentState?.validate() ??
+                                          false)) {
+                                        return;
+                                      }
+
+                                      final actorEmail =
+                                          await _resolveActorEmail();
+                                      await ref
+                                          .read(familyAccessViewModelProvider
+                                              .notifier)
+                                          .inviteFamilyMember(
+                                            clientId: clientId,
+                                            invitedBy: actorEmail,
+                                            email: emailController.text.trim(),
+                                            name: nameController.text.trim(),
+                                            relationship: selectedRelationship,
+                                            role: selectedRole,
+                                            permissions: draftPermissions,
+                                          );
+
+                                      final updatedState = ref
+                                          .read(familyAccessViewModelProvider);
+                                      if (updatedState.error != null) {
+                                        _showSnackBar(
+                                          updatedState.error!,
+                                          isError: true,
+                                        );
+                                        return;
+                                      }
+
+                                      if (!mounted) return;
+                                      Navigator.of(dialogContext).pop();
+                                      await _loadFamilyMembers();
+                                      _showSnackBar(
+                                        'Invitation sent to ${emailController.text.trim()}',
+                                      );
+                                    },
+                            ),
+                          );
+
+                          return Align(
+                            alignment: Alignment.centerRight,
+                            child: Wrap(
+                              spacing: BauhausDesign.space3,
+                              runSpacing: BauhausDesign.space3,
+                              alignment: WrapAlignment.end,
                               children: [
-                                BauhausActionButton(
-                                  text: 'Cancel',
-                                  variant: BauhausActionVariant.neutral,
-                                  onPressed: () =>
-                                      Navigator.of(dialogContext).pop(),
-                                ),
-                                const SizedBox(height: BauhausDesign.space3),
+                                cancelButton,
                                 sendInviteButton,
                               ],
-                            );
-                          }
-
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: BauhausActionButton(
-                                  text: 'Cancel',
-                                  variant: BauhausActionVariant.neutral,
-                                  onPressed: () =>
-                                      Navigator.of(dialogContext).pop(),
-                                ),
-                              ),
-                              const SizedBox(width: BauhausDesign.space3),
-                              Expanded(child: sendInviteButton),
-                            ],
+                            ),
                           );
                         },
                       ),
