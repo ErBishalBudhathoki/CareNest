@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
 import 'package:carenest/app/features/feedback/views/feedback_form_view.dart';
+import 'package:carenest/app/services/firebase_auth_service.dart';
 import 'package:carenest/backend/api_method.dart';
 
 /// Comprehensive error handling service for authentication
@@ -447,31 +448,39 @@ class AuthErrorHandler {
     String? email,
   ) async {
     final targetEmail = email?.trim().toLowerCase();
+    final firebaseAuthService = FirebaseAuthService();
 
     try {
       if (targetEmail == null || targetEmail.isEmpty) {
         throw Exception('Please enter a valid email and try again.');
       }
 
-      final response =
-          await ApiMethod().resendEmailVerificationOtp(targetEmail);
-      final isSuccess =
-          response['success'] == true || response['statusCode'] == 200;
+      final signedInUser = firebaseAuthService.currentUser;
+      final signedInEmail = signedInUser?.email?.trim().toLowerCase();
+      String successMessage = 'Verification link sent to $targetEmail.';
 
-      if (!isSuccess) {
-        throw Exception(
-          response['message']?.toString() ??
-              'Failed to send verification link.',
-        );
+      if (signedInUser != null && signedInEmail == targetEmail) {
+        await firebaseAuthService.sendEmailVerification();
+      } else {
+        final response =
+            await ApiMethod().resendEmailVerificationOtp(targetEmail);
+        final isSuccess =
+            response['success'] == true || response['statusCode'] == 200;
+
+        if (!isSuccess) {
+          throw Exception(
+            response['message']?.toString() ??
+                'Failed to send verification link.',
+          );
+        }
+
+        successMessage = response['message']?.toString() ?? successMessage;
       }
 
       if (context.mounted) {
         ScaffoldMessenger.maybeOf(context)?.showSnackBar(
           SnackBar(
-            content: Text(
-              response['message']?.toString() ??
-                  'Verification link sent to $targetEmail.',
-            ),
+            content: Text(successMessage),
             backgroundColor: Colors.green,
           ),
         );
