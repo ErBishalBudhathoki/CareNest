@@ -60,7 +60,6 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
       body: Column(
         children: [
           _buildHeader(context),
-          _buildQuickActions(context),
           Expanded(child: _buildPages(context)[_currentIndex]),
         ],
       ),
@@ -92,65 +91,56 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
             horizontal: BauhausDesign.space4,
             vertical: BauhausDesign.space3,
           ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final isCompact = constraints.maxWidth < 460;
-
-              final brandBlock = Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(BauhausDesign.space2),
-                    decoration: BoxDecoration(
-                      color: BauhausDesign.primary.withOpacity(0.1),
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
-                      border:
-                          Border.all(color: BauhausDesign.primary, width: 2),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space2),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: BauhausDesign.primary, width: 2),
+                ),
+                child: const Icon(
+                  Icons.person_outline,
+                  color: BauhausDesign.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CLIENT DASHBOARD',
+                      style: GoogleFonts.oswald(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: BauhausDesign.textDark,
+                        letterSpacing: 1.2,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.person_outline,
-                      color: BauhausDesign.primary,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: BauhausDesign.space3),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'CLIENT DASHBOARD',
-                          style: GoogleFonts.oswald(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
-                            letterSpacing: 1.2,
+                    Text(
+                      'Manage services, invoices, and appointments',
+                      style: BauhausDesign.getTextTheme(context)
+                          .bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
                           ),
-                        ),
-                        Text(
-                          'Manage services, invoices, and appointments',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodySmall
-                              ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                              ),
-                        ),
-                      ],
                     ),
-                  ),
-                ],
-              );
-
-              final familyButton = BauhausActionButton(
+                  ],
+                ),
+              ),
+              BauhausActionButton(
                 onPressed: () => _openFamilyAccess(context),
                 text: 'Family',
                 icon: Icons.family_restroom_outlined,
                 variant: BauhausActionVariant.secondary,
                 isOutlined: true,
                 isSmall: true,
-              );
-
-              final logoutButton = BauhausIconButton(
+              ),
+              const SizedBox(width: BauhausDesign.space2),
+              BauhausIconButton(
                 onPressed: () async {
                   await SessionTimeoutService().logoutAndClearSession(
                     reason: 'manual_logout_from_client_portal',
@@ -164,111 +154,9 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                 icon: Icons.logout,
                 variant: BauhausActionVariant.neutral,
                 tooltip: 'Logout',
-              );
-
-              if (isCompact) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    brandBlock,
-                    const SizedBox(height: BauhausDesign.space3),
-                    Row(
-                      children: [
-                        Expanded(child: familyButton),
-                        const SizedBox(width: BauhausDesign.space2),
-                        logoutButton,
-                      ],
-                    ),
-                  ],
-                );
-              }
-
-              return Row(
-                children: [
-                  Expanded(child: brandBlock),
-                  const SizedBox(width: BauhausDesign.space3),
-                  familyButton,
-                  const SizedBox(width: BauhausDesign.space2),
-                  logoutButton,
-                ],
-              );
-            },
+              ),
+            ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickActions(BuildContext context) {
-    final hasClientContext =
-        widget.clientId != null && widget.clientId!.trim().isNotEmpty;
-
-    return Container(
-      width: double.infinity,
-      color: BauhausDesign.backgroundLight,
-      padding: const EdgeInsets.fromLTRB(
-        BauhausDesign.space4,
-        BauhausDesign.space3,
-        BauhausDesign.space4,
-        0,
-      ),
-      child: BauhausCard(
-        backgroundColor: BauhausDesign.warning,
-        borderColor: BauhausDesign.neutral,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(BauhausDesign.space2),
-              decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-              ),
-              child: const Icon(
-                Icons.family_restroom_outlined,
-                color: BauhausDesign.textDark,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: BauhausDesign.space3),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'FAMILY ACCESS',
-                    style: GoogleFonts.oswald(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: BauhausDesign.textDark,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  const SizedBox(height: BauhausDesign.space1),
-                  Text(
-                    'Invite relatives and manage exactly what they can see.',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(color: BauhausDesign.textDark),
-                  ),
-                  const SizedBox(height: BauhausDesign.space3),
-                  BauhausActionButton(
-                    onPressed:
-                        hasClientContext ? () => _openFamilyAccess(context) : null,
-                    text: hasClientContext
-                        ? 'MANAGE FAMILY ACCESS'
-                        : 'CLIENT REQUIRED',
-                    icon: hasClientContext
-                        ? Icons.arrow_forward
-                        : Icons.info_outline,
-                    variant: BauhausActionVariant.secondary,
-                    isFullWidth: true,
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
