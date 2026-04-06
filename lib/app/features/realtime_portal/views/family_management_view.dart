@@ -26,6 +26,8 @@ class FamilyManagementView extends ConsumerStatefulWidget {
 }
 
 class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
+  final Set<String> _activeMemberActions = <String>{};
+
   DropdownMenuItem<String> _buildDropdownOption(
     String value,
     String label,
@@ -66,6 +68,21 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     await ref
         .read(familyAccessViewModelProvider.notifier)
         .getFamilyMembers(clientId: clientId);
+  }
+
+  bool _isActionInProgress(String actionKey) {
+    return _activeMemberActions.contains(actionKey);
+  }
+
+  void _setActionInProgress(String actionKey, bool value) {
+    if (!mounted) return;
+    setState(() {
+      if (value) {
+        _activeMemberActions.add(actionKey);
+      } else {
+        _activeMemberActions.remove(actionKey);
+      }
+    });
   }
 
   bool _isFamilyActor(User user) {
@@ -1007,6 +1024,39 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     );
   }
 
+  Future<void> _resendInvite(FamilyMember member) async {
+    final clientId = _resolvedClientId;
+    if (clientId == null || member.status != 'pending') return;
+
+    final actionKey = 'resend:${member.id}';
+    if (_isActionInProgress(actionKey)) return;
+
+    _setActionInProgress(actionKey, true);
+    try {
+      final actorEmail = await _resolveActorEmail();
+      await ref.read(familyAccessViewModelProvider.notifier).inviteFamilyMember(
+            clientId: clientId,
+            invitedBy: actorEmail,
+            email: member.email,
+            name: member.name,
+            relationship: member.relationship,
+            role: member.role,
+            permissions: member.permissions,
+          );
+
+      final updatedState = ref.read(familyAccessViewModelProvider);
+      if (updatedState.error != null) {
+        _showSnackBar(updatedState.error!, isError: true);
+        return;
+      }
+
+      await _loadFamilyMembers();
+      _showSnackBar('Invitation resent to ${member.email}');
+    } finally {
+      _setActionInProgress(actionKey, false);
+    }
+  }
+
   Widget _buildHeroCard(FamilyAccessState state, bool canManageMembers) {
     final activeCount =
         state.members.where((member) => member.status == 'active').length;
@@ -1083,24 +1133,61 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       {required bool canManageMembers}) {
     final isInactive = member.status == 'inactive';
     final isPending = member.status == 'pending';
+    final statusTone = isInactive
+        ? BauhausDesign.error
+        : (isPending ? BauhausDesign.warning : BauhausDesign.primary);
+    final resendActionKey = 'resend:${member.id}';
+    final isResending = _isActionInProgress(resendActionKey);
 
     return BauhausCard(
       margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space3,
+              vertical: BauhausDesign.space2,
+            ),
+            decoration: BoxDecoration(
+              color: statusTone,
+              border: Border(
+                bottom: BorderSide(
+                  color: BauhausDesign.neutral,
+                  width: 2,
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  isPending
+                      ? 'INVITE PENDING'
+                      : (isInactive ? 'ACCESS PAUSED' : 'ACCESS ACTIVE'),
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.8,
+                      ),
+                ),
+                const Spacer(),
+                _buildStatusBadge(member.status),
+              ],
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(
-                    color: BauhausDesign.primary.withOpacity(0.25),
-                  ),
+                  color: BauhausDesign.surfaceOffWhite,
+                  border: Border.all(color: BauhausDesign.textDark, width: 2),
                 ),
                 alignment: Alignment.center,
                 child: Text(
@@ -1108,7 +1195,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   style: BauhausDesign.getTextTheme(context)
                       .headlineMedium
                       ?.copyWith(
-                        color: BauhausDesign.primary,
+                        color: statusTone,
                         fontWeight: FontWeight.w900,
                       ),
                 ),
@@ -1120,84 +1207,143 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   children: [
                     Text(
                       member.name,
-                      style: BauhausDesign.getTextTheme(context).titleLarge,
+                      style: BauhausDesign.getTextTheme(context)
+                          .titleLarge
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w900,
+                          ),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       '${_relationshipLabel(member.relationship)} • ${_roleLabel(member.role)}',
                       style: BauhausDesign.getTextTheme(context)
                           .bodyMedium
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
-                    const SizedBox(height: BauhausDesign.space2),
-                    _buildInfoRow(
-                      icon: Icons.email_outlined,
-                      text: member.email,
-                    ),
-                    if (member.updatedAt != null) ...[
-                      const SizedBox(height: BauhausDesign.space1),
-                      _buildInfoRow(
-                        icon: Icons.history_toggle_off_rounded,
-                        text:
-                            'Updated ${member.updatedAt!.toLocal().toString().substring(0, 16)}',
-                      ),
-                    ],
                   ],
                 ),
               ),
-              _buildStatusBadge(member.status),
             ],
           ),
           const SizedBox(height: BauhausDesign.space4),
-          Divider(color: BauhausDesign.neutral.withOpacity(0.25), height: 1),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(BauhausDesign.space3),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceOffWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoRow(
+                  icon: Icons.email_outlined,
+                  text: member.email,
+                ),
+                if (member.updatedAt != null) ...[
+                  const SizedBox(height: BauhausDesign.space2),
+                  _buildInfoRow(
+                    icon: Icons.history_toggle_off_rounded,
+                    text:
+                        'Updated ${member.updatedAt!.toLocal().toString().substring(0, 16)}',
+                  ),
+                ],
+              ],
+            ),
+          ),
           const SizedBox(height: BauhausDesign.space4),
           Text(
-            'Permissions',
+            'PERMISSION MATRIX',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.8,
                 ),
           ),
           const SizedBox(height: BauhausDesign.space3),
-          Wrap(
-            spacing: BauhausDesign.space2,
-            runSpacing: BauhausDesign.space2,
-            children: _buildPermissionChips(member.permissions),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(BauhausDesign.space3),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+            ),
+            child: Wrap(
+              spacing: BauhausDesign.space2,
+              runSpacing: BauhausDesign.space2,
+              children: _buildPermissionChips(member.permissions),
+            ),
           ),
           if (canManageMembers) ...[
             const SizedBox(height: BauhausDesign.space5),
-            Row(
-              children: [
-                Expanded(
-                  child: BauhausActionButton(
-                    text: 'Manage Permissions',
-                    icon: Icons.tune_rounded,
-                    variant: BauhausActionVariant.secondary,
-                    isSmall: true,
-                    onPressed: () => _showPermissionsDialog(member),
-                  ),
-                ),
-                const SizedBox(width: BauhausDesign.space3),
-                Expanded(
-                  child: BauhausActionButton(
-                    text: isInactive
-                        ? 'Reactivate'
-                        : (isPending
-                            ? 'Deactivate Invite'
-                            : 'Deactivate Access'),
-                    icon: isInactive
-                        ? Icons.restart_alt_rounded
-                        : Icons.block_rounded,
-                    variant: isInactive
-                        ? BauhausActionVariant.success
-                        : BauhausActionVariant.error,
-                    isSmall: true,
-                    onPressed: () => _confirmStatusChange(
-                      member,
-                      isInactive ? 'active' : 'inactive',
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final actionButtons = <Widget>[
+                  SizedBox(
+                    width: constraints.maxWidth < 520
+                        ? double.infinity
+                        : (constraints.maxWidth - BauhausDesign.space3) / 2,
+                    child: BauhausActionButton(
+                      text: 'Manage Permissions',
+                      icon: Icons.tune_rounded,
+                      backgroundColor: BauhausDesign.surfaceOffWhite,
+                      textColor: BauhausDesign.textDark,
+                      isSmall: true,
+                      onPressed: () => _showPermissionsDialog(member),
                     ),
                   ),
-                ),
-              ],
+                  if (isPending)
+                    SizedBox(
+                      width: constraints.maxWidth < 520
+                          ? double.infinity
+                          : (constraints.maxWidth - BauhausDesign.space3) / 2,
+                      child: BauhausActionButton(
+                        text: isResending ? 'Resending...' : 'Resend Invite',
+                        icon: isResending ? null : Icons.mark_email_read_rounded,
+                        variant: BauhausActionVariant.warning,
+                        textColor: BauhausDesign.textDark,
+                        isSmall: true,
+                        isLoading: isResending,
+                        onPressed:
+                            isResending ? null : () => _resendInvite(member),
+                      ),
+                    ),
+                  SizedBox(
+                    width: constraints.maxWidth < 520
+                        ? double.infinity
+                        : (constraints.maxWidth - BauhausDesign.space3) / 2,
+                    child: BauhausActionButton(
+                      text: isInactive
+                          ? 'Reactivate'
+                          : (isPending
+                              ? 'Deactivate Invite'
+                              : 'Deactivate Access'),
+                      icon: isInactive
+                          ? Icons.restart_alt_rounded
+                          : Icons.block_rounded,
+                      variant: isInactive
+                          ? BauhausActionVariant.success
+                          : BauhausActionVariant.error,
+                      textColor: BauhausDesign.textDark,
+                      isSmall: true,
+                      onPressed: () => _confirmStatusChange(
+                        member,
+                        isInactive ? 'active' : 'inactive',
+                      ),
+                    ),
+                  ),
+                ];
+
+                return Wrap(
+                  spacing: BauhausDesign.space3,
+                  runSpacing: BauhausDesign.space3,
+                  children: actionButtons,
+                );
+              },
             ),
           ],
         ],
