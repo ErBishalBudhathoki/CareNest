@@ -191,6 +191,43 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     );
   }
 
+  Widget _buildNoticeBanner(
+    String message, {
+    bool isError = false,
+  }) {
+    final accent = isError ? BauhausDesign.error : BauhausDesign.success;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(BauhausDesign.space3),
+      decoration: BoxDecoration(
+        color: accent.withOpacity(0.1),
+        border: Border.all(color: accent, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            isError ? Icons.error_outline_rounded : Icons.check_circle_outline,
+            color: accent,
+            size: 18,
+          ),
+          const SizedBox(width: BauhausDesign.space2),
+          Expanded(
+            child: Text(
+              message,
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                    color: accent,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStatusBadge(String status) {
     final normalized = status.trim().toLowerCase();
     late final Color background;
@@ -287,13 +324,13 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     String selectedRelationship = 'guardian';
     String selectedRole = 'family';
     FamilyPermissions draftPermissions = _permissionsForRole(selectedRole);
+    bool isSubmitting = false;
+    String? dialogError;
 
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setDialogState) {
-          final inviteState = ref.watch(familyAccessViewModelProvider);
-
           return Dialog(
             backgroundColor: Colors.transparent,
             insetPadding:
@@ -390,7 +427,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         'Permissions',
                         style: BauhausDesign.getTextTheme(dialogContext)
                             .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w800),
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.w800,
+                            ),
                       ),
                       const SizedBox(height: BauhausDesign.space3),
                       _buildPermissionToggleList(
@@ -400,6 +440,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                               () => draftPermissions = nextPermissions);
                         },
                       ),
+                      if (dialogError != null) ...[
+                        const SizedBox(height: BauhausDesign.space4),
+                        _buildNoticeBanner(dialogError!, isError: true),
+                      ],
                       const SizedBox(height: BauhausDesign.space5),
                       LayoutBuilder(
                         builder: (context, constraints) {
@@ -415,7 +459,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                               textColor: BauhausDesign.textDark,
                               isFullWidth: true,
                               isSmall: true,
-                              onPressed: () =>
+                              onPressed: isSubmitting
+                                  ? null
+                                  : () =>
                                   Navigator.of(dialogContext).pop(),
                             ),
                           );
@@ -423,23 +469,25 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                           final sendInviteButton = SizedBox(
                             width: buttonWidth,
                             child: BauhausActionButton(
-                              text: inviteState.isInviting
-                                  ? 'Sending...'
-                                  : 'Send Invite',
-                              icon: inviteState.isInviting
-                                  ? null
-                                  : Icons.send_rounded,
+                              text: isSubmitting ? 'Sending...' : 'Send Invite',
+                              icon:
+                                  isSubmitting ? null : Icons.send_rounded,
                               variant: BauhausActionVariant.warning,
                               isFullWidth: true,
                               isSmall: true,
-                              isLoading: inviteState.isInviting,
-                              onPressed: inviteState.isInviting
+                              isLoading: isSubmitting,
+                              onPressed: isSubmitting
                                   ? null
                                   : () async {
                                       if (!(formKey.currentState?.validate() ??
                                           false)) {
                                         return;
                                       }
+
+                                      setDialogState(() {
+                                        isSubmitting = true;
+                                        dialogError = null;
+                                      });
 
                                       final actorEmail =
                                           await _resolveActorEmail();
@@ -459,10 +507,11 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                       final updatedState = ref
                                           .read(familyAccessViewModelProvider);
                                       if (updatedState.error != null) {
-                                        _showSnackBar(
-                                          updatedState.error!,
-                                          isError: true,
-                                        );
+                                        if (!mounted) return;
+                                        setDialogState(() {
+                                          isSubmitting = false;
+                                          dialogError = updatedState.error!;
+                                        });
                                         return;
                                       }
 
@@ -645,6 +694,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     if (clientId == null) return;
 
     FamilyPermissions draftPermissions = member.permissions;
+    bool isSaving = false;
+    String? dialogError;
 
     await showDialog<void>(
       context: context,
@@ -691,38 +742,63 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       ),
                     ),
                   ),
+                  if (dialogError != null) ...[
+                    const SizedBox(height: BauhausDesign.space4),
+                    _buildNoticeBanner(dialogError!, isError: true),
+                  ],
                   const SizedBox(height: BauhausDesign.space5),
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final saveButton = BauhausActionButton(
-                        text: 'Save',
-                        icon: Icons.save_outlined,
+                        text: isSaving ? 'Saving...' : 'Save',
+                        icon: isSaving ? null : Icons.save_outlined,
                         variant: BauhausActionVariant.secondary,
+                        isLoading: isSaving,
+                        isSmall: true,
+                        onPressed: isSaving
+                            ? null
+                            : () async {
+                                setDialogState(() {
+                                  isSaving = true;
+                                  dialogError = null;
+                                });
+
+                                final actorEmail = await _resolveActorEmail();
+                                await ref
+                                    .read(
+                                        familyAccessViewModelProvider.notifier)
+                                    .updatePermissions(
+                                      memberId: member.id,
+                                      clientId: clientId,
+                                      updatedBy: actorEmail,
+                                      permissions: draftPermissions,
+                                    );
+
+                                final updatedState =
+                                    ref.read(familyAccessViewModelProvider);
+                                if (updatedState.error != null) {
+                                  if (!mounted) return;
+                                  setDialogState(() {
+                                    isSaving = false;
+                                    dialogError = updatedState.error!;
+                                  });
+                                  return;
+                                }
+
+                                if (!mounted) return;
+                                Navigator.of(dialogContext).pop();
+                                _showSnackBar(
+                                    'Permissions updated for ${member.name}');
+                              },
+                      );
+
+                      final cancelButton = BauhausActionButton(
+                        text: 'Cancel',
+                        variant: BauhausActionVariant.neutral,
+                        isSmall: true,
                         onPressed: () async {
-                          final actorEmail = await _resolveActorEmail();
-                          await ref
-                              .read(familyAccessViewModelProvider.notifier)
-                              .updatePermissions(
-                                memberId: member.id,
-                                clientId: clientId,
-                                updatedBy: actorEmail,
-                                permissions: draftPermissions,
-                              );
-
-                          final updatedState =
-                              ref.read(familyAccessViewModelProvider);
-                          if (updatedState.error != null) {
-                            _showSnackBar(
-                              updatedState.error!,
-                              isError: true,
-                            );
-                            return;
-                          }
-
-                          if (!mounted) return;
+                          if (isSaving) return;
                           Navigator.of(dialogContext).pop();
-                          _showSnackBar(
-                              'Permissions updated for ${member.name}');
                         },
                       );
 
@@ -730,12 +806,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            BauhausActionButton(
-                              text: 'Cancel',
-                              variant: BauhausActionVariant.neutral,
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(),
-                            ),
+                            cancelButton,
                             const SizedBox(height: BauhausDesign.space3),
                             saveButton,
                           ],
@@ -744,14 +815,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
 
                       return Row(
                         children: [
-                          Expanded(
-                            child: BauhausActionButton(
-                              text: 'Cancel',
-                              variant: BauhausActionVariant.neutral,
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(),
-                            ),
-                          ),
+                          Expanded(child: cancelButton),
                           const SizedBox(width: BauhausDesign.space3),
                           Expanded(child: saveButton),
                         ],
@@ -1161,18 +1225,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   _buildHeroCard(state, canManageMembers),
                   const SizedBox(height: BauhausDesign.space4),
                   if (state.error != null) ...[
-                    BauhausCard(
-                      borderColor: BauhausDesign.error,
-                      backgroundColor: BauhausDesign.error.withOpacity(0.08),
-                      child: Text(
-                        state.error!,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(
-                              color: BauhausDesign.error,
-                            ),
-                      ),
-                    ),
+                    _buildNoticeBanner(state.error!, isError: true),
                     const SizedBox(height: BauhausDesign.space4),
                   ],
                   if (state.isLoading && state.members.isEmpty)
