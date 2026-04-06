@@ -196,29 +196,65 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     bool isError = false,
   }) {
     final accent = isError ? BauhausDesign.error : BauhausDesign.success;
+    final background =
+        isError ? const Color(0xFFFFE1E1) : const Color(0xFFE4F7E8);
+    final label = isError ? 'ERROR' : 'SUCCESS';
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.1),
-        border: Border.all(color: accent, width: 2),
-        boxShadow: const [BauhausDesign.shadowHardSm],
+        color: background,
+        border: Border.all(
+          color: BauhausDesign.textDark,
+          width: 2,
+        ),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            isError ? Icons.error_outline_rounded : Icons.check_circle_outline,
-            color: accent,
-            size: 18,
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space3,
+              vertical: BauhausDesign.space2,
+            ),
+            decoration: BoxDecoration(
+              color: accent,
+              border: Border(
+                bottom: BorderSide(
+                  color: BauhausDesign.textDark,
+                  width: 2,
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  isError
+                      ? Icons.error_outline_rounded
+                      : Icons.check_circle_outline,
+                  color: BauhausDesign.textDark,
+                  size: 18,
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                Text(
+                  label,
+                  style:
+                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.8,
+                          ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(width: BauhausDesign.space2),
-          Expanded(
+          Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space3),
             child: Text(
               message,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: accent,
+                    color: BauhausDesign.textDark,
                     fontWeight: FontWeight.w700,
                   ),
             ),
