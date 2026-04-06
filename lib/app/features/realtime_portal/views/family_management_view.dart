@@ -873,112 +873,137 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     if (clientId == null) return;
 
     final isDeactivate = nextStatus == 'inactive';
-    final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (dialogContext) => Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 560),
-              decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-                boxShadow: const [BauhausDesign.shadowHard],
-              ),
-              padding: const EdgeInsets.all(BauhausDesign.space5),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isDeactivate ? 'DEACTIVATE ACCESS' : 'REACTIVATE ACCESS',
-                    style: BauhausDesign.getTextTheme(dialogContext)
-                        .headlineMedium,
-                  ),
-                  const SizedBox(height: BauhausDesign.space2),
-                  Text(
-                    isDeactivate
-                        ? 'This will immediately stop ${member.name} from using their family access account.'
-                        : 'This will re-enable ${member.name}\'s family access account.',
-                    style: BauhausDesign.getTextTheme(dialogContext)
-                        .bodyMedium
-                        ?.copyWith(color: BauhausDesign.textMuted),
-                  ),
-                  const SizedBox(height: BauhausDesign.space5),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final confirmButton = BauhausActionButton(
-                        text: isDeactivate ? 'Deactivate' : 'Reactivate',
-                        icon: isDeactivate
-                            ? Icons.block_rounded
-                            : Icons.restart_alt_rounded,
-                        variant: isDeactivate
-                            ? BauhausActionVariant.error
-                            : BauhausActionVariant.success,
-                        onPressed: () => Navigator.of(dialogContext).pop(true),
-                      );
+    bool isSubmitting = false;
+    String? dialogError;
 
-                      if (constraints.maxWidth < 420) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            BauhausActionButton(
-                              text: 'Cancel',
-                              variant: BauhausActionVariant.neutral,
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(false),
-                            ),
-                            const SizedBox(height: BauhausDesign.space3),
-                            confirmButton,
-                          ],
-                        );
-                      }
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 560),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHard],
+            ),
+            padding: const EdgeInsets.all(BauhausDesign.space5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isDeactivate ? 'DEACTIVATE ACCESS' : 'REACTIVATE ACCESS',
+                  style: BauhausDesign.getTextTheme(dialogContext)
+                      .headlineMedium,
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Text(
+                  isDeactivate
+                      ? 'This will immediately stop ${member.name} from using their family access account.'
+                      : 'This will re-enable ${member.name}\'s family access account.',
+                  style: BauhausDesign.getTextTheme(dialogContext)
+                      .bodyMedium
+                      ?.copyWith(color: BauhausDesign.textMuted),
+                ),
+                if (dialogError != null) ...[
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildNoticeBanner(dialogError!, isError: true),
+                ],
+                const SizedBox(height: BauhausDesign.space5),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final confirmButton = BauhausActionButton(
+                      text: isSubmitting
+                          ? (isDeactivate
+                              ? 'Deactivating...'
+                              : 'Reactivating...')
+                          : (isDeactivate ? 'Deactivate' : 'Reactivate'),
+                      icon: isSubmitting
+                          ? null
+                          : (isDeactivate
+                              ? Icons.block_rounded
+                              : Icons.restart_alt_rounded),
+                      variant: isDeactivate
+                          ? BauhausActionVariant.error
+                          : BauhausActionVariant.success,
+                      isLoading: isSubmitting,
+                      onPressed: isSubmitting
+                          ? null
+                          : () async {
+                              setDialogState(() {
+                                isSubmitting = true;
+                                dialogError = null;
+                              });
 
-                      return Row(
+                              final actorEmail = await _resolveActorEmail();
+                              await ref
+                                  .read(familyAccessViewModelProvider.notifier)
+                                  .updateMemberStatus(
+                                    memberId: member.id,
+                                    clientId: clientId,
+                                    status: nextStatus,
+                                    updatedBy: actorEmail,
+                                  );
+
+                              final updatedState =
+                                  ref.read(familyAccessViewModelProvider);
+                              if (updatedState.error != null) {
+                                if (!mounted) return;
+                                setDialogState(() {
+                                  isSubmitting = false;
+                                  dialogError = updatedState.error!;
+                                });
+                                return;
+                              }
+
+                              if (!mounted) return;
+                              Navigator.of(dialogContext).pop();
+                              _showSnackBar(
+                                nextStatus == 'inactive'
+                                    ? '${member.name} has been deactivated'
+                                    : '${member.name} has been reactivated',
+                              );
+                            },
+                    );
+
+                    final cancelButton = BauhausActionButton(
+                      text: 'Cancel',
+                      variant: BauhausActionVariant.neutral,
+                      onPressed: isSubmitting
+                          ? null
+                          : () => Navigator.of(dialogContext).pop(),
+                    );
+
+                    if (constraints.maxWidth < 420) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(
-                            child: BauhausActionButton(
-                              text: 'Cancel',
-                              variant: BauhausActionVariant.neutral,
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(false),
-                            ),
-                          ),
-                          const SizedBox(width: BauhausDesign.space3),
-                          Expanded(child: confirmButton),
+                          cancelButton,
+                          const SizedBox(height: BauhausDesign.space3),
+                          confirmButton,
                         ],
                       );
-                    },
-                  ),
-                ],
-              ),
+                    }
+
+                    return Row(
+                      children: [
+                        Expanded(child: cancelButton),
+                        const SizedBox(width: BauhausDesign.space3),
+                        Expanded(child: confirmButton),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-        ) ??
-        false;
-
-    if (!confirmed) return;
-
-    final actorEmail = await _resolveActorEmail();
-    await ref.read(familyAccessViewModelProvider.notifier).updateMemberStatus(
-          memberId: member.id,
-          clientId: clientId,
-          status: nextStatus,
-          updatedBy: actorEmail,
-        );
-
-    final updatedState = ref.read(familyAccessViewModelProvider);
-    if (updatedState.error != null) {
-      _showSnackBar(updatedState.error!, isError: true);
-      return;
-    }
-
-    _showSnackBar(
-      nextStatus == 'inactive'
-          ? '${member.name} has been deactivated'
-          : '${member.name} has been reactivated',
+        ),
+      ),
     );
   }
 
