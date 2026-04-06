@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:carenest/app/core/base/base_model.dart';
+import 'package:carenest/config/environment.dart';
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
@@ -200,7 +201,7 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
   bool _hasValidDomain(String email) {
     if (!email.contains('@')) return false;
 
-    final domain = email.split('@').last;
+    final domain = email.split('@').last.toLowerCase();
 
     // Basic domain validation
     final domainRegex = RegExp(r'^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
@@ -215,7 +216,11 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
       'throwaway.email',
     ];
 
-    return !suspiciousDomains.contains(domain.toLowerCase());
+    if (AppConfig.isDevelopment && domain == 'mailinator.com') {
+      return true;
+    }
+
+    return !suspiciousDomains.contains(domain);
   }
 
   /// Check if password is commonly used
