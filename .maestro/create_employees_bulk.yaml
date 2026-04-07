@@ -1,0 +1,103 @@
+# Requires a real organization code for the current org.
+# Example run:
+# maestro test .maestro/create_employees_bulk.yaml -e ORG_CODE=ABC123
+appId: ${APP_ID}
+name: Create Multiple Employees
+env:
+  APP_ID: com.bishal.invoice.dev
+  ORG_CODE: CHANGE_ME
+  EMPLOYEE_PASSWORD: Bishal@xiomi222
+---
+- launchApp:
+    clearState: true
+
+- assertVisible: "Login"
+- openLink: "com.bishal.invoice://signup?orgCode=${ORG_CODE}"
+- extendedWaitUntil:
+    visible: "Create Account"
+    timeout: 15000
+- tapOn: "Normal User"
+- tapOn: "John"
+- inputText: "Ava"
+- tapOn: "Doe"
+- inputText: "Worker"
+- tapOn: "john@example.com"
+- inputText: "employee.seed.1@mailinator.com"
+- tapOn: "11 digits (numbers only)"
+- inputText: "11111111111"
+- scrollUntilVisible:
+    element:
+      text: "Password must be at least 6 characters"
+- tapOn: "Password must be at least 6 characters"
+- inputText: ${EMPLOYEE_PASSWORD}
+- tapOn: "Re-enter password"
+- inputText: ${EMPLOYEE_PASSWORD}
+- tapOn:
+    point: 0%,20%
+- scrollUntilVisible:
+    element:
+      text: "Create Account"
+- tapOn: "Create Account"
+- extendedWaitUntil:
+    visible: "Login"
+    timeout: 20000
+
+- openLink: "com.bishal.invoice://signup?orgCode=${ORG_CODE}"
+- extendedWaitUntil:
+    visible: "Create Account"
+    timeout: 15000
+- tapOn: "Normal User"
+- tapOn: "John"
+- inputText: "Liam"
+- tapOn: "Doe"
+- inputText: "Helper"
+- tapOn: "john@example.com"
+- inputText: "employee.seed.2@mailinator.com"
+- tapOn: "11 digits (numbers only)"
+- inputText: "22222222222"
+- scrollUntilVisible:
+    element:
+      text: "Password must be at least 6 characters"
+- tapOn: "Password must be at least 6 characters"
+- inputText: ${EMPLOYEE_PASSWORD}
+- tapOn: "Re-enter password"
+- inputText: ${EMPLOYEE_PASSWORD}
+- tapOn:
+    point: 0%,20%
+- scrollUntilVisible:
+    element:
+      text: "Create Account"
+- tapOn: "Create Account"
+- extendedWaitUntil:
+    visible: "Login"
+    timeout: 20000
+
+- openLink: "com.bishal.invoice://signup?orgCode=${ORG_CODE}"
+- extendedWaitUntil:
+    visible: "Create Account"
+    timeout: 15000
+- tapOn: "Normal User"
+- tapOn: "John"
+- inputText: "Chloe"
+- tapOn: "Doe"
+- inputText: "Support"
+- tapOn: "john@example.com"
+- inputText: "employee.seed.3@mailinator.com"
+- tapOn: "11 digits (numbers only)"
+- inputText: "33333333333"
+- scrollUntilVisible:
+    element:
+      text: "Password must be at least 6 characters"
+- tapOn: "Password must be at least 6 characters"
+- inputText: ${EMPLOYEE_PASSWORD}
+- tapOn: "Re-enter password"
+- inputText: ${EMPLOYEE_PASSWORD}
+- tapOn:
+    point: 0%,20%
+- scrollUntilVisible:
+    element:
+      text: "Create Account"
+- tapOn: "Create Account"
+- extendedWaitUntil:
+    visible: "Login"
+    timeout: 20000
