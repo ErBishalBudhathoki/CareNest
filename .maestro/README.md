@@ -15,7 +15,7 @@ These flows are a starting point for screenshot generation and smoke navigation.
 - `create_businesses_bulk.yaml`
   Logs in as the admin and creates three businesses using the Add Business form.
 - `create_employees_bulk.yaml`
-  Creates three employee accounts through the signup flow using a prefilled organization code deep link.
+  Creates three employee accounts through the signup UI and joins the current organization with an org code.
 
 ## App IDs
 
@@ -54,4 +54,4 @@ maestro test .maestro/create_employees_bulk.yaml -e ORG_CODE=YOUR_ORG_CODE
 - If system permission dialogs appear, grant them manually the first time or adjust the flow in Maestro Studio for your device language and OS version.
 - These flows intentionally target stable, top-level UI labels first. Deeper feature coverage usually depends on seeded test data and role-specific visibility.
 - If you want a fuller screenshot pack later, the next step is to add seeded demo data and build dedicated flows per feature area.
-- The employee creation flow uses the app deep link `com.bishal.invoice://signup?orgCode=...` so you can avoid manually toggling the organization join switch in Maestro.
+- The employee creation flow starts from `Login` -> `Sign Up`, then toggles `Join Existing Organization` and enters `ORG_CODE`.

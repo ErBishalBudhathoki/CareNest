@@ -5,17 +5,27 @@ appId: ${APP_ID}
 name: Create Multiple Employees
 env:
   APP_ID: com.bishal.invoice.dev
-  ORG_CODE: CHANGE_ME
+  ORG_CODE: AKM71X
   EMPLOYEE_PASSWORD: Bishal@xiomi222
 ---
 - launchApp:
     clearState: true
 
 - assertVisible: "Login"
-- openLink: "com.bishal.invoice://signup?orgCode=${ORG_CODE}"
+- tapOn: "Sign Up"
 - extendedWaitUntil:
     visible: "Create Account"
     timeout: 15000
+- scrollUntilVisible:
+    element:
+      text: "Join Existing Organization"
+- tapOn:
+    point: 90%,73%
+- extendedWaitUntil:
+    visible: "Enter code"
+    timeout: 5000
+- tapOn: "Enter code"
+- inputText: ${ORG_CODE}
 - tapOn: "Normal User"
 - tapOn: "John"
 - inputText: "Ava"
@@ -42,10 +52,20 @@ env:
     visible: "Login"
     timeout: 20000
 
-- openLink: "com.bishal.invoice://signup?orgCode=${ORG_CODE}"
+- tapOn: "Sign Up"
 - extendedWaitUntil:
     visible: "Create Account"
     timeout: 15000
+- scrollUntilVisible:
+    element:
+      text: "Join Existing Organization"
+- tapOn:
+    point: 90%,73%
+- extendedWaitUntil:
+    visible: "Enter code"
+    timeout: 5000
+- tapOn: "Enter code"
+- inputText: ${ORG_CODE}
 - tapOn: "Normal User"
 - tapOn: "John"
 - inputText: "Liam"
@@ -72,10 +92,20 @@ env:
     visible: "Login"
     timeout: 20000
 
-- openLink: "com.bishal.invoice://signup?orgCode=${ORG_CODE}"
+- tapOn: "Sign Up"
 - extendedWaitUntil:
     visible: "Create Account"
     timeout: 15000
+- scrollUntilVisible:
+    element:
+      text: "Join Existing Organization"
+- tapOn:
+    point: 90%,73%
+- extendedWaitUntil:
+    visible: "Enter code"
+    timeout: 5000
+- tapOn: "Enter code"
+- inputText: ${ORG_CODE}
 - tapOn: "Normal User"
 - tapOn: "John"
 - inputText: "Chloe"
