@@ -1,0 +1,133 @@
+appId: ${APP_ID}
+name: Create Multiple Clients
+env:
+  APP_ID: com.bishal.invoice.dev
+  ADMIN_EMAIL: deverbishal331@gmail.com
+  ADMIN_PASSWORD: Bishal@xiomi222
+---
+- launchApp:
+    clearState: true
+
+- assertVisible: "Login"
+- tapOn: "Enter your email"
+- inputText: ${ADMIN_EMAIL}
+- tapOn: "Enter your password"
+- inputText: ${ADMIN_PASSWORD}
+- tapOn:
+    point: 0%,35%
+- tapOn: "Sign in"
+
+- extendedWaitUntil:
+    visible: "ASSIGN"
+    timeout: 30000
+
+- scrollUntilVisible:
+    element:
+      text: "Add Client"
+- tapOn: "Add Client"
+- extendedWaitUntil:
+    visible: "First Name"
+    timeout: 15000
+- tapOn: "First Name"
+- inputText: "Maya"
+- tapOn: "Last Name"
+- inputText: "Client"
+- tapOn: "Email Address"
+- inputText: "client.seed.1@mailinator.com"
+- tapOn: "Phone Number"
+- inputText: "0400000001"
+- scrollUntilVisible:
+    element:
+      text: "Street Address"
+- tapOn: "Street Address"
+- inputText: "101 Seed Street"
+- tapOn: "City"
+- inputText: "Sydney"
+- tapOn: "State"
+- inputText: "NSW"
+- tapOn: "Zip Code"
+- inputText: "2000"
+- tapOn:
+    point: 0%,20%
+- scrollUntilVisible:
+    element:
+      text: "ADD CLIENT"
+- tapOn: "ADD CLIENT"
+- extendedWaitUntil:
+    visible: "OK"
+    timeout: 20000
+- tapOn: "OK"
+
+- scrollUntilVisible:
+    element:
+      text: "Add Client"
+- tapOn: "Add Client"
+- extendedWaitUntil:
+    visible: "First Name"
+    timeout: 15000
+- tapOn: "First Name"
+- inputText: "Noah"
+- tapOn: "Last Name"
+- inputText: "Client"
+- tapOn: "Email Address"
+- inputText: "client.seed.2@mailinator.com"
+- tapOn: "Phone Number"
+- inputText: "0400000002"
+- scrollUntilVisible:
+    element:
+      text: "Street Address"
+- tapOn: "Street Address"
+- inputText: "202 Harbor Road"
+- tapOn: "City"
+- inputText: "Melbourne"
+- tapOn: "State"
+- inputText: "VIC"
+- tapOn: "Zip Code"
+- inputText: "3000"
+- tapOn:
+    point: 0%,20%
+- scrollUntilVisible:
+    element:
+      text: "ADD CLIENT"
+- tapOn: "ADD CLIENT"
+- extendedWaitUntil:
+    visible: "OK"
+    timeout: 20000
+- tapOn: "OK"
+
+- scrollUntilVisible:
+    element:
+      text: "Add Client"
+- tapOn: "Add Client"
+- extendedWaitUntil:
+    visible: "First Name"
+    timeout: 15000
+- tapOn: "First Name"
+- inputText: "Zara"
+- tapOn: "Last Name"
+- inputText: "Client"
+- tapOn: "Email Address"
+- inputText: "client.seed.3@mailinator.com"
+- tapOn: "Phone Number"
+- inputText: "0400000003"
+- scrollUntilVisible:
+    element:
+      text: "Street Address"
+- tapOn: "Street Address"
+- inputText: "303 River Avenue"
+- tapOn: "City"
+- inputText: "Brisbane"
+- tapOn: "State"
+- inputText: "QLD"
+- tapOn: "Zip Code"
+- inputText: "4000"
+- tapOn:
+    point: 0%,20%
+- scrollUntilVisible:
+    element:
+      text: "ADD CLIENT"
+- tapOn: "ADD CLIENT"
+- extendedWaitUntil:
+    visible: "OK"
+    timeout: 20000
+- tapOn: "OK"
