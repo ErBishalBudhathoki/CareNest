@@ -64,10 +64,13 @@ env:
     end: 50%, 30%
 - waitForAnimationToEnd
 - tapOn:
-    point: 50%,92%
+    text: Create Account
+    index: 1
 - extendedWaitUntil:
-    visible: "Login"
+    visible: "Create Account"
     timeout: 20000
+- launchApp:
+    clearState: true
 
 - extendedWaitUntil:
     visible: "Enter your email"
@@ -121,8 +124,11 @@ env:
 - tapOn:
     point: 50%,92%
 - extendedWaitUntil:
-    visible: "Login"
+    visible: "Create Account"
     timeout: 20000
+
+- launchApp:
+    clearState: true
 
 - extendedWaitUntil:
     visible: "Enter your email"
