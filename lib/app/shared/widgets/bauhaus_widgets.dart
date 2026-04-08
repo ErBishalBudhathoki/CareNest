@@ -630,6 +630,7 @@ class BauhausTextField extends StatelessWidget {
 
 class BauhausActionButton extends StatelessWidget {
   final String? text;
+  final String? semanticsLabel;
   final VoidCallback? onPressed;
   final IconData? icon;
   final Color? backgroundColor;
@@ -643,6 +644,7 @@ class BauhausActionButton extends StatelessWidget {
   const BauhausActionButton({
     super.key,
     this.text,
+    this.semanticsLabel,
     this.onPressed,
     this.icon,
     this.backgroundColor,
@@ -705,7 +707,7 @@ class BauhausActionButton extends StatelessWidget {
 
     // Ghost variant special handling
     if (variant == BauhausActionVariant.ghost) {
-      return TextButton(
+      final button = TextButton(
           onPressed: isLoading ? null : onPressed,
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -728,9 +730,10 @@ class BauhausActionButton extends StatelessWidget {
                         ?.copyWith(color: effectiveText)),
             ],
           ));
+      return _wrapWithSemantics(button);
     }
 
-    return Container(
+    final button = Container(
       decoration: BoxDecoration(
         color: effectiveBg,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
@@ -788,6 +791,22 @@ class BauhausActionButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+    return _wrapWithSemantics(button);
+  }
+
+  Widget _wrapWithSemantics(Widget child) {
+    final label = semanticsLabel ?? text;
+    if (label == null || label.trim().isEmpty) {
+      return child;
+    }
+
+    return Semantics(
+      button: true,
+      enabled: onPressed != null && !isLoading,
+      label: label,
+      excludeSemantics: true,
+      child: child,
     );
   }
 }

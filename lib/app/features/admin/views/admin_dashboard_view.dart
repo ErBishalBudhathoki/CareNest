@@ -149,40 +149,9 @@ class _AdminDashboardViewControllerState
       final data = await _apiMethod.getInitData(widget.email);
       final emailKey = await _checkEmailKey(widget.email);
       final organizationId = _resolveOrganizationId(data);
-
-      Map<String, dynamic> stats = _defaultBusinessStats();
-      String? statsError;
-
-      if (organizationId != null && organizationId.isNotEmpty) {
-        try {
-          final response = await _apiMethod.getInvoiceStats(organizationId);
-          stats = _normalizeBusinessStats(response);
-        } catch (e) {
-          statsError = AppLocalizations.of(context)!.failedToLoadStats;
-        }
-
-        try {
-          final businesses = await _apiMethod.getBusinesses(organizationId);
-          if (businesses.isNotEmpty || _toInt(stats['activeBusinesses']) == 0) {
-            stats['activeBusinesses'] = businesses.length;
-          }
-        } catch (_) {}
-
-        try {
-          final clients =
-              await _apiMethod.getClientsByOrganizationId(organizationId);
-          if (clients.isNotEmpty || _toInt(stats['totalClients']) == 0) {
-            stats['totalClients'] = clients.length;
-          }
-        } catch (_) {}
-
-        stats['activeBusinesses'] = _toInt(stats['activeBusinesses']);
-        stats['totalClients'] = _toInt(stats['totalClients']);
-        stats['totalInvoices'] = _toInt(stats['totalInvoices']);
-        stats['totalRevenue'] = _formatRevenueDisplay(stats);
-      } else {
-        statsError = AppLocalizations.of(context)!.orgIdNotAvailable;
-      }
+      final statsPayload = await _loadBusinessStats(organizationId);
+      final stats = statsPayload['stats'] as Map<String, dynamic>;
+      final statsError = statsPayload['error'] as String?;
 
       if (mounted) {
         setState(() {
@@ -207,6 +176,65 @@ class _AdminDashboardViewControllerState
       debugPrint("Error fetching initial data: $e");
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<Map<String, dynamic>> _loadBusinessStats(String? organizationId) async {
+    Map<String, dynamic> stats = _defaultBusinessStats();
+    String? statsError;
+
+    if (organizationId != null && organizationId.isNotEmpty) {
+      try {
+        final response = await _apiMethod.getInvoiceStats(organizationId);
+        stats = _normalizeBusinessStats(response);
+      } catch (e) {
+        statsError = AppLocalizations.of(context)!.failedToLoadStats;
+      }
+
+      try {
+        final businesses = await _apiMethod.getBusinesses(organizationId);
+        if (businesses.isNotEmpty || _toInt(stats['activeBusinesses']) == 0) {
+          stats['activeBusinesses'] = businesses.length;
+        }
+      } catch (_) {}
+
+      try {
+        final clients = await _apiMethod.getClientsByOrganizationId(organizationId);
+        if (clients.isNotEmpty || _toInt(stats['totalClients']) == 0) {
+          stats['totalClients'] = clients.length;
+        }
+      } catch (_) {}
+
+      stats['activeBusinesses'] = _toInt(stats['activeBusinesses']);
+      stats['totalClients'] = _toInt(stats['totalClients']);
+      stats['totalInvoices'] = _toInt(stats['totalInvoices']);
+      stats['totalRevenue'] = _formatRevenueDisplay(stats);
+    } else {
+      statsError = AppLocalizations.of(context)!.orgIdNotAvailable;
+    }
+
+    return {
+      'stats': stats,
+      'error': statsError,
+    };
+  }
+
+  Future<void> _refreshBusinessOverview({bool showLoading = false}) async {
+    if (showLoading && mounted) {
+      setState(() {
+        _isStatsLoading = true;
+        _statsError = null;
+      });
+    }
+
+    final organizationId = _resolveOrganizationId(getInitialData);
+    final statsPayload = await _loadBusinessStats(organizationId);
+    if (!mounted) return;
+
+    setState(() {
+      businessStats = statsPayload['stats'] as Map<String, dynamic>;
+      _statsError = statsPayload['error'] as String?;
+      _isStatsLoading = false;
+    });
   }
 
   String? _resolveOrganizationId(dynamic initData) {
@@ -574,6 +602,26 @@ class _AdminDashboardViewControllerState
 
   void _openVoiceAssistant() {
     Navigator.pushNamed(context, Routes.voiceAssistant);
+  }
+
+  Future<void> _navigateToAddClient() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddClientDetails(),
+      ),
+    );
+
+    if (result == true) {
+      await _refreshBusinessOverview();
+    }
+  }
+
+  Future<void> _navigateToAddBusiness() async {
+    final result = await Navigator.pushNamed(context, Routes.addBusinessDetails);
+    if (result == true) {
+      await _refreshBusinessOverview();
+    }
   }
 
   @override
@@ -1335,12 +1383,7 @@ class _AdminDashboardViewControllerState
                             ),
                             gradientStartColor: BauhausDesign.secondary,
                             gradientEndColor: BauhausDesign.secondary,
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AddClientDetails(),
-                              ),
-                            ),
+                            onPressed: _navigateToAddClient,
                           )
                               .animate()
                               .scale(
@@ -1363,10 +1406,7 @@ class _AdminDashboardViewControllerState
                             ),
                             gradientStartColor: BauhausDesign.primary,
                             gradientEndColor: BauhausDesign.primary,
-                            onPressed: () => Navigator.pushNamed(
-                              context,
-                              Routes.addBusinessDetails,
-                            ),
+                            onPressed: _navigateToAddBusiness,
                           )
                               .animate(delay: 200.ms)
                               .scale(
@@ -2180,13 +2220,15 @@ class _AdminDashboardViewControllerState
     );
   }
 
-  void _navigateToClientList() {
-    Navigator.push(
+  Future<void> _navigateToClientList() async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const ClientListView(),
       ),
     );
+    if (!mounted) return;
+    await _refreshBusinessOverview();
   }
 
   Widget _buildStickyAdminLabel() {

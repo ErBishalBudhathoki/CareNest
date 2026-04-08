@@ -160,7 +160,7 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 if (mounted && Navigator.canPop(context)) {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(true);
                 }
               },
             ),

@@ -617,11 +617,13 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
           actions: [
             BauhausActionButton(
               text: l10n.cancelButton.toUpperCase(),
+              semanticsLabel: 'Cancel Add Client Dialog',
               variant: BauhausActionVariant.ghost,
               onPressed: () => Navigator.of(dialogContext).pop(),
             ),
             BauhausActionButton(
-              text: l10n.addClientButton.toUpperCase(),
+              text: l10n.confirmButton.toUpperCase(),
+              semanticsLabel: 'Confirm Add Client Dialog',
               variant: BauhausActionVariant.primary,
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
@@ -675,8 +677,8 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
       if (!mounted) return;
 
       if (isSuccess) {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.showSnackBar(
           SnackBar(
             content: Text(l10n.clientAddedSuccess),
             backgroundColor: BauhausDesign.success,
@@ -686,6 +688,7 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
             ),
           ),
         );
+        Navigator.of(context).pop(true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
