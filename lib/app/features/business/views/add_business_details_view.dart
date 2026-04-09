@@ -157,8 +157,13 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
             BauhausActionButton(
               text: l10n.ok.toUpperCase(),
               variant: BauhausActionVariant.primary,
+              semanticsLabel: 'Success OK Dialog',
               onPressed: () {
                 Navigator.of(dialogContext).pop();
+                // Refresh business stats to update the count dynamically
+                ref
+                    .read(businessStatsProvider.notifier)
+                    .loadBusinessStats(ref.read(organizationIdProvider));
                 if (mounted && Navigator.canPop(context)) {
                   Navigator.of(context).pop(true);
                 }

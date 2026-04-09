@@ -87,13 +87,10 @@ class AdminDashboardView extends ConsumerStatefulWidget {
 class _AdminDashboardViewControllerState
     extends ConsumerState<AdminDashboardView> with TickerProviderStateMixin {
   Map<String, dynamic> getInitialData = {};
-  Map<String, dynamic> businessStats = {};
   late final ApiMethod _apiMethod;
   final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
   String? key;
   bool _isLoading = true;
-  bool _isStatsLoading = true;
-  String? _statsError;
   late AnimationController _headerAnimationController;
   late AnimationController _contentAnimationController;
   late AnimationController _statsAnimationController;
@@ -149,18 +146,15 @@ class _AdminDashboardViewControllerState
       final data = await _apiMethod.getInitData(widget.email);
       final emailKey = await _checkEmailKey(widget.email);
       final organizationId = _resolveOrganizationId(data);
-      final statsPayload = await _loadBusinessStats(organizationId);
-      final stats = statsPayload['stats'] as Map<String, dynamic>;
-      final statsError = statsPayload['error'] as String?;
+      await ref
+          .read(businessStatsProvider.notifier)
+          .loadBusinessStats(organizationId);
 
       if (mounted) {
         setState(() {
           getInitialData = data;
-          businessStats = stats;
           key = emailKey;
           _isLoading = false;
-          _isStatsLoading = false;
-          _statsError = statsError;
         });
         ref.read(photoDataProvider.notifier).fetchPhotoData(widget.email);
 
@@ -178,63 +172,11 @@ class _AdminDashboardViewControllerState
     }
   }
 
-  Future<Map<String, dynamic>> _loadBusinessStats(String? organizationId) async {
-    Map<String, dynamic> stats = _defaultBusinessStats();
-    String? statsError;
-
-    if (organizationId != null && organizationId.isNotEmpty) {
-      try {
-        final response = await _apiMethod.getInvoiceStats(organizationId);
-        stats = _normalizeBusinessStats(response);
-      } catch (e) {
-        statsError = AppLocalizations.of(context)!.failedToLoadStats;
-      }
-
-      try {
-        final businesses = await _apiMethod.getBusinesses(organizationId);
-        if (businesses.isNotEmpty || _toInt(stats['activeBusinesses']) == 0) {
-          stats['activeBusinesses'] = businesses.length;
-        }
-      } catch (_) {}
-
-      try {
-        final clients = await _apiMethod.getClientsByOrganizationId(organizationId);
-        if (clients.isNotEmpty || _toInt(stats['totalClients']) == 0) {
-          stats['totalClients'] = clients.length;
-        }
-      } catch (_) {}
-
-      stats['activeBusinesses'] = _toInt(stats['activeBusinesses']);
-      stats['totalClients'] = _toInt(stats['totalClients']);
-      stats['totalInvoices'] = _toInt(stats['totalInvoices']);
-      stats['totalRevenue'] = _formatRevenueDisplay(stats);
-    } else {
-      statsError = AppLocalizations.of(context)!.orgIdNotAvailable;
-    }
-
-    return {
-      'stats': stats,
-      'error': statsError,
-    };
-  }
-
-  Future<void> _refreshBusinessOverview({bool showLoading = false}) async {
-    if (showLoading && mounted) {
-      setState(() {
-        _isStatsLoading = true;
-        _statsError = null;
-      });
-    }
-
+  Future<void> _refreshBusinessOverview() async {
     final organizationId = _resolveOrganizationId(getInitialData);
-    final statsPayload = await _loadBusinessStats(organizationId);
-    if (!mounted) return;
-
-    setState(() {
-      businessStats = statsPayload['stats'] as Map<String, dynamic>;
-      _statsError = statsPayload['error'] as String?;
-      _isStatsLoading = false;
-    });
+    await ref
+        .read(businessStatsProvider.notifier)
+        .loadBusinessStats(organizationId);
   }
 
   String? _resolveOrganizationId(dynamic initData) {
@@ -254,58 +196,6 @@ class _AdminDashboardViewControllerState
       if (parsed != null && parsed.isNotEmpty) return parsed;
     }
     return null;
-  }
-
-  Map<String, dynamic> _defaultBusinessStats() {
-    return {
-      'activeBusinesses': 0,
-      'totalClients': 0,
-      'totalInvoices': 0,
-      'totalRevenue': '\$0.00',
-      'rawRevenue': 0
-    };
-  }
-
-  Map<String, dynamic> _normalizeBusinessStats(Map<String, dynamic> response) {
-    final defaults = _defaultBusinessStats();
-    if (response.isEmpty) return defaults;
-
-    dynamic stats = response['data'];
-    if (stats is Map<String, dynamic> &&
-        stats['data'] is Map<String, dynamic>) {
-      stats = stats['data'];
-    }
-    if (stats is! Map<String, dynamic>) return defaults;
-
-    final normalized = <String, dynamic>{...defaults, ...stats};
-
-    if (!normalized.containsKey('totalRevenue') &&
-        normalized['totalAmount'] != null) {
-      normalized['totalRevenue'] = normalized['totalAmount'];
-    }
-    if (!normalized.containsKey('rawRevenue') &&
-        normalized['totalAmount'] != null) {
-      normalized['rawRevenue'] = normalized['totalAmount'];
-    }
-
-    return normalized;
-  }
-
-  int _toInt(dynamic value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    if (value is String) return int.tryParse(value) ?? 0;
-    return 0;
-  }
-
-  String _formatRevenueDisplay(Map<String, dynamic> stats) {
-    final revenue = stats['totalRevenue'];
-    if (revenue is String && revenue.trim().isNotEmpty) return revenue;
-    final raw = stats['rawRevenue'];
-    final numValue = raw is num
-        ? raw.toDouble()
-        : (revenue is num ? revenue.toDouble() : 0.0);
-    return '\$${numValue.toStringAsFixed(2)}';
   }
 
   bool get _hasConfiguredInvoicingEmail {
@@ -618,7 +508,8 @@ class _AdminDashboardViewControllerState
   }
 
   Future<void> _navigateToAddBusiness() async {
-    final result = await Navigator.pushNamed(context, Routes.addBusinessDetails);
+    final result =
+        await Navigator.pushNamed(context, Routes.addBusinessDetails);
     if (result == true) {
       await _refreshBusinessOverview();
     }
@@ -626,6 +517,8 @@ class _AdminDashboardViewControllerState
 
   @override
   Widget build(BuildContext context) {
+    final businessStatsState = ref.watch(businessStatsProvider);
+    final businessStats = businessStatsState.stats;
     if (_isLoading) {
       return Scaffold(
         backgroundColor: BauhausDesign.backgroundLight,
@@ -653,12 +546,12 @@ class _AdminDashboardViewControllerState
           CustomScrollView(
             controller: _scrollController,
             slivers: [
-              _buildEnhancedHeaderSliver(),
+              _buildEnhancedHeaderSliver(businessStats),
               BusinessOverviewSliver(
                 animation: _statsAnimationController,
                 businessStats: businessStats,
               ),
-              _buildFeaturedActionsSliver(),
+              _buildFeaturedActionsSliver(businessStats),
               _buildQuickActionsSliver(),
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
@@ -669,7 +562,7 @@ class _AdminDashboardViewControllerState
     );
   }
 
-  Widget _buildEnhancedHeaderSliver() {
+  Widget _buildEnhancedHeaderSliver(Map<String, dynamic> businessStats) {
     final apiFirstName = getInitialData['firstName']?.toString().trim() ?? '';
     final apiLastName = getInitialData['lastName']?.toString().trim() ?? '';
     final storedName = _sharedPrefs.getName()?.trim() ?? '';
@@ -1021,6 +914,16 @@ class _AdminDashboardViewControllerState
                                                 _buildQuickStat(
                                                     context,
                                                     'Active',
+                                                    (stats['activeInvoices'] ??
+                                                            0)
+                                                        .toString(),
+                                                    Icons.trending_up),
+                                                const SizedBox(
+                                                    width:
+                                                        BauhausDesign.space4),
+                                                _buildQuickStat(
+                                                    context,
+                                                    'Active',
                                                     (businessStats[
                                                                 'activeInvoices'] ??
                                                             0)
@@ -1146,106 +1049,6 @@ class _AdminDashboardViewControllerState
     );
   }
 
-  Widget _buildStatsOverviewSliver() {
-    return SliverToBoxAdapter(
-      child: AnimatedBuilder(
-        animation: _statsAnimationController,
-        builder: (context, child) {
-          return Transform.translate(
-            offset: Offset(
-              0,
-              30 * (1 - _statsAnimationController.value),
-            ),
-            child: Opacity(
-              opacity: _statsAnimationController.value,
-              child: Transform.translate(
-                offset: const Offset(0, -20), // Reduced negative offset
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                        24, 20, 24, 10), // Reduced top padding
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.businessOverview,
-                          style: BauhausDesign.getTextTheme(context)
-                              .titleMedium
-                              ?.copyWith(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: BauhausDesign.neutral,
-                                letterSpacing: -0.5,
-                              ),
-                        ),
-                        const SizedBox(height: BauhausDesign.space1),
-                        Text(
-                          AppLocalizations.of(context)!.businessOverviewDesc,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
-                                color: BauhausDesign.neutral,
-                                fontWeight: FontWeight.w500,
-                              ),
-                        ),
-                        const SizedBox(height: BauhausDesign.space6),
-                        SizedBox(
-                          height: 150,
-                          child: ListView(
-                            clipBehavior: Clip.none,
-                            scrollDirection: Axis.horizontal,
-                            physics: const BouncingScrollPhysics(),
-                            children: [
-                              _buildEnhancedStatsCard(
-                                Icons.business_center_rounded,
-                                businessStats['activeBusinesses']?.toString() ??
-                                    '0',
-                                AppLocalizations.of(context)!.activeBusinesses,
-                                BauhausDesign.primary,
-                                0,
-                              ),
-                              _buildEnhancedStatsCard(
-                                Icons.people_rounded,
-                                businessStats['totalClients']?.toString() ??
-                                    '0',
-                                AppLocalizations.of(context)!.totalClients,
-                                BauhausDesign.success,
-                                1,
-                              ),
-                              _buildEnhancedStatsCard(
-                                Icons.receipt_long_rounded,
-                                businessStats['totalInvoices']?.toString() ??
-                                    '0',
-                                AppLocalizations.of(context)!.invoicesGenerated,
-                                BauhausDesign.secondary,
-                                2,
-                              ),
-                              _buildEnhancedStatsCard(
-                                Icons.trending_up_rounded,
-                                businessStats['totalRevenue']?.toString() ??
-                                    '\$0.00',
-                                AppLocalizations.of(context)!.totalRevenue,
-                                BauhausDesign.warning,
-                                3,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   Widget _buildEnhancedStatsCard(
     IconData icon,
     String value,
@@ -1330,7 +1133,7 @@ class _AdminDashboardViewControllerState
         .fadeIn(duration: 600.ms, curve: Curves.easeOutQuart);
   }
 
-  Widget _buildFeaturedActionsSliver() {
+  Widget _buildFeaturedActionsSliver(Map<String, dynamic> businessStats) {
     return SliverToBoxAdapter(
       child: AnimatedBuilder(
         animation: _contentAnimationController,
