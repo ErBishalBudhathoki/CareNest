@@ -914,16 +914,6 @@ class _AdminDashboardViewControllerState
                                                 _buildQuickStat(
                                                     context,
                                                     'Active',
-                                                    (stats['activeInvoices'] ??
-                                                            0)
-                                                        .toString(),
-                                                    Icons.trending_up),
-                                                const SizedBox(
-                                                    width:
-                                                        BauhausDesign.space4),
-                                                _buildQuickStat(
-                                                    context,
-                                                    'Active',
                                                     (businessStats[
                                                                 'activeInvoices'] ??
                                                             0)
