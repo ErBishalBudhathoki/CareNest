@@ -439,3 +439,133 @@ final organizationIdProvider = Provider<String?>((ref) {
   debugPrint('🔍 DEBUG Provider: organizationIdProvider returning: $orgId');
   return orgId;
 });
+
+// Business Stats Provider
+final businessStatsProvider =
+    StateNotifierProvider<BusinessStatsNotifier, BusinessStatsState>((ref) {
+  return BusinessStatsNotifier(ref.read(apiMethodProvider));
+});
+
+class BusinessStatsState {
+  final Map<String, dynamic> stats;
+  final bool isLoading;
+  final String? error;
+
+  const BusinessStatsState({
+    required this.stats,
+    this.isLoading = false,
+    this.error,
+  });
+
+  BusinessStatsState copyWith({
+    Map<String, dynamic>? stats,
+    bool? isLoading,
+    String? error,
+  }) {
+    return BusinessStatsState(
+      stats: stats ?? this.stats,
+      isLoading: isLoading ?? this.isLoading,
+      error: error ?? this.error,
+    );
+  }
+}
+
+class BusinessStatsNotifier extends StateNotifier<BusinessStatsState> {
+  final ApiMethod _apiMethod;
+
+  BusinessStatsNotifier(this._apiMethod)
+      : super(BusinessStatsState(
+          stats: _defaultBusinessStats(),
+        ));
+
+  static Map<String, dynamic> _defaultBusinessStats() {
+    return {
+      'activeBusinesses': 0,
+      'totalClients': 0,
+      'totalInvoices': 0,
+      'totalRevenue': '\$0.00',
+      'rawRevenue': 0
+    };
+  }
+
+  Future<void> loadBusinessStats(String? organizationId) async {
+    if (organizationId == null || organizationId.isEmpty) {
+      state = state.copyWith(
+          error: 'Organization ID not available', isLoading: false);
+      return;
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final response = await _apiMethod.getInvoiceStats(organizationId);
+      Map<String, dynamic> stats = _normalizeBusinessStats(response);
+
+      try {
+        final businesses = await _apiMethod.getBusinesses(organizationId);
+        if (businesses.isNotEmpty || _toInt(stats['activeBusinesses']) == 0) {
+          stats['activeBusinesses'] = businesses.length;
+        }
+      } catch (_) {}
+
+      try {
+        final clients =
+            await _apiMethod.getClientsByOrganizationId(organizationId);
+        if (clients.isNotEmpty || _toInt(stats['totalClients']) == 0) {
+          stats['totalClients'] = clients.length;
+        }
+      } catch (_) {}
+
+      stats['activeBusinesses'] = _toInt(stats['activeBusinesses']);
+      stats['totalClients'] = _toInt(stats['totalClients']);
+      stats['totalInvoices'] = _toInt(stats['totalInvoices']);
+      stats['totalRevenue'] = _formatRevenueDisplay(stats);
+
+      state = state.copyWith(stats: stats, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(error: e.toString(), isLoading: false);
+    }
+  }
+
+  Map<String, dynamic> _normalizeBusinessStats(Map<String, dynamic> response) {
+    final defaults = _defaultBusinessStats();
+    if (response.isEmpty) return defaults;
+
+    dynamic stats = response['data'];
+    if (stats is Map<String, dynamic> &&
+        stats['data'] is Map<String, dynamic>) {
+      stats = stats['data'];
+    }
+    if (stats is! Map<String, dynamic>) return defaults;
+
+    final normalized = <String, dynamic>{...defaults, ...stats};
+
+    if (!normalized.containsKey('totalRevenue') &&
+        normalized['totalAmount'] != null) {
+      normalized['totalRevenue'] = normalized['totalAmount'];
+    }
+    if (!normalized.containsKey('rawRevenue') &&
+        normalized['totalAmount'] != null) {
+      normalized['rawRevenue'] = normalized['totalAmount'];
+    }
+
+    return normalized;
+  }
+
+  int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  String _formatRevenueDisplay(Map<String, dynamic> stats) {
+    final revenue = stats['totalRevenue'];
+    if (revenue is String && revenue.trim().isNotEmpty) return revenue;
+    final raw = stats['rawRevenue'];
+    final numValue = raw is num
+        ? raw.toDouble()
+        : (revenue is num ? revenue.toDouble() : 0.0);
+    return '\$${numValue.toStringAsFixed(2)}';
+  }
+}
