@@ -97,6 +97,10 @@ class AppConfig {
     }
   }
 
+  static bool get isDevelopment => appFlavor == Flavor.development;
+
+  static bool get isProduction => appFlavor == Flavor.production;
+
   static String normalizeBaseUrl([String? rawBaseUrl]) {
     final value = rawBaseUrl;
     if (value == null || value.trim().isEmpty) {

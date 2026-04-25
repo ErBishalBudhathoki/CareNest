@@ -1,0 +1,26 @@
+{
+	"nodes":[
+		{"id":"6f0ad84f44ce9c17","type":"group","x":-80,"y":-120,"width":2160,"height":1160,"color":"5","label":"Frontend + Mobile Documentation"},
+		{"id":"a1b2c3d4e5f67890","type":"text","text":"# Frontend / Mobile Map\n\nUse this canvas to navigate app docs, implementation summaries, and mobile integration notes.","x":40,"y":20,"width":360,"height":180},
+		{"id":"c1d2e3f4a5b67890","type":"file","file":"README.md","x":860,"y":0,"width":320,"height":220},
+		{"id":"d1e2f3a4b5c67890","type":"file","file":"DOCUMENTATION_INDEX.md","x":1240,"y":0,"width":320,"height":220},
+		{"id":"e1f2a3b4c5d67890","type":"file","file":"docs/README.md","x":480,"y":320,"width":320,"height":220},
+		{"id":"f1a2b3c4d5e67890","type":"file","file":"docs/FEATURE_ROADMAP.md","x":860,"y":320,"width":320,"height":220},
+		{"id":"0a1b2c3d4e5f6789","type":"file","file":"docs/INTEGRATION_QUICK_START.md","x":1240,"y":320,"width":320,"height":220},
+		{"id":"2a3b4c5d6e7f8901","type":"file","file":"ONBOARDING_QUESTIONNAIRE_PROGRESS.md","x":480,"y":640,"width":320,"height":220},
+		{"id":"3a4b5c6d7e8f9012","type":"file","file":"APP_STORE_READINESS.md","x":860,"y":640,"width":320,"height":220},
+		{"id":"4a5b6c7d8e9f0123","type":"file","file":"APP_STORE_SUBMISSION_CHECKLIST.md","x":1300,"y":640,"width":320,"height":220},
+		{"id":"1a2b3c4d5e6f7890","type":"file","file":"docs/FIREBASE_SETUP_COMPLETE_GUIDE.md","x":1720,"y":320,"width":320,"height":220},
+		{"id":"b1c2d3e4f5a67890","type":"file","file":"OBSIDIAN_FRONTEND_MOBILE_DOCS.md","x":40,"y":320,"width":320,"height":220}
+	],
+	"edges":[
+		{"id":"aa11bb22cc33dd44","fromNode":"a1b2c3d4e5f67890","fromSide":"right","toNode":"b1c2d3e4f5a67890","toSide":"left","label":"main map"},
+		{"id":"bb22cc33dd44ee55","fromNode":"b1c2d3e4f5a67890","fromSide":"right","toNode":"e1f2a3b4c5d67890","toSide":"left","label":"details"},
+		{"id":"cc33dd44ee55ff66","fromNode":"b1c2d3e4f5a67890","fromSide":"bottom","toNode":"f1a2b3c4d5e67890","toSide":"top","label":"roadmap"},
+		{"id":"dd44ee55ff667788","fromNode":"e1f2a3b4c5d67890","fromSide":"right","toNode":"0a1b2c3d4e5f6789","toSide":"left","label":"integration"},
+		{"id":"ee55ff6677889900","fromNode":"0a1b2c3d4e5f6789","fromSide":"right","toNode":"1a2b3c4d5e6f7890","toSide":"left","label":"firebase"},
+		{"id":"ff6677889900aa11","fromNode":"f1a2b3c4d5e67890","fromSide":"bottom","toNode":"2a3b4c5d6e7f8901","toSide":"top","label":"onboarding"},
+		{"id":"0011aa22bb33cc44","fromNode":"1a2b3c4d5e6f7890","fromSide":"bottom","toNode":"3a4b5c6d7e8f9012","toSide":"top","label":"store readiness"},
+		{"id":"1122bb33cc44dd55","fromNode":"3a4b5c6d7e8f9012","fromSide":"right","toNode":"4a5b6c7d8e9f0123","toSide":"left","label":"submit"}
+	]
+}

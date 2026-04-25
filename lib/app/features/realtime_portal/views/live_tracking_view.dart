@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/realtime_tracking_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/services/websocket_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Live Tracking View
 /// Real-time worker location tracking with map
@@ -15,6 +16,8 @@ class LiveTrackingView extends ConsumerStatefulWidget {
 }
 
 class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
+  static const String _developmentSocketUrl = 'http://localhost:3000';
+
   GoogleMapController? _mapController;
   final WebSocketService _wsService = WebSocketService();
   Set<Marker> _markers = {};
@@ -22,19 +25,20 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
   @override
   void initState() {
     super.initState();
+    if (kReleaseMode) {
+      return;
+    }
     _initializeWebSocket();
   }
 
   void _initializeWebSocket() {
-    // Initialize WebSocket connection
     _wsService.connect(
-      serverUrl: 'http://localhost:3000',
-      userId: 'client-123', // Get from auth
+      serverUrl: _developmentSocketUrl,
+      userId: 'client-123',
       userType: 'client',
-      token: 'auth-token', // Get from auth
+      token: 'auth-token',
     );
 
-    // Listen for location updates
     _wsService.onLocationUpdate = (location) {
       ref
           .read(realtimeTrackingViewModelProvider.notifier)
@@ -42,7 +46,6 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
       _updateMarker(location.latitude, location.longitude);
     };
 
-    // Listen for geofence events
     _wsService.onGeofenceEvent = (event) {
       ref
           .read(realtimeTrackingViewModelProvider.notifier)
@@ -126,6 +129,77 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
 
   @override
   Widget build(BuildContext context) {
+    if (kReleaseMode) {
+      return Scaffold(
+        backgroundColor: AppColors.colorBackground,
+        appBar: AppBar(
+          backgroundColor: AppColors.colorPrimary,
+          elevation: 0,
+          title: const Text(
+            'Live Tracking',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.location_off_rounded,
+                    color: AppColors.colorPrimary,
+                    size: 48,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Live tracking is not available in this App Store build.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.colorFontPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'The production socket endpoint is not enabled yet, so this screen is hidden from reviewers and users until it is fully configured.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.5,
+                      color: AppColors.colorFontSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     final state = ref.watch(realtimeTrackingViewModelProvider);
 
     return Scaffold(

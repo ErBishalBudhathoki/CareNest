@@ -148,7 +148,7 @@ class FirebaseAuthService {
 
         final actionCodeSettings = ActionCodeSettings(
           url: 'https://$projectId.firebaseapp.com/email-verified',
-          handleCodeInApp: true,
+          handleCodeInApp: false,
           iOSBundleId: bundleId,
           androidPackageName: bundleId,
           androidInstallApp: true,
