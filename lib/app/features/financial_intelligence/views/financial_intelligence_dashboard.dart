@@ -1881,12 +1881,12 @@ class _FinancialIntelligenceDashboardState
     final abs = value.abs();
     final sign = value < 0 ? '-' : '';
     if (abs >= 1000000) {
-      return '${sign}USD ${(abs / 1000000).toStringAsFixed(2)}M';
+      return '${sign}AUD ${(abs / 1000000).toStringAsFixed(2)}M';
     }
     if (abs >= 1000) {
-      return '${sign}USD ${(abs / 1000).toStringAsFixed(1)}K';
+      return '${sign}AUD ${(abs / 1000).toStringAsFixed(1)}K';
     }
-    return '${sign}USD ${abs.toStringAsFixed(0)}';
+    return '${sign}AUD ${abs.toStringAsFixed(0)}';
   }
 
   String _formatPercent(double value) {

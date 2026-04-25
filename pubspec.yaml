@@ -162,6 +162,7 @@ flutter:
     - assets/ndis_support_items.json
     - assets/icons/
     - assets/icons/ic_launcher.png
+    - assets/ui_assets_svg/
   uses-material-design: true
   fonts:
     - family: Lato

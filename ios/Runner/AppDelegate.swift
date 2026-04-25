@@ -36,10 +36,10 @@ import Vision
       }
     })
     
-    if let controller = window?.rootViewController as? FlutterViewController {
+    if let visionRegistrar = registrar(forPlugin: "VisionPlugin") {
       let visionChannel = FlutterMethodChannel(
         name: "com.bishal.invoice/vision",
-        binaryMessenger: controller.binaryMessenger
+        binaryMessenger: visionRegistrar.messenger()
       )
       visionChannel.setMethodCallHandler({ [weak self] (call, result) in
         guard call.method == "recognizeText" else {

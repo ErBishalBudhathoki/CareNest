@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "id": "51f0ad84f44ce9c1",
+      "type": "group",
+      "x": -80,
+      "y": -120,
+      "width": 2160,
+      "height": 1160,
+      "label": "Backend Documentation",
+      "color": "4"
+    },
+    {
+      "id": "61b2c3d4e5f67890",
+      "type": "text",
+      "x": 40,
+      "y": 20,
+      "width": 360,
+      "height": 180,
+      "text": "# Backend Map\n\nStart with backend overview. Follow into API, core inventory, operations, deployment, and testing docs."
+    },
+    {
+      "id": "71c2d3e4f5a67890",
+      "type": "file",
+      "x": 480,
+      "y": 0,
+      "width": 320,
+      "height": 220,
+      "file": "OBSIDIAN_BACKEND_MARKDOWN_INDEX.md"
+    },
+    {
+      "id": "81d2e3f4a5b67890",
+      "type": "file",
+      "x": 860,
+      "y": 0,
+      "width": 320,
+      "height": 220,
+      "file": "backend/README.md"
+    },
+    {
+      "id": "91e2f3a4b5c67890",
+      "type": "file",
+      "x": 1240,
+      "y": 0,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/README.md"
+    },
+    {
+      "id": "a1f2a3b4c5d67890",
+      "type": "file",
+      "x": 480,
+      "y": 320,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/overview.md"
+    },
+    {
+      "id": "b1a2b3c4d5e67890",
+      "type": "file",
+      "x": 860,
+      "y": 320,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/api/README.md"
+    },
+    {
+      "id": "c1a2b3c4d5e67890",
+      "type": "file",
+      "x": 1240,
+      "y": 320,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/core/README.md"
+    },
+    {
+      "id": "d1a2b3c4d5e67890",
+      "type": "file",
+      "x": 1620,
+      "y": 320,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/architecture/event_driven_system.md"
+    },
+    {
+      "id": "e1a2b3c4d5e67890",
+      "type": "file",
+      "x": 480,
+      "y": 640,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/operations/README.md"
+    },
+    {
+      "id": "f1a2b3c4d5e67891",
+      "type": "file",
+      "x": 860,
+      "y": 640,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/deployment/CONSOLIDATED_SECRETS_GUIDE.md"
+    },
+    {
+      "id": "0b1c2d3e4f5a6789",
+      "type": "file",
+      "x": 1240,
+      "y": 640,
+      "width": 320,
+      "height": 220,
+      "file": "backend/docs/testing/TESTING_VERIFICATION_GUIDE.md"
+    },
+    {
+      "id": "1b2c3d4e5f6a7890",
+      "type": "file",
+      "x": 1620,
+      "y": 640,
+      "width": 320,
+      "height": 220,
+      "file": "backend/API_SECURITY.md"
+    }
+  ],
+  "edges": [
+    {
+      "id": "2211bb33cc44dd55",
+      "fromNode": "61b2c3d4e5f67890",
+      "fromSide": "right",
+      "toNode": "71c2d3e4f5a67890",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "index"
+    },
+    {
+      "id": "3322cc44dd55ee66",
+      "fromNode": "71c2d3e4f5a67890",
+      "fromSide": "right",
+      "toNode": "81d2e3f4a5b67890",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "entry"
+    },
+    {
+      "id": "4433dd55ee66ff77",
+      "fromNode": "81d2e3f4a5b67890",
+      "fromSide": "right",
+      "toNode": "91e2f3a4b5c67890",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "docs"
+    },
+    {
+      "id": "5544ee66ff778899",
+      "fromNode": "91e2f3a4b5c67890",
+      "fromSide": "bottom",
+      "toNode": "a1f2a3b4c5d67890",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "overview"
+    },
+    {
+      "id": "6655ff77889900aa",
+      "fromNode": "a1f2a3b4c5d67890",
+      "fromSide": "right",
+      "toNode": "b1a2b3c4d5e67890",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "api"
+    },
+    {
+      "id": "776600aa11bb22cc",
+      "fromNode": "a1f2a3b4c5d67890",
+      "fromSide": "right",
+      "toNode": "c1a2b3c4d5e67890",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "core"
+    },
+    {
+      "id": "887711bb22cc33dd",
+      "fromNode": "c1a2b3c4d5e67890",
+      "fromSide": "right",
+      "toNode": "d1a2b3c4d5e67890",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "architecture"
+    },
+    {
+      "id": "998822cc33dd44ee",
+      "fromNode": "c1a2b3c4d5e67890",
+      "fromSide": "bottom",
+      "toNode": "e1a2b3c4d5e67890",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ops"
+    },
+    {
+      "id": "aa9933dd44ee55ff",
+      "fromNode": "e1a2b3c4d5e67890",
+      "fromSide": "right",
+      "toNode": "f1a2b3c4d5e67891",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "deploy"
+    },
+    {
+      "id": "bbaa44ee55ff6677",
+      "fromNode": "e1a2b3c4d5e67890",
+      "fromSide": "right",
+      "toNode": "0b1c2d3e4f5a6789",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "test"
+    },
+    {
+      "id": "ccbb55ff66778899",
+      "fromNode": "f1a2b3c4d5e67891",
+      "fromSide": "right",
+      "toNode": "1b2c3d4e5f6a7890",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "security"
+    }
+  ]
+}

@@ -52,4 +52,8 @@ class AppConfig {
         return 'Unknown';
     }
   }
+
+  static bool get isDevelopment => appFlavor == Flavor.development;
+
+  static bool get isProduction => appFlavor == Flavor.production;
 }

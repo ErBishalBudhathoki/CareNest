@@ -677,12 +677,14 @@ class ApiMethod extends ChangeNotifier {
     return a.scheme == b.scheme && a.host == b.host && a.port == b.port;
   }
 
-  Future<String?> _getAuthorizationHeaderValue() async {
+  Future<String?> _getAuthorizationHeaderValue({
+    bool forceRefresh = false,
+  }) async {
     // Try to get Firebase ID token first (new auth system)
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        final idToken = await user.getIdToken();
+        final idToken = await user.getIdToken(forceRefresh);
         if (idToken != null && idToken.isNotEmpty) {
           if (!_hasLoggedFirebaseTokenUsage) {
             debugPrint('✅ Using Firebase ID token for authorization');
@@ -737,6 +739,7 @@ class ApiMethod extends ChangeNotifier {
     bool includeAuth = false,
     bool includeAppCheck = false,
     Map<String, String>? extra,
+    bool forceAuthRefresh = false,
   }) async {
     final headers = <String, String>{
       'Content-Type': 'application/json',
@@ -745,7 +748,9 @@ class ApiMethod extends ChangeNotifier {
     };
 
     if (includeAuth && !headers.containsKey('Authorization')) {
-      final authValue = await _getAuthorizationHeaderValue();
+      final authValue = await _getAuthorizationHeaderValue(
+        forceRefresh: forceAuthRefresh,
+      );
       if (authValue != null) {
         headers['Authorization'] = authValue;
       }
@@ -761,10 +766,13 @@ class ApiMethod extends ChangeNotifier {
     return headers;
   }
 
-  Future<Map<String, String>?> _buildProtectedJsonHeaders() async {
+  Future<Map<String, String>?> _buildProtectedJsonHeaders({
+    bool forceAuthRefresh = false,
+  }) async {
     var headers = await _buildJsonHeaders(
       includeAuth: true,
       includeAppCheck: true,
+      forceAuthRefresh: forceAuthRefresh,
     );
 
     if (!headers.containsKey('Authorization')) {
@@ -772,6 +780,7 @@ class ApiMethod extends ChangeNotifier {
       headers = await _buildJsonHeaders(
         includeAuth: true,
         includeAppCheck: true,
+        forceAuthRefresh: forceAuthRefresh,
       );
     }
 
@@ -6101,13 +6110,21 @@ class ApiMethod extends ChangeNotifier {
   Future<Map<String, dynamic>> getTaxSettings() async {
     try {
       final uri = Uri.parse('${_baseUrl}config/tax-brackets');
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      var headers = await _buildProtectedJsonHeaders();
+      if (headers == null) {
+        throw Exception('Failed to load tax settings: missing authorization');
+      }
 
-      final response = await http.get(uri, headers: headers);
+      var response = await http.get(uri, headers: headers);
+
+      if (response.statusCode == 401) {
+        debugPrint(
+            'Tax settings request returned 401, retrying with a refreshed Firebase token.');
+        headers = await _buildProtectedJsonHeaders(forceAuthRefresh: true);
+        if (headers != null) {
+          response = await http.get(uri, headers: headers);
+        }
+      }
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);

@@ -4,13 +4,17 @@ const Set<String> _adminRoleTags = {
   'owner',
 };
 
+const Set<String> _employeeRoleTags = {
+  'employee',
+};
+
 const Set<String> _clientRoleTags = {
   'client',
-  'family',
+  'family', // family members share client dashboard
 };
 
 enum UserRole {
-  normal,
+  employee,
   admin,
   client,
 }
@@ -21,6 +25,11 @@ class UserRoleResolver {
   static bool isAdminTag(String? role) {
     final normalized = role?.trim().toLowerCase();
     return normalized != null && _adminRoleTags.contains(normalized);
+  }
+
+  static bool isEmployeeTag(String? role) {
+    final normalized = role?.trim().toLowerCase();
+    return normalized != null && _employeeRoleTags.contains(normalized);
   }
 
   static bool isClientTag(String? role) {
@@ -77,6 +86,6 @@ class UserRoleResolver {
       return UserRole.client;
     }
 
-    return UserRole.normal;
+    return UserRole.employee;
   }
 }

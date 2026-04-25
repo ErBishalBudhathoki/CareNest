@@ -9,9 +9,23 @@ class AuthService {
   final Dio _dio = DioClient().dio;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
+  Future<Response<dynamic>> _postAuthV2(
+    String action, {
+    Object? data,
+  }) async {
+    try {
+      return await _dio.post('/auth/v2/$action', data: data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return await _dio.post('/v2/auth/$action', data: data);
+      }
+      rethrow;
+    }
+  }
+
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _dio.post('/auth/v2/login', data: {
+      final response = await _postAuthV2('login', data: {
         'email': email,
         'password': password,
       });
@@ -63,7 +77,7 @@ class AuthService {
 
   Future<void> register(
       String email, String password, String firstName, String lastName) async {
-    await _dio.post('/auth/v2/register', data: {
+    await _postAuthV2('register', data: {
       'email': email,
       'password': password,
       'firstName': firstName,
@@ -81,7 +95,7 @@ class AuthService {
     try {
       final refreshToken = await _storage.read(key: 'refreshToken');
       if (refreshToken != null) {
-        await _dio.post('/auth/v2/logout', data: {
+        await _postAuthV2('logout', data: {
           'refreshToken': refreshToken,
         });
       }
@@ -102,7 +116,7 @@ class AuthService {
 
   Future<void> changePassword(
       String currentPassword, String newPassword) async {
-    await _dio.post('/auth/v2/change-password', data: {
+    await _postAuthV2('change-password', data: {
       'currentPassword': currentPassword,
       'newPassword': newPassword,
     });

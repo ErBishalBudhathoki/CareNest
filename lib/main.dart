@@ -62,6 +62,7 @@ import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
 import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_stepper_view.dart';
 import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.dart';
 
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
@@ -294,13 +295,12 @@ Future<void> _initializeAppCheck() async {
           '║        FIREBASE APP CHECK — DEBUG TOKEN INFO             ║');
       debugPrint(
           '╠══════════════════════════════════════════════════════════╣');
-      debugPrint(
-          '║ Fixed token set via AndroidManifest meta-data:           ║');
-      debugPrint('║   cce8603d-dd78-4514-bb50-ff39a08e6f7b                  ║');
+      debugPrint('║ Use Firebase SDK debug secret printed above in logcat:  ║');
+      debugPrint('║ D/...DebugAppCheckProvider: Enter this debug secret...  ║');
       debugPrint(
           '║                                                          ║');
       debugPrint(
-          '║ If you see a 403 error, register this token at:          ║');
+          '║ If you see a 403 error, register that secret at:         ║');
       debugPrint('║  Firebase Console → App Check → Apps →                  ║');
       debugPrint(
           '║  Android (com.bishal.invoice) → Manage debug tokens      ║');
@@ -321,7 +321,7 @@ Future<void> _initializeAppCheck() async {
       debugPrint('❌ Error getting App Check token: ${e.message}');
       if (androidSelection.provider == AndroidProvider.debug) {
         debugPrint(
-            '   → Register cce8603d-dd78-4514-bb50-ff39a08e6f7b in Firebase Console');
+            '   → Register debug secret printed earlier by DebugAppCheckProvider in Firebase Console');
       }
     } catch (e) {
       debugPrint('❌ Error getting App Check token: $e');
@@ -539,6 +539,7 @@ class MyApp extends ConsumerWidget {
           },
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.onboarding: (context) => const OnboardingWelcomeView(),
+          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
@@ -546,7 +547,7 @@ class MyApp extends ConsumerWidget {
                 arguments?['email'] as String? ?? 'defaultemail@default.com';
             final firstName = arguments?['firstName'] as String? ?? 'First';
             final lastName = arguments?['lastName'] as String? ?? 'Last';
-            final role = arguments?['role'] as UserRole? ?? UserRole.normal;
+            final role = arguments?['role'] as UserRole? ?? UserRole.employee;
             return NavBarWidget(
               context: context,
               email: email,
@@ -559,7 +560,7 @@ class MyApp extends ConsumerWidget {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
-            final role = arguments?['role'] as UserRole? ?? UserRole.normal;
+            final role = arguments?['role'] as UserRole? ?? UserRole.employee;
             final organizationId =
                 arguments?['organizationId'] as String? ?? '';
             final organizationName =

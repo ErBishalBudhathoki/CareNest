@@ -55,6 +55,22 @@ Deploy production build to production track
 
 Deploy internal build to internal testing
 
+### android upload_internal_aab
+
+```sh
+[bundle exec] fastlane android upload_internal_aab
+```
+
+Upload existing production AAB to internal testing
+
+### android upload_production_aab
+
+```sh
+[bundle exec] fastlane android upload_production_aab
+```
+
+Upload existing production AAB to production track
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

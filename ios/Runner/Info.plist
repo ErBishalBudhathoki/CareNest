@@ -36,25 +36,11 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.bishal.invoice</string>
-			</array>
-		</dict>
-		<dict>
 			<key>CFBundleURLName</key>
 			<string>com.bishal.invoice</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>https</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>bishalbudhathoki.com</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>https</string>
+				<string>com.bishal.invoice</string>
 			</array>
 		</dict>
 	</array>
@@ -62,19 +48,23 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<true/>
+	<key>GoogleMapsAPIKey</key>
+	<string>$(GOOGLE_MAPS_API_KEY_FOR_IOS)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>geo</string>
 		<string>googlechrome</string>
 		<string>googlechromes</string>
-		<string>http</string>
-		<string>https</string>
 		<string>maps</string>
 		<string>comgooglemaps</string>
 	</array>
-    <key>GoogleMapsAPIKey</key>
-    <string>$(GOOGLE_MAPS_API_KEY_FOR_IOS)</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>MKDirectionsApplicationSupportedModes</key>
 	<array>
@@ -91,42 +81,32 @@
 		<string>MKDirectionsModeTaxi</string>
 		<string>MKDirectionsModeTrain</string>
 	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>LSSupportsOpeningDocumentsInPlace</key>
-		<true/>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_dartobservatory._tcp</string>
-	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>We use the camera to scan receipts and attach them to your organization's expenses.</string>
+	<string>CareNest uses the camera to scan receipts, attach documents, and update profile photos.</string>
 	<key>NSDocumentsFolderUsageDescription</key>
-	<string>Your app needs access to the documents folder to save and download files.</string>
+	<string>CareNest saves invoices, reports, and exported documents to your files.</string>
 	<key>NSFileProtectionKey</key>
 	<string>NSFileProtectionComplete</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>This app needs local network access for debugging and communication with the development server.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background to track attendance.</string>
+	<string>CareNest uses your location during scheduled visits to trigger clock-in reminders and verify attendance, including when the app is in the background.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background to track attendance.</string>
+	<string>CareNest uses background location around scheduled client visits to trigger arrival reminders and attendance events.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open to track attendance.</string>
+	<string>CareNest uses your location while the app is open for maps, navigation, and attendance workflows.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app uses the microphone to record your notes.</string>
+	<string>CareNest uses the microphone to record voice notes for care and invoice workflows.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your app needs access to the photo library to upload a profile picture.</string>
+	<string>CareNest uses your photo library to attach receipts, documents, and profile photos.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>This app uses speech recognition to convert your spoken notes into text.</string>
+	<string>CareNest uses speech recognition to turn spoken notes into text.</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>CareNest sends notifications for appointments, invoices, and clock-in reminders.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
+		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
@@ -152,14 +132,7 @@
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>allowProvisioningUpdates</key>
-	<true/>
 	<key>io.flutter.embedded_views_preview</key>
-	<true/>
-	<!-- Add notification permissions -->
-	<key>NSUserNotificationsUsageDescription</key>
-	<string>We need to send you notifications about your invoices and timers.</string>
-	<key>FirebaseMessagingAutoInitEnabled</key>
 	<true/>
 </dict>
 </plist>

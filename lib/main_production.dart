@@ -60,6 +60,8 @@ import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
 import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_stepper_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.dart';
 
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
@@ -261,14 +263,16 @@ Future<void> _initializeAppCheck() async {
   try {
     final token = await FirebaseAppCheck.instance.getToken(true);
     if (token != null && token.isNotEmpty) {
-      debugPrint('✅ App Check token obtained successfully (${token.substring(0, 20)}...)');
+      debugPrint(
+          '✅ App Check token obtained successfully (${token.substring(0, 20)}...)');
     } else {
       debugPrint('⚠️ App Check token was null or empty');
     }
   } on FirebaseException catch (e) {
     if (androidSelection.provider == AndroidProvider.debug) {
       debugPrint('❌ Error getting App Check token: ${e.message}');
-      debugPrint('   → Ensure the debug token from logcat is registered in Firebase Console.');
+      debugPrint(
+          '   → Ensure the debug token from logcat is registered in Firebase Console.');
     } else {
       debugPrint('❌ Error getting App Check token: ${e.message}');
     }
@@ -482,6 +486,8 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.assignC2E: (context) => const AssignC2E(),
+          Routes.onboarding: (context) => const OnboardingWelcomeView(),
+          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
@@ -489,7 +495,7 @@ class MyApp extends ConsumerWidget {
                 arguments?['email'] as String? ?? 'defaultemail@default.com';
             final firstName = arguments?['firstName'] as String? ?? 'First';
             final lastName = arguments?['lastName'] as String? ?? 'Last';
-            final role = arguments?['role'] as UserRole? ?? UserRole.normal;
+            final role = arguments?['role'] as UserRole? ?? UserRole.employee;
             return NavBarWidget(
               context: context,
               email: email,
@@ -502,7 +508,7 @@ class MyApp extends ConsumerWidget {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
-            final role = arguments?['role'] as UserRole? ?? UserRole.normal;
+            final role = arguments?['role'] as UserRole? ?? UserRole.employee;
             final organizationId =
                 arguments?['organizationId'] as String? ?? '';
             final organizationName =

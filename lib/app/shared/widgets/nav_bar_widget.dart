@@ -3,16 +3,19 @@ import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'dart:typed_data';
 
 import 'package:carenest/app/shared/widgets/line_items_view.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/auth/views/login_view.dart';
+import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
+import 'package:carenest/app/features/requests/models/request_model.dart';
+import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/features/training_compliance/views/training_compliance_hub_view.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
@@ -246,7 +249,7 @@ class NavBarWidget extends ConsumerWidget {
                       )),
                   onTap: () {
                     // Show the delete confirmation dialog
-                    _showDeleteConfirmationDialog(context, theme, apiMethod);
+                    _showDeleteConfirmationDialog(context, theme, ref);
                   },
                 ),
                 const Divider(),
@@ -289,18 +292,19 @@ class NavBarWidget extends ConsumerWidget {
   }
 
   void _showDeleteConfirmationDialog(
-      BuildContext context, ThemeData theme, ApiMethod apiMethod) {
+      BuildContext context, ThemeData theme, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Delete Account'),
-          content: const Text('Are you sure you want to delete your account?'),
+          content: const Text(
+            'Start account deletion? After approval, your account is deactivated and records required for payroll, tax, audit, and care obligations are retained for up to 90 days before permanent deletion.',
+          ),
           actions: [
             TextButton(
               onPressed: () {
-                // Perform the delete operation
-                _deleteAccount(theme, apiMethod);
+                _deleteAccount(theme, ref);
                 Navigator.of(context).pop();
               },
               child: const Text('Yes'),
@@ -318,86 +322,63 @@ class NavBarWidget extends ConsumerWidget {
     );
   }
 
-  Future<void> _deleteAccount(ThemeData theme, ApiMethod apiMethod) async {
+  Future<void> _deleteAccount(ThemeData theme, WidgetRef ref) async {
     try {
-      final response = await apiMethod.deleteUser(email);
-      if (response.containsKey('message')) {
-        if (response['message'].toString() == "User deleted successfully") {
-          final context = _navBarScaffoldKey.currentContext!;
-          Flushbar(
-            flushbarPosition: FlushbarPosition.BOTTOM,
-            duration: const Duration(seconds: 3),
-            titleText: Text(
-              "Success",
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontFamily: "ShadowsIntoLightTwo",
-              ),
-            ),
-            messageText: Text(
-              "User deleted successfully",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white,
-                fontFamily: "ShadowsIntoLightTwo",
-              ),
-            ),
-          ).show(context);
-
-          // Navigate to login after success message
-          await Future.delayed(
-              const Duration(seconds: 3)); // Delay for message visibility
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LoginView()),
-          );
-        } else {
-          // Handle other messages or errors
-          final context = _navBarScaffoldKey.currentContext!;
-          Flushbar(
-            flushbarPosition: FlushbarPosition.BOTTOM,
-            duration: const Duration(seconds: 3),
-            titleText: Text(
-              "Error",
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontFamily: "ShadowsIntoLightTwo",
-              ),
-            ),
-            messageText: Text(
-              "Failed to delete user, try again later",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white,
-                fontFamily: "ShadowsIntoLightTwo",
-              ),
-            ),
-          ).show(context);
-        }
-      } else {
-        // Handle unexpected response or errors
-        final context = _navBarScaffoldKey.currentContext!;
-        Flushbar(
-          flushbarPosition: FlushbarPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
-          titleText: Text(
-            "Server error",
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontFamily: "ShadowsIntoLightTwo",
-            ),
-          ),
-          messageText: Text(
-            "Server error, try again later",
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white,
-              fontFamily: "ShadowsIntoLightTwo",
-            ),
-          ),
-        ).show(context);
+      final orgId = organizationId ?? ref.read(organizationIdProvider);
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (orgId == null || orgId.isEmpty || currentUser == null) {
+        throw Exception('Missing organization or user context');
       }
+
+      final request = RequestModel(
+        organizationId: orgId,
+        userId: currentUser.uid,
+        type: 'ACCOUNT_DELETION',
+        status: RequestStatus.pending,
+        details: {
+          'reason':
+              'User requested account deletion from navigation drawer with 90-day retention',
+          'email': email,
+          'retentionDays': 90,
+          'retentionReason':
+              'Payroll, tax, audit, and care-service record obligations',
+          'deactivateOnApproval': true,
+          'requestedAt': DateTime.now().toIso8601String(),
+        },
+      );
+
+      await ref.read(requestRepositoryProvider).createRequest(request, email);
+
+      final context = _navBarScaffoldKey.currentContext!;
+      Flushbar(
+        flushbarPosition: FlushbarPosition.BOTTOM,
+        duration: const Duration(seconds: 4),
+        titleText: Text(
+          "Deletion Requested",
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: "ShadowsIntoLightTwo",
+          ),
+        ),
+        messageText: Text(
+          "You have been signed out. After approval, the account is deactivated and required records are retained for up to 90 days before permanent deletion.",
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: Colors.white,
+            fontFamily: "ShadowsIntoLightTwo",
+          ),
+        ),
+      ).show(context);
+
+      await SessionTimeoutService(
+        sharedPrefs: ref.read(sharedPreferencesUtilsProvider),
+      ).logoutAndClearSession(reason: 'account_deletion_requested_from_nav');
+
+      await Future.delayed(const Duration(milliseconds: 900));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginView()),
+      );
     } catch (error) {
-      // Handle any errors during the API call
       final context = _navBarScaffoldKey.currentContext!;
       Flushbar(
         flushbarPosition: FlushbarPosition.BOTTOM,

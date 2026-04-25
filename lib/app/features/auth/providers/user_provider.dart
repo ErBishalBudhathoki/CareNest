@@ -85,7 +85,7 @@ final currentUserProvider = FutureProvider<User?>((ref) async {
       name: sharedPrefs.getName() ?? '',
       email: email,
       phone: '',
-      role: sharedPrefs.getRole() ?? UserRole.normal,
+      role: sharedPrefs.getRole() ?? UserRole.employee,
     );
   }
 

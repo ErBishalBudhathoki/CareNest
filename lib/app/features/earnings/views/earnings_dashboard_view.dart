@@ -10,11 +10,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
 import 'package:carenest/app/features/earnings/services/employee_invoice_service.dart';
-import 'package:carenest/app/core/providers/auth_providers.dart';
-import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
-import 'package:carenest/app/features/admin/providers/business_stats_provider.dart';
-import 'package:carenest/app/features/admin/widgets/business_overview_section.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 final earningsChartHighlightProvider = StateProvider<double?>((ref) => null);
@@ -34,7 +30,6 @@ class EarningsDashboardView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(earningsViewModelProvider);
     final viewModel = ref.read(earningsViewModelProvider.notifier);
-    final role = ref.watch(userRoleProvider);
 
     final range = _calculateRange(state.period, state.anchorDate);
     final rangeLabel = _formatRangeLabel(state.period, range.start, range.end);
@@ -89,13 +84,6 @@ class EarningsDashboardView extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (role == UserRole.admin &&
-                              organizationId != null &&
-                              organizationId!.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: _buildBusinessOverview(context, ref),
-                            ),
                           _buildPeriodControls(
                             context: context,
                             period: state.period,
@@ -146,8 +134,6 @@ class EarningsDashboardView extends ConsumerWidget {
                               _buildProjectedPayCard(
                                   state.projection!, context),
                           ],
-                          const SizedBox(height: 20),
-                          _buildPayHistory(state.periodHistory, context),
                           const SizedBox(height: 20),
                           _buildPayHistory(state.periodHistory, context),
                           const SizedBox(height: 20),
@@ -400,38 +386,12 @@ class EarningsDashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildBusinessOverview(BuildContext context, WidgetRef ref) {
-    final orgId = organizationId;
-    if (orgId == null || orgId.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final statsAsync = ref.watch(businessStatsProvider(orgId));
-    return statsAsync.when(
-      data: (stats) => BusinessOverviewSection(businessStats: stats),
-      loading: () => SizedBox(
-        height: 150,
-        child: BauhausLoadingState(
-            message: AppLocalizations.of(context)!.loadingOverview),
-      ),
-      error: (e, _) => Card(
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(AppLocalizations.of(context)!
-              .failedToLoadBusinessOverview(e.toString())),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSummaryCard(
     EarningsSummary summary,
     BuildContext context, {
     required String title,
   }) {
-    final currencyFormat = NumberFormat.simpleCurrency();
+    final currencyFormat = _audCurrencyFormat();
 
     return Container(
       decoration: BauhausDesign.cardDecoration,
@@ -558,7 +518,7 @@ class EarningsDashboardView extends ConsumerWidget {
 
   Widget _buildProjectedPayCard(
       ProjectedEarnings projection, BuildContext context) {
-    final currencyFormat = NumberFormat.simpleCurrency();
+    final currencyFormat = _audCurrencyFormat();
 
     return Container(
       decoration: BauhausDesign.cardDecoration.copyWith(
@@ -745,7 +705,7 @@ class EarningsDashboardView extends ConsumerWidget {
                       getTooltipItems: (spots) => spots
                           .map(
                             (spot) => LineTooltipItem(
-                              '\$${spot.y.toStringAsFixed(0)}',
+                              'AUD ${spot.y.toStringAsFixed(0)}',
                               const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                             ),
                           )
@@ -803,7 +763,7 @@ class EarningsDashboardView extends ConsumerWidget {
                         ?.copyWith(color: Colors.white70, letterSpacing: 1.5)),
                 const SizedBox(height: 4),
                 Text(
-                  '\$${displayValue.toStringAsFixed(0)}',
+                  'AUD ${displayValue.toStringAsFixed(0)}',
                   style: BauhausDesign.getTextTheme(context)
                       .headlineMedium
                       ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
@@ -819,7 +779,7 @@ class EarningsDashboardView extends ConsumerWidget {
   Widget _buildHistoryList(
       List<EarningsHistoryItem> history, BuildContext context) {
     if (history.isEmpty) return const SizedBox.shrink();
-    final currencyFormat = NumberFormat.simpleCurrency();
+    final currencyFormat = _audCurrencyFormat();
 
     return Container(
       decoration: BauhausDesign.cardDecoration,
@@ -869,7 +829,7 @@ class EarningsDashboardView extends ConsumerWidget {
     if (history == null || history.items.isEmpty) {
       return const SizedBox.shrink();
     }
-    final currencyFormat = NumberFormat.simpleCurrency();
+    final currencyFormat = _audCurrencyFormat();
     final isWeekly = history.bucket == 'week';
 
     String labelForItem(EarningsPeriodHistoryItem item) {
@@ -936,7 +896,7 @@ class EarningsDashboardView extends ConsumerWidget {
     double periodEarnings,
     TaxFrequency frequency,
   ) {
-    final currencyFormat = NumberFormat.simpleCurrency();
+    final currencyFormat = _audCurrencyFormat();
     String frequencyLabel;
     switch (frequency) {
       case TaxFrequency.weekly:
@@ -1009,6 +969,10 @@ class EarningsDashboardView extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  NumberFormat _audCurrencyFormat() {
+    return NumberFormat.currency(locale: 'en_AU', symbol: 'AUD ');
   }
 }
 

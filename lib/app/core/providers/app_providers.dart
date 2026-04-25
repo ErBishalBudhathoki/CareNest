@@ -351,13 +351,13 @@ final userRoleProvider =
 class UserRoleNotifier extends StateNotifier<UserRole> {
   final SharedPreferencesUtils _sharedPrefs;
 
-  UserRoleNotifier(this._sharedPrefs) : super(UserRole.normal) {
+  UserRoleNotifier(this._sharedPrefs) : super(UserRole.employee) {
     _loadRole();
   }
 
   Future<void> _loadRole() async {
     final role = _sharedPrefs.getRole();
-    state = role ?? UserRole.normal;
+    state = role ?? UserRole.employee;
   }
 
   Future<void> updateRole(UserRole newRole) async {

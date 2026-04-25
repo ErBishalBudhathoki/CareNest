@@ -10,6 +10,7 @@ import 'package:carenest/app/features/auth/models/login_model.dart';
 import 'package:carenest/app/features/auth/services/auth_error_handler.dart';
 import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/onboarding/services/onboarding_gate_service.dart';
 
 import 'package:device_info_plus/device_info_plus.dart';
 
@@ -19,6 +20,7 @@ class LoginViewModel extends ChangeNotifier {
   final SharedPreferencesUtils _sharedPrefs;
   final FcmTokenManager _fcmTokenManager;
   final FirebaseAuthService _firebaseAuth;
+  final OnboardingGateService _onboardingGateService = OnboardingGateService();
 
   bool isLoading = false;
   String? _deviceId;
@@ -302,6 +304,23 @@ class LoginViewModel extends ChangeNotifier {
       organizationRole: userData['organizationRole'],
       clientId: userData['clientId']?.toString(),
     );
+    _navigateWithOnboardingGate(context, userData, resolvedRole);
+  }
+
+  void _navigateWithOnboardingGate(
+    BuildContext context,
+    Map<String, dynamic> userData,
+    UserRole resolvedRole,
+  ) async {
+    final onboardingTarget = await _onboardingGateService.resolveTarget(
+      role: resolvedRole,
+      userId: userData['_id']?.toString(),
+      email: userData['email']?.toString(),
+    );
+
+    if (!context.mounted) {
+      return;
+    }
 
     if (resolvedRole == UserRole.admin) {
       Navigator.pushReplacementNamed(
@@ -315,7 +334,10 @@ class LoginViewModel extends ChangeNotifier {
           'organizationCode': userData['organizationCode'],
         },
       );
-    } else if (resolvedRole == UserRole.client) {
+      return;
+    }
+
+    if (resolvedRole == UserRole.client) {
       final clientId = userData['clientId']?.toString() ?? '';
       Navigator.pushReplacementNamed(
         context,
@@ -325,19 +347,25 @@ class LoginViewModel extends ChangeNotifier {
           'clientId': clientId,
         },
       );
-    } else {
-      Navigator.pushReplacementNamed(
-        context,
-        Routes.bottomNavBar,
-        arguments: {
-          'email': userData['email'],
-          'role': UserRole.normal,
-          'organizationId': userData['organizationId'],
-          'organizationName': userData['organizationName'],
-          'organizationCode': userData['organizationCode'],
-        },
-      );
+      return;
     }
+
+    if (onboardingTarget == OnboardingGateTarget.welcome) {
+      Navigator.pushReplacementNamed(context, Routes.onboarding);
+      return;
+    }
+
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.bottomNavBar,
+      arguments: {
+        'email': userData['email'],
+        'role': UserRole.employee,
+        'organizationId': userData['organizationId'],
+        'organizationName': userData['organizationName'],
+        'organizationCode': userData['organizationCode'],
+      },
+    );
   }
 
   @override

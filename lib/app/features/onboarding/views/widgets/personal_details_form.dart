@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../shared/constants/bauhaus_design.dart';
+import '../../../../shared/widgets/bauhaus_widgets.dart';
+import '../../../../shared/widgets/button_widget.dart';
 import '../../providers/onboarding_providers.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
 
 class PersonalDetailsForm extends ConsumerStatefulWidget {
   final String initialStatus;
@@ -16,7 +17,8 @@ class PersonalDetailsForm extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<PersonalDetailsForm> createState() => _PersonalDetailsFormState();
+  ConsumerState<PersonalDetailsForm> createState() =>
+      _PersonalDetailsFormState();
 }
 
 class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
@@ -40,14 +42,6 @@ class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Personal Details', 
-            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.bold
-            )
-          ),
-          const SizedBox(height: BauhausDesign.space3),
           BauhausTextField(
             controller: _addressController,
             label: 'Home Address',
@@ -56,18 +50,17 @@ class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
           ),
           const SizedBox(height: BauhausDesign.space3),
           Text(
-            'Emergency Contact', 
+            'Emergency Contact (Optional)',
             style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.bold
-            )
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           BauhausTextField(
             controller: _emergencyNameController,
             label: 'Contact Name',
             hintText: 'Enter Contact Name',
-            validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
           ),
           const SizedBox(height: BauhausDesign.space3),
           BauhausTextField(
@@ -75,7 +68,6 @@ class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
             label: 'Contact Phone',
             hintText: 'Enter Contact Phone',
             keyboardType: TextInputType.phone,
-            validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
           ),
           const SizedBox(height: BauhausDesign.space4),
           ButtonWidget(

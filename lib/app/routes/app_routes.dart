@@ -39,6 +39,7 @@ abstract class Routes {
   static const String shiftDetails = '/shiftDetails';
   static const String employeeInvoice = '/employeeInvoice';
   static const String onboarding = '/onboarding';
+  static const String onboardingStepper = '/onboarding/stepper';
   static const String clientDashboard = '/clientDashboard';
 
   // Phase 1 Routes

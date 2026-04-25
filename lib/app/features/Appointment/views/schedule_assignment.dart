@@ -460,7 +460,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       _focusedTime.minute,
     );
 
-    DateTime endDateTime = DateTime(
+    DateTime rawEndDateTime = DateTime(
       _focusedDay.year,
       _focusedDay.month,
       _focusedDay.day,
@@ -468,8 +468,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       _focusedTime1.minute,
     );
 
-    if (startDateTime.isAfter(endDateTime) ||
-        startDateTime.isAtSameMomentAs(endDateTime)) {
+    DateTime endDateTime = _normalizeEndDateTime(startDateTime, rawEndDateTime);
+
+    if (!endDateTime.isAfter(startDateTime)) {
       return AppLocalizations.of(context)!.startBeforeEnd;
     }
 
@@ -478,12 +479,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       return AppLocalizations.of(context)!.minimumDuration30;
     }
 
-    String formattedDate = DateFormat("yyyy-MM-dd").format(_focusedDay);
     for (int i = 0; i < dateList.length; i++) {
-      if (dateList[i] == formattedDate) {
-        if (_hasTimeConflict(i, startDateTime, endDateTime)) {
-          return AppLocalizations.of(context)!.timeConflictExisting;
-        }
+      if (_hasTimeConflict(i, startDateTime, endDateTime)) {
+        return AppLocalizations.of(context)!.timeConflictExisting;
       }
     }
 
@@ -512,14 +510,12 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
     }
     for (int i = 0; i < dateList.length; i++) {
       for (int j = i + 1; j < dateList.length; j++) {
-        if (dateList[i] == dateList[j]) {
-          if (_hasTimeConflictBetweenSchedules(i, j)) {
-            errors.add(AppLocalizations.of(context)!.timeConflictBetween(
-              '${i + 1}',
-              '${j + 1}',
-              dateList[i],
-            ));
-          }
+        if (_hasTimeConflictBetweenSchedules(i, j)) {
+          errors.add(AppLocalizations.of(context)!.timeConflictBetween(
+            '${i + 1}',
+            '${j + 1}',
+            dateList[i],
+          ));
         }
       }
     }
@@ -565,19 +561,21 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   String? _validateTimeLogic(int index) {
     try {
-      String startTimeStr = startTimeList[index];
-      String endTimeStr = endTimeList[index];
       DateTime scheduleDate = DateTime.parse(dateList[index]);
+      final scheduleRange = _buildScheduleDateTimeRange(
+        scheduleDate,
+        startTimeList[index],
+        endTimeList[index],
+      );
 
-      DateTime? startDateTime = _parseTimeString(startTimeStr, scheduleDate);
-      DateTime? endDateTime = _parseTimeString(endTimeStr, scheduleDate);
-
-      if (startDateTime == null || endDateTime == null) {
+      if (scheduleRange == null) {
         return AppLocalizations.of(context)!.invalidTimeFormat;
       }
 
-      if (startDateTime.isAfter(endDateTime) ||
-          startDateTime.isAtSameMomentAs(endDateTime)) {
+      final startDateTime = scheduleRange['start']!;
+      final endDateTime = scheduleRange['end']!;
+
+      if (!endDateTime.isAfter(startDateTime)) {
         return AppLocalizations.of(context)!.startBeforeEnd;
       }
 
@@ -624,56 +622,46 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
     }
   }
 
+  DateTime _normalizeEndDateTime(DateTime startDateTime, DateTime endDateTime) {
+    if (endDateTime.isBefore(startDateTime)) {
+      return endDateTime.add(const Duration(days: 1));
+    }
+    return endDateTime;
+  }
+
+  Map<String, DateTime>? _buildScheduleDateTimeRange(
+    DateTime scheduleDate,
+    String startTimeStr,
+    String endTimeStr,
+  ) {
+    final startDateTime = _parseTimeString(startTimeStr, scheduleDate);
+    final rawEndDateTime = _parseTimeString(endTimeStr, scheduleDate);
+
+    if (startDateTime == null || rawEndDateTime == null) {
+      return null;
+    }
+
+    return {
+      'start': startDateTime,
+      'end': _normalizeEndDateTime(startDateTime, rawEndDateTime),
+    };
+  }
+
   bool _hasTimeConflict(int existingIndex, DateTime newStart, DateTime newEnd) {
     try {
-      String startTimeStr = startTimeList[existingIndex];
-      String endTimeStr = endTimeList[existingIndex];
-
-      List<String> startTimeParts = startTimeStr.split(':');
-      List<String> endTimeParts = endTimeStr.split(':');
-
-      int existingStartHour = int.parse(startTimeParts[0]);
-      final startMinuteParts = startTimeParts[1].split(' ');
-      int existingStartMinute = int.parse(startMinuteParts.isNotEmpty
-          ? startMinuteParts[0]
-          : startTimeParts[1]);
-
-      int existingEndHour = int.parse(endTimeParts[0]);
-      final endMinuteParts = endTimeParts[1].split(' ');
-      int existingEndMinute = int.parse(
-          endMinuteParts.isNotEmpty ? endMinuteParts[0] : endTimeParts[1]);
-
-      if (startTimeParts[1].toLowerCase().contains('pm') &&
-          existingStartHour != 12) {
-        existingStartHour += 12;
-      } else if (startTimeParts[1].toLowerCase().contains('am') &&
-          existingStartHour == 12) {
-        existingStartHour = 0;
-      }
-
-      if (endTimeParts[1].toLowerCase().contains('pm') &&
-          existingEndHour != 12) {
-        existingEndHour += 12;
-      } else if (endTimeParts[1].toLowerCase().contains('am') &&
-          existingEndHour == 12) {
-        existingEndHour = 0;
-      }
-
-      DateTime existingStart = DateTime(
-        newStart.year,
-        newStart.month,
-        newStart.day,
-        existingStartHour,
-        existingStartMinute,
+      final existingScheduleDate = DateTime.parse(dateList[existingIndex]);
+      final existingScheduleRange = _buildScheduleDateTimeRange(
+        existingScheduleDate,
+        startTimeList[existingIndex],
+        endTimeList[existingIndex],
       );
 
-      DateTime existingEnd = DateTime(
-        newEnd.year,
-        newEnd.month,
-        newEnd.day,
-        existingEndHour,
-        existingEndMinute,
-      );
+      if (existingScheduleRange == null) {
+        return false;
+      }
+
+      final existingStart = existingScheduleRange['start']!;
+      final existingEnd = existingScheduleRange['end']!;
 
       return (newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart));
     } catch (e) {
@@ -683,18 +671,25 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   bool _hasTimeConflictBetweenSchedules(int index1, int index2) {
     try {
-      DateTime? start1 = _parseTimeString(
-          startTimeList[index1], DateTime.parse(dateList[index1]));
-      DateTime? end1 = _parseTimeString(
-          endTimeList[index1], DateTime.parse(dateList[index1]));
-      DateTime? start2 = _parseTimeString(
-          startTimeList[index2], DateTime.parse(dateList[index2]));
-      DateTime? end2 = _parseTimeString(
-          endTimeList[index2], DateTime.parse(dateList[index2]));
+      final schedule1 = _buildScheduleDateTimeRange(
+        DateTime.parse(dateList[index1]),
+        startTimeList[index1],
+        endTimeList[index1],
+      );
+      final schedule2 = _buildScheduleDateTimeRange(
+        DateTime.parse(dateList[index2]),
+        startTimeList[index2],
+        endTimeList[index2],
+      );
 
-      if (start1 == null || end1 == null || start2 == null || end2 == null) {
+      if (schedule1 == null || schedule2 == null) {
         return false;
       }
+
+      final start1 = schedule1['start']!;
+      final end1 = schedule1['end']!;
+      final start2 = schedule2['start']!;
+      final end2 = schedule2['end']!;
 
       return (start1.isBefore(end2) && start2.isBefore(end1));
     } catch (e) {
@@ -1427,7 +1422,11 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   }
 
   Widget _buildTimeSelector(
-      String label, TimeOfDay time, bool isVisible, VoidCallback onTap) {
+    String label,
+    TimeOfDay time,
+    bool isVisible,
+    VoidCallback onTap,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

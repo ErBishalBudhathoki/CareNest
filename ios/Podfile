@@ -43,7 +43,7 @@
 #   end
 # end
 
-platform :ios, '14.0'
+platform :ios, '15.5'
 use_frameworks!
 
 # Disable CocoaPods analytics to improve build latency
@@ -116,9 +116,11 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
-    # Force the minimum iOS version to 14.0 for all targets
+    # Force the minimum iOS version to 15.5 for all targets
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
+      # Apple Silicon simulators require arm64; the old exclusion breaks local runs.
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'i386'
 
       # Special handling for BoringSSL-GRPC
       if target.name == 'BoringSSL-GRPC'

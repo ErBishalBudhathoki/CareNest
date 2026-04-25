@@ -9,6 +9,7 @@ import 'package:carenest/app/features/requests/views/requests_view.dart';
 import 'package:carenest/app/features/timesheet/views/timesheet_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/config/environment.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
 class ClockInAndOutView extends ConsumerStatefulWidget {
@@ -249,7 +250,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                 Expanded(
                   child: Stack(
                     children: [
-                      if (kDebugMode)
+                      if (kDebugMode && !AppConfig.isProduction)
                         Positioned(
                           top: BauhausDesign.space3,
                           left: BauhausDesign.space4,
