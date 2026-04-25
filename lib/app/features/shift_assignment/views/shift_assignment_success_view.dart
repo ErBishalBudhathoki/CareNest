@@ -651,7 +651,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
       (route) => false,
       arguments: {
         'email': userEmail ?? widget.userEmail,
-        'role': userRole ?? UserRole.normal,
+        'role': userRole ?? UserRole.employee,
         'organizationId': organizationId,
         'organizationName': organizationName,
         'organizationCode': organizationCode,

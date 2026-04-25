@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_state.dart';
+import 'package:carenest/app/features/onboarding/services/onboarding_gate_service.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   final SessionTimeoutService _sessionTimeoutService = SessionTimeoutService();
+  final OnboardingGateService _onboardingGateService = OnboardingGateService();
 
   @override
   void initState() {
@@ -76,11 +78,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             arguments: {'email': userEmail, 'clientId': clientId},
           );
         } else {
+          final onboardingTarget = await _onboardingGateService.resolveTarget(
+            role: role,
+            userId: sharedPrefs.getUserId(),
+            email: userEmail,
+          );
+
+          if (!mounted) return;
+
+          if (onboardingTarget == OnboardingGateTarget.welcome) {
+            Navigator.of(context).pushReplacementNamed(Routes.onboarding);
+            return;
+          }
+
           Navigator.of(context).pushReplacementNamed(
             Routes.bottomNavBar,
             arguments: {
               'email': userEmail,
-              'role': UserRole.normal,
+              'role': UserRole.employee,
               'organizationId': sharedPrefs.getOrganizationId(),
               'organizationName': sharedPrefs.getString('organizationName'),
               'organizationCode': sharedPrefs.getOrganizationCode(),

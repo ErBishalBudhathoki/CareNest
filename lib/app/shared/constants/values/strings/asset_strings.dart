@@ -8,7 +8,7 @@ class AssetsStrings {
       "assets/images/placeholder_product.png";
   static const String signUpBackground =
       "assets/images/geeks-store-app-surface.jpg";
-  static const String appLogo = "assets/images/applogo.png";
+  static const String appLogo = 'assets/icons/ic_launcher.png';
   static const String cardImageGirl = "assets/images/she_with_phone.png";
   static const String cardImageBoy =
       "assets/images/he_sitting_with_notebook.png";

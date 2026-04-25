@@ -1,9 +1,9 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
+//business name is the NDIS businness of the client who manages the client's plan
 /// Business addition status enum
 enum AddBusinessStatus { idle, processing, success, error }
 
