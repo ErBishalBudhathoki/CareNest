@@ -58,6 +58,8 @@ import 'package:carenest/app/features/invoice/views/enhanced_invoice_generation_
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
 import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_stepper_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.dart';
 
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -422,6 +424,8 @@ class MyApp extends ConsumerWidget {
           Routes.businessList: (context) => const BusinessListView(),
           Routes.clientList: (context) => const ClientListView(),
           Routes.assignC2E: (context) => const AssignC2E(),
+          Routes.onboarding: (context) => const OnboardingWelcomeView(),
+          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
@@ -429,7 +433,7 @@ class MyApp extends ConsumerWidget {
                 arguments?['email'] as String? ?? 'defaultemail@default.com';
             final firstName = arguments?['firstName'] as String? ?? 'First';
             final lastName = arguments?['lastName'] as String? ?? 'Last';
-            final role = arguments?['role'] as UserRole? ?? UserRole.normal;
+            final role = arguments?['role'] as UserRole? ?? UserRole.employee;
             return NavBarWidget(
               context: context,
               email: email,
@@ -442,7 +446,7 @@ class MyApp extends ConsumerWidget {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
-            final role = arguments?['role'] as UserRole? ?? UserRole.normal;
+            final role = arguments?['role'] as UserRole? ?? UserRole.employee;
             final organizationId =
                 arguments?['organizationId'] as String? ?? '';
             final organizationName =

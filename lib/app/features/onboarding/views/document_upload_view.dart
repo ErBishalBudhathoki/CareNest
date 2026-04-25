@@ -1,33 +1,37 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:io';
-import '../providers/onboarding_providers.dart';
-import '../models/employee_document.dart';
+
 import '../../../shared/constants/bauhaus_design.dart';
 import '../../../shared/widgets/button_widget.dart';
+import '../models/employee_document.dart';
+import '../providers/onboarding_providers.dart';
 
 class DocumentUploadView extends ConsumerStatefulWidget {
-  final VoidCallback onComplete;
+  const DocumentUploadView({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.documentTypes,
+    required this.onComplete,
+    this.optionalDocumentTypes = const <String>{},
+    this.buttonText = 'Continue',
+  });
 
-  const DocumentUploadView({super.key, required this.onComplete});
+  final String title;
+  final String description;
+  final List<String> documentTypes;
+  final Set<String> optionalDocumentTypes;
+  final String buttonText;
+  final VoidCallback onComplete;
 
   @override
   ConsumerState<DocumentUploadView> createState() => _DocumentUploadViewState();
 }
 
 class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
-  // Required documents list
-  final List<String> _requiredDocs = [
-    'Passport / ID',
-    'Visa Grant (if applicable)',
-    'Qualifications / Certifications',
-    'Police Check',
-    'WWCC (Working With Children Check)',
-    'NDIS Worker Screening',
-    'First Aid Certificate',
-  ];
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(onboardingViewModelProvider);
@@ -37,7 +41,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Required Documents',
+          widget.title,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
                 color: BauhausDesign.textDark,
                 fontWeight: FontWeight.bold,
@@ -45,94 +49,116 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
         ),
         const SizedBox(height: BauhausDesign.space2),
         Text(
-          'Please upload the following documents. At least one document is required to complete onboarding.',
+          widget.description,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                 color: BauhausDesign.textDark.withOpacity(0.7),
               ),
         ),
         const SizedBox(height: 16),
-        Expanded(
-          child: ListView.separated(
-            itemCount: _requiredDocs.length,
-            separatorBuilder: (ctx, i) => const Divider(color: BauhausDesign.textDark),
+        ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: widget.documentTypes.length,
+            separatorBuilder: (ctx, i) =>
+                const Divider(color: BauhausDesign.textDark),
             itemBuilder: (ctx, index) {
-              final docType = _requiredDocs[index];
+              final docType = widget.documentTypes[index];
               final uploadedDoc = documents.firstWhere(
-                (d) => d.type == docType, 
+                (d) => d.type == docType,
                 orElse: () => EmployeeDocument(
-                  id: '', 
-                  userId: '', 
-                  organizationId: '', 
-                  type: '', 
-                  fileUrl: '', 
+                  id: '',
+                  userId: '',
+                  organizationId: '',
+                  type: '',
+                  fileUrl: '',
                   status: 'pending',
-                  uploadedAt: DateTime.now()
+                  uploadedAt: DateTime.now(),
                 ),
               );
-              
-              final isUploaded = uploadedDoc.id != null && uploadedDoc.id!.isNotEmpty;
+
+              final isUploaded =
+                  uploadedDoc.id != null && uploadedDoc.id!.isNotEmpty;
+              final isOptional = widget.optionalDocumentTypes.contains(docType);
 
               return ListTile(
-                leading: Icon(
-                  isUploaded ? Icons.check_circle : Icons.circle_outlined,
-                  color: isUploaded ? Colors.green : BauhausDesign.textDark,
-                ),
+                contentPadding: EdgeInsets.zero,
                 title: Text(
-                  docType,
-                  style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                        color: BauhausDesign.textDark,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  isOptional ? '$docType (Optional)' : docType,
+                  style:
+                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w500,
+                          ),
                 ),
                 subtitle: Text(
                   isUploaded ? 'Uploaded' : 'Tap to upload',
                   style: TextStyle(
-                    color: isUploaded ? Colors.green : BauhausDesign.textDark.withOpacity(0.6),
+                    color: isUploaded
+                        ? Colors.green
+                        : BauhausDesign.textDark.withOpacity(0.6),
                   ),
                 ),
-                trailing: isUploaded 
+                trailing: isUploaded
                     ? IconButton(
-                        icon: const Icon(Icons.delete_outline, color: BauhausDesign.textDark),
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: BauhausDesign.error,
+                        ),
                         onPressed: () async {
-                          if (uploadedDoc.id != null) {
-                            try {
-                              await ref.read(onboardingViewModelProvider.notifier).deleteDocument(uploadedDoc.id!);
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
-                              }
+                          if (uploadedDoc.id == null ||
+                              uploadedDoc.id!.isEmpty) {
+                            return;
+                          }
+
+                          try {
+                            await ref
+                                .read(onboardingViewModelProvider.notifier)
+                                .deleteDocument(uploadedDoc.id!);
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Delete failed: $e')),
+                              );
                             }
                           }
                         },
                       )
-                    : const Icon(Icons.upload_file, color: BauhausDesign.textDark),
+                    : const Icon(
+                        Icons.upload_file,
+                        color: BauhausDesign.textDark,
+                      ),
                 onTap: isUploaded ? null : () => _pickAndUpload(docType),
               );
             },
           ),
-        ),
         const SizedBox(height: 16),
         if (state.isLoading)
           const Center(child: CircularProgressIndicator())
         else
           ButtonWidget(
-            buttonText: 'Finish Onboarding',
+            buttonText: widget.buttonText,
             onPressed: () {
-              final mandatoryDocs = _requiredDocs.where((doc) => !doc.toLowerCase().contains('(if applicable)')).toList();
+              final requiredDocs = widget.documentTypes
+                  .where((doc) => !widget.optionalDocumentTypes.contains(doc))
+                  .toList();
               final uploadedTypes = documents.map((d) => d.type).toSet();
-              
-              final missingDocs = mandatoryDocs.where((doc) => !uploadedTypes.contains(doc)).toList();
+              final missingDocs = requiredDocs
+                  .where((doc) => !uploadedTypes.contains(doc))
+                  .toList();
 
               if (missingDocs.isNotEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Missing required documents:\n- ${missingDocs.join('\n- ')}'),
+                    content: Text(
+                      'Missing required documents:\n- ${missingDocs.join('\n- ')}',
+                    ),
                     backgroundColor: BauhausDesign.error,
                     duration: const Duration(seconds: 4),
                   ),
                 );
                 return;
               }
+
               widget.onComplete();
             },
           ),
@@ -144,15 +170,17 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
     final result = await FilePicker.platform.pickFiles();
     if (result != null && result.files.single.path != null) {
       final file = File(result.files.single.path!);
-      
+
       try {
         await ref.read(onboardingViewModelProvider.notifier).uploadDocument(
-          file,
-          docType,
-        );
+              file,
+              docType,
+            );
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Upload failed: $e')),
+          );
         }
       }
     }

@@ -13,12 +13,13 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "com.bishal.invoice/system_ui"
+    private val systemUiChannel = "com.bishal.invoice/system_ui"
+    private val appCheckChannel = "com.bishal.invoice/app_check"
     
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, systemUiChannel).setMethodCallHandler { call, result ->
             when (call.method) {
                 "hideSystemUI" -> {
                     hideSystemUI()
@@ -27,6 +28,17 @@ class MainActivity: FlutterActivity() {
                 "showSystemUI" -> {
                     showSystemUI()
                     result.success(null)
+                }
+                else -> {
+                    result.notImplemented()
+                }
+            }
+        }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, appCheckChannel).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getInstallerPackageName" -> {
+                    result.success(getInstallerPackageName())
                 }
                 else -> {
                     result.notImplemented()
@@ -64,6 +76,20 @@ class MainActivity: FlutterActivity() {
             WindowCompat.setDecorFitsSystemWindows(window, true)
             val controller = WindowInsetsControllerCompat(window, window.decorView)
             controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    private fun getInstallerPackageName(): String? {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                packageManager.getInstallSourceInfo(packageName).installingPackageName
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getInstallerPackageName(packageName)
+            }
+        } catch (e: Exception) {
+            Log.w("AppCheck", "Unable to read installer package", e)
+            null
         }
     }
 }

@@ -1,7 +1,21 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M128 128H384V384H128V128Z" fill="#2196F3"/>
-  <path d="M176 224H336V240H176V224Z" fill="white"/>
-  <path d="M176 272H336V288H176V272Z" fill="white"/>
-  <path d="M176 320H336V336H176V320Z" fill="white"/>
-  <path d="M176 176H256V192H176V176Z" fill="white"/>
+  <defs>
+    <linearGradient id="carenestDoc" x1="176" y1="112" x2="360" y2="356" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#35D1B2"/>
+      <stop offset="1" stop-color="#2F80ED"/>
+    </linearGradient>
+    <linearGradient id="carenestNest" x1="148" y1="348" x2="364" y2="348" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="168" fill="#E9FBF7"/>
+  <path d="M210 112H294L350 168V298C350 331.137 323.137 358 290 358H222C188.863 358 162 331.137 162 298V160C162 133.49 183.49 112 210 112Z" fill="url(#carenestDoc)"/>
+  <path d="M294 112V156C294 169.255 304.745 180 318 180H350" fill="#9AE6D2" fill-opacity="0.88"/>
+  <path d="M213 194H297" stroke="white" stroke-width="16" stroke-linecap="round"/>
+  <path d="M213 230H299" stroke="white" stroke-width="16" stroke-linecap="round" opacity="0.92"/>
+  <path d="M213 266H275" stroke="white" stroke-width="16" stroke-linecap="round" opacity="0.92"/>
+  <path d="M221 312L245 336L292 287" stroke="white" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M150 334C178 384 216 410 256 410C296 410 334 384 362 334" stroke="url(#carenestNest)" stroke-width="36" stroke-linecap="round"/>
+  <path d="M183 338C204 369 229 384 256 384C283 384 308 369 329 338" stroke="#7DD3FC" stroke-opacity="0.72" stroke-width="16" stroke-linecap="round"/>
 </svg>

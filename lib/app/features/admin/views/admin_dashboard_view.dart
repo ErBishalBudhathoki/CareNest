@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/business/views/business_list_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/holiday/views/holiday_list_view.dart';
@@ -108,6 +109,7 @@ class _AdminDashboardViewControllerState
   void didChangeDependencies() {
     super.didChangeDependencies();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       ref.read(notificationProvider.notifier).refresh();
     });
   }
@@ -146,28 +148,31 @@ class _AdminDashboardViewControllerState
       final data = await _apiMethod.getInitData(widget.email);
       final emailKey = await _checkEmailKey(widget.email);
       final organizationId = _resolveOrganizationId(data);
+      if (!mounted) return;
       await ref
           .read(businessStatsProvider.notifier)
           .loadBusinessStats(organizationId);
+      if (!mounted) return;
 
-      if (mounted) {
-        setState(() {
-          getInitialData = data;
-          key = emailKey;
-          _isLoading = false;
-        });
-        ref.read(photoDataProvider.notifier).fetchPhotoData(widget.email);
+      setState(() {
+        getInitialData = data;
+        key = emailKey;
+        _isLoading = false;
+      });
+      ref.read(photoDataProvider.notifier).fetchPhotoData(widget.email);
 
-        _headerAnimationController.forward();
-        Future.delayed(const Duration(milliseconds: 300), () {
-          _statsAnimationController.forward();
-        });
-        Future.delayed(const Duration(milliseconds: 600), () {
-          _contentAnimationController.forward();
-        });
-      }
+      _headerAnimationController.forward();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!mounted) return;
+        _statsAnimationController.forward();
+      });
+      Future.delayed(const Duration(milliseconds: 600), () {
+        if (!mounted) return;
+        _contentAnimationController.forward();
+      });
     } catch (e) {
       debugPrint("Error fetching initial data: $e");
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -550,6 +555,9 @@ class _AdminDashboardViewControllerState
               BusinessOverviewSliver(
                 animation: _statsAnimationController,
                 businessStats: businessStats,
+                onActiveBusinessesTap: _navigateToBusinessList,
+                onTotalClientsTap: _navigateToClientList,
+                onInvoicesGeneratedTap: _navigateToInvoiceList,
               ),
               _buildFeaturedActionsSliver(businessStats),
               _buildQuickActionsSliver(),
@@ -1849,15 +1857,17 @@ class _AdminDashboardViewControllerState
     }
   }
 
-  void _navigateToInvoiceList() {
+  Future<void> _navigateToInvoiceList() async {
     debugPrint("in invoice list");
-    Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushNamed(
       Routes.invoiceList,
       arguments: {
         'organizationId': widget.organizationId,
         'userEmail': widget.email,
       },
     );
+    if (!mounted) return;
+    await _refreshBusinessOverview();
   }
 
   Future<void> _navigateToHolidayList() async {
@@ -2011,6 +2021,17 @@ class _AdminDashboardViewControllerState
         ),
       ),
     );
+  }
+
+  Future<void> _navigateToBusinessList() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const BusinessListView(),
+      ),
+    );
+    if (!mounted) return;
+    await _refreshBusinessOverview();
   }
 
   Future<void> _navigateToClientList() async {

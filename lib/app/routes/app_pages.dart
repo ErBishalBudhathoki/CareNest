@@ -124,7 +124,7 @@ class AppPages {
     const VoiceAssistantView(),
 
     // const AssignmentListView(),
-    //const BottomNavBarWidget(email: '', role: UserRole.normal),
+    //const BottomNavBarWidget(email: '', role: UserRole.employee),
   ];
 
   // Function-based route for NavBarWidget

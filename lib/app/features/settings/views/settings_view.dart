@@ -188,7 +188,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       Routes.bottomNavBar,
       arguments: {
         'email': widget.userEmail,
-        'role': UserRole.normal,
+        'role': UserRole.employee,
         'organizationId': widget.organizationId,
         'organizationName': widget.organizationName,
         'organizationCode': widget.organizationCode,

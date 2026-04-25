@@ -5,11 +5,17 @@ import 'package:flutter_animate/flutter_animate.dart';
 class BusinessOverviewSection extends StatelessWidget {
   final Animation<double>? animation;
   final Map<String, dynamic> businessStats;
+  final VoidCallback? onActiveBusinessesTap;
+  final VoidCallback? onTotalClientsTap;
+  final VoidCallback? onInvoicesGeneratedTap;
 
   const BusinessOverviewSection({
     super.key,
     required this.businessStats,
     this.animation,
+    this.onActiveBusinessesTap,
+    this.onTotalClientsTap,
+    this.onInvoicesGeneratedTap,
   });
 
   @override
@@ -55,6 +61,7 @@ class BusinessOverviewSection extends StatelessWidget {
                     title: 'Active Businesses',
                     color: BauhausDesign.primary,
                     index: 0,
+                    onTap: onActiveBusinessesTap,
                   ),
                   _buildEnhancedStatsCard(
                     context: context,
@@ -63,6 +70,7 @@ class BusinessOverviewSection extends StatelessWidget {
                     title: 'Total Clients',
                     color: BauhausDesign.success,
                     index: 1,
+                    onTap: onTotalClientsTap,
                   ),
                   _buildEnhancedStatsCard(
                     context: context,
@@ -71,6 +79,7 @@ class BusinessOverviewSection extends StatelessWidget {
                     title: 'Invoices Generated',
                     color: BauhausDesign.secondary,
                     index: 2,
+                    onTap: onInvoicesGeneratedTap,
                   ),
                   _buildEnhancedStatsCard(
                     context: context,
@@ -117,76 +126,85 @@ class BusinessOverviewSection extends StatelessWidget {
     required String title,
     required Color color,
     required int index,
+    VoidCallback? onTap,
   }) {
-    final card = Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+    final card = Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-        boxShadow: const [
-          BauhausDesign.shadowHard,
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-                boxShadow: const [
-                  BauhausDesign.shadowHardSm,
-                ],
-              ),
-              child:
-                  Icon(icon, color: BauhausDesign.surfaceLight, size: 18),
-            ),
-            const SizedBox(height: BauhausDesign.space2),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      value,
-                      style:
-                          BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+        child: Container(
+          width: 140,
+          margin: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceLight,
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [
+              BauhausDesign.shadowHard,
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    boxShadow: const [
+                      BauhausDesign.shadowHardSm,
+                    ],
+                  ),
+                  child: Icon(icon, color: BauhausDesign.surfaceLight, size: 18),
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          value,
+                          style: BauhausDesign.getTextTheme(context)
+                              .titleMedium
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: BauhausDesign.neutral,
                                 letterSpacing: -0.5,
                               ),
-                      maxLines: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    title,
-                    style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                          color: BauhausDesign.neutral,
-                          height: 1.1,
-                          fontWeight: FontWeight.w600,
+                          maxLines: 1,
                         ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        title,
+                        style: BauhausDesign.getTextTheme(context)
+                            .labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.neutral,
+                              height: 1.1,
+                              fontWeight: FontWeight.w600,
+                            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    )
-        ;
+    );
 
     final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     if (disableAnimations) {
