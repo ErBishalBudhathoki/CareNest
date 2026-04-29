@@ -42,7 +42,7 @@ jobs:
         run: flutter analyze --fatal-infos
 
       - name: Run Trivy scanner
-        uses: aquasecurity/trivy-action@v0.29.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
