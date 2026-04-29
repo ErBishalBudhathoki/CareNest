@@ -159,15 +159,15 @@ void main() {
       name: 'Employee User',
       email: 'employee@example.com',
       phone: '0',
-      role: UserRole.normal,
+      role: UserRole.employee,
     );
-    final prefs = _TestPrefs(role: UserRole.normal);
+    final prefs = _TestPrefs(role: UserRole.employee);
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
-          userRoleProvider.overrideWith((ref) => _ImmediateUserRoleNotifier(prefs, UserRole.normal)),
+          userRoleProvider.overrideWith((ref) => _ImmediateUserRoleNotifier(prefs, UserRole.employee)),
           currentUserProvider.overrideWith((ref) async => user),
           earningsRepositoryProvider.overrideWithValue(_FakeEarningsRepository()),
         ],
