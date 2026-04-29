@@ -248,8 +248,13 @@ libos/
 
 # Local mobile automation workspace
 .maestro/
+.codex/
+.obsidian/
 /app-store-screenshots/
 /test.yaml
+android/test_mail.py
+profiles/
+third_party/
 
 # Dependencies
 node_modules/
