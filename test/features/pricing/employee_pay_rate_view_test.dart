@@ -33,7 +33,7 @@ void main() {
       name: 'Test User',
       email: 'test@example.com',
       phone: '1234567890',
-      role: UserRole.normal,
+      role: UserRole.employee,
       // No classification initially
     );
 

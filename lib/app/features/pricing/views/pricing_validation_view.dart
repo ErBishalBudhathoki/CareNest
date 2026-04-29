@@ -427,7 +427,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  initialValue: _selectedValidationType,
+                  value: _selectedValidationType,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.typeLabel,
                     border: OutlineInputBorder(
@@ -471,7 +471,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               const SizedBox(width: 16),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  initialValue: _selectedSeverity,
+                  value: _selectedSeverity,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.severityLabel,
                     border: OutlineInputBorder(
