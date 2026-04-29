@@ -128,8 +128,6 @@ support-items-all.json
 # Large image files
 assets/icons/fav-folder-dynamic-color.png
 assets/icons/fav-folder-dynamic-premium.png
-assets/images/he_sitting_with_notebook.png
-assets/images/she_with_phone.png
 
 # Environment files
 .env
