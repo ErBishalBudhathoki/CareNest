@@ -433,7 +433,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                   ),
                   const SizedBox(height: 16.0),
                   DropdownButtonFormField<String>(
-                    initialValue: _selectedCategory,
+                    value: _selectedCategory,
                     style: BauhausDesign.getTextTheme(context).bodyMedium,
                     dropdownColor: BauhausDesign.surfaceWhite,
                     decoration:
@@ -492,7 +492,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                       }
 
                       return DropdownButtonFormField<Patient>(
-                        initialValue: _selectedClient,
+                        value: _selectedClient,
                         style: BauhausDesign.getTextTheme(context).bodyMedium,
                         dropdownColor: BauhausDesign.surfaceWhite,
                         decoration: BauhausDesign.inputDecoration(
@@ -584,7 +584,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                   if (_isRecurring) ...[
                     const SizedBox(height: 8.0),
                     DropdownButtonFormField<String>(
-                      initialValue: _recurringFrequency,
+                      value: _recurringFrequency,
                       style: BauhausDesign.getTextTheme(context).bodyMedium,
                       dropdownColor: BauhausDesign.surfaceWhite,
                       decoration: BauhausDesign.inputDecoration(

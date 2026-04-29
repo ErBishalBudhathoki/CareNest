@@ -879,7 +879,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
         ),
         const SizedBox(height: BauhausDesign.space2),
         DropdownButtonFormField<String>(
-          initialValue: value,
+          value: value,
           onChanged: onChanged,
           decoration: BauhausDesign.inputDecoration(''),
           items: items.map((item) {

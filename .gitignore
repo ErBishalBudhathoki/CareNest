@@ -255,7 +255,6 @@ libos/
 /test.yaml
 android/test_mail.py
 profiles/
-third_party/
 
 # Dependencies
 node_modules/

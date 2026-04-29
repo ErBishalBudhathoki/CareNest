@@ -141,7 +141,7 @@ dependency_overrides:
 flutter:
   generate: true
   assets:
-    - .env
+    # - .env
     - assets/images/client-profile.png
     - assets/images/placeholder_product.png
     - assets/images/invoice_banner.png
@@ -154,8 +154,8 @@ flutter:
     - assets/icons/profile_placeholder.png
     - assets/icons/3D Icons/
     - assets/icons/PNG with shadow/
-    - assets/images/he_sitting_with_notebook.png
-    - assets/images/she_with_phone.png
+    # - assets/images/he_sitting_with_notebook.png
+    # - assets/images/she_with_phone.png
     - lib/main.dart
     - assets/lottieAnimationJSON/loading_horizontal_line.json
     - assets/lottieAnimationJSON/warning.json
