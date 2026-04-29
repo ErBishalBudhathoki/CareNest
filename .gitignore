@@ -208,6 +208,7 @@ technical_reference.md
 
 # Package files
 package-lock.json
+pubspec.lock
 Procfile
 
 # Migration and seed scripts
@@ -444,8 +445,7 @@ signup_flow_analysis.md
 
 # End to end tech doc
 endToEndTechDocPack.md
-
-# Next step planning
+APP_STORE_READINESS.md
 next\ step.md
 
 # Generated PDFs at root
