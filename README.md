@@ -2,7 +2,7 @@
 
 CareNest is a comprehensive invoice management application built with Flutter. It provides a multi-tenant solution with role-based access control, allowing different organizations to manage their invoices, clients, and employees securely.
 
-The app is available on the [Google Play Store](https://play.google.com/store/apps/details?id=your.package.name).
+The app is available on the [Google Play Store](https://play.google.com/store/apps/details?id=com.bishal.invoice&pcampaignid=web_share).
 
 ## Features
 
@@ -15,7 +15,7 @@ The app is available on the [Google Play Store](https://play.google.com/store/ap
 
 ## Backend
 
-The backend for CareNest is a Node.js Express server. It is managed in a separate repository, which you can find here: [CareNest Backend](https://github.com/BishalBudhathoki/carenest_backend.git)
+The backend for CareNest is a Node.js Express server. It is managed in a separate repository, which you can find here: [CareNest Backend](https://github.com/ErBishalBudhathoki/carenest_backend.git)
 
 ## Installation and Setup
 
@@ -43,4 +43,4 @@ The backend for CareNest is a Node.js Express server. It is managed in a separat
 
 ### Backend Server
 
-For instructions on how to set up the backend server, please refer to the `README.md` file in the [backend repository](https://github.com/BishalBudhathoki/carenest_backend.git).
+For instructions on how to set up the backend server, please refer to the `README.md` file in the [backend repository](https://github.com/ErBishalBudhathoki/carenest_backend.git).
