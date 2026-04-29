@@ -1,1 +1,12 @@
-include: ../google_ml_kit/analysis_options.yaml
+# This file is used to configure the analyzer for this package.
+# It has been modified to remove a non-existent include that caused analysis errors.
+
+analyzer:
+  exclude:
+    - build/**
+    - lib/**/*.g.dart
+    - lib/**/*.freezed.dart
+
+linter:
+  rules:
+    - public_member_api_docs: false
