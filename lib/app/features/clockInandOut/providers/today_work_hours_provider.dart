@@ -9,29 +9,27 @@ import 'package:intl/intl.dart';
 /// running timer's elapsed seconds. Reacts to changes in both sources.
 final todayWorkHoursProvider =
     FutureProvider.family.autoDispose<double, String>((ref, email) async {
-  final timesheetState = ref.watch(timesheetViewModelProvider(email));
+  final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+  final entries =
+      ref.watch(timesheetViewModelProvider(email)).valueOrNull ?? [];
   final timerService = ref.watch(timerServiceProvider);
 
-  double totalSeconds = 0;
+  final secondsFromEntries = entries.fold<double>(
+    0,
+    (sum, entry) => sum + _parseTimeWorkedToSeconds(entry.timeWorked),
+  );
 
-  // Sum completed timesheet entries for today
-  timesheetState.whenData((entries) {
-    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    for (final entry in entries) {
-      if (entry.shiftDate == today) {
-        totalSeconds += _parseTimeWorkedToSeconds(entry.timeWorked);
-      }
-    }
-  });
-
-  // Add active timer seconds if currently running
-  if (timerService.isRunning) {
-    totalSeconds += timerService.elapsedSeconds;
-  }
+  final timerSeconds =
+      timerService.isRunning ? timerService.elapsedSeconds : 0;
+  final totalSeconds = secondsFromEntries + timerSeconds;
 
   return totalSeconds / 3600.0;
 });
 
+/// Parses a timesheet duration string in "HH:mm:ss" format to total seconds.
+///
+/// Returns 0 for null or malformed input.
 int _parseTimeWorkedToSeconds(String? timeWorked) {
   if (timeWorked == null) return 0;
   final parts = timeWorked.split(':');
