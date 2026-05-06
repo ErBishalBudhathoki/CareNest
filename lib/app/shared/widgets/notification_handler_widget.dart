@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:carenest/app/features/home/viewmodels/home_viewmodel.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -98,6 +100,14 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
               // Example navigation:
               // Navigator.of(context).pushNamed('/messages', arguments: {'messageId': messageId});
             }
+            break;
+          case 'emergency_broadcast':
+            _debugLog('DEBUG_NOTIF_HANDLER: Navigating to home for emergency broadcast');
+            // Navigation to home will trigger refresh on load
+            Navigator.of(context).pushNamedAndRemoveUntil('/bottomNavBar', (route) => false, arguments: {
+              'email': SharedPreferencesUtils().getUserEmail() ?? '',
+              'role': UserRole.employee, // Default to employee for this view
+            });
             break;
           default:
             // Default action for other notification types
@@ -397,7 +407,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
           _debugLog('✅ Local notification display attempt completed');
 
           // 8. Update app UI based on notification data if needed
-          _updateAppUI(message);
+          await _updateAppUI(message);
         } catch (e) {
           _debugLog('❌ Failed to display local notification: $e');
         }
@@ -488,7 +498,7 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
   }
 
   // Method to update app UI based on notification data
-  void _updateAppUI(RemoteMessage message) {
+  Future<void> _updateAppUI(RemoteMessage message) async {
     try {
       // Extract relevant data from the message
       final data = message.data;
@@ -515,6 +525,15 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
             break;
           case 'message':
             // Update message-related UI
+            break;
+          case 'emergency_broadcast':
+            _debugLog('DEBUG_NOTIF_HANDLER: Emergency broadcast received - refreshing home dashboard');
+            final sharedUtils = SharedPreferencesUtils();
+            await sharedUtils.init();
+            final email = sharedUtils.getUserEmail();
+            if (email != null && email.isNotEmpty) {
+              ref.read(homeViewModelProvider.notifier).refreshSilently(email);
+            }
             break;
         }
       }
