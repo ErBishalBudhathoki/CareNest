@@ -194,31 +194,51 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       _debugLog(
           'DEBUG_NOTIF_HANDLER: Starting notification system initialization');
 
-      // Step 1: Initialize local notification service
+      // Step 1: Initialize local notification service (channels, plugin)
       _localNotificationService = LocalNotificationService();
-      // Disable auto-requesting permissions here to comply with new flow
       await _localNotificationService.initialize(requestPermissions: false);
       _debugLog('DEBUG_NOTIF_HANDLER: Local notification service initialized');
 
-      // Step 2: Check Firebase permissions (do not request yet)
+      // Step 2: ALWAYS register the FCM token, regardless of notification permission.
+      // Firebase can retrieve and send a token even when the user hasn't granted
+      // POST_NOTIFICATIONS permission (Android 13+). Without this, the backend
+      // has no token to push to and emergency alerts are silently dropped.
+      await _registerFcmToken();
+
+      // Step 3: Check Firebase permission status
       final settings =
           await FirebaseMessaging.instance.getNotificationSettings();
-
       _debugLog(
-          'DEBUG_NOTIF_HANDLER: Current Firebase permission status: ${settings.authorizationStatus}');
+          'DEBUG_NOTIF_HANDLER: Firebase permission status: ${settings.authorizationStatus}');
 
-      // Step 3: Check Android-specific permissions for API 33+
-      // We skip manual request here to comply with new flow
-
-      // Step 4: Only proceed if Firebase permissions are granted
-      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-          settings.authorizationStatus == AuthorizationStatus.provisional) {
+      // Step 4: Request permission if not yet determined (Android 13+ / iOS)
+      if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
+        final newSettings =
+            await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+          provisional: false,
+        );
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: ✅ Permissions already granted, initializing services');
-        await _initializeServices();
+            'DEBUG_NOTIF_HANDLER: Permission requested — result: ${newSettings.authorizationStatus}');
+      }
+
+      // Step 5: Set up foreground notification display pipeline only if granted.
+      // The system tray still shows FCM push notifications in background/terminated
+      // state without this (handled by Firebase directly on Android).
+      final currentSettings =
+          await FirebaseMessaging.instance.getNotificationSettings();
+      if (currentSettings.authorizationStatus ==
+              AuthorizationStatus.authorized ||
+          currentSettings.authorizationStatus ==
+              AuthorizationStatus.provisional) {
+        _debugLog(
+            'DEBUG_NOTIF_HANDLER: ✅ Permissions granted, setting up foreground notification pipeline');
+        await _initializeForegroundNotificationPipeline();
       } else {
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: ℹ️ Permissions not yet granted. Waiting for user login/action.');
+            'DEBUG_NOTIF_HANDLER: ℹ️ Permissions not granted — FCM token registered, foreground display skipped');
       }
     } catch (e) {
       _debugLog(
@@ -226,26 +246,10 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
     }
   }
 
-  Future<void> _initializeServices() async {
-    _debugLog(
-        'DEBUG_NOTIF_HANDLER: Initializing notification handler services');
-
-    // Configure foreground notification presentation options
-    // Set to false to ensure onMessage listener is triggered for custom handling
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: false, // Disable automatic alert display to allow custom handling
-      badge: false, // Disable automatic badge updates
-      sound: false, // Disable automatic sound
-    );
-    _debugLog(
-        'DEBUG_NOTIF_HANDLER: Foreground notification presentation options set to FALSE for custom handling');
-
-    // Set up the foreground notification listener
-    await configureForegroundNotifications();
-    _debugLog(
-        'DEBUG_NOTIF_HANDLER: Foreground notification listener configured');
-
+  /// Register the FCM device token with the backend.
+  /// This runs unconditionally — notification permission is NOT required to
+  /// obtain or upload an FCM token.
+  Future<void> _registerFcmToken() async {
     try {
       final sharedUtils = SharedPreferencesUtils();
       await sharedUtils.init();
@@ -260,22 +264,52 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
         final isValidSession = await sessionTimeoutService.isSessionValid();
         if (!isValidSession) {
           _debugLog(
-              'DEBUG_NOTIF_HANDLER: Session invalid/expired. Clearing session and skipping FCM init.');
+              'DEBUG_NOTIF_HANDLER: Session invalid — skipping FCM token registration');
           await sessionTimeoutService.logoutAndClearSession(
             reason: 'notification_handler_session_validation_failed',
           );
           return;
         }
-
+        _debugLog(
+            'DEBUG_NOTIF_HANDLER: Registering FCM token for $email');
         await ref
             .read(app_providers.fcmTokenManagerProvider)
             .initialize(email, organizationId);
+        _debugLog('DEBUG_NOTIF_HANDLER: ✅ FCM token registered successfully');
+      } else {
+        _debugLog(
+            'DEBUG_NOTIF_HANDLER: No email/orgId in prefs — skipping FCM token registration');
       }
     } catch (e) {
       _debugLog(
-          'DEBUG_NOTIF_HANDLER: Failed to initialize FCM token manager: $e');
+          'DEBUG_NOTIF_HANDLER: Failed to register FCM token: $e');
     }
   }
+
+  /// Configure foreground notification presentation and the onMessage listener.
+  /// Only called when notification permission is granted.
+  Future<void> _initializeForegroundNotificationPipeline() async {
+    // Suppress automatic FCM-overlay so our custom in-app handler fires
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: false,
+      badge: false,
+      sound: false,
+    );
+    _debugLog(
+        'DEBUG_NOTIF_HANDLER: Foreground presentation options set (custom handling active)');
+
+    await configureForegroundNotifications();
+    _debugLog('DEBUG_NOTIF_HANDLER: Foreground notification listener configured');
+  }
+
+  // Legacy entry point kept for backward compatibility — delegates to the new split methods.
+  Future<void> _initializeServices() async {
+    await _registerFcmToken();
+    await _initializeForegroundNotificationPipeline();
+  }
+
+
 
   Future<dynamic> createAndDisplayNotification(
       int id, String? title, String? body, String? payload) async {
