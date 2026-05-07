@@ -344,10 +344,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     payloadData,
   );
 
-  if (message.notification != null) {
-    return;
-  }
-
   final localNotificationService = LocalNotificationService();
   await localNotificationService.initialize(requestPermissions: false);
 
@@ -360,6 +356,11 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     data: payloadData,
   );
 
+  // Always display a local notification.
+  // On Android, FCM background messages with a `notification` payload are
+  // shown by the system tray automatically — but local notifications ensure
+  // they appear on ALL Android versions with correct channel/sound settings.
+  // The duplicate is prevented by using the same notification ID.
   await localNotificationService.createAndDisplayNotification(
     notification,
     payloadData,

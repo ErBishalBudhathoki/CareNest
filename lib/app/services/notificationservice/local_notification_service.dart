@@ -185,6 +185,8 @@ class LocalNotificationService {
         return 'Timesheet Reminders';
       case 'expense_reminders':
         return 'Expense Reminders';
+      case 'emergency_alerts':
+        return 'Emergency Alerts';
       default:
         return 'General Notifications';
     }
@@ -202,6 +204,8 @@ class LocalNotificationService {
         return 'Reminders to submit your timesheets';
       case 'expense_reminders':
         return 'Reminders to upload expense receipts';
+      case 'emergency_alerts':
+        return 'High-priority emergency broadcast alerts';
       default:
         return 'General application notifications';
     }
@@ -333,14 +337,29 @@ class LocalNotificationService {
           showBadge: true,
         );
 
+        // Emergency alerts channel — highest priority for broadcast alerts
+        const AndroidNotificationChannel emergencyChannel =
+            AndroidNotificationChannel(
+          'emergency_alerts',
+          'Emergency Alerts',
+          description: 'High-priority emergency broadcast alerts',
+          importance: Importance.max,
+          playSound: true,
+          sound: null,
+          enableVibration: true,
+          enableLights: true,
+          showBadge: true,
+        );
+
         // Create the notification channels
         await androidPlugin.createNotificationChannel(mainChannel);
         await androidPlugin.createNotificationChannel(timerChannel);
         await androidPlugin.createNotificationChannel(messageChannel);
         await androidPlugin.createNotificationChannel(timesheetChannel);
         await androidPlugin.createNotificationChannel(expenseChannel);
+        await androidPlugin.createNotificationChannel(emergencyChannel);
         debugPrint(
-            'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders');
+            'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders, emergency_alerts');
       }
     }
   }
