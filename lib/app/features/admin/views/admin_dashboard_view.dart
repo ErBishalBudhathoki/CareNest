@@ -1558,6 +1558,8 @@ class _AdminDashboardViewControllerState
               MaterialPageRoute(
                   builder: (_) => CommunicationHubDashboard(
                         userId: widget.email,
+                        currentUserId: widget.email,
+                        organizationId: widget.organizationId,
                       )),
             ),
           ),
