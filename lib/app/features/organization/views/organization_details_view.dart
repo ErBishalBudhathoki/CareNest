@@ -11,6 +11,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -279,137 +280,147 @@ class _OrganizationDetailsViewState
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
-      padding: const EdgeInsets.all(BauhausDesign.space3),
-      decoration: BoxDecoration(
-        color: isVerified
-            ? BauhausDesign.success.withOpacity(0.12)
-            : BauhausDesign.accent.withOpacity(0.18),
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-        boxShadow: const [BauhausDesign.shadowHardXs],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+        decoration: BoxDecoration(
+          color: BauhausDesign.surfaceWhite,
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          boxShadow: const [BauhausDesign.shadowHardXs],
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(BauhausDesign.space3),
+          decoration: BoxDecoration(
+            color: isVerified
+                ? BauhausDesign.success.withOpacity(0.12)
+                : BauhausDesign.accent.withOpacity(0.18),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                isVerified
-                    ? Icons.verified_user_rounded
-                    : Icons.mark_email_unread_outlined,
-                color: BauhausDesign.neutral,
-                size: 18,
-              ),
-              const SizedBox(width: BauhausDesign.space2),
-              Expanded(
-                child: Text(
-                  _organizationVerificationTitle(l10n),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              Row(
+                children: [
+                  Icon(
+                    isVerified
+                        ? Icons.verified_user_rounded
+                        : Icons.mark_email_unread_outlined,
+                    color: BauhausDesign.neutral,
+                    size: 18,
+                  ),
+                  const SizedBox(width: BauhausDesign.space2),
+                  Expanded(
+                    child: Text(
+                      _organizationVerificationTitle(l10n),
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelLarge
+                          ?.copyWith(
                             color: BauhausDesign.neutral,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 0.8,
                           ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BauhausDesign.space2,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: isVerified
-                      ? BauhausDesign.success
-                      : BauhausDesign.surfaceWhite,
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
-                ),
-                child: Text(
-                  isVerified
-                      ? l10n.verified.toUpperCase()
-                      : l10n.unverified.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space2,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isVerified
+                          ? BauhausDesign.success
+                          : BauhausDesign.surfaceWhite,
+                      borderRadius:
+                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      border: Border.all(color: BauhausDesign.neutral),
+                    ),
+                    child: Text(
+                      isVerified
+                          ? l10n.verified.toUpperCase()
+                          : l10n.unverified.toUpperCase(),
+                      style: BauhausDesign.getTextTheme(context)
+                          .labelSmall
+                          ?.copyWith(
                             color: BauhausDesign.neutral,
                             fontWeight: FontWeight.w900,
                           ),
-                ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space2),
+              Text(
+                _organizationVerificationMessage(l10n),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                      color: BauhausDesign.neutral,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              Wrap(
+                spacing: BauhausDesign.space2,
+                runSpacing: BauhausDesign.space2,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _navigateToEdit,
+                    icon: const Icon(Icons.edit_outlined, size: 16),
+                    label: Text(
+                      (_organizationContactEmail == null
+                              ? l10n.setOrganizationEmail
+                              : l10n.editContactDetails)
+                          .toUpperCase(),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: BauhausDesign.neutral,
+                      backgroundColor: BauhausDesign.surfaceWhite,
+                      side: const BorderSide(
+                          color: BauhausDesign.neutral, width: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space3,
+                        vertical: BauhausDesign.space2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusMd),
+                      ),
+                    ),
+                  ),
+                  if (_hasDedicatedOrganizationEmail &&
+                      !_organizationEmailVerified)
+                    FilledButton.icon(
+                      onPressed: _sendingOrganizationVerification
+                          ? null
+                          : _sendOrganizationVerificationEmail,
+                      icon: Icon(
+                        _organizationVerificationSentAt == null
+                            ? Icons.mark_email_read_outlined
+                            : Icons.refresh_rounded,
+                        size: 16,
+                      ),
+                      label: Text(
+                        (_organizationVerificationSentAt == null
+                                ? l10n.sendVerification
+                                : l10n.resendVerification)
+                            .toUpperCase(),
+                      ),
+                      style: FilledButton.styleFrom(
+                        foregroundColor: BauhausDesign.neutral,
+                        backgroundColor: BauhausDesign.accent,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: BauhausDesign.space3,
+                          vertical: BauhausDesign.space2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusMd),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: BauhausDesign.space2),
-          Text(
-            _organizationVerificationMessage(l10n),
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.neutral,
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          const SizedBox(height: BauhausDesign.space3),
-          Wrap(
-            spacing: BauhausDesign.space2,
-            runSpacing: BauhausDesign.space2,
-            children: [
-              OutlinedButton.icon(
-                onPressed: _navigateToEdit,
-                icon: const Icon(Icons.edit_outlined, size: 16),
-                label: Text(
-                  (_organizationContactEmail == null
-                          ? l10n.setOrganizationEmail
-                          : l10n.editContactDetails)
-                      .toUpperCase(),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: BauhausDesign.neutral,
-                  backgroundColor: BauhausDesign.surfaceWhite,
-                  side:
-                      const BorderSide(color: BauhausDesign.neutral, width: 2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space3,
-                    vertical: BauhausDesign.space2,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  ),
-                ),
-              ),
-              if (_hasDedicatedOrganizationEmail && !_organizationEmailVerified)
-                FilledButton.icon(
-                  onPressed: _sendingOrganizationVerification
-                      ? null
-                      : _sendOrganizationVerificationEmail,
-                  icon: Icon(
-                    _organizationVerificationSentAt == null
-                        ? Icons.mark_email_read_outlined
-                        : Icons.refresh_rounded,
-                    size: 16,
-                  ),
-                  label: Text(
-                    (_organizationVerificationSentAt == null
-                            ? l10n.sendVerification
-                            : l10n.resendVerification)
-                        .toUpperCase(),
-                  ),
-                  style: FilledButton.styleFrom(
-                    foregroundColor: BauhausDesign.neutral,
-                    backgroundColor: BauhausDesign.accent,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: BauhausDesign.space3,
-                      vertical: BauhausDesign.space2,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusMd),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   Future<void> _loadOrganization({bool forceRefresh = false}) async {
@@ -874,6 +885,9 @@ $appLink
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final userRole = ref.watch(app_providers.userRoleProvider);
+    final isEmployee = userRole == UserRole.employee;
+    
     // Data extraction
     final name =
         _organization?['name'] ?? widget.organizationName ?? l10n.organization;
@@ -959,12 +973,14 @@ $appLink
                           const SizedBox(width: BauhausDesign.space3),
                           _buildTab(AppLocalizations.of(context)!.contactTab,
                               'Contact', _selectedTab == 'Contact'),
-                          const SizedBox(width: BauhausDesign.space3),
-                          _buildTab(AppLocalizations.of(context)!.banking,
-                              'Banking', _selectedTab == 'Banking'),
-                          const SizedBox(width: BauhausDesign.space3),
-                          _buildTab(AppLocalizations.of(context)!.ndisTab,
-                              'NDIS', _selectedTab == 'NDIS'),
+                          if (!isEmployee) ...[
+                            const SizedBox(width: BauhausDesign.space3),
+                            _buildTab(AppLocalizations.of(context)!.banking,
+                                'Banking', _selectedTab == 'Banking'),
+                            const SizedBox(width: BauhausDesign.space3),
+                            _buildTab(AppLocalizations.of(context)!.ndisTab,
+                                'NDIS', _selectedTab == 'NDIS'),
+                          ],
                         ],
                       ),
                     ),
@@ -1055,9 +1071,10 @@ $appLink
                         ],
                       ),
 
-                      const SizedBox(height: BauhausDesign.space4),
+                      if (!isEmployee) ...[
+                        const SizedBox(height: BauhausDesign.space4),
 
-                      // Banking Details
+                        // Banking Details
                       _buildSectionCard(
                         context,
                         key: _bankingKey,
@@ -1292,6 +1309,7 @@ $appLink
                           ],
                         ],
                       ),
+                      ],
                       const SizedBox(height: BauhausDesign.space6),
                     ],
                   ),

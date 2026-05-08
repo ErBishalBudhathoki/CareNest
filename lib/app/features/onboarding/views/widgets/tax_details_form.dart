@@ -6,6 +6,7 @@ import '../../../../shared/constants/bauhaus_design.dart';
 import '../../../../shared/widgets/bauhaus_widgets.dart';
 import '../../../../shared/widgets/button_widget.dart';
 import '../../providers/onboarding_providers.dart';
+import '../../utils/australian_validators.dart';
 
 class TaxDetailsForm extends ConsumerStatefulWidget {
   final String taxStatus;
@@ -116,9 +117,12 @@ class _TaxDetailsFormState extends ConsumerState<TaxDetailsForm> {
   }
 
   String? _validateTfn(String? value) {
-    final digits = (value ?? '').trim();
-    if (digits.isEmpty) return 'Required';
+    final digits = (value ?? '').replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) {
+      return 'Required — without a TFN, super is taxed at 47%';
+    }
     if (digits.length != 9) return 'TFN must be exactly 9 digits';
+    if (!isValidTfn(digits)) return 'Invalid TFN (checksum failed)';
     return null;
   }
 

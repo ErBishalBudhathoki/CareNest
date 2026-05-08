@@ -193,7 +193,7 @@ class _ScheduleDashboardScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: BauhausDesign.surfaceLight,
       appBar: _buildBauhausAppBar(),
       body: _isLoading
           ? const Center(
@@ -213,37 +213,27 @@ class _ScheduleDashboardScreenState
   }
 
   PreferredSizeWidget _buildBauhausAppBar() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
-          ),
+    return AppBar(
+      backgroundColor: BauhausDesign.surfaceLight,
+      elevation: 0,
+      leading: BauhausIconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: Icons.arrow_back,
+        variant: BauhausActionVariant.ghost,
+      ),
+      title: Text(
+        AppLocalizations.of(context)!.scheduleTitle,
+        style: BauhausDesign.getTextTheme(context).displaySmall,
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: BauhausDesign.space2),
+          child: _buildFilterDropdown(),
         ),
-        child: SafeArea(
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
-            child: Row(
-              children: [
-                BauhausIconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Icons.arrow_back,
-                  variant: BauhausActionVariant.ghost,
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Text(
-                  AppLocalizations.of(context)!.scheduleTitle,
-                  style: BauhausDesign.getTextTheme(context).displaySmall,
-                ),
-                const Spacer(),
-                _buildFilterDropdown(),
-              ],
-            ),
-          ),
-        ),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(2),
+        child: Container(color: BauhausDesign.neutral, height: 2),
       ),
     );
   }

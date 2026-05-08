@@ -36,6 +36,9 @@ class SettingsView extends ConsumerStatefulWidget {
   final Uint8List? photoData;
   final String? imageUrl;
   final VoidCallback? onPhotoUpdated;
+  /// The role the current dashboard was loaded with (admin vs employee mode).
+  /// Used to determine which mode-switch buttons to show.
+  final UserRole? currentDashboardRole;
 
   const SettingsView({
     super.key,
@@ -47,6 +50,7 @@ class SettingsView extends ConsumerStatefulWidget {
     this.photoData,
     this.imageUrl,
     this.onPhotoUpdated,
+    this.currentDashboardRole,
   });
 
   @override
@@ -82,7 +86,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
   bool get _isOwner {
     final role = SharedPreferencesUtils().getRole();
-    return role == UserRole.admin;
+    if (role == UserRole.admin) return true;
+    // Fallback: check the Riverpod provider in case SharedPrefs hasn't synced
+    try {
+      final providerRole = ref.read(userRoleProvider);
+      if (providerRole == UserRole.admin) return true;
+    } catch (_) {}
+    debugPrint('SettingsView._isOwner: SharedPrefs role=$role — returning false');
+    return false;
   }
 
   void _handleSecretTap() {
@@ -214,14 +225,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   void _showLogoutConfirmation() {
     showDialog(
       context: context,
-      builder: (context) => ConfirmationAlertDialog(
+      builder: (dialogContext) => ConfirmationAlertDialog(
         title: AppLocalizations.of(context)!.logoutConfirmTitle,
         content: AppLocalizations.of(context)!.logoutConfirmMessage,
         confirmText: AppLocalizations.of(context)!.logoutButton,
         confirmColor: BauhausDesign.error,
         confirmAction: () async {
-          Navigator.pop(context);
-          await _performLogout(context);
+          Navigator.pop(dialogContext);
+          await _performLogout();
         },
       ),
     );
@@ -230,13 +241,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   void _showDeleteAccountConfirmation() {
     showDialog(
       context: context,
-      builder: (context) => ConfirmationAlertDialog(
+      builder: (dialogContext) => ConfirmationAlertDialog(
         title: AppLocalizations.of(context)!.deleteAccountConfirmTitle,
         content: AppLocalizations.of(context)!.deleteAccountConfirmMessage,
         confirmText: AppLocalizations.of(context)!.deleteButton,
         confirmColor: BauhausDesign.error,
         confirmAction: () async {
-          Navigator.pop(context);
+          Navigator.pop(dialogContext);
           await _deleteAccount();
         },
       ),
@@ -258,7 +269,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       );
       await Future.delayed(const Duration(milliseconds: 900));
       if (!mounted) return;
-      await _performLogout(context);
+      await _performLogout();
     } catch (e) {
       _showSettingsSnackBar(
         'Failed to start account deletion: $e',
@@ -543,23 +554,27 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     _buildSettingsSection(
                       title: AppLocalizations.of(context)!.ownerToolsSection,
                       items: [
-                        _buildSettingsItem(
-                          icon: Icons.badge_outlined,
-                          color: BauhausDesign.secondary,
-                          title:
-                              AppLocalizations.of(context)!.employeeOptionTitle,
-                          subtitle: AppLocalizations.of(context)!
-                              .employeeTrackingDesc,
-                          onTap: _openEmployeeDashboardMode,
-                        ),
-                        _buildSettingsItem(
-                          icon: Icons.admin_panel_settings_outlined,
-                          color: BauhausDesign.primary,
-                          title: AppLocalizations.of(context)!.adminDashboard,
-                          subtitle: AppLocalizations.of(context)!
-                              .adminDashboardSubtitle,
-                          onTap: _openAdminDashboardMode,
-                        ),
+                        // Show "Switch to Employee" only when on admin dashboard
+                        if (widget.currentDashboardRole != UserRole.employee)
+                          _buildSettingsItem(
+                            icon: Icons.badge_outlined,
+                            color: BauhausDesign.secondary,
+                            title:
+                                AppLocalizations.of(context)!.employeeOptionTitle,
+                            subtitle: AppLocalizations.of(context)!
+                                .employeeTrackingDesc,
+                            onTap: _openEmployeeDashboardMode,
+                          ),
+                        // Show "Switch to Admin" only when on employee dashboard
+                        if (widget.currentDashboardRole == UserRole.employee)
+                          _buildSettingsItem(
+                            icon: Icons.admin_panel_settings_outlined,
+                            color: BauhausDesign.primary,
+                            title: AppLocalizations.of(context)!.adminDashboard,
+                            subtitle: AppLocalizations.of(context)!
+                                .adminDashboardSubtitle,
+                            onTap: _openAdminDashboardMode,
+                          ),
                         if (showSecurityDashboard)
                           _buildSettingsItem(
                             icon: Icons.shield_outlined,
@@ -825,7 +840,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 
-  Future<void> _performLogout(BuildContext context) async {
+  Future<void> _performLogout() async {
     final sharedPrefs = SharedPreferencesUtils();
     await SessionTimeoutService(sharedPrefs: sharedPrefs).logoutAndClearSession(
       reason: 'manual_logout_from_settings',

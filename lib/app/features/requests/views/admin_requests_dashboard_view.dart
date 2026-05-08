@@ -201,6 +201,7 @@ class _AdminRequestsDashboardViewState
           children: [
             BauhausEmptyState(
               title: "No requests found",
+              message: "There are no requests in this category yet.",
               icon: Icons.inbox_outlined,
             ),
             const SizedBox(height: BauhausDesign.space4),

@@ -2,6 +2,8 @@ const Set<String> _adminRoleTags = {
   'admin',
   'superadmin',
   'owner',
+  'manager',
+  'moderator',
 };
 
 const Set<String> _employeeRoleTags = {

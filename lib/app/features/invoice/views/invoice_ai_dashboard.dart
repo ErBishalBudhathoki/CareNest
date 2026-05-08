@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
 class InvoiceAIDashboard extends StatelessWidget {
   final String? organizationId;
@@ -12,274 +12,429 @@ class InvoiceAIDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = BauhausDesign.getTextTheme(context);
+
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.surfaceLight,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+            style: IconButton.styleFrom(
+              backgroundColor: BauhausDesign.surfaceOffWhite,
+              side: const BorderSide(
+                  color: BauhausDesign.neutral, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(BauhausDesign.radiusSm),
+              ),
+            ),
+          ),
+        ),
         title: Text(
           'SMART INVOICING',
-          style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+          style: textTheme.headlineMedium?.copyWith(
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(color: BauhausDesign.neutral, height: 2),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Card
-            BauhausCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: BauhausDesign.primary.withOpacity(0.1),
-                        border: Border.all(
-                          color: BauhausDesign.primary,
-                          width: 2,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.auto_awesome,
-                        color: BauhausDesign.primary,
-                        size: 32,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'AI-POWERED INVOICING',
-                            style: BauhausDesign.getTextTheme(context)
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Automated validation, error detection, and payment predictions',
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.neutral,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // Hero Card with SVG illustration
+            _buildHeroCard(context, textTheme),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: BauhausDesign.space4),
 
-            // Stats Cards
+            // Stats Grid — compact 2x2
+            _buildStatsGrid(context, textTheme),
+
+            const SizedBox(height: BauhausDesign.space5),
+
+            // Features Section Header
             Row(
               children: [
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    title: 'ERRORS DETECTED',
-                    value: '3',
-                    icon: Icons.error_outline,
-                    color: BauhausDesign.error,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    title: 'AUTO-GENERATED',
-                    value: '24',
-                    icon: Icons.auto_awesome,
-                    color: BauhausDesign.success,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    title: 'AVG PAYMENT',
-                    value: '28d',
-                    icon: Icons.schedule,
+                Container(
+                  width: 4,
+                  height: 20,
+                  decoration: BoxDecoration(
                     color: BauhausDesign.secondary,
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    title: 'ACCURACY',
-                    value: '96%',
-                    icon: Icons.check_circle_outline,
-                    color: BauhausDesign.primary,
+                const SizedBox(width: BauhausDesign.space2),
+                Text(
+                  'FEATURES',
+                  style: textTheme.labelLarge?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: BauhausDesign.space3),
 
-            // Features Section
-            BauhausSectionHeader(title: 'FEATURES'),
-            const SizedBox(height: 16),
-
+            // Feature Cards
             _buildFeatureCard(
               context,
+              textTheme,
               title: 'Auto-Generate Invoices',
-              description: 'Automatically create invoices from completed appointments',
+              description:
+                  'Create invoices automatically from completed appointments',
               icon: Icons.receipt_long,
-              color: BauhausDesign.primary,
-              onTap: () {
-                _showAutoGenerateDialog(context);
-              },
+              accentColor: BauhausDesign.primary,
+              onTap: () => _showAutoGenerateDialog(context),
             ),
-
-            const SizedBox(height: 16),
-
+            const SizedBox(height: BauhausDesign.space3),
             _buildFeatureCard(
               context,
+              textTheme,
               title: 'Error Detection',
-              description: 'AI-powered validation to catch billing errors',
-              icon: Icons.search,
-              color: BauhausDesign.warning,
-              onTap: () {
-                _showErrorDetectionDialog(context);
-              },
+              description:
+                  'AI-powered validation to catch billing errors',
+              icon: Icons.bug_report_outlined,
+              accentColor: BauhausDesign.warning,
+              onTap: () => _showErrorDetectionDialog(context),
             ),
-
-            const SizedBox(height: 16),
-
+            const SizedBox(height: BauhausDesign.space3),
             _buildFeatureCard(
               context,
+              textTheme,
               title: 'Payment Predictions',
-              description: 'Predict when clients will pay based on history',
+              description:
+                  'Predict when clients will pay based on history',
               icon: Icons.trending_up,
-              color: BauhausDesign.secondary,
-              onTap: () {
-                _showPaymentPredictionDialog(context);
-              },
+              accentColor: BauhausDesign.secondary,
+              onTap: () => _showPaymentPredictionDialog(context),
             ),
-
-            const SizedBox(height: 16),
-
+            const SizedBox(height: BauhausDesign.space3),
             _buildFeatureCard(
               context,
+              textTheme,
               title: 'Smart Reminders',
-              description: 'Optimal timing for payment reminders',
-              icon: Icons.notifications_active,
-              color: BauhausDesign.success,
-              onTap: () {
-                _showSmartRemindersDialog(context);
-              },
+              description:
+                  'Optimal timing for payment reminders',
+              icon: Icons.notifications_active_outlined,
+              accentColor: BauhausDesign.success,
+              onTap: () => _showSmartRemindersDialog(context),
             ),
+
+            const SizedBox(height: BauhausDesign.space6),
           ],
         ),
       ),
+    );
+  }
+
+  // ─── Hero Card ───────────────────────────────────────────────────────
+  Widget _buildHeroCard(BuildContext context, TextTheme textTheme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Column(
+        children: [
+          // SVG illustration
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(BauhausDesign.radiusSm - 1),
+              topRight: Radius.circular(BauhausDesign.radiusSm - 1),
+            ),
+            child: Container(
+              width: double.infinity,
+              height: 140,
+              color: BauhausDesign.secondary.withValues(alpha: 0.06),
+              child: SvgPicture.asset(
+                'assets/ui_assets_svg/undraw_printing-invoices_g6c9.svg',
+                fit: BoxFit.contain,
+                height: 120,
+              ),
+            ),
+          ),
+          // Separator
+          Container(height: 2, color: BauhausDesign.neutral),
+          // Text content
+          Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.primary.withValues(alpha: 0.08),
+                    borderRadius:
+                        BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(
+                      color: BauhausDesign.primary.withValues(alpha: 0.3),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.auto_awesome,
+                    color: BauhausDesign.primary,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: BauhausDesign.space3),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'AI-POWERED INVOICING',
+                        style: textTheme.titleMedium?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Automated validation, error detection & payment predictions',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: BauhausDesign.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Stats Grid ──────────────────────────────────────────────────────
+  Widget _buildStatsGrid(BuildContext context, TextTheme textTheme) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              _buildStatCard(
+                context,
+                textTheme,
+                title: 'ERRORS',
+                value: '3',
+                icon: Icons.error_outline,
+                accentColor: BauhausDesign.error,
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              _buildStatCard(
+                context,
+                textTheme,
+                title: 'AVG PAYMENT',
+                value: '28d',
+                icon: Icons.schedule,
+                accentColor: BauhausDesign.secondary,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: BauhausDesign.space3),
+        Expanded(
+          child: Column(
+            children: [
+              _buildStatCard(
+                context,
+                textTheme,
+                title: 'GENERATED',
+                value: '24',
+                icon: Icons.auto_awesome,
+                accentColor: BauhausDesign.success,
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              _buildStatCard(
+                context,
+                textTheme,
+                title: 'ACCURACY',
+                value: '96%',
+                icon: Icons.check_circle_outline,
+                accentColor: BauhausDesign.primary,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildStatCard(
-    BuildContext context, {
+    BuildContext context,
+    TextTheme textTheme, {
     required String title,
     required String value,
     required IconData icon,
-    required Color color,
+    required Color accentColor,
   }) {
-    return BauhausCard(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                  ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space3,
+        vertical: BauhausDesign.space3,
+      ),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        boxShadow: const [BauhausDesign.shadowHardXs],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.08),
+              borderRadius:
+                  BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(
+                color: accentColor.withValues(alpha: 0.3),
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+            child: Icon(icon, color: accentColor, size: 18),
+          ),
+          const SizedBox(width: BauhausDesign.space3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: BauhausDesign.textMuted,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
                   ),
+                ),
+                Text(
+                  value,
+                  style: textTheme.headlineSmall?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
+  // ─── Feature Card ────────────────────────────────────────────────────
   Widget _buildFeatureCard(
-    BuildContext context, {
+    BuildContext context,
+    TextTheme textTheme, {
     required String title,
     required String description,
     required IconData icon,
-    required Color color,
+    required Color accentColor,
     required VoidCallback onTap,
   }) {
-    return BauhausCard(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: BauhausDesign.surfaceLight,
+          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+          boxShadow: const [BauhausDesign.shadowHardXs],
+        ),
+        child: IntrinsicHeight(
           child: Row(
             children: [
+              // Left accent strip
               Container(
-                padding: const EdgeInsets.all(12),
+                width: 5,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  border: Border.all(color: color, width: 2),
+                  color: accentColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft:
+                        Radius.circular(BauhausDesign.radiusSm - 1),
+                    bottomLeft:
+                        Radius.circular(BauhausDesign.radiusSm - 1),
+                  ),
                 ),
-                child: Icon(icon, color: color, size: 28),
               ),
-              const SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space3,
+                    vertical: BauhausDesign.space3,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color:
+                              accentColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusSm),
+                          border: Border.all(
+                            color:
+                                accentColor.withValues(alpha: 0.3),
+                            width: 1.5,
                           ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.neutral,
-                          ),
-                    ),
-                  ],
+                        ),
+                        child: Icon(icon,
+                            color: accentColor, size: 22),
+                      ),
+                      const SizedBox(width: BauhausDesign.space3),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          mainAxisAlignment:
+                              MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              title.toUpperCase(),
+                              style:
+                                  textTheme.labelLarge?.copyWith(
+                                color: BauhausDesign.textDark,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              description,
+                              style:
+                                  textTheme.bodySmall?.copyWith(
+                                color: BauhausDesign.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: BauhausDesign.space2),
+                      Icon(
+                        Icons.chevron_right,
+                        color: BauhausDesign.neutral,
+                        size: 22,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(
-                Icons.arrow_forward,
-                color: BauhausDesign.neutral,
               ),
             ],
           ),
@@ -288,89 +443,132 @@ class InvoiceAIDashboard extends StatelessWidget {
     );
   }
 
+  // ─── Dialogs ─────────────────────────────────────────────────────────
   void _showAutoGenerateDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('AUTO-GENERATE INVOICES'),
-        content: const Text(
+    _showBauhausDialog(
+      context,
+      title: 'AUTO-GENERATE INVOICES',
+      body:
           'This feature will automatically generate invoices from completed appointments. '
           'Please select a date range to continue.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL'),
+      primaryLabel: 'CONTINUE',
+      onPrimary: () {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Auto-generate feature requires appointment data'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Auto-generate feature requires appointment data'),
-                ),
-              );
-            },
-            child: const Text('CONTINUE'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   void _showErrorDetectionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('ERROR DETECTION'),
-        content: const Text(
+    _showBauhausDialog(
+      context,
+      title: 'ERROR DETECTION',
+      body:
           'AI will scan your invoices for common errors like incorrect amounts, '
           'missing fields, and tax calculation issues.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
     );
   }
 
   void _showPaymentPredictionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('PAYMENT PREDICTIONS'),
-        content: const Text(
+    _showBauhausDialog(
+      context,
+      title: 'PAYMENT PREDICTIONS',
+      body:
           'Based on client payment history, we predict when invoices will be paid '
           'and identify high-risk late payments.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
     );
   }
 
   void _showSmartRemindersDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('SMART REMINDERS'),
-        content: const Text(
+    _showBauhausDialog(
+      context,
+      title: 'SMART REMINDERS',
+      body:
           'AI determines the optimal time to send payment reminders based on '
           'client behavior and payment patterns.',
+    );
+  }
+
+  void _showBauhausDialog(
+    BuildContext context, {
+    required String title,
+    required String body,
+    String? primaryLabel,
+    VoidCallback? onPrimary,
+  }) {
+    final textTheme = BauhausDesign.getTextTheme(context);
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(BauhausDesign.radiusSm),
+          side: const BorderSide(
+              color: BauhausDesign.neutral, width: 2),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+        child: Padding(
+          padding: const EdgeInsets.all(BauhausDesign.space5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: textTheme.titleMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              Text(
+                body,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: BauhausDesign.textMuted,
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      primaryLabel != null ? 'CANCEL' : 'OK',
+                      style: textTheme.labelLarge?.copyWith(
+                        color: BauhausDesign.textMuted,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  if (primaryLabel != null) ...[
+                    const SizedBox(width: BauhausDesign.space2),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: BauhausDesign.primary,
+                        foregroundColor:
+                            BauhausDesign.surfaceWhite,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusSm),
+                          side: const BorderSide(
+                              color: BauhausDesign.neutral,
+                              width: 1.5),
+                        ),
+                      ),
+                      onPressed: onPrimary,
+                      child: Text(primaryLabel),
+                    ),
+                  ],
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

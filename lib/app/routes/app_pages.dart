@@ -2,7 +2,7 @@ import 'package:carenest/app/features/Appointment/views/client_appointment_detai
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 
-import 'package:carenest/app/features/home/views/home_view.dart';
+import 'package:carenest/app/features/home/views/employee_home_view.dart';
 import 'package:carenest/app/features/auth/views/login_view.dart';
 import 'package:carenest/app/features/auth/views/signup_view.dart';
 import 'package:carenest/app/features/auth/views/forgot_password_view.dart';
@@ -57,7 +57,7 @@ class AppPages {
     const SplashScreen(),
     const AdminDashboardView(email: ''),
     const LoginView(),
-    const HomeView(email: ''),
+    const EmployeeHomeView(email: ''),
     const SignUpView(),
     const ForgotPasswordView(),
     const AddClientDetails(),

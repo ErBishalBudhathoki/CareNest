@@ -1,8 +1,10 @@
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
 import '../models/team_models.dart';
 import '../providers/team_providers.dart';
 
@@ -21,16 +23,19 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
   @override
   void initState() {
     super.initState();
+    debugPrint('TeamDashboardView: initState');
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 600),
     );
-    _fadeIn = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
+    _fadeIn = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
     _animController.forward();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('TeamDashboardView: Triggering initial loads');
       ref.read(teamViewModelProvider).loadMyTeams();
       ref.read(teamViewModelProvider).loadActiveBroadcasts();
+      ref.read(teamViewModelProvider).loadBroadcastHistory(silent: true);
     });
   }
 
@@ -43,6 +48,8 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(teamViewModelProvider);
+    debugPrint(
+        'TeamDashboardView: build (isLoading: ${viewModel.isLoading}, teams: ${viewModel.teams.length}, error: ${viewModel.errorMessage})');
 
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceWhite,
@@ -91,7 +98,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                   ),
                 ),
               )
-            else if (viewModel.errorMessage != null)
+            else if (viewModel.errorMessage != null && viewModel.teams.isEmpty)
               SliverToBoxAdapter(
                 child: _buildErrorState(context, viewModel.errorMessage!),
               )
@@ -101,8 +108,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
               )
             else
               SliverPadding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => Padding(
@@ -111,12 +117,11 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                         team: viewModel.teams[index],
                         index: index,
                         availableUsers: viewModel.availableUsers,
+                        isAdmin: ref.watch(userRoleProvider) == UserRole.admin,
                         onInvite: (teamId, email, role) async {
-                          await ref
-                              .read(teamViewModelProvider)
-                              .inviteMember(teamId, email, role);
+                          await viewModel.inviteMember(teamId, email, role);
                           // Reload to show new member
-                          ref.read(teamViewModelProvider).loadMyTeams();
+                          viewModel.loadMyTeams();
                         },
                       ),
                     ),
@@ -124,11 +129,30 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                   ),
                 ),
               ),
+            // Emergency History (Admins only)
+            if (ref.watch(userRoleProvider) == UserRole.admin &&
+                viewModel.broadcastHistory.isNotEmpty) ...[
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              SliverToBoxAdapter(
+                child: _buildSectionLabel('EMERGENCY HISTORY'),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final broadcast = viewModel.broadcastHistory[index];
+                    return _buildHistoryItem(context, broadcast);
+                  },
+                  childCount: viewModel.broadcastHistory.length,
+                ),
+              ),
+            ],
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
       ),
-      floatingActionButton: _buildFAB(context),
+      floatingActionButton: ref.watch(userRoleProvider) == UserRole.admin
+          ? _buildFAB(context)
+          : null,
     );
   }
 
@@ -151,6 +175,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
             HapticFeedback.lightImpact();
             ref.read(teamViewModelProvider).loadMyTeams();
             ref.read(teamViewModelProvider).loadActiveBroadcasts();
+            ref.read(teamViewModelProvider).loadBroadcastHistory(silent: true);
           },
         ),
       ],
@@ -175,8 +200,16 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
 
   // ─── Emergency Broadcast Banner ───────────────────────────
   Widget _buildBroadcastBanner(BuildContext context, dynamic viewModel) {
-    final broadcasts =
+    final currentUserId = ref.watch(userIdProvider);
+    final allBroadcasts =
         viewModel.activeBroadcasts as List<EmergencyBroadcast>;
+
+    // Filter out acknowledged broadcasts
+    final broadcasts = allBroadcasts.where((b) {
+      if (currentUserId == null) return true;
+      return !b.acknowledgments.contains(currentUserId);
+    }).toList();
+
     final hasActive = broadcasts.isNotEmpty;
 
     return Padding(
@@ -187,11 +220,8 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
           // Header bar
           Container(
             width: double.infinity,
-            color: hasActive
-                ? const Color(0xFF8B0000)
-                : BauhausDesign.neutral,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            color: hasActive ? const Color(0xFF8B0000) : BauhausDesign.neutral,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               children: [
                 Icon(
@@ -224,16 +254,14 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                   ? const Color(0xFFFFF5F5)
                   : BauhausDesign.surfaceOffWhite,
               border: Border.all(
-                color: hasActive
-                    ? BauhausDesign.primary
-                    : BauhausDesign.neutral,
+                color:
+                    hasActive ? BauhausDesign.primary : BauhausDesign.neutral,
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: hasActive
-                      ? BauhausDesign.primary
-                      : BauhausDesign.neutral,
+                  color:
+                      hasActive ? BauhausDesign.primary : BauhausDesign.neutral,
                   offset: const Offset(4, 4),
                   blurRadius: 0,
                 ),
@@ -277,31 +305,32 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                         },
                       )),
                 // Send button
-                GestureDetector(
-                  onTap: () => _showEmergencyDialog(context, viewModel),
-                  child: Container(
-                    width: double.infinity,
-                    color: BauhausDesign.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.campaign,
-                            color: Colors.white, size: 14),
-                        const SizedBox(width: 8),
-                        Text(
-                          'SEND EMERGENCY BROADCAST',
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 1.5,
+                if (ref.watch(userRoleProvider) == UserRole.admin)
+                  GestureDetector(
+                    onTap: () => _showEmergencyDialog(context, viewModel),
+                    child: Container(
+                      width: double.infinity,
+                      color: BauhausDesign.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 11),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.campaign,
+                              color: Colors.white, size: 14),
+                          const SizedBox(width: 8),
+                          Text(
+                            'SEND EMERGENCY BROADCAST',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 1.5,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -316,10 +345,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
       child: Row(
         children: [
-          Container(
-              width: 4,
-              height: 16,
-              color: BauhausDesign.secondary),
+          Container(width: 4, height: 16, color: BauhausDesign.secondary),
           const SizedBox(width: 10),
           Text(
             label,
@@ -428,8 +454,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
           color: BauhausDesign.secondary,
           boxShadow: [BauhausDesign.shadowHardLg],
         ),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -464,7 +489,8 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
           children: [
             _InputLabel('TEAM NAME'),
             const SizedBox(height: 6),
-            _NeoTextField(controller: nameCtrl, hint: 'e.g. Morning Shift Alpha'),
+            _NeoTextField(
+                controller: nameCtrl, hint: 'e.g. Morning Shift Alpha'),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -499,8 +525,11 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
   // ─── Emergency Dialog ─────────────────────────────────────
   void _showEmergencyDialog(BuildContext context, dynamic viewModel) {
     final msgCtrl = TextEditingController();
-    // Pick first team for demo; in a real app user would select
     final teams = viewModel.teams as List<Team>;
+    final selectedTeamIds = <String>{};
+    if (teams.isNotEmpty && teams.first.id != null) {
+      selectedTeamIds.add(teams.first.id!);
+    }
 
     showDialog(
       context: context,
@@ -508,9 +537,11 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
         accentColor: BauhausDesign.primary,
         title: 'EMERGENCY BROADCAST',
         titleIcon: Icons.warning_amber_rounded,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: StatefulBuilder(
+          builder: (context, setS) => Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Container(
               padding: const EdgeInsets.all(10),
               color: const Color(0xFFFFF3E0),
@@ -542,6 +573,46 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
               focusBorderColor: BauhausDesign.primary,
             ),
             const SizedBox(height: 20),
+            _InputLabel('TARGET TEAMS'),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: teams.map((t) {
+                final teamId = t.id;
+                if (teamId == null) return const SizedBox.shrink();
+                
+                final isSelected = selectedTeamIds.contains(teamId);
+                return FilterChip(
+                  label: Text(t.name.toUpperCase()),
+                  selected: isSelected,
+                  onSelected: (val) {
+                    setS(() {
+                      if (val) {
+                        selectedTeamIds.add(teamId);
+                      } else {
+                        if (selectedTeamIds.length > 1) {
+                          selectedTeamIds.remove(teamId);
+                        }
+                      }
+                    });
+                  },
+                  selectedColor: BauhausDesign.primary,
+                  checkmarkColor: Colors.white,
+                  backgroundColor: BauhausDesign.surfaceOffWhite,
+                  labelStyle: GoogleFonts.oswald(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: isSelected ? Colors.white : BauhausDesign.textDark,
+                  ),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                    side: BorderSide(color: BauhausDesign.neutral, width: 2),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
@@ -555,45 +626,72 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                   child: _NeoFilledButton(
                     label: 'BROADCAST',
                     color: BauhausDesign.primary,
-                    onTap: () {
+                    onTap: () async {
                       final msg = msgCtrl.text.trim();
                       if (msg.isEmpty) return;
                       HapticFeedback.heavyImpact();
-                      if (teams.isNotEmpty && teams.first.id != null) {
-                        viewModel.sendBroadcast(
-                            teams.first.id!, msg, 'alert');
+
+                      try {
+                        if (selectedTeamIds.isNotEmpty) {
+                          await viewModel.sendBroadcast(
+                              selectedTeamIds.toList(), msg, 'alert');
+                        }
+
+                        if (context.mounted) {
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Emergency broadcast sent!',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
+                              backgroundColor: BauhausDesign.primary,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Failed to send broadcast: $e',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
                       }
-                      Navigator.pop(ctx);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Emergency broadcast sent!',
-                            style: GoogleFonts.inter(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
-                          ),
-                          backgroundColor: BauhausDesign.primary,
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
                     },
                   ),
                 ),
               ],
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildHistoryItem(BuildContext context, EmergencyBroadcast broadcast) {
+    return _HistoryTile(broadcast: broadcast);
   }
 }
 
 // ═══════════════════════════════════════════════════════════
 // Team Card
 // ═══════════════════════════════════════════════════════════
-class _TeamCard extends StatefulWidget {
+class _TeamCard extends ConsumerStatefulWidget {
   final Team team;
   final int index;
+  final bool isAdmin;
   final List<TeamMember> availableUsers;
   final Future<void> Function(String teamId, String email, String role)
       onInvite;
@@ -601,15 +699,16 @@ class _TeamCard extends StatefulWidget {
   const _TeamCard({
     required this.team,
     required this.index,
+    required this.isAdmin,
     required this.availableUsers,
     required this.onInvite,
   });
 
   @override
-  State<_TeamCard> createState() => _TeamCardState();
+  ConsumerState<_TeamCard> createState() => _TeamCardState();
 }
 
-class _TeamCardState extends State<_TeamCard>
+class _TeamCardState extends ConsumerState<_TeamCard>
     with SingleTickerProviderStateMixin {
   bool _expanded = false;
   late AnimationController _ctrl;
@@ -628,10 +727,8 @@ class _TeamCardState extends State<_TeamCard>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 240));
-    _expandAnim =
-        CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut);
+        vsync: this, duration: const Duration(milliseconds: 240));
+    _expandAnim = CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut);
   }
 
   @override
@@ -642,9 +739,8 @@ class _TeamCardState extends State<_TeamCard>
 
   @override
   Widget build(BuildContext context) {
-    final initial = widget.team.name.isNotEmpty
-        ? widget.team.name[0].toUpperCase()
-        : '?';
+    final initial =
+        widget.team.name.isNotEmpty ? widget.team.name[0].toUpperCase() : '?';
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -653,9 +749,7 @@ class _TeamCardState extends State<_TeamCard>
         border: Border.all(color: BauhausDesign.neutral, width: 2),
         boxShadow: [
           BoxShadow(
-            color: _expanded
-                ? _accent.withOpacity(0.85)
-                : Colors.black,
+            color: _expanded ? _accent.withOpacity(0.85) : Colors.black,
             offset: const Offset(5, 5),
             blurRadius: 0,
           ),
@@ -719,6 +813,33 @@ class _TeamCardState extends State<_TeamCard>
                       ],
                     ),
                   ),
+                  if (widget.isAdmin) ...[
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      onPressed: () => _showEditTeamDialog(context),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.archive_outlined, size: 18),
+                      onPressed: () => _showSquashConfirm(context),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline,
+                          size: 18, color: BauhausDesign.primary),
+                      onPressed: () => _showDeleteConfirm(context),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   AnimatedRotation(
                     turns: _expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 240),
@@ -798,7 +919,7 @@ class _TeamCardState extends State<_TeamCard>
   void _showInviteDialog(BuildContext context) {
     String selectedRole = 'member';
     TeamMember? selectedUser;
-    
+
     // Filter available users to those not already in the team
     final existingUserIds = widget.team.members.map((m) => m.userId).toSet();
     final selectableUsers = widget.availableUsers
@@ -823,11 +944,13 @@ class _TeamCardState extends State<_TeamCard>
                   padding: const EdgeInsets.all(12),
                   decoration: const BoxDecoration(
                     color: BauhausDesign.surfaceOffWhite,
-                    border: Border.fromBorderSide(BorderSide(color: BauhausDesign.neutral, width: 2)),
+                    border: Border.fromBorderSide(
+                        BorderSide(color: BauhausDesign.neutral, width: 2)),
                   ),
                   child: Text(
                     'No available users to invite.',
-                    style: GoogleFonts.inter(fontSize: 13, color: BauhausDesign.textMuted),
+                    style: GoogleFonts.inter(
+                        fontSize: 13, color: BauhausDesign.textMuted),
                   ),
                 )
               else
@@ -835,7 +958,8 @@ class _TeamCardState extends State<_TeamCard>
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: const BoxDecoration(
                     color: BauhausDesign.surfaceOffWhite,
-                    border: Border.fromBorderSide(BorderSide(color: BauhausDesign.neutral, width: 2)),
+                    border: Border.fromBorderSide(
+                        BorderSide(color: BauhausDesign.neutral, width: 2)),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<TeamMember>(
@@ -843,9 +967,11 @@ class _TeamCardState extends State<_TeamCard>
                       value: selectedUser,
                       hint: Text(
                         'Select an organization member',
-                        style: GoogleFonts.inter(color: BauhausDesign.textMuted, fontSize: 13),
+                        style: GoogleFonts.inter(
+                            color: BauhausDesign.textMuted, fontSize: 13),
                       ),
-                      icon: const Icon(Icons.keyboard_arrow_down, color: BauhausDesign.textDark),
+                      icon: const Icon(Icons.keyboard_arrow_down,
+                          color: BauhausDesign.textDark),
                       dropdownColor: BauhausDesign.surfaceWhite,
                       items: selectableUsers.map((user) {
                         final label = user.displayName.isNotEmpty
@@ -880,23 +1006,18 @@ class _TeamCardState extends State<_TeamCard>
                     child: GestureDetector(
                       onTap: () => setS(() => selectedRole = r),
                       child: Container(
-                        margin:
-                            const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10),
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
                           color: isSelected
                               ? _accent
                               : BauhausDesign.surfaceOffWhite,
                           border: Border.all(
-                            color: isSelected
-                                ? _accent
-                                : BauhausDesign.neutral,
+                            color: isSelected ? _accent : BauhausDesign.neutral,
                             width: 2,
                           ),
-                          boxShadow: isSelected
-                              ? [BauhausDesign.shadowHardSm]
-                              : [],
+                          boxShadow:
+                              isSelected ? [BauhausDesign.shadowHardSm] : [],
                         ),
                         alignment: Alignment.center,
                         child: Text(
@@ -937,15 +1058,13 @@ class _TeamCardState extends State<_TeamCard>
                       onTap: () async {
                         if (selectedUser == null) return;
                         final email = selectedUser!.email;
-                        if (email.isEmpty ||
-                            !email.contains('@')) return;
+                        if (email.isEmpty || !email.contains('@')) return;
                         HapticFeedback.mediumImpact();
                         Navigator.pop(ctx);
                         await widget.onInvite(
                             widget.team.id ?? '', email, selectedRole);
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
                               'Invite sent to $email',
                               style: GoogleFonts.inter(
@@ -963,6 +1082,144 @@ class _TeamCardState extends State<_TeamCard>
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditTeamDialog(BuildContext context) {
+    final nameCtrl = TextEditingController(text: widget.team.name);
+    showDialog(
+      context: context,
+      builder: (ctx) => _NeoBrutalistDialog(
+        accentColor: BauhausDesign.secondary,
+        title: 'EDIT TEAM',
+        titleIcon: Icons.edit_outlined,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _InputLabel('TEAM NAME'),
+            const SizedBox(height: 8),
+            _NeoTextField(
+              controller: nameCtrl,
+              hint: 'Enter team name...',
+              focusBorderColor: BauhausDesign.secondary,
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: _NeoOutlineButton(
+                    label: 'CANCEL',
+                    onTap: () => Navigator.pop(ctx),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _NeoFilledButton(
+                    label: 'SAVE',
+                    color: BauhausDesign.secondary,
+                    onTap: () async {
+                      final name = nameCtrl.text.trim();
+                      if (name.isEmpty) return;
+                      await ref
+                          .read(teamViewModelProvider)
+                          .updateTeam(widget.team.id!, name);
+                      if (context.mounted) Navigator.pop(ctx);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => _NeoBrutalistDialog(
+        accentColor: BauhausDesign.primary,
+        title: 'DELETE TEAM',
+        titleIcon: Icons.delete_outline,
+        child: Column(
+          children: [
+            Text(
+              'Are you sure you want to delete ${widget.team.name}?\nThis action cannot be undone.',
+              style: GoogleFonts.inter(fontSize: 13, height: 1.5),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: _NeoOutlineButton(
+                    label: 'CANCEL',
+                    onTap: () => Navigator.pop(ctx),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _NeoFilledButton(
+                    label: 'DELETE',
+                    color: BauhausDesign.primary,
+                    onTap: () async {
+                      await ref
+                          .read(teamViewModelProvider)
+                          .deleteTeam(widget.team.id!);
+                      if (context.mounted) Navigator.pop(ctx);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSquashConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => _NeoBrutalistDialog(
+        accentColor: BauhausDesign.info,
+        title: 'SQUASH TEAM',
+        titleIcon: Icons.archive_outlined,
+        child: Column(
+          children: [
+            Text(
+              'Squashing will archive ${widget.team.name}. It will be hidden from the active dashboard.',
+              style: GoogleFonts.inter(fontSize: 13, height: 1.5),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: _NeoOutlineButton(
+                    label: 'CANCEL',
+                    onTap: () => Navigator.pop(ctx),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _NeoFilledButton(
+                    label: 'SQUASH',
+                    color: BauhausDesign.info,
+                    onTap: () async {
+                      await ref
+                          .read(teamViewModelProvider)
+                          .squashTeam(widget.team.id!);
+                      if (context.mounted) Navigator.pop(ctx);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -985,8 +1242,7 @@ class _MemberRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final roleColor =
-        _roleColors[member.role] ?? BauhausDesign.textMuted;
+    final roleColor = _roleColors[member.role] ?? BauhausDesign.textMuted;
     final isActive = member.status == 'active';
 
     // Prefer display name, fall back to email, never show raw ID
@@ -1001,8 +1257,7 @@ class _MemberRow extends StatelessWidget {
         : null;
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -1019,9 +1274,7 @@ class _MemberRow extends StatelessWidget {
             height: 8,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isActive
-                  ? BauhausDesign.success
-                  : BauhausDesign.textMuted,
+              color: isActive ? BauhausDesign.success : BauhausDesign.textMuted,
             ),
           ),
           const SizedBox(width: 10),
@@ -1053,8 +1306,7 @@ class _MemberRow extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             color: roleColor.withOpacity(0.12),
             child: Text(
               member.role.toUpperCase(),
@@ -1075,12 +1327,93 @@ class _MemberRow extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════
 // Broadcast Tile
 // ═══════════════════════════════════════════════════════════
+
+class _HistoryTile extends StatelessWidget {
+  final EmergencyBroadcast broadcast;
+
+  const _HistoryTile({required this.broadcast});
+
+  @override
+  Widget build(BuildContext context) {
+    final initiatorName = broadcast.initiatorName ?? 'Admin';
+    final ackCount = broadcast.acknowledgments.length;
+    final dateStr =
+        "${broadcast.createdAt.day}/${broadcast.createdAt.month} ${broadcast.createdAt.hour}:${broadcast.createdAt.minute.toString().padLeft(2, '0')}";
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceOffWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        boxShadow: const [BauhausDesign.shadowHardXs],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: BauhausDesign.neutral.withOpacity(0.08),
+            ),
+            child: const Icon(Icons.history,
+                color: BauhausDesign.textMuted, size: 16),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  broadcast.message,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: BauhausDesign.textDark,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'By $initiatorName  ·  $dateStr',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    color: BauhausDesign.textMuted,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral.withOpacity(0.2)),
+            ),
+            child: Text(
+              '$ackCount ACK',
+              style: GoogleFonts.inter(
+                fontSize: 9,
+                fontWeight: FontWeight.w900,
+                color: BauhausDesign.textDark,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _BroadcastTile extends StatelessWidget {
   final EmergencyBroadcast broadcast;
   final VoidCallback onAcknowledge;
 
-  const _BroadcastTile(
-      {required this.broadcast, required this.onAcknowledge});
+  const _BroadcastTile({required this.broadcast, required this.onAcknowledge});
 
   @override
   Widget build(BuildContext context) {
@@ -1130,8 +1463,7 @@ class _BroadcastTile extends StatelessWidget {
           GestureDetector(
             onTap: onAcknowledge,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: const BoxDecoration(
                 color: BauhausDesign.neutral,
                 boxShadow: [BauhausDesign.shadowHardXs],
@@ -1173,8 +1505,7 @@ class _NeoBrutalistDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Container(
         decoration: BoxDecoration(
           color: BauhausDesign.surfaceWhite,
@@ -1195,12 +1526,10 @@ class _NeoBrutalistDialog extends StatelessWidget {
             Container(
               width: double.infinity,
               color: BauhausDesign.neutral,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(titleIcon,
-                      color: BauhausDesign.textLight, size: 16),
+                  Icon(titleIcon, color: BauhausDesign.textLight, size: 16),
                   const SizedBox(width: 8),
                   Text(
                     title,
@@ -1215,9 +1544,17 @@ class _NeoBrutalistDialog extends StatelessWidget {
               ),
             ),
             // Body
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: child,
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.65,
+              ),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: child,
+                ),
+              ),
             ),
           ],
         ),
@@ -1281,20 +1618,18 @@ class _NeoTextField extends StatelessWidget {
         ),
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide:
-              BorderSide(color: BauhausDesign.neutral, width: 2),
+          borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
         ),
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide:
-              BorderSide(color: BauhausDesign.neutral, width: 2),
+          borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: focusBorderColor, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12, vertical: 11),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       ),
     );
   }
