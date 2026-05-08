@@ -473,3 +473,8 @@ jest_dx/
 node-compile-cache/
 .snapai.google-api-key
 .venv-cairosvg/
+
+.superpowers/
+appstore_screenshots/
+screenshot-generator/
+skills-lock.json

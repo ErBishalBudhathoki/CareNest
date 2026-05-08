@@ -91,12 +91,13 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
           BauhausTextField(
             controller: _accountNumberController,
             label: 'Account Number',
-            hintText: '6 to 10 digits',
+            hintText: '1234 5678',
             keyboardType: TextInputType.number,
             validator: _accountNumberValidator,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(10),
+              LengthLimitingTextInputFormatter(8),
+              _AccountNumberFormatter(),
             ],
           ),
           const SizedBox(height: 24),
@@ -124,11 +125,9 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
   }
 
   String? _accountNumberValidator(String? value) {
-    final digits = (value ?? '').trim();
+    final digits = (value ?? '').replaceAll(' ', '');
     if (digits.isEmpty) return 'Required';
-    if (digits.length < 6 || digits.length > 10) {
-      return 'Account number must be 6 to 10 digits';
-    }
+    if (digits.length != 8) return 'Must be exactly 8 digits';
     return null;
   }
 
@@ -169,6 +168,27 @@ class _BSBFormatter extends TextInputFormatter {
     }
 
     final formatted = buffer.toString();
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
+class _AccountNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(' ', '');
+    if (digits.length <= 4) {
+      return TextEditingValue(
+        text: digits,
+        selection: TextSelection.collapsed(offset: digits.length),
+      );
+    }
+    final formatted = '${digits.substring(0, 4)} ${digits.substring(4)}';
     return TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),

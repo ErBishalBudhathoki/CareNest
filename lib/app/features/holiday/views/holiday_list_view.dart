@@ -284,9 +284,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     final visibleHolidays = _filteredHolidays;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: BauhausDesign.surfaceLight,
         elevation: 0,
         centerTitle: true,
         leadingWidth: 64,
@@ -311,6 +311,10 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
         title: Text(
           l10n.holidays,
           style: BauhausDesign.getTextTheme(context).headlineMedium,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(color: BauhausDesign.neutral, height: 2),
         ),
       ),
       body: Column(

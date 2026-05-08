@@ -106,4 +106,22 @@ class WorkerRepository {
       throw Exception('Unexpected error fetching shift history: $e');
     }
   }
+
+  /// Acknowledge an emergency broadcast
+  ///
+  /// [broadcastId]: The ID of the broadcast to acknowledge
+  Future<void> acknowledgeBroadcast(String broadcastId) async {
+    try {
+      final response = await _apiMethod.post(
+        'emergency/acknowledge/$broadcastId',
+      );
+
+      if (response['success'] != true) {
+        throw Exception(response['message'] ?? 'Failed to acknowledge broadcast');
+      }
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('Unexpected error acknowledging broadcast: $e');
+    }
+  }
 }

@@ -11,6 +11,7 @@ import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.d
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
 import 'package:carenest/firebase_options.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -48,7 +49,7 @@ import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/admin/views/employee_invoice_generation_view.dart';
 
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
-import 'package:carenest/app/features/home/views/home_view.dart';
+import 'package:carenest/app/features/home/views/employee_home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
@@ -64,6 +65,7 @@ import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
 import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
 import 'package:carenest/app/features/onboarding/views/onboarding_stepper_view.dart';
 import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_app_router.dart';
 
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
@@ -76,7 +78,7 @@ import 'package:carenest/app/features/care_intelligence/views/behavior_support_v
 import 'package:carenest/app/features/care_intelligence/views/health_monitoring_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/outcome_tracking_view.dart';
 import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view.dart';
-import 'package:carenest/app/features/worker/views/worker_dashboard_view.dart';
+import 'package:carenest/app/features/worker/views/deprecated_worker_dashboard_view.dart';
 import 'package:carenest/app/features/worker/views/worker_shift_history_view.dart';
 import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
@@ -108,6 +110,7 @@ String _envValue(String key, {String fallback = ''}) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferencesUtils().init();
   await _loadEnvironmentConfig();
 
   const flutterFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
@@ -288,25 +291,33 @@ Future<void> _initializeAppCheck() async {
         'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}');
 
     if (androidSelection.provider == AndroidProvider.debug) {
-      debugPrint('');
-      debugPrint(
-          '╔══════════════════════════════════════════════════════════╗');
-      debugPrint(
-          '║        FIREBASE APP CHECK — DEBUG TOKEN INFO             ║');
-      debugPrint(
-          '╠══════════════════════════════════════════════════════════╣');
-      debugPrint('║ Use Firebase SDK debug secret printed above in logcat:  ║');
-      debugPrint('║ D/...DebugAppCheckProvider: Enter this debug secret...  ║');
-      debugPrint(
-          '║                                                          ║');
-      debugPrint(
-          '║ If you see a 403 error, register that secret at:         ║');
-      debugPrint('║  Firebase Console → App Check → Apps →                  ║');
-      debugPrint(
-          '║  Android (com.bishal.invoice) → Manage debug tokens      ║');
-      debugPrint(
-          '╚══════════════════════════════════════════════════════════╝');
-      debugPrint('');
+      // Small delay to allow the native SDK to print the debug secret first
+      Future.delayed(const Duration(milliseconds: 500), () {
+        debugPrint('');
+        debugPrint(
+            '╔════════════════════════════════════════════════════════════════════════╗');
+        debugPrint(
+            '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
+        debugPrint(
+            '╠════════════════════════════════════════════════════════════════════════╣');
+        debugPrint(
+            '║ 1. LOOK BELOW in this terminal for a line starting with:               ║');
+        debugPrint(
+            '║    D/DebugAppCheckProvider: Enter this debug secret...                 ║');
+        debugPrint(
+            '║                                                                        ║');
+        debugPrint(
+            '║ 2. COPY the secret (UUID format) and register it at:                   ║');
+        debugPrint(
+            '║    Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
+        debugPrint(
+            '║                                                                        ║');
+        debugPrint(
+            '║ 3. RESTART the app after registering the token to fix 403 errors.      ║');
+        debugPrint(
+            '╚════════════════════════════════════════════════════════════════════════╝');
+        debugPrint('');
+      });
     }
 
     // Force-fetch token to verify Firebase Console registration worked.
@@ -477,7 +488,7 @@ class MyApp extends ConsumerWidget {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
-            return HomeView(email: email);
+            return EmployeeHomeView(email: email);
           },
           Routes.signup: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
@@ -539,7 +550,18 @@ class MyApp extends ConsumerWidget {
           },
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.onboarding: (context) => const OnboardingWelcomeView(),
-          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
+          Routes.onboardingStepper: (context) =>
+              const OnboardingStepperView(),
+          Routes.onboardingAppIntro: (context) {
+            final args = ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>?;
+            return OnboardingAppRouter(
+              onFinished: () {
+                Navigator.pushReplacementNamed(
+                    context, args?['nextRoute'] as String? ?? Routes.login);
+              },
+            );
+          },
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
@@ -771,7 +793,7 @@ class MyApp extends ConsumerWidget {
           Routes.behaviorSupport: (context) => const BehaviorSupportView(),
           Routes.healthMonitoring: (context) => const HealthMonitoringView(),
           Routes.outcomeTracking: (context) => const OutcomeTrackingView(),
-          Routes.workerDashboard: (context) => const WorkerDashboardView(),
+          Routes.workerDashboard: (context) => const DeprecatedWorkerDashboardView(),
           Routes.workerShiftHistory: (context) =>
               const WorkerShiftHistoryView(),
           Routes.teamDashboard: (context) => const TeamDashboardView(),

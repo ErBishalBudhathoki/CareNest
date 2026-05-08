@@ -145,6 +145,9 @@ class _AdminDashboardViewControllerState
   Future<void> _fetchInitialData() async {
     try {
       await _sharedPrefs.init();
+      // Background role re-sync to prevent/fix role regressions
+      ref.read(userRoleProvider.notifier).refreshRole();
+
       final data = await _apiMethod.getInitData(widget.email);
       final emailKey = await _checkEmailKey(widget.email);
       final organizationId = _resolveOrganizationId(data);
@@ -496,7 +499,7 @@ class _AdminDashboardViewControllerState
   }
 
   void _openVoiceAssistant() {
-    Navigator.pushNamed(context, Routes.voiceAssistant);
+    Navigator.of(context, rootNavigator: true).pushNamed(Routes.voiceAssistant);
   }
 
   Future<void> _navigateToAddClient() async {
@@ -513,8 +516,8 @@ class _AdminDashboardViewControllerState
   }
 
   Future<void> _navigateToAddBusiness() async {
-    final result =
-        await Navigator.pushNamed(context, Routes.addBusinessDetails);
+    final result = await Navigator.of(context, rootNavigator: true)
+        .pushNamed(Routes.addBusinessDetails);
     if (result == true) {
       await _refreshBusinessOverview();
     }
@@ -836,6 +839,8 @@ class _AdminDashboardViewControllerState
                                                               .organizationName,
                                                           organizationCode: widget
                                                               .organizationCode,
+                                                          currentDashboardRole:
+                                                              UserRole.admin,
                                                         ),
                                                       ),
                                                     );

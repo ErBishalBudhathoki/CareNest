@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
-import 'package:carenest/app/features/home/views/home_view.dart';
+import 'package:carenest/app/features/home/views/employee_home_view.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 
 import 'package:carenest/app/features/settings/views/settings_view.dart';
@@ -47,6 +47,8 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     _selectedIndex = _normalizeInitialIndex(widget.initialIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _loadUserData();
+      // Ensure the role provider is fresh from the backend
+      ref.read(userRoleProvider.notifier).refreshRole();
       if (mounted) {
         await PermissionManager.requestNotificationPermission(context);
       }
@@ -123,6 +125,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         userName: '$_firstName $_lastName'.trim(),
         photoData: _photoData,
         imageUrl: _imageUrl,
+        currentDashboardRole: widget.role,
       ),
     );
 
@@ -139,7 +142,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         organizationCode: widget.organizationCode,
       );
     } else {
-      return HomeView(
+      return EmployeeHomeView(
         email: widget.email,
         photoData: _photoData,
         organizationId: widget.organizationId,

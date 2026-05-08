@@ -244,9 +244,19 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
     double total = 0.0;
 
     for (final assignment in state.assignments) {
-      final List<dynamic> startTimes = assignment['startTimeList'] ?? [];
-      final List<dynamic> endTimes = assignment['endTimeList'] ?? [];
-      final List<dynamic> breaks = assignment['breakList'] ?? [];
+      // The API returns shift data inside a 'schedule' array; fall back to
+      // top-level lists only when 'schedule' is absent (legacy format).
+      final List<dynamic> scheduleArray = assignment['schedule'] ?? [];
+
+      final List<dynamic> startTimes = scheduleArray.isNotEmpty
+          ? scheduleArray.map((item) => item['startTime'] ?? '').toList()
+          : assignment['startTimeList'] ?? [];
+      final List<dynamic> endTimes = scheduleArray.isNotEmpty
+          ? scheduleArray.map((item) => item['endTime'] ?? '').toList()
+          : assignment['endTimeList'] ?? [];
+      final List<dynamic> breaks = scheduleArray.isNotEmpty
+          ? scheduleArray.map((item) => item['break'] ?? '').toList()
+          : assignment['breakList'] ?? [];
 
       total += _calculateAssignmentHours(startTimes, endTimes, breaks);
     }

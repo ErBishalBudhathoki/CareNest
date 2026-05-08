@@ -1,8 +1,7 @@
-
 class TeamMember {
   final String userId;
   final String displayName; // populated from userId.firstName + lastName
-  final String email;       // populated from userId.email
+  final String email; // populated from userId.email
   final String role;
   final String status;
   final DateTime joinedAt;
@@ -38,10 +37,10 @@ class TeamMember {
       userId: userId,
       displayName: displayName,
       email: email,
-      role: json['role'] as String? ?? 'member',
-      status: json['status'] as String? ?? 'active',
+      role: (json['role'] ?? 'member').toString(),
+      status: (json['status'] ?? 'active').toString(),
       joinedAt: DateTime.tryParse(
-              (json['joinedAt'] ?? json['createdAt'] ?? '') as String) ??
+              (json['joinedAt'] ?? json['createdAt'] ?? '') as String? ?? '') ??
           DateTime.now(),
     );
   }
@@ -78,16 +77,18 @@ class Team {
   factory Team.fromJson(Map<String, dynamic> json) {
     return Team(
       // backend toJSON transforms _id → id, but handle both defensively
-      id: (json['id'] ?? json['_id']) as String?,
-      name: json['name'] as String,
-      ownerId: (json['ownerId'] ?? json['managerId'] ?? '') as String,
+      id: (json['id'] ?? json['_id'])?.toString(),
+      name: (json['name'] ?? 'Unnamed Team').toString(),
+      ownerId: (json['ownerId'] ?? json['managerId'] ?? '').toString(),
       // members may be absent on create; default to empty list
       members: (json['members'] as List<dynamic>? ?? [])
           .map((e) => TeamMember.fromJson(e as Map<String, dynamic>))
           .toList(),
       settings: json['settings'] as Map<String, dynamic>? ?? {},
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt'] as String? ?? '') ??
+          DateTime.now(),
     );
   }
 
@@ -107,7 +108,10 @@ class Team {
 class EmergencyBroadcast {
   final String? id;
   final String teamId;
+  final List<String> teamIds;
   final String initiatorId;
+  final String? initiatorName; // populated firstName + lastName
+  final String? initiatorEmail; // populated email
   final String type;
   final String message;
   final String status;
@@ -117,7 +121,10 @@ class EmergencyBroadcast {
   const EmergencyBroadcast({
     this.id,
     required this.teamId,
+    this.teamIds = const [],
     required this.initiatorId,
+    this.initiatorName,
+    this.initiatorEmail,
     required this.type,
     required this.message,
     this.status = 'active',
@@ -126,18 +133,40 @@ class EmergencyBroadcast {
   });
 
   factory EmergencyBroadcast.fromJson(Map<String, dynamic> json) {
+    final rawInitiator = json['initiatorId'];
+    String iId = '';
+    String? iName;
+    String? iEmail;
+
+    if (rawInitiator is Map<String, dynamic>) {
+      iId = (rawInitiator['id'] ?? rawInitiator['_id'] ?? '').toString();
+      final first = (rawInitiator['firstName'] as String? ?? '').trim();
+      final last = (rawInitiator['lastName'] as String? ?? '').trim();
+      iName = [first, last].where((s) => s.isNotEmpty).join(' ');
+      iEmail = (rawInitiator['email'] as String? ?? '').trim();
+    } else {
+      iId = (rawInitiator ?? '').toString();
+    }
+
     return EmergencyBroadcast(
-      id: (json['id'] ?? json['_id']) as String?,
-      teamId: json['teamId'] as String,
-      initiatorId: json['initiatorId'] as String,
-      type: json['type'] as String,
-      message: json['message'] as String,
-      status: json['status'] as String? ?? 'active',
+      id: (json['id'] ?? json['_id'])?.toString(),
+      teamId: (json['teamId'] ?? '').toString(),
+      teamIds: (json['teamIds'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      initiatorId: iId,
+      initiatorName: iName,
+      initiatorEmail: iEmail,
+      type: (json['type'] ?? 'general').toString(),
+      message: (json['message'] ?? '').toString(),
+      status: (json['status'] ?? 'active').toString(),
       acknowledgments: (json['acknowledgments'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+          DateTime.now(),
     );
   }
 
@@ -145,6 +174,7 @@ class EmergencyBroadcast {
     return {
       if (id != null) '_id': id,
       'teamId': teamId,
+      'teamIds': teamIds,
       'initiatorId': initiatorId,
       'type': type,
       'message': message,

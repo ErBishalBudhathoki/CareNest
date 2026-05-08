@@ -99,21 +99,67 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
     final filteredAssignments = _getFilteredAssignments(state.assignments);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(state, viewModel),
-            Expanded(
-              child: _buildBody(state, viewModel, filteredAssignments),
+      backgroundColor: BauhausDesign.surfaceLight,
+      appBar: AppBar(
+        backgroundColor: BauhausDesign.surfaceLight,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+            style: IconButton.styleFrom(
+              backgroundColor: BauhausDesign.surfaceOffWhite,
+              side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              ),
             ),
-          ],
+          ),
         ),
+        title: Text(
+          AppLocalizations.of(context)!.assignmentList.toUpperCase(),
+          style: BauhausDesign.getTextTheme(context)
+              .headlineMedium
+              ?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              onPressed: () =>
+                  viewModel.refreshAssignments(widget.organizationId),
+              icon: const Icon(Icons.refresh, size: 20),
+              style: IconButton.styleFrom(
+                backgroundColor: BauhausDesign.surfaceOffWhite,
+                side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                ),
+              ),
+            ),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(color: BauhausDesign.neutral, height: 2),
+        ),
+      ),
+      body: Column(
+        children: [
+          _buildHeaderStats(state, viewModel),
+          Expanded(
+            child: _buildBody(state, viewModel, filteredAssignments),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHeader(
+  Widget _buildHeaderStats(
       AssignmentListState state, AssignmentListViewModel viewModel) {
     final filteredAssignments = _getFilteredAssignments(state.assignments);
 
@@ -124,42 +170,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
         BauhausDesign.space4,
         BauhausDesign.space3,
       ),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
-      ),
+      color: BauhausDesign.surfaceLight,
       child: Column(
         children: [
-          Row(
-            children: [
-              BauhausIconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: Icons.arrow_back,
-                variant: BauhausActionVariant.neutral,
-              ),
-              const SizedBox(width: BauhausDesign.space3),
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.assignmentList.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineMedium
-                      ?.copyWith(
-                        color: BauhausDesign.textDark,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ),
-              BauhausIconButton(
-                onPressed: () =>
-                    viewModel.refreshAssignments(widget.organizationId),
-                icon: Icons.refresh,
-                variant: BauhausActionVariant.neutral,
-              ),
-            ],
-          ),
-          const SizedBox(height: BauhausDesign.space3),
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: _panelDecoration(),
@@ -525,30 +538,56 @@ class _EnhancedAssignmentCardState
         : _getDisplayName(clientEmail, AppLocalizations.of(context)!.client);
 
     return Container(
-      decoration: _panelDecoration(),
-      padding: const EdgeInsets.all(BauhausDesign.space3),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(employeeName, clientName, shiftCount),
-          const SizedBox(height: BauhausDesign.space3),
-          _buildMetaRow(createdAt, startTimeList, endTimeList, breakList),
-          const SizedBox(height: BauhausDesign.space3),
-          _buildShiftPreview(
-            dateList,
-            startTimeList,
-            endTimeList,
-            breakList,
-            highIntensityList,
-            shiftCount,
-          ),
-          const SizedBox(height: BauhausDesign.space3),
-          _buildDetailsToggle(),
-          if (showFullDetails) ...[
-            const SizedBox(height: BauhausDesign.space3),
-            ..._buildDetailedInfo(),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            // Colored accent strip on the left
+            Container(
+              width: 5,
+              decoration: BoxDecoration(
+                color: BauhausDesign.secondary,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(BauhausDesign.radiusSm - 1),
+                  bottomLeft: Radius.circular(BauhausDesign.radiusSm - 1),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(employeeName, clientName, shiftCount),
+                    const SizedBox(height: BauhausDesign.space3),
+                    _buildMetaRow(createdAt, startTimeList, endTimeList, breakList),
+                    const SizedBox(height: BauhausDesign.space3),
+                    _buildShiftPreview(
+                      dateList,
+                      startTimeList,
+                      endTimeList,
+                      breakList,
+                      highIntensityList,
+                      shiftCount,
+                    ),
+                    const SizedBox(height: BauhausDesign.space3),
+                    _buildDetailsToggle(),
+                    if (showFullDetails) ...[
+                      const SizedBox(height: BauhausDesign.space3),
+                      ..._buildDetailedInfo(),
+                    ],
+                  ],
+                ),
+              ),
+            ),
           ],
-        ],
+        ),
       ),
     );
   }
@@ -670,19 +709,25 @@ class _EnhancedAssignmentCardState
   Widget _buildMetaRow(String createdAt, List<dynamic> startTimeList,
       List<dynamic> endTimeList, List<dynamic> breakList) {
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space2),
-      decoration: _panelDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderColor: BauhausDesign.neutral.withValues(alpha: 0.4),
-        borderWidth: 1.5,
+      padding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space3,
+        vertical: BauhausDesign.space2,
+      ),
+      decoration: BoxDecoration(
+        color: BauhausDesign.secondary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        border: Border.all(
+          color: BauhausDesign.secondary.withValues(alpha: 0.25),
+          width: 1.5,
+        ),
       ),
       child: Row(
         children: [
           Expanded(
             child: Row(
               children: [
-                const Icon(Icons.calendar_today,
-                    size: 14, color: BauhausDesign.textMuted),
+                Icon(Icons.calendar_today,
+                    size: 14, color: BauhausDesign.secondary),
                 const SizedBox(width: BauhausDesign.space1),
                 Expanded(
                   child: Text(
@@ -691,19 +736,35 @@ class _EnhancedAssignmentCardState
                     overflow: TextOverflow.ellipsis,
                     style: BauhausDesign.getTextTheme(context)
                         .labelSmall
-                        ?.copyWith(color: BauhausDesign.textMuted),
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
-          Text(
-            '${AppLocalizations.of(context)!.totalHours}: ${_calculateTotalHours(startTimeList, endTimeList, breakList)}',
-            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.primary,
-                  fontWeight: FontWeight.w700,
-                ),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space2,
+              vertical: 2,
+            ),
+            decoration: BoxDecoration(
+              color: BauhausDesign.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              border: Border.all(
+                color: BauhausDesign.primary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Text(
+              '${AppLocalizations.of(context)!.totalHours}: ${_calculateTotalHours(startTimeList, endTimeList, breakList)}',
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                    color: BauhausDesign.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
           ),
         ],
       ),
@@ -953,10 +1014,13 @@ class _EnhancedAssignmentCardState
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space2),
-      decoration: _panelDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderColor: BauhausDesign.neutral.withValues(alpha: 0.3),
-        borderWidth: 1.5,
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceOffWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        border: Border.all(
+          color: BauhausDesign.neutral.withValues(alpha: 0.4),
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

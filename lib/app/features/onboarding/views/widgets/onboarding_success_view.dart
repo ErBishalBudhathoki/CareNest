@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/button_widget.dart';
 
@@ -7,87 +8,164 @@ class OnboardingSuccessView extends StatelessWidget {
   final VoidCallback? onReviewPressed;
 
   const OnboardingSuccessView({
-    super.key, 
+    super.key,
     required this.status,
     this.onReviewPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    String title;
-    String message;
-    IconData icon;
-    Color color;
-
-    switch (status) {
-      case 'completed':
-        title = 'Onboarding Complete!';
-        message = 'You have successfully completed the onboarding process. Welcome to the team!';
-        icon = Icons.check_circle_outline;
-        color = Colors.green;
-        break;
-      case 'submitted':
-      case 'review_pending':
-        title = 'Submitted for Review';
-        message = 'Your details have been submitted and are currently under review. We will notify you once approved.';
-        icon = Icons.hourglass_top;
-        color = Colors.orange;
-        break;
-      case 'rejected':
-        title = 'Action Required';
-        message = 'Some details or documents were rejected. Please review your submission.';
-        icon = Icons.error_outline;
-        color = BauhausDesign.error;
-        break;
-      default:
-        title = 'Processing';
-        message = 'Your onboarding status is being updated.';
-        icon = Icons.info_outline;
-        color = BauhausDesign.secondary;
-    }
+    final data = _statusData();
+    final theme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
-      body: Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Icon(icon, size: 80, color: color),
-            const SizedBox(height: BauhausDesign.space4),
-            Text(
-              title,
-              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.bold,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: BauhausDesign.space3),
-            Text(
-              message,
-              style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                    color: BauhausDesign.textDark.withOpacity(0.7),
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            if (status == 'rejected')
-                      ButtonWidget(
-                        buttonText: 'Review Submission',
-                        onPressed: onReviewPressed ?? () {},
-                      )
-                    else
-              ButtonWidget(
-                buttonText: 'Back to Home',
-                onPressed: () {
-                  Navigator.of(context).pop(); // Go back to main app
-                },
+      backgroundColor: BauhausDesign.background,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: data.color.withOpacity(0.08),
+                  border: Border.all(color: data.color, width: 3),
+                ),
+                child:
+                    Icon(data.icon, size: 40, color: data.color),
               ),
-          ],
+              const SizedBox(height: 32),
+              Text(
+                data.title,
+                style: theme.displaySmall?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w900,
+                  height: 1.15,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                data.message,
+                style: theme.bodyLarge?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  height: 1.5,
+                ),
+              ),
+              if (data.steps != null) ...[
+                const SizedBox(height: 32),
+                ...data.steps!.map(
+                  (s) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          margin: const EdgeInsets.only(top: 8),
+                          color: data.color,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            s,
+                            style: theme.bodyMedium?.copyWith(
+                              color: BauhausDesign.textDark
+                                  .withOpacity(0.7),
+                              height: 1.45,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 40),
+              if (status == 'rejected')
+                ButtonWidget(
+                  buttonText: 'Review Submission',
+                  buttonColor: BauhausDesign.error,
+                  onPressed: onReviewPressed,
+                )
+              else
+                ButtonWidget(
+                  buttonText: 'Back to Home',
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                        context, Routes.login);
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  _StatusData _statusData() {
+    switch (status) {
+      case 'completed':
+        return _StatusData(
+          title: 'Onboarding\nComplete!',
+          message:
+              'Everything has been approved. '
+              'Welcome to the team — you\'re ready to start.',
+          icon: Icons.check,
+          color: BauhausDesign.success,
+        );
+      case 'submitted':
+      case 'review_pending':
+        return _StatusData(
+          title: 'Submitted\nfor Review',
+          message:
+              'Your details and documents have been submitted. '
+              'Our team will review them and get back to you '
+              'within 1–2 business days.',
+          icon: Icons.schedule,
+          color: BauhausDesign.warning,
+          steps: const [
+            'You\'ll receive a notification when review begins',
+            'If anything needs updating, we\'ll let you know',
+            'Once approved, your profile goes live immediately',
+          ],
+        );
+      case 'rejected':
+        return _StatusData(
+          title: 'Action\nRequired',
+          message:
+              'Some of your details or documents need attention. '
+              'Review the feedback and resubmit.',
+          icon: Icons.priority_high,
+          color: BauhausDesign.error,
+        );
+      default:
+        return _StatusData(
+          title: 'Processing',
+          message: 'Your onboarding status is being updated.',
+          icon: Icons.info_outline,
+          color: BauhausDesign.secondary,
+        );
+    }
+  }
+}
+
+class _StatusData {
+  final String title;
+  final String message;
+  final IconData icon;
+  final Color color;
+  final List<String>? steps;
+
+  const _StatusData({
+    required this.title,
+    required this.message,
+    required this.icon,
+    required this.color,
+    this.steps,
+  });
 }
