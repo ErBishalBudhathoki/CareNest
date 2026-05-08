@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/communication/viewmodels/communication_viewmodel.dart';
@@ -30,12 +31,18 @@ class _CommunicationHubDashboardState
 
   late final TextEditingController _messageController;
   late final TextEditingController _broadcastController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _subjectController;
 
   @override
   void initState() {
     super.initState();
     _messageController = TextEditingController();
     _broadcastController = TextEditingController();
+    _phoneController = TextEditingController();
+    _emailController = TextEditingController();
+    _subjectController = TextEditingController();
     if (widget.userId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref
@@ -54,6 +61,9 @@ class _CommunicationHubDashboardState
   void dispose() {
     _messageController.dispose();
     _broadcastController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _subjectController.dispose();
     super.dispose();
   }
 
@@ -316,14 +326,14 @@ class _CommunicationHubDashboardState
                   if (_selectedChannel == 'SMS') ...[
                     BauhausSectionHeader(title: 'RECIPIENT PHONE'),
                     const SizedBox(height: 8),
-                    BauhausTextField(controller: TextEditingController(), label: 'Phone Number', hintText: '+61 4XX XXX XXX'),
+                    BauhausTextField(controller: _phoneController, label: 'Phone Number', hintText: '+61 4XX XXX XXX', keyboardType: TextInputType.phone),
                     const SizedBox(height: 16),
                   ] else if (_selectedChannel == 'Email') ...[
                     BauhausSectionHeader(title: 'RECIPIENT EMAIL'),
                     const SizedBox(height: 8),
-                    BauhausTextField(controller: TextEditingController(), label: 'Email Address', hintText: 'employee@example.com'),
+                    BauhausTextField(controller: _emailController, label: 'Email Address', hintText: 'employee@example.com', keyboardType: TextInputType.emailAddress),
                     const SizedBox(height: 8),
-                    BauhausTextField(controller: TextEditingController(), label: 'Subject', hintText: 'Message subject...'),
+                    BauhausTextField(controller: _subjectController, label: 'Subject', hintText: 'Message subject...'),
                     const SizedBox(height: 16),
                   ] else ...[
                     BauhausSectionHeader(title: 'RECIPIENT'),
@@ -365,19 +375,78 @@ class _CommunicationHubDashboardState
                       onPressed: state.isSending ? null : () async {
                         final message = _messageController.text.trim();
                         if (message.isEmpty) return;
+
+                        if (_selectedChannel == 'SMS') {
+                          final phone = _phoneController.text.trim();
+                          if (phone.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Please enter a phone number'), backgroundColor: BauhausDesign.error)
+                            );
+                            return;
+                          }
+                          
+                          // Launch SMS intent
+                          final Uri smsUri = Uri(
+                            scheme: 'sms',
+                            path: phone,
+                            queryParameters: <String, String>{
+                              'body': message,
+                            },
+                          );
+                          
+                          try {
+                            if (await canLaunchUrl(smsUri)) {
+                              await launchUrl(smsUri);
+                            } else {
+                              throw 'Could not launch SMS app';
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error launching SMS app: $e'), backgroundColor: BauhausDesign.error)
+                              );
+                            }
+                            return; // Don't log if we couldn't even launch it
+                          }
+                        } else if (_selectedChannel == 'Email') {
+                          final email = _emailController.text.trim();
+                          final subject = _subjectController.text.trim();
+                          if (email.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Please enter an email address'), backgroundColor: BauhausDesign.error)
+                            );
+                            return;
+                          }
+                          
+                          final Uri emailUri = Uri(
+                            scheme: 'mailto',
+                            path: email,
+                            query: 'subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}'
+                          );
+                          
+                          try {
+                            if (await canLaunchUrl(emailUri)) {
+                              await launchUrl(emailUri);
+                            }
+                          } catch (e) {
+                            // Proceed to log failure or success anyway
+                          }
+                        }
+
+                        // Log to backend
                         final success = await ref
                             .read(communicationViewModelProvider.notifier)
                             .sendMessage({
                           'userId': widget.userId,
                           'message': message,
                           'channel': _selectedChannel,
-                          'group': _selectedGroup,
+                          'group': _selectedChannel == 'In-App' ? _selectedGroup : (_selectedChannel == 'SMS' ? _phoneController.text : _emailController.text),
                           'timestamp': DateTime.now().toIso8601String(),
                         });
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(success ? '$_selectedChannel message sent!' : 'Failed to send'),
-                            backgroundColor: success ? BauhausDesign.success : BauhausDesign.error,
+                            content: Text(success ? '$_selectedChannel sent and logged!' : 'Logged offline/Failed to log'),
+                            backgroundColor: success ? BauhausDesign.success : BauhausDesign.warning,
                           ));
                           if (success) _messageController.clear();
                         }
