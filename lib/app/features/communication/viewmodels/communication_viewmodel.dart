@@ -8,7 +8,7 @@ final communicationViewModelProvider =
   return CommunicationViewModel(repository);
 });
 
-class BroadcastMessage {
+class HubBroadcastMessage {
   final String id;
   final String message;
   final String type;
@@ -18,7 +18,7 @@ class BroadcastMessage {
   final List<String> acknowledgments;
   final DateTime createdAt;
 
-  BroadcastMessage({
+  HubBroadcastMessage({
     required this.id,
     required this.message,
     this.type = 'general',
@@ -29,8 +29,8 @@ class BroadcastMessage {
     required this.createdAt,
   });
 
-  factory BroadcastMessage.fromJson(Map<String, dynamic> j) {
-    return BroadcastMessage(
+  factory HubBroadcastMessage.fromJson(Map<String, dynamic> j) {
+    return HubBroadcastMessage(
       id: j['id'] ?? j['_id'] ?? '',
       message: j['message'] ?? '',
       type: j['type'] ?? 'general',
@@ -53,8 +53,8 @@ class CommunicationState {
   final List<MessageTemplate> templates;
   final MessageStatus? messageStatus;
   final bool isSending;
-  final List<BroadcastMessage> activeBroadcasts;
-  final List<BroadcastMessage> broadcastHistory;
+  final List<HubBroadcastMessage> activeBroadcasts;
+  final List<HubBroadcastMessage> broadcastHistory;
 
   CommunicationState({
     this.isLoading = false,
@@ -76,8 +76,8 @@ class CommunicationState {
     List<MessageTemplate>? templates,
     MessageStatus? messageStatus,
     bool? isSending,
-    List<BroadcastMessage>? activeBroadcasts,
-    List<BroadcastMessage>? broadcastHistory,
+    List<HubBroadcastMessage>? activeBroadcasts,
+    List<HubBroadcastMessage>? broadcastHistory,
   }) {
     return CommunicationState(
       isLoading: isLoading ?? this.isLoading,
@@ -160,7 +160,7 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
       state = state.copyWith(isSending: false);
       if (response['success'] == true) {
         // Optimistically add to active broadcasts
-        final newBroadcast = BroadcastMessage(
+        final newBroadcast = HubBroadcastMessage(
           id: response['data']?['id'] ??
               DateTime.now().millisecondsSinceEpoch.toString(),
           message: broadcastData['message'] ?? '',
@@ -187,7 +187,7 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
           organizationId: organizationId);
       if (response['success'] == true && response['data'] != null) {
         final broadcasts = (response['data'] as List)
-            .map((item) => BroadcastMessage.fromJson(item))
+            .map((item) => HubBroadcastMessage.fromJson(item))
             .toList();
         state = state.copyWith(activeBroadcasts: broadcasts);
       }
@@ -200,7 +200,7 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
           organizationId: organizationId);
       if (response['success'] == true && response['data'] != null) {
         final history = (response['data'] as List)
-            .map((item) => BroadcastMessage.fromJson(item))
+            .map((item) => HubBroadcastMessage.fromJson(item))
             .toList();
         state = state.copyWith(broadcastHistory: history);
       }
@@ -210,7 +210,7 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
   void acknowledgeBroadcast(String broadcastId, String userId) {
     final updated = state.activeBroadcasts.map((b) {
       if (b.id == broadcastId) {
-        return BroadcastMessage(
+        return HubBroadcastMessage(
           id: b.id,
           message: b.message,
           type: b.type,

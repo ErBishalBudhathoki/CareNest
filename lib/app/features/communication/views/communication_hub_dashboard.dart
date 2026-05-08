@@ -795,7 +795,7 @@ class _CommunicationHubDashboardState
 }
 
 class _CommsBroadcastTile extends StatelessWidget {
-  final BroadcastMessage broadcast;
+  final HubBroadcastMessage broadcast;
   final VoidCallback onAcknowledge;
 
   const _CommsBroadcastTile({
@@ -867,7 +867,7 @@ class _CommsBroadcastTile extends StatelessWidget {
 }
 
 class _CommsBroadcastHistoryTile extends StatelessWidget {
-  final BroadcastMessage broadcast;
+  final HubBroadcastMessage broadcast;
 
   const _CommsBroadcastHistoryTile({required this.broadcast});
 
