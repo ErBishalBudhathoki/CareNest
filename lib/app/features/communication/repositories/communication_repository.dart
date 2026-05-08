@@ -12,69 +12,72 @@ class CommunicationRepository {
   CommunicationRepository(this._apiMethod);
 
   /// Send a message via specified channel
-  Future<Map<String, dynamic>> sendMessage({
-    required Map<String, dynamic> messageData,
-  }) async {
+  Future<Map<String, dynamic>> sendMessage({required Map<String, dynamic> messageData}) async {
     try {
-      final response = await _apiMethod.sendMessage(messageData: messageData);
+      final response = await _apiMethod.post(
+        'communication-hub/send',
+        body: messageData,
+      );
       return response;
     } catch (e) {
       return {'success': false, 'message': 'Error sending message: $e'};
     }
   }
 
-  /// Get all conversations for a user
-  Future<Map<String, dynamic>> getConversations({
-    required String userId,
-  }) async {
+  /// Broadcast a message to a specific group
+  Future<Map<String, dynamic>> broadcastMessage({required Map<String, dynamic> broadcastData}) async {
     try {
-      final response = await _apiMethod.getConversations(userId: userId);
-      return response;
-    } catch (e) {
-      return {'success': false, 'message': 'Error fetching conversations: $e'};
-    }
-  }
-
-  /// Get messages for a specific conversation
-  Future<Map<String, dynamic>> getMessages({
-    required String conversationId,
-  }) async {
-    try {
-      final response = await _apiMethod.getMessages(conversationId: conversationId);
-      return response;
-    } catch (e) {
-      return {'success': false, 'message': 'Error fetching messages: $e'};
-    }
-  }
-
-  /// Broadcast message to a group
-  Future<Map<String, dynamic>> broadcastMessage({
-    required Map<String, dynamic> broadcastData,
-  }) async {
-    try {
-      final response = await _apiMethod.broadcastMessage(broadcastData: broadcastData);
+      final response = await _apiMethod.post(
+        'communication-hub/broadcast',
+        body: broadcastData,
+      );
       return response;
     } catch (e) {
       return {'success': false, 'message': 'Error broadcasting message: $e'};
     }
   }
 
-  /// Schedule a message for later delivery
-  Future<Map<String, dynamic>> scheduleMessage({
-    required Map<String, dynamic> scheduleData,
-  }) async {
+  /// Fetch user conversations
+  Future<Map<String, dynamic>> getConversations({required String userId}) async {
     try {
-      final response = await _apiMethod.scheduleMessage(scheduleData: scheduleData);
+      final response = await _apiMethod.get(
+        'communication-hub/conversations/$userId',
+      );
+      return response;
+    } catch (e) {
+      return {'success': false, 'message': 'Error fetching conversations: $e'};
+    }
+  }
+
+  /// Fetch messages for a conversation
+  Future<Map<String, dynamic>> getMessages({required String conversationId}) async {
+    try {
+      final response = await _apiMethod.get(
+        'communication-hub/messages/$conversationId',
+      );
+      return response;
+    } catch (e) {
+      return {'success': false, 'message': 'Error fetching messages: $e'};
+    }
+  }
+
+  /// Schedule a message for later delivery
+  Future<Map<String, dynamic>> scheduleMessage({required Map<String, dynamic> scheduleData}) async {
+    try {
+      final response = await _apiMethod.post(
+        'communication-hub/schedule',
+        body: scheduleData,
+      );
       return response;
     } catch (e) {
       return {'success': false, 'message': 'Error scheduling message: $e'};
     }
   }
 
-  /// Get available message templates
+  /// Get predefined message templates
   Future<Map<String, dynamic>> getMessageTemplates() async {
     try {
-      final response = await _apiMethod.getMessageTemplates();
+      final response = await _apiMethod.get('communication-hub/templates');
       return response;
     } catch (e) {
       return {'success': false, 'message': 'Error fetching templates: $e'};
@@ -86,7 +89,7 @@ class CommunicationRepository {
     required String messageId,
   }) async {
     try {
-      final response = await _apiMethod.getMessageStatus(messageId: messageId);
+      final response = await _apiMethod.get('communication-hub/status/$messageId');
       return response;
     } catch (e) {
       return {'success': false, 'message': 'Error fetching message status: $e'};
@@ -99,7 +102,7 @@ class CommunicationRepository {
   }) async {
     try {
       final response = await _apiMethod.post(
-        'communication/broadcasts/active',
+        'communication-hub/broadcasts/active',
         body: {'organizationId': organizationId},
       );
       return response;
@@ -114,12 +117,28 @@ class CommunicationRepository {
   }) async {
     try {
       final response = await _apiMethod.post(
-        'communication/broadcasts/history',
+        'communication-hub/broadcasts/history',
         body: {'organizationId': organizationId},
       );
       return response;
     } catch (e) {
       return {'success': false, 'data': [], 'message': e.toString()};
+    }
+  }
+  
+  /// Acknowledge a broadcast
+  Future<Map<String, dynamic>> acknowledgeBroadcast({
+    required String broadcastId,
+    required String userId,
+  }) async {
+    try {
+      final response = await _apiMethod.post(
+        'communication-hub/broadcasts/acknowledge/$broadcastId',
+        body: {'userId': userId},
+      );
+      return response;
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
     }
   }
 }
