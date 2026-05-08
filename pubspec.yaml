@@ -141,7 +141,7 @@ dependency_overrides:
 flutter:
   generate: true
   assets:
-    # - .env
+    - .env
     - assets/images/client-profile.png
     - assets/images/placeholder_product.png
     - assets/images/invoice_banner.png

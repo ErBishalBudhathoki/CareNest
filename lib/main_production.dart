@@ -46,7 +46,7 @@ import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/admin/views/employee_invoice_generation_view.dart';
 
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
-import 'package:carenest/app/features/home/views/home_view.dart';
+import 'package:carenest/app/features/home/views/employee_home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
@@ -62,9 +62,11 @@ import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
 import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
 import 'package:carenest/app/features/onboarding/views/onboarding_stepper_view.dart';
 import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_app_router.dart';
 
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
+import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
 // But we need to IMPORT it explicitly here to use it in MaterialApp.
 
@@ -245,18 +247,33 @@ Future<void> _initializeAppCheck() async {
       'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}');
 
   if (androidSelection.provider == AndroidProvider.debug) {
-    debugPrint('');
-    debugPrint('╔══════════════════════════════════════════════════════════╗');
-    debugPrint('║        FIREBASE APP CHECK — DEBUG TOKEN INFO             ║');
-    debugPrint('╠══════════════════════════════════════════════════════════╣');
-    debugPrint('║ Firebase SDK generates a random debug token for you.     ║');
-    debugPrint('║ To find it, use adb logcat and search for:               ║');
-    debugPrint('║ "DebugAppCheckProvider"                                  ║');
-    debugPrint('║                                                          ║');
-    debugPrint('║ Once you find the token in your native logs, add it to:  ║');
-    debugPrint('║ Firebase Console → App Check → Manage debug tokens       ║');
-    debugPrint('╚══════════════════════════════════════════════════════════╝');
-    debugPrint('');
+    // Small delay to allow the native SDK to print the debug secret first
+    Future.delayed(const Duration(milliseconds: 500), () {
+      debugPrint('');
+      debugPrint(
+          '╔════════════════════════════════════════════════════════════════════════╗');
+      debugPrint(
+          '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
+      debugPrint(
+          '╠════════════════════════════════════════════════════════════════════════╣');
+      debugPrint(
+          '║ 1. LOOK BELOW in this terminal for a line starting with:               ║');
+      debugPrint(
+          '║    D/DebugAppCheckProvider: Enter this debug secret...                 ║');
+      debugPrint(
+          '║                                                                        ║');
+      debugPrint(
+          '║ 2. COPY the secret (UUID format) and register it at:                   ║');
+      debugPrint(
+          '║    Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
+      debugPrint(
+          '║                                                                        ║');
+      debugPrint(
+          '║ 3. RESTART the app after registering the token to fix 403 errors.      ║');
+      debugPrint(
+          '╚════════════════════════════════════════════════════════════════════════╝');
+      debugPrint('');
+    });
   }
 
   // Attempt to obtain a token to verify activation worked.
@@ -425,7 +442,7 @@ class MyApp extends ConsumerWidget {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
-            return HomeView(email: email);
+            return EmployeeHomeView(email: email);
           },
           Routes.signup: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
@@ -487,7 +504,18 @@ class MyApp extends ConsumerWidget {
           },
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.onboarding: (context) => const OnboardingWelcomeView(),
-          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
+          Routes.onboardingStepper: (context) =>
+              const OnboardingStepperView(),
+          Routes.onboardingAppIntro: (context) {
+            final args = ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>?;
+            return OnboardingAppRouter(
+              onFinished: () {
+                Navigator.pushReplacementNamed(
+                    context, args?['nextRoute'] as String? ?? Routes.login);
+              },
+            );
+          },
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
@@ -708,6 +736,7 @@ class MyApp extends ConsumerWidget {
             return const AdminRequestsDashboardView();
           },
           Routes.mileageTracker: (context) => const MileageTrackerView(),
+          Routes.teamDashboard: (context) => const TeamDashboardView(),
         },
       ),
     );

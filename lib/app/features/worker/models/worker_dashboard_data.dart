@@ -1,5 +1,6 @@
 import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
+import 'package:carenest/app/features/teams/models/team_models.dart';
 
 /// Worker Dashboard Data Model
 /// Contains aggregated data for the worker dashboard view
@@ -24,6 +25,9 @@ class WorkerDashboardData {
   /// Current leave balances (annual, sick, personal, etc.)
   final List<WorkerLeaveBalance> leaveBalances;
 
+  /// Active emergency broadcasts for the worker's teams
+  final List<EmergencyBroadcast> activeBroadcasts;
+
   const WorkerDashboardData({
     this.activeTimer,
     this.todayShifts = const [],
@@ -31,6 +35,7 @@ class WorkerDashboardData {
     this.pastAssignedShifts = const [],
     this.recentExpenses = const [],
     this.leaveBalances = const [],
+    this.activeBroadcasts = const [],
   });
 
   /// Create from backend JSON response
@@ -59,6 +64,7 @@ class WorkerDashboardData {
         pastAssignedShifts: _parseShiftList(json['pastAssignedShifts']),
         recentExpenses: _parseExpenseList(json['recentExpenses']),
         leaveBalances: _parseLeaveBalances(json['leaveBalances']),
+        activeBroadcasts: _parseBroadcastList(json['activeBroadcasts']),
       );
     } catch (e, stackTrace) {
       // Log error for debugging
@@ -148,6 +154,29 @@ class WorkerDashboardData {
           .toList();
     } catch (e) {
       print('Error parsing leave balance list: $e');
+      return [];
+    }
+  }
+
+  /// Parse list of emergency broadcasts with error handling
+  static List<EmergencyBroadcast> _parseBroadcastList(dynamic broadcastsJson) {
+    if (broadcastsJson == null) return [];
+    if (broadcastsJson is! List) return [];
+
+    try {
+      return broadcastsJson
+          .map((e) {
+            try {
+              return EmergencyBroadcast.fromJson(e as Map<String, dynamic>);
+            } catch (e) {
+              print('Error parsing emergency broadcast: $e');
+              return null;
+            }
+          })
+          .whereType<EmergencyBroadcast>() // Filter out null values
+          .toList();
+    } catch (e) {
+      print('Error parsing emergency broadcast list: $e');
       return [];
     }
   }

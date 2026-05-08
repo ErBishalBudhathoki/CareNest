@@ -251,10 +251,14 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
   /// obtain or upload an FCM token.
   Future<void> _registerFcmToken() async {
     try {
+      // Always-on logging for this critical path — silent failures here mean
+      // zero push notifications for the user.
+      debugPrint('🔔 FCM_REG: Starting FCM token registration...');
       final sharedUtils = SharedPreferencesUtils();
       await sharedUtils.init();
       final email = sharedUtils.getUserEmail();
       final organizationId = sharedUtils.getOrganizationId();
+      debugPrint('🔔 FCM_REG: email=$email, orgId=$organizationId');
       if (email != null &&
           email.isNotEmpty &&
           organizationId != null &&
@@ -262,27 +266,29 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
         final sessionTimeoutService =
             SessionTimeoutService(sharedPrefs: sharedUtils);
         final isValidSession = await sessionTimeoutService.isSessionValid();
+        debugPrint('🔔 FCM_REG: Session valid=$isValidSession');
         if (!isValidSession) {
-          _debugLog(
-              'DEBUG_NOTIF_HANDLER: Session invalid — skipping FCM token registration');
+          debugPrint(
+              '🔔 FCM_REG: ❌ Session invalid — skipping FCM token registration & logging out');
           await sessionTimeoutService.logoutAndClearSession(
             reason: 'notification_handler_session_validation_failed',
           );
           return;
         }
-        _debugLog(
-            'DEBUG_NOTIF_HANDLER: Registering FCM token for $email');
+        debugPrint(
+            '🔔 FCM_REG: Registering FCM token for $email with org $organizationId');
         await ref
             .read(app_providers.fcmTokenManagerProvider)
             .initialize(email, organizationId);
-        _debugLog('DEBUG_NOTIF_HANDLER: ✅ FCM token registered successfully');
+        debugPrint('🔔 FCM_REG: ✅ FCM token registered successfully for $email');
       } else {
-        _debugLog(
-            'DEBUG_NOTIF_HANDLER: No email/orgId in prefs — skipping FCM token registration');
+        debugPrint(
+            '🔔 FCM_REG: ⚠️ No email/orgId in prefs — skipping FCM token registration (email=$email, orgId=$organizationId)');
       }
-    } catch (e) {
-      _debugLog(
-          'DEBUG_NOTIF_HANDLER: Failed to register FCM token: $e');
+    } catch (e, stackTrace) {
+      debugPrint(
+          '🔔 FCM_REG: ❌ Failed to register FCM token: $e');
+      debugPrint('🔔 FCM_REG: Stack: $stackTrace');
     }
   }
 

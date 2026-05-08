@@ -1,216 +1,185 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:carenest/app/core/services/sync/sync_manager.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/widgets/button_widget.dart';
 
 class OfflineSyncDashboard extends StatefulWidget {
   final String? userId;
 
-  const OfflineSyncDashboard({
-    super.key,
-    this.userId,
-  });
+  const OfflineSyncDashboard({super.key, this.userId});
 
   @override
-  State<OfflineSyncDashboard> createState() => _OfflineSyncDashboardState();
+  State<OfflineSyncDashboard> createState() =>
+      _OfflineSyncDashboardState();
 }
 
 class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
-  final bool _isLoading = false;
-  final bool _isOnline = true;
+  final SyncManager _sync = SyncManager.instance;
 
-  // Mock data
-  final int _queuedItems = 5;
-  final int _syncedToday = 23;
-  final int _conflicts = 1;
-  final String _lastSync = '2 hours ago';
+  bool _isOnline = true;
+  bool _isSyncing = false;
+  bool _isLoading = true;
+  List<SyncQueueItem> _queue = [];
+  String _lastSync = '';
+  StreamSubscription<List<ConnectivityResult>>? _connectSub;
+  StreamSubscription<bool>? _syncSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+    _connectSub =
+        Connectivity().onConnectivityChanged.listen((results) {
+      if (!mounted) return;
+      setState(() {
+        _isOnline =
+            results.any((r) => r != ConnectivityResult.none);
+      });
+    });
+    _syncSub = _sync.isSyncingStream.listen((syncing) {
+      if (!mounted) return;
+      setState(() => _isSyncing = syncing);
+      if (!syncing) _loadData();
+    });
+    _loadData();
+  }
+
+  @override
+  void dispose() {
+    _connectSub?.cancel();
+    _syncSub?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final results = await Connectivity().checkConnectivity();
+    if (!mounted) return;
+    setState(() {
+      _isOnline =
+          results.any((r) => r != ConnectivityResult.none);
+    });
+  }
+
+  Future<void> _loadData() async {
+    final queue = await _sync.getQueue();
+    if (!mounted) return;
+    setState(() {
+      _queue = queue;
+      _isLoading = false;
+      _lastSync = _formatLastSync();
+    });
+  }
+
+  String _formatLastSync() {
+    if (_queue.isEmpty && _lastSync.isEmpty) return 'Never';
+    if (_lastSync.isNotEmpty) return _lastSync;
+    return 'Just now';
+  }
+
+  Future<void> _syncNow() async {
+    if (!_isOnline || _queue.isEmpty) return;
+    await _sync.processQueue();
+    setState(() => _lastSync = 'Just now');
+    await _loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final theme = BauhausDesign.getTextTheme(context);
+
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
-      appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
-        elevation: 0,
-        title: Text(
-          'OFFLINE MODE',
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            height: 2,
-            color: BauhausDesign.neutral,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: BauhausDesign.space4),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space2,
-                vertical: BauhausDesign.space1,
-              ),
-              decoration: BoxDecoration(
-                color: _isOnline ? BauhausDesign.success : BauhausDesign.warning,
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-                boxShadow: const [BauhausDesign.shadowHardSm],
-              ),
-              child: Text(
-                _isOnline ? 'ONLINE' : 'OFFLINE',
-                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: _isOnline
-                          ? BauhausDesign.surfaceWhite
-                          : BauhausDesign.textDark,
-                    ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: BauhausLoadingState())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(BauhausDesign.space4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: BauhausDesign.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              color: BauhausDesign.surfaceWhite,
+              padding: const EdgeInsets.fromLTRB(
+                  BauhausDesign.space4,
+                  BauhausDesign.space3,
+                  BauhausDesign.space2,
+                  BauhausDesign.space3),
+              child: Row(
                 children: [
-                  // Stats Cards
-                  _buildStatsSection(),
-                  const SizedBox(height: BauhausDesign.space6),
-
-                  // Feature Cards
-                  BauhausSectionHeader(title: 'SYNC TOOLS'),
-                  const SizedBox(height: BauhausDesign.space3),
-
-                  _buildFeatureCard(
-                    title: 'Sync Now',
-                    description: 'Sync all queued data to server',
-                    icon: Icons.sync_outlined,
-                    color: BauhausDesign.primary,
-                    onTap: _syncNow,
-                    enabled: _isOnline && _queuedItems > 0,
+                  const SizedBox(
+                      width: BauhausDesign.space2),
+                  Expanded(
+                    child: Text(
+                      _isOnline
+                          ? 'SYNC STATUS'
+                          : 'OFFLINE MODE',
+                      style: theme.headlineLarge?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: BauhausDesign.space3),
-
-                  _buildFeatureCard(
-                    title: 'View Queue',
-                    description: 'See all queued offline data',
-                    icon: Icons.queue_outlined,
-                    color: BauhausDesign.secondary,
-                    onTap: _viewQueue,
-                  ),
-                  const SizedBox(height: BauhausDesign.space3),
-
-                  _buildFeatureCard(
-                    title: 'Resolve Conflicts',
-                    description: 'Handle sync conflicts manually',
-                    icon: Icons.merge_outlined,
-                    color: BauhausDesign.warning,
-                    onTap: _resolveConflicts,
-                    enabled: _conflicts > 0,
-                  ),
-                  const SizedBox(height: BauhausDesign.space3),
-
-                  _buildFeatureCard(
-                    title: 'Download Data',
-                    description: 'Download data for offline use',
-                    icon: Icons.download_outlined,
-                    color: BauhausDesign.success,
-                    onTap: _downloadData,
-                    enabled: _isOnline,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space2,
+                      vertical: BauhausDesign.space1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _isOnline
+                          ? BauhausDesign.success
+                          : BauhausDesign.warning,
+                    ),
+                    child: Text(
+                      _isOnline ? 'ONLINE' : 'OFFLINE',
+                      style: theme.labelSmall?.copyWith(
+                        color: _isOnline
+                            ? BauhausDesign.surfaceWhite
+                            : BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildStatsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        BauhausSectionHeader(title: 'SYNC STATUS'),
-        const SizedBox(height: BauhausDesign.space3),
-        Row(
-          children: [
+            Container(height: 2, color: BauhausDesign.neoInk),
             Expanded(
-              child: _buildStatCard(
-                label: 'Queued',
-                value: '$_queuedItems',
-                icon: Icons.pending_outlined,
-                color: BauhausDesign.warning,
-              ),
-            ),
-            const SizedBox(width: BauhausDesign.space3),
-            Expanded(
-              child: _buildStatCard(
-                label: 'Synced Today',
-                value: '$_syncedToday',
-                icon: Icons.check_circle_outline,
-                color: BauhausDesign.success,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: BauhausDesign.space3),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                label: 'Conflicts',
-                value: '$_conflicts',
-                icon: Icons.error_outline,
-                color: _conflicts > 0 ? BauhausDesign.error : BauhausDesign.neutral,
-              ),
-            ),
-            const SizedBox(width: BauhausDesign.space3),
-            Expanded(
-              child: _buildStatCard(
-                label: 'Last Sync',
-                value: _lastSync,
-                icon: Icons.schedule_outlined,
-                color: BauhausDesign.secondary,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatCard({
-    required String label,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return BauhausCard(
-      child: Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  label.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(context).labelSmall,
-                ),
-                Icon(icon, color: color, size: 20),
-              ],
-            ),
-            const SizedBox(height: BauhausDesign.space2),
-            Text(
-              value,
-              style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
+              child: _isLoading
+          ? const Center(child: BauhausLoadingState())
+          : SingleChildScrollView(
+              padding:
+                  const EdgeInsets.all(BauhausDesign.space4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _StatusBar(
+                    isOnline: _isOnline,
+                    queueCount: _queue.length,
+                    lastSync: _lastSync,
                   ),
+                  const SizedBox(height: BauhausDesign.space6),
+                  BauhausSectionHeader(
+                      title: 'PENDING CHANGES'),
+                  const SizedBox(
+                      height: BauhausDesign.space3),
+                  if (_queue.isEmpty)
+                    _EmptyState(isOnline: _isOnline)
+                  else
+                    ..._queue.map(_buildQueueItem),
+                  const SizedBox(
+                      height: BauhausDesign.space6),
+                  if (_queue.isNotEmpty)
+                    ButtonWidget(
+                      buttonText:
+                          _isSyncing ? 'SYNCING...' : 'SYNC NOW',
+                      isLoading: _isSyncing,
+                      onPressed:
+                          (_isOnline && !_isSyncing)
+                              ? _syncNow
+                              : null,
+                    ),
+                ],
+              ),
+            ),
             ),
           ],
         ),
@@ -218,84 +187,195 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
     );
   }
 
-  Widget _buildFeatureCard({
-    required String title,
-    required String description,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-    bool enabled = true,
-  }) {
-    return Opacity(
-      opacity: enabled ? 1.0 : 0.5,
+  Widget _buildQueueItem(SyncQueueItem item) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
       child: BauhausCard(
-        child: InkWell(
-          onTap: enabled ? onTap : null,
-          child: Padding(
-            padding: const EdgeInsets.all(BauhausDesign.space5),
-            child: Row(
+        padding: const EdgeInsets.all(BauhausDesign.space4),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: BauhausDesign.warning.withOpacity(0.1),
+                border: Border.all(
+                    color: BauhausDesign.warning, width: 2),
+              ),
+              child: const Icon(Icons.pending_outlined,
+                  size: 20, color: BauhausDesign.warning),
+            ),
+            const SizedBox(width: BauhausDesign.space3),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.endpoint,
+                    style: BauhausDesign.getTextTheme(context)
+                        .labelLarge
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w700,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(
+                      height: BauhausDesign.space0_5),
+                  Text(
+                    '${item.method.toUpperCase()} · '
+                    '${_timeAgo(item.timestamp)}',
+                    style: BauhausDesign.getTextTheme(context)
+                        .bodySmall
+                        ?.copyWith(
+                            color: BauhausDesign.textMuted),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: BauhausDesign.warning.withOpacity(0.1),
+                border: Border.all(
+                    color: BauhausDesign.warning, width: 1.5),
+              ),
+              child: Text(
+                'PENDING',
+                style: BauhausDesign.neoMonoStyle(
+                  context,
+                  color: BauhausDesign.warning,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+}
+
+class _StatusBar extends StatelessWidget {
+  final bool isOnline;
+  final int queueCount;
+  final String lastSync;
+
+  const _StatusBar({
+    required this.isOnline,
+    required this.queueCount,
+    required this.lastSync,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: BoxDecoration(
+        color: isOnline
+            ? BauhausDesign.success.withOpacity(0.06)
+            : BauhausDesign.warning.withOpacity(0.08),
+        border: Border.all(
+          color: isOnline
+              ? BauhausDesign.success
+              : BauhausDesign.warning,
+          width: 2,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isOnline ? Icons.wifi : Icons.wifi_off,
+            size: 28,
+            color: isOnline
+                ? BauhausDesign.success
+                : BauhausDesign.warning,
+          ),
+          const SizedBox(width: BauhausDesign.space3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    border: Border.all(color: color, width: 2),
-                  ),
-                  child: Icon(icon, color: color, size: 24),
-                ),
-                const SizedBox(width: BauhausDesign.space4),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                Text(
+                  isOnline ? 'Connected' : 'No Connection',
+                  style: BauhausDesign.getTextTheme(context)
+                      .labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
                       ),
-                      const SizedBox(height: BauhausDesign.space1),
-                      Text(
-                        description,
-                        style: BauhausDesign.getTextTheme(context).bodySmall,
-                      ),
-                    ],
-                  ),
                 ),
-                Icon(
-                  Icons.arrow_forward,
-                  color: enabled ? BauhausDesign.textDark : BauhausDesign.neutral,
+                Text(
+                  queueCount == 0
+                      ? 'All changes synced · Last sync $lastSync'
+                      : '$queueCount pending change${queueCount == 1 ? '' : 's'} · '
+                          'Last sync $lastSync',
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodySmall
+                      ?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
+}
 
-  void _syncNow() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Syncing data to server...')),
-    );
-  }
+class _EmptyState extends StatelessWidget {
+  final bool isOnline;
+  const _EmptyState({required this.isOnline});
 
-  void _viewQueue() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Loading queue...')),
-    );
-  }
-
-  void _resolveConflicts() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Loading conflicts...')),
-    );
-  }
-
-  void _downloadData() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Downloading offline data...')),
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:
+          const EdgeInsets.symmetric(vertical: BauhausDesign.space8),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              isOnline
+                  ? Icons.check_circle_outline
+                  : Icons.cloud_off,
+              size: 48,
+              color: BauhausDesign.textMuted,
+            ),
+            const SizedBox(height: BauhausDesign.space3),
+            Text(
+              isOnline
+                  ? 'Nothing pending'
+                  : 'No offline data yet',
+              style: BauhausDesign.getTextTheme(context)
+                  .bodyLarge
+                  ?.copyWith(color: BauhausDesign.textMuted),
+            ),
+            const SizedBox(height: BauhausDesign.space1),
+            Text(
+              isOnline
+                  ? 'All your changes have been synced.'
+                  : 'Work done offline will appear here '
+                      'to sync when back online.',
+              textAlign: TextAlign.center,
+              style: BauhausDesign.getTextTheme(context)
+                  .bodySmall
+                  ?.copyWith(color: BauhausDesign.textMuted),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -37,9 +37,10 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
     final state = ref.watch(onboardingViewModelProvider);
     final documents = state.documents;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         Text(
           widget.title,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
@@ -162,7 +163,32 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
               widget.onComplete();
             },
           ),
+        const SizedBox(height: 12),
+        GestureDetector(
+          onTap: widget.onComplete,
+          child: Container(
+            height: 48,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(
+                  color: BauhausDesign.neoInk.withOpacity(0.3),
+                  width: 2),
+            ),
+            child: Text(
+              'Skip for now',
+              style: BauhausDesign.neoMonoStyle(
+                context,
+                color: BauhausDesign.textMuted,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ),
+        ),
       ],
+    ),
     );
   }
 

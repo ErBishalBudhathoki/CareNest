@@ -224,6 +224,15 @@ class LoginViewModel extends ChangeNotifier {
         await SessionTimeoutService(sharedPrefs: _sharedPrefs)
             .markSessionStarted();
 
+        // Register FCM token NOW that we have valid email + organizationId.
+        // NotificationHandler.initState runs at app startup before login, so
+        // it always skips because email/orgId aren't in prefs yet.  This is
+        // the earliest place where we can reliably register the push token.
+        _registerFcmTokenAfterLogin(
+          email: userData['email'] ?? credential.user!.email ?? '',
+          organizationId: userData['organizationId'] ?? '',
+        );
+
         _logSecurityEvent('login_successful', {
           'email': model.getSanitizedEmail(),
           'userId': userData['_id'],
@@ -366,6 +375,34 @@ class LoginViewModel extends ChangeNotifier {
         'organizationCode': userData['organizationCode'],
       },
     );
+  }
+
+  /// Fire-and-forget FCM token registration after successful login.
+  /// This is critical: without it, the backend has no FCM token to push
+  /// emergency broadcast notifications to this device.
+  void _registerFcmTokenAfterLogin({
+    required String email,
+    required String organizationId,
+  }) {
+    if (email.isEmpty || organizationId.isEmpty) {
+      debugPrint('🔔 FCM_REG: Skipping post-login registration — missing email/orgId');
+      return;
+    }
+    // Run async registration without awaiting — don't block navigation.
+    Future(() async {
+      try {
+        debugPrint('🔔 FCM_REG: Post-login registration for $email (org: $organizationId)');
+        await _fcmTokenManager.initialize(
+          email,
+          organizationId,
+          deviceId: _deviceId,
+          deviceInfo: _deviceInfo,
+        );
+        debugPrint('🔔 FCM_REG: ✅ Post-login FCM token registration successful');
+      } catch (e) {
+        debugPrint('🔔 FCM_REG: ❌ Post-login FCM token registration failed: $e');
+      }
+    });
   }
 
   @override
