@@ -18,7 +18,7 @@ class AdminMileageDashboard extends ConsumerWidget {
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
         title: Text(
           'MILEAGE ADMIN',

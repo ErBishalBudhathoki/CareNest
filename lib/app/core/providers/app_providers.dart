@@ -345,24 +345,78 @@ class ShiftDataNotifier extends StateNotifier<List<dynamic>> {
 // User Role Provider
 final userRoleProvider =
     StateNotifierProvider<UserRoleNotifier, UserRole>((ref) {
-  return UserRoleNotifier(ref.read(sharedPreferencesProvider));
+  return UserRoleNotifier(
+    ref.read(sharedPreferencesProvider),
+    ref.read(apiMethodProvider),
+  );
 });
 
 class UserRoleNotifier extends StateNotifier<UserRole> {
   final SharedPreferencesUtils _sharedPrefs;
+  final ApiMethod _apiMethod;
 
-  UserRoleNotifier(this._sharedPrefs) : super(UserRole.employee) {
+  UserRoleNotifier(this._sharedPrefs, this._apiMethod)
+      : super(UserRole.employee) {
     _loadRole();
   }
 
   Future<void> _loadRole() async {
     final role = _sharedPrefs.getRole();
+    debugPrint('👤 UserRoleNotifier: Loaded role from SharedPrefs: $role');
     state = role ?? UserRole.employee;
   }
 
   Future<void> updateRole(UserRole newRole) async {
     await _sharedPrefs.setRole(newRole);
     state = newRole;
+  }
+
+  /// Re-syncs the user's role from the backend to ensure local state is fresh.
+  /// Useful for handling role regressions or updates without forcing logout.
+  Future<void> refreshRole() async {
+    final email = _sharedPrefs.getUserEmail();
+    final firebaseUid = _sharedPrefs.getString('firebaseUid');
+    final authToken = _sharedPrefs.getAuthToken();
+
+    if (email == null ||
+        email.isEmpty ||
+        firebaseUid == null ||
+        authToken == null) return;
+
+    try {
+      // API expects the raw token, not the 'Bearer ' prefixed one
+      final idToken = authToken.replaceFirst('Bearer ', '').trim();
+
+      debugPrint('🔄 Refreshing user role from backend for: $email');
+      final response = await _apiMethod.syncFirebaseUser(
+        firebaseUid: firebaseUid,
+        email: email,
+        idToken: idToken,
+      );
+
+      debugPrint('📥 syncFirebaseUser response: $response');
+
+      if (response['success'] == true) {
+        final userData = response['data'] ?? response;
+        final newRole = UserRoleResolver.resolve(
+          role: userData['role'],
+          roles: userData['roles'],
+          organizationRole: userData['organizationRole'],
+          clientId: userData['clientId']?.toString(),
+        );
+
+        debugPrint('✅ Role refreshed: $newRole (was: $state)');
+        if (state != newRole) {
+          state = newRole;
+          await _sharedPrefs.setRole(newRole);
+          debugPrint('💾 Local role updated to: $newRole');
+        }
+      } else {
+        debugPrint('❌ refreshRole failed: ${response['message']}');
+      }
+    } catch (e) {
+      debugPrint('❌ Error in refreshRole: $e');
+    }
   }
 }
 
@@ -430,6 +484,14 @@ final userEmailProvider = Provider<String?>((ref) {
   final email = prefs.getUserEmail();
   debugPrint('🔍 DEBUG Provider: userEmailProvider returning: $email');
   return email;
+});
+
+// User ID provider - retrieves the current user's unique ID from SharedPreferences
+final userIdProvider = Provider<String?>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  final userId = prefs.getUserId();
+  debugPrint('🔍 DEBUG Provider: userIdProvider returning: $userId');
+  return userId;
 });
 
 // Organization ID provider - retrieves the current organization ID from SharedPreferences

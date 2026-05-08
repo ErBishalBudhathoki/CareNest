@@ -44,7 +44,7 @@ import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/admin/views/employee_invoice_generation_view.dart';
 
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
-import 'package:carenest/app/features/home/views/home_view.dart';
+import 'package:carenest/app/features/home/views/employee_home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
@@ -60,8 +60,10 @@ import 'package:carenest/app/features/invoice/views/invoice_detail_view.dart';
 import 'package:carenest/app/features/requests/views/admin_requests_dashboard_view.dart';
 import 'package:carenest/app/features/onboarding/views/onboarding_stepper_view.dart';
 import 'package:carenest/app/features/onboarding/views/onboarding_welcome_view.dart';
+import 'package:carenest/app/features/onboarding/views/onboarding_app_router.dart';
 
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
+import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
@@ -210,15 +212,77 @@ Future<void> _initializeFirebase() async {
 }
 
 Future<void> _initializeAppCheck() async {
+  debugPrint('\n=== APP CHECK INITIALIZATION STARTED ===');
+  debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+  debugPrint('Environment: ${AppConfig.flavorName}');
+
   if (!kIsWeb && Platform.isIOS) {
-    debugPrint('⚠️ Running on iOS - Skipping App Check initialization');
+    debugPrint('⚠️ Running on iOS - App Check handled natively (App Attest)');
+    debugPrint('=== END APP CHECK INITIALIZATION ===\n');
     return;
   }
-  await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
-    androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.debug,
-  );
+
+  try {
+    // Development entry point always uses Debug provider for Android/Apple
+    await FirebaseAppCheck.instance.activate(
+      webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
+      androidProvider: AndroidProvider.debug,
+      appleProvider: AppleProvider.debug,
+    );
+
+    debugPrint('✅ App Check activated successfully');
+    debugPrint('Android Provider: Debug');
+    debugPrint('Apple Provider: Debug');
+
+    // Small delay to allow the native SDK to print the debug secret first
+    Future.delayed(const Duration(milliseconds: 500), () {
+      debugPrint('');
+      debugPrint(
+          '╔════════════════════════════════════════════════════════════════════════╗');
+      debugPrint(
+          '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
+      debugPrint(
+          '╠════════════════════════════════════════════════════════════════════════╣');
+      debugPrint(
+          '║ 1. LOOK BELOW in this terminal for a line starting with:               ║');
+      debugPrint(
+          '║    D/DebugAppCheckProvider: Enter this debug secret...                 ║');
+      debugPrint(
+          '║                                                                        ║');
+      debugPrint(
+          '║ 2. COPY the secret (UUID format) and register it at:                   ║');
+      debugPrint(
+          '║    Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
+      debugPrint(
+          '║                                                                        ║');
+      debugPrint(
+          '║ 3. RESTART the app after registering the token to fix 403 errors.      ║');
+      debugPrint(
+          '╚════════════════════════════════════════════════════════════════════════╝');
+      debugPrint('');
+    });
+
+    // Force-fetch token to verify Firebase Console registration worked.
+    try {
+      final token = await FirebaseAppCheck.instance.getToken(true);
+      if (token != null && token.isNotEmpty) {
+        debugPrint('✅ App Check token obtained successfully');
+      } else {
+        debugPrint('⚠️ App Check token was null or empty');
+      }
+    } on FirebaseException catch (e) {
+      debugPrint('❌ Error getting App Check token: ${e.message}');
+      debugPrint(
+          '   → Register debug secret printed earlier by DebugAppCheckProvider in Firebase Console');
+    } catch (e) {
+      debugPrint('❌ Error getting App Check token: $e');
+    }
+
+    debugPrint('=== END APP CHECK INITIALIZATION ===\n');
+  } catch (e) {
+    debugPrint('❌ App Check initialization failed: $e');
+    debugPrint('=== END APP CHECK INITIALIZATION (WITH ERROR) ===\n');
+  }
 }
 
 Future<void> _initializeDeepLinks() async {
@@ -363,7 +427,7 @@ class MyApp extends ConsumerWidget {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
-            return HomeView(email: email);
+            return EmployeeHomeView(email: email);
           },
           Routes.signup: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
@@ -425,7 +489,18 @@ class MyApp extends ConsumerWidget {
           Routes.clientList: (context) => const ClientListView(),
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.onboarding: (context) => const OnboardingWelcomeView(),
-          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
+          Routes.onboardingStepper: (context) =>
+              const OnboardingStepperView(),
+          Routes.onboardingAppIntro: (context) {
+            final args = ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>?;
+            return OnboardingAppRouter(
+              onFinished: () {
+                Navigator.pushReplacementNamed(
+                    context, args?['nextRoute'] as String? ?? Routes.login);
+              },
+            );
+          },
           Routes.navBar: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
@@ -646,6 +721,7 @@ class MyApp extends ConsumerWidget {
             return const AdminRequestsDashboardView();
           },
           Routes.mileageTracker: (context) => const MileageTrackerView(),
+          Routes.teamDashboard: (context) => const TeamDashboardView(),
         },
       ),
     );

@@ -165,20 +165,25 @@ class SharedPreferencesUtils {
       await init();
     }
     await _sharedPreferences!
-        .setString('role', role.toString().split('.').last);
+        .setString(_kRoleKey, role.toString().split('.').last);
   }
 
   UserRole? getRole() {
-    String? roleString = _sharedPreferences?.getString('role');
+    if (_sharedPreferences == null) {
+      debugPrint('⚠️ SharedPreferencesUtils: getRole called before initialization');
+      return null;
+    }
+    String? roleString = _sharedPreferences?.getString(_kRoleKey);
     if (roleString == null) {
+      debugPrint('⚠️ SharedPreferencesUtils: roleString is null for key $_kRoleKey');
       return null;
     }
     return UserRoleResolver.resolve(role: roleString);
   }
 
-  setUserData({required String email, required UserRole role}) {
-    saveEmailToSharedPreferences(email);
-    setRole(role);
+  Future<void> setUserData({required String email, required UserRole role}) async {
+    await saveEmailToSharedPreferences(email);
+    await setRole(role);
   }
 
   /// Saves the user's email to local storage.
