@@ -8,6 +8,43 @@ final communicationViewModelProvider =
   return CommunicationViewModel(repository);
 });
 
+class BroadcastMessage {
+  final String id;
+  final String message;
+  final String type;
+  final String initiatorName;
+  final String group;
+  final String status;
+  final List<String> acknowledgments;
+  final DateTime createdAt;
+
+  BroadcastMessage({
+    required this.id,
+    required this.message,
+    this.type = 'general',
+    this.initiatorName = 'Admin',
+    this.group = 'All Workers',
+    this.status = 'active',
+    this.acknowledgments = const [],
+    required this.createdAt,
+  });
+
+  factory BroadcastMessage.fromJson(Map<String, dynamic> j) {
+    return BroadcastMessage(
+      id: j['id'] ?? j['_id'] ?? '',
+      message: j['message'] ?? '',
+      type: j['type'] ?? 'general',
+      initiatorName: j['initiatorName'] ?? j['initiator']?['name'] ?? 'Admin',
+      group: j['group'] ?? 'All Workers',
+      status: j['status'] ?? 'active',
+      acknowledgments: List<String>.from(j['acknowledgments'] ?? []),
+      createdAt: j['createdAt'] != null
+          ? DateTime.tryParse(j['createdAt']) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+}
+
 class CommunicationState {
   final bool isLoading;
   final String? error;
@@ -16,6 +53,8 @@ class CommunicationState {
   final List<MessageTemplate> templates;
   final MessageStatus? messageStatus;
   final bool isSending;
+  final List<BroadcastMessage> activeBroadcasts;
+  final List<BroadcastMessage> broadcastHistory;
 
   CommunicationState({
     this.isLoading = false,
@@ -25,6 +64,8 @@ class CommunicationState {
     this.templates = const [],
     this.messageStatus,
     this.isSending = false,
+    this.activeBroadcasts = const [],
+    this.broadcastHistory = const [],
   });
 
   CommunicationState copyWith({
@@ -35,6 +76,8 @@ class CommunicationState {
     List<MessageTemplate>? templates,
     MessageStatus? messageStatus,
     bool? isSending,
+    List<BroadcastMessage>? activeBroadcasts,
+    List<BroadcastMessage>? broadcastHistory,
   }) {
     return CommunicationState(
       isLoading: isLoading ?? this.isLoading,
@@ -44,6 +87,8 @@ class CommunicationState {
       templates: templates ?? this.templates,
       messageStatus: messageStatus ?? this.messageStatus,
       isSending: isSending ?? this.isSending,
+      activeBroadcasts: activeBroadcasts ?? this.activeBroadcasts,
+      broadcastHistory: broadcastHistory ?? this.broadcastHistory,
     );
   }
 }
@@ -53,7 +98,6 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
 
   CommunicationViewModel(this._repository) : super(CommunicationState());
 
-  /// Load all conversations for a user
   Future<void> loadConversations(String userId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -74,11 +118,11 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
     }
   }
 
-  /// Load messages for a conversation
   Future<void> loadMessages(String conversationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _repository.getMessages(conversationId: conversationId);
+      final response =
+          await _repository.getMessages(conversationId: conversationId);
       if (response['success'] == true && response['data'] != null) {
         final messages = (response['data'] as List)
             .map((item) => Message.fromJson(item))
@@ -95,11 +139,11 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
     }
   }
 
-  /// Send a message
   Future<bool> sendMessage(Map<String, dynamic> messageData) async {
     state = state.copyWith(isSending: true, error: null);
     try {
-      final response = await _repository.sendMessage(messageData: messageData);
+      final response =
+          await _repository.sendMessage(messageData: messageData);
       state = state.copyWith(isSending: false);
       return response['success'] == true;
     } catch (e) {
@@ -108,24 +152,91 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
     }
   }
 
-  /// Broadcast message to group
   Future<bool> broadcastMessage(Map<String, dynamic> broadcastData) async {
     state = state.copyWith(isSending: true, error: null);
     try {
-      final response = await _repository.broadcastMessage(broadcastData: broadcastData);
+      final response =
+          await _repository.broadcastMessage(broadcastData: broadcastData);
       state = state.copyWith(isSending: false);
-      return response['success'] == true;
+      if (response['success'] == true) {
+        // Optimistically add to active broadcasts
+        final newBroadcast = BroadcastMessage(
+          id: response['data']?['id'] ??
+              DateTime.now().millisecondsSinceEpoch.toString(),
+          message: broadcastData['message'] ?? '',
+          type: broadcastData['type'] ?? 'general',
+          group: broadcastData['group'] ?? 'All Workers',
+          initiatorName: 'You',
+          createdAt: DateTime.now(),
+        );
+        state = state.copyWith(
+          activeBroadcasts: [newBroadcast, ...state.activeBroadcasts],
+        );
+        return true;
+      }
+      return false;
     } catch (e) {
       state = state.copyWith(isSending: false, error: e.toString());
       return false;
     }
   }
 
-  /// Schedule a message
+  Future<void> loadActiveBroadcasts(String organizationId) async {
+    try {
+      final response = await _repository.getActiveBroadcasts(
+          organizationId: organizationId);
+      if (response['success'] == true && response['data'] != null) {
+        final broadcasts = (response['data'] as List)
+            .map((item) => BroadcastMessage.fromJson(item))
+            .toList();
+        state = state.copyWith(activeBroadcasts: broadcasts);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> loadBroadcastHistory(String organizationId) async {
+    try {
+      final response = await _repository.getBroadcastHistory(
+          organizationId: organizationId);
+      if (response['success'] == true && response['data'] != null) {
+        final history = (response['data'] as List)
+            .map((item) => BroadcastMessage.fromJson(item))
+            .toList();
+        state = state.copyWith(broadcastHistory: history);
+      }
+    } catch (_) {}
+  }
+
+  void acknowledgeBroadcast(String broadcastId, String userId) {
+    final updated = state.activeBroadcasts.map((b) {
+      if (b.id == broadcastId) {
+        return BroadcastMessage(
+          id: b.id,
+          message: b.message,
+          type: b.type,
+          initiatorName: b.initiatorName,
+          group: b.group,
+          status: b.status,
+          acknowledgments: [...b.acknowledgments, userId],
+          createdAt: b.createdAt,
+        );
+      }
+      return b;
+    }).toList();
+    state = state.copyWith(activeBroadcasts: updated);
+    // Fire-and-forget to backend
+    _repository.broadcastMessage(broadcastData: {
+      'action': 'acknowledge',
+      'broadcastId': broadcastId,
+      'userId': userId,
+    });
+  }
+
   Future<bool> scheduleMessage(Map<String, dynamic> scheduleData) async {
     state = state.copyWith(isSending: true, error: null);
     try {
-      final response = await _repository.scheduleMessage(scheduleData: scheduleData);
+      final response =
+          await _repository.scheduleMessage(scheduleData: scheduleData);
       state = state.copyWith(isSending: false);
       return response['success'] == true;
     } catch (e) {
@@ -134,31 +245,22 @@ class CommunicationViewModel extends StateNotifier<CommunicationState> {
     }
   }
 
-  /// Load message templates
   Future<void> loadTemplates() async {
-    state = state.copyWith(isLoading: true, error: null);
     try {
       final response = await _repository.getMessageTemplates();
       if (response['success'] == true && response['data'] != null) {
         final templates = (response['data'] as List)
             .map((item) => MessageTemplate.fromJson(item))
             .toList();
-        state = state.copyWith(isLoading: false, templates: templates);
-      } else {
-        state = state.copyWith(
-          isLoading: false,
-          error: response['message'] ?? 'Failed to load templates',
-        );
+        state = state.copyWith(templates: templates);
       }
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-    }
+    } catch (_) {}
   }
 
-  /// Get message status
   Future<void> getMessageStatus(String messageId) async {
     try {
-      final response = await _repository.getMessageStatus(messageId: messageId);
+      final response =
+          await _repository.getMessageStatus(messageId: messageId);
       if (response['success'] == true && response['data'] != null) {
         final status = MessageStatus.fromJson(response['data']);
         state = state.copyWith(messageStatus: status);

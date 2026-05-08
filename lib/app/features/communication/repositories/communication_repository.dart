@@ -92,4 +92,34 @@ class CommunicationRepository {
       return {'success': false, 'message': 'Error fetching message status: $e'};
     }
   }
+
+  /// Get active broadcasts for an organization
+  Future<Map<String, dynamic>> getActiveBroadcasts({
+    required String organizationId,
+  }) async {
+    try {
+      final response = await _apiMethod.post(
+        'communication/broadcasts/active',
+        body: {'organizationId': organizationId},
+      );
+      return response;
+    } catch (e) {
+      return {'success': false, 'data': [], 'message': e.toString()};
+    }
+  }
+
+  /// Get broadcast history for an organization
+  Future<Map<String, dynamic>> getBroadcastHistory({
+    required String organizationId,
+  }) async {
+    try {
+      final response = await _apiMethod.post(
+        'communication/broadcasts/history',
+        body: {'organizationId': organizationId},
+      );
+      return response;
+    } catch (e) {
+      return {'success': false, 'data': [], 'message': e.toString()};
+    }
+  }
 }
