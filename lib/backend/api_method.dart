@@ -715,8 +715,16 @@ class ApiMethod extends ChangeNotifier {
 
   Future<String?> _getAppCheckToken() async {
     try {
-      final token = await FirebaseAppCheck.instance.getToken();
+      String? token = await FirebaseAppCheck.instance.getToken();
+      
+      // If token is null (e.g. after logout or cache expiry), force a refresh
       if (token == null || token.isEmpty) {
+        debugPrint('⚠️ App Check token cache empty. Forcing refresh...');
+        token = await FirebaseAppCheck.instance.getToken(true);
+      }
+      
+      if (token == null || token.isEmpty) {
+        debugPrint('❌ App Check token still null after forced refresh.');
         return null;
       }
       return token;
