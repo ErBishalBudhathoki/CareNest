@@ -265,8 +265,28 @@ class SharedPreferencesUtils {
   /// Clears all user data from storage, typically on logout.
   Future<void> clearAllUserData() async {
     await init();
-    await _sharedPreferences!.clear(); // .clear() is simpler for logout
-    debugPrint("🗑️ All user data cleared from SharedPreferences.");
+    
+    // Do NOT use _sharedPreferences!.clear() here!
+    // .clear() wipes the entire Android SharedPreferences file, which breaks 
+    // native SDKs (like Firebase App Check) that store their debug secrets/keys there.
+    final keysToRemove = [
+      _kUserEmailKey,
+      'password',
+      _kAuthTokenKey,
+      _kRoleKey,
+      _kOrganizationIdKey,
+      'hasShownInitialWelcome',
+      'userRole',
+      'clientDetails',
+      'employeeDetails',
+      'userId',
+    ];
+
+    for (final key in keysToRemove) {
+      await _sharedPreferences!.remove(key);
+    }
+    
+    debugPrint("🗑️ User data cleared from SharedPreferences (retained native SDK keys).");
   }
 
   // New: Token helpers
