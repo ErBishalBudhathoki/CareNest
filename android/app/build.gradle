@@ -71,7 +71,7 @@ android {
             GOOGLE_MAPS_API_KEY_FOR_ANDROID: env.getProperty('GOOGLE_MAPS_API_KEY_FOR_ANDROID') ?: ""
         ]
 
-        testInstrumentationRunner "dev.patrol.PatrolJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -115,10 +115,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    testOptions {
-        execution "ANDROIDX_TEST_ORCHESTRATOR"
-    }
-
     buildFeatures {
         buildConfig true
     }
@@ -129,10 +125,6 @@ flutter {
 }
 
 dependencies {
-    androidTestImplementation "dev.patrol:patrol:4.5.0"
-    androidTestUtil "androidx.test:orchestrator:1.5.0"
-
-
     implementation 'androidx.window:window:1.4.0'
     implementation 'androidx.window:window-java:1.4.0'
     implementation platform('com.google.firebase:firebase-bom:34.1.0')
