@@ -1729,7 +1729,7 @@ abstract class AppLocalizations {
   /// No description provided for @businessOverviewDesc.
   ///
   /// In en, this message translates to:
-  /// **'Track your business performance at a glance'**
+  /// **'Monitor your business performance at a glance'**
   String get businessOverviewDesc;
 
   /// No description provided for @businessPhone.
@@ -3487,13 +3487,13 @@ abstract class AppLocalizations {
   /// No description provided for @employeeTracking.
   ///
   /// In en, this message translates to:
-  /// **'Employee Tracking'**
+  /// **'Employee Insights'**
   String get employeeTracking;
 
   /// No description provided for @employeeTrackingDesc.
   ///
   /// In en, this message translates to:
-  /// **'Track employee work status & shifts'**
+  /// **'View employee insights, work status & shifts'**
   String get employeeTrackingDesc;
 
   /// No description provided for @employmentTypeLabel.
@@ -4207,7 +4207,7 @@ abstract class AppLocalizations {
   /// No description provided for @expenseManagementDesc.
   ///
   /// In en, this message translates to:
-  /// **'Track and manage organization expenses'**
+  /// **'Monitor and manage organization expenses'**
   String get expenseManagementDesc;
 
   /// No description provided for @expenseManagementWelcome.
@@ -6121,7 +6121,7 @@ abstract class AppLocalizations {
   /// No description provided for @leaveTracker.
   ///
   /// In en, this message translates to:
-  /// **'Leave Tracker'**
+  /// **'Leave Insights'**
   String get leaveTracker;
 
   /// No description provided for @leaveTrackerDesc.
@@ -6193,7 +6193,7 @@ abstract class AppLocalizations {
   /// No description provided for @liveTracking.
   ///
   /// In en, this message translates to:
-  /// **'Live Tracking'**
+  /// **'Live Insights'**
   String get liveTracking;
 
   /// No description provided for @loadingAppointmentDetails.
@@ -6469,13 +6469,13 @@ abstract class AppLocalizations {
   /// No description provided for @mileageTracker.
   ///
   /// In en, this message translates to:
-  /// **'Mileage Tracker'**
+  /// **'Mileage Insights'**
   String get mileageTracker;
 
   /// No description provided for @mileageTrackerDesc.
   ///
   /// In en, this message translates to:
-  /// **'Track your trips, calculate distance, and log reimbursable mileage.'**
+  /// **'Monitor your trips, calculate distance, and log reimbursable mileage.'**
   String get mileageTrackerDesc;
 
   /// No description provided for @minimumDuration.
@@ -6733,7 +6733,7 @@ abstract class AppLocalizations {
   /// No description provided for @moduleMetricTrackedEntries.
   ///
   /// In en, this message translates to:
-  /// **'Tracked Entries'**
+  /// **'Insights Entries'**
   String get moduleMetricTrackedEntries;
 
   /// No description provided for @moduleMetricWeeklyChanges.
@@ -6751,7 +6751,7 @@ abstract class AppLocalizations {
   /// No description provided for @moduleNoTrackedChanges.
   ///
   /// In en, this message translates to:
-  /// **'No tracked changes yet'**
+  /// **'No insights changes yet'**
   String get moduleNoTrackedChanges;
 
   /// No description provided for @moduleRatesCoverage.
@@ -8791,7 +8791,7 @@ abstract class AppLocalizations {
   /// No description provided for @priceHistoryDesc.
   ///
   /// In en, this message translates to:
-  /// **'Track pricing changes over time'**
+  /// **'Monitor pricing changes over time'**
   String get priceHistoryDesc;
 
   /// No description provided for @priceHistoryRetention.
@@ -8803,7 +8803,7 @@ abstract class AppLocalizations {
   /// No description provided for @priceHistorySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Track pricing changes over time'**
+  /// **'Monitor pricing changes over time'**
   String get priceHistorySubtitle;
 
   /// No description provided for @priceHistorySubtitleLabel.
@@ -11018,7 +11018,7 @@ abstract class AppLocalizations {
   /// No description provided for @startTracking.
   ///
   /// In en, this message translates to:
-  /// **'START TRACKING'**
+  /// **'START INSIGHTS'**
   String get startTracking;
 
   /// No description provided for @statActive.
@@ -11714,7 +11714,7 @@ abstract class AppLocalizations {
   /// No description provided for @timeClockDesc.
   ///
   /// In en, this message translates to:
-  /// **'Track your work hours. Clock in at start, out at finish.'**
+  /// **'Monitor your work hours. Clock in at start, out at finish.'**
   String get timeClockDesc;
 
   /// No description provided for @timeConflictBetween.
@@ -12044,19 +12044,19 @@ abstract class AppLocalizations {
   /// No description provided for @trackExpenses.
   ///
   /// In en, this message translates to:
-  /// **'Track Expenses'**
+  /// **'Expense Insights'**
   String get trackExpenses;
 
   /// No description provided for @trackExpensesDesc.
   ///
   /// In en, this message translates to:
-  /// **'Keep track of your daily spending and manage reimbursements.'**
+  /// **'Monitor your daily spending and manage reimbursements.'**
   String get trackExpensesDesc;
 
   /// No description provided for @trackPricingChanges.
   ///
   /// In en, this message translates to:
-  /// **'Track pricing changes over time'**
+  /// **'Monitor pricing changes over time'**
   String get trackPricingChanges;
 
   /// No description provided for @tradingAs.
@@ -12080,7 +12080,7 @@ abstract class AppLocalizations {
   /// No description provided for @trainingComplianceDesc.
   ///
   /// In en, this message translates to:
-  /// **'Manage certifications, complete training, and track compliance.'**
+  /// **'Manage certifications, complete training, and monitor compliance.'**
   String get trainingComplianceDesc;
 
   /// No description provided for @trainingComplianceTitle.

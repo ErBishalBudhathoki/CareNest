@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform, listEquals;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform, listEquals;
 import 'package:google_maps_flutter/google_maps_flutter.dart' as google_maps;
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 
@@ -153,7 +154,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
       backgroundColor: Colors.transparent,
       foregroundColor: BauhausDesign.surfaceWhite,
       title: Text(
-        'Employee Tracking',
+        'Employee Insights',
         style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
               color: BauhausDesign.surfaceWhite,
               fontWeight: FontWeight.w600,
@@ -260,14 +261,15 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
               children: [
                 Text(
                   'SYSTEM v2.024',
-                  style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                        color: BauhausDesign.textMuted,
-                        letterSpacing: 0.8,
-                      ),
+                  style:
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            letterSpacing: 0.8,
+                          ),
                 ),
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
-                  'EMPLOYEE\nTRACKING',
+                  'EMPLOYEE\nINSIGHTS',
                   style: BauhausDesign.getTextTheme(context)
                       .headlineLarge
                       ?.copyWith(
@@ -340,8 +342,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     final active = stats['active'] ?? 0;
     final onBreak = stats['onBreak'] ?? 0;
     final offline = stats['offline'] ?? 0;
-    final activePct =
-        total > 0 ? ((active / total) * 100).round() : 0;
+    final activePct = total > 0 ? ((active / total) * 100).round() : 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,12 +396,11 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                 ),
                 child: Text(
                   '+$activePct%',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(
-                        color: BauhausDesign.surfaceWhite,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style:
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            color: BauhausDesign.surfaceWhite,
+                            fontWeight: FontWeight.bold,
+                          ),
                 ),
               ),
             ],
@@ -499,15 +499,12 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     final liveEmployees = state.data.employees
         .where(
           (employee) =>
-              employee.liveLatitude != null &&
-              employee.liveLongitude != null,
+              employee.liveLatitude != null && employee.liveLongitude != null,
         )
         .toList()
       ..sort((a, b) {
-        final aSeen =
-            a.liveUpdatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bSeen =
-            b.liveUpdatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final aSeen = a.liveUpdatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bSeen = b.liveUpdatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
         return bSeen.compareTo(aSeen);
       });
 
@@ -534,8 +531,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                 decoration: BoxDecoration(
                   color: BauhausDesign.primaryBlue,
                   border: Border(
-                    bottom:
-                        BorderSide(color: BauhausDesign.neutral, width: 2),
+                    bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
                   ),
                 ),
                 child: Row(
@@ -648,14 +644,15 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   Widget _buildLiveZoneEmployeeCard(EmployeeStatus employee) {
     final statusColor = _statusColor(employee.status);
     final statusLabel = _statusLabel(employee.status);
-    final location = (employee.liveClientName == null ||
-            employee.liveClientName!.isEmpty)
-        ? (employee.currentLocation == null ||
-                employee.currentLocation!.isEmpty)
-            ? 'Location pending'
-            : employee.currentLocation!
-        : employee.liveClientName!;
-    final lastSeen = _formatLastSeen(employee.liveUpdatedAt ?? employee.lastSeen);
+    final location =
+        (employee.liveClientName == null || employee.liveClientName!.isEmpty)
+            ? (employee.currentLocation == null ||
+                    employee.currentLocation!.isEmpty)
+                ? 'Location pending'
+                : employee.currentLocation!
+            : employee.liveClientName!;
+    final lastSeen =
+        _formatLastSeen(employee.liveUpdatedAt ?? employee.lastSeen);
     final coords = _formatCoordinates(employee);
     final distance = employee.liveDistanceMeters != null
         ? '${employee.liveDistanceMeters!.round()}m'
@@ -1587,10 +1584,14 @@ class _LiveZoneMapState extends State<_LiveZoneMap> {
     double maxLng = liveEmployees.first.liveLongitude!;
 
     for (final employee in liveEmployees) {
-      minLat = employee.liveLatitude! < minLat ? employee.liveLatitude! : minLat;
-      maxLat = employee.liveLatitude! > maxLat ? employee.liveLatitude! : maxLat;
-      minLng = employee.liveLongitude! < minLng ? employee.liveLongitude! : minLng;
-      maxLng = employee.liveLongitude! > maxLng ? employee.liveLongitude! : maxLng;
+      minLat =
+          employee.liveLatitude! < minLat ? employee.liveLatitude! : minLat;
+      maxLat =
+          employee.liveLatitude! > maxLat ? employee.liveLatitude! : maxLat;
+      minLng =
+          employee.liveLongitude! < minLng ? employee.liveLongitude! : minLng;
+      maxLng =
+          employee.liveLongitude! > maxLng ? employee.liveLongitude! : maxLng;
     }
 
     final bounds = google_maps.LatLngBounds(

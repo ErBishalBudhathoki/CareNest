@@ -6,9 +6,8 @@ part of 'compliance_checklist.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ComplianceChecklistImpl _$$ComplianceChecklistImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceChecklistImpl(
+_ComplianceChecklist _$ComplianceChecklistFromJson(Map<String, dynamic> json) =>
+    _ComplianceChecklist(
       id: json['_id'] as String?,
       title: json['title'] as String,
       description: json['description'] as String,
@@ -20,8 +19,8 @@ _$ComplianceChecklistImpl _$$ComplianceChecklistImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ComplianceChecklistImplToJson(
-        _$ComplianceChecklistImpl instance) =>
+Map<String, dynamic> _$ComplianceChecklistToJson(
+        _ComplianceChecklist instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'title': instance.title,
@@ -30,23 +29,22 @@ Map<String, dynamic> _$$ComplianceChecklistImplToJson(
       'targetRoles': instance.targetRoles,
     };
 
-_$ChecklistItemImpl _$$ChecklistItemImplFromJson(Map<String, dynamic> json) =>
-    _$ChecklistItemImpl(
+_ChecklistItem _$ChecklistItemFromJson(Map<String, dynamic> json) =>
+    _ChecklistItem(
       text: json['text'] as String,
       isRequired: json['isRequired'] as bool? ?? true,
       id: json['_id'] as String?,
     );
 
-Map<String, dynamic> _$$ChecklistItemImplToJson(_$ChecklistItemImpl instance) =>
+Map<String, dynamic> _$ChecklistItemToJson(_ChecklistItem instance) =>
     <String, dynamic>{
       'text': instance.text,
       'isRequired': instance.isRequired,
       '_id': instance.id,
     };
 
-_$UserChecklistStatusImpl _$$UserChecklistStatusImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UserChecklistStatusImpl(
+_UserChecklistStatus _$UserChecklistStatusFromJson(Map<String, dynamic> json) =>
+    _UserChecklistStatus(
       id: json['_id'] as String?,
       userId: json['userId'] as String,
       checklistId: json['checklistId'] as String,
@@ -55,8 +53,8 @@ _$UserChecklistStatusImpl _$$UserChecklistStatusImplFromJson(
       lastUpdated: DateTime.parse(json['lastUpdated'] as String),
     );
 
-Map<String, dynamic> _$$UserChecklistStatusImplToJson(
-        _$UserChecklistStatusImpl instance) =>
+Map<String, dynamic> _$UserChecklistStatusToJson(
+        _UserChecklistStatus instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'userId': instance.userId,

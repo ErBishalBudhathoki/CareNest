@@ -6,8 +6,8 @@ part of 'bulk_action_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TimesheetItemImpl _$$TimesheetItemImplFromJson(Map<String, dynamic> json) =>
-    _$TimesheetItemImpl(
+_TimesheetItem _$TimesheetItemFromJson(Map<String, dynamic> json) =>
+    _TimesheetItem(
       id: json['id'] as String,
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
@@ -18,7 +18,7 @@ _$TimesheetItemImpl _$$TimesheetItemImplFromJson(Map<String, dynamic> json) =>
       serviceName: json['serviceName'] as String?,
     );
 
-Map<String, dynamic> _$$TimesheetItemImplToJson(_$TimesheetItemImpl instance) =>
+Map<String, dynamic> _$TimesheetItemToJson(_TimesheetItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'workerId': instance.workerId,
@@ -30,25 +30,23 @@ Map<String, dynamic> _$$TimesheetItemImplToJson(_$TimesheetItemImpl instance) =>
       'serviceName': instance.serviceName,
     };
 
-_$BulkTimesheetResultImpl _$$BulkTimesheetResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BulkTimesheetResultImpl(
+_BulkTimesheetResult _$BulkTimesheetResultFromJson(Map<String, dynamic> json) =>
+    _BulkTimesheetResult(
       approvedCount: (json['approvedCount'] as num).toInt(),
       rejectedCount: (json['rejectedCount'] as num).toInt(),
       totalRequested: (json['totalRequested'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$BulkTimesheetResultImplToJson(
-        _$BulkTimesheetResultImpl instance) =>
+Map<String, dynamic> _$BulkTimesheetResultToJson(
+        _BulkTimesheetResult instance) =>
     <String, dynamic>{
       'approvedCount': instance.approvedCount,
       'rejectedCount': instance.rejectedCount,
       'totalRequested': instance.totalRequested,
     };
 
-_$InvoicePreviewItemImpl _$$InvoicePreviewItemImplFromJson(
-        Map<String, dynamic> json) =>
-    _$InvoicePreviewItemImpl(
+_InvoicePreviewItem _$InvoicePreviewItemFromJson(Map<String, dynamic> json) =>
+    _InvoicePreviewItem(
       clientId: json['clientId'] as String,
       clientName: json['clientName'] as String,
       clientEmail: json['clientEmail'] as String,
@@ -58,8 +56,7 @@ _$InvoicePreviewItemImpl _$$InvoicePreviewItemImplFromJson(
       totalAmount: (json['totalAmount'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$InvoicePreviewItemImplToJson(
-        _$InvoicePreviewItemImpl instance) =>
+Map<String, dynamic> _$InvoicePreviewItemToJson(_InvoicePreviewItem instance) =>
     <String, dynamic>{
       'clientId': instance.clientId,
       'clientName': instance.clientName,
@@ -68,9 +65,8 @@ Map<String, dynamic> _$$InvoicePreviewItemImplToJson(
       'totalAmount': instance.totalAmount,
     };
 
-_$AppointmentLineItemImpl _$$AppointmentLineItemImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AppointmentLineItemImpl(
+_AppointmentLineItem _$AppointmentLineItemFromJson(Map<String, dynamic> json) =>
+    _AppointmentLineItem(
       appointmentId: json['appointmentId'] as String,
       date: DateTime.parse(json['date'] as String),
       service: json['service'] as String,
@@ -79,8 +75,8 @@ _$AppointmentLineItemImpl _$$AppointmentLineItemImplFromJson(
       amount: (json['amount'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$AppointmentLineItemImplToJson(
-        _$AppointmentLineItemImpl instance) =>
+Map<String, dynamic> _$AppointmentLineItemToJson(
+        _AppointmentLineItem instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'date': instance.date.toIso8601String(),
@@ -90,8 +86,8 @@ Map<String, dynamic> _$$AppointmentLineItemImplToJson(
       'amount': instance.amount,
     };
 
-_$InvoicePreviewImpl _$$InvoicePreviewImplFromJson(Map<String, dynamic> json) =>
-    _$InvoicePreviewImpl(
+_InvoicePreview _$InvoicePreviewFromJson(Map<String, dynamic> json) =>
+    _InvoicePreview(
       invoiceCount: (json['invoiceCount'] as num).toInt(),
       totalAppointments: (json['totalAppointments'] as num).toInt(),
       totalAmount: (json['totalAmount'] as num).toDouble(),
@@ -100,8 +96,7 @@ _$InvoicePreviewImpl _$$InvoicePreviewImplFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$InvoicePreviewImplToJson(
-        _$InvoicePreviewImpl instance) =>
+Map<String, dynamic> _$InvoicePreviewToJson(_InvoicePreview instance) =>
     <String, dynamic>{
       'invoiceCount': instance.invoiceCount,
       'totalAppointments': instance.totalAppointments,
@@ -109,25 +104,22 @@ Map<String, dynamic> _$$InvoicePreviewImplToJson(
       'invoices': instance.invoices,
     };
 
-_$BulkInvoiceResultImpl _$$BulkInvoiceResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BulkInvoiceResultImpl(
+_BulkInvoiceResult _$BulkInvoiceResultFromJson(Map<String, dynamic> json) =>
+    _BulkInvoiceResult(
       invoiceCount: (json['invoiceCount'] as num).toInt(),
       appointmentCount: (json['appointmentCount'] as num).toInt(),
       totalAmount: (json['totalAmount'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$BulkInvoiceResultImplToJson(
-        _$BulkInvoiceResultImpl instance) =>
+Map<String, dynamic> _$BulkInvoiceResultToJson(_BulkInvoiceResult instance) =>
     <String, dynamic>{
       'invoiceCount': instance.invoiceCount,
       'appointmentCount': instance.appointmentCount,
       'totalAmount': instance.totalAmount,
     };
 
-_$ShiftAssignmentImpl _$$ShiftAssignmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ShiftAssignmentImpl(
+_ShiftAssignment _$ShiftAssignmentFromJson(Map<String, dynamic> json) =>
+    _ShiftAssignment(
       shiftId: json['shiftId'] as String,
       workerId: json['workerId'] as String?,
       shiftDate: json['shiftDate'] == null
@@ -137,8 +129,7 @@ _$ShiftAssignmentImpl _$$ShiftAssignmentImplFromJson(
       service: json['service'] as String?,
     );
 
-Map<String, dynamic> _$$ShiftAssignmentImplToJson(
-        _$ShiftAssignmentImpl instance) =>
+Map<String, dynamic> _$ShiftAssignmentToJson(_ShiftAssignment instance) =>
     <String, dynamic>{
       'shiftId': instance.shiftId,
       'workerId': instance.workerId,
@@ -147,9 +138,8 @@ Map<String, dynamic> _$$ShiftAssignmentImplToJson(
       'service': instance.service,
     };
 
-_$WorkerSuggestionImpl _$$WorkerSuggestionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$WorkerSuggestionImpl(
+_WorkerSuggestion _$WorkerSuggestionFromJson(Map<String, dynamic> json) =>
+    _WorkerSuggestion(
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
       workerEmail: json['workerEmail'] as String,
@@ -160,8 +150,7 @@ _$WorkerSuggestionImpl _$$WorkerSuggestionImplFromJson(
       rating: (json['rating'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$WorkerSuggestionImplToJson(
-        _$WorkerSuggestionImpl instance) =>
+Map<String, dynamic> _$WorkerSuggestionToJson(_WorkerSuggestion instance) =>
     <String, dynamic>{
       'workerId': instance.workerId,
       'workerName': instance.workerName,
@@ -172,9 +161,8 @@ Map<String, dynamic> _$$WorkerSuggestionImplToJson(
       'rating': instance.rating,
     };
 
-_$ShiftSuggestionImpl _$$ShiftSuggestionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ShiftSuggestionImpl(
+_ShiftSuggestion _$ShiftSuggestionFromJson(Map<String, dynamic> json) =>
+    _ShiftSuggestion(
       shiftId: json['shiftId'] as String,
       shiftDate: DateTime.parse(json['shiftDate'] as String),
       shiftTime: json['shiftTime'] as String,
@@ -184,8 +172,7 @@ _$ShiftSuggestionImpl _$$ShiftSuggestionImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ShiftSuggestionImplToJson(
-        _$ShiftSuggestionImpl instance) =>
+Map<String, dynamic> _$ShiftSuggestionToJson(_ShiftSuggestion instance) =>
     <String, dynamic>{
       'shiftId': instance.shiftId,
       'shiftDate': instance.shiftDate.toIso8601String(),
@@ -194,17 +181,15 @@ Map<String, dynamic> _$$ShiftSuggestionImplToJson(
       'suggestedWorkers': instance.suggestedWorkers,
     };
 
-_$AssignmentResultImpl _$$AssignmentResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AssignmentResultImpl(
+_AssignmentResult _$AssignmentResultFromJson(Map<String, dynamic> json) =>
+    _AssignmentResult(
       shiftId: json['shiftId'] as String,
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String?,
       reason: json['reason'] as String?,
     );
 
-Map<String, dynamic> _$$AssignmentResultImplToJson(
-        _$AssignmentResultImpl instance) =>
+Map<String, dynamic> _$AssignmentResultToJson(_AssignmentResult instance) =>
     <String, dynamic>{
       'shiftId': instance.shiftId,
       'workerId': instance.workerId,
@@ -212,9 +197,9 @@ Map<String, dynamic> _$$AssignmentResultImplToJson(
       'reason': instance.reason,
     };
 
-_$BulkAssignmentResultImpl _$$BulkAssignmentResultImplFromJson(
+_BulkAssignmentResult _$BulkAssignmentResultFromJson(
         Map<String, dynamic> json) =>
-    _$BulkAssignmentResultImpl(
+    _BulkAssignmentResult(
       successfulCount: (json['successfulCount'] as num).toInt(),
       failedCount: (json['failedCount'] as num).toInt(),
       successful: (json['successful'] as List<dynamic>)
@@ -225,8 +210,8 @@ _$BulkAssignmentResultImpl _$$BulkAssignmentResultImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$BulkAssignmentResultImplToJson(
-        _$BulkAssignmentResultImpl instance) =>
+Map<String, dynamic> _$BulkAssignmentResultToJson(
+        _BulkAssignmentResult instance) =>
     <String, dynamic>{
       'successfulCount': instance.successfulCount,
       'failedCount': instance.failedCount,
@@ -234,9 +219,8 @@ Map<String, dynamic> _$$BulkAssignmentResultImplToJson(
       'failed': instance.failed,
     };
 
-_$MessageRecipientImpl _$$MessageRecipientImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MessageRecipientImpl(
+_MessageRecipient _$MessageRecipientFromJson(Map<String, dynamic> json) =>
+    _MessageRecipient(
       id: json['id'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
@@ -244,8 +228,7 @@ _$MessageRecipientImpl _$$MessageRecipientImplFromJson(
       selected: json['selected'] as bool,
     );
 
-Map<String, dynamic> _$$MessageRecipientImplToJson(
-        _$MessageRecipientImpl instance) =>
+Map<String, dynamic> _$MessageRecipientToJson(_MessageRecipient instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -254,9 +237,8 @@ Map<String, dynamic> _$$MessageRecipientImplToJson(
       'selected': instance.selected,
     };
 
-_$MessageTemplateImpl _$$MessageTemplateImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MessageTemplateImpl(
+_MessageTemplate _$MessageTemplateFromJson(Map<String, dynamic> json) =>
+    _MessageTemplate(
       id: json['id'] as String,
       name: json['name'] as String,
       subject: json['subject'] as String,
@@ -265,8 +247,7 @@ _$MessageTemplateImpl _$$MessageTemplateImplFromJson(
           (json['variables'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$$MessageTemplateImplToJson(
-        _$MessageTemplateImpl instance) =>
+Map<String, dynamic> _$MessageTemplateToJson(_MessageTemplate instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -275,8 +256,7 @@ Map<String, dynamic> _$$MessageTemplateImplToJson(
       'variables': instance.variables,
     };
 
-_$BulkMessageImpl _$$BulkMessageImplFromJson(Map<String, dynamic> json) =>
-    _$BulkMessageImpl(
+_BulkMessage _$BulkMessageFromJson(Map<String, dynamic> json) => _BulkMessage(
       recipientIds: (json['recipientIds'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -290,7 +270,7 @@ _$BulkMessageImpl _$$BulkMessageImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['scheduledFor'] as String),
     );
 
-Map<String, dynamic> _$$BulkMessageImplToJson(_$BulkMessageImpl instance) =>
+Map<String, dynamic> _$BulkMessageToJson(_BulkMessage instance) =>
     <String, dynamic>{
       'recipientIds': instance.recipientIds,
       'subject': instance.subject,
@@ -306,9 +286,8 @@ const _$MessageChannelEnumMap = {
   MessageChannel.email: 'email',
 };
 
-_$BulkMessageResultImpl _$$BulkMessageResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BulkMessageResultImpl(
+_BulkMessageResult _$BulkMessageResultFromJson(Map<String, dynamic> json) =>
+    _BulkMessageResult(
       sentCount: (json['sentCount'] as num).toInt(),
       scheduledCount: (json['scheduledCount'] as num).toInt(),
       totalRequested: (json['totalRequested'] as num).toInt(),
@@ -317,8 +296,7 @@ _$BulkMessageResultImpl _$$BulkMessageResultImplFromJson(
           : DateTime.parse(json['scheduledFor'] as String),
     );
 
-Map<String, dynamic> _$$BulkMessageResultImplToJson(
-        _$BulkMessageResultImpl instance) =>
+Map<String, dynamic> _$BulkMessageResultToJson(_BulkMessageResult instance) =>
     <String, dynamic>{
       'sentCount': instance.sentCount,
       'scheduledCount': instance.scheduledCount,

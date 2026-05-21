@@ -8,7 +8,7 @@ part 'care_intelligence_models.g.dart';
 // ============================================================================
 
 @freezed
-class IntelligenceReport with _$IntelligenceReport {
+abstract class IntelligenceReport with _$IntelligenceReport {
   const factory IntelligenceReport({
     required String clientId,
     required String organizationId,
@@ -26,7 +26,7 @@ class IntelligenceReport with _$IntelligenceReport {
 }
 
 @freezed
-class RiskSummary with _$RiskSummary {
+abstract class RiskSummary with _$RiskSummary {
   const factory RiskSummary({
     required double overallRisk,
     required List<String> highRiskAreas,
@@ -39,7 +39,7 @@ class RiskSummary with _$RiskSummary {
 }
 
 @freezed
-class Recommendation with _$Recommendation {
+abstract class Recommendation with _$Recommendation {
   const factory Recommendation({
     required String category,
     required String recommendation,
@@ -52,7 +52,7 @@ class Recommendation with _$Recommendation {
 }
 
 @freezed
-class OutcomePredictions with _$OutcomePredictions {
+abstract class OutcomePredictions with _$OutcomePredictions {
   const factory OutcomePredictions({
     required GoalAchievementPrediction goalAchievement,
     required HealthStabilityPrediction healthStability,
@@ -64,7 +64,7 @@ class OutcomePredictions with _$OutcomePredictions {
 }
 
 @freezed
-class GoalAchievementPrediction with _$GoalAchievementPrediction {
+abstract class GoalAchievementPrediction with _$GoalAchievementPrediction {
   const factory GoalAchievementPrediction({
     required double probability,
     required String timeline,
@@ -76,7 +76,7 @@ class GoalAchievementPrediction with _$GoalAchievementPrediction {
 }
 
 @freezed
-class HealthStabilityPrediction with _$HealthStabilityPrediction {
+abstract class HealthStabilityPrediction with _$HealthStabilityPrediction {
   const factory HealthStabilityPrediction({
     required double probability,
     required List<String> factors,
@@ -88,7 +88,7 @@ class HealthStabilityPrediction with _$HealthStabilityPrediction {
 }
 
 @freezed
-class ServiceUtilizationPrediction with _$ServiceUtilizationPrediction {
+abstract class ServiceUtilizationPrediction with _$ServiceUtilizationPrediction {
   const factory ServiceUtilizationPrediction({
     required String predictedChange,
     required int percentage,
@@ -100,7 +100,7 @@ class ServiceUtilizationPrediction with _$ServiceUtilizationPrediction {
 }
 
 @freezed
-class Alert with _$Alert {
+abstract class Alert with _$Alert {
   const factory Alert({
     required String severity,
     required String type,
@@ -113,7 +113,7 @@ class Alert with _$Alert {
 }
 
 @freezed
-class NextAction with _$NextAction {
+abstract class NextAction with _$NextAction {
   const factory NextAction({
     required String action,
     required String priority,
@@ -126,7 +126,7 @@ class NextAction with _$NextAction {
 }
 
 @freezed
-class CarePatterns with _$CarePatterns {
+abstract class CarePatterns with _$CarePatterns {
   const factory CarePatterns({
     required ServiceUtilization serviceUtilization,
     required HealthTrends healthTrends,
@@ -140,7 +140,7 @@ class CarePatterns with _$CarePatterns {
 }
 
 @freezed
-class ServiceUtilization with _$ServiceUtilization {
+abstract class ServiceUtilization with _$ServiceUtilization {
   const factory ServiceUtilization({
     required String trend,
     required int averageHoursPerWeek,
@@ -153,7 +153,7 @@ class ServiceUtilization with _$ServiceUtilization {
 }
 
 @freezed
-class HealthTrends with _$HealthTrends {
+abstract class HealthTrends with _$HealthTrends {
   const factory HealthTrends({
     required double vitalStability,
     required double medicationCompliance,
@@ -166,7 +166,7 @@ class HealthTrends with _$HealthTrends {
 }
 
 @freezed
-class BehaviorPatterns with _$BehaviorPatterns {
+abstract class BehaviorPatterns with _$BehaviorPatterns {
   const factory BehaviorPatterns({
     required int positiveInteractions,
     required int challengingBehaviors,
@@ -179,7 +179,7 @@ class BehaviorPatterns with _$BehaviorPatterns {
 }
 
 @freezed
-class GoalProgress with _$GoalProgress {
+abstract class GoalProgress with _$GoalProgress {
   const factory GoalProgress({
     required int onTrack,
     required int needsAttention,
@@ -192,7 +192,7 @@ class GoalProgress with _$GoalProgress {
 }
 
 @freezed
-class FamilyEngagement with _$FamilyEngagement {
+abstract class FamilyEngagement with _$FamilyEngagement {
   const factory FamilyEngagement({
     required String communicationFrequency,
     required double satisfactionScore,
@@ -209,7 +209,7 @@ class FamilyEngagement with _$FamilyEngagement {
 // ============================================================================
 
 @freezed
-class RiskAssessment with _$RiskAssessment {
+abstract class RiskAssessment with _$RiskAssessment {
   const factory RiskAssessment({
     required String clientId,
     required String organizationId,
@@ -231,7 +231,7 @@ class RiskAssessment with _$RiskAssessment {
 }
 
 @freezed
-class RiskCategory with _$RiskCategory {
+abstract class RiskCategory with _$RiskCategory {
   const factory RiskCategory({
     required int score,
     required String level,
@@ -248,7 +248,7 @@ class RiskCategory with _$RiskCategory {
 }
 
 @freezed
-class RiskTrends with _$RiskTrends {
+abstract class RiskTrends with _$RiskTrends {
   const factory RiskTrends({
     required String direction,
     required int changePercentage,
@@ -260,7 +260,7 @@ class RiskTrends with _$RiskTrends {
 }
 
 @freezed
-class RiskRecommendation with _$RiskRecommendation {
+abstract class RiskRecommendation with _$RiskRecommendation {
   const factory RiskRecommendation({
     required String priority,
     required String recommendation,
@@ -272,7 +272,7 @@ class RiskRecommendation with _$RiskRecommendation {
 }
 
 @freezed
-class FallsRiskAssessment with _$FallsRiskAssessment {
+abstract class FallsRiskAssessment with _$FallsRiskAssessment {
   const factory FallsRiskAssessment({
     required int riskScore,
     required String riskLevel,
@@ -288,7 +288,7 @@ class FallsRiskAssessment with _$FallsRiskAssessment {
 }
 
 @freezed
-class ContributingFactor with _$ContributingFactor {
+abstract class ContributingFactor with _$ContributingFactor {
   const factory ContributingFactor({
     required String factor,
     required double weight,
@@ -300,7 +300,7 @@ class ContributingFactor with _$ContributingFactor {
 }
 
 @freezed
-class MonitoringPlan with _$MonitoringPlan {
+abstract class MonitoringPlan with _$MonitoringPlan {
   const factory MonitoringPlan({
     required String frequency,
     required List<String> indicators,
@@ -312,7 +312,7 @@ class MonitoringPlan with _$MonitoringPlan {
 }
 
 @freezed
-class BehaviorEscalationPrediction with _$BehaviorEscalationPrediction {
+abstract class BehaviorEscalationPrediction with _$BehaviorEscalationPrediction {
   const factory BehaviorEscalationPrediction({
     required double escalationProbability,
     required String timeframe,
@@ -328,7 +328,7 @@ class BehaviorEscalationPrediction with _$BehaviorEscalationPrediction {
 }
 
 @freezed
-class Trigger with _$Trigger {
+abstract class Trigger with _$Trigger {
   const factory Trigger({
     required String trigger,
     required double likelihood,
@@ -343,7 +343,7 @@ class Trigger with _$Trigger {
 // ============================================================================
 
 @freezed
-class CarePlan with _$CarePlan {
+abstract class CarePlan with _$CarePlan {
   const factory CarePlan({
     required String clientId,
     required String organizationId,
@@ -364,7 +364,7 @@ class CarePlan with _$CarePlan {
 }
 
 @freezed
-class Assessment with _$Assessment {
+abstract class Assessment with _$Assessment {
   const factory Assessment({
     required List<String> strengths,
     required List<String> needs,
@@ -377,7 +377,7 @@ class Assessment with _$Assessment {
 }
 
 @freezed
-class SmartGoal with _$SmartGoal {
+abstract class SmartGoal with _$SmartGoal {
   const factory SmartGoal({
     required String goalId,
     required String outcomeArea,
@@ -398,7 +398,7 @@ class SmartGoal with _$SmartGoal {
 }
 
 @freezed
-class Milestone with _$Milestone {
+abstract class Milestone with _$Milestone {
   const factory Milestone({
     required String milestone,
     required String target,
@@ -410,7 +410,7 @@ class Milestone with _$Milestone {
 }
 
 @freezed
-class ServiceRecommendation with _$ServiceRecommendation {
+abstract class ServiceRecommendation with _$ServiceRecommendation {
   const factory ServiceRecommendation({
     required String serviceType,
     required String frequency,
@@ -426,7 +426,7 @@ class ServiceRecommendation with _$ServiceRecommendation {
 }
 
 @freezed
-class Provider with _$Provider {
+abstract class Provider with _$Provider {
   const factory Provider({
     required String name,
     required double rating,
@@ -438,7 +438,7 @@ class Provider with _$Provider {
 }
 
 @freezed
-class Resources with _$Resources {
+abstract class Resources with _$Resources {
   const factory Resources({
     required int workers,
     required List<String> equipment,
@@ -450,7 +450,7 @@ class Resources with _$Resources {
 }
 
 @freezed
-class Budget with _$Budget {
+abstract class Budget with _$Budget {
   const factory Budget({
     required int weekly,
     required int monthly,
@@ -461,7 +461,7 @@ class Budget with _$Budget {
 }
 
 @freezed
-class Timeline with _$Timeline {
+abstract class Timeline with _$Timeline {
   const factory Timeline({
     required String startDate,
     required String endDate,
@@ -473,7 +473,7 @@ class Timeline with _$Timeline {
 }
 
 @freezed
-class Phase with _$Phase {
+abstract class Phase with _$Phase {
   const factory Phase({
     required String phase,
     required String duration,
@@ -485,7 +485,7 @@ class Phase with _$Phase {
 }
 
 @freezed
-class Review with _$Review {
+abstract class Review with _$Review {
   const factory Review({
     required String type,
     required String date,
@@ -496,7 +496,7 @@ class Review with _$Review {
 }
 
 @freezed
-class SuccessMetric with _$SuccessMetric {
+abstract class SuccessMetric with _$SuccessMetric {
   const factory SuccessMetric({
     required String metric,
     required String target,
@@ -511,7 +511,7 @@ class SuccessMetric with _$SuccessMetric {
 // ============================================================================
 
 @freezed
-class Incident with _$Incident {
+abstract class Incident with _$Incident {
   const factory Incident({
     required String incidentId,
     required String reportedAt,
@@ -527,7 +527,7 @@ class Incident with _$Incident {
 }
 
 @freezed
-class NotificationRouting with _$NotificationRouting {
+abstract class NotificationRouting with _$NotificationRouting {
   const factory NotificationRouting({
     required bool family,
     required bool supervisor,
@@ -540,7 +540,7 @@ class NotificationRouting with _$NotificationRouting {
 }
 
 @freezed
-class Investigation with _$Investigation {
+abstract class Investigation with _$Investigation {
   const factory Investigation({
     required String investigator,
     required String dueDate,
@@ -552,7 +552,7 @@ class Investigation with _$Investigation {
 }
 
 @freezed
-class RootCauseAnalysis with _$RootCauseAnalysis {
+abstract class RootCauseAnalysis with _$RootCauseAnalysis {
   const factory RootCauseAnalysis({
     required String incidentId,
     required String analyzedAt,
@@ -568,7 +568,7 @@ class RootCauseAnalysis with _$RootCauseAnalysis {
 }
 
 @freezed
-class RootCause with _$RootCause {
+abstract class RootCause with _$RootCause {
   const factory RootCause({
     required String cause,
     required String likelihood,
@@ -579,7 +579,7 @@ class RootCause with _$RootCause {
 }
 
 @freezed
-class ContributingFactorAnalysis with _$ContributingFactorAnalysis {
+abstract class ContributingFactorAnalysis with _$ContributingFactorAnalysis {
   const factory ContributingFactorAnalysis({
     required String factor,
     required String contribution,
@@ -590,7 +590,7 @@ class ContributingFactorAnalysis with _$ContributingFactorAnalysis {
 }
 
 @freezed
-class SimilarIncident with _$SimilarIncident {
+abstract class SimilarIncident with _$SimilarIncident {
   const factory SimilarIncident({
     required String incidentId,
     required String date,
@@ -602,8 +602,8 @@ class SimilarIncident with _$SimilarIncident {
 }
 
 @freezed
-class IncidentPatterns with _$IncidentPatterns {
-  const factory IncidentPatterns({
+abstract class IncidentPatternData with _$IncidentPatternData {
+  const factory IncidentPatternData({
     required String organizationId,
     required String timeframe,
     required String analyzedAt,
@@ -614,12 +614,12 @@ class IncidentPatterns with _$IncidentPatterns {
     required List<String> preventiveActions,
   }) = _IncidentPatterns;
 
-  factory IncidentPatterns.fromJson(Map<String, dynamic> json) =>
+  factory IncidentPatternData.fromJson(Map<String, dynamic> json) =>
       _$IncidentPatternsFromJson(json);
 }
 
 @freezed
-class FrequencyPatterns with _$FrequencyPatterns {
+abstract class FrequencyPatterns with _$FrequencyPatterns {
   const factory FrequencyPatterns({
     required Map<String, int> byType,
     required Map<String, int> byLocation,
@@ -632,7 +632,7 @@ class FrequencyPatterns with _$FrequencyPatterns {
 }
 
 @freezed
-class RecurringIssue with _$RecurringIssue {
+abstract class RecurringIssue with _$RecurringIssue {
   const factory RecurringIssue({
     required String issue,
     required int frequency,
@@ -644,7 +644,7 @@ class RecurringIssue with _$RecurringIssue {
 }
 
 @freezed
-class Trends with _$Trends {
+abstract class Trends with _$Trends {
   const factory Trends({
     required String direction,
     required int changePercentage,
@@ -656,7 +656,7 @@ class Trends with _$Trends {
 }
 
 @freezed
-class HighRiskArea with _$HighRiskArea {
+abstract class HighRiskArea with _$HighRiskArea {
   const factory HighRiskArea({
     required String area,
     required String riskLevel,
@@ -671,7 +671,7 @@ class HighRiskArea with _$HighRiskArea {
 // ============================================================================
 
 @freezed
-class DrugInteraction with _$DrugInteraction {
+abstract class DrugInteraction with _$DrugInteraction {
   const factory DrugInteraction({
     required List<String> medications,
     required String severity,
@@ -685,7 +685,7 @@ class DrugInteraction with _$DrugInteraction {
 }
 
 @freezed
-class MedicationCompliance with _$MedicationCompliance {
+abstract class MedicationCompliance with _$MedicationCompliance {
   const factory MedicationCompliance({
     required String clientId,
     required String period,
@@ -701,7 +701,7 @@ class MedicationCompliance with _$MedicationCompliance {
 }
 
 @freezed
-class MedicationComplianceDetail with _$MedicationComplianceDetail {
+abstract class MedicationComplianceDetail with _$MedicationComplianceDetail {
   const factory MedicationComplianceDetail({
     required String medication,
     required int prescribed,
@@ -715,7 +715,7 @@ class MedicationComplianceDetail with _$MedicationComplianceDetail {
 }
 
 @freezed
-class CompliancePatterns with _$CompliancePatterns {
+abstract class CompliancePatterns with _$CompliancePatterns {
   const factory CompliancePatterns({
     required MissedDoses missedDoses,
   }) = _CompliancePatterns;
@@ -725,7 +725,7 @@ class CompliancePatterns with _$CompliancePatterns {
 }
 
 @freezed
-class MissedDoses with _$MissedDoses {
+abstract class MissedDoses with _$MissedDoses {
   const factory MissedDoses({
     required List<String> timeOfDay,
     required List<String> dayOfWeek,
@@ -737,7 +737,7 @@ class MissedDoses with _$MissedDoses {
 }
 
 @freezed
-class ComplianceRiskAssessment with _$ComplianceRiskAssessment {
+abstract class ComplianceRiskAssessment with _$ComplianceRiskAssessment {
   const factory ComplianceRiskAssessment({
     required double nonComplianceRisk,
     required List<String> factors,
@@ -749,7 +749,7 @@ class ComplianceRiskAssessment with _$ComplianceRiskAssessment {
 }
 
 @freezed
-class MedicationAlert with _$MedicationAlert {
+abstract class MedicationAlert with _$MedicationAlert {
   const factory MedicationAlert({
     required String type,
     required String severity,

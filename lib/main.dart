@@ -7,6 +7,7 @@ import 'package:carenest/app/features/invoice/views/automatic_invoice_generation
 import 'package:carenest/app/services/app_check/app_check_provider_resolver.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
+import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
@@ -53,9 +54,17 @@ import 'package:carenest/app/features/home/views/employee_home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dashboard.dart';
+import 'package:carenest/app/features/realtime_portal/views/admin_family_management_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/messaging_audit_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/appointment_timeline_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/live_tracking_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/secure_messaging_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/service_confirmation_view.dart';
 import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
-import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
+// ... existing imports
 import 'package:carenest/app/features/notes/views/add_notes_view.dart';
+
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
 import 'package:carenest/app/features/assignment_list/views/assignment_list_view.dart';
@@ -443,6 +452,7 @@ class MyApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/splashScreen',
         routes: {
+          '/': (context) => const SplashScreen(), // Add root route
           Routes.splashScreen: (context) => const SplashScreen(),
           Routes.admin: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
@@ -538,6 +548,11 @@ class MyApp extends ConsumerWidget {
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
             );
           },
+          Routes.realtimePortal: (context) => const RealtimePortalDashboard(),
+          Routes.liveTracking: (context) => const LiveTrackingView(),
+          Routes.appointmentTimeline: (context) => const AppointmentTimelineView(),
+          Routes.secureMessaging: (context) => const SecureMessagingView(),
+          Routes.serviceConfirmation: (context) => const ServiceConfirmationView(),
           Routes.familyManagement: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
@@ -546,6 +561,24 @@ class MyApp extends ConsumerWidget {
             return FamilyManagementView(
               clientId:
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.adminFamilyManagement: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return AdminFamilyManagementView(
+              clientId: clientId ?? '',
+            );
+          },
+          Routes.messagingAudit: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final appointmentId = arguments['appointmentId'] as String?;
+            return MessagingAuditView(
+              appointmentId: appointmentId,
             );
           },
           Routes.assignC2E: (context) => const AssignC2E(),
@@ -694,22 +727,6 @@ class MyApp extends ConsumerWidget {
               ),
             );
           },
-          Routes.employeeInvoice: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                    as Map<String, dynamic>? ??
-                {};
-            final String adminEmail = arguments['email'] as String? ?? '';
-            final String organizationId =
-                arguments['organizationId'] as String? ?? '';
-            final String? organizationName =
-                arguments['organizationName'] as String?;
-
-            return EmployeeInvoiceGenerationView(
-              adminEmail: adminEmail,
-              organizationId: organizationId,
-              organizationName: organizationName,
-            );
-          },
           Routes.enhancedInvoiceGeneration: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
@@ -730,6 +747,22 @@ class MyApp extends ConsumerWidget {
             );
           },
 
+          Routes.employeeInvoice: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final String adminEmail = arguments['email'] as String? ?? '';
+            final String organizationId =
+                arguments['organizationId'] as String? ?? '';
+            final String? organizationName =
+                arguments['organizationName'] as String?;
+
+            return EmployeeInvoiceGenerationView(
+              adminEmail: adminEmail,
+              organizationId: organizationId,
+              organizationName: organizationName,
+            );
+          },
           Routes.automaticInvoiceGeneration: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??

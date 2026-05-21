@@ -112,7 +112,7 @@ class MileageTrackerView extends ConsumerWidget {
             if (viewModel.recentTrips.isEmpty)
               BauhausEmptyState(
                 title: 'No Trips Yet',
-                message: 'Start tracking or add a manual entry.',
+                message: 'Start insights or add a manual entry.',
                 icon: Icons.directions_car,
               )
             else

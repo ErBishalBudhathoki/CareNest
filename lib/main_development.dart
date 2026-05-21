@@ -48,7 +48,16 @@ import 'package:carenest/app/features/home/views/employee_home_view.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/admin_family_management_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/messaging_audit_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/appointment_timeline_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/live_tracking_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/secure_messaging_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/service_confirmation_view.dart';
 import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dashboard.dart';
+
+// ... rest of imports
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
@@ -475,6 +484,11 @@ class MyApp extends ConsumerWidget {
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
             );
           },
+          Routes.realtimePortal: (context) => const RealtimePortalDashboard(),
+          Routes.liveTracking: (context) => const LiveTrackingView(),
+          Routes.appointmentTimeline: (context) => const AppointmentTimelineView(),
+          Routes.secureMessaging: (context) => const SecureMessagingView(),
+          Routes.serviceConfirmation: (context) => const ServiceConfirmationView(),
           Routes.familyManagement: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
@@ -483,6 +497,24 @@ class MyApp extends ConsumerWidget {
             return FamilyManagementView(
               clientId:
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
+            );
+          },
+          Routes.adminFamilyManagement: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return AdminFamilyManagementView(
+              clientId: clientId ?? '',
+            );
+          },
+          Routes.messagingAudit: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final appointmentId = arguments['appointmentId'] as String?;
+            return MessagingAuditView(
+              appointmentId: appointmentId,
             );
           },
           Routes.businessList: (context) => const BusinessListView(),

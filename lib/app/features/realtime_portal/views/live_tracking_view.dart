@@ -136,7 +136,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           backgroundColor: AppColors.colorPrimary,
           elevation: 0,
           title: const Text(
-            'Live Tracking',
+            'Live Insights',
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -174,7 +174,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Live tracking is not available in this App Store build.',
+                    'Live insights are not available in this App Store build.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
@@ -208,7 +208,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
         backgroundColor: AppColors.colorPrimary,
         elevation: 0,
         title: const Text(
-          'Live Tracking',
+          'Live Insights',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -391,7 +391,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No Active Tracking',
+            'No Active Insights',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -400,7 +400,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Tracking will start when worker begins journey',
+            'Insights will start when worker begins journey',
             style: TextStyle(
               fontSize: 14,
               color: Color(0xFF666666), // BauhausDesign.textMuted

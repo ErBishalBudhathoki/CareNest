@@ -4,7 +4,7 @@ part 'user_organization.freezed.dart';
 part 'user_organization.g.dart';
 
 @freezed
-class UserOrganization with _$UserOrganization {
+abstract class UserOrganization with _$UserOrganization {
   const factory UserOrganization({
     required String id,
     required String userId,

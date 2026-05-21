@@ -6,8 +6,7 @@ part of 'shift_matching_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$WorkerMatchImpl _$$WorkerMatchImplFromJson(Map<String, dynamic> json) =>
-    _$WorkerMatchImpl(
+_WorkerMatch _$WorkerMatchFromJson(Map<String, dynamic> json) => _WorkerMatch(
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
       workerEmail: json['workerEmail'] as String,
@@ -24,7 +23,7 @@ _$WorkerMatchImpl _$$WorkerMatchImplFromJson(Map<String, dynamic> json) =>
       workerProfile: json['workerProfile'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$WorkerMatchImplToJson(_$WorkerMatchImpl instance) =>
+Map<String, dynamic> _$WorkerMatchToJson(_WorkerMatch instance) =>
     <String, dynamic>{
       'workerId': instance.workerId,
       'workerName': instance.workerName,
@@ -39,15 +38,14 @@ Map<String, dynamic> _$$WorkerMatchImplToJson(_$WorkerMatchImpl instance) =>
       'workerProfile': instance.workerProfile,
     };
 
-_$MatchFactorImpl _$$MatchFactorImplFromJson(Map<String, dynamic> json) =>
-    _$MatchFactorImpl(
+_MatchFactor _$MatchFactorFromJson(Map<String, dynamic> json) => _MatchFactor(
       factor: json['factor'] as String,
       score: (json['score'] as num).toDouble(),
       weight: (json['weight'] as num).toDouble(),
       description: json['description'] as String,
     );
 
-Map<String, dynamic> _$$MatchFactorImplToJson(_$MatchFactorImpl instance) =>
+Map<String, dynamic> _$MatchFactorToJson(_MatchFactor instance) =>
     <String, dynamic>{
       'factor': instance.factor,
       'score': instance.score,
@@ -55,9 +53,8 @@ Map<String, dynamic> _$$MatchFactorImplToJson(_$MatchFactorImpl instance) =>
       'description': instance.description,
     };
 
-_$ShiftRecommendationImpl _$$ShiftRecommendationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ShiftRecommendationImpl(
+_ShiftRecommendation _$ShiftRecommendationFromJson(Map<String, dynamic> json) =>
+    _ShiftRecommendation(
       shiftId: json['shiftId'] as String,
       shiftDate: DateTime.parse(json['shiftDate'] as String),
       shiftTime: json['shiftTime'] as String,
@@ -70,8 +67,8 @@ _$ShiftRecommendationImpl _$$ShiftRecommendationImplFromJson(
       isUrgent: json['isUrgent'] as bool?,
     );
 
-Map<String, dynamic> _$$ShiftRecommendationImplToJson(
-        _$ShiftRecommendationImpl instance) =>
+Map<String, dynamic> _$ShiftRecommendationToJson(
+        _ShiftRecommendation instance) =>
     <String, dynamic>{
       'shiftId': instance.shiftId,
       'shiftDate': instance.shiftDate.toIso8601String(),
@@ -83,9 +80,8 @@ Map<String, dynamic> _$$ShiftRecommendationImplToJson(
       'isUrgent': instance.isUrgent,
     };
 
-_$AutoFillRequestImpl _$$AutoFillRequestImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AutoFillRequestImpl(
+_AutoFillRequest _$AutoFillRequestFromJson(Map<String, dynamic> json) =>
+    _AutoFillRequest(
       organizationId: json['organizationId'] as String,
       shiftIds:
           (json['shiftIds'] as List<dynamic>).map((e) => e as String).toList(),
@@ -95,8 +91,7 @@ _$AutoFillRequestImpl _$$AutoFillRequestImplFromJson(
       optimizeRoute: json['optimizeRoute'] as bool?,
     );
 
-Map<String, dynamic> _$$AutoFillRequestImplToJson(
-        _$AutoFillRequestImpl instance) =>
+Map<String, dynamic> _$AutoFillRequestToJson(_AutoFillRequest instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'shiftIds': instance.shiftIds,
@@ -105,8 +100,8 @@ Map<String, dynamic> _$$AutoFillRequestImplToJson(
       'optimizeRoute': instance.optimizeRoute,
     };
 
-_$AutoFillResultImpl _$$AutoFillResultImplFromJson(Map<String, dynamic> json) =>
-    _$AutoFillResultImpl(
+_AutoFillResult _$AutoFillResultFromJson(Map<String, dynamic> json) =>
+    _AutoFillResult(
       totalShifts: (json['totalShifts'] as num).toInt(),
       filledShifts: (json['filledShifts'] as num).toInt(),
       unfilledShifts: (json['unfilledShifts'] as num).toInt(),
@@ -119,8 +114,7 @@ _$AutoFillResultImpl _$$AutoFillResultImplFromJson(Map<String, dynamic> json) =>
       optimizationSummary: json['optimizationSummary'] as String?,
     );
 
-Map<String, dynamic> _$$AutoFillResultImplToJson(
-        _$AutoFillResultImpl instance) =>
+Map<String, dynamic> _$AutoFillResultToJson(_AutoFillResult instance) =>
     <String, dynamic>{
       'totalShifts': instance.totalShifts,
       'filledShifts': instance.filledShifts,
@@ -130,9 +124,8 @@ Map<String, dynamic> _$$AutoFillResultImplToJson(
       'optimizationSummary': instance.optimizationSummary,
     };
 
-_$ShiftAssignmentImpl _$$ShiftAssignmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ShiftAssignmentImpl(
+_ShiftAssignment _$ShiftAssignmentFromJson(Map<String, dynamic> json) =>
+    _ShiftAssignment(
       shiftId: json['shiftId'] as String,
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
@@ -143,8 +136,7 @@ _$ShiftAssignmentImpl _$$ShiftAssignmentImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ShiftAssignmentImplToJson(
-        _$ShiftAssignmentImpl instance) =>
+Map<String, dynamic> _$ShiftAssignmentToJson(_ShiftAssignment instance) =>
     <String, dynamic>{
       'shiftId': instance.shiftId,
       'workerId': instance.workerId,
@@ -154,9 +146,8 @@ Map<String, dynamic> _$$ShiftAssignmentImplToJson(
       'warnings': instance.warnings,
     };
 
-_$MatchingCriteriaImpl _$$MatchingCriteriaImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MatchingCriteriaImpl(
+_MatchingCriteria _$MatchingCriteriaFromJson(Map<String, dynamic> json) =>
+    _MatchingCriteria(
       requireSkillMatch: json['requireSkillMatch'] as bool? ?? true,
       checkAvailability: json['checkAvailability'] as bool? ?? true,
       considerDistance: json['considerDistance'] as bool? ?? true,
@@ -169,8 +160,7 @@ _$MatchingCriteriaImpl _$$MatchingCriteriaImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$MatchingCriteriaImplToJson(
-        _$MatchingCriteriaImpl instance) =>
+Map<String, dynamic> _$MatchingCriteriaToJson(_MatchingCriteria instance) =>
     <String, dynamic>{
       'requireSkillMatch': instance.requireSkillMatch,
       'checkAvailability': instance.checkAvailability,
@@ -182,9 +172,8 @@ Map<String, dynamic> _$$MatchingCriteriaImplToJson(
       'priorityFactors': instance.priorityFactors,
     };
 
-_$RouteOptimizationImpl _$$RouteOptimizationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$RouteOptimizationImpl(
+_RouteOptimization _$RouteOptimizationFromJson(Map<String, dynamic> json) =>
+    _RouteOptimization(
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
       shifts: (json['shifts'] as List<dynamic>)
@@ -196,8 +185,7 @@ _$RouteOptimizationImpl _$$RouteOptimizationImplFromJson(
       recommendations: json['recommendations'] as String?,
     );
 
-Map<String, dynamic> _$$RouteOptimizationImplToJson(
-        _$RouteOptimizationImpl instance) =>
+Map<String, dynamic> _$RouteOptimizationToJson(_RouteOptimization instance) =>
     <String, dynamic>{
       'workerId': instance.workerId,
       'workerName': instance.workerName,
@@ -208,8 +196,8 @@ Map<String, dynamic> _$$RouteOptimizationImplToJson(
       'recommendations': instance.recommendations,
     };
 
-_$OptimizedShiftImpl _$$OptimizedShiftImplFromJson(Map<String, dynamic> json) =>
-    _$OptimizedShiftImpl(
+_OptimizedShift _$OptimizedShiftFromJson(Map<String, dynamic> json) =>
+    _OptimizedShift(
       shiftId: json['shiftId'] as String,
       startTime: DateTime.parse(json['startTime'] as String),
       endTime: DateTime.parse(json['endTime'] as String),
@@ -222,8 +210,7 @@ _$OptimizedShiftImpl _$$OptimizedShiftImplFromJson(Map<String, dynamic> json) =>
       sequenceOrder: (json['sequenceOrder'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$OptimizedShiftImplToJson(
-        _$OptimizedShiftImpl instance) =>
+Map<String, dynamic> _$OptimizedShiftToJson(_OptimizedShift instance) =>
     <String, dynamic>{
       'shiftId': instance.shiftId,
       'startTime': instance.startTime.toIso8601String(),
@@ -236,9 +223,9 @@ Map<String, dynamic> _$$OptimizedShiftImplToJson(
       'sequenceOrder': instance.sequenceOrder,
     };
 
-_$ScheduleOptimizationImpl _$$ScheduleOptimizationImplFromJson(
+_ScheduleOptimization _$ScheduleOptimizationFromJson(
         Map<String, dynamic> json) =>
-    _$ScheduleOptimizationImpl(
+    _ScheduleOptimization(
       organizationId: json['organizationId'] as String,
       date: DateTime.parse(json['date'] as String),
       totalShifts: (json['totalShifts'] as num).toInt(),
@@ -252,8 +239,8 @@ _$ScheduleOptimizationImpl _$$ScheduleOptimizationImplFromJson(
       summary: json['summary'] as String?,
     );
 
-Map<String, dynamic> _$$ScheduleOptimizationImplToJson(
-        _$ScheduleOptimizationImpl instance) =>
+Map<String, dynamic> _$ScheduleOptimizationToJson(
+        _ScheduleOptimization instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'date': instance.date.toIso8601String(),
@@ -265,9 +252,8 @@ Map<String, dynamic> _$$ScheduleOptimizationImplToJson(
       'summary': instance.summary,
     };
 
-_$NoShowPredictionImpl _$$NoShowPredictionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$NoShowPredictionImpl(
+_NoShowPrediction _$NoShowPredictionFromJson(Map<String, dynamic> json) =>
+    _NoShowPrediction(
       workerId: json['workerId'] as String,
       shiftId: json['shiftId'] as String,
       probability: (json['probability'] as num).toDouble(),
@@ -278,8 +264,7 @@ _$NoShowPredictionImpl _$$NoShowPredictionImplFromJson(
       recommendation: json['recommendation'] as String?,
     );
 
-Map<String, dynamic> _$$NoShowPredictionImplToJson(
-        _$NoShowPredictionImpl instance) =>
+Map<String, dynamic> _$NoShowPredictionToJson(_NoShowPrediction instance) =>
     <String, dynamic>{
       'workerId': instance.workerId,
       'shiftId': instance.shiftId,

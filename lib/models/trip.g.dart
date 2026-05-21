@@ -6,7 +6,7 @@ part of 'trip.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TripImpl _$$TripImplFromJson(Map<String, dynamic> json) => _$TripImpl(
+_Trip _$TripFromJson(Map<String, dynamic> json) => _Trip(
       id: json['_id'] as String,
       organizationId: json['organizationId'] as String,
       userId: json['userId'] as String,
@@ -25,8 +25,7 @@ _$TripImpl _$$TripImplFromJson(Map<String, dynamic> json) => _$TripImpl(
           : EmployeeInfo.fromJson(json['employee'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$TripImplToJson(_$TripImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TripToJson(_Trip instance) => <String, dynamic>{
       '_id': instance.id,
       'organizationId': instance.organizationId,
       'userId': instance.userId,
@@ -43,14 +42,14 @@ Map<String, dynamic> _$$TripImplToJson(_$TripImpl instance) =>
       'employee': instance.employee,
     };
 
-_$EmployeeInfoImpl _$$EmployeeInfoImplFromJson(Map<String, dynamic> json) =>
-    _$EmployeeInfoImpl(
+_EmployeeInfo _$EmployeeInfoFromJson(Map<String, dynamic> json) =>
+    _EmployeeInfo(
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       email: json['email'] as String?,
     );
 
-Map<String, dynamic> _$$EmployeeInfoImplToJson(_$EmployeeInfoImpl instance) =>
+Map<String, dynamic> _$EmployeeInfoToJson(_EmployeeInfo instance) =>
     <String, dynamic>{
       'firstName': instance.firstName,
       'lastName': instance.lastName,

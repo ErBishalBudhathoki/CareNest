@@ -1573,7 +1573,7 @@ class _AdminDashboardViewControllerState
           CommandAction(
             icon: const Icon(Icons.real_estate_agent_outlined),
             title: 'Real-Time Portal',
-            subtitle: 'Live tracking & service confirmations',
+            subtitle: 'Live insights & service confirmations',
             color: BauhausDesign.accent,
             onTap: () => Navigator.push(
               context,

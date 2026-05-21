@@ -5,7 +5,7 @@ part 'organization_model.freezed.dart';
 part 'organization_model.g.dart';
 
 @freezed
-class Address with _$Address {
+abstract class Address with _$Address {
   const factory Address({
     String? street,
     String? city,
@@ -19,7 +19,7 @@ class Address with _$Address {
 }
 
 @freezed
-class ContactDetails with _$ContactDetails {
+abstract class ContactDetails with _$ContactDetails {
   const factory ContactDetails({
     String? phone,
     String? email,
@@ -31,7 +31,7 @@ class ContactDetails with _$ContactDetails {
 }
 
 @freezed
-class BankDetails with _$BankDetails {
+abstract class BankDetails with _$BankDetails {
   const factory BankDetails({
     String? bankName,
     String? accountName,
@@ -44,7 +44,7 @@ class BankDetails with _$BankDetails {
 }
 
 @freezed
-class NdisRegistration with _$NdisRegistration {
+abstract class NdisRegistration with _$NdisRegistration {
   const factory NdisRegistration({
     bool? isRegistered,
     String? registrationNumber,
@@ -55,7 +55,7 @@ class NdisRegistration with _$NdisRegistration {
 }
 
 @freezed
-class Organization with _$Organization {
+abstract class Organization with _$Organization {
   const factory Organization({
     required String id,
     required String name,

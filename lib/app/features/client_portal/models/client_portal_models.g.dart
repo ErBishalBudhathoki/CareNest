@@ -6,9 +6,8 @@ part of 'client_portal_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ClientDashboardImpl _$$ClientDashboardImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ClientDashboardImpl(
+_ClientDashboard _$ClientDashboardFromJson(Map<String, dynamic> json) =>
+    _ClientDashboard(
       clientId: json['clientId'] as String,
       clientName: json['clientName'] as String,
       todayAppointments: (json['todayAppointments'] as List<dynamic>)
@@ -25,8 +24,7 @@ _$ClientDashboardImpl _$$ClientDashboardImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ClientDashboardImplToJson(
-        _$ClientDashboardImpl instance) =>
+Map<String, dynamic> _$ClientDashboardToJson(_ClientDashboard instance) =>
     <String, dynamic>{
       'clientId': instance.clientId,
       'clientName': instance.clientName,
@@ -36,9 +34,8 @@ Map<String, dynamic> _$$ClientDashboardImplToJson(
       'notifications': instance.notifications,
     };
 
-_$TodayAppointmentImpl _$$TodayAppointmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TodayAppointmentImpl(
+_TodayAppointment _$TodayAppointmentFromJson(Map<String, dynamic> json) =>
+    _TodayAppointment(
       appointmentId: json['appointmentId'] as String,
       workerName: json['workerName'] as String,
       serviceName: json['serviceName'] as String,
@@ -49,8 +46,7 @@ _$TodayAppointmentImpl _$$TodayAppointmentImplFromJson(
       workerPhoto: json['workerPhoto'] as String?,
     );
 
-Map<String, dynamic> _$$TodayAppointmentImplToJson(
-        _$TodayAppointmentImpl instance) =>
+Map<String, dynamic> _$TodayAppointmentToJson(_TodayAppointment instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'workerName': instance.workerName,
@@ -62,9 +58,8 @@ Map<String, dynamic> _$$TodayAppointmentImplToJson(
       'workerPhoto': instance.workerPhoto,
     };
 
-_$UpcomingAppointmentImpl _$$UpcomingAppointmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UpcomingAppointmentImpl(
+_UpcomingAppointment _$UpcomingAppointmentFromJson(Map<String, dynamic> json) =>
+    _UpcomingAppointment(
       appointmentId: json['appointmentId'] as String,
       workerName: json['workerName'] as String,
       serviceName: json['serviceName'] as String,
@@ -74,8 +69,8 @@ _$UpcomingAppointmentImpl _$$UpcomingAppointmentImplFromJson(
       status: json['status'] as String,
     );
 
-Map<String, dynamic> _$$UpcomingAppointmentImplToJson(
-        _$UpcomingAppointmentImpl instance) =>
+Map<String, dynamic> _$UpcomingAppointmentToJson(
+        _UpcomingAppointment instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'workerName': instance.workerName,
@@ -86,24 +81,22 @@ Map<String, dynamic> _$$UpcomingAppointmentImplToJson(
       'status': instance.status,
     };
 
-_$RecentActivityImpl _$$RecentActivityImplFromJson(Map<String, dynamic> json) =>
-    _$RecentActivityImpl(
+_RecentActivity _$RecentActivityFromJson(Map<String, dynamic> json) =>
+    _RecentActivity(
       type: json['type'] as String,
       message: json['message'] as String,
       timestamp: json['timestamp'] as String,
     );
 
-Map<String, dynamic> _$$RecentActivityImplToJson(
-        _$RecentActivityImpl instance) =>
+Map<String, dynamic> _$RecentActivityToJson(_RecentActivity instance) =>
     <String, dynamic>{
       'type': instance.type,
       'message': instance.message,
       'timestamp': instance.timestamp,
     };
 
-_$ClientNotificationImpl _$$ClientNotificationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ClientNotificationImpl(
+_ClientNotification _$ClientNotificationFromJson(Map<String, dynamic> json) =>
+    _ClientNotification(
       id: json['id'] as String,
       type: json['type'] as String,
       message: json['message'] as String,
@@ -111,8 +104,7 @@ _$ClientNotificationImpl _$$ClientNotificationImplFromJson(
       read: json['read'] as bool,
     );
 
-Map<String, dynamic> _$$ClientNotificationImplToJson(
-        _$ClientNotificationImpl instance) =>
+Map<String, dynamic> _$ClientNotificationToJson(_ClientNotification instance) =>
     <String, dynamic>{
       'id': instance.id,
       'type': instance.type,
@@ -121,8 +113,8 @@ Map<String, dynamic> _$$ClientNotificationImplToJson(
       'read': instance.read,
     };
 
-_$WorkerLocationImpl _$$WorkerLocationImplFromJson(Map<String, dynamic> json) =>
-    _$WorkerLocationImpl(
+_WorkerLocation _$WorkerLocationFromJson(Map<String, dynamic> json) =>
+    _WorkerLocation(
       appointmentId: json['appointmentId'] as String,
       workerName: json['workerName'] as String,
       latitude: (json['latitude'] as num).toDouble(),
@@ -135,8 +127,7 @@ _$WorkerLocationImpl _$$WorkerLocationImplFromJson(Map<String, dynamic> json) =>
       lastUpdated: json['lastUpdated'] as String?,
     );
 
-Map<String, dynamic> _$$WorkerLocationImplToJson(
-        _$WorkerLocationImpl instance) =>
+Map<String, dynamic> _$WorkerLocationToJson(_WorkerLocation instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'workerName': instance.workerName,
@@ -150,9 +141,8 @@ Map<String, dynamic> _$$WorkerLocationImplToJson(
       'lastUpdated': instance.lastUpdated,
     };
 
-_$AppointmentStatusImpl _$$AppointmentStatusImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AppointmentStatusImpl(
+_AppointmentStatus _$AppointmentStatusFromJson(Map<String, dynamic> json) =>
+    _AppointmentStatus(
       appointmentId: json['appointmentId'] as String,
       status: json['status'] as String,
       workerName: json['workerName'] as String,
@@ -171,8 +161,7 @@ _$AppointmentStatusImpl _$$AppointmentStatusImplFromJson(
       lastUpdated: json['lastUpdated'] as String,
     );
 
-Map<String, dynamic> _$$AppointmentStatusImplToJson(
-        _$AppointmentStatusImpl instance) =>
+Map<String, dynamic> _$AppointmentStatusToJson(_AppointmentStatus instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'status': instance.status,
@@ -189,20 +178,20 @@ Map<String, dynamic> _$$AppointmentStatusImplToJson(
       'lastUpdated': instance.lastUpdated,
     };
 
-_$ChecklistItemImpl _$$ChecklistItemImplFromJson(Map<String, dynamic> json) =>
-    _$ChecklistItemImpl(
+_ChecklistItem _$ChecklistItemFromJson(Map<String, dynamic> json) =>
+    _ChecklistItem(
       item: json['item'] as String,
       completed: json['completed'] as bool,
     );
 
-Map<String, dynamic> _$$ChecklistItemImplToJson(_$ChecklistItemImpl instance) =>
+Map<String, dynamic> _$ChecklistItemToJson(_ChecklistItem instance) =>
     <String, dynamic>{
       'item': instance.item,
       'completed': instance.completed,
     };
 
-_$ServiceHistoryImpl _$$ServiceHistoryImplFromJson(Map<String, dynamic> json) =>
-    _$ServiceHistoryImpl(
+_ServiceHistory _$ServiceHistoryFromJson(Map<String, dynamic> json) =>
+    _ServiceHistory(
       serviceId: json['serviceId'] as String,
       workerName: json['workerName'] as String,
       serviceName: json['serviceName'] as String,
@@ -213,8 +202,7 @@ _$ServiceHistoryImpl _$$ServiceHistoryImplFromJson(Map<String, dynamic> json) =>
       feedback: json['feedback'] as String?,
     );
 
-Map<String, dynamic> _$$ServiceHistoryImplToJson(
-        _$ServiceHistoryImpl instance) =>
+Map<String, dynamic> _$ServiceHistoryToJson(_ServiceHistory instance) =>
     <String, dynamic>{
       'serviceId': instance.serviceId,
       'workerName': instance.workerName,
@@ -226,9 +214,8 @@ Map<String, dynamic> _$$ServiceHistoryImplToJson(
       'feedback': instance.feedback,
     };
 
-_$ClientAppointmentImpl _$$ClientAppointmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ClientAppointmentImpl(
+_ClientAppointment _$ClientAppointmentFromJson(Map<String, dynamic> json) =>
+    _ClientAppointment(
       id: json['id'] as String,
       date: json['date'] as String,
       startTime: json['startTime'] as String,
@@ -238,8 +225,7 @@ _$ClientAppointmentImpl _$$ClientAppointmentImplFromJson(
       scheduleId: json['scheduleId'] as String?,
     );
 
-Map<String, dynamic> _$$ClientAppointmentImplToJson(
-        _$ClientAppointmentImpl instance) =>
+Map<String, dynamic> _$ClientAppointmentToJson(_ClientAppointment instance) =>
     <String, dynamic>{
       'id': instance.id,
       'date': instance.date,
@@ -250,9 +236,9 @@ Map<String, dynamic> _$$ClientAppointmentImplToJson(
       'scheduleId': instance.scheduleId,
     };
 
-_$ClientAppointmentDetailImpl _$$ClientAppointmentDetailImplFromJson(
+_ClientAppointmentDetail _$ClientAppointmentDetailFromJson(
         Map<String, dynamic> json) =>
-    _$ClientAppointmentDetailImpl(
+    _ClientAppointmentDetail(
       id: json['id'] as String,
       date: json['date'] as String,
       startTime: json['startTime'] as String,
@@ -271,8 +257,8 @@ _$ClientAppointmentDetailImpl _$$ClientAppointmentDetailImplFromJson(
       scheduleId: json['scheduleId'] as String?,
     );
 
-Map<String, dynamic> _$$ClientAppointmentDetailImplToJson(
-        _$ClientAppointmentDetailImpl instance) =>
+Map<String, dynamic> _$ClientAppointmentDetailToJson(
+        _ClientAppointmentDetail instance) =>
     <String, dynamic>{
       'id': instance.id,
       'date': instance.date,
@@ -288,8 +274,8 @@ Map<String, dynamic> _$$ClientAppointmentDetailImplToJson(
       'scheduleId': instance.scheduleId,
     };
 
-_$ClientEmployeeImpl _$$ClientEmployeeImplFromJson(Map<String, dynamic> json) =>
-    _$ClientEmployeeImpl(
+_ClientEmployee _$ClientEmployeeFromJson(Map<String, dynamic> json) =>
+    _ClientEmployee(
       email: json['email'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
@@ -297,8 +283,7 @@ _$ClientEmployeeImpl _$$ClientEmployeeImplFromJson(Map<String, dynamic> json) =>
       photo: json['photo'] as String?,
     );
 
-Map<String, dynamic> _$$ClientEmployeeImplToJson(
-        _$ClientEmployeeImpl instance) =>
+Map<String, dynamic> _$ClientEmployeeToJson(_ClientEmployee instance) =>
     <String, dynamic>{
       'email': instance.email,
       'firstName': instance.firstName,
@@ -307,8 +292,8 @@ Map<String, dynamic> _$$ClientEmployeeImplToJson(
       'photo': instance.photo,
     };
 
-_$ClientInvoiceImpl _$$ClientInvoiceImplFromJson(Map<String, dynamic> json) =>
-    _$ClientInvoiceImpl(
+_ClientInvoice _$ClientInvoiceFromJson(Map<String, dynamic> json) =>
+    _ClientInvoice(
       id: json['id'] as String,
       invoiceNumber: json['invoiceNumber'] as String,
       workflow: json['workflow'] as Map<String, dynamic>,
@@ -316,7 +301,7 @@ _$ClientInvoiceImpl _$$ClientInvoiceImplFromJson(Map<String, dynamic> json) =>
       lineItems: json['lineItems'] as List<dynamic>?,
     );
 
-Map<String, dynamic> _$$ClientInvoiceImplToJson(_$ClientInvoiceImpl instance) =>
+Map<String, dynamic> _$ClientInvoiceToJson(_ClientInvoice instance) =>
     <String, dynamic>{
       'id': instance.id,
       'invoiceNumber': instance.invoiceNumber,
@@ -325,15 +310,13 @@ Map<String, dynamic> _$$ClientInvoiceImplToJson(_$ClientInvoiceImpl instance) =>
       'lineItems': instance.lineItems,
     };
 
-_$AppointmentParamsImpl _$$AppointmentParamsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AppointmentParamsImpl(
+_AppointmentParams _$AppointmentParamsFromJson(Map<String, dynamic> json) =>
+    _AppointmentParams(
       assignmentId: json['assignmentId'] as String,
       scheduleId: json['scheduleId'] as String,
     );
 
-Map<String, dynamic> _$$AppointmentParamsImplToJson(
-        _$AppointmentParamsImpl instance) =>
+Map<String, dynamic> _$AppointmentParamsToJson(_AppointmentParams instance) =>
     <String, dynamic>{
       'assignmentId': instance.assignmentId,
       'scheduleId': instance.scheduleId,

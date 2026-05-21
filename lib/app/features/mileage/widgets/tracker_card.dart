@@ -66,7 +66,7 @@ class TrackerCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          isTracking ? 'TRACKING...' : 'READY',
+          isTracking ? 'INSIGHTS...' : 'READY',
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: isTracking

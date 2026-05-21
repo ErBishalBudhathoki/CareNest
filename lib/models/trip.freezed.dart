@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,44 +9,97 @@ part of 'trip.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Trip _$TripFromJson(Map<String, dynamic> json) {
-  return _Trip.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Trip {
   @JsonKey(name: '_id')
-  String get id => throw _privateConstructorUsedError;
-  String get organizationId => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String? get clientId => throw _privateConstructorUsedError;
-  DateTime get date => throw _privateConstructorUsedError;
-  String get startLocation => throw _privateConstructorUsedError;
-  String get endLocation => throw _privateConstructorUsedError;
-  double get distance => throw _privateConstructorUsedError;
-  String get tripType =>
-      throw _privateConstructorUsedError; // 'BETWEEN_CLIENTS', 'WITH_CLIENT', 'COMMUTE'
-  String get status =>
-      throw _privateConstructorUsedError; // 'PENDING', 'APPROVED', 'REJECTED'
-  String? get adminApprovalStatus => throw _privateConstructorUsedError;
-  bool get isReimbursable => throw _privateConstructorUsedError;
-  bool get isBillable => throw _privateConstructorUsedError; // Joined fields
-  EmployeeInfo? get employee => throw _privateConstructorUsedError;
+  String get id;
+  String get organizationId;
+  String get userId;
+  String? get clientId;
+  DateTime get date;
+  String get startLocation;
+  String get endLocation;
+  double get distance;
+  String get tripType; // 'BETWEEN_CLIENTS', 'WITH_CLIENT', 'COMMUTE'
+  String get status; // 'PENDING', 'APPROVED', 'REJECTED'
+  String? get adminApprovalStatus;
+  bool get isReimbursable;
+  bool get isBillable; // Joined fields
+  EmployeeInfo? get employee;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $TripCopyWith<Trip> get copyWith => throw _privateConstructorUsedError;
+  /// Create a copy of Trip
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $TripCopyWith<Trip> get copyWith =>
+      _$TripCopyWithImpl<Trip>(this as Trip, _$identity);
+
+  /// Serializes this Trip to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Trip &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.organizationId, organizationId) ||
+                other.organizationId == organizationId) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.clientId, clientId) ||
+                other.clientId == clientId) &&
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.startLocation, startLocation) ||
+                other.startLocation == startLocation) &&
+            (identical(other.endLocation, endLocation) ||
+                other.endLocation == endLocation) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance) &&
+            (identical(other.tripType, tripType) ||
+                other.tripType == tripType) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.adminApprovalStatus, adminApprovalStatus) ||
+                other.adminApprovalStatus == adminApprovalStatus) &&
+            (identical(other.isReimbursable, isReimbursable) ||
+                other.isReimbursable == isReimbursable) &&
+            (identical(other.isBillable, isBillable) ||
+                other.isBillable == isBillable) &&
+            (identical(other.employee, employee) ||
+                other.employee == employee));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      organizationId,
+      userId,
+      clientId,
+      date,
+      startLocation,
+      endLocation,
+      distance,
+      tripType,
+      status,
+      adminApprovalStatus,
+      isReimbursable,
+      isBillable,
+      employee);
+
+  @override
+  String toString() {
+    return 'Trip(id: $id, organizationId: $organizationId, userId: $userId, clientId: $clientId, date: $date, startLocation: $startLocation, endLocation: $endLocation, distance: $distance, tripType: $tripType, status: $status, adminApprovalStatus: $adminApprovalStatus, isReimbursable: $isReimbursable, isBillable: $isBillable, employee: $employee)';
+  }
 }
 
 /// @nodoc
-abstract class $TripCopyWith<$Res> {
-  factory $TripCopyWith(Trip value, $Res Function(Trip) then) =
-      _$TripCopyWithImpl<$Res, Trip>;
+abstract mixin class $TripCopyWith<$Res> {
+  factory $TripCopyWith(Trip value, $Res Function(Trip) _then) =
+      _$TripCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
@@ -68,15 +121,14 @@ abstract class $TripCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$TripCopyWithImpl<$Res, $Val extends Trip>
-    implements $TripCopyWith<$Res> {
-  _$TripCopyWithImpl(this._value, this._then);
+class _$TripCopyWithImpl<$Res> implements $TripCopyWith<$Res> {
+  _$TripCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Trip _self;
+  final $Res Function(Trip) _then;
 
+  /// Create a copy of Trip
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -95,196 +147,329 @@ class _$TripCopyWithImpl<$Res, $Val extends Trip>
     Object? isBillable = null,
     Object? employee = freezed,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       organizationId: null == organizationId
-          ? _value.organizationId
+          ? _self.organizationId
           : organizationId // ignore: cast_nullable_to_non_nullable
               as String,
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       clientId: freezed == clientId
-          ? _value.clientId
+          ? _self.clientId
           : clientId // ignore: cast_nullable_to_non_nullable
               as String?,
       date: null == date
-          ? _value.date
+          ? _self.date
           : date // ignore: cast_nullable_to_non_nullable
               as DateTime,
       startLocation: null == startLocation
-          ? _value.startLocation
+          ? _self.startLocation
           : startLocation // ignore: cast_nullable_to_non_nullable
               as String,
       endLocation: null == endLocation
-          ? _value.endLocation
+          ? _self.endLocation
           : endLocation // ignore: cast_nullable_to_non_nullable
               as String,
       distance: null == distance
-          ? _value.distance
+          ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
               as double,
       tripType: null == tripType
-          ? _value.tripType
+          ? _self.tripType
           : tripType // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
       adminApprovalStatus: freezed == adminApprovalStatus
-          ? _value.adminApprovalStatus
+          ? _self.adminApprovalStatus
           : adminApprovalStatus // ignore: cast_nullable_to_non_nullable
               as String?,
       isReimbursable: null == isReimbursable
-          ? _value.isReimbursable
+          ? _self.isReimbursable
           : isReimbursable // ignore: cast_nullable_to_non_nullable
               as bool,
       isBillable: null == isBillable
-          ? _value.isBillable
+          ? _self.isBillable
           : isBillable // ignore: cast_nullable_to_non_nullable
               as bool,
       employee: freezed == employee
-          ? _value.employee
+          ? _self.employee
           : employee // ignore: cast_nullable_to_non_nullable
               as EmployeeInfo?,
-    ) as $Val);
+    ));
   }
 
+  /// Create a copy of Trip
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $EmployeeInfoCopyWith<$Res>? get employee {
-    if (_value.employee == null) {
+    if (_self.employee == null) {
       return null;
     }
 
-    return $EmployeeInfoCopyWith<$Res>(_value.employee!, (value) {
-      return _then(_value.copyWith(employee: value) as $Val);
+    return $EmployeeInfoCopyWith<$Res>(_self.employee!, (value) {
+      return _then(_self.copyWith(employee: value));
     });
   }
 }
 
-/// @nodoc
-abstract class _$$TripImplCopyWith<$Res> implements $TripCopyWith<$Res> {
-  factory _$$TripImplCopyWith(
-          _$TripImpl value, $Res Function(_$TripImpl) then) =
-      __$$TripImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String id,
-      String organizationId,
-      String userId,
-      String? clientId,
-      DateTime date,
-      String startLocation,
-      String endLocation,
-      double distance,
-      String tripType,
-      String status,
-      String? adminApprovalStatus,
-      bool isReimbursable,
-      bool isBillable,
-      EmployeeInfo? employee});
+/// Adds pattern-matching-related methods to [Trip].
+extension TripPatterns on Trip {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-  @override
-  $EmployeeInfoCopyWith<$Res>? get employee;
-}
-
-/// @nodoc
-class __$$TripImplCopyWithImpl<$Res>
-    extends _$TripCopyWithImpl<$Res, _$TripImpl>
-    implements _$$TripImplCopyWith<$Res> {
-  __$$TripImplCopyWithImpl(_$TripImpl _value, $Res Function(_$TripImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? organizationId = null,
-    Object? userId = null,
-    Object? clientId = freezed,
-    Object? date = null,
-    Object? startLocation = null,
-    Object? endLocation = null,
-    Object? distance = null,
-    Object? tripType = null,
-    Object? status = null,
-    Object? adminApprovalStatus = freezed,
-    Object? isReimbursable = null,
-    Object? isBillable = null,
-    Object? employee = freezed,
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Trip value)? $default, {
+    required TResult orElse(),
   }) {
-    return _then(_$TripImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      organizationId: null == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      clientId: freezed == clientId
-          ? _value.clientId
-          : clientId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      startLocation: null == startLocation
-          ? _value.startLocation
-          : startLocation // ignore: cast_nullable_to_non_nullable
-              as String,
-      endLocation: null == endLocation
-          ? _value.endLocation
-          : endLocation // ignore: cast_nullable_to_non_nullable
-              as String,
-      distance: null == distance
-          ? _value.distance
-          : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      tripType: null == tripType
-          ? _value.tripType
-          : tripType // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      adminApprovalStatus: freezed == adminApprovalStatus
-          ? _value.adminApprovalStatus
-          : adminApprovalStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isReimbursable: null == isReimbursable
-          ? _value.isReimbursable
-          : isReimbursable // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isBillable: null == isBillable
-          ? _value.isBillable
-          : isBillable // ignore: cast_nullable_to_non_nullable
-              as bool,
-      employee: freezed == employee
-          ? _value.employee
-          : employee // ignore: cast_nullable_to_non_nullable
-              as EmployeeInfo?,
-    ));
+    final _that = this;
+    switch (_that) {
+      case _Trip() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Trip value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Trip():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Trip value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Trip() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String id,
+            String organizationId,
+            String userId,
+            String? clientId,
+            DateTime date,
+            String startLocation,
+            String endLocation,
+            double distance,
+            String tripType,
+            String status,
+            String? adminApprovalStatus,
+            bool isReimbursable,
+            bool isBillable,
+            EmployeeInfo? employee)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Trip() when $default != null:
+        return $default(
+            _that.id,
+            _that.organizationId,
+            _that.userId,
+            _that.clientId,
+            _that.date,
+            _that.startLocation,
+            _that.endLocation,
+            _that.distance,
+            _that.tripType,
+            _that.status,
+            _that.adminApprovalStatus,
+            _that.isReimbursable,
+            _that.isBillable,
+            _that.employee);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String id,
+            String organizationId,
+            String userId,
+            String? clientId,
+            DateTime date,
+            String startLocation,
+            String endLocation,
+            double distance,
+            String tripType,
+            String status,
+            String? adminApprovalStatus,
+            bool isReimbursable,
+            bool isBillable,
+            EmployeeInfo? employee)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Trip():
+        return $default(
+            _that.id,
+            _that.organizationId,
+            _that.userId,
+            _that.clientId,
+            _that.date,
+            _that.startLocation,
+            _that.endLocation,
+            _that.distance,
+            _that.tripType,
+            _that.status,
+            _that.adminApprovalStatus,
+            _that.isReimbursable,
+            _that.isBillable,
+            _that.employee);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String id,
+            String organizationId,
+            String userId,
+            String? clientId,
+            DateTime date,
+            String startLocation,
+            String endLocation,
+            double distance,
+            String tripType,
+            String status,
+            String? adminApprovalStatus,
+            bool isReimbursable,
+            bool isBillable,
+            EmployeeInfo? employee)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Trip() when $default != null:
+        return $default(
+            _that.id,
+            _that.organizationId,
+            _that.userId,
+            _that.clientId,
+            _that.date,
+            _that.startLocation,
+            _that.endLocation,
+            _that.distance,
+            _that.tripType,
+            _that.status,
+            _that.adminApprovalStatus,
+            _that.isReimbursable,
+            _that.isBillable,
+            _that.employee);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$TripImpl implements _Trip {
-  const _$TripImpl(
+class _Trip implements Trip {
+  const _Trip(
       {@JsonKey(name: '_id') required this.id,
       required this.organizationId,
       required this.userId,
@@ -299,9 +484,7 @@ class _$TripImpl implements _Trip {
       this.isReimbursable = false,
       this.isBillable = false,
       this.employee});
-
-  factory _$TripImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TripImplFromJson(json);
+  factory _Trip.fromJson(Map<String, dynamic> json) => _$TripFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -338,16 +521,26 @@ class _$TripImpl implements _Trip {
   @override
   final EmployeeInfo? employee;
 
+  /// Create a copy of Trip
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'Trip(id: $id, organizationId: $organizationId, userId: $userId, clientId: $clientId, date: $date, startLocation: $startLocation, endLocation: $endLocation, distance: $distance, tripType: $tripType, status: $status, adminApprovalStatus: $adminApprovalStatus, isReimbursable: $isReimbursable, isBillable: $isBillable, employee: $employee)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$TripCopyWith<_Trip> get copyWith =>
+      __$TripCopyWithImpl<_Trip>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$TripToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TripImpl &&
+            other is _Trip &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.organizationId, organizationId) ||
                 other.organizationId == organizationId) &&
@@ -374,7 +567,7 @@ class _$TripImpl implements _Trip {
                 other.employee == employee));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -393,152 +586,197 @@ class _$TripImpl implements _Trip {
       isBillable,
       employee);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$TripImplCopyWith<_$TripImpl> get copyWith =>
-      __$$TripImplCopyWithImpl<_$TripImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TripImplToJson(
-      this,
-    );
+  String toString() {
+    return 'Trip(id: $id, organizationId: $organizationId, userId: $userId, clientId: $clientId, date: $date, startLocation: $startLocation, endLocation: $endLocation, distance: $distance, tripType: $tripType, status: $status, adminApprovalStatus: $adminApprovalStatus, isReimbursable: $isReimbursable, isBillable: $isBillable, employee: $employee)';
   }
 }
 
-abstract class _Trip implements Trip {
-  const factory _Trip(
-      {@JsonKey(name: '_id') required final String id,
-      required final String organizationId,
-      required final String userId,
-      final String? clientId,
-      required final DateTime date,
-      required final String startLocation,
-      required final String endLocation,
-      required final double distance,
-      required final String tripType,
-      required final String status,
-      final String? adminApprovalStatus,
-      final bool isReimbursable,
-      final bool isBillable,
-      final EmployeeInfo? employee}) = _$TripImpl;
+/// @nodoc
+abstract mixin class _$TripCopyWith<$Res> implements $TripCopyWith<$Res> {
+  factory _$TripCopyWith(_Trip value, $Res Function(_Trip) _then) =
+      __$TripCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String organizationId,
+      String userId,
+      String? clientId,
+      DateTime date,
+      String startLocation,
+      String endLocation,
+      double distance,
+      String tripType,
+      String status,
+      String? adminApprovalStatus,
+      bool isReimbursable,
+      bool isBillable,
+      EmployeeInfo? employee});
 
-  factory _Trip.fromJson(Map<String, dynamic> json) = _$TripImpl.fromJson;
-
   @override
-  @JsonKey(name: '_id')
-  String get id;
-  @override
-  String get organizationId;
-  @override
-  String get userId;
-  @override
-  String? get clientId;
-  @override
-  DateTime get date;
-  @override
-  String get startLocation;
-  @override
-  String get endLocation;
-  @override
-  double get distance;
-  @override
-  String get tripType;
-  @override // 'BETWEEN_CLIENTS', 'WITH_CLIENT', 'COMMUTE'
-  String get status;
-  @override // 'PENDING', 'APPROVED', 'REJECTED'
-  String? get adminApprovalStatus;
-  @override
-  bool get isReimbursable;
-  @override
-  bool get isBillable;
-  @override // Joined fields
-  EmployeeInfo? get employee;
-  @override
-  @JsonKey(ignore: true)
-  _$$TripImplCopyWith<_$TripImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $EmployeeInfoCopyWith<$Res>? get employee;
 }
 
-EmployeeInfo _$EmployeeInfoFromJson(Map<String, dynamic> json) {
-  return _EmployeeInfo.fromJson(json);
+/// @nodoc
+class __$TripCopyWithImpl<$Res> implements _$TripCopyWith<$Res> {
+  __$TripCopyWithImpl(this._self, this._then);
+
+  final _Trip _self;
+  final $Res Function(_Trip) _then;
+
+  /// Create a copy of Trip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? organizationId = null,
+    Object? userId = null,
+    Object? clientId = freezed,
+    Object? date = null,
+    Object? startLocation = null,
+    Object? endLocation = null,
+    Object? distance = null,
+    Object? tripType = null,
+    Object? status = null,
+    Object? adminApprovalStatus = freezed,
+    Object? isReimbursable = null,
+    Object? isBillable = null,
+    Object? employee = freezed,
+  }) {
+    return _then(_Trip(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      organizationId: null == organizationId
+          ? _self.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      clientId: freezed == clientId
+          ? _self.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      date: null == date
+          ? _self.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      startLocation: null == startLocation
+          ? _self.startLocation
+          : startLocation // ignore: cast_nullable_to_non_nullable
+              as String,
+      endLocation: null == endLocation
+          ? _self.endLocation
+          : endLocation // ignore: cast_nullable_to_non_nullable
+              as String,
+      distance: null == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double,
+      tripType: null == tripType
+          ? _self.tripType
+          : tripType // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      adminApprovalStatus: freezed == adminApprovalStatus
+          ? _self.adminApprovalStatus
+          : adminApprovalStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isReimbursable: null == isReimbursable
+          ? _self.isReimbursable
+          : isReimbursable // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isBillable: null == isBillable
+          ? _self.isBillable
+          : isBillable // ignore: cast_nullable_to_non_nullable
+              as bool,
+      employee: freezed == employee
+          ? _self.employee
+          : employee // ignore: cast_nullable_to_non_nullable
+              as EmployeeInfo?,
+    ));
+  }
+
+  /// Create a copy of Trip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $EmployeeInfoCopyWith<$Res>? get employee {
+    if (_self.employee == null) {
+      return null;
+    }
+
+    return $EmployeeInfoCopyWith<$Res>(_self.employee!, (value) {
+      return _then(_self.copyWith(employee: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$EmployeeInfo {
-  String? get firstName => throw _privateConstructorUsedError;
-  String? get lastName => throw _privateConstructorUsedError;
-  String? get email => throw _privateConstructorUsedError;
+  String? get firstName;
+  String? get lastName;
+  String? get email;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $EmployeeInfoCopyWith<EmployeeInfo> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $EmployeeInfoCopyWith<$Res> {
-  factory $EmployeeInfoCopyWith(
-          EmployeeInfo value, $Res Function(EmployeeInfo) then) =
-      _$EmployeeInfoCopyWithImpl<$Res, EmployeeInfo>;
-  @useResult
-  $Res call({String? firstName, String? lastName, String? email});
-}
-
-/// @nodoc
-class _$EmployeeInfoCopyWithImpl<$Res, $Val extends EmployeeInfo>
-    implements $EmployeeInfoCopyWith<$Res> {
-  _$EmployeeInfoCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of EmployeeInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $EmployeeInfoCopyWith<EmployeeInfo> get copyWith =>
+      _$EmployeeInfoCopyWithImpl<EmployeeInfo>(
+          this as EmployeeInfo, _$identity);
+
+  /// Serializes this EmployeeInfo to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? firstName = freezed,
-    Object? lastName = freezed,
-    Object? email = freezed,
-  }) {
-    return _then(_value.copyWith(
-      firstName: freezed == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is EmployeeInfo &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
+            (identical(other.email, email) || other.email == email));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, firstName, lastName, email);
+
+  @override
+  String toString() {
+    return 'EmployeeInfo(firstName: $firstName, lastName: $lastName, email: $email)';
   }
 }
 
 /// @nodoc
-abstract class _$$EmployeeInfoImplCopyWith<$Res>
-    implements $EmployeeInfoCopyWith<$Res> {
-  factory _$$EmployeeInfoImplCopyWith(
-          _$EmployeeInfoImpl value, $Res Function(_$EmployeeInfoImpl) then) =
-      __$$EmployeeInfoImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $EmployeeInfoCopyWith<$Res> {
+  factory $EmployeeInfoCopyWith(
+          EmployeeInfo value, $Res Function(EmployeeInfo) _then) =
+      _$EmployeeInfoCopyWithImpl;
   @useResult
   $Res call({String? firstName, String? lastName, String? email});
 }
 
 /// @nodoc
-class __$$EmployeeInfoImplCopyWithImpl<$Res>
-    extends _$EmployeeInfoCopyWithImpl<$Res, _$EmployeeInfoImpl>
-    implements _$$EmployeeInfoImplCopyWith<$Res> {
-  __$$EmployeeInfoImplCopyWithImpl(
-      _$EmployeeInfoImpl _value, $Res Function(_$EmployeeInfoImpl) _then)
-      : super(_value, _then);
+class _$EmployeeInfoCopyWithImpl<$Res> implements $EmployeeInfoCopyWith<$Res> {
+  _$EmployeeInfoCopyWithImpl(this._self, this._then);
 
+  final EmployeeInfo _self;
+  final $Res Function(EmployeeInfo) _then;
+
+  /// Create a copy of EmployeeInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -546,30 +784,189 @@ class __$$EmployeeInfoImplCopyWithImpl<$Res>
     Object? lastName = freezed,
     Object? email = freezed,
   }) {
-    return _then(_$EmployeeInfoImpl(
+    return _then(_self.copyWith(
       firstName: freezed == firstName
-          ? _value.firstName
+          ? _self.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
               as String?,
       lastName: freezed == lastName
-          ? _value.lastName
+          ? _self.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
               as String?,
       email: freezed == email
-          ? _value.email
+          ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [EmployeeInfo].
+extension EmployeeInfoPatterns on EmployeeInfo {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_EmployeeInfo value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeInfo() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_EmployeeInfo value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeInfo():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_EmployeeInfo value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeInfo() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String? firstName, String? lastName, String? email)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeInfo() when $default != null:
+        return $default(_that.firstName, _that.lastName, _that.email);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String? firstName, String? lastName, String? email)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeInfo():
+        return $default(_that.firstName, _that.lastName, _that.email);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String? firstName, String? lastName, String? email)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeInfo() when $default != null:
+        return $default(_that.firstName, _that.lastName, _that.email);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$EmployeeInfoImpl implements _EmployeeInfo {
-  const _$EmployeeInfoImpl({this.firstName, this.lastName, this.email});
-
-  factory _$EmployeeInfoImpl.fromJson(Map<String, dynamic> json) =>
-      _$$EmployeeInfoImplFromJson(json);
+class _EmployeeInfo implements EmployeeInfo {
+  const _EmployeeInfo({this.firstName, this.lastName, this.email});
+  factory _EmployeeInfo.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeInfoFromJson(json);
 
   @override
   final String? firstName;
@@ -578,16 +975,26 @@ class _$EmployeeInfoImpl implements _EmployeeInfo {
   @override
   final String? email;
 
+  /// Create a copy of EmployeeInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'EmployeeInfo(firstName: $firstName, lastName: $lastName, email: $email)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$EmployeeInfoCopyWith<_EmployeeInfo> get copyWith =>
+      __$EmployeeInfoCopyWithImpl<_EmployeeInfo>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$EmployeeInfoToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$EmployeeInfoImpl &&
+            other is _EmployeeInfo &&
             (identical(other.firstName, firstName) ||
                 other.firstName == firstName) &&
             (identical(other.lastName, lastName) ||
@@ -595,41 +1002,59 @@ class _$EmployeeInfoImpl implements _EmployeeInfo {
             (identical(other.email, email) || other.email == email));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, firstName, lastName, email);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$EmployeeInfoImplCopyWith<_$EmployeeInfoImpl> get copyWith =>
-      __$$EmployeeInfoImplCopyWithImpl<_$EmployeeInfoImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$EmployeeInfoImplToJson(
-      this,
-    );
+  String toString() {
+    return 'EmployeeInfo(firstName: $firstName, lastName: $lastName, email: $email)';
   }
 }
 
-abstract class _EmployeeInfo implements EmployeeInfo {
-  const factory _EmployeeInfo(
-      {final String? firstName,
-      final String? lastName,
-      final String? email}) = _$EmployeeInfoImpl;
-
-  factory _EmployeeInfo.fromJson(Map<String, dynamic> json) =
-      _$EmployeeInfoImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$EmployeeInfoCopyWith<$Res>
+    implements $EmployeeInfoCopyWith<$Res> {
+  factory _$EmployeeInfoCopyWith(
+          _EmployeeInfo value, $Res Function(_EmployeeInfo) _then) =
+      __$EmployeeInfoCopyWithImpl;
   @override
-  String? get firstName;
-  @override
-  String? get lastName;
-  @override
-  String? get email;
-  @override
-  @JsonKey(ignore: true)
-  _$$EmployeeInfoImplCopyWith<_$EmployeeInfoImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String? firstName, String? lastName, String? email});
 }
+
+/// @nodoc
+class __$EmployeeInfoCopyWithImpl<$Res>
+    implements _$EmployeeInfoCopyWith<$Res> {
+  __$EmployeeInfoCopyWithImpl(this._self, this._then);
+
+  final _EmployeeInfo _self;
+  final $Res Function(_EmployeeInfo) _then;
+
+  /// Create a copy of EmployeeInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? email = freezed,
+  }) {
+    return _then(_EmployeeInfo(
+      firstName: freezed == firstName
+          ? _self.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _self.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      email: freezed == email
+          ? _self.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

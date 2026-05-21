@@ -6,9 +6,8 @@ part of 'onboarding_record.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$OnboardingRecordImpl _$$OnboardingRecordImplFromJson(
-        Map<String, dynamic> json) =>
-    _$OnboardingRecordImpl(
+_OnboardingRecord _$OnboardingRecordFromJson(Map<String, dynamic> json) =>
+    _OnboardingRecord(
       userId: json['userId'] as String,
       organizationId: json['organizationId'] as String,
       status: json['status'] as String,
@@ -24,8 +23,7 @@ _$OnboardingRecordImpl _$$OnboardingRecordImplFromJson(
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$OnboardingRecordImplToJson(
-        _$OnboardingRecordImpl instance) =>
+Map<String, dynamic> _$OnboardingRecordToJson(_OnboardingRecord instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'organizationId': instance.organizationId,
@@ -37,9 +35,8 @@ Map<String, dynamic> _$$OnboardingRecordImplToJson(
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
-_$OnboardingStepsImpl _$$OnboardingStepsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$OnboardingStepsImpl(
+_OnboardingSteps _$OnboardingStepsFromJson(Map<String, dynamic> json) =>
+    _OnboardingSteps(
       personalDetails:
           StepDetail.fromJson(json['personalDetails'] as Map<String, dynamic>),
       bankDetails:
@@ -52,8 +49,7 @@ _$OnboardingStepsImpl _$$OnboardingStepsImplFromJson(
           DocumentStep.fromJson(json['documents'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$OnboardingStepsImplToJson(
-        _$OnboardingStepsImpl instance) =>
+Map<String, dynamic> _$OnboardingStepsToJson(_OnboardingSteps instance) =>
     <String, dynamic>{
       'personalDetails': instance.personalDetails,
       'bankDetails': instance.bankDetails,
@@ -62,9 +58,8 @@ Map<String, dynamic> _$$OnboardingStepsImplToJson(
       'documents': instance.documents,
     };
 
-_$BankDetailsStepImpl _$$BankDetailsStepImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BankDetailsStepImpl(
+_BankDetailsStep _$BankDetailsStepFromJson(Map<String, dynamic> json) =>
+    _BankDetailsStep(
       status: json['status'] as String,
       bankName: json['bankName'] as String?,
       accountName: json['accountName'] as String?,
@@ -75,8 +70,7 @@ _$BankDetailsStepImpl _$$BankDetailsStepImplFromJson(
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$BankDetailsStepImplToJson(
-        _$BankDetailsStepImpl instance) =>
+Map<String, dynamic> _$BankDetailsStepToJson(_BankDetailsStep instance) =>
     <String, dynamic>{
       'status': instance.status,
       'bankName': instance.bankName,
@@ -86,22 +80,21 @@ Map<String, dynamic> _$$BankDetailsStepImplToJson(
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
-_$StepDetailImpl _$$StepDetailImplFromJson(Map<String, dynamic> json) =>
-    _$StepDetailImpl(
+_StepDetail _$StepDetailFromJson(Map<String, dynamic> json) => _StepDetail(
       status: json['status'] as String,
       updatedAt: json['updatedAt'] == null
           ? null
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$StepDetailImplToJson(_$StepDetailImpl instance) =>
+Map<String, dynamic> _$StepDetailToJson(_StepDetail instance) =>
     <String, dynamic>{
       'status': instance.status,
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
-_$TaxDetailsStepImpl _$$TaxDetailsStepImplFromJson(Map<String, dynamic> json) =>
-    _$TaxDetailsStepImpl(
+_TaxDetailsStep _$TaxDetailsStepFromJson(Map<String, dynamic> json) =>
+    _TaxDetailsStep(
       status: json['status'] as String,
       tfn: json['tfn'] as String?,
       taxScale: json['taxScale'] as String?,
@@ -110,8 +103,7 @@ _$TaxDetailsStepImpl _$$TaxDetailsStepImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$TaxDetailsStepImplToJson(
-        _$TaxDetailsStepImpl instance) =>
+Map<String, dynamic> _$TaxDetailsStepToJson(_TaxDetailsStep instance) =>
     <String, dynamic>{
       'status': instance.status,
       'tfn': instance.tfn,
@@ -119,9 +111,8 @@ Map<String, dynamic> _$$TaxDetailsStepImplToJson(
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
-_$SuperannuationStepImpl _$$SuperannuationStepImplFromJson(
-        Map<String, dynamic> json) =>
-    _$SuperannuationStepImpl(
+_SuperannuationStep _$SuperannuationStepFromJson(Map<String, dynamic> json) =>
+    _SuperannuationStep(
       status: json['status'] as String,
       fundName: json['fundName'] as String?,
       memberNumber: json['memberNumber'] as String?,
@@ -131,8 +122,7 @@ _$SuperannuationStepImpl _$$SuperannuationStepImplFromJson(
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$SuperannuationStepImplToJson(
-        _$SuperannuationStepImpl instance) =>
+Map<String, dynamic> _$SuperannuationStepToJson(_SuperannuationStep instance) =>
     <String, dynamic>{
       'status': instance.status,
       'fundName': instance.fundName,
@@ -141,8 +131,8 @@ Map<String, dynamic> _$$SuperannuationStepImplToJson(
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
-_$DocumentStepImpl _$$DocumentStepImplFromJson(Map<String, dynamic> json) =>
-    _$DocumentStepImpl(
+_DocumentStep _$DocumentStepFromJson(Map<String, dynamic> json) =>
+    _DocumentStep(
       status: json['status'] as String,
       count: (json['count'] as num?)?.toInt() ?? 0,
       updatedAt: json['updatedAt'] == null
@@ -150,16 +140,15 @@ _$DocumentStepImpl _$$DocumentStepImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$DocumentStepImplToJson(_$DocumentStepImpl instance) =>
+Map<String, dynamic> _$DocumentStepToJson(_DocumentStep instance) =>
     <String, dynamic>{
       'status': instance.status,
       'count': instance.count,
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
-_$ProbationDetailsImpl _$$ProbationDetailsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ProbationDetailsImpl(
+_ProbationDetails _$ProbationDetailsFromJson(Map<String, dynamic> json) =>
+    _ProbationDetails(
       startDate: json['startDate'] == null
           ? null
           : DateTime.parse(json['startDate'] as String),
@@ -172,8 +161,7 @@ _$ProbationDetailsImpl _$$ProbationDetailsImplFromJson(
       status: json['status'] as String,
     );
 
-Map<String, dynamic> _$$ProbationDetailsImplToJson(
-        _$ProbationDetailsImpl instance) =>
+Map<String, dynamic> _$ProbationDetailsToJson(_ProbationDetails instance) =>
     <String, dynamic>{
       'startDate': instance.startDate?.toIso8601String(),
       'endDate': instance.endDate?.toIso8601String(),

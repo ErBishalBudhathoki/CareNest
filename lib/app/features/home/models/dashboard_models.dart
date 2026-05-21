@@ -5,7 +5,7 @@ part 'dashboard_models.g.dart';
 
 /// Today's summary data
 @freezed
-class TodaySummary with _$TodaySummary {
+abstract class TodaySummary with _$TodaySummary {
   const factory TodaySummary({
     required int appointmentsToday,
     required int workersOnShift,
@@ -24,7 +24,7 @@ class TodaySummary with _$TodaySummary {
 
 /// Worker location data for live map
 @freezed
-class WorkerLocation with _$WorkerLocation {
+abstract class WorkerLocation with _$WorkerLocation {
   const factory WorkerLocation({
     required String workerId,
     required String workerName,
@@ -56,7 +56,7 @@ enum WorkerStatus {
 
 /// Quick action item
 @freezed
-class QuickAction with _$QuickAction {
+abstract class QuickAction with _$QuickAction {
   const factory QuickAction({
     required String id,
     required String title,
@@ -83,7 +83,7 @@ enum QuickActionType {
 
 /// Compliance alert
 @freezed
-class ComplianceAlert with _$ComplianceAlert {
+abstract class ComplianceAlert with _$ComplianceAlert {
   const factory ComplianceAlert({
     required String id,
     required ComplianceAlertType type,
@@ -119,7 +119,7 @@ enum ComplianceSeverity {
 
 /// Revenue chart data point
 @freezed
-class RevenueDataPoint with _$RevenueDataPoint {
+abstract class RevenueDataPoint with _$RevenueDataPoint {
   const factory RevenueDataPoint({
     required DateTime date,
     required double revenue,
@@ -134,7 +134,7 @@ class RevenueDataPoint with _$RevenueDataPoint {
 
 /// Revenue comparison data
 @freezed
-class RevenueComparison with _$RevenueComparison {
+abstract class RevenueComparison with _$RevenueComparison {
   const factory RevenueComparison({
     required double todayRevenue,
     required double yesterdayRevenue,
@@ -163,7 +163,7 @@ enum TrendDirection {
 
 /// Dashboard state combining all widget data
 @freezed
-class DashboardState with _$DashboardState {
+abstract class DashboardState with _$DashboardState {
   const factory DashboardState({
     TodaySummary? todaySummary,
     List<WorkerLocation>? workerLocations,

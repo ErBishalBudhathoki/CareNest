@@ -4,7 +4,7 @@ part 'certification.freezed.dart';
 part 'certification.g.dart';
 
 @freezed
-class Certification with _$Certification {
+abstract class Certification with _$Certification {
   const factory Certification({
     @JsonKey(name: '_id') String? id,
     required String userId,

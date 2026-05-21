@@ -8,7 +8,7 @@ part 'financial_intelligence_models.g.dart';
 // ============================================================================
 
 @freezed
-class RevenueForecast with _$RevenueForecast {
+abstract class RevenueForecast with _$RevenueForecast {
   const factory RevenueForecast({
     required String organizationId,
     required String generatedAt,
@@ -26,7 +26,7 @@ class RevenueForecast with _$RevenueForecast {
 }
 
 @freezed
-class DailyPrediction with _$DailyPrediction {
+abstract class DailyPrediction with _$DailyPrediction {
   const factory DailyPrediction({
     required String date,
     required double predicted,
@@ -37,7 +37,7 @@ class DailyPrediction with _$DailyPrediction {
 }
 
 @freezed
-class ConfidenceIntervals with _$ConfidenceIntervals {
+abstract class ConfidenceIntervals with _$ConfidenceIntervals {
   const factory ConfidenceIntervals({
     required List<ConfidenceInterval> intervals,
   }) = _ConfidenceIntervals;
@@ -46,7 +46,7 @@ class ConfidenceIntervals with _$ConfidenceIntervals {
 }
 
 @freezed
-class ConfidenceInterval with _$ConfidenceInterval {
+abstract class ConfidenceInterval with _$ConfidenceInterval {
   const factory ConfidenceInterval({
     required String date,
     required double lower,
@@ -58,7 +58,7 @@ class ConfidenceInterval with _$ConfidenceInterval {
 }
 
 @freezed
-class ForecastScenarios with _$ForecastScenarios {
+abstract class ForecastScenarios with _$ForecastScenarios {
   const factory ForecastScenarios({
     required double bestCase,
     required double mostLikely,
@@ -69,7 +69,7 @@ class ForecastScenarios with _$ForecastScenarios {
 }
 
 @freezed
-class ForecastMetrics with _$ForecastMetrics {
+abstract class ForecastMetrics with _$ForecastMetrics {
   const factory ForecastMetrics({
     required double arimaAccuracy,
     required double prophetAccuracy,
@@ -83,7 +83,7 @@ class ForecastMetrics with _$ForecastMetrics {
 }
 
 @freezed
-class RevenueDrivers with _$RevenueDrivers {
+abstract class RevenueDrivers with _$RevenueDrivers {
   const factory RevenueDrivers({
     required String organizationId,
     required int period,
@@ -97,7 +97,7 @@ class RevenueDrivers with _$RevenueDrivers {
 }
 
 @freezed
-class PrimaryDriver with _$PrimaryDriver {
+abstract class PrimaryDriver with _$PrimaryDriver {
   const factory PrimaryDriver({
     required String driver,
     required double impact,
@@ -110,7 +110,7 @@ class PrimaryDriver with _$PrimaryDriver {
 }
 
 @freezed
-class ExternalFactor with _$ExternalFactor {
+abstract class ExternalFactor with _$ExternalFactor {
   const factory ExternalFactor({
     required String factor,
     required double impact,
@@ -126,7 +126,7 @@ class ExternalFactor with _$ExternalFactor {
 // ============================================================================
 
 @freezed
-class PriceOptimization with _$PriceOptimization {
+abstract class PriceOptimization with _$PriceOptimization {
   const factory PriceOptimization({
     required String serviceId,
     required String serviceName,
@@ -143,7 +143,7 @@ class PriceOptimization with _$PriceOptimization {
 }
 
 @freezed
-class PriceImpact with _$PriceImpact {
+abstract class PriceImpact with _$PriceImpact {
   const factory PriceImpact({
     required double demandChange,
     required double revenueChange,
@@ -154,7 +154,7 @@ class PriceImpact with _$PriceImpact {
 }
 
 @freezed
-class ABTest with _$ABTest {
+abstract class ABTest with _$ABTest {
   const factory ABTest({
     required String testId,
     required String organizationId,
@@ -171,7 +171,7 @@ class ABTest with _$ABTest {
 }
 
 @freezed
-class ABVariant with _$ABVariant {
+abstract class ABVariant with _$ABVariant {
   const factory ABVariant({
     required String name,
     required double price,
@@ -183,7 +183,7 @@ class ABVariant with _$ABVariant {
 }
 
 @freezed
-class ABMetrics with _$ABMetrics {
+abstract class ABMetrics with _$ABMetrics {
   const factory ABMetrics({
     required int conversions,
     required double revenue,
@@ -194,7 +194,7 @@ class ABMetrics with _$ABMetrics {
 }
 
 @freezed
-class PricingRecommendations with _$PricingRecommendations {
+abstract class PricingRecommendations with _$PricingRecommendations {
   const factory PricingRecommendations({
     required String serviceId,
     required String analyzedAt,
@@ -209,7 +209,7 @@ class PricingRecommendations with _$PricingRecommendations {
 }
 
 @freezed
-class CurrentPricing with _$CurrentPricing {
+abstract class CurrentPricing with _$CurrentPricing {
   const factory CurrentPricing({
     required double price,
     required double demand,
@@ -221,7 +221,7 @@ class CurrentPricing with _$CurrentPricing {
 }
 
 @freezed
-class PricingStrategy with _$PricingStrategy {
+abstract class PricingStrategy with _$PricingStrategy {
   const factory PricingStrategy({
     required String strategy,
     required double recommendedPrice,
@@ -236,7 +236,7 @@ class PricingStrategy with _$PricingStrategy {
 }
 
 @freezed
-class MarketInsights with _$MarketInsights {
+abstract class MarketInsights with _$MarketInsights {
   const factory MarketInsights({
     required CompetitorPricing competitorPricing,
     required double demandElasticity,
@@ -247,7 +247,7 @@ class MarketInsights with _$MarketInsights {
 }
 
 @freezed
-class CompetitorPricing with _$CompetitorPricing {
+abstract class CompetitorPricing with _$CompetitorPricing {
   const factory CompetitorPricing({
     required double average,
     required List<double> range,
@@ -262,7 +262,7 @@ class CompetitorPricing with _$CompetitorPricing {
 // ============================================================================
 
 @freezed
-class Invoice with _$Invoice {
+abstract class Invoice with _$Invoice {
   const factory Invoice({
     required String invoiceId,
     required String organizationId,
@@ -283,7 +283,7 @@ class Invoice with _$Invoice {
 }
 
 @freezed
-class LineItem with _$LineItem {
+abstract class LineItem with _$LineItem {
   const factory LineItem({
     required String description,
     required int quantity,
@@ -295,7 +295,7 @@ class LineItem with _$LineItem {
 }
 
 @freezed
-class ValidationResult with _$ValidationResult {
+abstract class ValidationResult with _$ValidationResult {
   const factory ValidationResult({
     required bool passed,
     required List<String> errors,
@@ -307,7 +307,7 @@ class ValidationResult with _$ValidationResult {
 }
 
 @freezed
-class ValidationCheck with _$ValidationCheck {
+abstract class ValidationCheck with _$ValidationCheck {
   const factory ValidationCheck({
     required String check,
     required bool passed,
@@ -319,7 +319,7 @@ class ValidationCheck with _$ValidationCheck {
 }
 
 @freezed
-class BillingAnomaly with _$BillingAnomaly {
+abstract class BillingAnomaly with _$BillingAnomaly {
   const factory BillingAnomaly({
     required String type,
     required String severity,
@@ -331,7 +331,7 @@ class BillingAnomaly with _$BillingAnomaly {
 }
 
 @freezed
-class CreditNote with _$CreditNote {
+abstract class CreditNote with _$CreditNote {
   const factory CreditNote({
     required String creditNoteId,
     required String invoiceId,
@@ -350,7 +350,7 @@ class CreditNote with _$CreditNote {
 }
 
 @freezed
-class CreditNoteWorkflow with _$CreditNoteWorkflow {
+abstract class CreditNoteWorkflow with _$CreditNoteWorkflow {
   const factory CreditNoteWorkflow({
     required bool requiresApproval,
     required String approvalLevel,
@@ -361,7 +361,7 @@ class CreditNoteWorkflow with _$CreditNoteWorkflow {
 }
 
 @freezed
-class AuditEntry with _$AuditEntry {
+abstract class AuditEntry with _$AuditEntry {
   const factory AuditEntry({
     required String action,
     required String timestamp,
@@ -376,7 +376,7 @@ class AuditEntry with _$AuditEntry {
 // ============================================================================
 
 @freezed
-class CashFlowForecast with _$CashFlowForecast {
+abstract class CashFlowForecast with _$CashFlowForecast {
   const factory CashFlowForecast({
     required String organizationId,
     required int horizon,
@@ -392,7 +392,7 @@ class CashFlowForecast with _$CashFlowForecast {
 }
 
 @freezed
-class CashPosition with _$CashPosition {
+abstract class CashPosition with _$CashPosition {
   const factory CashPosition({
     required double cash,
     required double receivables,
@@ -404,7 +404,7 @@ class CashPosition with _$CashPosition {
 }
 
 @freezed
-class DailyCashFlow with _$DailyCashFlow {
+abstract class DailyCashFlow with _$DailyCashFlow {
   const factory DailyCashFlow({
     required String date,
     required double openingBalance,
@@ -419,7 +419,7 @@ class DailyCashFlow with _$DailyCashFlow {
 }
 
 @freezed
-class CashFlowSummary with _$CashFlowSummary {
+abstract class CashFlowSummary with _$CashFlowSummary {
   const factory CashFlowSummary({
     required double projectedInflows,
     required double projectedOutflows,
@@ -432,7 +432,7 @@ class CashFlowSummary with _$CashFlowSummary {
 }
 
 @freezed
-class CashFlowRisk with _$CashFlowRisk {
+abstract class CashFlowRisk with _$CashFlowRisk {
   const factory CashFlowRisk({
     required String risk,
     required String level,
@@ -444,7 +444,7 @@ class CashFlowRisk with _$CashFlowRisk {
 }
 
 @freezed
-class PaymentPrediction with _$PaymentPrediction {
+abstract class PaymentPrediction with _$PaymentPrediction {
   const factory PaymentPrediction({
     required String invoiceId,
     required String clientId,
@@ -466,7 +466,7 @@ class PaymentPrediction with _$PaymentPrediction {
 // ============================================================================
 
 @freezed
-class FinancialDashboard with _$FinancialDashboard {
+abstract class FinancialDashboard with _$FinancialDashboard {
   const factory FinancialDashboard({
     required String organizationId,
     required String period,
@@ -482,7 +482,7 @@ class FinancialDashboard with _$FinancialDashboard {
 }
 
 @freezed
-class KPI with _$KPI {
+abstract class KPI with _$KPI {
   const factory KPI({
     required double value,
     required double change,
@@ -493,7 +493,7 @@ class KPI with _$KPI {
 }
 
 @freezed
-class RevenueByService with _$RevenueByService {
+abstract class RevenueByService with _$RevenueByService {
   const factory RevenueByService({
     required String service,
     required double revenue,
@@ -504,7 +504,7 @@ class RevenueByService with _$RevenueByService {
 }
 
 @freezed
-class ClientProfitability with _$ClientProfitability {
+abstract class ClientProfitability with _$ClientProfitability {
   const factory ClientProfitability({
     required String clientId,
     required double revenue,
@@ -517,7 +517,7 @@ class ClientProfitability with _$ClientProfitability {
 }
 
 @freezed
-class CostAnalysis with _$CostAnalysis {
+abstract class CostAnalysis with _$CostAnalysis {
   const factory CostAnalysis({
     required CostCategory labor,
     required CostCategory overhead,
@@ -529,7 +529,7 @@ class CostAnalysis with _$CostAnalysis {
 }
 
 @freezed
-class CostCategory with _$CostCategory {
+abstract class CostCategory with _$CostCategory {
   const factory CostCategory({
     required double amount,
     required double percentage,
@@ -539,7 +539,7 @@ class CostCategory with _$CostCategory {
 }
 
 @freezed
-class TrendData with _$TrendData {
+abstract class TrendData with _$TrendData {
   const factory TrendData({
     required String month,
     required double revenue,
@@ -554,7 +554,7 @@ class TrendData with _$TrendData {
 // ============================================================================
 
 @freezed
-class Budget with _$Budget {
+abstract class Budget with _$Budget {
   const factory Budget({
     required String budgetId,
     required String organizationId,
@@ -571,7 +571,7 @@ class Budget with _$Budget {
 }
 
 @freezed
-class BudgetCategory with _$BudgetCategory {
+abstract class BudgetCategory with _$BudgetCategory {
   const factory BudgetCategory({
     required double total,
     Map<String, dynamic>? breakdown,
@@ -581,7 +581,7 @@ class BudgetCategory with _$BudgetCategory {
 }
 
 @freezed
-class BudgetScenarios with _$BudgetScenarios {
+abstract class BudgetScenarios with _$BudgetScenarios {
   const factory BudgetScenarios({
     required BudgetScenario best,
     required BudgetScenario base,
@@ -592,7 +592,7 @@ class BudgetScenarios with _$BudgetScenarios {
 }
 
 @freezed
-class BudgetScenario with _$BudgetScenario {
+abstract class BudgetScenario with _$BudgetScenario {
   const factory BudgetScenario({
     required double revenue,
     required double profit,
@@ -606,7 +606,7 @@ class BudgetScenario with _$BudgetScenario {
 // ============================================================================
 
 @freezed
-class Payment with _$Payment {
+abstract class Payment with _$Payment {
   const factory Payment({
     required String paymentId,
     required double amount,
@@ -622,7 +622,7 @@ class Payment with _$Payment {
 }
 
 @freezed
-class PaymentRouting with _$PaymentRouting {
+abstract class PaymentRouting with _$PaymentRouting {
   const factory PaymentRouting({
     required String processor,
     required String gateway,
@@ -633,7 +633,7 @@ class PaymentRouting with _$PaymentRouting {
 }
 
 @freezed
-class PaymentFees with _$PaymentFees {
+abstract class PaymentFees with _$PaymentFees {
   const factory PaymentFees({
     required double processing,
     required double gateway,
@@ -648,7 +648,7 @@ class PaymentFees with _$PaymentFees {
 // ============================================================================
 
 @freezed
-class ComplianceCheck with _$ComplianceCheck {
+abstract class ComplianceCheck with _$ComplianceCheck {
   const factory ComplianceCheck({
     required String organizationId,
     required String checkedAt,
@@ -665,7 +665,7 @@ class ComplianceCheck with _$ComplianceCheck {
 }
 
 @freezed
-class ComplianceArea with _$ComplianceArea {
+abstract class ComplianceArea with _$ComplianceArea {
   const factory ComplianceArea({
     required String status,
     required List<ComplianceAreaCheck> checks,
@@ -675,7 +675,7 @@ class ComplianceArea with _$ComplianceArea {
 }
 
 @freezed
-class ComplianceAreaCheck with _$ComplianceAreaCheck {
+abstract class ComplianceAreaCheck with _$ComplianceAreaCheck {
   const factory ComplianceAreaCheck({
     required String check,
     required bool passed,
@@ -689,7 +689,7 @@ class ComplianceAreaCheck with _$ComplianceAreaCheck {
 // ============================================================================
 
 @freezed
-class ClientCredit with _$ClientCredit {
+abstract class ClientCredit with _$ClientCredit {
   const factory ClientCredit({
     required String clientId,
     required String organizationId,
@@ -704,7 +704,7 @@ class ClientCredit with _$ClientCredit {
 }
 
 @freezed
-class CreditCurrent with _$CreditCurrent {
+abstract class CreditCurrent with _$CreditCurrent {
   const factory CreditCurrent({
     required double limit,
     required double utilized,
@@ -716,7 +716,7 @@ class CreditCurrent with _$CreditCurrent {
 }
 
 @freezed
-class CreditRecommended with _$CreditRecommended {
+abstract class CreditRecommended with _$CreditRecommended {
   const factory CreditRecommended({
     required double limit,
     required String reasoning,
@@ -727,7 +727,7 @@ class CreditRecommended with _$CreditRecommended {
 }
 
 @freezed
-class PaymentHistory with _$PaymentHistory {
+abstract class PaymentHistory with _$PaymentHistory {
   const factory PaymentHistory({
     required int onTime,
     required int late,
@@ -738,7 +738,7 @@ class PaymentHistory with _$PaymentHistory {
 }
 
 @freezed
-class ClientLifetimeValue with _$ClientLifetimeValue {
+abstract class ClientLifetimeValue with _$ClientLifetimeValue {
   const factory ClientLifetimeValue({
     required String clientId,
     required String organizationId,
@@ -753,7 +753,7 @@ class ClientLifetimeValue with _$ClientLifetimeValue {
 }
 
 @freezed
-class CLVCurrent with _$CLVCurrent {
+abstract class CLVCurrent with _$CLVCurrent {
   const factory CLVCurrent({
     required double totalRevenue,
     required double totalProfit,
@@ -764,7 +764,7 @@ class CLVCurrent with _$CLVCurrent {
 }
 
 @freezed
-class CLVPredicted with _$CLVPredicted {
+abstract class CLVPredicted with _$CLVPredicted {
   const factory CLVPredicted({
     required double lifetimeValue,
     required double remainingValue,
@@ -776,7 +776,7 @@ class CLVPredicted with _$CLVPredicted {
 }
 
 @freezed
-class UpsellOpportunity with _$UpsellOpportunity {
+abstract class UpsellOpportunity with _$UpsellOpportunity {
   const factory UpsellOpportunity({
     required String opportunity,
     required double potential,
@@ -790,7 +790,7 @@ class UpsellOpportunity with _$UpsellOpportunity {
 // ============================================================================
 
 @freezed
-class ExecutiveReport with _$ExecutiveReport {
+abstract class ExecutiveReport with _$ExecutiveReport {
   const factory ExecutiveReport({
     required String organizationId,
     required String period,
@@ -806,7 +806,7 @@ class ExecutiveReport with _$ExecutiveReport {
 }
 
 @freezed
-class ProfitAndLoss with _$ProfitAndLoss {
+abstract class ProfitAndLoss with _$ProfitAndLoss {
   const factory ProfitAndLoss({
     required double revenue,
     required double costOfSales,
@@ -819,7 +819,7 @@ class ProfitAndLoss with _$ProfitAndLoss {
 }
 
 @freezed
-class BalanceSheet with _$BalanceSheet {
+abstract class BalanceSheet with _$BalanceSheet {
   const factory BalanceSheet({
     required BalanceSheetAssets assets,
     required BalanceSheetLiabilities liabilities,
@@ -830,7 +830,7 @@ class BalanceSheet with _$BalanceSheet {
 }
 
 @freezed
-class BalanceSheetAssets with _$BalanceSheetAssets {
+abstract class BalanceSheetAssets with _$BalanceSheetAssets {
   const factory BalanceSheetAssets({
     required double current,
     required double fixed,
@@ -841,7 +841,7 @@ class BalanceSheetAssets with _$BalanceSheetAssets {
 }
 
 @freezed
-class BalanceSheetLiabilities with _$BalanceSheetLiabilities {
+abstract class BalanceSheetLiabilities with _$BalanceSheetLiabilities {
   const factory BalanceSheetLiabilities({
     required double current,
     required double longTerm,
@@ -852,7 +852,7 @@ class BalanceSheetLiabilities with _$BalanceSheetLiabilities {
 }
 
 @freezed
-class CashFlowStatement with _$CashFlowStatement {
+abstract class CashFlowStatement with _$CashFlowStatement {
   const factory CashFlowStatement({
     required double operating,
     required double investing,

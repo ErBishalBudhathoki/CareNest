@@ -6,7 +6,7 @@ import 'package:carenest/app/features/training_compliance/repositories/training_
 part 'training_viewmodel.freezed.dart';
 
 @freezed
-class TrainingState with _$TrainingState {
+abstract class TrainingState with _$TrainingState {
   const factory TrainingState({
     @Default(false) bool isLoading,
     @Default([]) List<TrainingModule> modules,

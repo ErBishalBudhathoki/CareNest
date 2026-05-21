@@ -6,8 +6,8 @@ part of 'dashboard_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TodaySummaryImpl _$$TodaySummaryImplFromJson(Map<String, dynamic> json) =>
-    _$TodaySummaryImpl(
+_TodaySummary _$TodaySummaryFromJson(Map<String, dynamic> json) =>
+    _TodaySummary(
       appointmentsToday: (json['appointmentsToday'] as num).toInt(),
       workersOnShift: (json['workersOnShift'] as num).toInt(),
       revenueToday: (json['revenueToday'] as num).toDouble(),
@@ -21,7 +21,7 @@ _$TodaySummaryImpl _$$TodaySummaryImplFromJson(Map<String, dynamic> json) =>
       availableWorkers: (json['availableWorkers'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$$TodaySummaryImplToJson(_$TodaySummaryImpl instance) =>
+Map<String, dynamic> _$TodaySummaryToJson(_TodaySummary instance) =>
     <String, dynamic>{
       'appointmentsToday': instance.appointmentsToday,
       'workersOnShift': instance.workersOnShift,
@@ -34,8 +34,8 @@ Map<String, dynamic> _$$TodaySummaryImplToJson(_$TodaySummaryImpl instance) =>
       'availableWorkers': instance.availableWorkers,
     };
 
-_$WorkerLocationImpl _$$WorkerLocationImplFromJson(Map<String, dynamic> json) =>
-    _$WorkerLocationImpl(
+_WorkerLocation _$WorkerLocationFromJson(Map<String, dynamic> json) =>
+    _WorkerLocation(
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
       workerEmail: json['workerEmail'] as String,
@@ -51,8 +51,7 @@ _$WorkerLocationImpl _$$WorkerLocationImplFromJson(Map<String, dynamic> json) =>
       heading: (json['heading'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$$WorkerLocationImplToJson(
-        _$WorkerLocationImpl instance) =>
+Map<String, dynamic> _$WorkerLocationToJson(_WorkerLocation instance) =>
     <String, dynamic>{
       'workerId': instance.workerId,
       'workerName': instance.workerName,
@@ -77,8 +76,7 @@ const _$WorkerStatusEnumMap = {
   WorkerStatus.offline: 'offline',
 };
 
-_$QuickActionImpl _$$QuickActionImplFromJson(Map<String, dynamic> json) =>
-    _$QuickActionImpl(
+_QuickAction _$QuickActionFromJson(Map<String, dynamic> json) => _QuickAction(
       id: json['id'] as String,
       title: json['title'] as String,
       icon: json['icon'] as String,
@@ -88,7 +86,7 @@ _$QuickActionImpl _$$QuickActionImplFromJson(Map<String, dynamic> json) =>
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$QuickActionImplToJson(_$QuickActionImpl instance) =>
+Map<String, dynamic> _$QuickActionToJson(_QuickAction instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
@@ -108,9 +106,8 @@ const _$QuickActionTypeEnumMap = {
   QuickActionType.manageCompliance: 'manageCompliance',
 };
 
-_$ComplianceAlertImpl _$$ComplianceAlertImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceAlertImpl(
+_ComplianceAlert _$ComplianceAlertFromJson(Map<String, dynamic> json) =>
+    _ComplianceAlert(
       id: json['id'] as String,
       type: $enumDecode(_$ComplianceAlertTypeEnumMap, json['type']),
       title: json['title'] as String,
@@ -124,8 +121,7 @@ _$ComplianceAlertImpl _$$ComplianceAlertImplFromJson(
       actionRoute: json['actionRoute'] as String?,
     );
 
-Map<String, dynamic> _$$ComplianceAlertImplToJson(
-        _$ComplianceAlertImpl instance) =>
+Map<String, dynamic> _$ComplianceAlertToJson(_ComplianceAlert instance) =>
     <String, dynamic>{
       'id': instance.id,
       'type': _$ComplianceAlertTypeEnumMap[instance.type]!,
@@ -153,9 +149,8 @@ const _$ComplianceSeverityEnumMap = {
   ComplianceSeverity.critical: 'critical',
 };
 
-_$RevenueDataPointImpl _$$RevenueDataPointImplFromJson(
-        Map<String, dynamic> json) =>
-    _$RevenueDataPointImpl(
+_RevenueDataPoint _$RevenueDataPointFromJson(Map<String, dynamic> json) =>
+    _RevenueDataPoint(
       date: DateTime.parse(json['date'] as String),
       revenue: (json['revenue'] as num).toDouble(),
       expenses: (json['expenses'] as num).toDouble(),
@@ -163,8 +158,7 @@ _$RevenueDataPointImpl _$$RevenueDataPointImplFromJson(
       label: json['label'] as String?,
     );
 
-Map<String, dynamic> _$$RevenueDataPointImplToJson(
-        _$RevenueDataPointImpl instance) =>
+Map<String, dynamic> _$RevenueDataPointToJson(_RevenueDataPoint instance) =>
     <String, dynamic>{
       'date': instance.date.toIso8601String(),
       'revenue': instance.revenue,
@@ -173,9 +167,8 @@ Map<String, dynamic> _$$RevenueDataPointImplToJson(
       'label': instance.label,
     };
 
-_$RevenueComparisonImpl _$$RevenueComparisonImplFromJson(
-        Map<String, dynamic> json) =>
-    _$RevenueComparisonImpl(
+_RevenueComparison _$RevenueComparisonFromJson(Map<String, dynamic> json) =>
+    _RevenueComparison(
       todayRevenue: (json['todayRevenue'] as num).toDouble(),
       yesterdayRevenue: (json['yesterdayRevenue'] as num).toDouble(),
       weekToDateRevenue: (json['weekToDateRevenue'] as num).toDouble(),
@@ -196,8 +189,7 @@ _$RevenueComparisonImpl _$$RevenueComparisonImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$RevenueComparisonImplToJson(
-        _$RevenueComparisonImpl instance) =>
+Map<String, dynamic> _$RevenueComparisonToJson(_RevenueComparison instance) =>
     <String, dynamic>{
       'todayRevenue': instance.todayRevenue,
       'yesterdayRevenue': instance.yesterdayRevenue,
@@ -219,8 +211,8 @@ const _$TrendDirectionEnumMap = {
   TrendDirection.flat: 'flat',
 };
 
-_$DashboardStateImpl _$$DashboardStateImplFromJson(Map<String, dynamic> json) =>
-    _$DashboardStateImpl(
+_DashboardState _$DashboardStateFromJson(Map<String, dynamic> json) =>
+    _DashboardState(
       todaySummary: json['todaySummary'] == null
           ? null
           : TodaySummary.fromJson(json['todaySummary'] as Map<String, dynamic>),
@@ -244,8 +236,7 @@ _$DashboardStateImpl _$$DashboardStateImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['lastRefreshed'] as String),
     );
 
-Map<String, dynamic> _$$DashboardStateImplToJson(
-        _$DashboardStateImpl instance) =>
+Map<String, dynamic> _$DashboardStateToJson(_DashboardState instance) =>
     <String, dynamic>{
       'todaySummary': instance.todaySummary,
       'workerLocations': instance.workerLocations,

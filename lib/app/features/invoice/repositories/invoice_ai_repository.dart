@@ -87,6 +87,27 @@ class InvoiceAIRepository {
     }
   }
 
+  /// Generate invoice from free text prompt
+  Future<AutoGenerateResult> generateFromText({
+    required String organizationId,
+    required String textNote,
+  }) async {
+    try {
+      final response = await _apiMethod.generateFromText(
+        organizationId: organizationId,
+        textNote: textNote,
+      );
+
+      if (response['success'] == true && response['data'] != null) {
+        return AutoGenerateResult.fromJson(response['data']);
+      }
+
+      throw Exception(response['message'] ?? 'Failed to generate invoice from text');
+    } catch (e) {
+      throw Exception('Error generating invoice from text: $e');
+    }
+  }
+
   /// Get smart reminders for an invoice
   Future<List<SmartReminder>> getSmartReminders({
     required String invoiceId,
