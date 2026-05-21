@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,43 +9,89 @@ part of 'notification_preferences.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-NotificationPreferences _$NotificationPreferencesFromJson(
-    Map<String, dynamic> json) {
-  return _NotificationPreferences.fromJson(json);
-}
 
 /// @nodoc
 mixin _$NotificationPreferences {
-  String get userId => throw _privateConstructorUsedError;
-  Map<NotificationCategory, bool> get categoryEnabled =>
-      throw _privateConstructorUsedError;
-  Map<NotificationCategory, List<NotificationChannel>> get categoryChannels =>
-      throw _privateConstructorUsedError;
-  QuietHours get quietHours => throw _privateConstructorUsedError;
-  bool get smartTimingEnabled => throw _privateConstructorUsedError;
-  bool get geofenceEnabled => throw _privateConstructorUsedError;
-  double get geofenceRadiusKm => throw _privateConstructorUsedError;
-  bool get soundEnabled => throw _privateConstructorUsedError;
-  bool get vibrationEnabled => throw _privateConstructorUsedError;
-  bool get badgeEnabled => throw _privateConstructorUsedError;
-  DateTime? get lastUpdated => throw _privateConstructorUsedError;
+  String get userId;
+  Map<NotificationCategory, bool> get categoryEnabled;
+  Map<NotificationCategory, List<NotificationChannel>> get categoryChannels;
+  QuietHours get quietHours;
+  bool get smartTimingEnabled;
+  bool get geofenceEnabled;
+  double get geofenceRadiusKm;
+  bool get soundEnabled;
+  bool get vibrationEnabled;
+  bool get badgeEnabled;
+  DateTime? get lastUpdated;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  /// Create a copy of NotificationPreferences
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $NotificationPreferencesCopyWith<NotificationPreferences> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$NotificationPreferencesCopyWithImpl<NotificationPreferences>(
+          this as NotificationPreferences, _$identity);
+
+  /// Serializes this NotificationPreferences to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is NotificationPreferences &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            const DeepCollectionEquality()
+                .equals(other.categoryEnabled, categoryEnabled) &&
+            const DeepCollectionEquality()
+                .equals(other.categoryChannels, categoryChannels) &&
+            (identical(other.quietHours, quietHours) ||
+                other.quietHours == quietHours) &&
+            (identical(other.smartTimingEnabled, smartTimingEnabled) ||
+                other.smartTimingEnabled == smartTimingEnabled) &&
+            (identical(other.geofenceEnabled, geofenceEnabled) ||
+                other.geofenceEnabled == geofenceEnabled) &&
+            (identical(other.geofenceRadiusKm, geofenceRadiusKm) ||
+                other.geofenceRadiusKm == geofenceRadiusKm) &&
+            (identical(other.soundEnabled, soundEnabled) ||
+                other.soundEnabled == soundEnabled) &&
+            (identical(other.vibrationEnabled, vibrationEnabled) ||
+                other.vibrationEnabled == vibrationEnabled) &&
+            (identical(other.badgeEnabled, badgeEnabled) ||
+                other.badgeEnabled == badgeEnabled) &&
+            (identical(other.lastUpdated, lastUpdated) ||
+                other.lastUpdated == lastUpdated));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      userId,
+      const DeepCollectionEquality().hash(categoryEnabled),
+      const DeepCollectionEquality().hash(categoryChannels),
+      quietHours,
+      smartTimingEnabled,
+      geofenceEnabled,
+      geofenceRadiusKm,
+      soundEnabled,
+      vibrationEnabled,
+      badgeEnabled,
+      lastUpdated);
+
+  @override
+  String toString() {
+    return 'NotificationPreferences(userId: $userId, categoryEnabled: $categoryEnabled, categoryChannels: $categoryChannels, quietHours: $quietHours, smartTimingEnabled: $smartTimingEnabled, geofenceEnabled: $geofenceEnabled, geofenceRadiusKm: $geofenceRadiusKm, soundEnabled: $soundEnabled, vibrationEnabled: $vibrationEnabled, badgeEnabled: $badgeEnabled, lastUpdated: $lastUpdated)';
+  }
 }
 
 /// @nodoc
-abstract class $NotificationPreferencesCopyWith<$Res> {
+abstract mixin class $NotificationPreferencesCopyWith<$Res> {
   factory $NotificationPreferencesCopyWith(NotificationPreferences value,
-          $Res Function(NotificationPreferences) then) =
-      _$NotificationPreferencesCopyWithImpl<$Res, NotificationPreferences>;
+          $Res Function(NotificationPreferences) _then) =
+      _$NotificationPreferencesCopyWithImpl;
   @useResult
   $Res call(
       {String userId,
@@ -64,16 +110,15 @@ abstract class $NotificationPreferencesCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$NotificationPreferencesCopyWithImpl<$Res,
-        $Val extends NotificationPreferences>
+class _$NotificationPreferencesCopyWithImpl<$Res>
     implements $NotificationPreferencesCopyWith<$Res> {
-  _$NotificationPreferencesCopyWithImpl(this._value, this._then);
+  _$NotificationPreferencesCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final NotificationPreferences _self;
+  final $Res Function(NotificationPreferences) _then;
 
+  /// Create a copy of NotificationPreferences
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -89,167 +134,298 @@ class _$NotificationPreferencesCopyWithImpl<$Res,
     Object? badgeEnabled = null,
     Object? lastUpdated = freezed,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       categoryEnabled: null == categoryEnabled
-          ? _value.categoryEnabled
+          ? _self.categoryEnabled
           : categoryEnabled // ignore: cast_nullable_to_non_nullable
               as Map<NotificationCategory, bool>,
       categoryChannels: null == categoryChannels
-          ? _value.categoryChannels
+          ? _self.categoryChannels
           : categoryChannels // ignore: cast_nullable_to_non_nullable
               as Map<NotificationCategory, List<NotificationChannel>>,
       quietHours: null == quietHours
-          ? _value.quietHours
+          ? _self.quietHours
           : quietHours // ignore: cast_nullable_to_non_nullable
               as QuietHours,
       smartTimingEnabled: null == smartTimingEnabled
-          ? _value.smartTimingEnabled
+          ? _self.smartTimingEnabled
           : smartTimingEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
       geofenceEnabled: null == geofenceEnabled
-          ? _value.geofenceEnabled
+          ? _self.geofenceEnabled
           : geofenceEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
       geofenceRadiusKm: null == geofenceRadiusKm
-          ? _value.geofenceRadiusKm
+          ? _self.geofenceRadiusKm
           : geofenceRadiusKm // ignore: cast_nullable_to_non_nullable
               as double,
       soundEnabled: null == soundEnabled
-          ? _value.soundEnabled
+          ? _self.soundEnabled
           : soundEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
       vibrationEnabled: null == vibrationEnabled
-          ? _value.vibrationEnabled
+          ? _self.vibrationEnabled
           : vibrationEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
       badgeEnabled: null == badgeEnabled
-          ? _value.badgeEnabled
+          ? _self.badgeEnabled
           : badgeEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
       lastUpdated: freezed == lastUpdated
-          ? _value.lastUpdated
+          ? _self.lastUpdated
           : lastUpdated // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-    ) as $Val);
+    ));
   }
 
+  /// Create a copy of NotificationPreferences
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $QuietHoursCopyWith<$Res> get quietHours {
-    return $QuietHoursCopyWith<$Res>(_value.quietHours, (value) {
-      return _then(_value.copyWith(quietHours: value) as $Val);
+    return $QuietHoursCopyWith<$Res>(_self.quietHours, (value) {
+      return _then(_self.copyWith(quietHours: value));
     });
   }
 }
 
-/// @nodoc
-abstract class _$$NotificationPreferencesImplCopyWith<$Res>
-    implements $NotificationPreferencesCopyWith<$Res> {
-  factory _$$NotificationPreferencesImplCopyWith(
-          _$NotificationPreferencesImpl value,
-          $Res Function(_$NotificationPreferencesImpl) then) =
-      __$$NotificationPreferencesImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String userId,
-      Map<NotificationCategory, bool> categoryEnabled,
-      Map<NotificationCategory, List<NotificationChannel>> categoryChannels,
-      QuietHours quietHours,
-      bool smartTimingEnabled,
-      bool geofenceEnabled,
-      double geofenceRadiusKm,
-      bool soundEnabled,
-      bool vibrationEnabled,
-      bool badgeEnabled,
-      DateTime? lastUpdated});
+/// Adds pattern-matching-related methods to [NotificationPreferences].
+extension NotificationPreferencesPatterns on NotificationPreferences {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-  @override
-  $QuietHoursCopyWith<$Res> get quietHours;
-}
-
-/// @nodoc
-class __$$NotificationPreferencesImplCopyWithImpl<$Res>
-    extends _$NotificationPreferencesCopyWithImpl<$Res,
-        _$NotificationPreferencesImpl>
-    implements _$$NotificationPreferencesImplCopyWith<$Res> {
-  __$$NotificationPreferencesImplCopyWithImpl(
-      _$NotificationPreferencesImpl _value,
-      $Res Function(_$NotificationPreferencesImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userId = null,
-    Object? categoryEnabled = null,
-    Object? categoryChannels = null,
-    Object? quietHours = null,
-    Object? smartTimingEnabled = null,
-    Object? geofenceEnabled = null,
-    Object? geofenceRadiusKm = null,
-    Object? soundEnabled = null,
-    Object? vibrationEnabled = null,
-    Object? badgeEnabled = null,
-    Object? lastUpdated = freezed,
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_NotificationPreferences value)? $default, {
+    required TResult orElse(),
   }) {
-    return _then(_$NotificationPreferencesImpl(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      categoryEnabled: null == categoryEnabled
-          ? _value._categoryEnabled
-          : categoryEnabled // ignore: cast_nullable_to_non_nullable
-              as Map<NotificationCategory, bool>,
-      categoryChannels: null == categoryChannels
-          ? _value._categoryChannels
-          : categoryChannels // ignore: cast_nullable_to_non_nullable
-              as Map<NotificationCategory, List<NotificationChannel>>,
-      quietHours: null == quietHours
-          ? _value.quietHours
-          : quietHours // ignore: cast_nullable_to_non_nullable
-              as QuietHours,
-      smartTimingEnabled: null == smartTimingEnabled
-          ? _value.smartTimingEnabled
-          : smartTimingEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      geofenceEnabled: null == geofenceEnabled
-          ? _value.geofenceEnabled
-          : geofenceEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      geofenceRadiusKm: null == geofenceRadiusKm
-          ? _value.geofenceRadiusKm
-          : geofenceRadiusKm // ignore: cast_nullable_to_non_nullable
-              as double,
-      soundEnabled: null == soundEnabled
-          ? _value.soundEnabled
-          : soundEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      vibrationEnabled: null == vibrationEnabled
-          ? _value.vibrationEnabled
-          : vibrationEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      badgeEnabled: null == badgeEnabled
-          ? _value.badgeEnabled
-          : badgeEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      lastUpdated: freezed == lastUpdated
-          ? _value.lastUpdated
-          : lastUpdated // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    final _that = this;
+    switch (_that) {
+      case _NotificationPreferences() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_NotificationPreferences value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationPreferences():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_NotificationPreferences value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationPreferences() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String userId,
+            Map<NotificationCategory, bool> categoryEnabled,
+            Map<NotificationCategory, List<NotificationChannel>>
+                categoryChannels,
+            QuietHours quietHours,
+            bool smartTimingEnabled,
+            bool geofenceEnabled,
+            double geofenceRadiusKm,
+            bool soundEnabled,
+            bool vibrationEnabled,
+            bool badgeEnabled,
+            DateTime? lastUpdated)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationPreferences() when $default != null:
+        return $default(
+            _that.userId,
+            _that.categoryEnabled,
+            _that.categoryChannels,
+            _that.quietHours,
+            _that.smartTimingEnabled,
+            _that.geofenceEnabled,
+            _that.geofenceRadiusKm,
+            _that.soundEnabled,
+            _that.vibrationEnabled,
+            _that.badgeEnabled,
+            _that.lastUpdated);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String userId,
+            Map<NotificationCategory, bool> categoryEnabled,
+            Map<NotificationCategory, List<NotificationChannel>>
+                categoryChannels,
+            QuietHours quietHours,
+            bool smartTimingEnabled,
+            bool geofenceEnabled,
+            double geofenceRadiusKm,
+            bool soundEnabled,
+            bool vibrationEnabled,
+            bool badgeEnabled,
+            DateTime? lastUpdated)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationPreferences():
+        return $default(
+            _that.userId,
+            _that.categoryEnabled,
+            _that.categoryChannels,
+            _that.quietHours,
+            _that.smartTimingEnabled,
+            _that.geofenceEnabled,
+            _that.geofenceRadiusKm,
+            _that.soundEnabled,
+            _that.vibrationEnabled,
+            _that.badgeEnabled,
+            _that.lastUpdated);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String userId,
+            Map<NotificationCategory, bool> categoryEnabled,
+            Map<NotificationCategory, List<NotificationChannel>>
+                categoryChannels,
+            QuietHours quietHours,
+            bool smartTimingEnabled,
+            bool geofenceEnabled,
+            double geofenceRadiusKm,
+            bool soundEnabled,
+            bool vibrationEnabled,
+            bool badgeEnabled,
+            DateTime? lastUpdated)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationPreferences() when $default != null:
+        return $default(
+            _that.userId,
+            _that.categoryEnabled,
+            _that.categoryChannels,
+            _that.quietHours,
+            _that.smartTimingEnabled,
+            _that.geofenceEnabled,
+            _that.geofenceRadiusKm,
+            _that.soundEnabled,
+            _that.vibrationEnabled,
+            _that.badgeEnabled,
+            _that.lastUpdated);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$NotificationPreferencesImpl implements _NotificationPreferences {
-  const _$NotificationPreferencesImpl(
+class _NotificationPreferences implements NotificationPreferences {
+  const _NotificationPreferences(
       {required this.userId,
       required final Map<NotificationCategory, bool> categoryEnabled,
       required final Map<NotificationCategory, List<NotificationChannel>>
@@ -264,9 +440,8 @@ class _$NotificationPreferencesImpl implements _NotificationPreferences {
       this.lastUpdated})
       : _categoryEnabled = categoryEnabled,
         _categoryChannels = categoryChannels;
-
-  factory _$NotificationPreferencesImpl.fromJson(Map<String, dynamic> json) =>
-      _$$NotificationPreferencesImplFromJson(json);
+  factory _NotificationPreferences.fromJson(Map<String, dynamic> json) =>
+      _$NotificationPreferencesFromJson(json);
 
   @override
   final String userId;
@@ -309,16 +484,27 @@ class _$NotificationPreferencesImpl implements _NotificationPreferences {
   @override
   final DateTime? lastUpdated;
 
+  /// Create a copy of NotificationPreferences
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'NotificationPreferences(userId: $userId, categoryEnabled: $categoryEnabled, categoryChannels: $categoryChannels, quietHours: $quietHours, smartTimingEnabled: $smartTimingEnabled, geofenceEnabled: $geofenceEnabled, geofenceRadiusKm: $geofenceRadiusKm, soundEnabled: $soundEnabled, vibrationEnabled: $vibrationEnabled, badgeEnabled: $badgeEnabled, lastUpdated: $lastUpdated)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$NotificationPreferencesCopyWith<_NotificationPreferences> get copyWith =>
+      __$NotificationPreferencesCopyWithImpl<_NotificationPreferences>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$NotificationPreferencesToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NotificationPreferencesImpl &&
+            other is _NotificationPreferences &&
             (identical(other.userId, userId) || other.userId == userId) &&
             const DeepCollectionEquality()
                 .equals(other._categoryEnabled, _categoryEnabled) &&
@@ -342,7 +528,7 @@ class _$NotificationPreferencesImpl implements _NotificationPreferences {
                 other.lastUpdated == lastUpdated));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -358,153 +544,181 @@ class _$NotificationPreferencesImpl implements _NotificationPreferences {
       badgeEnabled,
       lastUpdated);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$NotificationPreferencesImplCopyWith<_$NotificationPreferencesImpl>
-      get copyWith => __$$NotificationPreferencesImplCopyWithImpl<
-          _$NotificationPreferencesImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$NotificationPreferencesImplToJson(
-      this,
-    );
+  String toString() {
+    return 'NotificationPreferences(userId: $userId, categoryEnabled: $categoryEnabled, categoryChannels: $categoryChannels, quietHours: $quietHours, smartTimingEnabled: $smartTimingEnabled, geofenceEnabled: $geofenceEnabled, geofenceRadiusKm: $geofenceRadiusKm, soundEnabled: $soundEnabled, vibrationEnabled: $vibrationEnabled, badgeEnabled: $badgeEnabled, lastUpdated: $lastUpdated)';
   }
 }
 
-abstract class _NotificationPreferences implements NotificationPreferences {
-  const factory _NotificationPreferences(
-      {required final String userId,
-      required final Map<NotificationCategory, bool> categoryEnabled,
-      required final Map<NotificationCategory, List<NotificationChannel>>
-          categoryChannels,
-      required final QuietHours quietHours,
-      final bool smartTimingEnabled,
-      final bool geofenceEnabled,
-      final double geofenceRadiusKm,
-      final bool soundEnabled,
-      final bool vibrationEnabled,
-      final bool badgeEnabled,
-      final DateTime? lastUpdated}) = _$NotificationPreferencesImpl;
+/// @nodoc
+abstract mixin class _$NotificationPreferencesCopyWith<$Res>
+    implements $NotificationPreferencesCopyWith<$Res> {
+  factory _$NotificationPreferencesCopyWith(_NotificationPreferences value,
+          $Res Function(_NotificationPreferences) _then) =
+      __$NotificationPreferencesCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String userId,
+      Map<NotificationCategory, bool> categoryEnabled,
+      Map<NotificationCategory, List<NotificationChannel>> categoryChannels,
+      QuietHours quietHours,
+      bool smartTimingEnabled,
+      bool geofenceEnabled,
+      double geofenceRadiusKm,
+      bool soundEnabled,
+      bool vibrationEnabled,
+      bool badgeEnabled,
+      DateTime? lastUpdated});
 
-  factory _NotificationPreferences.fromJson(Map<String, dynamic> json) =
-      _$NotificationPreferencesImpl.fromJson;
-
   @override
-  String get userId;
-  @override
-  Map<NotificationCategory, bool> get categoryEnabled;
-  @override
-  Map<NotificationCategory, List<NotificationChannel>> get categoryChannels;
-  @override
-  QuietHours get quietHours;
-  @override
-  bool get smartTimingEnabled;
-  @override
-  bool get geofenceEnabled;
-  @override
-  double get geofenceRadiusKm;
-  @override
-  bool get soundEnabled;
-  @override
-  bool get vibrationEnabled;
-  @override
-  bool get badgeEnabled;
-  @override
-  DateTime? get lastUpdated;
-  @override
-  @JsonKey(ignore: true)
-  _$$NotificationPreferencesImplCopyWith<_$NotificationPreferencesImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  $QuietHoursCopyWith<$Res> get quietHours;
 }
 
-QuietHours _$QuietHoursFromJson(Map<String, dynamic> json) {
-  return _QuietHours.fromJson(json);
+/// @nodoc
+class __$NotificationPreferencesCopyWithImpl<$Res>
+    implements _$NotificationPreferencesCopyWith<$Res> {
+  __$NotificationPreferencesCopyWithImpl(this._self, this._then);
+
+  final _NotificationPreferences _self;
+  final $Res Function(_NotificationPreferences) _then;
+
+  /// Create a copy of NotificationPreferences
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? userId = null,
+    Object? categoryEnabled = null,
+    Object? categoryChannels = null,
+    Object? quietHours = null,
+    Object? smartTimingEnabled = null,
+    Object? geofenceEnabled = null,
+    Object? geofenceRadiusKm = null,
+    Object? soundEnabled = null,
+    Object? vibrationEnabled = null,
+    Object? badgeEnabled = null,
+    Object? lastUpdated = freezed,
+  }) {
+    return _then(_NotificationPreferences(
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      categoryEnabled: null == categoryEnabled
+          ? _self._categoryEnabled
+          : categoryEnabled // ignore: cast_nullable_to_non_nullable
+              as Map<NotificationCategory, bool>,
+      categoryChannels: null == categoryChannels
+          ? _self._categoryChannels
+          : categoryChannels // ignore: cast_nullable_to_non_nullable
+              as Map<NotificationCategory, List<NotificationChannel>>,
+      quietHours: null == quietHours
+          ? _self.quietHours
+          : quietHours // ignore: cast_nullable_to_non_nullable
+              as QuietHours,
+      smartTimingEnabled: null == smartTimingEnabled
+          ? _self.smartTimingEnabled
+          : smartTimingEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      geofenceEnabled: null == geofenceEnabled
+          ? _self.geofenceEnabled
+          : geofenceEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      geofenceRadiusKm: null == geofenceRadiusKm
+          ? _self.geofenceRadiusKm
+          : geofenceRadiusKm // ignore: cast_nullable_to_non_nullable
+              as double,
+      soundEnabled: null == soundEnabled
+          ? _self.soundEnabled
+          : soundEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      vibrationEnabled: null == vibrationEnabled
+          ? _self.vibrationEnabled
+          : vibrationEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      badgeEnabled: null == badgeEnabled
+          ? _self.badgeEnabled
+          : badgeEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      lastUpdated: freezed == lastUpdated
+          ? _self.lastUpdated
+          : lastUpdated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+
+  /// Create a copy of NotificationPreferences
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $QuietHoursCopyWith<$Res> get quietHours {
+    return $QuietHoursCopyWith<$Res>(_self.quietHours, (value) {
+      return _then(_self.copyWith(quietHours: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$QuietHours {
-  bool get enabled => throw _privateConstructorUsedError;
-  String get startTime => throw _privateConstructorUsedError; // HH:mm format
-  String get endTime => throw _privateConstructorUsedError; // HH:mm format
-  List<int> get daysOfWeek => throw _privateConstructorUsedError;
+  bool get enabled;
+  String get startTime; // HH:mm format
+  String get endTime; // HH:mm format
+  List<int> get daysOfWeek;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $QuietHoursCopyWith<QuietHours> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $QuietHoursCopyWith<$Res> {
-  factory $QuietHoursCopyWith(
-          QuietHours value, $Res Function(QuietHours) then) =
-      _$QuietHoursCopyWithImpl<$Res, QuietHours>;
-  @useResult
-  $Res call(
-      {bool enabled, String startTime, String endTime, List<int> daysOfWeek});
-}
-
-/// @nodoc
-class _$QuietHoursCopyWithImpl<$Res, $Val extends QuietHours>
-    implements $QuietHoursCopyWith<$Res> {
-  _$QuietHoursCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of QuietHours
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $QuietHoursCopyWith<QuietHours> get copyWith =>
+      _$QuietHoursCopyWithImpl<QuietHours>(this as QuietHours, _$identity);
+
+  /// Serializes this QuietHours to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? enabled = null,
-    Object? startTime = null,
-    Object? endTime = null,
-    Object? daysOfWeek = null,
-  }) {
-    return _then(_value.copyWith(
-      enabled: null == enabled
-          ? _value.enabled
-          : enabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      startTime: null == startTime
-          ? _value.startTime
-          : startTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      endTime: null == endTime
-          ? _value.endTime
-          : endTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      daysOfWeek: null == daysOfWeek
-          ? _value.daysOfWeek
-          : daysOfWeek // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is QuietHours &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            const DeepCollectionEquality()
+                .equals(other.daysOfWeek, daysOfWeek));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, enabled, startTime, endTime,
+      const DeepCollectionEquality().hash(daysOfWeek));
+
+  @override
+  String toString() {
+    return 'QuietHours(enabled: $enabled, startTime: $startTime, endTime: $endTime, daysOfWeek: $daysOfWeek)';
   }
 }
 
 /// @nodoc
-abstract class _$$QuietHoursImplCopyWith<$Res>
-    implements $QuietHoursCopyWith<$Res> {
-  factory _$$QuietHoursImplCopyWith(
-          _$QuietHoursImpl value, $Res Function(_$QuietHoursImpl) then) =
-      __$$QuietHoursImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $QuietHoursCopyWith<$Res> {
+  factory $QuietHoursCopyWith(
+          QuietHours value, $Res Function(QuietHours) _then) =
+      _$QuietHoursCopyWithImpl;
   @useResult
   $Res call(
       {bool enabled, String startTime, String endTime, List<int> daysOfWeek});
 }
 
 /// @nodoc
-class __$$QuietHoursImplCopyWithImpl<$Res>
-    extends _$QuietHoursCopyWithImpl<$Res, _$QuietHoursImpl>
-    implements _$$QuietHoursImplCopyWith<$Res> {
-  __$$QuietHoursImplCopyWithImpl(
-      _$QuietHoursImpl _value, $Res Function(_$QuietHoursImpl) _then)
-      : super(_value, _then);
+class _$QuietHoursCopyWithImpl<$Res> implements $QuietHoursCopyWith<$Res> {
+  _$QuietHoursCopyWithImpl(this._self, this._then);
 
+  final QuietHours _self;
+  final $Res Function(QuietHours) _then;
+
+  /// Create a copy of QuietHours
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -513,39 +727,204 @@ class __$$QuietHoursImplCopyWithImpl<$Res>
     Object? endTime = null,
     Object? daysOfWeek = null,
   }) {
-    return _then(_$QuietHoursImpl(
+    return _then(_self.copyWith(
       enabled: null == enabled
-          ? _value.enabled
+          ? _self.enabled
           : enabled // ignore: cast_nullable_to_non_nullable
               as bool,
       startTime: null == startTime
-          ? _value.startTime
+          ? _self.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
               as String,
       endTime: null == endTime
-          ? _value.endTime
+          ? _self.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as String,
       daysOfWeek: null == daysOfWeek
-          ? _value._daysOfWeek
+          ? _self.daysOfWeek
           : daysOfWeek // ignore: cast_nullable_to_non_nullable
               as List<int>,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [QuietHours].
+extension QuietHoursPatterns on QuietHours {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_QuietHours value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _QuietHours() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_QuietHours value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _QuietHours():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_QuietHours value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _QuietHours() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(bool enabled, String startTime, String endTime,
+            List<int> daysOfWeek)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _QuietHours() when $default != null:
+        return $default(
+            _that.enabled, _that.startTime, _that.endTime, _that.daysOfWeek);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(bool enabled, String startTime, String endTime,
+            List<int> daysOfWeek)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _QuietHours():
+        return $default(
+            _that.enabled, _that.startTime, _that.endTime, _that.daysOfWeek);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(bool enabled, String startTime, String endTime,
+            List<int> daysOfWeek)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _QuietHours() when $default != null:
+        return $default(
+            _that.enabled, _that.startTime, _that.endTime, _that.daysOfWeek);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$QuietHoursImpl implements _QuietHours {
-  const _$QuietHoursImpl(
+class _QuietHours implements QuietHours {
+  const _QuietHours(
       {this.enabled = false,
       this.startTime = '22:00',
       this.endTime = '08:00',
       final List<int> daysOfWeek = const []})
       : _daysOfWeek = daysOfWeek;
-
-  factory _$QuietHoursImpl.fromJson(Map<String, dynamic> json) =>
-      _$$QuietHoursImplFromJson(json);
+  factory _QuietHours.fromJson(Map<String, dynamic> json) =>
+      _$QuietHoursFromJson(json);
 
   @override
   @JsonKey()
@@ -568,16 +947,26 @@ class _$QuietHoursImpl implements _QuietHours {
     return EqualUnmodifiableListView(_daysOfWeek);
   }
 
+  /// Create a copy of QuietHours
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'QuietHours(enabled: $enabled, startTime: $startTime, endTime: $endTime, daysOfWeek: $daysOfWeek)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$QuietHoursCopyWith<_QuietHours> get copyWith =>
+      __$QuietHoursCopyWithImpl<_QuietHours>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$QuietHoursToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$QuietHoursImpl &&
+            other is _QuietHours &&
             (identical(other.enabled, enabled) || other.enabled == enabled) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
@@ -586,181 +975,150 @@ class _$QuietHoursImpl implements _QuietHours {
                 .equals(other._daysOfWeek, _daysOfWeek));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, enabled, startTime, endTime,
       const DeepCollectionEquality().hash(_daysOfWeek));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$QuietHoursImplCopyWith<_$QuietHoursImpl> get copyWith =>
-      __$$QuietHoursImplCopyWithImpl<_$QuietHoursImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$QuietHoursImplToJson(
-      this,
-    );
+  String toString() {
+    return 'QuietHours(enabled: $enabled, startTime: $startTime, endTime: $endTime, daysOfWeek: $daysOfWeek)';
   }
 }
 
-abstract class _QuietHours implements QuietHours {
-  const factory _QuietHours(
-      {final bool enabled,
-      final String startTime,
-      final String endTime,
-      final List<int> daysOfWeek}) = _$QuietHoursImpl;
-
-  factory _QuietHours.fromJson(Map<String, dynamic> json) =
-      _$QuietHoursImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$QuietHoursCopyWith<$Res>
+    implements $QuietHoursCopyWith<$Res> {
+  factory _$QuietHoursCopyWith(
+          _QuietHours value, $Res Function(_QuietHours) _then) =
+      __$QuietHoursCopyWithImpl;
   @override
-  bool get enabled;
-  @override
-  String get startTime;
-  @override // HH:mm format
-  String get endTime;
-  @override // HH:mm format
-  List<int> get daysOfWeek;
-  @override
-  @JsonKey(ignore: true)
-  _$$QuietHoursImplCopyWith<_$QuietHoursImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {bool enabled, String startTime, String endTime, List<int> daysOfWeek});
 }
 
-GeofenceEvent _$GeofenceEventFromJson(Map<String, dynamic> json) {
-  return _GeofenceEvent.fromJson(json);
+/// @nodoc
+class __$QuietHoursCopyWithImpl<$Res> implements _$QuietHoursCopyWith<$Res> {
+  __$QuietHoursCopyWithImpl(this._self, this._then);
+
+  final _QuietHours _self;
+  final $Res Function(_QuietHours) _then;
+
+  /// Create a copy of QuietHours
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? enabled = null,
+    Object? startTime = null,
+    Object? endTime = null,
+    Object? daysOfWeek = null,
+  }) {
+    return _then(_QuietHours(
+      enabled: null == enabled
+          ? _self.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      startTime: null == startTime
+          ? _self.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as String,
+      endTime: null == endTime
+          ? _self.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as String,
+      daysOfWeek: null == daysOfWeek
+          ? _self._daysOfWeek
+          : daysOfWeek // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$GeofenceEvent {
-  String get eventId => throw _privateConstructorUsedError;
-  String get workerId => throw _privateConstructorUsedError;
-  String get workerName => throw _privateConstructorUsedError;
-  String get appointmentId => throw _privateConstructorUsedError;
-  String get clientName => throw _privateConstructorUsedError;
-  String get clientAddress => throw _privateConstructorUsedError;
-  GeofenceEventType get eventType => throw _privateConstructorUsedError;
-  DateTime get timestamp => throw _privateConstructorUsedError;
-  double get latitude => throw _privateConstructorUsedError;
-  double get longitude => throw _privateConstructorUsedError;
-  double? get distanceMeters => throw _privateConstructorUsedError;
-  String? get notes => throw _privateConstructorUsedError;
+  String get eventId;
+  String get workerId;
+  String get workerName;
+  String get appointmentId;
+  String get clientName;
+  String get clientAddress;
+  GeofenceEventType get eventType;
+  DateTime get timestamp;
+  double get latitude;
+  double get longitude;
+  double? get distanceMeters;
+  String? get notes;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $GeofenceEventCopyWith<GeofenceEvent> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $GeofenceEventCopyWith<$Res> {
-  factory $GeofenceEventCopyWith(
-          GeofenceEvent value, $Res Function(GeofenceEvent) then) =
-      _$GeofenceEventCopyWithImpl<$Res, GeofenceEvent>;
-  @useResult
-  $Res call(
-      {String eventId,
-      String workerId,
-      String workerName,
-      String appointmentId,
-      String clientName,
-      String clientAddress,
-      GeofenceEventType eventType,
-      DateTime timestamp,
-      double latitude,
-      double longitude,
-      double? distanceMeters,
-      String? notes});
-}
-
-/// @nodoc
-class _$GeofenceEventCopyWithImpl<$Res, $Val extends GeofenceEvent>
-    implements $GeofenceEventCopyWith<$Res> {
-  _$GeofenceEventCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of GeofenceEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $GeofenceEventCopyWith<GeofenceEvent> get copyWith =>
+      _$GeofenceEventCopyWithImpl<GeofenceEvent>(
+          this as GeofenceEvent, _$identity);
+
+  /// Serializes this GeofenceEvent to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? eventId = null,
-    Object? workerId = null,
-    Object? workerName = null,
-    Object? appointmentId = null,
-    Object? clientName = null,
-    Object? clientAddress = null,
-    Object? eventType = null,
-    Object? timestamp = null,
-    Object? latitude = null,
-    Object? longitude = null,
-    Object? distanceMeters = freezed,
-    Object? notes = freezed,
-  }) {
-    return _then(_value.copyWith(
-      eventId: null == eventId
-          ? _value.eventId
-          : eventId // ignore: cast_nullable_to_non_nullable
-              as String,
-      workerId: null == workerId
-          ? _value.workerId
-          : workerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      workerName: null == workerName
-          ? _value.workerName
-          : workerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      appointmentId: null == appointmentId
-          ? _value.appointmentId
-          : appointmentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      clientName: null == clientName
-          ? _value.clientName
-          : clientName // ignore: cast_nullable_to_non_nullable
-              as String,
-      clientAddress: null == clientAddress
-          ? _value.clientAddress
-          : clientAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      eventType: null == eventType
-          ? _value.eventType
-          : eventType // ignore: cast_nullable_to_non_nullable
-              as GeofenceEventType,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      latitude: null == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      longitude: null == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      distanceMeters: freezed == distanceMeters
-          ? _value.distanceMeters
-          : distanceMeters // ignore: cast_nullable_to_non_nullable
-              as double?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is GeofenceEvent &&
+            (identical(other.eventId, eventId) || other.eventId == eventId) &&
+            (identical(other.workerId, workerId) ||
+                other.workerId == workerId) &&
+            (identical(other.workerName, workerName) ||
+                other.workerName == workerName) &&
+            (identical(other.appointmentId, appointmentId) ||
+                other.appointmentId == appointmentId) &&
+            (identical(other.clientName, clientName) ||
+                other.clientName == clientName) &&
+            (identical(other.clientAddress, clientAddress) ||
+                other.clientAddress == clientAddress) &&
+            (identical(other.eventType, eventType) ||
+                other.eventType == eventType) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
+            (identical(other.distanceMeters, distanceMeters) ||
+                other.distanceMeters == distanceMeters) &&
+            (identical(other.notes, notes) || other.notes == notes));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      eventId,
+      workerId,
+      workerName,
+      appointmentId,
+      clientName,
+      clientAddress,
+      eventType,
+      timestamp,
+      latitude,
+      longitude,
+      distanceMeters,
+      notes);
+
+  @override
+  String toString() {
+    return 'GeofenceEvent(eventId: $eventId, workerId: $workerId, workerName: $workerName, appointmentId: $appointmentId, clientName: $clientName, clientAddress: $clientAddress, eventType: $eventType, timestamp: $timestamp, latitude: $latitude, longitude: $longitude, distanceMeters: $distanceMeters, notes: $notes)';
   }
 }
 
 /// @nodoc
-abstract class _$$GeofenceEventImplCopyWith<$Res>
-    implements $GeofenceEventCopyWith<$Res> {
-  factory _$$GeofenceEventImplCopyWith(
-          _$GeofenceEventImpl value, $Res Function(_$GeofenceEventImpl) then) =
-      __$$GeofenceEventImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $GeofenceEventCopyWith<$Res> {
+  factory $GeofenceEventCopyWith(
+          GeofenceEvent value, $Res Function(GeofenceEvent) _then) =
+      _$GeofenceEventCopyWithImpl;
   @useResult
   $Res call(
       {String eventId,
@@ -778,13 +1136,15 @@ abstract class _$$GeofenceEventImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$GeofenceEventImplCopyWithImpl<$Res>
-    extends _$GeofenceEventCopyWithImpl<$Res, _$GeofenceEventImpl>
-    implements _$$GeofenceEventImplCopyWith<$Res> {
-  __$$GeofenceEventImplCopyWithImpl(
-      _$GeofenceEventImpl _value, $Res Function(_$GeofenceEventImpl) _then)
-      : super(_value, _then);
+class _$GeofenceEventCopyWithImpl<$Res>
+    implements $GeofenceEventCopyWith<$Res> {
+  _$GeofenceEventCopyWithImpl(this._self, this._then);
 
+  final GeofenceEvent _self;
+  final $Res Function(GeofenceEvent) _then;
+
+  /// Create a copy of GeofenceEvent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -801,63 +1161,295 @@ class __$$GeofenceEventImplCopyWithImpl<$Res>
     Object? distanceMeters = freezed,
     Object? notes = freezed,
   }) {
-    return _then(_$GeofenceEventImpl(
+    return _then(_self.copyWith(
       eventId: null == eventId
-          ? _value.eventId
+          ? _self.eventId
           : eventId // ignore: cast_nullable_to_non_nullable
               as String,
       workerId: null == workerId
-          ? _value.workerId
+          ? _self.workerId
           : workerId // ignore: cast_nullable_to_non_nullable
               as String,
       workerName: null == workerName
-          ? _value.workerName
+          ? _self.workerName
           : workerName // ignore: cast_nullable_to_non_nullable
               as String,
       appointmentId: null == appointmentId
-          ? _value.appointmentId
+          ? _self.appointmentId
           : appointmentId // ignore: cast_nullable_to_non_nullable
               as String,
       clientName: null == clientName
-          ? _value.clientName
+          ? _self.clientName
           : clientName // ignore: cast_nullable_to_non_nullable
               as String,
       clientAddress: null == clientAddress
-          ? _value.clientAddress
+          ? _self.clientAddress
           : clientAddress // ignore: cast_nullable_to_non_nullable
               as String,
       eventType: null == eventType
-          ? _value.eventType
+          ? _self.eventType
           : eventType // ignore: cast_nullable_to_non_nullable
               as GeofenceEventType,
       timestamp: null == timestamp
-          ? _value.timestamp
+          ? _self.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime,
       latitude: null == latitude
-          ? _value.latitude
+          ? _self.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
               as double,
       longitude: null == longitude
-          ? _value.longitude
+          ? _self.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double,
       distanceMeters: freezed == distanceMeters
-          ? _value.distanceMeters
+          ? _self.distanceMeters
           : distanceMeters // ignore: cast_nullable_to_non_nullable
               as double?,
       notes: freezed == notes
-          ? _value.notes
+          ? _self.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [GeofenceEvent].
+extension GeofenceEventPatterns on GeofenceEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_GeofenceEvent value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _GeofenceEvent() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_GeofenceEvent value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _GeofenceEvent():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_GeofenceEvent value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _GeofenceEvent() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String eventId,
+            String workerId,
+            String workerName,
+            String appointmentId,
+            String clientName,
+            String clientAddress,
+            GeofenceEventType eventType,
+            DateTime timestamp,
+            double latitude,
+            double longitude,
+            double? distanceMeters,
+            String? notes)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _GeofenceEvent() when $default != null:
+        return $default(
+            _that.eventId,
+            _that.workerId,
+            _that.workerName,
+            _that.appointmentId,
+            _that.clientName,
+            _that.clientAddress,
+            _that.eventType,
+            _that.timestamp,
+            _that.latitude,
+            _that.longitude,
+            _that.distanceMeters,
+            _that.notes);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String eventId,
+            String workerId,
+            String workerName,
+            String appointmentId,
+            String clientName,
+            String clientAddress,
+            GeofenceEventType eventType,
+            DateTime timestamp,
+            double latitude,
+            double longitude,
+            double? distanceMeters,
+            String? notes)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _GeofenceEvent():
+        return $default(
+            _that.eventId,
+            _that.workerId,
+            _that.workerName,
+            _that.appointmentId,
+            _that.clientName,
+            _that.clientAddress,
+            _that.eventType,
+            _that.timestamp,
+            _that.latitude,
+            _that.longitude,
+            _that.distanceMeters,
+            _that.notes);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String eventId,
+            String workerId,
+            String workerName,
+            String appointmentId,
+            String clientName,
+            String clientAddress,
+            GeofenceEventType eventType,
+            DateTime timestamp,
+            double latitude,
+            double longitude,
+            double? distanceMeters,
+            String? notes)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _GeofenceEvent() when $default != null:
+        return $default(
+            _that.eventId,
+            _that.workerId,
+            _that.workerName,
+            _that.appointmentId,
+            _that.clientName,
+            _that.clientAddress,
+            _that.eventType,
+            _that.timestamp,
+            _that.latitude,
+            _that.longitude,
+            _that.distanceMeters,
+            _that.notes);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$GeofenceEventImpl implements _GeofenceEvent {
-  const _$GeofenceEventImpl(
+class _GeofenceEvent implements GeofenceEvent {
+  const _GeofenceEvent(
       {required this.eventId,
       required this.workerId,
       required this.workerName,
@@ -870,9 +1462,8 @@ class _$GeofenceEventImpl implements _GeofenceEvent {
       required this.longitude,
       this.distanceMeters,
       this.notes});
-
-  factory _$GeofenceEventImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GeofenceEventImplFromJson(json);
+  factory _GeofenceEvent.fromJson(Map<String, dynamic> json) =>
+      _$GeofenceEventFromJson(json);
 
   @override
   final String eventId;
@@ -899,16 +1490,26 @@ class _$GeofenceEventImpl implements _GeofenceEvent {
   @override
   final String? notes;
 
+  /// Create a copy of GeofenceEvent
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'GeofenceEvent(eventId: $eventId, workerId: $workerId, workerName: $workerName, appointmentId: $appointmentId, clientName: $clientName, clientAddress: $clientAddress, eventType: $eventType, timestamp: $timestamp, latitude: $latitude, longitude: $longitude, distanceMeters: $distanceMeters, notes: $notes)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$GeofenceEventCopyWith<_GeofenceEvent> get copyWith =>
+      __$GeofenceEventCopyWithImpl<_GeofenceEvent>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$GeofenceEventToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GeofenceEventImpl &&
+            other is _GeofenceEvent &&
             (identical(other.eventId, eventId) || other.eventId == eventId) &&
             (identical(other.workerId, workerId) ||
                 other.workerId == workerId) &&
@@ -933,7 +1534,7 @@ class _$GeofenceEventImpl implements _GeofenceEvent {
             (identical(other.notes, notes) || other.notes == notes));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -950,217 +1551,203 @@ class _$GeofenceEventImpl implements _GeofenceEvent {
       distanceMeters,
       notes);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$GeofenceEventImplCopyWith<_$GeofenceEventImpl> get copyWith =>
-      __$$GeofenceEventImplCopyWithImpl<_$GeofenceEventImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$GeofenceEventImplToJson(
-      this,
-    );
+  String toString() {
+    return 'GeofenceEvent(eventId: $eventId, workerId: $workerId, workerName: $workerName, appointmentId: $appointmentId, clientName: $clientName, clientAddress: $clientAddress, eventType: $eventType, timestamp: $timestamp, latitude: $latitude, longitude: $longitude, distanceMeters: $distanceMeters, notes: $notes)';
   }
 }
 
-abstract class _GeofenceEvent implements GeofenceEvent {
-  const factory _GeofenceEvent(
-      {required final String eventId,
-      required final String workerId,
-      required final String workerName,
-      required final String appointmentId,
-      required final String clientName,
-      required final String clientAddress,
-      required final GeofenceEventType eventType,
-      required final DateTime timestamp,
-      required final double latitude,
-      required final double longitude,
-      final double? distanceMeters,
-      final String? notes}) = _$GeofenceEventImpl;
-
-  factory _GeofenceEvent.fromJson(Map<String, dynamic> json) =
-      _$GeofenceEventImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$GeofenceEventCopyWith<$Res>
+    implements $GeofenceEventCopyWith<$Res> {
+  factory _$GeofenceEventCopyWith(
+          _GeofenceEvent value, $Res Function(_GeofenceEvent) _then) =
+      __$GeofenceEventCopyWithImpl;
   @override
-  String get eventId;
-  @override
-  String get workerId;
-  @override
-  String get workerName;
-  @override
-  String get appointmentId;
-  @override
-  String get clientName;
-  @override
-  String get clientAddress;
-  @override
-  GeofenceEventType get eventType;
-  @override
-  DateTime get timestamp;
-  @override
-  double get latitude;
-  @override
-  double get longitude;
-  @override
-  double? get distanceMeters;
-  @override
-  String? get notes;
-  @override
-  @JsonKey(ignore: true)
-  _$$GeofenceEventImplCopyWith<_$GeofenceEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String eventId,
+      String workerId,
+      String workerName,
+      String appointmentId,
+      String clientName,
+      String clientAddress,
+      GeofenceEventType eventType,
+      DateTime timestamp,
+      double latitude,
+      double longitude,
+      double? distanceMeters,
+      String? notes});
 }
 
-ShiftChangeNotification _$ShiftChangeNotificationFromJson(
-    Map<String, dynamic> json) {
-  return _ShiftChangeNotification.fromJson(json);
+/// @nodoc
+class __$GeofenceEventCopyWithImpl<$Res>
+    implements _$GeofenceEventCopyWith<$Res> {
+  __$GeofenceEventCopyWithImpl(this._self, this._then);
+
+  final _GeofenceEvent _self;
+  final $Res Function(_GeofenceEvent) _then;
+
+  /// Create a copy of GeofenceEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? eventId = null,
+    Object? workerId = null,
+    Object? workerName = null,
+    Object? appointmentId = null,
+    Object? clientName = null,
+    Object? clientAddress = null,
+    Object? eventType = null,
+    Object? timestamp = null,
+    Object? latitude = null,
+    Object? longitude = null,
+    Object? distanceMeters = freezed,
+    Object? notes = freezed,
+  }) {
+    return _then(_GeofenceEvent(
+      eventId: null == eventId
+          ? _self.eventId
+          : eventId // ignore: cast_nullable_to_non_nullable
+              as String,
+      workerId: null == workerId
+          ? _self.workerId
+          : workerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      workerName: null == workerName
+          ? _self.workerName
+          : workerName // ignore: cast_nullable_to_non_nullable
+              as String,
+      appointmentId: null == appointmentId
+          ? _self.appointmentId
+          : appointmentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      clientName: null == clientName
+          ? _self.clientName
+          : clientName // ignore: cast_nullable_to_non_nullable
+              as String,
+      clientAddress: null == clientAddress
+          ? _self.clientAddress
+          : clientAddress // ignore: cast_nullable_to_non_nullable
+              as String,
+      eventType: null == eventType
+          ? _self.eventType
+          : eventType // ignore: cast_nullable_to_non_nullable
+              as GeofenceEventType,
+      timestamp: null == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      latitude: null == latitude
+          ? _self.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      longitude: null == longitude
+          ? _self.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      distanceMeters: freezed == distanceMeters
+          ? _self.distanceMeters
+          : distanceMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
+      notes: freezed == notes
+          ? _self.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$ShiftChangeNotification {
-  String get notificationId => throw _privateConstructorUsedError;
-  String get shiftId => throw _privateConstructorUsedError;
-  String get workerId => throw _privateConstructorUsedError;
-  String get workerName => throw _privateConstructorUsedError;
-  String get clientName => throw _privateConstructorUsedError;
-  ShiftChangeType get changeType => throw _privateConstructorUsedError;
-  DateTime get shiftDate => throw _privateConstructorUsedError;
-  String get shiftTime => throw _privateConstructorUsedError;
-  String? get oldTime => throw _privateConstructorUsedError;
-  String? get newTime => throw _privateConstructorUsedError;
-  String? get reason => throw _privateConstructorUsedError;
-  String? get replacementWorkerId => throw _privateConstructorUsedError;
-  String? get replacementWorkerName => throw _privateConstructorUsedError;
-  DateTime get timestamp => throw _privateConstructorUsedError;
+  String get notificationId;
+  String get shiftId;
+  String get workerId;
+  String get workerName;
+  String get clientName;
+  ShiftChangeType get changeType;
+  DateTime get shiftDate;
+  String get shiftTime;
+  String? get oldTime;
+  String? get newTime;
+  String? get reason;
+  String? get replacementWorkerId;
+  String? get replacementWorkerName;
+  DateTime get timestamp;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $ShiftChangeNotificationCopyWith<ShiftChangeNotification> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ShiftChangeNotificationCopyWith<$Res> {
-  factory $ShiftChangeNotificationCopyWith(ShiftChangeNotification value,
-          $Res Function(ShiftChangeNotification) then) =
-      _$ShiftChangeNotificationCopyWithImpl<$Res, ShiftChangeNotification>;
-  @useResult
-  $Res call(
-      {String notificationId,
-      String shiftId,
-      String workerId,
-      String workerName,
-      String clientName,
-      ShiftChangeType changeType,
-      DateTime shiftDate,
-      String shiftTime,
-      String? oldTime,
-      String? newTime,
-      String? reason,
-      String? replacementWorkerId,
-      String? replacementWorkerName,
-      DateTime timestamp});
-}
-
-/// @nodoc
-class _$ShiftChangeNotificationCopyWithImpl<$Res,
-        $Val extends ShiftChangeNotification>
-    implements $ShiftChangeNotificationCopyWith<$Res> {
-  _$ShiftChangeNotificationCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of ShiftChangeNotification
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $ShiftChangeNotificationCopyWith<ShiftChangeNotification> get copyWith =>
+      _$ShiftChangeNotificationCopyWithImpl<ShiftChangeNotification>(
+          this as ShiftChangeNotification, _$identity);
+
+  /// Serializes this ShiftChangeNotification to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? notificationId = null,
-    Object? shiftId = null,
-    Object? workerId = null,
-    Object? workerName = null,
-    Object? clientName = null,
-    Object? changeType = null,
-    Object? shiftDate = null,
-    Object? shiftTime = null,
-    Object? oldTime = freezed,
-    Object? newTime = freezed,
-    Object? reason = freezed,
-    Object? replacementWorkerId = freezed,
-    Object? replacementWorkerName = freezed,
-    Object? timestamp = null,
-  }) {
-    return _then(_value.copyWith(
-      notificationId: null == notificationId
-          ? _value.notificationId
-          : notificationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      shiftId: null == shiftId
-          ? _value.shiftId
-          : shiftId // ignore: cast_nullable_to_non_nullable
-              as String,
-      workerId: null == workerId
-          ? _value.workerId
-          : workerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      workerName: null == workerName
-          ? _value.workerName
-          : workerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      clientName: null == clientName
-          ? _value.clientName
-          : clientName // ignore: cast_nullable_to_non_nullable
-              as String,
-      changeType: null == changeType
-          ? _value.changeType
-          : changeType // ignore: cast_nullable_to_non_nullable
-              as ShiftChangeType,
-      shiftDate: null == shiftDate
-          ? _value.shiftDate
-          : shiftDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      shiftTime: null == shiftTime
-          ? _value.shiftTime
-          : shiftTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      oldTime: freezed == oldTime
-          ? _value.oldTime
-          : oldTime // ignore: cast_nullable_to_non_nullable
-              as String?,
-      newTime: freezed == newTime
-          ? _value.newTime
-          : newTime // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      replacementWorkerId: freezed == replacementWorkerId
-          ? _value.replacementWorkerId
-          : replacementWorkerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      replacementWorkerName: freezed == replacementWorkerName
-          ? _value.replacementWorkerName
-          : replacementWorkerName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ShiftChangeNotification &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
+            (identical(other.shiftId, shiftId) || other.shiftId == shiftId) &&
+            (identical(other.workerId, workerId) ||
+                other.workerId == workerId) &&
+            (identical(other.workerName, workerName) ||
+                other.workerName == workerName) &&
+            (identical(other.clientName, clientName) ||
+                other.clientName == clientName) &&
+            (identical(other.changeType, changeType) ||
+                other.changeType == changeType) &&
+            (identical(other.shiftDate, shiftDate) ||
+                other.shiftDate == shiftDate) &&
+            (identical(other.shiftTime, shiftTime) ||
+                other.shiftTime == shiftTime) &&
+            (identical(other.oldTime, oldTime) || other.oldTime == oldTime) &&
+            (identical(other.newTime, newTime) || other.newTime == newTime) &&
+            (identical(other.reason, reason) || other.reason == reason) &&
+            (identical(other.replacementWorkerId, replacementWorkerId) ||
+                other.replacementWorkerId == replacementWorkerId) &&
+            (identical(other.replacementWorkerName, replacementWorkerName) ||
+                other.replacementWorkerName == replacementWorkerName) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      notificationId,
+      shiftId,
+      workerId,
+      workerName,
+      clientName,
+      changeType,
+      shiftDate,
+      shiftTime,
+      oldTime,
+      newTime,
+      reason,
+      replacementWorkerId,
+      replacementWorkerName,
+      timestamp);
+
+  @override
+  String toString() {
+    return 'ShiftChangeNotification(notificationId: $notificationId, shiftId: $shiftId, workerId: $workerId, workerName: $workerName, clientName: $clientName, changeType: $changeType, shiftDate: $shiftDate, shiftTime: $shiftTime, oldTime: $oldTime, newTime: $newTime, reason: $reason, replacementWorkerId: $replacementWorkerId, replacementWorkerName: $replacementWorkerName, timestamp: $timestamp)';
   }
 }
 
 /// @nodoc
-abstract class _$$ShiftChangeNotificationImplCopyWith<$Res>
-    implements $ShiftChangeNotificationCopyWith<$Res> {
-  factory _$$ShiftChangeNotificationImplCopyWith(
-          _$ShiftChangeNotificationImpl value,
-          $Res Function(_$ShiftChangeNotificationImpl) then) =
-      __$$ShiftChangeNotificationImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ShiftChangeNotificationCopyWith<$Res> {
+  factory $ShiftChangeNotificationCopyWith(ShiftChangeNotification value,
+          $Res Function(ShiftChangeNotification) _then) =
+      _$ShiftChangeNotificationCopyWithImpl;
   @useResult
   $Res call(
       {String notificationId,
@@ -1180,15 +1767,15 @@ abstract class _$$ShiftChangeNotificationImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ShiftChangeNotificationImplCopyWithImpl<$Res>
-    extends _$ShiftChangeNotificationCopyWithImpl<$Res,
-        _$ShiftChangeNotificationImpl>
-    implements _$$ShiftChangeNotificationImplCopyWith<$Res> {
-  __$$ShiftChangeNotificationImplCopyWithImpl(
-      _$ShiftChangeNotificationImpl _value,
-      $Res Function(_$ShiftChangeNotificationImpl) _then)
-      : super(_value, _then);
+class _$ShiftChangeNotificationCopyWithImpl<$Res>
+    implements $ShiftChangeNotificationCopyWith<$Res> {
+  _$ShiftChangeNotificationCopyWithImpl(this._self, this._then);
 
+  final ShiftChangeNotification _self;
+  final $Res Function(ShiftChangeNotification) _then;
+
+  /// Create a copy of ShiftChangeNotification
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1207,71 +1794,315 @@ class __$$ShiftChangeNotificationImplCopyWithImpl<$Res>
     Object? replacementWorkerName = freezed,
     Object? timestamp = null,
   }) {
-    return _then(_$ShiftChangeNotificationImpl(
+    return _then(_self.copyWith(
       notificationId: null == notificationId
-          ? _value.notificationId
+          ? _self.notificationId
           : notificationId // ignore: cast_nullable_to_non_nullable
               as String,
       shiftId: null == shiftId
-          ? _value.shiftId
+          ? _self.shiftId
           : shiftId // ignore: cast_nullable_to_non_nullable
               as String,
       workerId: null == workerId
-          ? _value.workerId
+          ? _self.workerId
           : workerId // ignore: cast_nullable_to_non_nullable
               as String,
       workerName: null == workerName
-          ? _value.workerName
+          ? _self.workerName
           : workerName // ignore: cast_nullable_to_non_nullable
               as String,
       clientName: null == clientName
-          ? _value.clientName
+          ? _self.clientName
           : clientName // ignore: cast_nullable_to_non_nullable
               as String,
       changeType: null == changeType
-          ? _value.changeType
+          ? _self.changeType
           : changeType // ignore: cast_nullable_to_non_nullable
               as ShiftChangeType,
       shiftDate: null == shiftDate
-          ? _value.shiftDate
+          ? _self.shiftDate
           : shiftDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
       shiftTime: null == shiftTime
-          ? _value.shiftTime
+          ? _self.shiftTime
           : shiftTime // ignore: cast_nullable_to_non_nullable
               as String,
       oldTime: freezed == oldTime
-          ? _value.oldTime
+          ? _self.oldTime
           : oldTime // ignore: cast_nullable_to_non_nullable
               as String?,
       newTime: freezed == newTime
-          ? _value.newTime
+          ? _self.newTime
           : newTime // ignore: cast_nullable_to_non_nullable
               as String?,
       reason: freezed == reason
-          ? _value.reason
+          ? _self.reason
           : reason // ignore: cast_nullable_to_non_nullable
               as String?,
       replacementWorkerId: freezed == replacementWorkerId
-          ? _value.replacementWorkerId
+          ? _self.replacementWorkerId
           : replacementWorkerId // ignore: cast_nullable_to_non_nullable
               as String?,
       replacementWorkerName: freezed == replacementWorkerName
-          ? _value.replacementWorkerName
+          ? _self.replacementWorkerName
           : replacementWorkerName // ignore: cast_nullable_to_non_nullable
               as String?,
       timestamp: null == timestamp
-          ? _value.timestamp
+          ? _self.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [ShiftChangeNotification].
+extension ShiftChangeNotificationPatterns on ShiftChangeNotification {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ShiftChangeNotification value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftChangeNotification() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ShiftChangeNotification value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftChangeNotification():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ShiftChangeNotification value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftChangeNotification() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String notificationId,
+            String shiftId,
+            String workerId,
+            String workerName,
+            String clientName,
+            ShiftChangeType changeType,
+            DateTime shiftDate,
+            String shiftTime,
+            String? oldTime,
+            String? newTime,
+            String? reason,
+            String? replacementWorkerId,
+            String? replacementWorkerName,
+            DateTime timestamp)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftChangeNotification() when $default != null:
+        return $default(
+            _that.notificationId,
+            _that.shiftId,
+            _that.workerId,
+            _that.workerName,
+            _that.clientName,
+            _that.changeType,
+            _that.shiftDate,
+            _that.shiftTime,
+            _that.oldTime,
+            _that.newTime,
+            _that.reason,
+            _that.replacementWorkerId,
+            _that.replacementWorkerName,
+            _that.timestamp);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String notificationId,
+            String shiftId,
+            String workerId,
+            String workerName,
+            String clientName,
+            ShiftChangeType changeType,
+            DateTime shiftDate,
+            String shiftTime,
+            String? oldTime,
+            String? newTime,
+            String? reason,
+            String? replacementWorkerId,
+            String? replacementWorkerName,
+            DateTime timestamp)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftChangeNotification():
+        return $default(
+            _that.notificationId,
+            _that.shiftId,
+            _that.workerId,
+            _that.workerName,
+            _that.clientName,
+            _that.changeType,
+            _that.shiftDate,
+            _that.shiftTime,
+            _that.oldTime,
+            _that.newTime,
+            _that.reason,
+            _that.replacementWorkerId,
+            _that.replacementWorkerName,
+            _that.timestamp);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String notificationId,
+            String shiftId,
+            String workerId,
+            String workerName,
+            String clientName,
+            ShiftChangeType changeType,
+            DateTime shiftDate,
+            String shiftTime,
+            String? oldTime,
+            String? newTime,
+            String? reason,
+            String? replacementWorkerId,
+            String? replacementWorkerName,
+            DateTime timestamp)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftChangeNotification() when $default != null:
+        return $default(
+            _that.notificationId,
+            _that.shiftId,
+            _that.workerId,
+            _that.workerName,
+            _that.clientName,
+            _that.changeType,
+            _that.shiftDate,
+            _that.shiftTime,
+            _that.oldTime,
+            _that.newTime,
+            _that.reason,
+            _that.replacementWorkerId,
+            _that.replacementWorkerName,
+            _that.timestamp);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$ShiftChangeNotificationImpl implements _ShiftChangeNotification {
-  const _$ShiftChangeNotificationImpl(
+class _ShiftChangeNotification implements ShiftChangeNotification {
+  const _ShiftChangeNotification(
       {required this.notificationId,
       required this.shiftId,
       required this.workerId,
@@ -1286,9 +2117,8 @@ class _$ShiftChangeNotificationImpl implements _ShiftChangeNotification {
       this.replacementWorkerId,
       this.replacementWorkerName,
       required this.timestamp});
-
-  factory _$ShiftChangeNotificationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ShiftChangeNotificationImplFromJson(json);
+  factory _ShiftChangeNotification.fromJson(Map<String, dynamic> json) =>
+      _$ShiftChangeNotificationFromJson(json);
 
   @override
   final String notificationId;
@@ -1319,16 +2149,27 @@ class _$ShiftChangeNotificationImpl implements _ShiftChangeNotification {
   @override
   final DateTime timestamp;
 
+  /// Create a copy of ShiftChangeNotification
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ShiftChangeNotification(notificationId: $notificationId, shiftId: $shiftId, workerId: $workerId, workerName: $workerName, clientName: $clientName, changeType: $changeType, shiftDate: $shiftDate, shiftTime: $shiftTime, oldTime: $oldTime, newTime: $newTime, reason: $reason, replacementWorkerId: $replacementWorkerId, replacementWorkerName: $replacementWorkerName, timestamp: $timestamp)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ShiftChangeNotificationCopyWith<_ShiftChangeNotification> get copyWith =>
+      __$ShiftChangeNotificationCopyWithImpl<_ShiftChangeNotification>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ShiftChangeNotificationToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ShiftChangeNotificationImpl &&
+            other is _ShiftChangeNotification &&
             (identical(other.notificationId, notificationId) ||
                 other.notificationId == notificationId) &&
             (identical(other.shiftId, shiftId) || other.shiftId == shiftId) &&
@@ -1355,7 +2196,7 @@ class _$ShiftChangeNotificationImpl implements _ShiftChangeNotification {
                 other.timestamp == timestamp));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -1374,168 +2215,184 @@ class _$ShiftChangeNotificationImpl implements _ShiftChangeNotification {
       replacementWorkerName,
       timestamp);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ShiftChangeNotificationImplCopyWith<_$ShiftChangeNotificationImpl>
-      get copyWith => __$$ShiftChangeNotificationImplCopyWithImpl<
-          _$ShiftChangeNotificationImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ShiftChangeNotificationImplToJson(
-      this,
-    );
+  String toString() {
+    return 'ShiftChangeNotification(notificationId: $notificationId, shiftId: $shiftId, workerId: $workerId, workerName: $workerName, clientName: $clientName, changeType: $changeType, shiftDate: $shiftDate, shiftTime: $shiftTime, oldTime: $oldTime, newTime: $newTime, reason: $reason, replacementWorkerId: $replacementWorkerId, replacementWorkerName: $replacementWorkerName, timestamp: $timestamp)';
   }
 }
 
-abstract class _ShiftChangeNotification implements ShiftChangeNotification {
-  const factory _ShiftChangeNotification(
-      {required final String notificationId,
-      required final String shiftId,
-      required final String workerId,
-      required final String workerName,
-      required final String clientName,
-      required final ShiftChangeType changeType,
-      required final DateTime shiftDate,
-      required final String shiftTime,
-      final String? oldTime,
-      final String? newTime,
-      final String? reason,
-      final String? replacementWorkerId,
-      final String? replacementWorkerName,
-      required final DateTime timestamp}) = _$ShiftChangeNotificationImpl;
-
-  factory _ShiftChangeNotification.fromJson(Map<String, dynamic> json) =
-      _$ShiftChangeNotificationImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$ShiftChangeNotificationCopyWith<$Res>
+    implements $ShiftChangeNotificationCopyWith<$Res> {
+  factory _$ShiftChangeNotificationCopyWith(_ShiftChangeNotification value,
+          $Res Function(_ShiftChangeNotification) _then) =
+      __$ShiftChangeNotificationCopyWithImpl;
   @override
-  String get notificationId;
-  @override
-  String get shiftId;
-  @override
-  String get workerId;
-  @override
-  String get workerName;
-  @override
-  String get clientName;
-  @override
-  ShiftChangeType get changeType;
-  @override
-  DateTime get shiftDate;
-  @override
-  String get shiftTime;
-  @override
-  String? get oldTime;
-  @override
-  String? get newTime;
-  @override
-  String? get reason;
-  @override
-  String? get replacementWorkerId;
-  @override
-  String? get replacementWorkerName;
-  @override
-  DateTime get timestamp;
-  @override
-  @JsonKey(ignore: true)
-  _$$ShiftChangeNotificationImplCopyWith<_$ShiftChangeNotificationImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String notificationId,
+      String shiftId,
+      String workerId,
+      String workerName,
+      String clientName,
+      ShiftChangeType changeType,
+      DateTime shiftDate,
+      String shiftTime,
+      String? oldTime,
+      String? newTime,
+      String? reason,
+      String? replacementWorkerId,
+      String? replacementWorkerName,
+      DateTime timestamp});
 }
 
-SmartTimingRecommendation _$SmartTimingRecommendationFromJson(
-    Map<String, dynamic> json) {
-  return _SmartTimingRecommendation.fromJson(json);
+/// @nodoc
+class __$ShiftChangeNotificationCopyWithImpl<$Res>
+    implements _$ShiftChangeNotificationCopyWith<$Res> {
+  __$ShiftChangeNotificationCopyWithImpl(this._self, this._then);
+
+  final _ShiftChangeNotification _self;
+  final $Res Function(_ShiftChangeNotification) _then;
+
+  /// Create a copy of ShiftChangeNotification
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? notificationId = null,
+    Object? shiftId = null,
+    Object? workerId = null,
+    Object? workerName = null,
+    Object? clientName = null,
+    Object? changeType = null,
+    Object? shiftDate = null,
+    Object? shiftTime = null,
+    Object? oldTime = freezed,
+    Object? newTime = freezed,
+    Object? reason = freezed,
+    Object? replacementWorkerId = freezed,
+    Object? replacementWorkerName = freezed,
+    Object? timestamp = null,
+  }) {
+    return _then(_ShiftChangeNotification(
+      notificationId: null == notificationId
+          ? _self.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      shiftId: null == shiftId
+          ? _self.shiftId
+          : shiftId // ignore: cast_nullable_to_non_nullable
+              as String,
+      workerId: null == workerId
+          ? _self.workerId
+          : workerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      workerName: null == workerName
+          ? _self.workerName
+          : workerName // ignore: cast_nullable_to_non_nullable
+              as String,
+      clientName: null == clientName
+          ? _self.clientName
+          : clientName // ignore: cast_nullable_to_non_nullable
+              as String,
+      changeType: null == changeType
+          ? _self.changeType
+          : changeType // ignore: cast_nullable_to_non_nullable
+              as ShiftChangeType,
+      shiftDate: null == shiftDate
+          ? _self.shiftDate
+          : shiftDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      shiftTime: null == shiftTime
+          ? _self.shiftTime
+          : shiftTime // ignore: cast_nullable_to_non_nullable
+              as String,
+      oldTime: freezed == oldTime
+          ? _self.oldTime
+          : oldTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      newTime: freezed == newTime
+          ? _self.newTime
+          : newTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      reason: freezed == reason
+          ? _self.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      replacementWorkerId: freezed == replacementWorkerId
+          ? _self.replacementWorkerId
+          : replacementWorkerId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      replacementWorkerName: freezed == replacementWorkerName
+          ? _self.replacementWorkerName
+          : replacementWorkerName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      timestamp: null == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$SmartTimingRecommendation {
-  String get userId => throw _privateConstructorUsedError;
-  NotificationCategory get category => throw _privateConstructorUsedError;
-  DateTime get recommendedTime => throw _privateConstructorUsedError;
-  double get confidence => throw _privateConstructorUsedError;
-  String get reason => throw _privateConstructorUsedError;
-  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+  String get userId;
+  NotificationCategory get category;
+  DateTime get recommendedTime;
+  double get confidence;
+  String get reason;
+  Map<String, dynamic>? get metadata;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $SmartTimingRecommendationCopyWith<SmartTimingRecommendation> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $SmartTimingRecommendationCopyWith<$Res> {
-  factory $SmartTimingRecommendationCopyWith(SmartTimingRecommendation value,
-          $Res Function(SmartTimingRecommendation) then) =
-      _$SmartTimingRecommendationCopyWithImpl<$Res, SmartTimingRecommendation>;
-  @useResult
-  $Res call(
-      {String userId,
-      NotificationCategory category,
-      DateTime recommendedTime,
-      double confidence,
-      String reason,
-      Map<String, dynamic>? metadata});
-}
-
-/// @nodoc
-class _$SmartTimingRecommendationCopyWithImpl<$Res,
-        $Val extends SmartTimingRecommendation>
-    implements $SmartTimingRecommendationCopyWith<$Res> {
-  _$SmartTimingRecommendationCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of SmartTimingRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $SmartTimingRecommendationCopyWith<SmartTimingRecommendation> get copyWith =>
+      _$SmartTimingRecommendationCopyWithImpl<SmartTimingRecommendation>(
+          this as SmartTimingRecommendation, _$identity);
+
+  /// Serializes this SmartTimingRecommendation to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? userId = null,
-    Object? category = null,
-    Object? recommendedTime = null,
-    Object? confidence = null,
-    Object? reason = null,
-    Object? metadata = freezed,
-  }) {
-    return _then(_value.copyWith(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      category: null == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as NotificationCategory,
-      recommendedTime: null == recommendedTime
-          ? _value.recommendedTime
-          : recommendedTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      confidence: null == confidence
-          ? _value.confidence
-          : confidence // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: null == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String,
-      metadata: freezed == metadata
-          ? _value.metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SmartTimingRecommendation &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
+            (identical(other.recommendedTime, recommendedTime) ||
+                other.recommendedTime == recommendedTime) &&
+            (identical(other.confidence, confidence) ||
+                other.confidence == confidence) &&
+            (identical(other.reason, reason) || other.reason == reason) &&
+            const DeepCollectionEquality().equals(other.metadata, metadata));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      userId,
+      category,
+      recommendedTime,
+      confidence,
+      reason,
+      const DeepCollectionEquality().hash(metadata));
+
+  @override
+  String toString() {
+    return 'SmartTimingRecommendation(userId: $userId, category: $category, recommendedTime: $recommendedTime, confidence: $confidence, reason: $reason, metadata: $metadata)';
   }
 }
 
 /// @nodoc
-abstract class _$$SmartTimingRecommendationImplCopyWith<$Res>
-    implements $SmartTimingRecommendationCopyWith<$Res> {
-  factory _$$SmartTimingRecommendationImplCopyWith(
-          _$SmartTimingRecommendationImpl value,
-          $Res Function(_$SmartTimingRecommendationImpl) then) =
-      __$$SmartTimingRecommendationImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $SmartTimingRecommendationCopyWith<$Res> {
+  factory $SmartTimingRecommendationCopyWith(SmartTimingRecommendation value,
+          $Res Function(SmartTimingRecommendation) _then) =
+      _$SmartTimingRecommendationCopyWithImpl;
   @useResult
   $Res call(
       {String userId,
@@ -1547,15 +2404,15 @@ abstract class _$$SmartTimingRecommendationImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$SmartTimingRecommendationImplCopyWithImpl<$Res>
-    extends _$SmartTimingRecommendationCopyWithImpl<$Res,
-        _$SmartTimingRecommendationImpl>
-    implements _$$SmartTimingRecommendationImplCopyWith<$Res> {
-  __$$SmartTimingRecommendationImplCopyWithImpl(
-      _$SmartTimingRecommendationImpl _value,
-      $Res Function(_$SmartTimingRecommendationImpl) _then)
-      : super(_value, _then);
+class _$SmartTimingRecommendationCopyWithImpl<$Res>
+    implements $SmartTimingRecommendationCopyWith<$Res> {
+  _$SmartTimingRecommendationCopyWithImpl(this._self, this._then);
 
+  final SmartTimingRecommendation _self;
+  final $Res Function(SmartTimingRecommendation) _then;
+
+  /// Create a copy of SmartTimingRecommendation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1566,39 +2423,220 @@ class __$$SmartTimingRecommendationImplCopyWithImpl<$Res>
     Object? reason = null,
     Object? metadata = freezed,
   }) {
-    return _then(_$SmartTimingRecommendationImpl(
+    return _then(_self.copyWith(
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       category: null == category
-          ? _value.category
+          ? _self.category
           : category // ignore: cast_nullable_to_non_nullable
               as NotificationCategory,
       recommendedTime: null == recommendedTime
-          ? _value.recommendedTime
+          ? _self.recommendedTime
           : recommendedTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
       confidence: null == confidence
-          ? _value.confidence
+          ? _self.confidence
           : confidence // ignore: cast_nullable_to_non_nullable
               as double,
       reason: null == reason
-          ? _value.reason
+          ? _self.reason
           : reason // ignore: cast_nullable_to_non_nullable
               as String,
       metadata: freezed == metadata
-          ? _value._metadata
+          ? _self.metadata
           : metadata // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [SmartTimingRecommendation].
+extension SmartTimingRecommendationPatterns on SmartTimingRecommendation {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_SmartTimingRecommendation value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SmartTimingRecommendation() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_SmartTimingRecommendation value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SmartTimingRecommendation():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_SmartTimingRecommendation value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SmartTimingRecommendation() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String userId,
+            NotificationCategory category,
+            DateTime recommendedTime,
+            double confidence,
+            String reason,
+            Map<String, dynamic>? metadata)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SmartTimingRecommendation() when $default != null:
+        return $default(_that.userId, _that.category, _that.recommendedTime,
+            _that.confidence, _that.reason, _that.metadata);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String userId,
+            NotificationCategory category,
+            DateTime recommendedTime,
+            double confidence,
+            String reason,
+            Map<String, dynamic>? metadata)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SmartTimingRecommendation():
+        return $default(_that.userId, _that.category, _that.recommendedTime,
+            _that.confidence, _that.reason, _that.metadata);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String userId,
+            NotificationCategory category,
+            DateTime recommendedTime,
+            double confidence,
+            String reason,
+            Map<String, dynamic>? metadata)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SmartTimingRecommendation() when $default != null:
+        return $default(_that.userId, _that.category, _that.recommendedTime,
+            _that.confidence, _that.reason, _that.metadata);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$SmartTimingRecommendationImpl implements _SmartTimingRecommendation {
-  const _$SmartTimingRecommendationImpl(
+class _SmartTimingRecommendation implements SmartTimingRecommendation {
+  const _SmartTimingRecommendation(
       {required this.userId,
       required this.category,
       required this.recommendedTime,
@@ -1606,9 +2644,8 @@ class _$SmartTimingRecommendationImpl implements _SmartTimingRecommendation {
       required this.reason,
       final Map<String, dynamic>? metadata})
       : _metadata = metadata;
-
-  factory _$SmartTimingRecommendationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SmartTimingRecommendationImplFromJson(json);
+  factory _SmartTimingRecommendation.fromJson(Map<String, dynamic> json) =>
+      _$SmartTimingRecommendationFromJson(json);
 
   @override
   final String userId;
@@ -1630,16 +2667,28 @@ class _$SmartTimingRecommendationImpl implements _SmartTimingRecommendation {
     return EqualUnmodifiableMapView(value);
   }
 
+  /// Create a copy of SmartTimingRecommendation
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'SmartTimingRecommendation(userId: $userId, category: $category, recommendedTime: $recommendedTime, confidence: $confidence, reason: $reason, metadata: $metadata)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$SmartTimingRecommendationCopyWith<_SmartTimingRecommendation>
+      get copyWith =>
+          __$SmartTimingRecommendationCopyWithImpl<_SmartTimingRecommendation>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$SmartTimingRecommendationToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SmartTimingRecommendationImpl &&
+            other is _SmartTimingRecommendation &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.category, category) ||
                 other.category == category) &&
@@ -1651,7 +2700,7 @@ class _$SmartTimingRecommendationImpl implements _SmartTimingRecommendation {
             const DeepCollectionEquality().equals(other._metadata, _metadata));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -1662,146 +2711,138 @@ class _$SmartTimingRecommendationImpl implements _SmartTimingRecommendation {
       reason,
       const DeepCollectionEquality().hash(_metadata));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$SmartTimingRecommendationImplCopyWith<_$SmartTimingRecommendationImpl>
-      get copyWith => __$$SmartTimingRecommendationImplCopyWithImpl<
-          _$SmartTimingRecommendationImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SmartTimingRecommendationImplToJson(
-      this,
-    );
+  String toString() {
+    return 'SmartTimingRecommendation(userId: $userId, category: $category, recommendedTime: $recommendedTime, confidence: $confidence, reason: $reason, metadata: $metadata)';
   }
 }
 
-abstract class _SmartTimingRecommendation implements SmartTimingRecommendation {
-  const factory _SmartTimingRecommendation(
-      {required final String userId,
-      required final NotificationCategory category,
-      required final DateTime recommendedTime,
-      required final double confidence,
-      required final String reason,
-      final Map<String, dynamic>? metadata}) = _$SmartTimingRecommendationImpl;
-
-  factory _SmartTimingRecommendation.fromJson(Map<String, dynamic> json) =
-      _$SmartTimingRecommendationImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$SmartTimingRecommendationCopyWith<$Res>
+    implements $SmartTimingRecommendationCopyWith<$Res> {
+  factory _$SmartTimingRecommendationCopyWith(_SmartTimingRecommendation value,
+          $Res Function(_SmartTimingRecommendation) _then) =
+      __$SmartTimingRecommendationCopyWithImpl;
   @override
-  String get userId;
-  @override
-  NotificationCategory get category;
-  @override
-  DateTime get recommendedTime;
-  @override
-  double get confidence;
-  @override
-  String get reason;
-  @override
-  Map<String, dynamic>? get metadata;
-  @override
-  @JsonKey(ignore: true)
-  _$$SmartTimingRecommendationImplCopyWith<_$SmartTimingRecommendationImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String userId,
+      NotificationCategory category,
+      DateTime recommendedTime,
+      double confidence,
+      String reason,
+      Map<String, dynamic>? metadata});
 }
 
-NotificationDeliveryStatus _$NotificationDeliveryStatusFromJson(
-    Map<String, dynamic> json) {
-  return _NotificationDeliveryStatus.fromJson(json);
+/// @nodoc
+class __$SmartTimingRecommendationCopyWithImpl<$Res>
+    implements _$SmartTimingRecommendationCopyWith<$Res> {
+  __$SmartTimingRecommendationCopyWithImpl(this._self, this._then);
+
+  final _SmartTimingRecommendation _self;
+  final $Res Function(_SmartTimingRecommendation) _then;
+
+  /// Create a copy of SmartTimingRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? userId = null,
+    Object? category = null,
+    Object? recommendedTime = null,
+    Object? confidence = null,
+    Object? reason = null,
+    Object? metadata = freezed,
+  }) {
+    return _then(_SmartTimingRecommendation(
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: null == category
+          ? _self.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as NotificationCategory,
+      recommendedTime: null == recommendedTime
+          ? _self.recommendedTime
+          : recommendedTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      confidence: null == confidence
+          ? _self.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      reason: null == reason
+          ? _self.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
+      metadata: freezed == metadata
+          ? _self._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$NotificationDeliveryStatus {
-  String get notificationId => throw _privateConstructorUsedError;
-  Map<NotificationChannel, DeliveryResult> get channelResults =>
-      throw _privateConstructorUsedError;
-  DateTime get sentAt => throw _privateConstructorUsedError;
-  DateTime? get deliveredAt => throw _privateConstructorUsedError;
-  DateTime? get readAt => throw _privateConstructorUsedError;
-  DateTime? get actionedAt => throw _privateConstructorUsedError;
+  String get notificationId;
+  Map<NotificationChannel, DeliveryResult> get channelResults;
+  DateTime get sentAt;
+  DateTime? get deliveredAt;
+  DateTime? get readAt;
+  DateTime? get actionedAt;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $NotificationDeliveryStatusCopyWith<NotificationDeliveryStatus>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $NotificationDeliveryStatusCopyWith<$Res> {
-  factory $NotificationDeliveryStatusCopyWith(NotificationDeliveryStatus value,
-          $Res Function(NotificationDeliveryStatus) then) =
-      _$NotificationDeliveryStatusCopyWithImpl<$Res,
-          NotificationDeliveryStatus>;
-  @useResult
-  $Res call(
-      {String notificationId,
-      Map<NotificationChannel, DeliveryResult> channelResults,
-      DateTime sentAt,
-      DateTime? deliveredAt,
-      DateTime? readAt,
-      DateTime? actionedAt});
-}
-
-/// @nodoc
-class _$NotificationDeliveryStatusCopyWithImpl<$Res,
-        $Val extends NotificationDeliveryStatus>
-    implements $NotificationDeliveryStatusCopyWith<$Res> {
-  _$NotificationDeliveryStatusCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of NotificationDeliveryStatus
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $NotificationDeliveryStatusCopyWith<NotificationDeliveryStatus>
+      get copyWith =>
+          _$NotificationDeliveryStatusCopyWithImpl<NotificationDeliveryStatus>(
+              this as NotificationDeliveryStatus, _$identity);
+
+  /// Serializes this NotificationDeliveryStatus to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? notificationId = null,
-    Object? channelResults = null,
-    Object? sentAt = null,
-    Object? deliveredAt = freezed,
-    Object? readAt = freezed,
-    Object? actionedAt = freezed,
-  }) {
-    return _then(_value.copyWith(
-      notificationId: null == notificationId
-          ? _value.notificationId
-          : notificationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      channelResults: null == channelResults
-          ? _value.channelResults
-          : channelResults // ignore: cast_nullable_to_non_nullable
-              as Map<NotificationChannel, DeliveryResult>,
-      sentAt: null == sentAt
-          ? _value.sentAt
-          : sentAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
-          : deliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      readAt: freezed == readAt
-          ? _value.readAt
-          : readAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      actionedAt: freezed == actionedAt
-          ? _value.actionedAt
-          : actionedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is NotificationDeliveryStatus &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
+            const DeepCollectionEquality()
+                .equals(other.channelResults, channelResults) &&
+            (identical(other.sentAt, sentAt) || other.sentAt == sentAt) &&
+            (identical(other.deliveredAt, deliveredAt) ||
+                other.deliveredAt == deliveredAt) &&
+            (identical(other.readAt, readAt) || other.readAt == readAt) &&
+            (identical(other.actionedAt, actionedAt) ||
+                other.actionedAt == actionedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      notificationId,
+      const DeepCollectionEquality().hash(channelResults),
+      sentAt,
+      deliveredAt,
+      readAt,
+      actionedAt);
+
+  @override
+  String toString() {
+    return 'NotificationDeliveryStatus(notificationId: $notificationId, channelResults: $channelResults, sentAt: $sentAt, deliveredAt: $deliveredAt, readAt: $readAt, actionedAt: $actionedAt)';
   }
 }
 
 /// @nodoc
-abstract class _$$NotificationDeliveryStatusImplCopyWith<$Res>
-    implements $NotificationDeliveryStatusCopyWith<$Res> {
-  factory _$$NotificationDeliveryStatusImplCopyWith(
-          _$NotificationDeliveryStatusImpl value,
-          $Res Function(_$NotificationDeliveryStatusImpl) then) =
-      __$$NotificationDeliveryStatusImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $NotificationDeliveryStatusCopyWith<$Res> {
+  factory $NotificationDeliveryStatusCopyWith(NotificationDeliveryStatus value,
+          $Res Function(NotificationDeliveryStatus) _then) =
+      _$NotificationDeliveryStatusCopyWithImpl;
   @useResult
   $Res call(
       {String notificationId,
@@ -1813,15 +2854,15 @@ abstract class _$$NotificationDeliveryStatusImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$NotificationDeliveryStatusImplCopyWithImpl<$Res>
-    extends _$NotificationDeliveryStatusCopyWithImpl<$Res,
-        _$NotificationDeliveryStatusImpl>
-    implements _$$NotificationDeliveryStatusImplCopyWith<$Res> {
-  __$$NotificationDeliveryStatusImplCopyWithImpl(
-      _$NotificationDeliveryStatusImpl _value,
-      $Res Function(_$NotificationDeliveryStatusImpl) _then)
-      : super(_value, _then);
+class _$NotificationDeliveryStatusCopyWithImpl<$Res>
+    implements $NotificationDeliveryStatusCopyWith<$Res> {
+  _$NotificationDeliveryStatusCopyWithImpl(this._self, this._then);
 
+  final NotificationDeliveryStatus _self;
+  final $Res Function(NotificationDeliveryStatus) _then;
+
+  /// Create a copy of NotificationDeliveryStatus
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1832,39 +2873,220 @@ class __$$NotificationDeliveryStatusImplCopyWithImpl<$Res>
     Object? readAt = freezed,
     Object? actionedAt = freezed,
   }) {
-    return _then(_$NotificationDeliveryStatusImpl(
+    return _then(_self.copyWith(
       notificationId: null == notificationId
-          ? _value.notificationId
+          ? _self.notificationId
           : notificationId // ignore: cast_nullable_to_non_nullable
               as String,
       channelResults: null == channelResults
-          ? _value._channelResults
+          ? _self.channelResults
           : channelResults // ignore: cast_nullable_to_non_nullable
               as Map<NotificationChannel, DeliveryResult>,
       sentAt: null == sentAt
-          ? _value.sentAt
+          ? _self.sentAt
           : sentAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
       deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
+          ? _self.deliveredAt
           : deliveredAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       readAt: freezed == readAt
-          ? _value.readAt
+          ? _self.readAt
           : readAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       actionedAt: freezed == actionedAt
-          ? _value.actionedAt
+          ? _self.actionedAt
           : actionedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [NotificationDeliveryStatus].
+extension NotificationDeliveryStatusPatterns on NotificationDeliveryStatus {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_NotificationDeliveryStatus value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationDeliveryStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_NotificationDeliveryStatus value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationDeliveryStatus():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_NotificationDeliveryStatus value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationDeliveryStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String notificationId,
+            Map<NotificationChannel, DeliveryResult> channelResults,
+            DateTime sentAt,
+            DateTime? deliveredAt,
+            DateTime? readAt,
+            DateTime? actionedAt)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationDeliveryStatus() when $default != null:
+        return $default(_that.notificationId, _that.channelResults,
+            _that.sentAt, _that.deliveredAt, _that.readAt, _that.actionedAt);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String notificationId,
+            Map<NotificationChannel, DeliveryResult> channelResults,
+            DateTime sentAt,
+            DateTime? deliveredAt,
+            DateTime? readAt,
+            DateTime? actionedAt)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationDeliveryStatus():
+        return $default(_that.notificationId, _that.channelResults,
+            _that.sentAt, _that.deliveredAt, _that.readAt, _that.actionedAt);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String notificationId,
+            Map<NotificationChannel, DeliveryResult> channelResults,
+            DateTime sentAt,
+            DateTime? deliveredAt,
+            DateTime? readAt,
+            DateTime? actionedAt)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _NotificationDeliveryStatus() when $default != null:
+        return $default(_that.notificationId, _that.channelResults,
+            _that.sentAt, _that.deliveredAt, _that.readAt, _that.actionedAt);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$NotificationDeliveryStatusImpl implements _NotificationDeliveryStatus {
-  const _$NotificationDeliveryStatusImpl(
+class _NotificationDeliveryStatus implements NotificationDeliveryStatus {
+  const _NotificationDeliveryStatus(
       {required this.notificationId,
       required final Map<NotificationChannel, DeliveryResult> channelResults,
       required this.sentAt,
@@ -1872,10 +3094,8 @@ class _$NotificationDeliveryStatusImpl implements _NotificationDeliveryStatus {
       this.readAt,
       this.actionedAt})
       : _channelResults = channelResults;
-
-  factory _$NotificationDeliveryStatusImpl.fromJson(
-          Map<String, dynamic> json) =>
-      _$$NotificationDeliveryStatusImplFromJson(json);
+  factory _NotificationDeliveryStatus.fromJson(Map<String, dynamic> json) =>
+      _$NotificationDeliveryStatusFromJson(json);
 
   @override
   final String notificationId;
@@ -1896,16 +3116,27 @@ class _$NotificationDeliveryStatusImpl implements _NotificationDeliveryStatus {
   @override
   final DateTime? actionedAt;
 
+  /// Create a copy of NotificationDeliveryStatus
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'NotificationDeliveryStatus(notificationId: $notificationId, channelResults: $channelResults, sentAt: $sentAt, deliveredAt: $deliveredAt, readAt: $readAt, actionedAt: $actionedAt)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$NotificationDeliveryStatusCopyWith<_NotificationDeliveryStatus>
+      get copyWith => __$NotificationDeliveryStatusCopyWithImpl<
+          _NotificationDeliveryStatus>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$NotificationDeliveryStatusToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NotificationDeliveryStatusImpl &&
+            other is _NotificationDeliveryStatus &&
             (identical(other.notificationId, notificationId) ||
                 other.notificationId == notificationId) &&
             const DeepCollectionEquality()
@@ -1918,7 +3149,7 @@ class _$NotificationDeliveryStatusImpl implements _NotificationDeliveryStatus {
                 other.actionedAt == actionedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -1929,184 +3160,350 @@ class _$NotificationDeliveryStatusImpl implements _NotificationDeliveryStatus {
       readAt,
       actionedAt);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$NotificationDeliveryStatusImplCopyWith<_$NotificationDeliveryStatusImpl>
-      get copyWith => __$$NotificationDeliveryStatusImplCopyWithImpl<
-          _$NotificationDeliveryStatusImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$NotificationDeliveryStatusImplToJson(
-      this,
-    );
+  String toString() {
+    return 'NotificationDeliveryStatus(notificationId: $notificationId, channelResults: $channelResults, sentAt: $sentAt, deliveredAt: $deliveredAt, readAt: $readAt, actionedAt: $actionedAt)';
   }
 }
 
-abstract class _NotificationDeliveryStatus
-    implements NotificationDeliveryStatus {
-  const factory _NotificationDeliveryStatus(
-      {required final String notificationId,
-      required final Map<NotificationChannel, DeliveryResult> channelResults,
-      required final DateTime sentAt,
-      final DateTime? deliveredAt,
-      final DateTime? readAt,
-      final DateTime? actionedAt}) = _$NotificationDeliveryStatusImpl;
-
-  factory _NotificationDeliveryStatus.fromJson(Map<String, dynamic> json) =
-      _$NotificationDeliveryStatusImpl.fromJson;
-
-  @override
-  String get notificationId;
-  @override
-  Map<NotificationChannel, DeliveryResult> get channelResults;
-  @override
-  DateTime get sentAt;
-  @override
-  DateTime? get deliveredAt;
-  @override
-  DateTime? get readAt;
-  @override
-  DateTime? get actionedAt;
-  @override
-  @JsonKey(ignore: true)
-  _$$NotificationDeliveryStatusImplCopyWith<_$NotificationDeliveryStatusImpl>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-DeliveryResult _$DeliveryResultFromJson(Map<String, dynamic> json) {
-  return _DeliveryResult.fromJson(json);
-}
-
 /// @nodoc
-mixin _$DeliveryResult {
-  bool get success => throw _privateConstructorUsedError;
-  String? get errorMessage => throw _privateConstructorUsedError;
-  String? get messageId => throw _privateConstructorUsedError;
-  DateTime? get timestamp => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $DeliveryResultCopyWith<DeliveryResult> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $DeliveryResultCopyWith<$Res> {
-  factory $DeliveryResultCopyWith(
-          DeliveryResult value, $Res Function(DeliveryResult) then) =
-      _$DeliveryResultCopyWithImpl<$Res, DeliveryResult>;
+abstract mixin class _$NotificationDeliveryStatusCopyWith<$Res>
+    implements $NotificationDeliveryStatusCopyWith<$Res> {
+  factory _$NotificationDeliveryStatusCopyWith(
+          _NotificationDeliveryStatus value,
+          $Res Function(_NotificationDeliveryStatus) _then) =
+      __$NotificationDeliveryStatusCopyWithImpl;
+  @override
   @useResult
   $Res call(
-      {bool success,
-      String? errorMessage,
-      String? messageId,
-      DateTime? timestamp});
+      {String notificationId,
+      Map<NotificationChannel, DeliveryResult> channelResults,
+      DateTime sentAt,
+      DateTime? deliveredAt,
+      DateTime? readAt,
+      DateTime? actionedAt});
 }
 
 /// @nodoc
-class _$DeliveryResultCopyWithImpl<$Res, $Val extends DeliveryResult>
-    implements $DeliveryResultCopyWith<$Res> {
-  _$DeliveryResultCopyWithImpl(this._value, this._then);
+class __$NotificationDeliveryStatusCopyWithImpl<$Res>
+    implements _$NotificationDeliveryStatusCopyWith<$Res> {
+  __$NotificationDeliveryStatusCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final _NotificationDeliveryStatus _self;
+  final $Res Function(_NotificationDeliveryStatus) _then;
 
-  @pragma('vm:prefer-inline')
+  /// Create a copy of NotificationDeliveryStatus
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? success = null,
-    Object? errorMessage = freezed,
-    Object? messageId = freezed,
-    Object? timestamp = freezed,
+    Object? notificationId = null,
+    Object? channelResults = null,
+    Object? sentAt = null,
+    Object? deliveredAt = freezed,
+    Object? readAt = freezed,
+    Object? actionedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      messageId: freezed == messageId
-          ? _value.messageId
-          : messageId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      timestamp: freezed == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
+    return _then(_NotificationDeliveryStatus(
+      notificationId: null == notificationId
+          ? _self.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      channelResults: null == channelResults
+          ? _self._channelResults
+          : channelResults // ignore: cast_nullable_to_non_nullable
+              as Map<NotificationChannel, DeliveryResult>,
+      sentAt: null == sentAt
+          ? _self.sentAt
+          : sentAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      deliveredAt: freezed == deliveredAt
+          ? _self.deliveredAt
+          : deliveredAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$DeliveryResultImplCopyWith<$Res>
-    implements $DeliveryResultCopyWith<$Res> {
-  factory _$$DeliveryResultImplCopyWith(_$DeliveryResultImpl value,
-          $Res Function(_$DeliveryResultImpl) then) =
-      __$$DeliveryResultImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {bool success,
-      String? errorMessage,
-      String? messageId,
-      DateTime? timestamp});
-}
-
-/// @nodoc
-class __$$DeliveryResultImplCopyWithImpl<$Res>
-    extends _$DeliveryResultCopyWithImpl<$Res, _$DeliveryResultImpl>
-    implements _$$DeliveryResultImplCopyWith<$Res> {
-  __$$DeliveryResultImplCopyWithImpl(
-      _$DeliveryResultImpl _value, $Res Function(_$DeliveryResultImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? success = null,
-    Object? errorMessage = freezed,
-    Object? messageId = freezed,
-    Object? timestamp = freezed,
-  }) {
-    return _then(_$DeliveryResultImpl(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      messageId: freezed == messageId
-          ? _value.messageId
-          : messageId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      timestamp: freezed == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
+      readAt: freezed == readAt
+          ? _self.readAt
+          : readAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      actionedAt: freezed == actionedAt
+          ? _self.actionedAt
+          : actionedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
   }
 }
 
 /// @nodoc
+mixin _$DeliveryResult {
+  bool get success;
+  String? get errorMessage;
+  String? get messageId;
+  DateTime? get timestamp;
+
+  /// Create a copy of DeliveryResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $DeliveryResultCopyWith<DeliveryResult> get copyWith =>
+      _$DeliveryResultCopyWithImpl<DeliveryResult>(
+          this as DeliveryResult, _$identity);
+
+  /// Serializes this DeliveryResult to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is DeliveryResult &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.messageId, messageId) ||
+                other.messageId == messageId) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, success, errorMessage, messageId, timestamp);
+
+  @override
+  String toString() {
+    return 'DeliveryResult(success: $success, errorMessage: $errorMessage, messageId: $messageId, timestamp: $timestamp)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $DeliveryResultCopyWith<$Res> {
+  factory $DeliveryResultCopyWith(
+          DeliveryResult value, $Res Function(DeliveryResult) _then) =
+      _$DeliveryResultCopyWithImpl;
+  @useResult
+  $Res call(
+      {bool success,
+      String? errorMessage,
+      String? messageId,
+      DateTime? timestamp});
+}
+
+/// @nodoc
+class _$DeliveryResultCopyWithImpl<$Res>
+    implements $DeliveryResultCopyWith<$Res> {
+  _$DeliveryResultCopyWithImpl(this._self, this._then);
+
+  final DeliveryResult _self;
+  final $Res Function(DeliveryResult) _then;
+
+  /// Create a copy of DeliveryResult
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? errorMessage = freezed,
+    Object? messageId = freezed,
+    Object? timestamp = freezed,
+  }) {
+    return _then(_self.copyWith(
+      success: null == success
+          ? _self.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _self.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      messageId: freezed == messageId
+          ? _self.messageId
+          : messageId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      timestamp: freezed == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [DeliveryResult].
+extension DeliveryResultPatterns on DeliveryResult {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_DeliveryResult value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DeliveryResult() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_DeliveryResult value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DeliveryResult():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_DeliveryResult value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DeliveryResult() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(bool success, String? errorMessage, String? messageId,
+            DateTime? timestamp)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DeliveryResult() when $default != null:
+        return $default(_that.success, _that.errorMessage, _that.messageId,
+            _that.timestamp);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(bool success, String? errorMessage, String? messageId,
+            DateTime? timestamp)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DeliveryResult():
+        return $default(_that.success, _that.errorMessage, _that.messageId,
+            _that.timestamp);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(bool success, String? errorMessage, String? messageId,
+            DateTime? timestamp)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DeliveryResult() when $default != null:
+        return $default(_that.success, _that.errorMessage, _that.messageId,
+            _that.timestamp);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$DeliveryResultImpl implements _DeliveryResult {
-  const _$DeliveryResultImpl(
+class _DeliveryResult implements DeliveryResult {
+  const _DeliveryResult(
       {required this.success,
       this.errorMessage,
       this.messageId,
       this.timestamp});
-
-  factory _$DeliveryResultImpl.fromJson(Map<String, dynamic> json) =>
-      _$$DeliveryResultImplFromJson(json);
+  factory _DeliveryResult.fromJson(Map<String, dynamic> json) =>
+      _$DeliveryResultFromJson(json);
 
   @override
   final bool success;
@@ -2117,16 +3514,26 @@ class _$DeliveryResultImpl implements _DeliveryResult {
   @override
   final DateTime? timestamp;
 
+  /// Create a copy of DeliveryResult
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'DeliveryResult(success: $success, errorMessage: $errorMessage, messageId: $messageId, timestamp: $timestamp)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$DeliveryResultCopyWith<_DeliveryResult> get copyWith =>
+      __$DeliveryResultCopyWithImpl<_DeliveryResult>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$DeliveryResultToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DeliveryResultImpl &&
+            other is _DeliveryResult &&
             (identical(other.success, success) || other.success == success) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
@@ -2136,46 +3543,69 @@ class _$DeliveryResultImpl implements _DeliveryResult {
                 other.timestamp == timestamp));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, success, errorMessage, messageId, timestamp);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$DeliveryResultImplCopyWith<_$DeliveryResultImpl> get copyWith =>
-      __$$DeliveryResultImplCopyWithImpl<_$DeliveryResultImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$DeliveryResultImplToJson(
-      this,
-    );
+  String toString() {
+    return 'DeliveryResult(success: $success, errorMessage: $errorMessage, messageId: $messageId, timestamp: $timestamp)';
   }
 }
 
-abstract class _DeliveryResult implements DeliveryResult {
-  const factory _DeliveryResult(
-      {required final bool success,
-      final String? errorMessage,
-      final String? messageId,
-      final DateTime? timestamp}) = _$DeliveryResultImpl;
-
-  factory _DeliveryResult.fromJson(Map<String, dynamic> json) =
-      _$DeliveryResultImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$DeliveryResultCopyWith<$Res>
+    implements $DeliveryResultCopyWith<$Res> {
+  factory _$DeliveryResultCopyWith(
+          _DeliveryResult value, $Res Function(_DeliveryResult) _then) =
+      __$DeliveryResultCopyWithImpl;
   @override
-  bool get success;
-  @override
-  String? get errorMessage;
-  @override
-  String? get messageId;
-  @override
-  DateTime? get timestamp;
-  @override
-  @JsonKey(ignore: true)
-  _$$DeliveryResultImplCopyWith<_$DeliveryResultImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {bool success,
+      String? errorMessage,
+      String? messageId,
+      DateTime? timestamp});
 }
+
+/// @nodoc
+class __$DeliveryResultCopyWithImpl<$Res>
+    implements _$DeliveryResultCopyWith<$Res> {
+  __$DeliveryResultCopyWithImpl(this._self, this._then);
+
+  final _DeliveryResult _self;
+  final $Res Function(_DeliveryResult) _then;
+
+  /// Create a copy of DeliveryResult
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? success = null,
+    Object? errorMessage = freezed,
+    Object? messageId = freezed,
+    Object? timestamp = freezed,
+  }) {
+    return _then(_DeliveryResult(
+      success: null == success
+          ? _self.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _self.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      messageId: freezed == messageId
+          ? _self.messageId
+          : messageId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      timestamp: freezed == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+// dart format on

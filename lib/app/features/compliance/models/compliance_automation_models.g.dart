@@ -6,8 +6,8 @@ part of 'compliance_automation_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ComplianceScanImpl _$$ComplianceScanImplFromJson(Map<String, dynamic> json) =>
-    _$ComplianceScanImpl(
+_ComplianceScan _$ComplianceScanFromJson(Map<String, dynamic> json) =>
+    _ComplianceScan(
       organizationId: json['organizationId'] as String,
       scanDate: json['scanDate'] as String,
       complianceScore: ComplianceScore.fromJson(
@@ -22,8 +22,7 @@ _$ComplianceScanImpl _$$ComplianceScanImplFromJson(Map<String, dynamic> json) =>
           ComplianceSummary.fromJson(json['summary'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ComplianceScanImplToJson(
-        _$ComplianceScanImpl instance) =>
+Map<String, dynamic> _$ComplianceScanToJson(_ComplianceScan instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'scanDate': instance.scanDate,
@@ -33,25 +32,23 @@ Map<String, dynamic> _$$ComplianceScanImplToJson(
       'summary': instance.summary,
     };
 
-_$ComplianceScoreImpl _$$ComplianceScoreImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceScoreImpl(
+_ComplianceScore _$ComplianceScoreFromJson(Map<String, dynamic> json) =>
+    _ComplianceScore(
       score: (json['score'] as num).toInt(),
       riskLevel: json['riskLevel'] as String,
       breakdown:
           ScoreBreakdown.fromJson(json['breakdown'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ComplianceScoreImplToJson(
-        _$ComplianceScoreImpl instance) =>
+Map<String, dynamic> _$ComplianceScoreToJson(_ComplianceScore instance) =>
     <String, dynamic>{
       'score': instance.score,
       'riskLevel': instance.riskLevel,
       'breakdown': instance.breakdown,
     };
 
-_$ScoreBreakdownImpl _$$ScoreBreakdownImplFromJson(Map<String, dynamic> json) =>
-    _$ScoreBreakdownImpl(
+_ScoreBreakdown _$ScoreBreakdownFromJson(Map<String, dynamic> json) =>
+    _ScoreBreakdown(
       baseScore: (json['baseScore'] as num).toInt(),
       issueDeduction: (json['issueDeduction'] as num).toInt(),
       warningDeduction: (json['warningDeduction'] as num).toInt(),
@@ -60,8 +57,7 @@ _$ScoreBreakdownImpl _$$ScoreBreakdownImplFromJson(Map<String, dynamic> json) =>
       complianceRate: (json['complianceRate'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$ScoreBreakdownImplToJson(
-        _$ScoreBreakdownImpl instance) =>
+Map<String, dynamic> _$ScoreBreakdownToJson(_ScoreBreakdown instance) =>
     <String, dynamic>{
       'baseScore': instance.baseScore,
       'issueDeduction': instance.issueDeduction,
@@ -71,17 +67,15 @@ Map<String, dynamic> _$$ScoreBreakdownImplToJson(
       'complianceRate': instance.complianceRate,
     };
 
-_$ComplianceIssueImpl _$$ComplianceIssueImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceIssueImpl(
+_ComplianceIssue _$ComplianceIssueFromJson(Map<String, dynamic> json) =>
+    _ComplianceIssue(
       type: json['type'] as String,
       count: (json['count'] as num).toInt(),
       message: json['message'] as String,
       severity: json['severity'] as String,
     );
 
-Map<String, dynamic> _$$ComplianceIssueImplToJson(
-        _$ComplianceIssueImpl instance) =>
+Map<String, dynamic> _$ComplianceIssueToJson(_ComplianceIssue instance) =>
     <String, dynamic>{
       'type': instance.type,
       'count': instance.count,
@@ -89,9 +83,8 @@ Map<String, dynamic> _$$ComplianceIssueImplToJson(
       'severity': instance.severity,
     };
 
-_$ComplianceSummaryImpl _$$ComplianceSummaryImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceSummaryImpl(
+_ComplianceSummary _$ComplianceSummaryFromJson(Map<String, dynamic> json) =>
+    _ComplianceSummary(
       totalIssues: (json['totalIssues'] as num).toInt(),
       totalWarnings: (json['totalWarnings'] as num).toInt(),
       criticalCount: (json['criticalCount'] as num).toInt(),
@@ -99,8 +92,7 @@ _$ComplianceSummaryImpl _$$ComplianceSummaryImplFromJson(
       mediumCount: (json['mediumCount'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$ComplianceSummaryImplToJson(
-        _$ComplianceSummaryImpl instance) =>
+Map<String, dynamic> _$ComplianceSummaryToJson(_ComplianceSummary instance) =>
     <String, dynamic>{
       'totalIssues': instance.totalIssues,
       'totalWarnings': instance.totalWarnings,
@@ -109,9 +101,8 @@ Map<String, dynamic> _$$ComplianceSummaryImplToJson(
       'mediumCount': instance.mediumCount,
     };
 
-_$ExpiringDocumentImpl _$$ExpiringDocumentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ExpiringDocumentImpl(
+_ExpiringDocument _$ExpiringDocumentFromJson(Map<String, dynamic> json) =>
+    _ExpiringDocument(
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
       documentType: json['documentType'] as String,
@@ -120,8 +111,7 @@ _$ExpiringDocumentImpl _$$ExpiringDocumentImplFromJson(
       severity: json['severity'] as String,
     );
 
-Map<String, dynamic> _$$ExpiringDocumentImplToJson(
-        _$ExpiringDocumentImpl instance) =>
+Map<String, dynamic> _$ExpiringDocumentToJson(_ExpiringDocument instance) =>
     <String, dynamic>{
       'workerId': instance.workerId,
       'workerName': instance.workerName,
@@ -131,9 +121,8 @@ Map<String, dynamic> _$$ExpiringDocumentImplToJson(
       'severity': instance.severity,
     };
 
-_$ComplianceAlertImpl _$$ComplianceAlertImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceAlertImpl(
+_ComplianceAlert _$ComplianceAlertFromJson(Map<String, dynamic> json) =>
+    _ComplianceAlert(
       alertId: json['alertId'] as String,
       type: json['type'] as String,
       message: json['message'] as String,
@@ -143,8 +132,7 @@ _$ComplianceAlertImpl _$$ComplianceAlertImplFromJson(
       status: json['status'] as String?,
     );
 
-Map<String, dynamic> _$$ComplianceAlertImplToJson(
-        _$ComplianceAlertImpl instance) =>
+Map<String, dynamic> _$ComplianceAlertToJson(_ComplianceAlert instance) =>
     <String, dynamic>{
       'alertId': instance.alertId,
       'type': instance.type,
@@ -155,9 +143,8 @@ Map<String, dynamic> _$$ComplianceAlertImplToJson(
       'status': instance.status,
     };
 
-_$ComplianceReportImpl _$$ComplianceReportImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceReportImpl(
+_ComplianceReport _$ComplianceReportFromJson(Map<String, dynamic> json) =>
+    _ComplianceReport(
       reportId: json['reportId'] as String,
       organizationId: json['organizationId'] as String,
       reportType: json['reportType'] as String,
@@ -184,8 +171,7 @@ _$ComplianceReportImpl _$$ComplianceReportImplFromJson(
           : AuditTrail.fromJson(json['auditTrail'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ComplianceReportImplToJson(
-        _$ComplianceReportImpl instance) =>
+Map<String, dynamic> _$ComplianceReportToJson(_ComplianceReport instance) =>
     <String, dynamic>{
       'reportId': instance.reportId,
       'organizationId': instance.organizationId,
@@ -200,39 +186,37 @@ Map<String, dynamic> _$$ComplianceReportImplToJson(
       'auditTrail': instance.auditTrail,
     };
 
-_$ComplianceRecommendationImpl _$$ComplianceRecommendationImplFromJson(
+_ComplianceRecommendation _$ComplianceRecommendationFromJson(
         Map<String, dynamic> json) =>
-    _$ComplianceRecommendationImpl(
+    _ComplianceRecommendation(
       priority: json['priority'] as String,
       action: json['action'] as String,
       description: json['description'] as String,
     );
 
-Map<String, dynamic> _$$ComplianceRecommendationImplToJson(
-        _$ComplianceRecommendationImpl instance) =>
+Map<String, dynamic> _$ComplianceRecommendationToJson(
+        _ComplianceRecommendation instance) =>
     <String, dynamic>{
       'priority': instance.priority,
       'action': instance.action,
       'description': instance.description,
     };
 
-_$AuditTrailImpl _$$AuditTrailImplFromJson(Map<String, dynamic> json) =>
-    _$AuditTrailImpl(
+_AuditTrail _$AuditTrailFromJson(Map<String, dynamic> json) => _AuditTrail(
       lastAuditDate: json['lastAuditDate'] as String,
       nextAuditDate: json['nextAuditDate'] as String,
       complianceHistory: json['complianceHistory'] as List<dynamic>,
     );
 
-Map<String, dynamic> _$$AuditTrailImplToJson(_$AuditTrailImpl instance) =>
+Map<String, dynamic> _$AuditTrailToJson(_AuditTrail instance) =>
     <String, dynamic>{
       'lastAuditDate': instance.lastAuditDate,
       'nextAuditDate': instance.nextAuditDate,
       'complianceHistory': instance.complianceHistory,
     };
 
-_$ComplianceTrendImpl _$$ComplianceTrendImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceTrendImpl(
+_ComplianceTrend _$ComplianceTrendFromJson(Map<String, dynamic> json) =>
+    _ComplianceTrend(
       month: json['month'] as String,
       score: (json['score'] as num).toInt(),
       issues: (json['issues'] as num).toInt(),
@@ -240,8 +224,7 @@ _$ComplianceTrendImpl _$$ComplianceTrendImplFromJson(
       compliantWorkers: (json['compliantWorkers'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$ComplianceTrendImplToJson(
-        _$ComplianceTrendImpl instance) =>
+Map<String, dynamic> _$ComplianceTrendToJson(_ComplianceTrend instance) =>
     <String, dynamic>{
       'month': instance.month,
       'score': instance.score,
@@ -250,9 +233,8 @@ Map<String, dynamic> _$$ComplianceTrendImplToJson(
       'compliantWorkers': instance.compliantWorkers,
     };
 
-_$ComplianceTrendsImpl _$$ComplianceTrendsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceTrendsImpl(
+_ComplianceTrends _$ComplianceTrendsFromJson(Map<String, dynamic> json) =>
+    _ComplianceTrends(
       organizationId: json['organizationId'] as String,
       period: json['period'] as String,
       trendDirection: json['trendDirection'] as String,
@@ -262,8 +244,7 @@ _$ComplianceTrendsImpl _$$ComplianceTrendsImplFromJson(
       summary: TrendSummary.fromJson(json['summary'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ComplianceTrendsImplToJson(
-        _$ComplianceTrendsImpl instance) =>
+Map<String, dynamic> _$ComplianceTrendsToJson(_ComplianceTrends instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'period': instance.period,
@@ -272,15 +253,15 @@ Map<String, dynamic> _$$ComplianceTrendsImplToJson(
       'summary': instance.summary,
     };
 
-_$TrendSummaryImpl _$$TrendSummaryImplFromJson(Map<String, dynamic> json) =>
-    _$TrendSummaryImpl(
+_TrendSummary _$TrendSummaryFromJson(Map<String, dynamic> json) =>
+    _TrendSummary(
       averageScore: (json['averageScore'] as num).toInt(),
       highestScore: (json['highestScore'] as num).toInt(),
       lowestScore: (json['lowestScore'] as num).toInt(),
       improvement: (json['improvement'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$TrendSummaryImplToJson(_$TrendSummaryImpl instance) =>
+Map<String, dynamic> _$TrendSummaryToJson(_TrendSummary instance) =>
     <String, dynamic>{
       'averageScore': instance.averageScore,
       'highestScore': instance.highestScore,

@@ -6,9 +6,8 @@ part of 'organization_integrations.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$IntegrationConfigImpl _$$IntegrationConfigImplFromJson(
-        Map<String, dynamic> json) =>
-    _$IntegrationConfigImpl(
+_IntegrationConfig _$IntegrationConfigFromJson(Map<String, dynamic> json) =>
+    _IntegrationConfig(
       isConnected: json['isConnected'] as bool? ?? false,
       apiKey: json['apiKey'] as String?,
       accessToken: json['accessToken'] as String?,
@@ -22,8 +21,7 @@ _$IntegrationConfigImpl _$$IntegrationConfigImplFromJson(
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$IntegrationConfigImplToJson(
-        _$IntegrationConfigImpl instance) =>
+Map<String, dynamic> _$IntegrationConfigToJson(_IntegrationConfig instance) =>
     <String, dynamic>{
       'isConnected': instance.isConnected,
       'apiKey': instance.apiKey,
@@ -34,9 +32,9 @@ Map<String, dynamic> _$$IntegrationConfigImplToJson(
       'metadata': instance.metadata,
     };
 
-_$OrganizationIntegrationsImpl _$$OrganizationIntegrationsImplFromJson(
+_OrganizationIntegrations _$OrganizationIntegrationsFromJson(
         Map<String, dynamic> json) =>
-    _$OrganizationIntegrationsImpl(
+    _OrganizationIntegrations(
       xero: json['xero'] == null
           ? null
           : IntegrationConfig.fromJson(json['xero'] as Map<String, dynamic>),
@@ -93,8 +91,8 @@ _$OrganizationIntegrationsImpl _$$OrganizationIntegrationsImplFromJson(
               json['webhooks'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$OrganizationIntegrationsImplToJson(
-        _$OrganizationIntegrationsImpl instance) =>
+Map<String, dynamic> _$OrganizationIntegrationsToJson(
+        _OrganizationIntegrations instance) =>
     <String, dynamic>{
       'xero': instance.xero,
       'myob': instance.myob,
@@ -114,9 +112,9 @@ Map<String, dynamic> _$$OrganizationIntegrationsImplToJson(
       'webhooks': instance.webhooks,
     };
 
-_$OrganizationBrandingConfigImpl _$$OrganizationBrandingConfigImplFromJson(
+_OrganizationBrandingConfig _$OrganizationBrandingConfigFromJson(
         Map<String, dynamic> json) =>
-    _$OrganizationBrandingConfigImpl(
+    _OrganizationBrandingConfig(
       primaryColor: json['primaryColor'] as String?,
       secondaryColor: json['secondaryColor'] as String?,
       accentColor: json['accentColor'] as String?,
@@ -126,8 +124,8 @@ _$OrganizationBrandingConfigImpl _$$OrganizationBrandingConfigImplFromJson(
       customStyles: json['customStyles'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$OrganizationBrandingConfigImplToJson(
-        _$OrganizationBrandingConfigImpl instance) =>
+Map<String, dynamic> _$OrganizationBrandingConfigToJson(
+        _OrganizationBrandingConfig instance) =>
     <String, dynamic>{
       'primaryColor': instance.primaryColor,
       'secondaryColor': instance.secondaryColor,

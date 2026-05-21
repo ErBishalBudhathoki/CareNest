@@ -8,7 +8,7 @@ part 'workforce_models.g.dart';
 // ============================================================================
 
 @freezed
-class DemandForecast with _$DemandForecast {
+abstract class DemandForecast with _$DemandForecast {
   const factory DemandForecast({
     required DateTime date,
     required int predicted,
@@ -21,7 +21,7 @@ class DemandForecast with _$DemandForecast {
 }
 
 @freezed
-class SeasonalPattern with _$SeasonalPattern {
+abstract class SeasonalPattern with _$SeasonalPattern {
   const factory SeasonalPattern({
     required int day,
     required double average,
@@ -33,7 +33,7 @@ class SeasonalPattern with _$SeasonalPattern {
 }
 
 @freezed
-class ForecastConfidence with _$ForecastConfidence {
+abstract class ForecastConfidence with _$ForecastConfidence {
   const factory ForecastConfidence({
     required double mae,
     required double rmse,
@@ -45,7 +45,7 @@ class ForecastConfidence with _$ForecastConfidence {
 }
 
 @freezed
-class WorkforcePlan with _$WorkforcePlan {
+abstract class WorkforcePlan with _$WorkforcePlan {
   const factory WorkforcePlan({
     required int currentCapacity,
     required int requiredCapacity,
@@ -59,7 +59,7 @@ class WorkforcePlan with _$WorkforcePlan {
 }
 
 @freezed
-class SkillGap with _$SkillGap {
+abstract class SkillGap with _$SkillGap {
   const factory SkillGap({
     required String skill,
     required int current,
@@ -72,7 +72,7 @@ class SkillGap with _$SkillGap {
 }
 
 @freezed
-class TurnoverPrediction with _$TurnoverPrediction {
+abstract class TurnoverPrediction with _$TurnoverPrediction {
   const factory TurnoverPrediction({
     required String employeeId,
     required double riskScore,
@@ -86,7 +86,7 @@ class TurnoverPrediction with _$TurnoverPrediction {
 }
 
 @freezed
-class ScenarioAnalysis with _$ScenarioAnalysis {
+abstract class ScenarioAnalysis with _$ScenarioAnalysis {
   const factory ScenarioAnalysis({
     required String name,
     required double projectedRevenue,
@@ -105,7 +105,7 @@ class ScenarioAnalysis with _$ScenarioAnalysis {
 // ============================================================================
 
 @freezed
-class ResourceAllocation with _$ResourceAllocation {
+abstract class ResourceAllocation with _$ResourceAllocation {
   const factory ResourceAllocation({
     required String appointmentId,
     required String workerId,
@@ -118,7 +118,7 @@ class ResourceAllocation with _$ResourceAllocation {
 }
 
 @freezed
-class AllocationMetrics with _$AllocationMetrics {
+abstract class AllocationMetrics with _$AllocationMetrics {
   const factory AllocationMetrics({
     required int totalAllocations,
     required double averageScore,
@@ -133,7 +133,7 @@ class AllocationMetrics with _$AllocationMetrics {
 }
 
 @freezed
-class WorkerRecommendation with _$WorkerRecommendation {
+abstract class WorkerRecommendation with _$WorkerRecommendation {
   const factory WorkerRecommendation({
     required String workerId,
     required String workerName,
@@ -147,7 +147,7 @@ class WorkerRecommendation with _$WorkerRecommendation {
 }
 
 @freezed
-class WorkloadAnalysis with _$WorkloadAnalysis {
+abstract class WorkloadAnalysis with _$WorkloadAnalysis {
   const factory WorkloadAnalysis({
     required String workerId,
     required String workerName,
@@ -165,7 +165,7 @@ class WorkloadAnalysis with _$WorkloadAnalysis {
 // ============================================================================
 
 @freezed
-class PerformanceMetrics with _$PerformanceMetrics {
+abstract class PerformanceMetrics with _$PerformanceMetrics {
   const factory PerformanceMetrics({
     required int totalAppointments,
     required double avgRating,
@@ -181,7 +181,7 @@ class PerformanceMetrics with _$PerformanceMetrics {
 }
 
 @freezed
-class PerformanceAnalytics with _$PerformanceAnalytics {
+abstract class PerformanceAnalytics with _$PerformanceAnalytics {
   const factory PerformanceAnalytics({
     required String employeeId,
     required String employeeName,
@@ -196,7 +196,7 @@ class PerformanceAnalytics with _$PerformanceAnalytics {
 }
 
 @freezed
-class PerformanceTrend with _$PerformanceTrend {
+abstract class PerformanceTrend with _$PerformanceTrend {
   const factory PerformanceTrend({
     required String direction,
     required double growth,
@@ -208,7 +208,7 @@ class PerformanceTrend with _$PerformanceTrend {
 }
 
 @freezed
-class PeerComparison with _$PeerComparison {
+abstract class PeerComparison with _$PeerComparison {
   const factory PeerComparison({
     required double avgPeerScore,
     required double percentile,
@@ -220,7 +220,7 @@ class PeerComparison with _$PeerComparison {
 }
 
 @freezed
-class SkillProficiency with _$SkillProficiency {
+abstract class SkillProficiency with _$SkillProficiency {
   const factory SkillProficiency({
     required String skill,
     required String level,
@@ -239,7 +239,7 @@ class SkillProficiency with _$SkillProficiency {
 // ============================================================================
 
 @freezed
-class QualityScore with _$QualityScore {
+abstract class QualityScore with _$QualityScore {
   const factory QualityScore({
     required String appointmentId,
     required double overallScore,
@@ -255,7 +255,7 @@ class QualityScore with _$QualityScore {
 }
 
 @freezed
-class QualityFactors with _$QualityFactors {
+abstract class QualityFactors with _$QualityFactors {
   const factory QualityFactors({
     required double punctuality,
     required double completion,
@@ -269,7 +269,7 @@ class QualityFactors with _$QualityFactors {
 }
 
 @freezed
-class QualityIssue with _$QualityIssue {
+abstract class QualityIssue with _$QualityIssue {
   const factory QualityIssue({
     required String type,
     required String severity,
@@ -281,7 +281,7 @@ class QualityIssue with _$QualityIssue {
 }
 
 @freezed
-class ComplianceCheck with _$ComplianceCheck {
+abstract class ComplianceCheck with _$ComplianceCheck {
   const factory ComplianceCheck({
     required String appointmentId,
     required Map<String, ComplianceResult> checks,
@@ -295,7 +295,7 @@ class ComplianceCheck with _$ComplianceCheck {
 }
 
 @freezed
-class ComplianceResult with _$ComplianceResult {
+abstract class ComplianceResult with _$ComplianceResult {
   const factory ComplianceResult({
     required bool passed,
     String? reason,
@@ -306,7 +306,7 @@ class ComplianceResult with _$ComplianceResult {
 }
 
 @freezed
-class ComplianceViolation with _$ComplianceViolation {
+abstract class ComplianceViolation with _$ComplianceViolation {
   const factory ComplianceViolation({
     required String check,
     required String reason,
@@ -317,7 +317,7 @@ class ComplianceViolation with _$ComplianceViolation {
 }
 
 @freezed
-class SentimentAnalysis with _$SentimentAnalysis {
+abstract class SentimentAnalysis with _$SentimentAnalysis {
   const factory SentimentAnalysis({
     required String appointmentId,
     required String feedback,
@@ -334,7 +334,7 @@ class SentimentAnalysis with _$SentimentAnalysis {
 }
 
 @freezed
-class RiskAssessment with _$RiskAssessment {
+abstract class RiskAssessment with _$RiskAssessment {
   const factory RiskAssessment({
     required String appointmentId,
     required double riskScore,
@@ -349,7 +349,7 @@ class RiskAssessment with _$RiskAssessment {
 }
 
 @freezed
-class RiskFactors with _$RiskFactors {
+abstract class RiskFactors with _$RiskFactors {
   const factory RiskFactors({
     required double workerExperience,
     required double clientComplexity,
@@ -363,7 +363,7 @@ class RiskFactors with _$RiskFactors {
 }
 
 @freezed
-class IncidentPattern with _$IncidentPattern {
+abstract class IncidentPattern with _$IncidentPattern {
   const factory IncidentPattern({
     required int totalIncidents,
     required Map<String, dynamic> patterns,
@@ -376,7 +376,7 @@ class IncidentPattern with _$IncidentPattern {
 }
 
 @freezed
-class RecurringIssue with _$RecurringIssue {
+abstract class RecurringIssue with _$RecurringIssue {
   const factory RecurringIssue({
     required String type,
     required String description,
@@ -388,7 +388,7 @@ class RecurringIssue with _$RecurringIssue {
 }
 
 @freezed
-class PreventiveAction with _$PreventiveAction {
+abstract class PreventiveAction with _$PreventiveAction {
   const factory PreventiveAction({
     required String action,
     required String priority,
@@ -404,7 +404,7 @@ class PreventiveAction with _$PreventiveAction {
 // ============================================================================
 
 @freezed
-class ExecutiveDashboard with _$ExecutiveDashboard {
+abstract class ExecutiveDashboard with _$ExecutiveDashboard {
   const factory ExecutiveDashboard({
     required DashboardKPIs kpis,
     required RevenueMetrics revenue,
@@ -421,7 +421,7 @@ class ExecutiveDashboard with _$ExecutiveDashboard {
 }
 
 @freezed
-class DashboardKPIs with _$DashboardKPIs {
+abstract class DashboardKPIs with _$DashboardKPIs {
   const factory DashboardKPIs({
     required double totalRevenue,
     required int totalAppointments,
@@ -436,7 +436,7 @@ class DashboardKPIs with _$DashboardKPIs {
 }
 
 @freezed
-class RevenueMetrics with _$RevenueMetrics {
+abstract class RevenueMetrics with _$RevenueMetrics {
   const factory RevenueMetrics({
     required double total,
     required int count,
@@ -448,7 +448,7 @@ class RevenueMetrics with _$RevenueMetrics {
 }
 
 @freezed
-class OperationalMetrics with _$OperationalMetrics {
+abstract class OperationalMetrics with _$OperationalMetrics {
   const factory OperationalMetrics({
     required double utilization,
     required double efficiency,
@@ -461,7 +461,7 @@ class OperationalMetrics with _$OperationalMetrics {
 }
 
 @freezed
-class ClientMetrics with _$ClientMetrics {
+abstract class ClientMetrics with _$ClientMetrics {
   const factory ClientMetrics({
     required int total,
     required int active,
@@ -475,7 +475,7 @@ class ClientMetrics with _$ClientMetrics {
 }
 
 @freezed
-class WorkforceMetrics with _$WorkforceMetrics {
+abstract class WorkforceMetrics with _$WorkforceMetrics {
   const factory WorkforceMetrics({
     required int total,
     required double utilization,
@@ -489,7 +489,7 @@ class WorkforceMetrics with _$WorkforceMetrics {
 }
 
 @freezed
-class TrendData with _$TrendData {
+abstract class TrendData with _$TrendData {
   const factory TrendData({
     required String direction,
     required double change,
@@ -500,7 +500,7 @@ class TrendData with _$TrendData {
 }
 
 @freezed
-class RevenueForecast with _$RevenueForecast {
+abstract class RevenueForecast with _$RevenueForecast {
   const factory RevenueForecast({
     required int period,
     required double predicted,
@@ -513,7 +513,7 @@ class RevenueForecast with _$RevenueForecast {
 }
 
 @freezed
-class ChurnPrediction with _$ChurnPrediction {
+abstract class ChurnPrediction with _$ChurnPrediction {
   const factory ChurnPrediction({
     required String clientId,
     required String clientName,
@@ -529,7 +529,7 @@ class ChurnPrediction with _$ChurnPrediction {
 }
 
 @freezed
-class ChurnFactors with _$ChurnFactors {
+abstract class ChurnFactors with _$ChurnFactors {
   const factory ChurnFactors({
     required double recency,
     required double frequency,
@@ -543,7 +543,7 @@ class ChurnFactors with _$ChurnFactors {
 }
 
 @freezed
-class ChurnIntervention with _$ChurnIntervention {
+abstract class ChurnIntervention with _$ChurnIntervention {
   const factory ChurnIntervention({
     required String action,
     required String priority,
@@ -555,7 +555,7 @@ class ChurnIntervention with _$ChurnIntervention {
 }
 
 @freezed
-class ProfitabilityAnalysis with _$ProfitabilityAnalysis {
+abstract class ProfitabilityAnalysis with _$ProfitabilityAnalysis {
   const factory ProfitabilityAnalysis({
     required String dimension,
     required double revenue,
@@ -570,7 +570,7 @@ class ProfitabilityAnalysis with _$ProfitabilityAnalysis {
 }
 
 @freezed
-class WhatIfScenario with _$WhatIfScenario {
+abstract class WhatIfScenario with _$WhatIfScenario {
   const factory WhatIfScenario({
     required String name,
     required ScenarioMetrics baseline,
@@ -585,7 +585,7 @@ class WhatIfScenario with _$WhatIfScenario {
 }
 
 @freezed
-class ScenarioMetrics with _$ScenarioMetrics {
+abstract class ScenarioMetrics with _$ScenarioMetrics {
   const factory ScenarioMetrics({
     required int appointments,
     required int workers,
@@ -598,7 +598,7 @@ class ScenarioMetrics with _$ScenarioMetrics {
 }
 
 @freezed
-class ScenarioImpact with _$ScenarioImpact {
+abstract class ScenarioImpact with _$ScenarioImpact {
   const factory ScenarioImpact({
     required double revenueChange,
     required String revenueChangePercent,
@@ -612,7 +612,7 @@ class ScenarioImpact with _$ScenarioImpact {
 }
 
 @freezed
-class ScenarioFeasibility with _$ScenarioFeasibility {
+abstract class ScenarioFeasibility with _$ScenarioFeasibility {
   const factory ScenarioFeasibility({
     required Map<String, double> scores,
     required double overall,
@@ -624,7 +624,7 @@ class ScenarioFeasibility with _$ScenarioFeasibility {
 }
 
 @freezed
-class ScenarioRecommendation with _$ScenarioRecommendation {
+abstract class ScenarioRecommendation with _$ScenarioRecommendation {
   const factory ScenarioRecommendation({
     required String decision,
     required String confidence,
@@ -636,7 +636,7 @@ class ScenarioRecommendation with _$ScenarioRecommendation {
 }
 
 @freezed
-class CustomerLifetimeValue with _$CustomerLifetimeValue {
+abstract class CustomerLifetimeValue with _$CustomerLifetimeValue {
   const factory CustomerLifetimeValue({
     required String clientId,
     required String clientName,
@@ -651,7 +651,7 @@ class CustomerLifetimeValue with _$CustomerLifetimeValue {
 }
 
 @freezed
-class CLVMetrics with _$CLVMetrics {
+abstract class CLVMetrics with _$CLVMetrics {
   const factory CLVMetrics({
     required double totalRevenue,
     required int appointmentCount,
@@ -670,7 +670,7 @@ class CLVMetrics with _$CLVMetrics {
 // ============================================================================
 
 @freezed
-class MLModel with _$MLModel {
+abstract class MLModel with _$MLModel {
   const factory MLModel({
     required String id,
     required String name,
@@ -688,7 +688,7 @@ class MLModel with _$MLModel {
 }
 
 @freezed
-class MLMetrics with _$MLMetrics {
+abstract class MLMetrics with _$MLMetrics {
   const factory MLMetrics({
     required double accuracy,
     required double precision,
@@ -701,7 +701,7 @@ class MLMetrics with _$MLMetrics {
 }
 
 @freezed
-class MLPrediction with _$MLPrediction {
+abstract class MLPrediction with _$MLPrediction {
   const factory MLPrediction({
     required String modelId,
     required PredictionResult prediction,
@@ -715,7 +715,7 @@ class MLPrediction with _$MLPrediction {
 }
 
 @freezed
-class PredictionResult with _$PredictionResult {
+abstract class PredictionResult with _$PredictionResult {
   const factory PredictionResult({
     required String predictedClass,
     required double score,

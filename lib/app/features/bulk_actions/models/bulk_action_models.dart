@@ -8,7 +8,7 @@ part 'bulk_action_models.g.dart';
 // ============================================================================
 
 @freezed
-class TimesheetItem with _$TimesheetItem {
+abstract class TimesheetItem with _$TimesheetItem {
   const factory TimesheetItem({
     required String id,
     required String workerId,
@@ -25,7 +25,7 @@ class TimesheetItem with _$TimesheetItem {
 }
 
 @freezed
-class BulkTimesheetResult with _$BulkTimesheetResult {
+abstract class BulkTimesheetResult with _$BulkTimesheetResult {
   const factory BulkTimesheetResult({
     required int approvedCount,
     required int rejectedCount,
@@ -41,7 +41,7 @@ class BulkTimesheetResult with _$BulkTimesheetResult {
 // ============================================================================
 
 @freezed
-class InvoicePreviewItem with _$InvoicePreviewItem {
+abstract class InvoicePreviewItem with _$InvoicePreviewItem {
   const factory InvoicePreviewItem({
     required String clientId,
     required String clientName,
@@ -55,7 +55,7 @@ class InvoicePreviewItem with _$InvoicePreviewItem {
 }
 
 @freezed
-class AppointmentLineItem with _$AppointmentLineItem {
+abstract class AppointmentLineItem with _$AppointmentLineItem {
   const factory AppointmentLineItem({
     required String appointmentId,
     required DateTime date,
@@ -70,7 +70,7 @@ class AppointmentLineItem with _$AppointmentLineItem {
 }
 
 @freezed
-class InvoicePreview with _$InvoicePreview {
+abstract class InvoicePreview with _$InvoicePreview {
   const factory InvoicePreview({
     required int invoiceCount,
     required int totalAppointments,
@@ -83,7 +83,7 @@ class InvoicePreview with _$InvoicePreview {
 }
 
 @freezed
-class BulkInvoiceResult with _$BulkInvoiceResult {
+abstract class BulkInvoiceResult with _$BulkInvoiceResult {
   const factory BulkInvoiceResult({
     required int invoiceCount,
     required int appointmentCount,
@@ -99,7 +99,7 @@ class BulkInvoiceResult with _$BulkInvoiceResult {
 // ============================================================================
 
 @freezed
-class ShiftAssignment with _$ShiftAssignment {
+abstract class ShiftAssignment with _$ShiftAssignment {
   const factory ShiftAssignment({
     required String shiftId,
     required String? workerId,
@@ -113,7 +113,7 @@ class ShiftAssignment with _$ShiftAssignment {
 }
 
 @freezed
-class WorkerSuggestion with _$WorkerSuggestion {
+abstract class WorkerSuggestion with _$WorkerSuggestion {
   const factory WorkerSuggestion({
     required String workerId,
     required String workerName,
@@ -129,7 +129,7 @@ class WorkerSuggestion with _$WorkerSuggestion {
 }
 
 @freezed
-class ShiftSuggestion with _$ShiftSuggestion {
+abstract class ShiftSuggestion with _$ShiftSuggestion {
   const factory ShiftSuggestion({
     required String shiftId,
     required DateTime shiftDate,
@@ -143,7 +143,7 @@ class ShiftSuggestion with _$ShiftSuggestion {
 }
 
 @freezed
-class AssignmentResult with _$AssignmentResult {
+abstract class AssignmentResult with _$AssignmentResult {
   const factory AssignmentResult({
     required String shiftId,
     required String workerId,
@@ -156,7 +156,7 @@ class AssignmentResult with _$AssignmentResult {
 }
 
 @freezed
-class BulkAssignmentResult with _$BulkAssignmentResult {
+abstract class BulkAssignmentResult with _$BulkAssignmentResult {
   const factory BulkAssignmentResult({
     required int successfulCount,
     required int failedCount,
@@ -173,7 +173,7 @@ class BulkAssignmentResult with _$BulkAssignmentResult {
 // ============================================================================
 
 @freezed
-class MessageRecipient with _$MessageRecipient {
+abstract class MessageRecipient with _$MessageRecipient {
   const factory MessageRecipient({
     required String id,
     required String name,
@@ -187,7 +187,7 @@ class MessageRecipient with _$MessageRecipient {
 }
 
 @freezed
-class MessageTemplate with _$MessageTemplate {
+abstract class MessageTemplate with _$MessageTemplate {
   const factory MessageTemplate({
     required String id,
     required String name,
@@ -207,7 +207,7 @@ enum MessageChannel {
 }
 
 @freezed
-class BulkMessage with _$BulkMessage {
+abstract class BulkMessage with _$BulkMessage {
   const factory BulkMessage({
     required List<String> recipientIds,
     required String subject,
@@ -221,7 +221,7 @@ class BulkMessage with _$BulkMessage {
 }
 
 @freezed
-class BulkMessageResult with _$BulkMessageResult {
+abstract class BulkMessageResult with _$BulkMessageResult {
   const factory BulkMessageResult({
     required int sentCount,
     required int scheduledCount,

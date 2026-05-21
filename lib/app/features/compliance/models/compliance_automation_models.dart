@@ -5,7 +5,7 @@ part 'compliance_automation_models.g.dart';
 
 /// Compliance scan results
 @freezed
-class ComplianceScan with _$ComplianceScan {
+abstract class ComplianceScan with _$ComplianceScan {
   const factory ComplianceScan({
     required String organizationId,
     required String scanDate,
@@ -21,7 +21,7 @@ class ComplianceScan with _$ComplianceScan {
 
 /// Compliance score with breakdown
 @freezed
-class ComplianceScore with _$ComplianceScore {
+abstract class ComplianceScore with _$ComplianceScore {
   const factory ComplianceScore({
     required int score,
     required String riskLevel,
@@ -34,7 +34,7 @@ class ComplianceScore with _$ComplianceScore {
 
 /// Score breakdown details
 @freezed
-class ScoreBreakdown with _$ScoreBreakdown {
+abstract class ScoreBreakdown with _$ScoreBreakdown {
   const factory ScoreBreakdown({
     required int baseScore,
     required int issueDeduction,
@@ -50,7 +50,7 @@ class ScoreBreakdown with _$ScoreBreakdown {
 
 /// Compliance issue or warning
 @freezed
-class ComplianceIssue with _$ComplianceIssue {
+abstract class ComplianceIssue with _$ComplianceIssue {
   const factory ComplianceIssue({
     required String type,
     required int count,
@@ -64,7 +64,7 @@ class ComplianceIssue with _$ComplianceIssue {
 
 /// Compliance summary
 @freezed
-class ComplianceSummary with _$ComplianceSummary {
+abstract class ComplianceSummary with _$ComplianceSummary {
   const factory ComplianceSummary({
     required int totalIssues,
     required int totalWarnings,
@@ -79,7 +79,7 @@ class ComplianceSummary with _$ComplianceSummary {
 
 /// Expiring document
 @freezed
-class ExpiringDocument with _$ExpiringDocument {
+abstract class ExpiringDocument with _$ExpiringDocument {
   const factory ExpiringDocument({
     required String workerId,
     required String workerName,
@@ -95,7 +95,7 @@ class ExpiringDocument with _$ExpiringDocument {
 
 /// Compliance alert
 @freezed
-class ComplianceAlert with _$ComplianceAlert {
+abstract class ComplianceAlert with _$ComplianceAlert {
   const factory ComplianceAlert({
     required String alertId,
     required String type,
@@ -112,7 +112,7 @@ class ComplianceAlert with _$ComplianceAlert {
 
 /// Compliance report
 @freezed
-class ComplianceReport with _$ComplianceReport {
+abstract class ComplianceReport with _$ComplianceReport {
   const factory ComplianceReport({
     required String reportId,
     required String organizationId,
@@ -133,7 +133,7 @@ class ComplianceReport with _$ComplianceReport {
 
 /// Compliance recommendation
 @freezed
-class ComplianceRecommendation with _$ComplianceRecommendation {
+abstract class ComplianceRecommendation with _$ComplianceRecommendation {
   const factory ComplianceRecommendation({
     required String priority,
     required String action,
@@ -146,7 +146,7 @@ class ComplianceRecommendation with _$ComplianceRecommendation {
 
 /// Audit trail
 @freezed
-class AuditTrail with _$AuditTrail {
+abstract class AuditTrail with _$AuditTrail {
   const factory AuditTrail({
     required String lastAuditDate,
     required String nextAuditDate,
@@ -159,7 +159,7 @@ class AuditTrail with _$AuditTrail {
 
 /// Compliance trend data
 @freezed
-class ComplianceTrend with _$ComplianceTrend {
+abstract class ComplianceTrend with _$ComplianceTrend {
   const factory ComplianceTrend({
     required String month,
     required int score,
@@ -174,7 +174,7 @@ class ComplianceTrend with _$ComplianceTrend {
 
 /// Compliance trends response
 @freezed
-class ComplianceTrends with _$ComplianceTrends {
+abstract class ComplianceTrends with _$ComplianceTrends {
   const factory ComplianceTrends({
     required String organizationId,
     required String period,
@@ -189,7 +189,7 @@ class ComplianceTrends with _$ComplianceTrends {
 
 /// Trend summary
 @freezed
-class TrendSummary with _$TrendSummary {
+abstract class TrendSummary with _$TrendSummary {
   const factory TrendSummary({
     required int averageScore,
     required int highestScore,

@@ -6,7 +6,7 @@ import 'package:carenest/app/features/training_compliance/repositories/training_
 part 'compliance_viewmodel.freezed.dart';
 
 @freezed
-class ComplianceState with _$ComplianceState {
+abstract class ComplianceState with _$ComplianceState {
   const factory ComplianceState({
     @Default(false) bool isLoading,
     @Default([]) List<ComplianceChecklist> checklists,

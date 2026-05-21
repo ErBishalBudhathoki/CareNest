@@ -35,12 +35,13 @@ class MessagingState {
     bool? isSending,
     Map<String, TypingIndicator>? typingIndicators,
     int? unreadCount,
+    bool clearActiveConversation = false,
   }) {
     return MessagingState(
       isLoading: isLoading ?? this.isLoading,
       error: error,
       conversations: conversations ?? this.conversations,
-      activeConversation: activeConversation ?? this.activeConversation,
+      activeConversation: clearActiveConversation ? null : (activeConversation ?? this.activeConversation),
       messages: messages ?? this.messages,
       isSending: isSending ?? this.isSending,
       typingIndicators: typingIndicators ?? this.typingIndicators,
@@ -53,6 +54,11 @@ class MessagingViewModel extends StateNotifier<MessagingState> {
   final RealtimePortalRepository _repository;
 
   MessagingViewModel(this._repository) : super(MessagingState());
+
+  /// Clear active conversation
+  void clearActiveConversation() {
+    state = state.copyWith(clearActiveConversation: true);
+  }
 
   /// Send message
   Future<void> sendMessage({

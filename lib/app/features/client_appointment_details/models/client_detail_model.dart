@@ -4,7 +4,7 @@ part 'client_detail_model.freezed.dart';
 part 'client_detail_model.g.dart';
 
 @freezed
-class ClientDetailModel with _$ClientDetailModel {
+abstract class ClientDetailModel with _$ClientDetailModel {
   const factory ClientDetailModel({
     required String id,
     required String clientFirstName,

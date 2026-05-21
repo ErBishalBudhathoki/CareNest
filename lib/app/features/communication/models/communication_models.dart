@@ -4,7 +4,7 @@ part 'communication_models.freezed.dart';
 part 'communication_models.g.dart';
 
 @freezed
-class Message with _$Message {
+abstract class Message with _$Message {
   const factory Message({
     required String messageId,
     required String senderId,
@@ -21,7 +21,7 @@ class Message with _$Message {
 }
 
 @freezed
-class Conversation with _$Conversation {
+abstract class Conversation with _$Conversation {
   const factory Conversation({
     required String conversationId,
     required String participantName,
@@ -35,7 +35,7 @@ class Conversation with _$Conversation {
 }
 
 @freezed
-class BroadcastMessage with _$BroadcastMessage {
+abstract class BroadcastMessage with _$BroadcastMessage {
   const factory BroadcastMessage({
     required String broadcastId,
     required int recipientCount,
@@ -47,7 +47,7 @@ class BroadcastMessage with _$BroadcastMessage {
 }
 
 @freezed
-class ScheduledMessage with _$ScheduledMessage {
+abstract class ScheduledMessage with _$ScheduledMessage {
   const factory ScheduledMessage({
     required String scheduleId,
     required String message,
@@ -60,7 +60,7 @@ class ScheduledMessage with _$ScheduledMessage {
 }
 
 @freezed
-class MessageTemplate with _$MessageTemplate {
+abstract class MessageTemplate with _$MessageTemplate {
   const factory MessageTemplate({
     required String templateId,
     required String name,
@@ -73,7 +73,7 @@ class MessageTemplate with _$MessageTemplate {
 }
 
 @freezed
-class MessageStatus with _$MessageStatus {
+abstract class MessageStatus with _$MessageStatus {
   const factory MessageStatus({
     required String messageId,
     required String status,

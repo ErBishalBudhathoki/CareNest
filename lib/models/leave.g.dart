@@ -6,15 +6,15 @@ part of 'leave.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$LeaveBalanceImpl _$$LeaveBalanceImplFromJson(Map<String, dynamic> json) =>
-    _$LeaveBalanceImpl(
+_LeaveBalance _$LeaveBalanceFromJson(Map<String, dynamic> json) =>
+    _LeaveBalance(
       annualLeave: (json['annualLeave'] as num).toDouble(),
       sickLeave: (json['sickLeave'] as num).toDouble(),
       personalLeave: (json['personalLeave'] as num).toDouble(),
       longServiceLeave: (json['longServiceLeave'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$LeaveBalanceImplToJson(_$LeaveBalanceImpl instance) =>
+Map<String, dynamic> _$LeaveBalanceToJson(_LeaveBalance instance) =>
     <String, dynamic>{
       'annualLeave': instance.annualLeave,
       'sickLeave': instance.sickLeave,
@@ -22,8 +22,8 @@ Map<String, dynamic> _$$LeaveBalanceImplToJson(_$LeaveBalanceImpl instance) =>
       'longServiceLeave': instance.longServiceLeave,
     };
 
-_$LeaveRequestImpl _$$LeaveRequestImplFromJson(Map<String, dynamic> json) =>
-    _$LeaveRequestImpl(
+_LeaveRequest _$LeaveRequestFromJson(Map<String, dynamic> json) =>
+    _LeaveRequest(
       id: json['_id'] as String?,
       userId: json['userId'] as String,
       organizationId: json['organizationId'] as String,
@@ -53,7 +53,7 @@ _$LeaveRequestImpl _$$LeaveRequestImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$LeaveRequestImplToJson(_$LeaveRequestImpl instance) =>
+Map<String, dynamic> _$LeaveRequestToJson(_LeaveRequest instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'userId': instance.userId,
@@ -74,24 +74,22 @@ Map<String, dynamic> _$$LeaveRequestImplToJson(_$LeaveRequestImpl instance) =>
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
-_$LeaveAttachmentImpl _$$LeaveAttachmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$LeaveAttachmentImpl(
+_LeaveAttachment _$LeaveAttachmentFromJson(Map<String, dynamic> json) =>
+    _LeaveAttachment(
       filename: json['filename'] as String,
       url: json['url'] as String,
       uploadedAt: DateTime.parse(json['uploadedAt'] as String),
     );
 
-Map<String, dynamic> _$$LeaveAttachmentImplToJson(
-        _$LeaveAttachmentImpl instance) =>
+Map<String, dynamic> _$LeaveAttachmentToJson(_LeaveAttachment instance) =>
     <String, dynamic>{
       'filename': instance.filename,
       'url': instance.url,
       'uploadedAt': instance.uploadedAt.toIso8601String(),
     };
 
-_$LeaveHistoryImpl _$$LeaveHistoryImplFromJson(Map<String, dynamic> json) =>
-    _$LeaveHistoryImpl(
+_LeaveHistory _$LeaveHistoryFromJson(Map<String, dynamic> json) =>
+    _LeaveHistory(
       action: json['action'] as String,
       performedBy: json['performedBy'] as String,
       timestamp: DateTime.parse(json['timestamp'] as String),
@@ -99,7 +97,7 @@ _$LeaveHistoryImpl _$$LeaveHistoryImplFromJson(Map<String, dynamic> json) =>
       reason: json['reason'] as String?,
     );
 
-Map<String, dynamic> _$$LeaveHistoryImplToJson(_$LeaveHistoryImpl instance) =>
+Map<String, dynamic> _$LeaveHistoryToJson(_LeaveHistory instance) =>
     <String, dynamic>{
       'action': instance.action,
       'performedBy': instance.performedBy,
@@ -108,8 +106,8 @@ Map<String, dynamic> _$$LeaveHistoryImplToJson(_$LeaveHistoryImpl instance) =>
       'reason': instance.reason,
     };
 
-_$PublicHolidayImpl _$$PublicHolidayImplFromJson(Map<String, dynamic> json) =>
-    _$PublicHolidayImpl(
+_PublicHoliday _$PublicHolidayFromJson(Map<String, dynamic> json) =>
+    _PublicHoliday(
       id: json['_id'] as String?,
       name: json['name'] as String,
       date: DateTime.parse(json['date'] as String),
@@ -119,7 +117,7 @@ _$PublicHolidayImpl _$$PublicHolidayImplFromJson(Map<String, dynamic> json) =>
       state: json['state'] as String?,
     );
 
-Map<String, dynamic> _$$PublicHolidayImplToJson(_$PublicHolidayImpl instance) =>
+Map<String, dynamic> _$PublicHolidayToJson(_PublicHoliday instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
@@ -130,15 +128,15 @@ Map<String, dynamic> _$$PublicHolidayImplToJson(_$PublicHolidayImpl instance) =>
       'state': instance.state,
     };
 
-_$LeaveForecastImpl _$$LeaveForecastImplFromJson(Map<String, dynamic> json) =>
-    _$LeaveForecastImpl(
+_LeaveForecast _$LeaveForecastFromJson(Map<String, dynamic> json) =>
+    _LeaveForecast(
       forecast: LeaveBalance.fromJson(json['forecast'] as Map<String, dynamic>),
       accrualRate: (json['accrualRate'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ),
     );
 
-Map<String, dynamic> _$$LeaveForecastImplToJson(_$LeaveForecastImpl instance) =>
+Map<String, dynamic> _$LeaveForecastToJson(_LeaveForecast instance) =>
     <String, dynamic>{
       'forecast': instance.forecast,
       'accrualRate': instance.accrualRate,

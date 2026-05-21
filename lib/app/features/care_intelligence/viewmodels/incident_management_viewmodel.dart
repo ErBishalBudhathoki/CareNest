@@ -8,7 +8,7 @@ class IncidentManagementState {
   final bool isLoading;
   final Incident? incident;
   final RootCauseAnalysis? rootCauseAnalysis;
-  final IncidentPatterns? patterns;
+  final IncidentPatternData? patterns;
   final Map<String, dynamic>? recurrencePrediction;
   final Map<String, dynamic>? correctiveActions;
   final String? error;
@@ -27,7 +27,7 @@ class IncidentManagementState {
     bool? isLoading,
     Incident? incident,
     RootCauseAnalysis? rootCauseAnalysis,
-    IncidentPatterns? patterns,
+    IncidentPatternData? patterns,
     Map<String, dynamic>? recurrencePrediction,
     Map<String, dynamic>? correctiveActions,
     String? error,
@@ -134,7 +134,7 @@ class IncidentManagementViewModel extends StateNotifier<IncidentManagementState>
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          patterns: result['patterns'] as IncidentPatterns?,
+          patterns: result['patterns'] as IncidentPatternData?,
         );
       } else {
         state = state.copyWith(

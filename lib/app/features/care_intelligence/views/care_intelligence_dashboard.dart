@@ -71,7 +71,7 @@ class _CareIntelligenceDashboardState
       route: Routes.healthMonitoring,
     ),
     _CareModule(
-      title: 'Outcome Tracking',
+      title: 'Outcome Insights',
       description: 'Measure progress against goals and recovery milestones.',
       icon: Icons.track_changes_rounded,
       accent: BauhausDesign.accent,

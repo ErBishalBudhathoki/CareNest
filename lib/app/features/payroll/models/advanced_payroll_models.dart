@@ -4,7 +4,7 @@ part 'advanced_payroll_models.freezed.dart';
 part 'advanced_payroll_models.g.dart';
 
 @freezed
-class PayrollCalculation with _$PayrollCalculation {
+abstract class PayrollCalculation with _$PayrollCalculation {
   const factory PayrollCalculation({
     required String userId,
     required String period,
@@ -24,7 +24,7 @@ class PayrollCalculation with _$PayrollCalculation {
 }
 
 @freezed
-class PenaltyRates with _$PenaltyRates {
+abstract class PenaltyRates with _$PenaltyRates {
   const factory PenaltyRates({
     required PenaltyRate saturday,
     required PenaltyRate sunday,
@@ -38,7 +38,7 @@ class PenaltyRates with _$PenaltyRates {
 }
 
 @freezed
-class PenaltyRate with _$PenaltyRate {
+abstract class PenaltyRate with _$PenaltyRate {
   const factory PenaltyRate({
     required double hours,
     required double rate,
@@ -50,7 +50,7 @@ class PenaltyRate with _$PenaltyRate {
 }
 
 @freezed
-class Allowances with _$Allowances {
+abstract class Allowances with _$Allowances {
   const factory Allowances({
     required double travel,
     required double meal,
@@ -64,7 +64,7 @@ class Allowances with _$Allowances {
 }
 
 @freezed
-class LeaveAccrual with _$LeaveAccrual {
+abstract class LeaveAccrual with _$LeaveAccrual {
   const factory LeaveAccrual({
     required LeaveAccrualDetail annualLeave,
     required LeaveAccrualDetail sickLeave,
@@ -75,7 +75,7 @@ class LeaveAccrual with _$LeaveAccrual {
 }
 
 @freezed
-class LeaveAccrualDetail with _$LeaveAccrualDetail {
+abstract class LeaveAccrualDetail with _$LeaveAccrualDetail {
   const factory LeaveAccrualDetail({
     required double hours,
     required double amount,
@@ -86,7 +86,7 @@ class LeaveAccrualDetail with _$LeaveAccrualDetail {
 }
 
 @freezed
-class TaxAndSuper with _$TaxAndSuper {
+abstract class TaxAndSuper with _$TaxAndSuper {
   const factory TaxAndSuper({
     required double tax,
     @JsonKey(name: 'super') required double superAmount,
@@ -99,7 +99,7 @@ class TaxAndSuper with _$TaxAndSuper {
 }
 
 @freezed
-class Payslip with _$Payslip {
+abstract class Payslip with _$Payslip {
   const factory Payslip({
     required String payslipId,
     required String userId,
@@ -116,7 +116,7 @@ class Payslip with _$Payslip {
 }
 
 @freezed
-class PayslipEarnings with _$PayslipEarnings {
+abstract class PayslipEarnings with _$PayslipEarnings {
   const factory PayslipEarnings({
     required double baseHours,
     required double baseRate,
@@ -131,7 +131,7 @@ class PayslipEarnings with _$PayslipEarnings {
 }
 
 @freezed
-class PayslipDeductions with _$PayslipDeductions {
+abstract class PayslipDeductions with _$PayslipDeductions {
   const factory PayslipDeductions({
     required double tax,
     @JsonKey(name: 'super') required double superAmount,
@@ -143,7 +143,7 @@ class PayslipDeductions with _$PayslipDeductions {
 }
 
 @freezed
-class PayslipYTD with _$PayslipYTD {
+abstract class PayslipYTD with _$PayslipYTD {
   const factory PayslipYTD({
     required double grossPay,
     required double tax,
@@ -156,7 +156,7 @@ class PayslipYTD with _$PayslipYTD {
 }
 
 @freezed
-class PayrollSummary with _$PayrollSummary {
+abstract class PayrollSummary with _$PayrollSummary {
   const factory PayrollSummary({
     required String organizationId,
     required String period,
@@ -173,7 +173,7 @@ class PayrollSummary with _$PayrollSummary {
 }
 
 @freezed
-class EmployeePayrollSummary with _$EmployeePayrollSummary {
+abstract class EmployeePayrollSummary with _$EmployeePayrollSummary {
   const factory EmployeePayrollSummary({
     required String userId,
     required String userName,

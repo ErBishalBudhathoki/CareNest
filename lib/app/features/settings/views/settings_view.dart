@@ -460,37 +460,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       ),
                     ],
                   ),
-                  if (!isClient)
-                    _buildSettingsSection(
-                      title: AppLocalizations.of(context)!.workerSection,
-                      items: [
-                        if (!isProductionFlavor)
-                          _buildSettingsItem(
-                            icon: Icons.dashboard_outlined,
-                            color: BauhausDesign.secondary,
-                            title: AppLocalizations.of(context)!
-                                .workerDashboardTitle,
-                            subtitle: AppLocalizations.of(context)!
-                                .workerDashboardSubtitle,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, Routes.workerDashboard);
-                            },
-                          ),
-                        _buildSettingsItem(
-                          icon: Icons.history_outlined,
-                          color: BauhausDesign.primary,
-                          title: AppLocalizations.of(context)!
-                              .workerShiftHistoryTitle,
-                          subtitle: AppLocalizations.of(context)!
-                              .workerShiftHistorySubtitle,
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, Routes.workerShiftHistory);
-                          },
-                        ),
-                      ],
-                    ),
                   _buildSettingsSection(
                     title: AppLocalizations.of(context)!.appSettingsSection,
                     items: [

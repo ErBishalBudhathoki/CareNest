@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,109 +9,72 @@ part of 'employee_tracking_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-EmployeeTrackingData _$EmployeeTrackingDataFromJson(Map<String, dynamic> json) {
-  return _EmployeeTrackingData.fromJson(json);
-}
 
 /// @nodoc
 mixin _$EmployeeTrackingData {
-  List<EmployeeStatus> get employees => throw _privateConstructorUsedError;
-  List<ShiftDetail> get shifts => throw _privateConstructorUsedError;
-  List<ClientAssignment> get assignments => throw _privateConstructorUsedError;
-  int get totalEmployees => throw _privateConstructorUsedError;
-  int get activeEmployees => throw _privateConstructorUsedError;
-  int get onBreakEmployees => throw _privateConstructorUsedError;
-  int get offlineEmployees => throw _privateConstructorUsedError;
+  List<EmployeeStatus> get employees;
+  List<ShiftDetail> get shifts;
+  List<ClientAssignment> get assignments;
+  int get totalEmployees;
+  int get activeEmployees;
+  int get onBreakEmployees;
+  int get offlineEmployees;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $EmployeeTrackingDataCopyWith<EmployeeTrackingData> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $EmployeeTrackingDataCopyWith<$Res> {
-  factory $EmployeeTrackingDataCopyWith(EmployeeTrackingData value,
-          $Res Function(EmployeeTrackingData) then) =
-      _$EmployeeTrackingDataCopyWithImpl<$Res, EmployeeTrackingData>;
-  @useResult
-  $Res call(
-      {List<EmployeeStatus> employees,
-      List<ShiftDetail> shifts,
-      List<ClientAssignment> assignments,
-      int totalEmployees,
-      int activeEmployees,
-      int onBreakEmployees,
-      int offlineEmployees});
-}
-
-/// @nodoc
-class _$EmployeeTrackingDataCopyWithImpl<$Res,
-        $Val extends EmployeeTrackingData>
-    implements $EmployeeTrackingDataCopyWith<$Res> {
-  _$EmployeeTrackingDataCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of EmployeeTrackingData
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $EmployeeTrackingDataCopyWith<EmployeeTrackingData> get copyWith =>
+      _$EmployeeTrackingDataCopyWithImpl<EmployeeTrackingData>(
+          this as EmployeeTrackingData, _$identity);
+
+  /// Serializes this EmployeeTrackingData to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? employees = null,
-    Object? shifts = null,
-    Object? assignments = null,
-    Object? totalEmployees = null,
-    Object? activeEmployees = null,
-    Object? onBreakEmployees = null,
-    Object? offlineEmployees = null,
-  }) {
-    return _then(_value.copyWith(
-      employees: null == employees
-          ? _value.employees
-          : employees // ignore: cast_nullable_to_non_nullable
-              as List<EmployeeStatus>,
-      shifts: null == shifts
-          ? _value.shifts
-          : shifts // ignore: cast_nullable_to_non_nullable
-              as List<ShiftDetail>,
-      assignments: null == assignments
-          ? _value.assignments
-          : assignments // ignore: cast_nullable_to_non_nullable
-              as List<ClientAssignment>,
-      totalEmployees: null == totalEmployees
-          ? _value.totalEmployees
-          : totalEmployees // ignore: cast_nullable_to_non_nullable
-              as int,
-      activeEmployees: null == activeEmployees
-          ? _value.activeEmployees
-          : activeEmployees // ignore: cast_nullable_to_non_nullable
-              as int,
-      onBreakEmployees: null == onBreakEmployees
-          ? _value.onBreakEmployees
-          : onBreakEmployees // ignore: cast_nullable_to_non_nullable
-              as int,
-      offlineEmployees: null == offlineEmployees
-          ? _value.offlineEmployees
-          : offlineEmployees // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is EmployeeTrackingData &&
+            const DeepCollectionEquality().equals(other.employees, employees) &&
+            const DeepCollectionEquality().equals(other.shifts, shifts) &&
+            const DeepCollectionEquality()
+                .equals(other.assignments, assignments) &&
+            (identical(other.totalEmployees, totalEmployees) ||
+                other.totalEmployees == totalEmployees) &&
+            (identical(other.activeEmployees, activeEmployees) ||
+                other.activeEmployees == activeEmployees) &&
+            (identical(other.onBreakEmployees, onBreakEmployees) ||
+                other.onBreakEmployees == onBreakEmployees) &&
+            (identical(other.offlineEmployees, offlineEmployees) ||
+                other.offlineEmployees == offlineEmployees));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(employees),
+      const DeepCollectionEquality().hash(shifts),
+      const DeepCollectionEquality().hash(assignments),
+      totalEmployees,
+      activeEmployees,
+      onBreakEmployees,
+      offlineEmployees);
+
+  @override
+  String toString() {
+    return 'EmployeeTrackingData(employees: $employees, shifts: $shifts, assignments: $assignments, totalEmployees: $totalEmployees, activeEmployees: $activeEmployees, onBreakEmployees: $onBreakEmployees, offlineEmployees: $offlineEmployees)';
   }
 }
 
 /// @nodoc
-abstract class _$$EmployeeTrackingDataImplCopyWith<$Res>
-    implements $EmployeeTrackingDataCopyWith<$Res> {
-  factory _$$EmployeeTrackingDataImplCopyWith(_$EmployeeTrackingDataImpl value,
-          $Res Function(_$EmployeeTrackingDataImpl) then) =
-      __$$EmployeeTrackingDataImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $EmployeeTrackingDataCopyWith<$Res> {
+  factory $EmployeeTrackingDataCopyWith(EmployeeTrackingData value,
+          $Res Function(EmployeeTrackingData) _then) =
+      _$EmployeeTrackingDataCopyWithImpl;
   @useResult
   $Res call(
       {List<EmployeeStatus> employees,
@@ -124,13 +87,15 @@ abstract class _$$EmployeeTrackingDataImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$EmployeeTrackingDataImplCopyWithImpl<$Res>
-    extends _$EmployeeTrackingDataCopyWithImpl<$Res, _$EmployeeTrackingDataImpl>
-    implements _$$EmployeeTrackingDataImplCopyWith<$Res> {
-  __$$EmployeeTrackingDataImplCopyWithImpl(_$EmployeeTrackingDataImpl _value,
-      $Res Function(_$EmployeeTrackingDataImpl) _then)
-      : super(_value, _then);
+class _$EmployeeTrackingDataCopyWithImpl<$Res>
+    implements $EmployeeTrackingDataCopyWith<$Res> {
+  _$EmployeeTrackingDataCopyWithImpl(this._self, this._then);
 
+  final EmployeeTrackingData _self;
+  final $Res Function(EmployeeTrackingData) _then;
+
+  /// Create a copy of EmployeeTrackingData
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -142,43 +107,245 @@ class __$$EmployeeTrackingDataImplCopyWithImpl<$Res>
     Object? onBreakEmployees = null,
     Object? offlineEmployees = null,
   }) {
-    return _then(_$EmployeeTrackingDataImpl(
+    return _then(_self.copyWith(
       employees: null == employees
-          ? _value._employees
+          ? _self.employees
           : employees // ignore: cast_nullable_to_non_nullable
               as List<EmployeeStatus>,
       shifts: null == shifts
-          ? _value._shifts
+          ? _self.shifts
           : shifts // ignore: cast_nullable_to_non_nullable
               as List<ShiftDetail>,
       assignments: null == assignments
-          ? _value._assignments
+          ? _self.assignments
           : assignments // ignore: cast_nullable_to_non_nullable
               as List<ClientAssignment>,
       totalEmployees: null == totalEmployees
-          ? _value.totalEmployees
+          ? _self.totalEmployees
           : totalEmployees // ignore: cast_nullable_to_non_nullable
               as int,
       activeEmployees: null == activeEmployees
-          ? _value.activeEmployees
+          ? _self.activeEmployees
           : activeEmployees // ignore: cast_nullable_to_non_nullable
               as int,
       onBreakEmployees: null == onBreakEmployees
-          ? _value.onBreakEmployees
+          ? _self.onBreakEmployees
           : onBreakEmployees // ignore: cast_nullable_to_non_nullable
               as int,
       offlineEmployees: null == offlineEmployees
-          ? _value.offlineEmployees
+          ? _self.offlineEmployees
           : offlineEmployees // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [EmployeeTrackingData].
+extension EmployeeTrackingDataPatterns on EmployeeTrackingData {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_EmployeeTrackingData value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeTrackingData() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_EmployeeTrackingData value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeTrackingData():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_EmployeeTrackingData value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeTrackingData() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            List<EmployeeStatus> employees,
+            List<ShiftDetail> shifts,
+            List<ClientAssignment> assignments,
+            int totalEmployees,
+            int activeEmployees,
+            int onBreakEmployees,
+            int offlineEmployees)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeTrackingData() when $default != null:
+        return $default(
+            _that.employees,
+            _that.shifts,
+            _that.assignments,
+            _that.totalEmployees,
+            _that.activeEmployees,
+            _that.onBreakEmployees,
+            _that.offlineEmployees);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            List<EmployeeStatus> employees,
+            List<ShiftDetail> shifts,
+            List<ClientAssignment> assignments,
+            int totalEmployees,
+            int activeEmployees,
+            int onBreakEmployees,
+            int offlineEmployees)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeTrackingData():
+        return $default(
+            _that.employees,
+            _that.shifts,
+            _that.assignments,
+            _that.totalEmployees,
+            _that.activeEmployees,
+            _that.onBreakEmployees,
+            _that.offlineEmployees);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            List<EmployeeStatus> employees,
+            List<ShiftDetail> shifts,
+            List<ClientAssignment> assignments,
+            int totalEmployees,
+            int activeEmployees,
+            int onBreakEmployees,
+            int offlineEmployees)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeTrackingData() when $default != null:
+        return $default(
+            _that.employees,
+            _that.shifts,
+            _that.assignments,
+            _that.totalEmployees,
+            _that.activeEmployees,
+            _that.onBreakEmployees,
+            _that.offlineEmployees);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$EmployeeTrackingDataImpl implements _EmployeeTrackingData {
-  const _$EmployeeTrackingDataImpl(
+class _EmployeeTrackingData implements EmployeeTrackingData {
+  const _EmployeeTrackingData(
       {final List<EmployeeStatus> employees = const [],
       final List<ShiftDetail> shifts = const [],
       final List<ClientAssignment> assignments = const [],
@@ -189,9 +356,8 @@ class _$EmployeeTrackingDataImpl implements _EmployeeTrackingData {
       : _employees = employees,
         _shifts = shifts,
         _assignments = assignments;
-
-  factory _$EmployeeTrackingDataImpl.fromJson(Map<String, dynamic> json) =>
-      _$$EmployeeTrackingDataImplFromJson(json);
+  factory _EmployeeTrackingData.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeTrackingDataFromJson(json);
 
   final List<EmployeeStatus> _employees;
   @override
@@ -233,16 +399,27 @@ class _$EmployeeTrackingDataImpl implements _EmployeeTrackingData {
   @JsonKey()
   final int offlineEmployees;
 
+  /// Create a copy of EmployeeTrackingData
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'EmployeeTrackingData(employees: $employees, shifts: $shifts, assignments: $assignments, totalEmployees: $totalEmployees, activeEmployees: $activeEmployees, onBreakEmployees: $onBreakEmployees, offlineEmployees: $offlineEmployees)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$EmployeeTrackingDataCopyWith<_EmployeeTrackingData> get copyWith =>
+      __$EmployeeTrackingDataCopyWithImpl<_EmployeeTrackingData>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$EmployeeTrackingDataToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$EmployeeTrackingDataImpl &&
+            other is _EmployeeTrackingData &&
             const DeepCollectionEquality()
                 .equals(other._employees, _employees) &&
             const DeepCollectionEquality().equals(other._shifts, _shifts) &&
@@ -258,7 +435,7 @@ class _$EmployeeTrackingDataImpl implements _EmployeeTrackingData {
                 other.offlineEmployees == offlineEmployees));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -270,259 +447,207 @@ class _$EmployeeTrackingDataImpl implements _EmployeeTrackingData {
       onBreakEmployees,
       offlineEmployees);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$EmployeeTrackingDataImplCopyWith<_$EmployeeTrackingDataImpl>
-      get copyWith =>
-          __$$EmployeeTrackingDataImplCopyWithImpl<_$EmployeeTrackingDataImpl>(
-              this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$EmployeeTrackingDataImplToJson(
-      this,
-    );
+  String toString() {
+    return 'EmployeeTrackingData(employees: $employees, shifts: $shifts, assignments: $assignments, totalEmployees: $totalEmployees, activeEmployees: $activeEmployees, onBreakEmployees: $onBreakEmployees, offlineEmployees: $offlineEmployees)';
   }
 }
 
-abstract class _EmployeeTrackingData implements EmployeeTrackingData {
-  const factory _EmployeeTrackingData(
-      {final List<EmployeeStatus> employees,
-      final List<ShiftDetail> shifts,
-      final List<ClientAssignment> assignments,
-      final int totalEmployees,
-      final int activeEmployees,
-      final int onBreakEmployees,
-      final int offlineEmployees}) = _$EmployeeTrackingDataImpl;
-
-  factory _EmployeeTrackingData.fromJson(Map<String, dynamic> json) =
-      _$EmployeeTrackingDataImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$EmployeeTrackingDataCopyWith<$Res>
+    implements $EmployeeTrackingDataCopyWith<$Res> {
+  factory _$EmployeeTrackingDataCopyWith(_EmployeeTrackingData value,
+          $Res Function(_EmployeeTrackingData) _then) =
+      __$EmployeeTrackingDataCopyWithImpl;
   @override
-  List<EmployeeStatus> get employees;
-  @override
-  List<ShiftDetail> get shifts;
-  @override
-  List<ClientAssignment> get assignments;
-  @override
-  int get totalEmployees;
-  @override
-  int get activeEmployees;
-  @override
-  int get onBreakEmployees;
-  @override
-  int get offlineEmployees;
-  @override
-  @JsonKey(ignore: true)
-  _$$EmployeeTrackingDataImplCopyWith<_$EmployeeTrackingDataImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {List<EmployeeStatus> employees,
+      List<ShiftDetail> shifts,
+      List<ClientAssignment> assignments,
+      int totalEmployees,
+      int activeEmployees,
+      int onBreakEmployees,
+      int offlineEmployees});
 }
 
-EmployeeStatus _$EmployeeStatusFromJson(Map<String, dynamic> json) {
-  return _EmployeeStatus.fromJson(json);
+/// @nodoc
+class __$EmployeeTrackingDataCopyWithImpl<$Res>
+    implements _$EmployeeTrackingDataCopyWith<$Res> {
+  __$EmployeeTrackingDataCopyWithImpl(this._self, this._then);
+
+  final _EmployeeTrackingData _self;
+  final $Res Function(_EmployeeTrackingData) _then;
+
+  /// Create a copy of EmployeeTrackingData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? employees = null,
+    Object? shifts = null,
+    Object? assignments = null,
+    Object? totalEmployees = null,
+    Object? activeEmployees = null,
+    Object? onBreakEmployees = null,
+    Object? offlineEmployees = null,
+  }) {
+    return _then(_EmployeeTrackingData(
+      employees: null == employees
+          ? _self._employees
+          : employees // ignore: cast_nullable_to_non_nullable
+              as List<EmployeeStatus>,
+      shifts: null == shifts
+          ? _self._shifts
+          : shifts // ignore: cast_nullable_to_non_nullable
+              as List<ShiftDetail>,
+      assignments: null == assignments
+          ? _self._assignments
+          : assignments // ignore: cast_nullable_to_non_nullable
+              as List<ClientAssignment>,
+      totalEmployees: null == totalEmployees
+          ? _self.totalEmployees
+          : totalEmployees // ignore: cast_nullable_to_non_nullable
+              as int,
+      activeEmployees: null == activeEmployees
+          ? _self.activeEmployees
+          : activeEmployees // ignore: cast_nullable_to_non_nullable
+              as int,
+      onBreakEmployees: null == onBreakEmployees
+          ? _self.onBreakEmployees
+          : onBreakEmployees // ignore: cast_nullable_to_non_nullable
+              as int,
+      offlineEmployees: null == offlineEmployees
+          ? _self.offlineEmployees
+          : offlineEmployees // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$EmployeeStatus {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
-  WorkStatus get status => throw _privateConstructorUsedError;
-  String? get profileImage => throw _privateConstructorUsedError;
-  String? get filename => throw _privateConstructorUsedError;
+  String get id;
+  String get name;
+  String get email;
+  WorkStatus get status;
+  String? get profileImage;
+  String? get filename;
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Uint8List? get photoData => throw _privateConstructorUsedError;
-  String? get currentLocation => throw _privateConstructorUsedError;
-  DateTime? get lastSeen => throw _privateConstructorUsedError;
-  String? get currentShiftId => throw _privateConstructorUsedError;
-  String? get assignedClientId => throw _privateConstructorUsedError;
-  double? get liveLatitude => throw _privateConstructorUsedError;
-  double? get liveLongitude => throw _privateConstructorUsedError;
-  double? get liveAccuracy => throw _privateConstructorUsedError;
-  DateTime? get liveUpdatedAt => throw _privateConstructorUsedError;
-  String? get liveAppointmentId => throw _privateConstructorUsedError;
-  String? get liveClientName => throw _privateConstructorUsedError;
-  double? get liveDistanceMeters => throw _privateConstructorUsedError;
-  double? get liveGeofenceRadiusMeters => throw _privateConstructorUsedError;
-  bool? get liveInsideGeofence => throw _privateConstructorUsedError;
-  double get hoursWorked => throw _privateConstructorUsedError;
-  bool get isOnBreak => throw _privateConstructorUsedError;
+  Uint8List? get photoData;
+  String? get currentLocation;
+  DateTime? get lastSeen;
+  String? get currentShiftId;
+  String? get assignedClientId;
+  double? get liveLatitude;
+  double? get liveLongitude;
+  double? get liveAccuracy;
+  DateTime? get liveUpdatedAt;
+  String? get liveAppointmentId;
+  String? get liveClientName;
+  double? get liveDistanceMeters;
+  double? get liveGeofenceRadiusMeters;
+  bool? get liveInsideGeofence;
+  double get hoursWorked;
+  bool get isOnBreak;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $EmployeeStatusCopyWith<EmployeeStatus> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $EmployeeStatusCopyWith<$Res> {
-  factory $EmployeeStatusCopyWith(
-          EmployeeStatus value, $Res Function(EmployeeStatus) then) =
-      _$EmployeeStatusCopyWithImpl<$Res, EmployeeStatus>;
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      String email,
-      WorkStatus status,
-      String? profileImage,
-      String? filename,
-      @JsonKey(includeFromJson: false, includeToJson: false)
-      Uint8List? photoData,
-      String? currentLocation,
-      DateTime? lastSeen,
-      String? currentShiftId,
-      String? assignedClientId,
-      double? liveLatitude,
-      double? liveLongitude,
-      double? liveAccuracy,
-      DateTime? liveUpdatedAt,
-      String? liveAppointmentId,
-      String? liveClientName,
-      double? liveDistanceMeters,
-      double? liveGeofenceRadiusMeters,
-      bool? liveInsideGeofence,
-      double hoursWorked,
-      bool isOnBreak});
-}
-
-/// @nodoc
-class _$EmployeeStatusCopyWithImpl<$Res, $Val extends EmployeeStatus>
-    implements $EmployeeStatusCopyWith<$Res> {
-  _$EmployeeStatusCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of EmployeeStatus
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $EmployeeStatusCopyWith<EmployeeStatus> get copyWith =>
+      _$EmployeeStatusCopyWithImpl<EmployeeStatus>(
+          this as EmployeeStatus, _$identity);
+
+  /// Serializes this EmployeeStatus to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? email = null,
-    Object? status = null,
-    Object? profileImage = freezed,
-    Object? filename = freezed,
-    Object? photoData = freezed,
-    Object? currentLocation = freezed,
-    Object? lastSeen = freezed,
-    Object? currentShiftId = freezed,
-    Object? assignedClientId = freezed,
-    Object? liveLatitude = freezed,
-    Object? liveLongitude = freezed,
-    Object? liveAccuracy = freezed,
-    Object? liveUpdatedAt = freezed,
-    Object? liveAppointmentId = freezed,
-    Object? liveClientName = freezed,
-    Object? liveDistanceMeters = freezed,
-    Object? liveGeofenceRadiusMeters = freezed,
-    Object? liveInsideGeofence = freezed,
-    Object? hoursWorked = null,
-    Object? isOnBreak = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as WorkStatus,
-      profileImage: freezed == profileImage
-          ? _value.profileImage
-          : profileImage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      filename: freezed == filename
-          ? _value.filename
-          : filename // ignore: cast_nullable_to_non_nullable
-              as String?,
-      photoData: freezed == photoData
-          ? _value.photoData
-          : photoData // ignore: cast_nullable_to_non_nullable
-              as Uint8List?,
-      currentLocation: freezed == currentLocation
-          ? _value.currentLocation
-          : currentLocation // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastSeen: freezed == lastSeen
-          ? _value.lastSeen
-          : lastSeen // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      currentShiftId: freezed == currentShiftId
-          ? _value.currentShiftId
-          : currentShiftId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      assignedClientId: freezed == assignedClientId
-          ? _value.assignedClientId
-          : assignedClientId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      liveLatitude: freezed == liveLatitude
-          ? _value.liveLatitude
-          : liveLatitude // ignore: cast_nullable_to_non_nullable
-              as double?,
-      liveLongitude: freezed == liveLongitude
-          ? _value.liveLongitude
-          : liveLongitude // ignore: cast_nullable_to_non_nullable
-              as double?,
-      liveAccuracy: freezed == liveAccuracy
-          ? _value.liveAccuracy
-          : liveAccuracy // ignore: cast_nullable_to_non_nullable
-              as double?,
-      liveUpdatedAt: freezed == liveUpdatedAt
-          ? _value.liveUpdatedAt
-          : liveUpdatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      liveAppointmentId: freezed == liveAppointmentId
-          ? _value.liveAppointmentId
-          : liveAppointmentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      liveClientName: freezed == liveClientName
-          ? _value.liveClientName
-          : liveClientName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      liveDistanceMeters: freezed == liveDistanceMeters
-          ? _value.liveDistanceMeters
-          : liveDistanceMeters // ignore: cast_nullable_to_non_nullable
-              as double?,
-      liveGeofenceRadiusMeters: freezed == liveGeofenceRadiusMeters
-          ? _value.liveGeofenceRadiusMeters
-          : liveGeofenceRadiusMeters // ignore: cast_nullable_to_non_nullable
-              as double?,
-      liveInsideGeofence: freezed == liveInsideGeofence
-          ? _value.liveInsideGeofence
-          : liveInsideGeofence // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      hoursWorked: null == hoursWorked
-          ? _value.hoursWorked
-          : hoursWorked // ignore: cast_nullable_to_non_nullable
-              as double,
-      isOnBreak: null == isOnBreak
-          ? _value.isOnBreak
-          : isOnBreak // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is EmployeeStatus &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.profileImage, profileImage) ||
+                other.profileImage == profileImage) &&
+            (identical(other.filename, filename) ||
+                other.filename == filename) &&
+            const DeepCollectionEquality().equals(other.photoData, photoData) &&
+            (identical(other.currentLocation, currentLocation) ||
+                other.currentLocation == currentLocation) &&
+            (identical(other.lastSeen, lastSeen) ||
+                other.lastSeen == lastSeen) &&
+            (identical(other.currentShiftId, currentShiftId) ||
+                other.currentShiftId == currentShiftId) &&
+            (identical(other.assignedClientId, assignedClientId) ||
+                other.assignedClientId == assignedClientId) &&
+            (identical(other.liveLatitude, liveLatitude) ||
+                other.liveLatitude == liveLatitude) &&
+            (identical(other.liveLongitude, liveLongitude) ||
+                other.liveLongitude == liveLongitude) &&
+            (identical(other.liveAccuracy, liveAccuracy) ||
+                other.liveAccuracy == liveAccuracy) &&
+            (identical(other.liveUpdatedAt, liveUpdatedAt) ||
+                other.liveUpdatedAt == liveUpdatedAt) &&
+            (identical(other.liveAppointmentId, liveAppointmentId) ||
+                other.liveAppointmentId == liveAppointmentId) &&
+            (identical(other.liveClientName, liveClientName) ||
+                other.liveClientName == liveClientName) &&
+            (identical(other.liveDistanceMeters, liveDistanceMeters) ||
+                other.liveDistanceMeters == liveDistanceMeters) &&
+            (identical(
+                    other.liveGeofenceRadiusMeters, liveGeofenceRadiusMeters) ||
+                other.liveGeofenceRadiusMeters == liveGeofenceRadiusMeters) &&
+            (identical(other.liveInsideGeofence, liveInsideGeofence) ||
+                other.liveInsideGeofence == liveInsideGeofence) &&
+            (identical(other.hoursWorked, hoursWorked) ||
+                other.hoursWorked == hoursWorked) &&
+            (identical(other.isOnBreak, isOnBreak) ||
+                other.isOnBreak == isOnBreak));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        name,
+        email,
+        status,
+        profileImage,
+        filename,
+        const DeepCollectionEquality().hash(photoData),
+        currentLocation,
+        lastSeen,
+        currentShiftId,
+        assignedClientId,
+        liveLatitude,
+        liveLongitude,
+        liveAccuracy,
+        liveUpdatedAt,
+        liveAppointmentId,
+        liveClientName,
+        liveDistanceMeters,
+        liveGeofenceRadiusMeters,
+        liveInsideGeofence,
+        hoursWorked,
+        isOnBreak
+      ]);
+
+  @override
+  String toString() {
+    return 'EmployeeStatus(id: $id, name: $name, email: $email, status: $status, profileImage: $profileImage, filename: $filename, photoData: $photoData, currentLocation: $currentLocation, lastSeen: $lastSeen, currentShiftId: $currentShiftId, assignedClientId: $assignedClientId, liveLatitude: $liveLatitude, liveLongitude: $liveLongitude, liveAccuracy: $liveAccuracy, liveUpdatedAt: $liveUpdatedAt, liveAppointmentId: $liveAppointmentId, liveClientName: $liveClientName, liveDistanceMeters: $liveDistanceMeters, liveGeofenceRadiusMeters: $liveGeofenceRadiusMeters, liveInsideGeofence: $liveInsideGeofence, hoursWorked: $hoursWorked, isOnBreak: $isOnBreak)';
   }
 }
 
 /// @nodoc
-abstract class _$$EmployeeStatusImplCopyWith<$Res>
-    implements $EmployeeStatusCopyWith<$Res> {
-  factory _$$EmployeeStatusImplCopyWith(_$EmployeeStatusImpl value,
-          $Res Function(_$EmployeeStatusImpl) then) =
-      __$$EmployeeStatusImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $EmployeeStatusCopyWith<$Res> {
+  factory $EmployeeStatusCopyWith(
+          EmployeeStatus value, $Res Function(EmployeeStatus) _then) =
+      _$EmployeeStatusCopyWithImpl;
   @useResult
   $Res call(
       {String id,
@@ -551,13 +676,15 @@ abstract class _$$EmployeeStatusImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$EmployeeStatusImplCopyWithImpl<$Res>
-    extends _$EmployeeStatusCopyWithImpl<$Res, _$EmployeeStatusImpl>
-    implements _$$EmployeeStatusImplCopyWith<$Res> {
-  __$$EmployeeStatusImplCopyWithImpl(
-      _$EmployeeStatusImpl _value, $Res Function(_$EmployeeStatusImpl) _then)
-      : super(_value, _then);
+class _$EmployeeStatusCopyWithImpl<$Res>
+    implements $EmployeeStatusCopyWith<$Res> {
+  _$EmployeeStatusCopyWithImpl(this._self, this._then);
 
+  final EmployeeStatus _self;
+  final $Res Function(EmployeeStatus) _then;
+
+  /// Create a copy of EmployeeStatus
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -584,103 +711,398 @@ class __$$EmployeeStatusImplCopyWithImpl<$Res>
     Object? hoursWorked = null,
     Object? isOnBreak = null,
   }) {
-    return _then(_$EmployeeStatusImpl(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
-          ? _value.name
+          ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
       email: null == email
-          ? _value.email
+          ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as WorkStatus,
       profileImage: freezed == profileImage
-          ? _value.profileImage
+          ? _self.profileImage
           : profileImage // ignore: cast_nullable_to_non_nullable
               as String?,
       filename: freezed == filename
-          ? _value.filename
+          ? _self.filename
           : filename // ignore: cast_nullable_to_non_nullable
               as String?,
       photoData: freezed == photoData
-          ? _value.photoData
+          ? _self.photoData
           : photoData // ignore: cast_nullable_to_non_nullable
               as Uint8List?,
       currentLocation: freezed == currentLocation
-          ? _value.currentLocation
+          ? _self.currentLocation
           : currentLocation // ignore: cast_nullable_to_non_nullable
               as String?,
       lastSeen: freezed == lastSeen
-          ? _value.lastSeen
+          ? _self.lastSeen
           : lastSeen // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       currentShiftId: freezed == currentShiftId
-          ? _value.currentShiftId
+          ? _self.currentShiftId
           : currentShiftId // ignore: cast_nullable_to_non_nullable
               as String?,
       assignedClientId: freezed == assignedClientId
-          ? _value.assignedClientId
+          ? _self.assignedClientId
           : assignedClientId // ignore: cast_nullable_to_non_nullable
               as String?,
       liveLatitude: freezed == liveLatitude
-          ? _value.liveLatitude
+          ? _self.liveLatitude
           : liveLatitude // ignore: cast_nullable_to_non_nullable
               as double?,
       liveLongitude: freezed == liveLongitude
-          ? _value.liveLongitude
+          ? _self.liveLongitude
           : liveLongitude // ignore: cast_nullable_to_non_nullable
               as double?,
       liveAccuracy: freezed == liveAccuracy
-          ? _value.liveAccuracy
+          ? _self.liveAccuracy
           : liveAccuracy // ignore: cast_nullable_to_non_nullable
               as double?,
       liveUpdatedAt: freezed == liveUpdatedAt
-          ? _value.liveUpdatedAt
+          ? _self.liveUpdatedAt
           : liveUpdatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       liveAppointmentId: freezed == liveAppointmentId
-          ? _value.liveAppointmentId
+          ? _self.liveAppointmentId
           : liveAppointmentId // ignore: cast_nullable_to_non_nullable
               as String?,
       liveClientName: freezed == liveClientName
-          ? _value.liveClientName
+          ? _self.liveClientName
           : liveClientName // ignore: cast_nullable_to_non_nullable
               as String?,
       liveDistanceMeters: freezed == liveDistanceMeters
-          ? _value.liveDistanceMeters
+          ? _self.liveDistanceMeters
           : liveDistanceMeters // ignore: cast_nullable_to_non_nullable
               as double?,
       liveGeofenceRadiusMeters: freezed == liveGeofenceRadiusMeters
-          ? _value.liveGeofenceRadiusMeters
+          ? _self.liveGeofenceRadiusMeters
           : liveGeofenceRadiusMeters // ignore: cast_nullable_to_non_nullable
               as double?,
       liveInsideGeofence: freezed == liveInsideGeofence
-          ? _value.liveInsideGeofence
+          ? _self.liveInsideGeofence
           : liveInsideGeofence // ignore: cast_nullable_to_non_nullable
               as bool?,
       hoursWorked: null == hoursWorked
-          ? _value.hoursWorked
+          ? _self.hoursWorked
           : hoursWorked // ignore: cast_nullable_to_non_nullable
               as double,
       isOnBreak: null == isOnBreak
-          ? _value.isOnBreak
+          ? _self.isOnBreak
           : isOnBreak // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [EmployeeStatus].
+extension EmployeeStatusPatterns on EmployeeStatus {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_EmployeeStatus value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_EmployeeStatus value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeStatus():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_EmployeeStatus value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String name,
+            String email,
+            WorkStatus status,
+            String? profileImage,
+            String? filename,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            Uint8List? photoData,
+            String? currentLocation,
+            DateTime? lastSeen,
+            String? currentShiftId,
+            String? assignedClientId,
+            double? liveLatitude,
+            double? liveLongitude,
+            double? liveAccuracy,
+            DateTime? liveUpdatedAt,
+            String? liveAppointmentId,
+            String? liveClientName,
+            double? liveDistanceMeters,
+            double? liveGeofenceRadiusMeters,
+            bool? liveInsideGeofence,
+            double hoursWorked,
+            bool isOnBreak)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeStatus() when $default != null:
+        return $default(
+            _that.id,
+            _that.name,
+            _that.email,
+            _that.status,
+            _that.profileImage,
+            _that.filename,
+            _that.photoData,
+            _that.currentLocation,
+            _that.lastSeen,
+            _that.currentShiftId,
+            _that.assignedClientId,
+            _that.liveLatitude,
+            _that.liveLongitude,
+            _that.liveAccuracy,
+            _that.liveUpdatedAt,
+            _that.liveAppointmentId,
+            _that.liveClientName,
+            _that.liveDistanceMeters,
+            _that.liveGeofenceRadiusMeters,
+            _that.liveInsideGeofence,
+            _that.hoursWorked,
+            _that.isOnBreak);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String name,
+            String email,
+            WorkStatus status,
+            String? profileImage,
+            String? filename,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            Uint8List? photoData,
+            String? currentLocation,
+            DateTime? lastSeen,
+            String? currentShiftId,
+            String? assignedClientId,
+            double? liveLatitude,
+            double? liveLongitude,
+            double? liveAccuracy,
+            DateTime? liveUpdatedAt,
+            String? liveAppointmentId,
+            String? liveClientName,
+            double? liveDistanceMeters,
+            double? liveGeofenceRadiusMeters,
+            bool? liveInsideGeofence,
+            double hoursWorked,
+            bool isOnBreak)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeStatus():
+        return $default(
+            _that.id,
+            _that.name,
+            _that.email,
+            _that.status,
+            _that.profileImage,
+            _that.filename,
+            _that.photoData,
+            _that.currentLocation,
+            _that.lastSeen,
+            _that.currentShiftId,
+            _that.assignedClientId,
+            _that.liveLatitude,
+            _that.liveLongitude,
+            _that.liveAccuracy,
+            _that.liveUpdatedAt,
+            _that.liveAppointmentId,
+            _that.liveClientName,
+            _that.liveDistanceMeters,
+            _that.liveGeofenceRadiusMeters,
+            _that.liveInsideGeofence,
+            _that.hoursWorked,
+            _that.isOnBreak);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String id,
+            String name,
+            String email,
+            WorkStatus status,
+            String? profileImage,
+            String? filename,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            Uint8List? photoData,
+            String? currentLocation,
+            DateTime? lastSeen,
+            String? currentShiftId,
+            String? assignedClientId,
+            double? liveLatitude,
+            double? liveLongitude,
+            double? liveAccuracy,
+            DateTime? liveUpdatedAt,
+            String? liveAppointmentId,
+            String? liveClientName,
+            double? liveDistanceMeters,
+            double? liveGeofenceRadiusMeters,
+            bool? liveInsideGeofence,
+            double hoursWorked,
+            bool isOnBreak)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeeStatus() when $default != null:
+        return $default(
+            _that.id,
+            _that.name,
+            _that.email,
+            _that.status,
+            _that.profileImage,
+            _that.filename,
+            _that.photoData,
+            _that.currentLocation,
+            _that.lastSeen,
+            _that.currentShiftId,
+            _that.assignedClientId,
+            _that.liveLatitude,
+            _that.liveLongitude,
+            _that.liveAccuracy,
+            _that.liveUpdatedAt,
+            _that.liveAppointmentId,
+            _that.liveClientName,
+            _that.liveDistanceMeters,
+            _that.liveGeofenceRadiusMeters,
+            _that.liveInsideGeofence,
+            _that.hoursWorked,
+            _that.isOnBreak);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$EmployeeStatusImpl implements _EmployeeStatus {
-  const _$EmployeeStatusImpl(
+class _EmployeeStatus implements EmployeeStatus {
+  const _EmployeeStatus(
       {required this.id,
       required this.name,
       required this.email,
@@ -703,9 +1125,8 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
       this.liveInsideGeofence,
       this.hoursWorked = 0.0,
       this.isOnBreak = false});
-
-  factory _$EmployeeStatusImpl.fromJson(Map<String, dynamic> json) =>
-      _$$EmployeeStatusImplFromJson(json);
+  factory _EmployeeStatus.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeStatusFromJson(json);
 
   @override
   final String id;
@@ -755,16 +1176,26 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
   @JsonKey()
   final bool isOnBreak;
 
+  /// Create a copy of EmployeeStatus
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'EmployeeStatus(id: $id, name: $name, email: $email, status: $status, profileImage: $profileImage, filename: $filename, photoData: $photoData, currentLocation: $currentLocation, lastSeen: $lastSeen, currentShiftId: $currentShiftId, assignedClientId: $assignedClientId, liveLatitude: $liveLatitude, liveLongitude: $liveLongitude, liveAccuracy: $liveAccuracy, liveUpdatedAt: $liveUpdatedAt, liveAppointmentId: $liveAppointmentId, liveClientName: $liveClientName, liveDistanceMeters: $liveDistanceMeters, liveGeofenceRadiusMeters: $liveGeofenceRadiusMeters, liveInsideGeofence: $liveInsideGeofence, hoursWorked: $hoursWorked, isOnBreak: $isOnBreak)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$EmployeeStatusCopyWith<_EmployeeStatus> get copyWith =>
+      __$EmployeeStatusCopyWithImpl<_EmployeeStatus>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$EmployeeStatusToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$EmployeeStatusImpl &&
+            other is _EmployeeStatus &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
@@ -807,7 +1238,7 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
                 other.isOnBreak == isOnBreak));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -832,229 +1263,242 @@ class _$EmployeeStatusImpl implements _EmployeeStatus {
         liveGeofenceRadiusMeters,
         liveInsideGeofence,
         hoursWorked,
-        isOnBreak,
+        isOnBreak
       ]);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$EmployeeStatusImplCopyWith<_$EmployeeStatusImpl> get copyWith =>
-      __$$EmployeeStatusImplCopyWithImpl<_$EmployeeStatusImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$EmployeeStatusImplToJson(
-      this,
-    );
+  String toString() {
+    return 'EmployeeStatus(id: $id, name: $name, email: $email, status: $status, profileImage: $profileImage, filename: $filename, photoData: $photoData, currentLocation: $currentLocation, lastSeen: $lastSeen, currentShiftId: $currentShiftId, assignedClientId: $assignedClientId, liveLatitude: $liveLatitude, liveLongitude: $liveLongitude, liveAccuracy: $liveAccuracy, liveUpdatedAt: $liveUpdatedAt, liveAppointmentId: $liveAppointmentId, liveClientName: $liveClientName, liveDistanceMeters: $liveDistanceMeters, liveGeofenceRadiusMeters: $liveGeofenceRadiusMeters, liveInsideGeofence: $liveInsideGeofence, hoursWorked: $hoursWorked, isOnBreak: $isOnBreak)';
   }
 }
 
-abstract class _EmployeeStatus implements EmployeeStatus {
-  const factory _EmployeeStatus(
-      {required final String id,
-      required final String name,
-      required final String email,
-      required final WorkStatus status,
-      final String? profileImage,
-      final String? filename,
+/// @nodoc
+abstract mixin class _$EmployeeStatusCopyWith<$Res>
+    implements $EmployeeStatusCopyWith<$Res> {
+  factory _$EmployeeStatusCopyWith(
+          _EmployeeStatus value, $Res Function(_EmployeeStatus) _then) =
+      __$EmployeeStatusCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String email,
+      WorkStatus status,
+      String? profileImage,
+      String? filename,
       @JsonKey(includeFromJson: false, includeToJson: false)
-      final Uint8List? photoData,
-      final String? currentLocation,
-      final DateTime? lastSeen,
-      final String? currentShiftId,
-      final String? assignedClientId,
-      final double? liveLatitude,
-      final double? liveLongitude,
-      final double? liveAccuracy,
-      final DateTime? liveUpdatedAt,
-      final String? liveAppointmentId,
-      final String? liveClientName,
-      final double? liveDistanceMeters,
-      final double? liveGeofenceRadiusMeters,
-      final bool? liveInsideGeofence,
-      final double hoursWorked,
-      final bool isOnBreak}) = _$EmployeeStatusImpl;
-
-  factory _EmployeeStatus.fromJson(Map<String, dynamic> json) =
-      _$EmployeeStatusImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get name;
-  @override
-  String get email;
-  @override
-  WorkStatus get status;
-  @override
-  String? get profileImage;
-  @override
-  String? get filename;
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  Uint8List? get photoData;
-  @override
-  String? get currentLocation;
-  @override
-  DateTime? get lastSeen;
-  @override
-  String? get currentShiftId;
-  @override
-  String? get assignedClientId;
-  @override
-  double? get liveLatitude;
-  @override
-  double? get liveLongitude;
-  @override
-  double? get liveAccuracy;
-  @override
-  DateTime? get liveUpdatedAt;
-  @override
-  String? get liveAppointmentId;
-  @override
-  String? get liveClientName;
-  @override
-  double? get liveDistanceMeters;
-  @override
-  double? get liveGeofenceRadiusMeters;
-  @override
-  bool? get liveInsideGeofence;
-  @override
-  double get hoursWorked;
-  @override
-  bool get isOnBreak;
-  @override
-  @JsonKey(ignore: true)
-  _$$EmployeeStatusImplCopyWith<_$EmployeeStatusImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+      Uint8List? photoData,
+      String? currentLocation,
+      DateTime? lastSeen,
+      String? currentShiftId,
+      String? assignedClientId,
+      double? liveLatitude,
+      double? liveLongitude,
+      double? liveAccuracy,
+      DateTime? liveUpdatedAt,
+      String? liveAppointmentId,
+      String? liveClientName,
+      double? liveDistanceMeters,
+      double? liveGeofenceRadiusMeters,
+      bool? liveInsideGeofence,
+      double hoursWorked,
+      bool isOnBreak});
 }
 
-ShiftDetail _$ShiftDetailFromJson(Map<String, dynamic> json) {
-  return _ShiftDetail.fromJson(json);
+/// @nodoc
+class __$EmployeeStatusCopyWithImpl<$Res>
+    implements _$EmployeeStatusCopyWith<$Res> {
+  __$EmployeeStatusCopyWithImpl(this._self, this._then);
+
+  final _EmployeeStatus _self;
+  final $Res Function(_EmployeeStatus) _then;
+
+  /// Create a copy of EmployeeStatus
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? email = null,
+    Object? status = null,
+    Object? profileImage = freezed,
+    Object? filename = freezed,
+    Object? photoData = freezed,
+    Object? currentLocation = freezed,
+    Object? lastSeen = freezed,
+    Object? currentShiftId = freezed,
+    Object? assignedClientId = freezed,
+    Object? liveLatitude = freezed,
+    Object? liveLongitude = freezed,
+    Object? liveAccuracy = freezed,
+    Object? liveUpdatedAt = freezed,
+    Object? liveAppointmentId = freezed,
+    Object? liveClientName = freezed,
+    Object? liveDistanceMeters = freezed,
+    Object? liveGeofenceRadiusMeters = freezed,
+    Object? liveInsideGeofence = freezed,
+    Object? hoursWorked = null,
+    Object? isOnBreak = null,
+  }) {
+    return _then(_EmployeeStatus(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      email: null == email
+          ? _self.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as WorkStatus,
+      profileImage: freezed == profileImage
+          ? _self.profileImage
+          : profileImage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      filename: freezed == filename
+          ? _self.filename
+          : filename // ignore: cast_nullable_to_non_nullable
+              as String?,
+      photoData: freezed == photoData
+          ? _self.photoData
+          : photoData // ignore: cast_nullable_to_non_nullable
+              as Uint8List?,
+      currentLocation: freezed == currentLocation
+          ? _self.currentLocation
+          : currentLocation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastSeen: freezed == lastSeen
+          ? _self.lastSeen
+          : lastSeen // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      currentShiftId: freezed == currentShiftId
+          ? _self.currentShiftId
+          : currentShiftId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      assignedClientId: freezed == assignedClientId
+          ? _self.assignedClientId
+          : assignedClientId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      liveLatitude: freezed == liveLatitude
+          ? _self.liveLatitude
+          : liveLatitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveLongitude: freezed == liveLongitude
+          ? _self.liveLongitude
+          : liveLongitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveAccuracy: freezed == liveAccuracy
+          ? _self.liveAccuracy
+          : liveAccuracy // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveUpdatedAt: freezed == liveUpdatedAt
+          ? _self.liveUpdatedAt
+          : liveUpdatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      liveAppointmentId: freezed == liveAppointmentId
+          ? _self.liveAppointmentId
+          : liveAppointmentId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      liveClientName: freezed == liveClientName
+          ? _self.liveClientName
+          : liveClientName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      liveDistanceMeters: freezed == liveDistanceMeters
+          ? _self.liveDistanceMeters
+          : liveDistanceMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveGeofenceRadiusMeters: freezed == liveGeofenceRadiusMeters
+          ? _self.liveGeofenceRadiusMeters
+          : liveGeofenceRadiusMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
+      liveInsideGeofence: freezed == liveInsideGeofence
+          ? _self.liveInsideGeofence
+          : liveInsideGeofence // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      hoursWorked: null == hoursWorked
+          ? _self.hoursWorked
+          : hoursWorked // ignore: cast_nullable_to_non_nullable
+              as double,
+      isOnBreak: null == isOnBreak
+          ? _self.isOnBreak
+          : isOnBreak // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$ShiftDetail {
-  String get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  DateTime get startTime => throw _privateConstructorUsedError;
-  DateTime get endTime => throw _privateConstructorUsedError;
-  String get employeeId => throw _privateConstructorUsedError;
-  String get employeeName => throw _privateConstructorUsedError;
-  String? get clientId => throw _privateConstructorUsedError;
-  String? get clientName => throw _privateConstructorUsedError;
-  String? get location => throw _privateConstructorUsedError;
-  ShiftStatus get status => throw _privateConstructorUsedError;
-  String? get notes => throw _privateConstructorUsedError;
+  String get id;
+  String get title;
+  DateTime get startTime;
+  DateTime get endTime;
+  String get employeeId;
+  String get employeeName;
+  String? get clientId;
+  String? get clientName;
+  String? get location;
+  ShiftStatus get status;
+  String? get notes;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $ShiftDetailCopyWith<ShiftDetail> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ShiftDetailCopyWith<$Res> {
-  factory $ShiftDetailCopyWith(
-          ShiftDetail value, $Res Function(ShiftDetail) then) =
-      _$ShiftDetailCopyWithImpl<$Res, ShiftDetail>;
-  @useResult
-  $Res call(
-      {String id,
-      String title,
-      DateTime startTime,
-      DateTime endTime,
-      String employeeId,
-      String employeeName,
-      String? clientId,
-      String? clientName,
-      String? location,
-      ShiftStatus status,
-      String? notes});
-}
-
-/// @nodoc
-class _$ShiftDetailCopyWithImpl<$Res, $Val extends ShiftDetail>
-    implements $ShiftDetailCopyWith<$Res> {
-  _$ShiftDetailCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of ShiftDetail
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $ShiftDetailCopyWith<ShiftDetail> get copyWith =>
+      _$ShiftDetailCopyWithImpl<ShiftDetail>(this as ShiftDetail, _$identity);
+
+  /// Serializes this ShiftDetail to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? startTime = null,
-    Object? endTime = null,
-    Object? employeeId = null,
-    Object? employeeName = null,
-    Object? clientId = freezed,
-    Object? clientName = freezed,
-    Object? location = freezed,
-    Object? status = null,
-    Object? notes = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      startTime: null == startTime
-          ? _value.startTime
-          : startTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      endTime: null == endTime
-          ? _value.endTime
-          : endTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      employeeId: null == employeeId
-          ? _value.employeeId
-          : employeeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      employeeName: null == employeeName
-          ? _value.employeeName
-          : employeeName // ignore: cast_nullable_to_non_nullable
-              as String,
-      clientId: freezed == clientId
-          ? _value.clientId
-          : clientId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      clientName: freezed == clientName
-          ? _value.clientName
-          : clientName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ShiftStatus,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ShiftDetail &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.employeeId, employeeId) ||
+                other.employeeId == employeeId) &&
+            (identical(other.employeeName, employeeName) ||
+                other.employeeName == employeeName) &&
+            (identical(other.clientId, clientId) ||
+                other.clientId == clientId) &&
+            (identical(other.clientName, clientName) ||
+                other.clientName == clientName) &&
+            (identical(other.location, location) ||
+                other.location == location) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.notes, notes) || other.notes == notes));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, title, startTime, endTime,
+      employeeId, employeeName, clientId, clientName, location, status, notes);
+
+  @override
+  String toString() {
+    return 'ShiftDetail(id: $id, title: $title, startTime: $startTime, endTime: $endTime, employeeId: $employeeId, employeeName: $employeeName, clientId: $clientId, clientName: $clientName, location: $location, status: $status, notes: $notes)';
   }
 }
 
 /// @nodoc
-abstract class _$$ShiftDetailImplCopyWith<$Res>
-    implements $ShiftDetailCopyWith<$Res> {
-  factory _$$ShiftDetailImplCopyWith(
-          _$ShiftDetailImpl value, $Res Function(_$ShiftDetailImpl) then) =
-      __$$ShiftDetailImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ShiftDetailCopyWith<$Res> {
+  factory $ShiftDetailCopyWith(
+          ShiftDetail value, $Res Function(ShiftDetail) _then) =
+      _$ShiftDetailCopyWithImpl;
   @useResult
   $Res call(
       {String id,
@@ -1071,13 +1515,14 @@ abstract class _$$ShiftDetailImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ShiftDetailImplCopyWithImpl<$Res>
-    extends _$ShiftDetailCopyWithImpl<$Res, _$ShiftDetailImpl>
-    implements _$$ShiftDetailImplCopyWith<$Res> {
-  __$$ShiftDetailImplCopyWithImpl(
-      _$ShiftDetailImpl _value, $Res Function(_$ShiftDetailImpl) _then)
-      : super(_value, _then);
+class _$ShiftDetailCopyWithImpl<$Res> implements $ShiftDetailCopyWith<$Res> {
+  _$ShiftDetailCopyWithImpl(this._self, this._then);
 
+  final ShiftDetail _self;
+  final $Res Function(ShiftDetail) _then;
+
+  /// Create a copy of ShiftDetail
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1093,59 +1538,285 @@ class __$$ShiftDetailImplCopyWithImpl<$Res>
     Object? status = null,
     Object? notes = freezed,
   }) {
-    return _then(_$ShiftDetailImpl(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       title: null == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
       startTime: null == startTime
-          ? _value.startTime
+          ? _self.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
       endTime: null == endTime
-          ? _value.endTime
+          ? _self.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
       employeeId: null == employeeId
-          ? _value.employeeId
+          ? _self.employeeId
           : employeeId // ignore: cast_nullable_to_non_nullable
               as String,
       employeeName: null == employeeName
-          ? _value.employeeName
+          ? _self.employeeName
           : employeeName // ignore: cast_nullable_to_non_nullable
               as String,
       clientId: freezed == clientId
-          ? _value.clientId
+          ? _self.clientId
           : clientId // ignore: cast_nullable_to_non_nullable
               as String?,
       clientName: freezed == clientName
-          ? _value.clientName
+          ? _self.clientName
           : clientName // ignore: cast_nullable_to_non_nullable
               as String?,
       location: freezed == location
-          ? _value.location
+          ? _self.location
           : location // ignore: cast_nullable_to_non_nullable
               as String?,
       status: null == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as ShiftStatus,
       notes: freezed == notes
-          ? _value.notes
+          ? _self.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [ShiftDetail].
+extension ShiftDetailPatterns on ShiftDetail {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ShiftDetail value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftDetail() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ShiftDetail value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftDetail():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ShiftDetail value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftDetail() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String title,
+            DateTime startTime,
+            DateTime endTime,
+            String employeeId,
+            String employeeName,
+            String? clientId,
+            String? clientName,
+            String? location,
+            ShiftStatus status,
+            String? notes)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftDetail() when $default != null:
+        return $default(
+            _that.id,
+            _that.title,
+            _that.startTime,
+            _that.endTime,
+            _that.employeeId,
+            _that.employeeName,
+            _that.clientId,
+            _that.clientName,
+            _that.location,
+            _that.status,
+            _that.notes);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String title,
+            DateTime startTime,
+            DateTime endTime,
+            String employeeId,
+            String employeeName,
+            String? clientId,
+            String? clientName,
+            String? location,
+            ShiftStatus status,
+            String? notes)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftDetail():
+        return $default(
+            _that.id,
+            _that.title,
+            _that.startTime,
+            _that.endTime,
+            _that.employeeId,
+            _that.employeeName,
+            _that.clientId,
+            _that.clientName,
+            _that.location,
+            _that.status,
+            _that.notes);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String id,
+            String title,
+            DateTime startTime,
+            DateTime endTime,
+            String employeeId,
+            String employeeName,
+            String? clientId,
+            String? clientName,
+            String? location,
+            ShiftStatus status,
+            String? notes)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ShiftDetail() when $default != null:
+        return $default(
+            _that.id,
+            _that.title,
+            _that.startTime,
+            _that.endTime,
+            _that.employeeId,
+            _that.employeeName,
+            _that.clientId,
+            _that.clientName,
+            _that.location,
+            _that.status,
+            _that.notes);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$ShiftDetailImpl implements _ShiftDetail {
-  const _$ShiftDetailImpl(
+class _ShiftDetail implements ShiftDetail {
+  const _ShiftDetail(
       {required this.id,
       required this.title,
       required this.startTime,
@@ -1157,9 +1828,8 @@ class _$ShiftDetailImpl implements _ShiftDetail {
       this.location,
       required this.status,
       this.notes});
-
-  factory _$ShiftDetailImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ShiftDetailImplFromJson(json);
+  factory _ShiftDetail.fromJson(Map<String, dynamic> json) =>
+      _$ShiftDetailFromJson(json);
 
   @override
   final String id;
@@ -1184,16 +1854,26 @@ class _$ShiftDetailImpl implements _ShiftDetail {
   @override
   final String? notes;
 
+  /// Create a copy of ShiftDetail
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ShiftDetail(id: $id, title: $title, startTime: $startTime, endTime: $endTime, employeeId: $employeeId, employeeName: $employeeName, clientId: $clientId, clientName: $clientName, location: $location, status: $status, notes: $notes)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ShiftDetailCopyWith<_ShiftDetail> get copyWith =>
+      __$ShiftDetailCopyWithImpl<_ShiftDetail>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ShiftDetailToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ShiftDetailImpl &&
+            other is _ShiftDetail &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.startTime, startTime) ||
@@ -1213,273 +1893,482 @@ class _$ShiftDetailImpl implements _ShiftDetail {
             (identical(other.notes, notes) || other.notes == notes));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, title, startTime, endTime,
       employeeId, employeeName, clientId, clientName, location, status, notes);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ShiftDetailImplCopyWith<_$ShiftDetailImpl> get copyWith =>
-      __$$ShiftDetailImplCopyWithImpl<_$ShiftDetailImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ShiftDetailImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _ShiftDetail implements ShiftDetail {
-  const factory _ShiftDetail(
-      {required final String id,
-      required final String title,
-      required final DateTime startTime,
-      required final DateTime endTime,
-      required final String employeeId,
-      required final String employeeName,
-      final String? clientId,
-      final String? clientName,
-      final String? location,
-      required final ShiftStatus status,
-      final String? notes}) = _$ShiftDetailImpl;
-
-  factory _ShiftDetail.fromJson(Map<String, dynamic> json) =
-      _$ShiftDetailImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get title;
-  @override
-  DateTime get startTime;
-  @override
-  DateTime get endTime;
-  @override
-  String get employeeId;
-  @override
-  String get employeeName;
-  @override
-  String? get clientId;
-  @override
-  String? get clientName;
-  @override
-  String? get location;
-  @override
-  ShiftStatus get status;
-  @override
-  String? get notes;
-  @override
-  @JsonKey(ignore: true)
-  _$$ShiftDetailImplCopyWith<_$ShiftDetailImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-ClientAssignment _$ClientAssignmentFromJson(Map<String, dynamic> json) {
-  return _ClientAssignment.fromJson(json);
-}
-
-/// @nodoc
-mixin _$ClientAssignment {
-  String get id => throw _privateConstructorUsedError;
-  String get clientName => throw _privateConstructorUsedError;
-  String get employeeId => throw _privateConstructorUsedError;
-  String get employeeName => throw _privateConstructorUsedError;
-  DateTime get assignedDate => throw _privateConstructorUsedError;
-  DateTime? get startDate => throw _privateConstructorUsedError;
-  DateTime? get endDate => throw _privateConstructorUsedError;
-  AssignmentStatus get status => throw _privateConstructorUsedError;
-  String? get notes => throw _privateConstructorUsedError;
-  String? get location => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $ClientAssignmentCopyWith<ClientAssignment> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ClientAssignmentCopyWith<$Res> {
-  factory $ClientAssignmentCopyWith(
-          ClientAssignment value, $Res Function(ClientAssignment) then) =
-      _$ClientAssignmentCopyWithImpl<$Res, ClientAssignment>;
-  @useResult
-  $Res call(
-      {String id,
-      String clientName,
-      String employeeId,
-      String employeeName,
-      DateTime assignedDate,
-      DateTime? startDate,
-      DateTime? endDate,
-      AssignmentStatus status,
-      String? notes,
-      String? location});
-}
-
-/// @nodoc
-class _$ClientAssignmentCopyWithImpl<$Res, $Val extends ClientAssignment>
-    implements $ClientAssignmentCopyWith<$Res> {
-  _$ClientAssignmentCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? clientName = null,
-    Object? employeeId = null,
-    Object? employeeName = null,
-    Object? assignedDate = null,
-    Object? startDate = freezed,
-    Object? endDate = freezed,
-    Object? status = null,
-    Object? notes = freezed,
-    Object? location = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      clientName: null == clientName
-          ? _value.clientName
-          : clientName // ignore: cast_nullable_to_non_nullable
-              as String,
-      employeeId: null == employeeId
-          ? _value.employeeId
-          : employeeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      employeeName: null == employeeName
-          ? _value.employeeName
-          : employeeName // ignore: cast_nullable_to_non_nullable
-              as String,
-      assignedDate: null == assignedDate
-          ? _value.assignedDate
-          : assignedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      startDate: freezed == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endDate: freezed == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as AssignmentStatus,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  String toString() {
+    return 'ShiftDetail(id: $id, title: $title, startTime: $startTime, endTime: $endTime, employeeId: $employeeId, employeeName: $employeeName, clientId: $clientId, clientName: $clientName, location: $location, status: $status, notes: $notes)';
   }
 }
 
 /// @nodoc
-abstract class _$$ClientAssignmentImplCopyWith<$Res>
-    implements $ClientAssignmentCopyWith<$Res> {
-  factory _$$ClientAssignmentImplCopyWith(_$ClientAssignmentImpl value,
-          $Res Function(_$ClientAssignmentImpl) then) =
-      __$$ClientAssignmentImplCopyWithImpl<$Res>;
+abstract mixin class _$ShiftDetailCopyWith<$Res>
+    implements $ShiftDetailCopyWith<$Res> {
+  factory _$ShiftDetailCopyWith(
+          _ShiftDetail value, $Res Function(_ShiftDetail) _then) =
+      __$ShiftDetailCopyWithImpl;
   @override
   @useResult
   $Res call(
       {String id,
-      String clientName,
+      String title,
+      DateTime startTime,
+      DateTime endTime,
       String employeeId,
       String employeeName,
-      DateTime assignedDate,
-      DateTime? startDate,
-      DateTime? endDate,
-      AssignmentStatus status,
-      String? notes,
-      String? location});
+      String? clientId,
+      String? clientName,
+      String? location,
+      ShiftStatus status,
+      String? notes});
 }
 
 /// @nodoc
-class __$$ClientAssignmentImplCopyWithImpl<$Res>
-    extends _$ClientAssignmentCopyWithImpl<$Res, _$ClientAssignmentImpl>
-    implements _$$ClientAssignmentImplCopyWith<$Res> {
-  __$$ClientAssignmentImplCopyWithImpl(_$ClientAssignmentImpl _value,
-      $Res Function(_$ClientAssignmentImpl) _then)
-      : super(_value, _then);
+class __$ShiftDetailCopyWithImpl<$Res> implements _$ShiftDetailCopyWith<$Res> {
+  __$ShiftDetailCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _ShiftDetail _self;
+  final $Res Function(_ShiftDetail) _then;
+
+  /// Create a copy of ShiftDetail
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
-    Object? clientName = null,
+    Object? title = null,
+    Object? startTime = null,
+    Object? endTime = null,
     Object? employeeId = null,
     Object? employeeName = null,
-    Object? assignedDate = null,
-    Object? startDate = freezed,
-    Object? endDate = freezed,
+    Object? clientId = freezed,
+    Object? clientName = freezed,
+    Object? location = freezed,
     Object? status = null,
     Object? notes = freezed,
-    Object? location = freezed,
   }) {
-    return _then(_$ClientAssignmentImpl(
+    return _then(_ShiftDetail(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      clientName: null == clientName
-          ? _value.clientName
-          : clientName // ignore: cast_nullable_to_non_nullable
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String,
+      startTime: null == startTime
+          ? _self.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      endTime: null == endTime
+          ? _self.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       employeeId: null == employeeId
-          ? _value.employeeId
+          ? _self.employeeId
           : employeeId // ignore: cast_nullable_to_non_nullable
               as String,
       employeeName: null == employeeName
-          ? _value.employeeName
+          ? _self.employeeName
           : employeeName // ignore: cast_nullable_to_non_nullable
               as String,
-      assignedDate: null == assignedDate
-          ? _value.assignedDate
-          : assignedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      startDate: freezed == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endDate: freezed == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as AssignmentStatus,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
+      clientId: freezed == clientId
+          ? _self.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientName: freezed == clientName
+          ? _self.clientName
+          : clientName // ignore: cast_nullable_to_non_nullable
               as String?,
       location: freezed == location
-          ? _value.location
+          ? _self.location
           : location // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as ShiftStatus,
+      notes: freezed == notes
+          ? _self.notes
+          : notes // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
 /// @nodoc
+mixin _$ClientAssignment {
+  String get id;
+  String get clientName;
+  String get employeeId;
+  String get employeeName;
+  DateTime get assignedDate;
+  DateTime? get startDate;
+  DateTime? get endDate;
+  AssignmentStatus get status;
+  String? get notes;
+  String? get location;
+
+  /// Create a copy of ClientAssignment
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ClientAssignmentCopyWith<ClientAssignment> get copyWith =>
+      _$ClientAssignmentCopyWithImpl<ClientAssignment>(
+          this as ClientAssignment, _$identity);
+
+  /// Serializes this ClientAssignment to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ClientAssignment &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.clientName, clientName) ||
+                other.clientName == clientName) &&
+            (identical(other.employeeId, employeeId) ||
+                other.employeeId == employeeId) &&
+            (identical(other.employeeName, employeeName) ||
+                other.employeeName == employeeName) &&
+            (identical(other.assignedDate, assignedDate) ||
+                other.assignedDate == assignedDate) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
+            (identical(other.endDate, endDate) || other.endDate == endDate) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.notes, notes) || other.notes == notes) &&
+            (identical(other.location, location) ||
+                other.location == location));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, clientName, employeeId,
+      employeeName, assignedDate, startDate, endDate, status, notes, location);
+
+  @override
+  String toString() {
+    return 'ClientAssignment(id: $id, clientName: $clientName, employeeId: $employeeId, employeeName: $employeeName, assignedDate: $assignedDate, startDate: $startDate, endDate: $endDate, status: $status, notes: $notes, location: $location)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $ClientAssignmentCopyWith<$Res> {
+  factory $ClientAssignmentCopyWith(
+          ClientAssignment value, $Res Function(ClientAssignment) _then) =
+      _$ClientAssignmentCopyWithImpl;
+  @useResult
+  $Res call(
+      {String id,
+      String clientName,
+      String employeeId,
+      String employeeName,
+      DateTime assignedDate,
+      DateTime? startDate,
+      DateTime? endDate,
+      AssignmentStatus status,
+      String? notes,
+      String? location});
+}
+
+/// @nodoc
+class _$ClientAssignmentCopyWithImpl<$Res>
+    implements $ClientAssignmentCopyWith<$Res> {
+  _$ClientAssignmentCopyWithImpl(this._self, this._then);
+
+  final ClientAssignment _self;
+  final $Res Function(ClientAssignment) _then;
+
+  /// Create a copy of ClientAssignment
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? clientName = null,
+    Object? employeeId = null,
+    Object? employeeName = null,
+    Object? assignedDate = null,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
+    Object? status = null,
+    Object? notes = freezed,
+    Object? location = freezed,
+  }) {
+    return _then(_self.copyWith(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      clientName: null == clientName
+          ? _self.clientName
+          : clientName // ignore: cast_nullable_to_non_nullable
+              as String,
+      employeeId: null == employeeId
+          ? _self.employeeId
+          : employeeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      employeeName: null == employeeName
+          ? _self.employeeName
+          : employeeName // ignore: cast_nullable_to_non_nullable
+              as String,
+      assignedDate: null == assignedDate
+          ? _self.assignedDate
+          : assignedDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      startDate: freezed == startDate
+          ? _self.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      endDate: freezed == endDate
+          ? _self.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AssignmentStatus,
+      notes: freezed == notes
+          ? _self.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      location: freezed == location
+          ? _self.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [ClientAssignment].
+extension ClientAssignmentPatterns on ClientAssignment {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ClientAssignment value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ClientAssignment() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ClientAssignment value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ClientAssignment():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ClientAssignment value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ClientAssignment() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String clientName,
+            String employeeId,
+            String employeeName,
+            DateTime assignedDate,
+            DateTime? startDate,
+            DateTime? endDate,
+            AssignmentStatus status,
+            String? notes,
+            String? location)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ClientAssignment() when $default != null:
+        return $default(
+            _that.id,
+            _that.clientName,
+            _that.employeeId,
+            _that.employeeName,
+            _that.assignedDate,
+            _that.startDate,
+            _that.endDate,
+            _that.status,
+            _that.notes,
+            _that.location);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String clientName,
+            String employeeId,
+            String employeeName,
+            DateTime assignedDate,
+            DateTime? startDate,
+            DateTime? endDate,
+            AssignmentStatus status,
+            String? notes,
+            String? location)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ClientAssignment():
+        return $default(
+            _that.id,
+            _that.clientName,
+            _that.employeeId,
+            _that.employeeName,
+            _that.assignedDate,
+            _that.startDate,
+            _that.endDate,
+            _that.status,
+            _that.notes,
+            _that.location);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String id,
+            String clientName,
+            String employeeId,
+            String employeeName,
+            DateTime assignedDate,
+            DateTime? startDate,
+            DateTime? endDate,
+            AssignmentStatus status,
+            String? notes,
+            String? location)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ClientAssignment() when $default != null:
+        return $default(
+            _that.id,
+            _that.clientName,
+            _that.employeeId,
+            _that.employeeName,
+            _that.assignedDate,
+            _that.startDate,
+            _that.endDate,
+            _that.status,
+            _that.notes,
+            _that.location);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$ClientAssignmentImpl implements _ClientAssignment {
-  const _$ClientAssignmentImpl(
+class _ClientAssignment implements ClientAssignment {
+  const _ClientAssignment(
       {required this.id,
       required this.clientName,
       required this.employeeId,
@@ -1490,9 +2379,8 @@ class _$ClientAssignmentImpl implements _ClientAssignment {
       required this.status,
       this.notes,
       this.location});
-
-  factory _$ClientAssignmentImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ClientAssignmentImplFromJson(json);
+  factory _ClientAssignment.fromJson(Map<String, dynamic> json) =>
+      _$ClientAssignmentFromJson(json);
 
   @override
   final String id;
@@ -1515,16 +2403,26 @@ class _$ClientAssignmentImpl implements _ClientAssignment {
   @override
   final String? location;
 
+  /// Create a copy of ClientAssignment
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ClientAssignment(id: $id, clientName: $clientName, employeeId: $employeeId, employeeName: $employeeName, assignedDate: $assignedDate, startDate: $startDate, endDate: $endDate, status: $status, notes: $notes, location: $location)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ClientAssignmentCopyWith<_ClientAssignment> get copyWith =>
+      __$ClientAssignmentCopyWithImpl<_ClientAssignment>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ClientAssignmentToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ClientAssignmentImpl &&
+            other is _ClientAssignment &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.clientName, clientName) ||
                 other.clientName == clientName) &&
@@ -1543,64 +2441,105 @@ class _$ClientAssignmentImpl implements _ClientAssignment {
                 other.location == location));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, clientName, employeeId,
       employeeName, assignedDate, startDate, endDate, status, notes, location);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ClientAssignmentImplCopyWith<_$ClientAssignmentImpl> get copyWith =>
-      __$$ClientAssignmentImplCopyWithImpl<_$ClientAssignmentImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ClientAssignmentImplToJson(
-      this,
-    );
+  String toString() {
+    return 'ClientAssignment(id: $id, clientName: $clientName, employeeId: $employeeId, employeeName: $employeeName, assignedDate: $assignedDate, startDate: $startDate, endDate: $endDate, status: $status, notes: $notes, location: $location)';
   }
 }
 
-abstract class _ClientAssignment implements ClientAssignment {
-  const factory _ClientAssignment(
-      {required final String id,
-      required final String clientName,
-      required final String employeeId,
-      required final String employeeName,
-      required final DateTime assignedDate,
-      final DateTime? startDate,
-      final DateTime? endDate,
-      required final AssignmentStatus status,
-      final String? notes,
-      final String? location}) = _$ClientAssignmentImpl;
-
-  factory _ClientAssignment.fromJson(Map<String, dynamic> json) =
-      _$ClientAssignmentImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$ClientAssignmentCopyWith<$Res>
+    implements $ClientAssignmentCopyWith<$Res> {
+  factory _$ClientAssignmentCopyWith(
+          _ClientAssignment value, $Res Function(_ClientAssignment) _then) =
+      __$ClientAssignmentCopyWithImpl;
   @override
-  String get id;
-  @override
-  String get clientName;
-  @override
-  String get employeeId;
-  @override
-  String get employeeName;
-  @override
-  DateTime get assignedDate;
-  @override
-  DateTime? get startDate;
-  @override
-  DateTime? get endDate;
-  @override
-  AssignmentStatus get status;
-  @override
-  String? get notes;
-  @override
-  String? get location;
-  @override
-  @JsonKey(ignore: true)
-  _$$ClientAssignmentImplCopyWith<_$ClientAssignmentImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String id,
+      String clientName,
+      String employeeId,
+      String employeeName,
+      DateTime assignedDate,
+      DateTime? startDate,
+      DateTime? endDate,
+      AssignmentStatus status,
+      String? notes,
+      String? location});
 }
+
+/// @nodoc
+class __$ClientAssignmentCopyWithImpl<$Res>
+    implements _$ClientAssignmentCopyWith<$Res> {
+  __$ClientAssignmentCopyWithImpl(this._self, this._then);
+
+  final _ClientAssignment _self;
+  final $Res Function(_ClientAssignment) _then;
+
+  /// Create a copy of ClientAssignment
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? clientName = null,
+    Object? employeeId = null,
+    Object? employeeName = null,
+    Object? assignedDate = null,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
+    Object? status = null,
+    Object? notes = freezed,
+    Object? location = freezed,
+  }) {
+    return _then(_ClientAssignment(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      clientName: null == clientName
+          ? _self.clientName
+          : clientName // ignore: cast_nullable_to_non_nullable
+              as String,
+      employeeId: null == employeeId
+          ? _self.employeeId
+          : employeeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      employeeName: null == employeeName
+          ? _self.employeeName
+          : employeeName // ignore: cast_nullable_to_non_nullable
+              as String,
+      assignedDate: null == assignedDate
+          ? _self.assignedDate
+          : assignedDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      startDate: freezed == startDate
+          ? _self.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      endDate: freezed == endDate
+          ? _self.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AssignmentStatus,
+      notes: freezed == notes
+          ? _self.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      location: freezed == location
+          ? _self.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

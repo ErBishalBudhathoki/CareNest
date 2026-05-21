@@ -61,6 +61,11 @@ class InvoiceAIDashboard extends ConsumerWidget {
 
             const SizedBox(height: BauhausDesign.space4),
 
+            // Quick Generate from text
+            _QuickGenerateWidget(organizationId: organizationId),
+
+            const SizedBox(height: BauhausDesign.space4),
+
             // Stats Grid — compact 2x2
             _buildStatsGrid(context, textTheme),
 
@@ -611,6 +616,167 @@ class InvoiceAIDashboard extends ConsumerWidget {
           ),
         ),
       ),
+      ),
     );
   }
 }
+
+class _QuickGenerateWidget extends ConsumerStatefulWidget {
+  final String? organizationId;
+
+  const _QuickGenerateWidget({required this.organizationId});
+
+  @override
+  ConsumerState<_QuickGenerateWidget> createState() => _QuickGenerateWidgetState();
+}
+
+class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
+  final _controller = TextEditingController();
+  bool _isGenerating = false;
+
+  Future<void> _handleGenerate() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    setState(() => _isGenerating = true);
+
+    try {
+      final repo = InvoiceAIRepository(ref.read(apiMethodProvider));
+      final result = await repo.generateFromText(
+        organizationId: widget.organizationId ?? 'org_123',
+        textNote: text,
+      );
+
+      if (mounted) {
+        _controller.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Success! Generated ${result.successfulInvoices} invoice(s).'),
+            backgroundColor: BauhausDesign.success,
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InvoiceListView(
+              organizationId: widget.organizationId ?? '',
+              userEmail: '',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: BauhausDesign.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isGenerating = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = BauhausDesign.getTextTheme(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.bolt, color: BauhausDesign.primary),
+              const SizedBox(width: BauhausDesign.space2),
+              Text(
+                'QUICK GENERATE',
+                style: textTheme.titleMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            'Type a natural language note to auto-create an invoice.',
+            style: textTheme.bodySmall?.copyWith(color: BauhausDesign.textMuted),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          TextField(
+            controller: _controller,
+            maxLines: 3,
+            minLines: 1,
+            decoration: InputDecoration(
+              hintText: 'e.g., "Eva helped Harry with groceries and it took 2 hours, plus \$50 for the food"',
+              hintStyle: textTheme.bodyMedium?.copyWith(color: BauhausDesign.neutral),
+              filled: true,
+              fillColor: BauhausDesign.surfaceLight,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                borderSide: const BorderSide(color: BauhausDesign.neutral, width: 2),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                borderSide: const BorderSide(color: BauhausDesign.neutral, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                borderSide: const BorderSide(color: BauhausDesign.primary, width: 2),
+              ),
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: BauhausDesign.textDark,
+                foregroundColor: BauhausDesign.surfaceWhite,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                ),
+                elevation: 0,
+              ),
+              onPressed: _isGenerating ? null : _handleGenerate,
+              child: _isGenerating
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.surfaceWhite),
+                      ),
+                    )
+                  : Text(
+                      'GENERATE INVOICE',
+                      style: textTheme.labelLarge?.copyWith(
+                        color: BauhausDesign.surfaceWhite,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

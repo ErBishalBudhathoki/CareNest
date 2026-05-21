@@ -6,9 +6,8 @@ part of 'financial_intelligence_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$RevenueForecastImpl _$$RevenueForecastImplFromJson(
-        Map<String, dynamic> json) =>
-    _$RevenueForecastImpl(
+_RevenueForecast _$RevenueForecastFromJson(Map<String, dynamic> json) =>
+    _RevenueForecast(
       organizationId: json['organizationId'] as String,
       generatedAt: json['generatedAt'] as String,
       horizon: (json['horizon'] as num).toInt(),
@@ -31,8 +30,7 @@ _$RevenueForecastImpl _$$RevenueForecastImplFromJson(
           (json['insights'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$$RevenueForecastImplToJson(
-        _$RevenueForecastImpl instance) =>
+Map<String, dynamic> _$RevenueForecastToJson(_RevenueForecast instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'generatedAt': instance.generatedAt,
@@ -46,47 +44,42 @@ Map<String, dynamic> _$$RevenueForecastImplToJson(
       'insights': instance.insights,
     };
 
-_$DailyPredictionImpl _$$DailyPredictionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$DailyPredictionImpl(
+_DailyPrediction _$DailyPredictionFromJson(Map<String, dynamic> json) =>
+    _DailyPrediction(
       date: json['date'] as String,
       predicted: (json['predicted'] as num).toDouble(),
       confidence: (json['confidence'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$DailyPredictionImplToJson(
-        _$DailyPredictionImpl instance) =>
+Map<String, dynamic> _$DailyPredictionToJson(_DailyPrediction instance) =>
     <String, dynamic>{
       'date': instance.date,
       'predicted': instance.predicted,
       'confidence': instance.confidence,
     };
 
-_$ConfidenceIntervalsImpl _$$ConfidenceIntervalsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ConfidenceIntervalsImpl(
+_ConfidenceIntervals _$ConfidenceIntervalsFromJson(Map<String, dynamic> json) =>
+    _ConfidenceIntervals(
       intervals: (json['intervals'] as List<dynamic>)
           .map((e) => ConfidenceInterval.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$ConfidenceIntervalsImplToJson(
-        _$ConfidenceIntervalsImpl instance) =>
+Map<String, dynamic> _$ConfidenceIntervalsToJson(
+        _ConfidenceIntervals instance) =>
     <String, dynamic>{
       'intervals': instance.intervals,
     };
 
-_$ConfidenceIntervalImpl _$$ConfidenceIntervalImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ConfidenceIntervalImpl(
+_ConfidenceInterval _$ConfidenceIntervalFromJson(Map<String, dynamic> json) =>
+    _ConfidenceInterval(
       date: json['date'] as String,
       lower: (json['lower'] as num).toDouble(),
       upper: (json['upper'] as num).toDouble(),
       confidence: (json['confidence'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$ConfidenceIntervalImplToJson(
-        _$ConfidenceIntervalImpl instance) =>
+Map<String, dynamic> _$ConfidenceIntervalToJson(_ConfidenceInterval instance) =>
     <String, dynamic>{
       'date': instance.date,
       'lower': instance.lower,
@@ -94,25 +87,22 @@ Map<String, dynamic> _$$ConfidenceIntervalImplToJson(
       'confidence': instance.confidence,
     };
 
-_$ForecastScenariosImpl _$$ForecastScenariosImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ForecastScenariosImpl(
+_ForecastScenarios _$ForecastScenariosFromJson(Map<String, dynamic> json) =>
+    _ForecastScenarios(
       bestCase: (json['bestCase'] as num).toDouble(),
       mostLikely: (json['mostLikely'] as num).toDouble(),
       worstCase: (json['worstCase'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$ForecastScenariosImplToJson(
-        _$ForecastScenariosImpl instance) =>
+Map<String, dynamic> _$ForecastScenariosToJson(_ForecastScenarios instance) =>
     <String, dynamic>{
       'bestCase': instance.bestCase,
       'mostLikely': instance.mostLikely,
       'worstCase': instance.worstCase,
     };
 
-_$ForecastMetricsImpl _$$ForecastMetricsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ForecastMetricsImpl(
+_ForecastMetrics _$ForecastMetricsFromJson(Map<String, dynamic> json) =>
+    _ForecastMetrics(
       arimaAccuracy: (json['arimaAccuracy'] as num).toDouble(),
       prophetAccuracy: (json['prophetAccuracy'] as num).toDouble(),
       lstmAccuracy: (json['lstmAccuracy'] as num).toDouble(),
@@ -121,8 +111,7 @@ _$ForecastMetricsImpl _$$ForecastMetricsImplFromJson(
       rmse: (json['rmse'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$ForecastMetricsImplToJson(
-        _$ForecastMetricsImpl instance) =>
+Map<String, dynamic> _$ForecastMetricsToJson(_ForecastMetrics instance) =>
     <String, dynamic>{
       'arimaAccuracy': instance.arimaAccuracy,
       'prophetAccuracy': instance.prophetAccuracy,
@@ -132,8 +121,8 @@ Map<String, dynamic> _$$ForecastMetricsImplToJson(
       'rmse': instance.rmse,
     };
 
-_$RevenueDriversImpl _$$RevenueDriversImplFromJson(Map<String, dynamic> json) =>
-    _$RevenueDriversImpl(
+_RevenueDrivers _$RevenueDriversFromJson(Map<String, dynamic> json) =>
+    _RevenueDrivers(
       organizationId: json['organizationId'] as String,
       period: (json['period'] as num).toInt(),
       analyzedAt: json['analyzedAt'] as String,
@@ -148,8 +137,7 @@ _$RevenueDriversImpl _$$RevenueDriversImplFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$RevenueDriversImplToJson(
-        _$RevenueDriversImpl instance) =>
+Map<String, dynamic> _$RevenueDriversToJson(_RevenueDrivers instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'period': instance.period,
@@ -159,8 +147,8 @@ Map<String, dynamic> _$$RevenueDriversImplToJson(
       'recommendations': instance.recommendations,
     };
 
-_$PrimaryDriverImpl _$$PrimaryDriverImplFromJson(Map<String, dynamic> json) =>
-    _$PrimaryDriverImpl(
+_PrimaryDriver _$PrimaryDriverFromJson(Map<String, dynamic> json) =>
+    _PrimaryDriver(
       driver: json['driver'] as String,
       impact: (json['impact'] as num).toDouble(),
       trend: json['trend'] as String,
@@ -168,7 +156,7 @@ _$PrimaryDriverImpl _$$PrimaryDriverImplFromJson(Map<String, dynamic> json) =>
       elasticity: (json['elasticity'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PrimaryDriverImplToJson(_$PrimaryDriverImpl instance) =>
+Map<String, dynamic> _$PrimaryDriverToJson(_PrimaryDriver instance) =>
     <String, dynamic>{
       'driver': instance.driver,
       'impact': instance.impact,
@@ -177,16 +165,15 @@ Map<String, dynamic> _$$PrimaryDriverImplToJson(_$PrimaryDriverImpl instance) =>
       'elasticity': instance.elasticity,
     };
 
-_$ExternalFactorImpl _$$ExternalFactorImplFromJson(Map<String, dynamic> json) =>
-    _$ExternalFactorImpl(
+_ExternalFactor _$ExternalFactorFromJson(Map<String, dynamic> json) =>
+    _ExternalFactor(
       factor: json['factor'] as String,
       impact: (json['impact'] as num).toDouble(),
       probability: (json['probability'] as num).toDouble(),
       potentialEffect: json['potentialEffect'] as String,
     );
 
-Map<String, dynamic> _$$ExternalFactorImplToJson(
-        _$ExternalFactorImpl instance) =>
+Map<String, dynamic> _$ExternalFactorToJson(_ExternalFactor instance) =>
     <String, dynamic>{
       'factor': instance.factor,
       'impact': instance.impact,
@@ -194,9 +181,8 @@ Map<String, dynamic> _$$ExternalFactorImplToJson(
       'potentialEffect': instance.potentialEffect,
     };
 
-_$PriceOptimizationImpl _$$PriceOptimizationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PriceOptimizationImpl(
+_PriceOptimization _$PriceOptimizationFromJson(Map<String, dynamic> json) =>
+    _PriceOptimization(
       serviceId: json['serviceId'] as String,
       serviceName: json['serviceName'] as String,
       currentPrice: (json['currentPrice'] as num).toDouble(),
@@ -208,8 +194,7 @@ _$PriceOptimizationImpl _$$PriceOptimizationImplFromJson(
       recommendation: json['recommendation'] as String,
     );
 
-Map<String, dynamic> _$$PriceOptimizationImplToJson(
-        _$PriceOptimizationImpl instance) =>
+Map<String, dynamic> _$PriceOptimizationToJson(_PriceOptimization instance) =>
     <String, dynamic>{
       'serviceId': instance.serviceId,
       'serviceName': instance.serviceName,
@@ -222,21 +207,20 @@ Map<String, dynamic> _$$PriceOptimizationImplToJson(
       'recommendation': instance.recommendation,
     };
 
-_$PriceImpactImpl _$$PriceImpactImplFromJson(Map<String, dynamic> json) =>
-    _$PriceImpactImpl(
+_PriceImpact _$PriceImpactFromJson(Map<String, dynamic> json) => _PriceImpact(
       demandChange: (json['demandChange'] as num).toDouble(),
       revenueChange: (json['revenueChange'] as num).toDouble(),
       marginChange: (json['marginChange'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PriceImpactImplToJson(_$PriceImpactImpl instance) =>
+Map<String, dynamic> _$PriceImpactToJson(_PriceImpact instance) =>
     <String, dynamic>{
       'demandChange': instance.demandChange,
       'revenueChange': instance.revenueChange,
       'marginChange': instance.marginChange,
     };
 
-_$ABTestImpl _$$ABTestImplFromJson(Map<String, dynamic> json) => _$ABTestImpl(
+_ABTest _$ABTestFromJson(Map<String, dynamic> json) => _ABTest(
       testId: json['testId'] as String,
       organizationId: json['organizationId'] as String,
       status: json['status'] as String,
@@ -252,8 +236,7 @@ _$ABTestImpl _$$ABTestImplFromJson(Map<String, dynamic> json) => _$ABTestImpl(
           .toList(),
     );
 
-Map<String, dynamic> _$$ABTestImplToJson(_$ABTestImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ABTestToJson(_ABTest instance) => <String, dynamic>{
       'testId': instance.testId,
       'organizationId': instance.organizationId,
       'status': instance.status,
@@ -265,15 +248,14 @@ Map<String, dynamic> _$$ABTestImplToJson(_$ABTestImpl instance) =>
       'successMetrics': instance.successMetrics,
     };
 
-_$ABVariantImpl _$$ABVariantImplFromJson(Map<String, dynamic> json) =>
-    _$ABVariantImpl(
+_ABVariant _$ABVariantFromJson(Map<String, dynamic> json) => _ABVariant(
       name: json['name'] as String,
       price: (json['price'] as num).toDouble(),
       allocation: (json['allocation'] as num).toDouble(),
       metrics: ABMetrics.fromJson(json['metrics'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ABVariantImplToJson(_$ABVariantImpl instance) =>
+Map<String, dynamic> _$ABVariantToJson(_ABVariant instance) =>
     <String, dynamic>{
       'name': instance.name,
       'price': instance.price,
@@ -281,23 +263,22 @@ Map<String, dynamic> _$$ABVariantImplToJson(_$ABVariantImpl instance) =>
       'metrics': instance.metrics,
     };
 
-_$ABMetricsImpl _$$ABMetricsImplFromJson(Map<String, dynamic> json) =>
-    _$ABMetricsImpl(
+_ABMetrics _$ABMetricsFromJson(Map<String, dynamic> json) => _ABMetrics(
       conversions: (json['conversions'] as num).toInt(),
       revenue: (json['revenue'] as num).toDouble(),
       sampleSize: (json['sampleSize'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$ABMetricsImplToJson(_$ABMetricsImpl instance) =>
+Map<String, dynamic> _$ABMetricsToJson(_ABMetrics instance) =>
     <String, dynamic>{
       'conversions': instance.conversions,
       'revenue': instance.revenue,
       'sampleSize': instance.sampleSize,
     };
 
-_$PricingRecommendationsImpl _$$PricingRecommendationsImplFromJson(
+_PricingRecommendations _$PricingRecommendationsFromJson(
         Map<String, dynamic> json) =>
-    _$PricingRecommendationsImpl(
+    _PricingRecommendations(
       serviceId: json['serviceId'] as String,
       analyzedAt: json['analyzedAt'] as String,
       current: CurrentPricing.fromJson(json['current'] as Map<String, dynamic>),
@@ -310,8 +291,8 @@ _$PricingRecommendationsImpl _$$PricingRecommendationsImplFromJson(
       reasoning: json['reasoning'] as String,
     );
 
-Map<String, dynamic> _$$PricingRecommendationsImplToJson(
-        _$PricingRecommendationsImpl instance) =>
+Map<String, dynamic> _$PricingRecommendationsToJson(
+        _PricingRecommendations instance) =>
     <String, dynamic>{
       'serviceId': instance.serviceId,
       'analyzedAt': instance.analyzedAt,
@@ -322,16 +303,15 @@ Map<String, dynamic> _$$PricingRecommendationsImplToJson(
       'reasoning': instance.reasoning,
     };
 
-_$CurrentPricingImpl _$$CurrentPricingImplFromJson(Map<String, dynamic> json) =>
-    _$CurrentPricingImpl(
+_CurrentPricing _$CurrentPricingFromJson(Map<String, dynamic> json) =>
+    _CurrentPricing(
       price: (json['price'] as num).toDouble(),
       demand: (json['demand'] as num).toDouble(),
       margin: (json['margin'] as num).toDouble(),
       competitiveness: json['competitiveness'] as String,
     );
 
-Map<String, dynamic> _$$CurrentPricingImplToJson(
-        _$CurrentPricingImpl instance) =>
+Map<String, dynamic> _$CurrentPricingToJson(_CurrentPricing instance) =>
     <String, dynamic>{
       'price': instance.price,
       'demand': instance.demand,
@@ -339,9 +319,8 @@ Map<String, dynamic> _$$CurrentPricingImplToJson(
       'competitiveness': instance.competitiveness,
     };
 
-_$PricingStrategyImpl _$$PricingStrategyImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PricingStrategyImpl(
+_PricingStrategy _$PricingStrategyFromJson(Map<String, dynamic> json) =>
+    _PricingStrategy(
       strategy: json['strategy'] as String,
       recommendedPrice: (json['recommendedPrice'] as num).toDouble(),
       expectedRevenue: (json['expectedRevenue'] as num).toDouble(),
@@ -351,8 +330,7 @@ _$PricingStrategyImpl _$$PricingStrategyImplFromJson(
       confidence: (json['confidence'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PricingStrategyImplToJson(
-        _$PricingStrategyImpl instance) =>
+Map<String, dynamic> _$PricingStrategyToJson(_PricingStrategy instance) =>
     <String, dynamic>{
       'strategy': instance.strategy,
       'recommendedPrice': instance.recommendedPrice,
@@ -363,8 +341,8 @@ Map<String, dynamic> _$$PricingStrategyImplToJson(
       'confidence': instance.confidence,
     };
 
-_$MarketInsightsImpl _$$MarketInsightsImplFromJson(Map<String, dynamic> json) =>
-    _$MarketInsightsImpl(
+_MarketInsights _$MarketInsightsFromJson(Map<String, dynamic> json) =>
+    _MarketInsights(
       competitorPricing: CompetitorPricing.fromJson(
           json['competitorPricing'] as Map<String, dynamic>),
       demandElasticity: (json['demandElasticity'] as num).toDouble(),
@@ -372,17 +350,15 @@ _$MarketInsightsImpl _$$MarketInsightsImplFromJson(Map<String, dynamic> json) =>
           (json['priceOptimizationPotential'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$MarketInsightsImplToJson(
-        _$MarketInsightsImpl instance) =>
+Map<String, dynamic> _$MarketInsightsToJson(_MarketInsights instance) =>
     <String, dynamic>{
       'competitorPricing': instance.competitorPricing,
       'demandElasticity': instance.demandElasticity,
       'priceOptimizationPotential': instance.priceOptimizationPotential,
     };
 
-_$CompetitorPricingImpl _$$CompetitorPricingImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CompetitorPricingImpl(
+_CompetitorPricing _$CompetitorPricingFromJson(Map<String, dynamic> json) =>
+    _CompetitorPricing(
       average: (json['average'] as num).toDouble(),
       range: (json['range'] as List<dynamic>)
           .map((e) => (e as num).toDouble())
@@ -390,16 +366,14 @@ _$CompetitorPricingImpl _$$CompetitorPricingImplFromJson(
       position: json['position'] as String,
     );
 
-Map<String, dynamic> _$$CompetitorPricingImplToJson(
-        _$CompetitorPricingImpl instance) =>
+Map<String, dynamic> _$CompetitorPricingToJson(_CompetitorPricing instance) =>
     <String, dynamic>{
       'average': instance.average,
       'range': instance.range,
       'position': instance.position,
     };
 
-_$InvoiceImpl _$$InvoiceImplFromJson(Map<String, dynamic> json) =>
-    _$InvoiceImpl(
+_Invoice _$InvoiceFromJson(Map<String, dynamic> json) => _Invoice(
       invoiceId: json['invoiceId'] as String,
       organizationId: json['organizationId'] as String,
       clientId: json['clientId'] as String,
@@ -422,8 +396,7 @@ _$InvoiceImpl _$$InvoiceImplFromJson(Map<String, dynamic> json) =>
       approvedAt: json['approvedAt'] as String?,
     );
 
-Map<String, dynamic> _$$InvoiceImplToJson(_$InvoiceImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$InvoiceToJson(_Invoice instance) => <String, dynamic>{
       'invoiceId': instance.invoiceId,
       'organizationId': instance.organizationId,
       'clientId': instance.clientId,
@@ -439,25 +412,22 @@ Map<String, dynamic> _$$InvoiceImplToJson(_$InvoiceImpl instance) =>
       'approvedAt': instance.approvedAt,
     };
 
-_$LineItemImpl _$$LineItemImplFromJson(Map<String, dynamic> json) =>
-    _$LineItemImpl(
+_LineItem _$LineItemFromJson(Map<String, dynamic> json) => _LineItem(
       description: json['description'] as String,
       quantity: (json['quantity'] as num).toInt(),
       rate: (json['rate'] as num).toDouble(),
       amount: (json['amount'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$LineItemImplToJson(_$LineItemImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$LineItemToJson(_LineItem instance) => <String, dynamic>{
       'description': instance.description,
       'quantity': instance.quantity,
       'rate': instance.rate,
       'amount': instance.amount,
     };
 
-_$ValidationResultImpl _$$ValidationResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ValidationResultImpl(
+_ValidationResult _$ValidationResultFromJson(Map<String, dynamic> json) =>
+    _ValidationResult(
       passed: json['passed'] as bool,
       errors:
           (json['errors'] as List<dynamic>).map((e) => e as String).toList(),
@@ -468,8 +438,7 @@ _$ValidationResultImpl _$$ValidationResultImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ValidationResultImplToJson(
-        _$ValidationResultImpl instance) =>
+Map<String, dynamic> _$ValidationResultToJson(_ValidationResult instance) =>
     <String, dynamic>{
       'passed': instance.passed,
       'errors': instance.errors,
@@ -477,9 +446,8 @@ Map<String, dynamic> _$$ValidationResultImplToJson(
       'checks': instance.checks,
     };
 
-_$ValidationCheckImpl _$$ValidationCheckImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ValidationCheckImpl(
+_ValidationCheck _$ValidationCheckFromJson(Map<String, dynamic> json) =>
+    _ValidationCheck(
       check: json['check'] as String,
       passed: json['passed'] as bool,
       errors:
@@ -487,8 +455,7 @@ _$ValidationCheckImpl _$$ValidationCheckImplFromJson(
       details: json['details'] as String,
     );
 
-Map<String, dynamic> _$$ValidationCheckImplToJson(
-        _$ValidationCheckImpl instance) =>
+Map<String, dynamic> _$ValidationCheckToJson(_ValidationCheck instance) =>
     <String, dynamic>{
       'check': instance.check,
       'passed': instance.passed,
@@ -496,16 +463,15 @@ Map<String, dynamic> _$$ValidationCheckImplToJson(
       'details': instance.details,
     };
 
-_$BillingAnomalyImpl _$$BillingAnomalyImplFromJson(Map<String, dynamic> json) =>
-    _$BillingAnomalyImpl(
+_BillingAnomaly _$BillingAnomalyFromJson(Map<String, dynamic> json) =>
+    _BillingAnomaly(
       type: json['type'] as String,
       severity: json['severity'] as String,
       description: json['description'] as String,
       details: json['details'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$BillingAnomalyImplToJson(
-        _$BillingAnomalyImpl instance) =>
+Map<String, dynamic> _$BillingAnomalyToJson(_BillingAnomaly instance) =>
     <String, dynamic>{
       'type': instance.type,
       'severity': instance.severity,
@@ -513,8 +479,7 @@ Map<String, dynamic> _$$BillingAnomalyImplToJson(
       'details': instance.details,
     };
 
-_$CreditNoteImpl _$$CreditNoteImplFromJson(Map<String, dynamic> json) =>
-    _$CreditNoteImpl(
+_CreditNote _$CreditNoteFromJson(Map<String, dynamic> json) => _CreditNote(
       creditNoteId: json['creditNoteId'] as String,
       invoiceId: json['invoiceId'] as String,
       amount: (json['amount'] as num).toDouble(),
@@ -531,7 +496,7 @@ _$CreditNoteImpl _$$CreditNoteImplFromJson(Map<String, dynamic> json) =>
       approvedAt: json['approvedAt'] as String?,
     );
 
-Map<String, dynamic> _$$CreditNoteImplToJson(_$CreditNoteImpl instance) =>
+Map<String, dynamic> _$CreditNoteToJson(_CreditNote instance) =>
     <String, dynamic>{
       'creditNoteId': instance.creditNoteId,
       'invoiceId': instance.invoiceId,
@@ -546,39 +511,35 @@ Map<String, dynamic> _$$CreditNoteImplToJson(_$CreditNoteImpl instance) =>
       'approvedAt': instance.approvedAt,
     };
 
-_$CreditNoteWorkflowImpl _$$CreditNoteWorkflowImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CreditNoteWorkflowImpl(
+_CreditNoteWorkflow _$CreditNoteWorkflowFromJson(Map<String, dynamic> json) =>
+    _CreditNoteWorkflow(
       requiresApproval: json['requiresApproval'] as bool,
       approvalLevel: json['approvalLevel'] as String,
       autoApprove: json['autoApprove'] as bool,
     );
 
-Map<String, dynamic> _$$CreditNoteWorkflowImplToJson(
-        _$CreditNoteWorkflowImpl instance) =>
+Map<String, dynamic> _$CreditNoteWorkflowToJson(_CreditNoteWorkflow instance) =>
     <String, dynamic>{
       'requiresApproval': instance.requiresApproval,
       'approvalLevel': instance.approvalLevel,
       'autoApprove': instance.autoApprove,
     };
 
-_$AuditEntryImpl _$$AuditEntryImplFromJson(Map<String, dynamic> json) =>
-    _$AuditEntryImpl(
+_AuditEntry _$AuditEntryFromJson(Map<String, dynamic> json) => _AuditEntry(
       action: json['action'] as String,
       timestamp: json['timestamp'] as String,
       reason: json['reason'] as String,
     );
 
-Map<String, dynamic> _$$AuditEntryImplToJson(_$AuditEntryImpl instance) =>
+Map<String, dynamic> _$AuditEntryToJson(_AuditEntry instance) =>
     <String, dynamic>{
       'action': instance.action,
       'timestamp': instance.timestamp,
       'reason': instance.reason,
     };
 
-_$CashFlowForecastImpl _$$CashFlowForecastImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CashFlowForecastImpl(
+_CashFlowForecast _$CashFlowForecastFromJson(Map<String, dynamic> json) =>
+    _CashFlowForecast(
       organizationId: json['organizationId'] as String,
       horizon: (json['horizon'] as num).toInt(),
       generatedAt: json['generatedAt'] as String,
@@ -597,8 +558,7 @@ _$CashFlowForecastImpl _$$CashFlowForecastImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$CashFlowForecastImplToJson(
-        _$CashFlowForecastImpl instance) =>
+Map<String, dynamic> _$CashFlowForecastToJson(_CashFlowForecast instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'horizon': instance.horizon,
@@ -610,15 +570,15 @@ Map<String, dynamic> _$$CashFlowForecastImplToJson(
       'recommendations': instance.recommendations,
     };
 
-_$CashPositionImpl _$$CashPositionImplFromJson(Map<String, dynamic> json) =>
-    _$CashPositionImpl(
+_CashPosition _$CashPositionFromJson(Map<String, dynamic> json) =>
+    _CashPosition(
       cash: (json['cash'] as num).toDouble(),
       receivables: (json['receivables'] as num).toDouble(),
       payables: (json['payables'] as num).toDouble(),
       netPosition: (json['netPosition'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CashPositionImplToJson(_$CashPositionImpl instance) =>
+Map<String, dynamic> _$CashPositionToJson(_CashPosition instance) =>
     <String, dynamic>{
       'cash': instance.cash,
       'receivables': instance.receivables,
@@ -626,8 +586,8 @@ Map<String, dynamic> _$$CashPositionImplToJson(_$CashPositionImpl instance) =>
       'netPosition': instance.netPosition,
     };
 
-_$DailyCashFlowImpl _$$DailyCashFlowImplFromJson(Map<String, dynamic> json) =>
-    _$DailyCashFlowImpl(
+_DailyCashFlow _$DailyCashFlowFromJson(Map<String, dynamic> json) =>
+    _DailyCashFlow(
       date: json['date'] as String,
       openingBalance: (json['openingBalance'] as num).toDouble(),
       inflows: (json['inflows'] as num).toDouble(),
@@ -637,7 +597,7 @@ _$DailyCashFlowImpl _$$DailyCashFlowImplFromJson(Map<String, dynamic> json) =>
       confidence: (json['confidence'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$DailyCashFlowImplToJson(_$DailyCashFlowImpl instance) =>
+Map<String, dynamic> _$DailyCashFlowToJson(_DailyCashFlow instance) =>
     <String, dynamic>{
       'date': instance.date,
       'openingBalance': instance.openingBalance,
@@ -648,9 +608,8 @@ Map<String, dynamic> _$$DailyCashFlowImplToJson(_$DailyCashFlowImpl instance) =>
       'confidence': instance.confidence,
     };
 
-_$CashFlowSummaryImpl _$$CashFlowSummaryImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CashFlowSummaryImpl(
+_CashFlowSummary _$CashFlowSummaryFromJson(Map<String, dynamic> json) =>
+    _CashFlowSummary(
       projectedInflows: (json['projectedInflows'] as num).toDouble(),
       projectedOutflows: (json['projectedOutflows'] as num).toDouble(),
       netCashFlow: (json['netCashFlow'] as num).toDouble(),
@@ -658,8 +617,7 @@ _$CashFlowSummaryImpl _$$CashFlowSummaryImplFromJson(
       maximumBalance: (json['maximumBalance'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CashFlowSummaryImplToJson(
-        _$CashFlowSummaryImpl instance) =>
+Map<String, dynamic> _$CashFlowSummaryToJson(_CashFlowSummary instance) =>
     <String, dynamic>{
       'projectedInflows': instance.projectedInflows,
       'projectedOutflows': instance.projectedOutflows,
@@ -668,15 +626,15 @@ Map<String, dynamic> _$$CashFlowSummaryImplToJson(
       'maximumBalance': instance.maximumBalance,
     };
 
-_$CashFlowRiskImpl _$$CashFlowRiskImplFromJson(Map<String, dynamic> json) =>
-    _$CashFlowRiskImpl(
+_CashFlowRisk _$CashFlowRiskFromJson(Map<String, dynamic> json) =>
+    _CashFlowRisk(
       risk: json['risk'] as String,
       level: json['level'] as String,
       description: json['description'] as String,
       probability: (json['probability'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CashFlowRiskImplToJson(_$CashFlowRiskImpl instance) =>
+Map<String, dynamic> _$CashFlowRiskToJson(_CashFlowRisk instance) =>
     <String, dynamic>{
       'risk': instance.risk,
       'level': instance.level,
@@ -684,9 +642,8 @@ Map<String, dynamic> _$$CashFlowRiskImplToJson(_$CashFlowRiskImpl instance) =>
       'probability': instance.probability,
     };
 
-_$PaymentPredictionImpl _$$PaymentPredictionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PaymentPredictionImpl(
+_PaymentPrediction _$PaymentPredictionFromJson(Map<String, dynamic> json) =>
+    _PaymentPrediction(
       invoiceId: json['invoiceId'] as String,
       clientId: json['clientId'] as String,
       amount: (json['amount'] as num).toDouble(),
@@ -700,8 +657,7 @@ _$PaymentPredictionImpl _$$PaymentPredictionImplFromJson(
           (json['actions'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$$PaymentPredictionImplToJson(
-        _$PaymentPredictionImpl instance) =>
+Map<String, dynamic> _$PaymentPredictionToJson(_PaymentPrediction instance) =>
     <String, dynamic>{
       'invoiceId': instance.invoiceId,
       'clientId': instance.clientId,
@@ -715,9 +671,8 @@ Map<String, dynamic> _$$PaymentPredictionImplToJson(
       'actions': instance.actions,
     };
 
-_$FinancialDashboardImpl _$$FinancialDashboardImplFromJson(
-        Map<String, dynamic> json) =>
-    _$FinancialDashboardImpl(
+_FinancialDashboard _$FinancialDashboardFromJson(Map<String, dynamic> json) =>
+    _FinancialDashboard(
       organizationId: json['organizationId'] as String,
       period: json['period'] as String,
       generatedAt: json['generatedAt'] as String,
@@ -737,8 +692,7 @@ _$FinancialDashboardImpl _$$FinancialDashboardImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$FinancialDashboardImplToJson(
-        _$FinancialDashboardImpl instance) =>
+Map<String, dynamic> _$FinancialDashboardToJson(_FinancialDashboard instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'period': instance.period,
@@ -750,37 +704,34 @@ Map<String, dynamic> _$$FinancialDashboardImplToJson(
       'trends': instance.trends,
     };
 
-_$KPIImpl _$$KPIImplFromJson(Map<String, dynamic> json) => _$KPIImpl(
+_KPI _$KPIFromJson(Map<String, dynamic> json) => _KPI(
       value: (json['value'] as num).toDouble(),
       change: (json['change'] as num).toDouble(),
       trend: json['trend'] as String,
     );
 
-Map<String, dynamic> _$$KPIImplToJson(_$KPIImpl instance) => <String, dynamic>{
+Map<String, dynamic> _$KPIToJson(_KPI instance) => <String, dynamic>{
       'value': instance.value,
       'change': instance.change,
       'trend': instance.trend,
     };
 
-_$RevenueByServiceImpl _$$RevenueByServiceImplFromJson(
-        Map<String, dynamic> json) =>
-    _$RevenueByServiceImpl(
+_RevenueByService _$RevenueByServiceFromJson(Map<String, dynamic> json) =>
+    _RevenueByService(
       service: json['service'] as String,
       revenue: (json['revenue'] as num).toDouble(),
       percentage: (json['percentage'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$RevenueByServiceImplToJson(
-        _$RevenueByServiceImpl instance) =>
+Map<String, dynamic> _$RevenueByServiceToJson(_RevenueByService instance) =>
     <String, dynamic>{
       'service': instance.service,
       'revenue': instance.revenue,
       'percentage': instance.percentage,
     };
 
-_$ClientProfitabilityImpl _$$ClientProfitabilityImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ClientProfitabilityImpl(
+_ClientProfitability _$ClientProfitabilityFromJson(Map<String, dynamic> json) =>
+    _ClientProfitability(
       clientId: json['clientId'] as String,
       revenue: (json['revenue'] as num).toDouble(),
       cost: (json['cost'] as num).toDouble(),
@@ -788,8 +739,8 @@ _$ClientProfitabilityImpl _$$ClientProfitabilityImplFromJson(
       margin: (json['margin'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$ClientProfitabilityImplToJson(
-        _$ClientProfitabilityImpl instance) =>
+Map<String, dynamic> _$ClientProfitabilityToJson(
+        _ClientProfitability instance) =>
     <String, dynamic>{
       'clientId': instance.clientId,
       'revenue': instance.revenue,
@@ -798,8 +749,8 @@ Map<String, dynamic> _$$ClientProfitabilityImplToJson(
       'margin': instance.margin,
     };
 
-_$CostAnalysisImpl _$$CostAnalysisImplFromJson(Map<String, dynamic> json) =>
-    _$CostAnalysisImpl(
+_CostAnalysis _$CostAnalysisFromJson(Map<String, dynamic> json) =>
+    _CostAnalysis(
       labor: CostCategory.fromJson(json['labor'] as Map<String, dynamic>),
       overhead: CostCategory.fromJson(json['overhead'] as Map<String, dynamic>),
       materials:
@@ -807,7 +758,7 @@ _$CostAnalysisImpl _$$CostAnalysisImplFromJson(Map<String, dynamic> json) =>
       other: CostCategory.fromJson(json['other'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$CostAnalysisImplToJson(_$CostAnalysisImpl instance) =>
+Map<String, dynamic> _$CostAnalysisToJson(_CostAnalysis instance) =>
     <String, dynamic>{
       'labor': instance.labor,
       'overhead': instance.overhead,
@@ -815,33 +766,32 @@ Map<String, dynamic> _$$CostAnalysisImplToJson(_$CostAnalysisImpl instance) =>
       'other': instance.other,
     };
 
-_$CostCategoryImpl _$$CostCategoryImplFromJson(Map<String, dynamic> json) =>
-    _$CostCategoryImpl(
+_CostCategory _$CostCategoryFromJson(Map<String, dynamic> json) =>
+    _CostCategory(
       amount: (json['amount'] as num).toDouble(),
       percentage: (json['percentage'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CostCategoryImplToJson(_$CostCategoryImpl instance) =>
+Map<String, dynamic> _$CostCategoryToJson(_CostCategory instance) =>
     <String, dynamic>{
       'amount': instance.amount,
       'percentage': instance.percentage,
     };
 
-_$TrendDataImpl _$$TrendDataImplFromJson(Map<String, dynamic> json) =>
-    _$TrendDataImpl(
+_TrendData _$TrendDataFromJson(Map<String, dynamic> json) => _TrendData(
       month: json['month'] as String,
       revenue: (json['revenue'] as num).toDouble(),
       profit: (json['profit'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$TrendDataImplToJson(_$TrendDataImpl instance) =>
+Map<String, dynamic> _$TrendDataToJson(_TrendData instance) =>
     <String, dynamic>{
       'month': instance.month,
       'revenue': instance.revenue,
       'profit': instance.profit,
     };
 
-_$BudgetImpl _$$BudgetImplFromJson(Map<String, dynamic> json) => _$BudgetImpl(
+_Budget _$BudgetFromJson(Map<String, dynamic> json) => _Budget(
       budgetId: json['budgetId'] as String,
       organizationId: json['organizationId'] as String,
       period: json['period'] as String,
@@ -857,8 +807,7 @@ _$BudgetImpl _$$BudgetImplFromJson(Map<String, dynamic> json) => _$BudgetImpl(
           BudgetScenarios.fromJson(json['scenarios'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$BudgetImplToJson(_$BudgetImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$BudgetToJson(_Budget instance) => <String, dynamic>{
       'budgetId': instance.budgetId,
       'organizationId': instance.organizationId,
       'period': instance.period,
@@ -870,50 +819,45 @@ Map<String, dynamic> _$$BudgetImplToJson(_$BudgetImpl instance) =>
       'scenarios': instance.scenarios,
     };
 
-_$BudgetCategoryImpl _$$BudgetCategoryImplFromJson(Map<String, dynamic> json) =>
-    _$BudgetCategoryImpl(
+_BudgetCategory _$BudgetCategoryFromJson(Map<String, dynamic> json) =>
+    _BudgetCategory(
       total: (json['total'] as num).toDouble(),
       breakdown: json['breakdown'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$BudgetCategoryImplToJson(
-        _$BudgetCategoryImpl instance) =>
+Map<String, dynamic> _$BudgetCategoryToJson(_BudgetCategory instance) =>
     <String, dynamic>{
       'total': instance.total,
       'breakdown': instance.breakdown,
     };
 
-_$BudgetScenariosImpl _$$BudgetScenariosImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BudgetScenariosImpl(
+_BudgetScenarios _$BudgetScenariosFromJson(Map<String, dynamic> json) =>
+    _BudgetScenarios(
       best: BudgetScenario.fromJson(json['best'] as Map<String, dynamic>),
       base: BudgetScenario.fromJson(json['base'] as Map<String, dynamic>),
       worst: BudgetScenario.fromJson(json['worst'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$BudgetScenariosImplToJson(
-        _$BudgetScenariosImpl instance) =>
+Map<String, dynamic> _$BudgetScenariosToJson(_BudgetScenarios instance) =>
     <String, dynamic>{
       'best': instance.best,
       'base': instance.base,
       'worst': instance.worst,
     };
 
-_$BudgetScenarioImpl _$$BudgetScenarioImplFromJson(Map<String, dynamic> json) =>
-    _$BudgetScenarioImpl(
+_BudgetScenario _$BudgetScenarioFromJson(Map<String, dynamic> json) =>
+    _BudgetScenario(
       revenue: (json['revenue'] as num).toDouble(),
       profit: (json['profit'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$BudgetScenarioImplToJson(
-        _$BudgetScenarioImpl instance) =>
+Map<String, dynamic> _$BudgetScenarioToJson(_BudgetScenario instance) =>
     <String, dynamic>{
       'revenue': instance.revenue,
       'profit': instance.profit,
     };
 
-_$PaymentImpl _$$PaymentImplFromJson(Map<String, dynamic> json) =>
-    _$PaymentImpl(
+_Payment _$PaymentFromJson(Map<String, dynamic> json) => _Payment(
       paymentId: json['paymentId'] as String,
       amount: (json['amount'] as num).toDouble(),
       method: json['method'] as String,
@@ -924,8 +868,7 @@ _$PaymentImpl _$$PaymentImplFromJson(Map<String, dynamic> json) =>
       estimatedCompletion: json['estimatedCompletion'] as String,
     );
 
-Map<String, dynamic> _$$PaymentImplToJson(_$PaymentImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PaymentToJson(_Payment instance) => <String, dynamic>{
       'paymentId': instance.paymentId,
       'amount': instance.amount,
       'method': instance.method,
@@ -936,38 +879,35 @@ Map<String, dynamic> _$$PaymentImplToJson(_$PaymentImpl instance) =>
       'estimatedCompletion': instance.estimatedCompletion,
     };
 
-_$PaymentRoutingImpl _$$PaymentRoutingImplFromJson(Map<String, dynamic> json) =>
-    _$PaymentRoutingImpl(
+_PaymentRouting _$PaymentRoutingFromJson(Map<String, dynamic> json) =>
+    _PaymentRouting(
       processor: json['processor'] as String,
       gateway: json['gateway'] as String,
       estimatedFee: (json['estimatedFee'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PaymentRoutingImplToJson(
-        _$PaymentRoutingImpl instance) =>
+Map<String, dynamic> _$PaymentRoutingToJson(_PaymentRouting instance) =>
     <String, dynamic>{
       'processor': instance.processor,
       'gateway': instance.gateway,
       'estimatedFee': instance.estimatedFee,
     };
 
-_$PaymentFeesImpl _$$PaymentFeesImplFromJson(Map<String, dynamic> json) =>
-    _$PaymentFeesImpl(
+_PaymentFees _$PaymentFeesFromJson(Map<String, dynamic> json) => _PaymentFees(
       processing: (json['processing'] as num).toDouble(),
       gateway: (json['gateway'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PaymentFeesImplToJson(_$PaymentFeesImpl instance) =>
+Map<String, dynamic> _$PaymentFeesToJson(_PaymentFees instance) =>
     <String, dynamic>{
       'processing': instance.processing,
       'gateway': instance.gateway,
       'total': instance.total,
     };
 
-_$ComplianceCheckImpl _$$ComplianceCheckImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceCheckImpl(
+_ComplianceCheck _$ComplianceCheckFromJson(Map<String, dynamic> json) =>
+    _ComplianceCheck(
       organizationId: json['organizationId'] as String,
       checkedAt: json['checkedAt'] as String,
       ndis: ComplianceArea.fromJson(json['ndis'] as Map<String, dynamic>),
@@ -983,8 +923,7 @@ _$ComplianceCheckImpl _$$ComplianceCheckImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ComplianceCheckImplToJson(
-        _$ComplianceCheckImpl instance) =>
+Map<String, dynamic> _$ComplianceCheckToJson(_ComplianceCheck instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'checkedAt': instance.checkedAt,
@@ -997,37 +936,35 @@ Map<String, dynamic> _$$ComplianceCheckImplToJson(
       'recommendations': instance.recommendations,
     };
 
-_$ComplianceAreaImpl _$$ComplianceAreaImplFromJson(Map<String, dynamic> json) =>
-    _$ComplianceAreaImpl(
+_ComplianceArea _$ComplianceAreaFromJson(Map<String, dynamic> json) =>
+    _ComplianceArea(
       status: json['status'] as String,
       checks: (json['checks'] as List<dynamic>)
           .map((e) => ComplianceAreaCheck.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$ComplianceAreaImplToJson(
-        _$ComplianceAreaImpl instance) =>
+Map<String, dynamic> _$ComplianceAreaToJson(_ComplianceArea instance) =>
     <String, dynamic>{
       'status': instance.status,
       'checks': instance.checks,
     };
 
-_$ComplianceAreaCheckImpl _$$ComplianceAreaCheckImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ComplianceAreaCheckImpl(
+_ComplianceAreaCheck _$ComplianceAreaCheckFromJson(Map<String, dynamic> json) =>
+    _ComplianceAreaCheck(
       check: json['check'] as String,
       passed: json['passed'] as bool,
     );
 
-Map<String, dynamic> _$$ComplianceAreaCheckImplToJson(
-        _$ComplianceAreaCheckImpl instance) =>
+Map<String, dynamic> _$ComplianceAreaCheckToJson(
+        _ComplianceAreaCheck instance) =>
     <String, dynamic>{
       'check': instance.check,
       'passed': instance.passed,
     };
 
-_$ClientCreditImpl _$$ClientCreditImplFromJson(Map<String, dynamic> json) =>
-    _$ClientCreditImpl(
+_ClientCredit _$ClientCreditFromJson(Map<String, dynamic> json) =>
+    _ClientCredit(
       clientId: json['clientId'] as String,
       organizationId: json['organizationId'] as String,
       analyzedAt: json['analyzedAt'] as String,
@@ -1039,7 +976,7 @@ _$ClientCreditImpl _$$ClientCreditImplFromJson(Map<String, dynamic> json) =>
           json['paymentHistory'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ClientCreditImplToJson(_$ClientCreditImpl instance) =>
+Map<String, dynamic> _$ClientCreditToJson(_ClientCredit instance) =>
     <String, dynamic>{
       'clientId': instance.clientId,
       'organizationId': instance.organizationId,
@@ -1050,15 +987,15 @@ Map<String, dynamic> _$$ClientCreditImplToJson(_$ClientCreditImpl instance) =>
       'paymentHistory': instance.paymentHistory,
     };
 
-_$CreditCurrentImpl _$$CreditCurrentImplFromJson(Map<String, dynamic> json) =>
-    _$CreditCurrentImpl(
+_CreditCurrent _$CreditCurrentFromJson(Map<String, dynamic> json) =>
+    _CreditCurrent(
       limit: (json['limit'] as num).toDouble(),
       utilized: (json['utilized'] as num).toDouble(),
       available: (json['available'] as num).toDouble(),
       utilizationRate: (json['utilizationRate'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CreditCurrentImplToJson(_$CreditCurrentImpl instance) =>
+Map<String, dynamic> _$CreditCurrentToJson(_CreditCurrent instance) =>
     <String, dynamic>{
       'limit': instance.limit,
       'utilized': instance.utilized,
@@ -1066,40 +1003,36 @@ Map<String, dynamic> _$$CreditCurrentImplToJson(_$CreditCurrentImpl instance) =>
       'utilizationRate': instance.utilizationRate,
     };
 
-_$CreditRecommendedImpl _$$CreditRecommendedImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CreditRecommendedImpl(
+_CreditRecommended _$CreditRecommendedFromJson(Map<String, dynamic> json) =>
+    _CreditRecommended(
       limit: (json['limit'] as num).toDouble(),
       reasoning: json['reasoning'] as String,
       confidence: (json['confidence'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CreditRecommendedImplToJson(
-        _$CreditRecommendedImpl instance) =>
+Map<String, dynamic> _$CreditRecommendedToJson(_CreditRecommended instance) =>
     <String, dynamic>{
       'limit': instance.limit,
       'reasoning': instance.reasoning,
       'confidence': instance.confidence,
     };
 
-_$PaymentHistoryImpl _$$PaymentHistoryImplFromJson(Map<String, dynamic> json) =>
-    _$PaymentHistoryImpl(
+_PaymentHistory _$PaymentHistoryFromJson(Map<String, dynamic> json) =>
+    _PaymentHistory(
       onTime: (json['onTime'] as num).toInt(),
       late: (json['late'] as num).toInt(),
       averageDaysLate: (json['averageDaysLate'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$PaymentHistoryImplToJson(
-        _$PaymentHistoryImpl instance) =>
+Map<String, dynamic> _$PaymentHistoryToJson(_PaymentHistory instance) =>
     <String, dynamic>{
       'onTime': instance.onTime,
       'late': instance.late,
       'averageDaysLate': instance.averageDaysLate,
     };
 
-_$ClientLifetimeValueImpl _$$ClientLifetimeValueImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ClientLifetimeValueImpl(
+_ClientLifetimeValue _$ClientLifetimeValueFromJson(Map<String, dynamic> json) =>
+    _ClientLifetimeValue(
       clientId: json['clientId'] as String,
       organizationId: json['organizationId'] as String,
       calculatedAt: json['calculatedAt'] as String,
@@ -1112,8 +1045,8 @@ _$ClientLifetimeValueImpl _$$ClientLifetimeValueImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ClientLifetimeValueImplToJson(
-        _$ClientLifetimeValueImpl instance) =>
+Map<String, dynamic> _$ClientLifetimeValueToJson(
+        _ClientLifetimeValue instance) =>
     <String, dynamic>{
       'clientId': instance.clientId,
       'organizationId': instance.organizationId,
@@ -1124,29 +1057,28 @@ Map<String, dynamic> _$$ClientLifetimeValueImplToJson(
       'opportunities': instance.opportunities,
     };
 
-_$CLVCurrentImpl _$$CLVCurrentImplFromJson(Map<String, dynamic> json) =>
-    _$CLVCurrentImpl(
+_CLVCurrent _$CLVCurrentFromJson(Map<String, dynamic> json) => _CLVCurrent(
       totalRevenue: (json['totalRevenue'] as num).toDouble(),
       totalProfit: (json['totalProfit'] as num).toDouble(),
       tenure: (json['tenure'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$CLVCurrentImplToJson(_$CLVCurrentImpl instance) =>
+Map<String, dynamic> _$CLVCurrentToJson(_CLVCurrent instance) =>
     <String, dynamic>{
       'totalRevenue': instance.totalRevenue,
       'totalProfit': instance.totalProfit,
       'tenure': instance.tenure,
     };
 
-_$CLVPredictedImpl _$$CLVPredictedImplFromJson(Map<String, dynamic> json) =>
-    _$CLVPredictedImpl(
+_CLVPredicted _$CLVPredictedFromJson(Map<String, dynamic> json) =>
+    _CLVPredicted(
       lifetimeValue: (json['lifetimeValue'] as num).toDouble(),
       remainingValue: (json['remainingValue'] as num).toDouble(),
       churnProbability: (json['churnProbability'] as num).toDouble(),
       expectedTenure: (json['expectedTenure'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$CLVPredictedImplToJson(_$CLVPredictedImpl instance) =>
+Map<String, dynamic> _$CLVPredictedToJson(_CLVPredicted instance) =>
     <String, dynamic>{
       'lifetimeValue': instance.lifetimeValue,
       'remainingValue': instance.remainingValue,
@@ -1154,23 +1086,20 @@ Map<String, dynamic> _$$CLVPredictedImplToJson(_$CLVPredictedImpl instance) =>
       'expectedTenure': instance.expectedTenure,
     };
 
-_$UpsellOpportunityImpl _$$UpsellOpportunityImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UpsellOpportunityImpl(
+_UpsellOpportunity _$UpsellOpportunityFromJson(Map<String, dynamic> json) =>
+    _UpsellOpportunity(
       opportunity: json['opportunity'] as String,
       potential: (json['potential'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$UpsellOpportunityImplToJson(
-        _$UpsellOpportunityImpl instance) =>
+Map<String, dynamic> _$UpsellOpportunityToJson(_UpsellOpportunity instance) =>
     <String, dynamic>{
       'opportunity': instance.opportunity,
       'potential': instance.potential,
     };
 
-_$ExecutiveReportImpl _$$ExecutiveReportImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ExecutiveReportImpl(
+_ExecutiveReport _$ExecutiveReportFromJson(Map<String, dynamic> json) =>
+    _ExecutiveReport(
       organizationId: json['organizationId'] as String,
       period: json['period'] as String,
       generatedAt: json['generatedAt'] as String,
@@ -1187,8 +1116,7 @@ _$ExecutiveReportImpl _$$ExecutiveReportImplFromJson(
           (json['insights'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$$ExecutiveReportImplToJson(
-        _$ExecutiveReportImpl instance) =>
+Map<String, dynamic> _$ExecutiveReportToJson(_ExecutiveReport instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'period': instance.period,
@@ -1200,8 +1128,8 @@ Map<String, dynamic> _$$ExecutiveReportImplToJson(
       'insights': instance.insights,
     };
 
-_$ProfitAndLossImpl _$$ProfitAndLossImplFromJson(Map<String, dynamic> json) =>
-    _$ProfitAndLossImpl(
+_ProfitAndLoss _$ProfitAndLossFromJson(Map<String, dynamic> json) =>
+    _ProfitAndLoss(
       revenue: (json['revenue'] as num).toDouble(),
       costOfSales: (json['costOfSales'] as num).toDouble(),
       grossProfit: (json['grossProfit'] as num).toDouble(),
@@ -1209,7 +1137,7 @@ _$ProfitAndLossImpl _$$ProfitAndLossImplFromJson(Map<String, dynamic> json) =>
       netProfit: (json['netProfit'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$ProfitAndLossImplToJson(_$ProfitAndLossImpl instance) =>
+Map<String, dynamic> _$ProfitAndLossToJson(_ProfitAndLoss instance) =>
     <String, dynamic>{
       'revenue': instance.revenue,
       'costOfSales': instance.costOfSales,
@@ -1218,8 +1146,8 @@ Map<String, dynamic> _$$ProfitAndLossImplToJson(_$ProfitAndLossImpl instance) =>
       'netProfit': instance.netProfit,
     };
 
-_$BalanceSheetImpl _$$BalanceSheetImplFromJson(Map<String, dynamic> json) =>
-    _$BalanceSheetImpl(
+_BalanceSheet _$BalanceSheetFromJson(Map<String, dynamic> json) =>
+    _BalanceSheet(
       assets:
           BalanceSheetAssets.fromJson(json['assets'] as Map<String, dynamic>),
       liabilities: BalanceSheetLiabilities.fromJson(
@@ -1227,56 +1155,52 @@ _$BalanceSheetImpl _$$BalanceSheetImplFromJson(Map<String, dynamic> json) =>
       equity: (json['equity'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$BalanceSheetImplToJson(_$BalanceSheetImpl instance) =>
+Map<String, dynamic> _$BalanceSheetToJson(_BalanceSheet instance) =>
     <String, dynamic>{
       'assets': instance.assets,
       'liabilities': instance.liabilities,
       'equity': instance.equity,
     };
 
-_$BalanceSheetAssetsImpl _$$BalanceSheetAssetsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BalanceSheetAssetsImpl(
+_BalanceSheetAssets _$BalanceSheetAssetsFromJson(Map<String, dynamic> json) =>
+    _BalanceSheetAssets(
       current: (json['current'] as num).toDouble(),
       fixed: (json['fixed'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$BalanceSheetAssetsImplToJson(
-        _$BalanceSheetAssetsImpl instance) =>
+Map<String, dynamic> _$BalanceSheetAssetsToJson(_BalanceSheetAssets instance) =>
     <String, dynamic>{
       'current': instance.current,
       'fixed': instance.fixed,
       'total': instance.total,
     };
 
-_$BalanceSheetLiabilitiesImpl _$$BalanceSheetLiabilitiesImplFromJson(
+_BalanceSheetLiabilities _$BalanceSheetLiabilitiesFromJson(
         Map<String, dynamic> json) =>
-    _$BalanceSheetLiabilitiesImpl(
+    _BalanceSheetLiabilities(
       current: (json['current'] as num).toDouble(),
       longTerm: (json['longTerm'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$BalanceSheetLiabilitiesImplToJson(
-        _$BalanceSheetLiabilitiesImpl instance) =>
+Map<String, dynamic> _$BalanceSheetLiabilitiesToJson(
+        _BalanceSheetLiabilities instance) =>
     <String, dynamic>{
       'current': instance.current,
       'longTerm': instance.longTerm,
       'total': instance.total,
     };
 
-_$CashFlowStatementImpl _$$CashFlowStatementImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CashFlowStatementImpl(
+_CashFlowStatement _$CashFlowStatementFromJson(Map<String, dynamic> json) =>
+    _CashFlowStatement(
       operating: (json['operating'] as num).toDouble(),
       investing: (json['investing'] as num).toDouble(),
       financing: (json['financing'] as num).toDouble(),
       netChange: (json['netChange'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CashFlowStatementImplToJson(
-        _$CashFlowStatementImpl instance) =>
+Map<String, dynamic> _$CashFlowStatementToJson(_CashFlowStatement instance) =>
     <String, dynamic>{
       'operating': instance.operating,
       'investing': instance.investing,

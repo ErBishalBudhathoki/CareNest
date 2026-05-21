@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/invoice/views/price_override_view.dart';
@@ -27,7 +28,8 @@ class ClientPricingReviewView extends ConsumerStatefulWidget {
       _ClientPricingReviewViewState();
 }
 
-class _ClientPricingReviewViewState extends ConsumerState<ClientPricingReviewView> {
+class _ClientPricingReviewViewState
+    extends ConsumerState<ClientPricingReviewView> {
   late final ApiMethod _apiMethod;
 
   // Loading and error states
@@ -79,20 +81,29 @@ class _ClientPricingReviewViewState extends ConsumerState<ClientPricingReviewVie
         for (final assignment in assignments) {
           if (assignment is Map<String, dynamic>) {
             final clientEmail = assignment['clientEmail'] as String? ?? '';
-            final clientId = assignment['clientId']?.toString() ??
-                assignment['_id']?.toString() ??
-                clientEmail;
+            final clientId = assignment['clientId']?.toString() ?? clientEmail;
 
             if (clientEmail.isNotEmpty) {
               if (!clientMap.containsKey(clientId)) {
+                String resolvedName = '';
+                final details =
+                    assignment['clientDetails'] as Map<String, dynamic>?;
+                if (details != null) {
+                  final first = details['clientFirstName']?.toString() ?? '';
+                  final last = details['clientLastName']?.toString() ?? '';
+                  resolvedName = '$first $last'.trim();
+                }
+                if (resolvedName.isEmpty) {
+                  resolvedName = assignment['clientName']?.toString() ??
+                      clientEmail.split('@')[0];
+                }
+
                 clientMap[clientId] = {
                   'clientId': clientId,
                   'clientEmail': clientEmail,
-                  'clientName': assignment['clientName'] ??
-                      assignment['clientDetails']?['clientFirstName'] ??
-                      clientEmail.split('@')[0],
+                  'clientName': resolvedName,
                   'clientState': assignment['clientState'] ??
-                      assignment['clientDetails']?['clientState'] ??
+                      details?['clientState'] ??
                       'NSW',
                   'assignments': <Map<String, dynamic>>[],
                 };
@@ -427,6 +438,7 @@ class _ClientPricingReviewViewState extends ConsumerState<ClientPricingReviewVie
                   style:
                       BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: BauhausDesign.textDark,
                           ),
                 ),
                 const SizedBox(height: BauhausDesign.space1),
@@ -1007,7 +1019,8 @@ class _ClientPricingDetailPage extends ConsumerStatefulWidget {
       _ClientPricingDetailPageState();
 }
 
-class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPage> {
+class _ClientPricingDetailPageState
+    extends ConsumerState<_ClientPricingDetailPage> {
   late final ApiMethod _apiMethod;
   List<Map<String, dynamic>> _items = [];
   bool _isLoading = true;
@@ -1112,6 +1125,10 @@ class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPa
           }
         }
 
+        if (currentPrice == 0.0 && ndisPriceCap != null) {
+          currentPrice = ndisPriceCap;
+        }
+
         final exceedsCap = ndisPriceCap != null && currentPrice > ndisPriceCap;
 
         itemsWithPricing.add({
@@ -1171,6 +1188,7 @@ class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPa
           clientName,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark,
               ),
         ),
         actions: [
@@ -1285,7 +1303,7 @@ class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPa
                     Text(
                       itemNumber,
                       style: BauhausDesign.getTextTheme(context)
-                          .labelMedium
+                          .titleMedium
                           ?.copyWith(
                             color: BauhausDesign.primary,
                             fontWeight: FontWeight.bold,
@@ -1296,9 +1314,10 @@ class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPa
                     Text(
                       itemName,
                       style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                          .titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w500,
+                            color: BauhausDesign.textDark,
                           ),
                     ),
                   ],
@@ -1314,57 +1333,147 @@ class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPa
             ],
           ),
           const SizedBox(height: BauhausDesign.space3),
-          // Pricing grid - 2x2 layout
+          // Pricing bento grid
           Container(
-            padding: const EdgeInsets.all(BauhausDesign.space3),
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral.withOpacity(0.2),
+              color: const Color(0xFFFFFDD0), // Cream color
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardSm],
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildPriceRowMobile(
-                        AppLocalizations.of(context)!.currentLabel,
+                // Top section: Current Price
+                Padding(
+                  padding: const EdgeInsets.all(BauhausDesign.space4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.currentLabel.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                              color: BauhausDesign.textMuted,
+                            ),
+                      ),
+                      const SizedBox(height: BauhausDesign.space1),
+                      Text(
                         '\$${currentPrice.toStringAsFixed(2)}',
-                        widget.getPriceSourceColor(priceSource),
+                        style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              color: widget.getPriceSourceColor(priceSource),
+                            ),
                       ),
-                    ),
-                    Expanded(
-                      child: _buildPriceRowMobile(
-                        AppLocalizations.of(context)!.ndisCapLabel,
-                        ndisPriceCap != null
-                            ? '\$${ndisPriceCap.toStringAsFixed(2)}'
-                            : AppLocalizations.of(context)!.notAvailableLabel,
-                        BauhausDesign.textMuted,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: BauhausDesign.space2),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildPriceRowMobile(
-                        AppLocalizations.of(context)!.sourceLabel,
-                        widget.getPriceSourceLabel(priceSource),
-                        widget.getPriceSourceColor(priceSource),
+                const Divider(height: 2, thickness: 2, color: BauhausDesign.neutral),
+                
+                // Middle section: NDIS Cap & Status
+                IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(BauhausDesign.space3),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.ndisCapLabel.toUpperCase(),
+                                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: BauhausDesign.textMuted,
+                                    ),
+                              ),
+                              const SizedBox(height: BauhausDesign.space1),
+                              Text(
+                                ndisPriceCap != null
+                                    ? '\$${ndisPriceCap.toStringAsFixed(2)}'
+                                    : AppLocalizations.of(context)!.notAvailableLabel,
+                                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: BauhausDesign.textDark,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: _buildPriceRowMobile(
-                        AppLocalizations.of(context)!.statusLabel,
-                        exceedsCap
-                            ? AppLocalizations.of(context)!.overCapLabel
-                            : AppLocalizations.of(context)!.okLabel,
-                        exceedsCap
-                            ? BauhausDesign.error
-                            : BauhausDesign.success,
+                      const VerticalDivider(width: 2, thickness: 2, color: BauhausDesign.neutral),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(BauhausDesign.space3),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.statusLabel.toUpperCase(),
+                                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: BauhausDesign.textMuted,
+                                    ),
+                              ),
+                              const SizedBox(height: BauhausDesign.space1),
+                              Row(
+                                children: [
+                                  Icon(
+                                    exceedsCap ? Icons.warning_amber_rounded : Icons.check_circle_outline,
+                                    color: exceedsCap ? BauhausDesign.error : BauhausDesign.success,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      exceedsCap
+                                          ? AppLocalizations.of(context)!.overCapLabel
+                                          : AppLocalizations.of(context)!.okLabel,
+                                      style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: exceedsCap ? BauhausDesign.error : BauhausDesign.success,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+                const Divider(height: 2, thickness: 2, color: BauhausDesign.neutral),
+                
+                // Bottom section: Source
+                Container(
+                  color: BauhausDesign.surfaceWhite,
+                  padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space3, vertical: BauhausDesign.space3),
+                  child: Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.sourceLabel.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textMuted,
+                            ),
+                      ),
+                      const SizedBox(width: BauhausDesign.space3),
+                      Expanded(
+                        child: Text(
+                          widget.getPriceSourceLabel(priceSource),
+                          textAlign: TextAlign.right,
+                          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: widget.getPriceSourceColor(priceSource),
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -1383,15 +1492,15 @@ class _ClientPricingDetailPageState extends ConsumerState<_ClientPricingDetailPa
       children: [
         Text(
           label,
-          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 color: BauhausDesign.textMuted,
                 fontWeight: FontWeight.bold,
               ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: BauhausDesign.space1),
         Text(
           value,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: color,
               ),

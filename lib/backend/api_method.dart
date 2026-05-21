@@ -7123,6 +7123,24 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  /// Generate invoice from free text prompt
+  Future<Map<String, dynamic>> generateFromText({
+    required String organizationId,
+    required String textNote,
+  }) async {
+    try {
+      final endpoint = 'invoice-ai/generate-from-text';
+      final body = {
+        'organizationId': organizationId,
+        'textNote': textNote,
+      };
+      return await post(endpoint, body: body);
+    } catch (e) {
+      debugPrint('Error generating invoice from text: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   /// Get smart reminders for an invoice
   Future<Map<String, dynamic>> getSmartReminders({
     required String invoiceId,

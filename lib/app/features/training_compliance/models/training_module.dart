@@ -4,7 +4,7 @@ part 'training_module.freezed.dart';
 part 'training_module.g.dart';
 
 @freezed
-class TrainingModule with _$TrainingModule {
+abstract class TrainingModule with _$TrainingModule {
   const factory TrainingModule({
     @JsonKey(name: '_id') String? id,
     required String title,
@@ -24,7 +24,7 @@ class TrainingModule with _$TrainingModule {
 }
 
 @freezed
-class TrainingProgress with _$TrainingProgress {
+abstract class TrainingProgress with _$TrainingProgress {
   const factory TrainingProgress({
     @JsonKey(name: '_id') String? id,
     required String userId,

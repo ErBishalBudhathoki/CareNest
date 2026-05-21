@@ -6,9 +6,9 @@ part of 'shared_employee.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SharedEmployeeAssignmentImpl _$$SharedEmployeeAssignmentImplFromJson(
+_SharedEmployeeAssignment _$SharedEmployeeAssignmentFromJson(
         Map<String, dynamic> json) =>
-    _$SharedEmployeeAssignmentImpl(
+    _SharedEmployeeAssignment(
       id: json['id'] as String,
       employeeId: json['employeeId'] as String,
       organizationId: json['organizationId'] as String,
@@ -23,8 +23,8 @@ _$SharedEmployeeAssignmentImpl _$$SharedEmployeeAssignmentImplFromJson(
       notes: json['notes'] as String?,
     );
 
-Map<String, dynamic> _$$SharedEmployeeAssignmentImplToJson(
-        _$SharedEmployeeAssignmentImpl instance) =>
+Map<String, dynamic> _$SharedEmployeeAssignmentToJson(
+        _SharedEmployeeAssignment instance) =>
     <String, dynamic>{
       'id': instance.id,
       'employeeId': instance.employeeId,

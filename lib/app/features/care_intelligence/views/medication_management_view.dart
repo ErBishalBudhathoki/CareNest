@@ -91,7 +91,7 @@ class _MedicationManagementViewState
                       else
                         ...state.alerts.map((alert) => _buildAlertCard(alert)),
                       const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'COMPLIANCE TRACKING'),
+                      BauhausSectionHeader(title: 'COMPLIANCE INSIGHTS'),
                       const SizedBox(height: 16),
                       _buildComplianceCard(state),
                     ],

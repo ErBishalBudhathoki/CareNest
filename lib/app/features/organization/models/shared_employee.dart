@@ -4,7 +4,7 @@ part 'shared_employee.freezed.dart';
 part 'shared_employee.g.dart';
 
 @freezed
-class SharedEmployeeAssignment with _$SharedEmployeeAssignment {
+abstract class SharedEmployeeAssignment with _$SharedEmployeeAssignment {
   const factory SharedEmployeeAssignment({
     required String id,
     required String employeeId,
