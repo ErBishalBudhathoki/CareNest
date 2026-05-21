@@ -873,7 +873,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get businessOverviewDesc =>
-      'Track your business performance at a glance';
+      'Monitor your business performance at a glance';
 
   @override
   String get businessPhone => 'Business Phone';
@@ -1833,10 +1833,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get employeesTitle => 'Employees';
 
   @override
-  String get employeeTracking => 'Employee Tracking';
+  String get employeeTracking => 'Employee Insights';
 
   @override
-  String get employeeTrackingDesc => 'Track employee work status & shifts';
+  String get employeeTrackingDesc =>
+      'View employee insights, work status & shifts';
 
   @override
   String get employmentTypeLabel => 'Employment Type';
@@ -2257,7 +2258,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenseManagement => 'EXPENSE MANAGEMENT';
 
   @override
-  String get expenseManagementDesc => 'Track and manage organization expenses';
+  String get expenseManagementDesc =>
+      'Monitor and manage organization expenses';
 
   @override
   String get expenseManagementWelcome =>
@@ -3343,7 +3345,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lastUpdatedLabel => 'Last Updated';
 
   @override
-  String get leaveTracker => 'Leave Tracker';
+  String get leaveTracker => 'Leave Insights';
 
   @override
   String get leaveTrackerDesc =>
@@ -3384,7 +3386,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get liveTracking => 'Live Tracking';
+  String get liveTracking => 'Live Insights';
 
   @override
   String get loadingAppointmentDetails => 'Loading appointment details...';
@@ -3528,11 +3530,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageAdminDesc => 'Review & approve employee trips';
 
   @override
-  String get mileageTracker => 'Mileage Tracker';
+  String get mileageTracker => 'Mileage Insights';
 
   @override
   String get mileageTrackerDesc =>
-      'Track your trips, calculate distance, and log reimbursable mileage.';
+      'Monitor your trips, calculate distance, and log reimbursable mileage.';
 
   @override
   String get minimumDuration => 'Minimum duration is 30 minutes';
@@ -3683,7 +3685,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moduleMetricRevenue => 'Revenue';
 
   @override
-  String get moduleMetricTrackedEntries => 'Tracked Entries';
+  String get moduleMetricTrackedEntries => 'Insights Entries';
 
   @override
   String get moduleMetricWeeklyChanges => 'Weekly Changes';
@@ -3692,7 +3694,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moduleNoDataYet => 'No data available yet';
 
   @override
-  String get moduleNoTrackedChanges => 'No tracked changes yet';
+  String get moduleNoTrackedChanges => 'No insights changes yet';
 
   @override
   String moduleRatesCoverage(String configured, String total) {
@@ -4793,13 +4795,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get priceHistoryClearedTitle => 'Clear Price History';
 
   @override
-  String get priceHistoryDesc => 'Track pricing changes over time';
+  String get priceHistoryDesc => 'Monitor pricing changes over time';
 
   @override
   String get priceHistoryRetention => 'Price History Retention (days)';
 
   @override
-  String get priceHistorySubtitle => 'Track pricing changes over time';
+  String get priceHistorySubtitle => 'Monitor pricing changes over time';
 
   @override
   String get priceHistorySubtitleLabel => 'View rate changes';
@@ -5987,7 +5989,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startTimeLabel => 'Start Time';
 
   @override
-  String get startTracking => 'START TRACKING';
+  String get startTracking => 'START INSIGHTS';
 
   @override
   String get statActive => 'Active';
@@ -6344,7 +6346,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get timeClockDesc =>
-      'Track your work hours. Clock in at start, out at finish.';
+      'Monitor your work hours. Clock in at start, out at finish.';
 
   @override
   String timeConflictBetween(String schedule1, String schedule2, String date) {
@@ -6515,14 +6517,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalWorkHoursToday => 'Total work hours today';
 
   @override
-  String get trackExpenses => 'Track Expenses';
+  String get trackExpenses => 'Expense Insights';
 
   @override
   String get trackExpensesDesc =>
-      'Keep track of your daily spending and manage reimbursements.';
+      'Monitor your daily spending and manage reimbursements.';
 
   @override
-  String get trackPricingChanges => 'Track pricing changes over time';
+  String get trackPricingChanges => 'Monitor pricing changes over time';
 
   @override
   String get tradingAs => 'Trading As';
@@ -6535,7 +6537,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainingComplianceDesc =>
-      'Manage certifications, complete training, and track compliance.';
+      'Manage certifications, complete training, and monitor compliance.';
 
   @override
   String get trainingComplianceTitle => 'Training & Compliance';

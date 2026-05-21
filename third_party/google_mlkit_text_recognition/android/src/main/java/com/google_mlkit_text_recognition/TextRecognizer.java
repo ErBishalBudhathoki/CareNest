@@ -24,6 +24,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
+@SuppressWarnings({"unchecked", "deprecation"})
 public class TextRecognizer implements MethodChannel.MethodCallHandler {
     private static final String START = "vision#startTextRecognizer";
     private static final String CLOSE = "vision#closeTextRecognizer";

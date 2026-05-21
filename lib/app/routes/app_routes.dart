@@ -73,6 +73,9 @@ abstract class Routes {
   static const String serviceConfirmation =
       '/realtime-portal/service-confirmation';
   static const String familyManagement = '/realtime-portal/family-management';
+  static const String adminFamilyManagement =
+      '/realtime-portal/admin-family-management';
+  static const String messagingAudit = '/realtime-portal/messaging-audit';
 
   // Phase 8 Routes - Workforce Optimization & Business Intelligence
   static const String workforceOptimization =

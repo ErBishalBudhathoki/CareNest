@@ -6,8 +6,7 @@ part of 'smart_expense_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ReceiptScanImpl _$$ReceiptScanImplFromJson(Map<String, dynamic> json) =>
-    _$ReceiptScanImpl(
+_ReceiptScan _$ReceiptScanFromJson(Map<String, dynamic> json) => _ReceiptScan(
       merchant: json['merchant'] as String,
       date: json['date'] as String,
       amount: (json['amount'] as num).toDouble(),
@@ -21,7 +20,7 @@ _$ReceiptScanImpl _$$ReceiptScanImplFromJson(Map<String, dynamic> json) =>
       confidence: (json['confidence'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$ReceiptScanImplToJson(_$ReceiptScanImpl instance) =>
+Map<String, dynamic> _$ReceiptScanToJson(_ReceiptScan instance) =>
     <String, dynamic>{
       'merchant': instance.merchant,
       'date': instance.date,
@@ -34,23 +33,21 @@ Map<String, dynamic> _$$ReceiptScanImplToJson(_$ReceiptScanImpl instance) =>
       'confidence': instance.confidence,
     };
 
-_$ReceiptItemImpl _$$ReceiptItemImplFromJson(Map<String, dynamic> json) =>
-    _$ReceiptItemImpl(
+_ReceiptItem _$ReceiptItemFromJson(Map<String, dynamic> json) => _ReceiptItem(
       description: json['description'] as String,
       quantity: (json['quantity'] as num).toInt(),
       price: (json['price'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$ReceiptItemImplToJson(_$ReceiptItemImpl instance) =>
+Map<String, dynamic> _$ReceiptItemToJson(_ReceiptItem instance) =>
     <String, dynamic>{
       'description': instance.description,
       'quantity': instance.quantity,
       'price': instance.price,
     };
 
-_$ExpenseCategoryImpl _$$ExpenseCategoryImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ExpenseCategoryImpl(
+_ExpenseCategory _$ExpenseCategoryFromJson(Map<String, dynamic> json) =>
+    _ExpenseCategory(
       category: json['category'] as String,
       confidence: (json['confidence'] as num).toDouble(),
       suggestedCategories: (json['suggestedCategories'] as List<dynamic>)
@@ -58,31 +55,27 @@ _$ExpenseCategoryImpl _$$ExpenseCategoryImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$ExpenseCategoryImplToJson(
-        _$ExpenseCategoryImpl instance) =>
+Map<String, dynamic> _$ExpenseCategoryToJson(_ExpenseCategory instance) =>
     <String, dynamic>{
       'category': instance.category,
       'confidence': instance.confidence,
       'suggestedCategories': instance.suggestedCategories,
     };
 
-_$CategorySuggestionImpl _$$CategorySuggestionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CategorySuggestionImpl(
+_CategorySuggestion _$CategorySuggestionFromJson(Map<String, dynamic> json) =>
+    _CategorySuggestion(
       category: json['category'] as String,
       confidence: (json['confidence'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$CategorySuggestionImplToJson(
-        _$CategorySuggestionImpl instance) =>
+Map<String, dynamic> _$CategorySuggestionToJson(_CategorySuggestion instance) =>
     <String, dynamic>{
       'category': instance.category,
       'confidence': instance.confidence,
     };
 
-_$PolicyValidationImpl _$$PolicyValidationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PolicyValidationImpl(
+_PolicyValidation _$PolicyValidationFromJson(Map<String, dynamic> json) =>
+    _PolicyValidation(
       isCompliant: json['isCompliant'] as bool,
       requiresApproval: json['requiresApproval'] as bool,
       violations: (json['violations'] as List<dynamic>)
@@ -95,8 +88,7 @@ _$PolicyValidationImpl _$$PolicyValidationImplFromJson(
           PolicyRule.fromJson(json['policyRule'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$PolicyValidationImplToJson(
-        _$PolicyValidationImpl instance) =>
+Map<String, dynamic> _$PolicyValidationToJson(_PolicyValidation instance) =>
     <String, dynamic>{
       'isCompliant': instance.isCompliant,
       'requiresApproval': instance.requiresApproval,
@@ -105,36 +97,33 @@ Map<String, dynamic> _$$PolicyValidationImplToJson(
       'policyRule': instance.policyRule,
     };
 
-_$PolicyViolationImpl _$$PolicyViolationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PolicyViolationImpl(
+_PolicyViolation _$PolicyViolationFromJson(Map<String, dynamic> json) =>
+    _PolicyViolation(
       type: json['type'] as String,
       message: json['message'] as String,
       severity: json['severity'] as String,
     );
 
-Map<String, dynamic> _$$PolicyViolationImplToJson(
-        _$PolicyViolationImpl instance) =>
+Map<String, dynamic> _$PolicyViolationToJson(_PolicyViolation instance) =>
     <String, dynamic>{
       'type': instance.type,
       'message': instance.message,
       'severity': instance.severity,
     };
 
-_$PolicyRuleImpl _$$PolicyRuleImplFromJson(Map<String, dynamic> json) =>
-    _$PolicyRuleImpl(
+_PolicyRule _$PolicyRuleFromJson(Map<String, dynamic> json) => _PolicyRule(
       maxAmount: (json['maxAmount'] as num).toDouble(),
       requiresReceipt: json['requiresReceipt'] as bool,
     );
 
-Map<String, dynamic> _$$PolicyRuleImplToJson(_$PolicyRuleImpl instance) =>
+Map<String, dynamic> _$PolicyRuleToJson(_PolicyRule instance) =>
     <String, dynamic>{
       'maxAmount': instance.maxAmount,
       'requiresReceipt': instance.requiresReceipt,
     };
 
-_$DuplicateCheckImpl _$$DuplicateCheckImplFromJson(Map<String, dynamic> json) =>
-    _$DuplicateCheckImpl(
+_DuplicateCheck _$DuplicateCheckFromJson(Map<String, dynamic> json) =>
+    _DuplicateCheck(
       isDuplicate: json['isDuplicate'] as bool,
       confidence: (json['confidence'] as num).toDouble(),
       matchedExpense: json['matchedExpense'] == null
@@ -143,24 +132,22 @@ _$DuplicateCheckImpl _$$DuplicateCheckImplFromJson(Map<String, dynamic> json) =>
               json['matchedExpense'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$DuplicateCheckImplToJson(
-        _$DuplicateCheckImpl instance) =>
+Map<String, dynamic> _$DuplicateCheckToJson(_DuplicateCheck instance) =>
     <String, dynamic>{
       'isDuplicate': instance.isDuplicate,
       'confidence': instance.confidence,
       'matchedExpense': instance.matchedExpense,
     };
 
-_$MatchedExpenseImpl _$$MatchedExpenseImplFromJson(Map<String, dynamic> json) =>
-    _$MatchedExpenseImpl(
+_MatchedExpense _$MatchedExpenseFromJson(Map<String, dynamic> json) =>
+    _MatchedExpense(
       expenseId: json['expenseId'] as String,
       date: json['date'] as String,
       amount: (json['amount'] as num).toDouble(),
       merchant: json['merchant'] as String,
     );
 
-Map<String, dynamic> _$$MatchedExpenseImplToJson(
-        _$MatchedExpenseImpl instance) =>
+Map<String, dynamic> _$MatchedExpenseToJson(_MatchedExpense instance) =>
     <String, dynamic>{
       'expenseId': instance.expenseId,
       'date': instance.date,
@@ -168,9 +155,8 @@ Map<String, dynamic> _$$MatchedExpenseImplToJson(
       'merchant': instance.merchant,
     };
 
-_$MileageCalculationImpl _$$MileageCalculationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MileageCalculationImpl(
+_MileageCalculation _$MileageCalculationFromJson(Map<String, dynamic> json) =>
+    _MileageCalculation(
       totalDistance: (json['totalDistance'] as num).toDouble(),
       unit: json['unit'] as String,
       ratePerKm: (json['ratePerKm'] as num).toDouble(),
@@ -183,8 +169,7 @@ _$MileageCalculationImpl _$$MileageCalculationImplFromJson(
       waypoints: (json['waypoints'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$MileageCalculationImplToJson(
-        _$MileageCalculationImpl instance) =>
+Map<String, dynamic> _$MileageCalculationToJson(_MileageCalculation instance) =>
     <String, dynamic>{
       'totalDistance': instance.totalDistance,
       'unit': instance.unit,
@@ -196,14 +181,14 @@ Map<String, dynamic> _$$MileageCalculationImplToJson(
       'waypoints': instance.waypoints,
     };
 
-_$LocationPointImpl _$$LocationPointImplFromJson(Map<String, dynamic> json) =>
-    _$LocationPointImpl(
+_LocationPoint _$LocationPointFromJson(Map<String, dynamic> json) =>
+    _LocationPoint(
       lat: (json['lat'] as num).toDouble(),
       lng: (json['lng'] as num).toDouble(),
       timestamp: json['timestamp'] as String?,
     );
 
-Map<String, dynamic> _$$LocationPointImplToJson(_$LocationPointImpl instance) =>
+Map<String, dynamic> _$LocationPointToJson(_LocationPoint instance) =>
     <String, dynamic>{
       'lat': instance.lat,
       'lng': instance.lng,

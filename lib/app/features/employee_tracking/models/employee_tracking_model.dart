@@ -5,7 +5,7 @@ part 'employee_tracking_model.freezed.dart';
 part 'employee_tracking_model.g.dart';
 
 @freezed
-class EmployeeTrackingData with _$EmployeeTrackingData {
+abstract class EmployeeTrackingData with _$EmployeeTrackingData {
   const factory EmployeeTrackingData({
     @Default([]) List<EmployeeStatus> employees,
     @Default([]) List<ShiftDetail> shifts,
@@ -21,7 +21,7 @@ class EmployeeTrackingData with _$EmployeeTrackingData {
 }
 
 @freezed
-class EmployeeStatus with _$EmployeeStatus {
+abstract class EmployeeStatus with _$EmployeeStatus {
   const factory EmployeeStatus({
     required String id,
     required String name,
@@ -52,7 +52,7 @@ class EmployeeStatus with _$EmployeeStatus {
 }
 
 @freezed
-class ShiftDetail with _$ShiftDetail {
+abstract class ShiftDetail with _$ShiftDetail {
   const factory ShiftDetail({
     required String id,
     required String title,
@@ -72,7 +72,7 @@ class ShiftDetail with _$ShiftDetail {
 }
 
 @freezed
-class ClientAssignment with _$ClientAssignment {
+abstract class ClientAssignment with _$ClientAssignment {
   const factory ClientAssignment({
     required String id,
     required String clientName,

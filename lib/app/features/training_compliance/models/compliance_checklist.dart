@@ -4,7 +4,7 @@ part 'compliance_checklist.freezed.dart';
 part 'compliance_checklist.g.dart';
 
 @freezed
-class ComplianceChecklist with _$ComplianceChecklist {
+abstract class ComplianceChecklist with _$ComplianceChecklist {
   const factory ComplianceChecklist({
     @JsonKey(name: '_id') String? id,
     required String title,
@@ -18,7 +18,7 @@ class ComplianceChecklist with _$ComplianceChecklist {
 }
 
 @freezed
-class ChecklistItem with _$ChecklistItem {
+abstract class ChecklistItem with _$ChecklistItem {
   const factory ChecklistItem({
     required String text,
     @Default(true) bool isRequired,
@@ -29,7 +29,7 @@ class ChecklistItem with _$ChecklistItem {
 }
 
 @freezed
-class UserChecklistStatus with _$UserChecklistStatus {
+abstract class UserChecklistStatus with _$UserChecklistStatus {
   const factory UserChecklistStatus({
     @JsonKey(name: '_id') String? id,
     required String userId,

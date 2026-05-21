@@ -4,7 +4,7 @@ part 'employee_document.freezed.dart';
 part 'employee_document.g.dart';
 
 @freezed
-class EmployeeDocument with _$EmployeeDocument {
+abstract class EmployeeDocument with _$EmployeeDocument {
   const factory EmployeeDocument({
     @JsonKey(name: '_id') String? id,
     required String userId,

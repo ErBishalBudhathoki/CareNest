@@ -6,9 +6,9 @@ part of 'organization_branding.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$OrganizationBrandingImpl _$$OrganizationBrandingImplFromJson(
+_OrganizationBranding _$OrganizationBrandingFromJson(
         Map<String, dynamic> json) =>
-    _$OrganizationBrandingImpl(
+    _OrganizationBranding(
       organizationId: json['organizationId'] as String,
       primaryColor: json['primaryColor'] as String? ?? '#DC143C',
       secondaryColor: json['secondaryColor'] as String? ?? '#0066CC',
@@ -19,8 +19,8 @@ _$OrganizationBrandingImpl _$$OrganizationBrandingImplFromJson(
               json['invoiceTemplate'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$OrganizationBrandingImplToJson(
-        _$OrganizationBrandingImpl instance) =>
+Map<String, dynamic> _$OrganizationBrandingToJson(
+        _OrganizationBranding instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'primaryColor': instance.primaryColor,
@@ -29,16 +29,14 @@ Map<String, dynamic> _$$OrganizationBrandingImplToJson(
       'invoiceTemplate': instance.invoiceTemplate,
     };
 
-_$InvoiceTemplateImpl _$$InvoiceTemplateImplFromJson(
-        Map<String, dynamic> json) =>
-    _$InvoiceTemplateImpl(
+_InvoiceTemplate _$InvoiceTemplateFromJson(Map<String, dynamic> json) =>
+    _InvoiceTemplate(
       headerText: json['headerText'] as String?,
       footerText: json['footerText'] as String?,
       showLogo: json['showLogo'] as bool? ?? true,
     );
 
-Map<String, dynamic> _$$InvoiceTemplateImplToJson(
-        _$InvoiceTemplateImpl instance) =>
+Map<String, dynamic> _$InvoiceTemplateToJson(_InvoiceTemplate instance) =>
     <String, dynamic>{
       'headerText': instance.headerText,
       'footerText': instance.footerText,

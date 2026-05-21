@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:signature/signature.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/service_confirmation_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Service Confirmation View
-/// Digital signature and service confirmation
+/// Digital signature and service confirmation following Bauhaus Neo-Brutalist rules
 class ServiceConfirmationView extends ConsumerStatefulWidget {
   const ServiceConfirmationView({super.key});
 
@@ -18,8 +20,8 @@ class ServiceConfirmationView extends ConsumerStatefulWidget {
 class _ServiceConfirmationViewState
     extends ConsumerState<ServiceConfirmationView> {
   final SignatureController _signatureController = SignatureController(
-    penStrokeWidth: 3,
-    penColor: Colors.black,
+    penStrokeWidth: 4,
+    penColor: BauhausDesign.neutral,
     exportBackgroundColor: Colors.white,
   );
 
@@ -30,7 +32,9 @@ class _ServiceConfirmationViewState
   @override
   void initState() {
     super.initState();
-    _loadChecklistTemplate();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadChecklistTemplate();
+    });
   }
 
   void _loadChecklistTemplate() {
@@ -51,27 +55,42 @@ class _ServiceConfirmationViewState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(serviceConfirmationViewModelProvider);
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final appointmentId = args?['appointmentId'] as String? ?? 'appt_default';
+    final clientId = args?['clientId'] as String? ?? 'client_default';
+    final workerId = args?['workerId'] as String? ?? 'worker_default';
+    final workerName = args?['workerName'] as String? ?? 'Worker';
+    final serviceName = args?['serviceName'] as String? ?? 'Home Care';
 
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: AppColors.colorPrimary,
+        backgroundColor: BauhausDesign.surfaceWhite,
         elevation: 0,
-        title: const Text(
+        centerTitle: true,
+        title: Text(
           'Service Confirmation',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                color: BauhausDesign.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
           onPressed: () => Navigator.pop(context),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.5),
+          child: Container(color: BauhausDesign.neutral, height: 1.5),
         ),
       ),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+              ),
+            )
           : Column(
               children: [
                 // Progress Indicator
@@ -80,13 +99,13 @@ class _ServiceConfirmationViewState
                 // Content
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
-                    child: _buildStepContent(state),
+                    padding: const EdgeInsets.all(BauhausDesign.space5),
+                    child: _buildStepContent(state, workerName, serviceName),
                   ),
                 ),
 
                 // Navigation Buttons
-                _buildNavigationButtons(state),
+                _buildNavigationButtons(state, appointmentId, clientId, workerId),
               ],
             ),
     );
@@ -94,8 +113,19 @@ class _ServiceConfirmationViewState
 
   Widget _buildProgressIndicator() {
     return Container(
-      padding: const EdgeInsets.all(20),
-      color: Colors.white,
+      padding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space5,
+      ),
+      decoration: const BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border(
+          bottom: BorderSide(
+            color: BauhausDesign.neutral,
+            width: BauhausDesign.borderThick,
+          ),
+        ),
+      ),
       child: Row(
         children: [
           _buildStepIndicator(0, 'Checklist', Icons.checklist),
@@ -120,29 +150,29 @@ class _ServiceConfirmationViewState
             height: 40,
             decoration: BoxDecoration(
               color: isCompleted
-                  ? AppColors.colorSuccess
+                  ? BauhausDesign.success
                   : isActive
-                      ? AppColors.colorPrimary
-                      : AppColors.colorBackground,
-              shape: BoxShape.circle,
+                      ? BauhausDesign.primary
+                      : Colors.white,
               border: Border.all(
-                color: isActive ? AppColors.colorPrimary : Color(0xFF666666),
-                width: 2,
+                color: BauhausDesign.neutral,
+                width: BauhausDesign.borderThick,
               ),
             ),
             child: Icon(
               isCompleted ? Icons.check : icon,
-              color: isCompleted || isActive ? Colors.white : Color(0xFF666666),
+              color: isCompleted || isActive ? Colors.white : BauhausDesign.textMuted,
               size: 20,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              color: isActive ? AppColors.colorPrimary : Color(0xFF666666),
+            style: BauhausDesign.neoMonoStyle(
+              context,
+              fontSize: BauhausDesign.fontXs,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              color: isActive ? BauhausDesign.primary : BauhausDesign.textMuted,
             ),
           ),
         ],
@@ -152,19 +182,19 @@ class _ServiceConfirmationViewState
 
   Widget _buildStepConnector() {
     return Container(
-      height: 2,
-      width: 40,
-      color: Color(0xFF666666).withOpacity(0.3),
+      height: 4,
+      width: 25,
+      color: BauhausDesign.neutral,
       margin: const EdgeInsets.only(bottom: 24),
     );
   }
 
-  Widget _buildStepContent(state) {
+  Widget _buildStepContent(state, String workerName, String serviceName) {
     switch (_currentStep) {
       case 0:
-        return _buildChecklistStep(state);
+        return _buildChecklistStep(state, serviceName);
       case 1:
-        return _buildRatingStep(state);
+        return _buildRatingStep(state, workerName);
       case 2:
         return _buildSignatureStep(state);
       default:
@@ -172,12 +202,20 @@ class _ServiceConfirmationViewState
     }
   }
 
-  Widget _buildChecklistStep(state) {
+  Widget _buildChecklistStep(state, String serviceName) {
     if (state.checklist.isEmpty) {
       return Center(
-        child: Text(
-          'No checklist items',
-          style: TextStyle(color: Color(0xFF666666)),
+        child: Container(
+          padding: const EdgeInsets.all(BauhausDesign.space5),
+          decoration: BauhausDesign.cardDecoration,
+          child: Text(
+            'No checklist items available.',
+            style: GoogleFonts.inter(
+              fontSize: BauhausDesign.fontMd,
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.textMuted,
+            ),
+          ),
         ),
       );
     }
@@ -187,21 +225,21 @@ class _ServiceConfirmationViewState
       children: [
         Text(
           'Service Checklist',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
-          ),
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.bold,
+              ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: BauhausDesign.space2),
         Text(
-          'Please review and confirm completed tasks',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF666666),
+          'Confirm completed tasks for $serviceName',
+          style: GoogleFonts.inter(
+            fontSize: BauhausDesign.fontMd,
+            color: BauhausDesign.textMuted,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: BauhausDesign.space6),
         ...state.checklist.map((item) => _buildChecklistItem(item)),
       ],
     );
@@ -209,18 +247,9 @@ class _ServiceConfirmationViewState
 
   Widget _buildChecklistItem(ChecklistItem item) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: item.completed == true
-              ? AppColors.colorSuccess.withOpacity(0.3)
-              : Color(0xFF666666).withOpacity(0.2),
-          width: 2,
-        ),
-      ),
+      margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: BauhausDesign.cardDecoration,
       child: Row(
         children: [
           Checkbox(
@@ -230,19 +259,21 @@ class _ServiceConfirmationViewState
                   .read(serviceConfirmationViewModelProvider.notifier)
                   .updateChecklistItem(item.id, value ?? false);
             },
-            activeColor: AppColors.colorSuccess,
+            activeColor: BauhausDesign.success,
+            checkColor: Colors.white,
+            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   item.item,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.colorFontPrimary,
+                  style: GoogleFonts.inter(
+                    fontSize: BauhausDesign.fontLg,
+                    fontWeight: FontWeight.bold,
+                    color: BauhausDesign.textDark,
                     decoration: item.completed == true
                         ? TextDecoration.lineThrough
                         : null,
@@ -252,10 +283,12 @@ class _ServiceConfirmationViewState
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      'Required',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.error,
+                      'REQUIRED TASK',
+                      style: BauhausDesign.neoMonoStyle(
+                        context,
+                        color: BauhausDesign.primary,
+                        fontSize: BauhausDesign.fontXs,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -267,32 +300,33 @@ class _ServiceConfirmationViewState
     );
   }
 
-  Widget _buildRatingStep(state) {
+  Widget _buildRatingStep(state, String workerName) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Rate Your Experience',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
-          ),
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.bold,
+              ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: BauhausDesign.space2),
         Text(
-          'How satisfied are you with the service?',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF666666),
+          'How satisfied are you with $workerName\'s service?',
+          style: GoogleFonts.inter(
+            fontSize: BauhausDesign.fontMd,
+            color: BauhausDesign.textMuted,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: BauhausDesign.space6),
         Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(5, (index) {
               final starNumber = index + 1;
+              final isHighlighted = starNumber <= _selectedRating;
               return IconButton(
                 iconSize: 48,
                 onPressed: () {
@@ -301,57 +335,53 @@ class _ServiceConfirmationViewState
                   });
                 },
                 icon: Icon(
-                  starNumber <= _selectedRating
-                      ? Icons.star
-                      : Icons.star_border,
-                  color: AppColors.colorWarning,
+                  isHighlighted ? Icons.star : Icons.star_border,
+                  color: isHighlighted ? BauhausDesign.accent : BauhausDesign.neutral,
                 ),
               );
             }),
           ),
         ),
-        if (_selectedRating > 0)
+        if (_selectedRating > 0) ...[
+          const SizedBox(height: BauhausDesign.space3),
           Center(
-            child: Text(
-              _getRatingText(_selectedRating),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.colorPrimary,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: BauhausDesign.accent,
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+              ),
+              child: Text(
+                _getRatingText(_selectedRating).toUpperCase(),
+                style: BauhausDesign.neoMonoStyle(
+                  context,
+                  fontSize: BauhausDesign.fontLg,
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-        const SizedBox(height: 32),
+        ],
+        const SizedBox(height: BauhausDesign.space6),
         Text(
           'Additional Feedback (Optional)',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+          style: GoogleFonts.inter(
+            fontSize: BauhausDesign.fontLg,
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: BauhausDesign.space3),
         TextField(
           controller: _feedbackController,
           maxLines: 4,
-          decoration: InputDecoration(
-            hintText: 'Share your thoughts...',
-            hintStyle: TextStyle(color: Color(0xFF666666)),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Color(0xFF666666).withOpacity(0.2)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Color(0xFF666666).withOpacity(0.2)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: AppColors.colorPrimary, width: 2),
-            ),
+          style: GoogleFonts.inter(
+            color: BauhausDesign.textDark,
+            fontSize: BauhausDesign.fontMd,
+            fontWeight: FontWeight.w500,
           ),
+          decoration: BauhausDesign.inputDecoration('Share your thoughts...'),
         ),
       ],
     );
@@ -363,72 +393,77 @@ class _ServiceConfirmationViewState
       children: [
         Text(
           'Digital Signature',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
-          ),
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.bold,
+              ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: BauhausDesign.space2),
         Text(
           'Please sign below to confirm service completion',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF666666),
+          style: GoogleFonts.inter(
+            fontSize: BauhausDesign.fontMd,
+            color: BauhausDesign.textMuted,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: BauhausDesign.space5),
+        // Draw board wrapped in Bauhaus Card style with hard shadow
         Container(
           height: 200,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Color(0xFF666666).withOpacity(0.2),
-              width: 2,
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Signature(
-              controller: _signatureController,
-              backgroundColor: Colors.white,
-            ),
+          decoration: BauhausDesign.cardDecoration,
+          child: Signature(
+            controller: _signatureController,
+            backgroundColor: Colors.white,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: BauhausDesign.space3),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            TextButton.icon(
-              onPressed: () {
-                _signatureController.clear();
-              },
-              icon: const Icon(Icons.clear),
-              label: const Text('Clear'),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.error,
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                boxShadow: const [BauhausDesign.shadowHardSm],
+              ),
+              child: TextButton.icon(
+                onPressed: () {
+                  _signatureController.clear();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: BauhausDesign.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                ),
+                icon: const Icon(Icons.clear, size: 16),
+                label: Text(
+                  'CLEAR',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: BauhausDesign.space5),
+        // Security Information box
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
           decoration: BoxDecoration(
-            color: AppColors.colorPrimary.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(12),
+            color: BauhausDesign.surfaceWhite,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: AppColors.colorPrimary, size: 20),
-              const SizedBox(width: 12),
+              const Icon(Icons.lock, color: BauhausDesign.success, size: 24),
+              const SizedBox(width: BauhausDesign.space4),
               Expanded(
                 child: Text(
                   'Your signature will be encrypted and timestamped for security',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF666666),
+                  style: GoogleFonts.inter(
+                    fontSize: BauhausDesign.fontMd,
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -439,74 +474,80 @@ class _ServiceConfirmationViewState
     );
   }
 
-  Widget _buildNavigationButtons(state) {
+  Widget _buildNavigationButtons(state, String appointmentId, String clientId, String workerId) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+      padding: const EdgeInsets.all(BauhausDesign.space5),
+      decoration: const BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        border: Border(
+          top: BorderSide(
+            color: BauhausDesign.neutral,
+            width: BauhausDesign.borderThick,
           ),
-        ],
+        ),
       ),
       child: Row(
         children: [
-          if (_currentStep > 0)
+          if (_currentStep > 0) ...[
             Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  setState(() {
-                    _currentStep--;
-                  });
-                },
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: AppColors.colorPrimary),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
-                child: Text(
-                  'Back',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.colorPrimary,
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentStep--;
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text(
+                    'BACK',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.neutral,
+                    ),
                   ),
                 ),
               ),
             ),
-          if (_currentStep > 0) const SizedBox(width: 16),
+            const SizedBox(width: BauhausDesign.space4),
+          ],
           Expanded(
-            child: ElevatedButton(
-              onPressed: state.isSubmitting ? null : () => _handleNext(state),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.colorPrimary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: state.isSubmitting ? BauhausDesign.textMuted : BauhausDesign.primary,
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                boxShadow: state.isSubmitting ? [] : const [BauhausDesign.shadowHardSm],
               ),
-              child: state.isSubmitting
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+              child: TextButton(
+                onPressed: state.isSubmitting ? null : () => _handleNext(state, appointmentId, clientId, workerId),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: state.isSubmitting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        _currentStep == 2 ? 'SUBMIT' : 'NEXT',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    )
-                  : Text(
-                      _currentStep == 2 ? 'Submit' : 'Next',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
+              ),
             ),
           ),
         ],
@@ -514,23 +555,27 @@ class _ServiceConfirmationViewState
     );
   }
 
-  void _handleNext(state) {
+  void _handleNext(state, String appointmentId, String clientId, String workerId) {
     if (_currentStep < 2) {
       setState(() {
         _currentStep++;
       });
     } else {
-      _submitConfirmation(state);
+      _submitConfirmation(state, appointmentId, clientId, workerId);
     }
   }
 
-  Future<void> _submitConfirmation(state) async {
+  Future<void> _submitConfirmation(state, String appointmentId, String clientId, String workerId) async {
     // Validate signature
     if (_signatureController.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please provide your signature'),
-          backgroundColor: AppColors.error,
+          content: Text(
+            'Please provide your signature',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          backgroundColor: BauhausDesign.primary,
+          behavior: SnackBarBehavior.floating,
         ),
       );
       return;
@@ -548,15 +593,70 @@ class _ServiceConfirmationViewState
     final signatureData = await _signatureController.toPngBytes();
     if (signatureData == null) return;
 
-    // TODO: Submit confirmation with actual appointment data
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Service confirmation submitted successfully'),
-        backgroundColor: AppColors.colorSuccess,
-      ),
-    );
+    final base64Sig = base64Encode(signatureData);
 
-    Navigator.pop(context);
+    try {
+      // Save signature first
+      await ref.read(serviceConfirmationViewModelProvider.notifier).saveSignature(
+            appointmentId: appointmentId,
+            clientId: clientId,
+            signatureData: base64Sig,
+          );
+
+      final updatedState = ref.read(serviceConfirmationViewModelProvider);
+      final signature = updatedState.signature ?? DigitalSignature(
+            id: 'sig_${DateTime.now().millisecondsSinceEpoch}',
+            appointmentId: appointmentId,
+            clientId: clientId,
+            signatureData: base64Sig,
+            timestamp: DateTime.now(),
+            hash: 'hash_${DateTime.now().millisecondsSinceEpoch}',
+            verified: true,
+          );
+
+      // Submit final confirmation
+      await ref.read(serviceConfirmationViewModelProvider.notifier).submitConfirmation(
+            appointmentId: appointmentId,
+            clientId: clientId,
+            workerId: workerId,
+            signature: signature,
+            checklist: updatedState.checklist,
+            rating: updatedState.rating ?? ClientRating(
+              stars: _selectedRating,
+              feedback: _feedbackController.text.trim(),
+              tags: [],
+              timestamp: DateTime.now(),
+            ),
+            photoUrls: [],
+            incidents: updatedState.incidents,
+          );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Service confirmation submitted successfully',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          backgroundColor: BauhausDesign.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Failed to submit confirmation: $e',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          backgroundColor: BauhausDesign.primary,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   String _getRatingText(int rating) {

@@ -14,6 +14,7 @@ import java.util.Objects;
 
 import io.flutter.plugin.common.MethodChannel;
 
+@SuppressWarnings({"unchecked", "deprecation"})
 public class InputImageConverter {
 
     //Returns an [InputImage] from the image data received

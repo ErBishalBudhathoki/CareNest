@@ -6,8 +6,8 @@ part of 'training_module.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TrainingModuleImpl _$$TrainingModuleImplFromJson(Map<String, dynamic> json) =>
-    _$TrainingModuleImpl(
+_TrainingModule _$TrainingModuleFromJson(Map<String, dynamic> json) =>
+    _TrainingModule(
       id: json['_id'] as String?,
       title: json['title'] as String,
       description: json['description'] as String,
@@ -21,8 +21,7 @@ _$TrainingModuleImpl _$$TrainingModuleImplFromJson(Map<String, dynamic> json) =>
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$TrainingModuleImplToJson(
-        _$TrainingModuleImpl instance) =>
+Map<String, dynamic> _$TrainingModuleToJson(_TrainingModule instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'title': instance.title,
@@ -37,9 +36,8 @@ Map<String, dynamic> _$$TrainingModuleImplToJson(
       'updatedAt': instance.updatedAt.toIso8601String(),
     };
 
-_$TrainingProgressImpl _$$TrainingProgressImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TrainingProgressImpl(
+_TrainingProgress _$TrainingProgressFromJson(Map<String, dynamic> json) =>
+    _TrainingProgress(
       id: json['_id'] as String?,
       userId: json['userId'] as String,
       moduleId: json['moduleId'] as String,
@@ -50,8 +48,7 @@ _$TrainingProgressImpl _$$TrainingProgressImplFromJson(
           : DateTime.parse(json['completedAt'] as String),
     );
 
-Map<String, dynamic> _$$TrainingProgressImplToJson(
-        _$TrainingProgressImpl instance) =>
+Map<String, dynamic> _$TrainingProgressToJson(_TrainingProgress instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'userId': instance.userId,

@@ -6,8 +6,7 @@ part of 'organization_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AddressImpl _$$AddressImplFromJson(Map<String, dynamic> json) =>
-    _$AddressImpl(
+_Address _$AddressFromJson(Map<String, dynamic> json) => _Address(
       street: json['street'] as String?,
       city: json['city'] as String?,
       state: json['state'] as String?,
@@ -15,8 +14,7 @@ _$AddressImpl _$$AddressImplFromJson(Map<String, dynamic> json) =>
       country: json['country'] as String?,
     );
 
-Map<String, dynamic> _$$AddressImplToJson(_$AddressImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$AddressToJson(_Address instance) => <String, dynamic>{
       'street': instance.street,
       'city': instance.city,
       'state': instance.state,
@@ -24,30 +22,28 @@ Map<String, dynamic> _$$AddressImplToJson(_$AddressImpl instance) =>
       'country': instance.country,
     };
 
-_$ContactDetailsImpl _$$ContactDetailsImplFromJson(Map<String, dynamic> json) =>
-    _$ContactDetailsImpl(
+_ContactDetails _$ContactDetailsFromJson(Map<String, dynamic> json) =>
+    _ContactDetails(
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       website: json['website'] as String?,
     );
 
-Map<String, dynamic> _$$ContactDetailsImplToJson(
-        _$ContactDetailsImpl instance) =>
+Map<String, dynamic> _$ContactDetailsToJson(_ContactDetails instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'email': instance.email,
       'website': instance.website,
     };
 
-_$BankDetailsImpl _$$BankDetailsImplFromJson(Map<String, dynamic> json) =>
-    _$BankDetailsImpl(
+_BankDetails _$BankDetailsFromJson(Map<String, dynamic> json) => _BankDetails(
       bankName: json['bankName'] as String?,
       accountName: json['accountName'] as String?,
       bsb: json['bsb'] as String?,
       accountNumber: json['accountNumber'] as String?,
     );
 
-Map<String, dynamic> _$$BankDetailsImplToJson(_$BankDetailsImpl instance) =>
+Map<String, dynamic> _$BankDetailsToJson(_BankDetails instance) =>
     <String, dynamic>{
       'bankName': instance.bankName,
       'accountName': instance.accountName,
@@ -55,22 +51,20 @@ Map<String, dynamic> _$$BankDetailsImplToJson(_$BankDetailsImpl instance) =>
       'accountNumber': instance.accountNumber,
     };
 
-_$NdisRegistrationImpl _$$NdisRegistrationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$NdisRegistrationImpl(
+_NdisRegistration _$NdisRegistrationFromJson(Map<String, dynamic> json) =>
+    _NdisRegistration(
       isRegistered: json['isRegistered'] as bool?,
       registrationNumber: json['registrationNumber'] as String?,
     );
 
-Map<String, dynamic> _$$NdisRegistrationImplToJson(
-        _$NdisRegistrationImpl instance) =>
+Map<String, dynamic> _$NdisRegistrationToJson(_NdisRegistration instance) =>
     <String, dynamic>{
       'isRegistered': instance.isRegistered,
       'registrationNumber': instance.registrationNumber,
     };
 
-_$OrganizationImpl _$$OrganizationImplFromJson(Map<String, dynamic> json) =>
-    _$OrganizationImpl(
+_Organization _$OrganizationFromJson(Map<String, dynamic> json) =>
+    _Organization(
       id: json['id'] as String,
       name: json['name'] as String,
       code: json['code'] as String,
@@ -95,7 +89,7 @@ _$OrganizationImpl _$$OrganizationImplFromJson(Map<String, dynamic> json) =>
       integrations: _integrationsFromJson(json['integrations']),
     );
 
-Map<String, dynamic> _$$OrganizationImplToJson(_$OrganizationImpl instance) =>
+Map<String, dynamic> _$OrganizationToJson(_Organization instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

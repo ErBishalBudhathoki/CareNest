@@ -44,7 +44,7 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
         backgroundColor: BauhausDesign.secondary,
         foregroundColor: BauhausDesign.surfaceWhite,
         title: Text(
-          'OUTCOME TRACKING',
+          'OUTCOME INSIGHTS',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
                 color: BauhausDesign.surfaceWhite,
                 fontWeight: FontWeight.bold,

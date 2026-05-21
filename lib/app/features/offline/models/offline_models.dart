@@ -5,7 +5,7 @@ part 'offline_models.g.dart';
 
 /// Offline queue item
 @freezed
-class OfflineQueueItem with _$OfflineQueueItem {
+abstract class OfflineQueueItem with _$OfflineQueueItem {
   const factory OfflineQueueItem({
     required String queueId,
     required String userId,
@@ -23,7 +23,7 @@ class OfflineQueueItem with _$OfflineQueueItem {
 
 /// Sync status
 @freezed
-class SyncStatus with _$SyncStatus {
+abstract class SyncStatus with _$SyncStatus {
   const factory SyncStatus({
     required int total,
     required int successful,
@@ -38,7 +38,7 @@ class SyncStatus with _$SyncStatus {
 
 /// Sync item result
 @freezed
-class SyncItemResult with _$SyncItemResult {
+abstract class SyncItemResult with _$SyncItemResult {
   const factory SyncItemResult({
     required String queueId,
     required String status,
@@ -53,7 +53,7 @@ class SyncItemResult with _$SyncItemResult {
 
 /// Conflict data
 @freezed
-class ConflictData with _$ConflictData {
+abstract class ConflictData with _$ConflictData {
   const factory ConflictData({
     required String conflictType,
     required int localVersion,
@@ -68,7 +68,7 @@ class ConflictData with _$ConflictData {
 
 /// Conflict resolution
 @freezed
-class ConflictResolution with _$ConflictResolution {
+abstract class ConflictResolution with _$ConflictResolution {
   const factory ConflictResolution({
     required String conflictId,
     required String resolution,
@@ -82,7 +82,7 @@ class ConflictResolution with _$ConflictResolution {
 
 /// Offline capable data
 @freezed
-class OfflineCapableData with _$OfflineCapableData {
+abstract class OfflineCapableData with _$OfflineCapableData {
   const factory OfflineCapableData({
     required String userId,
     required String downloadedAt,
@@ -96,7 +96,7 @@ class OfflineCapableData with _$OfflineCapableData {
 
 /// Offline data package
 @freezed
-class OfflineDataPackage with _$OfflineDataPackage {
+abstract class OfflineDataPackage with _$OfflineDataPackage {
   const factory OfflineDataPackage({
     required List<OfflineAppointment> appointments,
     required List<OfflineClient> clients,
@@ -109,7 +109,7 @@ class OfflineDataPackage with _$OfflineDataPackage {
 
 /// Offline appointment
 @freezed
-class OfflineAppointment with _$OfflineAppointment {
+abstract class OfflineAppointment with _$OfflineAppointment {
   const factory OfflineAppointment({
     required String id,
     required String clientName,
@@ -126,7 +126,7 @@ class OfflineAppointment with _$OfflineAppointment {
 
 /// Offline client
 @freezed
-class OfflineClient with _$OfflineClient {
+abstract class OfflineClient with _$OfflineClient {
   const factory OfflineClient({
     required String id,
     required String name,
@@ -141,7 +141,7 @@ class OfflineClient with _$OfflineClient {
 
 /// Offline form
 @freezed
-class OfflineForm with _$OfflineForm {
+abstract class OfflineForm with _$OfflineForm {
   const factory OfflineForm({
     required String id,
     required String name,

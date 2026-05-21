@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,34 +9,60 @@ part of 'organization_branding.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-OrganizationBranding _$OrganizationBrandingFromJson(Map<String, dynamic> json) {
-  return _OrganizationBranding.fromJson(json);
-}
 
 /// @nodoc
 mixin _$OrganizationBranding {
-  String get organizationId => throw _privateConstructorUsedError;
-  String get primaryColor => throw _privateConstructorUsedError;
-  String get secondaryColor => throw _privateConstructorUsedError;
-  String? get logoUrl => throw _privateConstructorUsedError;
-  InvoiceTemplate? get invoiceTemplate => throw _privateConstructorUsedError;
+  String get organizationId;
+  String get primaryColor;
+  String get secondaryColor;
+  String? get logoUrl;
+  InvoiceTemplate? get invoiceTemplate;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  /// Create a copy of OrganizationBranding
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $OrganizationBrandingCopyWith<OrganizationBranding> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$OrganizationBrandingCopyWithImpl<OrganizationBranding>(
+          this as OrganizationBranding, _$identity);
+
+  /// Serializes this OrganizationBranding to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OrganizationBranding &&
+            (identical(other.organizationId, organizationId) ||
+                other.organizationId == organizationId) &&
+            (identical(other.primaryColor, primaryColor) ||
+                other.primaryColor == primaryColor) &&
+            (identical(other.secondaryColor, secondaryColor) ||
+                other.secondaryColor == secondaryColor) &&
+            (identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl) &&
+            (identical(other.invoiceTemplate, invoiceTemplate) ||
+                other.invoiceTemplate == invoiceTemplate));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, organizationId, primaryColor,
+      secondaryColor, logoUrl, invoiceTemplate);
+
+  @override
+  String toString() {
+    return 'OrganizationBranding(organizationId: $organizationId, primaryColor: $primaryColor, secondaryColor: $secondaryColor, logoUrl: $logoUrl, invoiceTemplate: $invoiceTemplate)';
+  }
 }
 
 /// @nodoc
-abstract class $OrganizationBrandingCopyWith<$Res> {
+abstract mixin class $OrganizationBrandingCopyWith<$Res> {
   factory $OrganizationBrandingCopyWith(OrganizationBranding value,
-          $Res Function(OrganizationBranding) then) =
-      _$OrganizationBrandingCopyWithImpl<$Res, OrganizationBranding>;
+          $Res Function(OrganizationBranding) _then) =
+      _$OrganizationBrandingCopyWithImpl;
   @useResult
   $Res call(
       {String organizationId,
@@ -49,16 +75,15 @@ abstract class $OrganizationBrandingCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$OrganizationBrandingCopyWithImpl<$Res,
-        $Val extends OrganizationBranding>
+class _$OrganizationBrandingCopyWithImpl<$Res>
     implements $OrganizationBrandingCopyWith<$Res> {
-  _$OrganizationBrandingCopyWithImpl(this._value, this._then);
+  _$OrganizationBrandingCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final OrganizationBranding _self;
+  final $Res Function(OrganizationBranding) _then;
 
+  /// Create a copy of OrganizationBranding
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -68,116 +93,234 @@ class _$OrganizationBrandingCopyWithImpl<$Res,
     Object? logoUrl = freezed,
     Object? invoiceTemplate = freezed,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       organizationId: null == organizationId
-          ? _value.organizationId
+          ? _self.organizationId
           : organizationId // ignore: cast_nullable_to_non_nullable
               as String,
       primaryColor: null == primaryColor
-          ? _value.primaryColor
+          ? _self.primaryColor
           : primaryColor // ignore: cast_nullable_to_non_nullable
               as String,
       secondaryColor: null == secondaryColor
-          ? _value.secondaryColor
+          ? _self.secondaryColor
           : secondaryColor // ignore: cast_nullable_to_non_nullable
               as String,
       logoUrl: freezed == logoUrl
-          ? _value.logoUrl
+          ? _self.logoUrl
           : logoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
       invoiceTemplate: freezed == invoiceTemplate
-          ? _value.invoiceTemplate
+          ? _self.invoiceTemplate
           : invoiceTemplate // ignore: cast_nullable_to_non_nullable
               as InvoiceTemplate?,
-    ) as $Val);
+    ));
   }
 
+  /// Create a copy of OrganizationBranding
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $InvoiceTemplateCopyWith<$Res>? get invoiceTemplate {
-    if (_value.invoiceTemplate == null) {
+    if (_self.invoiceTemplate == null) {
       return null;
     }
 
-    return $InvoiceTemplateCopyWith<$Res>(_value.invoiceTemplate!, (value) {
-      return _then(_value.copyWith(invoiceTemplate: value) as $Val);
+    return $InvoiceTemplateCopyWith<$Res>(_self.invoiceTemplate!, (value) {
+      return _then(_self.copyWith(invoiceTemplate: value));
     });
   }
 }
 
-/// @nodoc
-abstract class _$$OrganizationBrandingImplCopyWith<$Res>
-    implements $OrganizationBrandingCopyWith<$Res> {
-  factory _$$OrganizationBrandingImplCopyWith(_$OrganizationBrandingImpl value,
-          $Res Function(_$OrganizationBrandingImpl) then) =
-      __$$OrganizationBrandingImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String organizationId,
-      String primaryColor,
-      String secondaryColor,
-      String? logoUrl,
-      InvoiceTemplate? invoiceTemplate});
+/// Adds pattern-matching-related methods to [OrganizationBranding].
+extension OrganizationBrandingPatterns on OrganizationBranding {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-  @override
-  $InvoiceTemplateCopyWith<$Res>? get invoiceTemplate;
-}
-
-/// @nodoc
-class __$$OrganizationBrandingImplCopyWithImpl<$Res>
-    extends _$OrganizationBrandingCopyWithImpl<$Res, _$OrganizationBrandingImpl>
-    implements _$$OrganizationBrandingImplCopyWith<$Res> {
-  __$$OrganizationBrandingImplCopyWithImpl(_$OrganizationBrandingImpl _value,
-      $Res Function(_$OrganizationBrandingImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? organizationId = null,
-    Object? primaryColor = null,
-    Object? secondaryColor = null,
-    Object? logoUrl = freezed,
-    Object? invoiceTemplate = freezed,
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_OrganizationBranding value)? $default, {
+    required TResult orElse(),
   }) {
-    return _then(_$OrganizationBrandingImpl(
-      organizationId: null == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      primaryColor: null == primaryColor
-          ? _value.primaryColor
-          : primaryColor // ignore: cast_nullable_to_non_nullable
-              as String,
-      secondaryColor: null == secondaryColor
-          ? _value.secondaryColor
-          : secondaryColor // ignore: cast_nullable_to_non_nullable
-              as String,
-      logoUrl: freezed == logoUrl
-          ? _value.logoUrl
-          : logoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      invoiceTemplate: freezed == invoiceTemplate
-          ? _value.invoiceTemplate
-          : invoiceTemplate // ignore: cast_nullable_to_non_nullable
-              as InvoiceTemplate?,
-    ));
+    final _that = this;
+    switch (_that) {
+      case _OrganizationBranding() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_OrganizationBranding value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OrganizationBranding():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_OrganizationBranding value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OrganizationBranding() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String organizationId,
+            String primaryColor,
+            String secondaryColor,
+            String? logoUrl,
+            InvoiceTemplate? invoiceTemplate)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OrganizationBranding() when $default != null:
+        return $default(_that.organizationId, _that.primaryColor,
+            _that.secondaryColor, _that.logoUrl, _that.invoiceTemplate);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String organizationId,
+            String primaryColor,
+            String secondaryColor,
+            String? logoUrl,
+            InvoiceTemplate? invoiceTemplate)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OrganizationBranding():
+        return $default(_that.organizationId, _that.primaryColor,
+            _that.secondaryColor, _that.logoUrl, _that.invoiceTemplate);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String organizationId,
+            String primaryColor,
+            String secondaryColor,
+            String? logoUrl,
+            InvoiceTemplate? invoiceTemplate)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OrganizationBranding() when $default != null:
+        return $default(_that.organizationId, _that.primaryColor,
+            _that.secondaryColor, _that.logoUrl, _that.invoiceTemplate);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$OrganizationBrandingImpl implements _OrganizationBranding {
-  const _$OrganizationBrandingImpl(
+class _OrganizationBranding implements OrganizationBranding {
+  const _OrganizationBranding(
       {required this.organizationId,
       this.primaryColor = '#DC143C',
       this.secondaryColor = '#0066CC',
       this.logoUrl,
       this.invoiceTemplate});
-
-  factory _$OrganizationBrandingImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OrganizationBrandingImplFromJson(json);
+  factory _OrganizationBranding.fromJson(Map<String, dynamic> json) =>
+      _$OrganizationBrandingFromJson(json);
 
   @override
   final String organizationId;
@@ -192,16 +335,27 @@ class _$OrganizationBrandingImpl implements _OrganizationBranding {
   @override
   final InvoiceTemplate? invoiceTemplate;
 
+  /// Create a copy of OrganizationBranding
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OrganizationBranding(organizationId: $organizationId, primaryColor: $primaryColor, secondaryColor: $secondaryColor, logoUrl: $logoUrl, invoiceTemplate: $invoiceTemplate)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OrganizationBrandingCopyWith<_OrganizationBranding> get copyWith =>
+      __$OrganizationBrandingCopyWithImpl<_OrganizationBranding>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OrganizationBrandingToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OrganizationBrandingImpl &&
+            other is _OrganizationBranding &&
             (identical(other.organizationId, organizationId) ||
                 other.organizationId == organizationId) &&
             (identical(other.primaryColor, primaryColor) ||
@@ -213,132 +367,154 @@ class _$OrganizationBrandingImpl implements _OrganizationBranding {
                 other.invoiceTemplate == invoiceTemplate));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, organizationId, primaryColor,
       secondaryColor, logoUrl, invoiceTemplate);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OrganizationBrandingImplCopyWith<_$OrganizationBrandingImpl>
-      get copyWith =>
-          __$$OrganizationBrandingImplCopyWithImpl<_$OrganizationBrandingImpl>(
-              this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OrganizationBrandingImplToJson(
-      this,
-    );
+  String toString() {
+    return 'OrganizationBranding(organizationId: $organizationId, primaryColor: $primaryColor, secondaryColor: $secondaryColor, logoUrl: $logoUrl, invoiceTemplate: $invoiceTemplate)';
   }
 }
 
-abstract class _OrganizationBranding implements OrganizationBranding {
-  const factory _OrganizationBranding(
-      {required final String organizationId,
-      final String primaryColor,
-      final String secondaryColor,
-      final String? logoUrl,
-      final InvoiceTemplate? invoiceTemplate}) = _$OrganizationBrandingImpl;
+/// @nodoc
+abstract mixin class _$OrganizationBrandingCopyWith<$Res>
+    implements $OrganizationBrandingCopyWith<$Res> {
+  factory _$OrganizationBrandingCopyWith(_OrganizationBranding value,
+          $Res Function(_OrganizationBranding) _then) =
+      __$OrganizationBrandingCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String organizationId,
+      String primaryColor,
+      String secondaryColor,
+      String? logoUrl,
+      InvoiceTemplate? invoiceTemplate});
 
-  factory _OrganizationBranding.fromJson(Map<String, dynamic> json) =
-      _$OrganizationBrandingImpl.fromJson;
-
   @override
-  String get organizationId;
-  @override
-  String get primaryColor;
-  @override
-  String get secondaryColor;
-  @override
-  String? get logoUrl;
-  @override
-  InvoiceTemplate? get invoiceTemplate;
-  @override
-  @JsonKey(ignore: true)
-  _$$OrganizationBrandingImplCopyWith<_$OrganizationBrandingImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  $InvoiceTemplateCopyWith<$Res>? get invoiceTemplate;
 }
 
-InvoiceTemplate _$InvoiceTemplateFromJson(Map<String, dynamic> json) {
-  return _InvoiceTemplate.fromJson(json);
+/// @nodoc
+class __$OrganizationBrandingCopyWithImpl<$Res>
+    implements _$OrganizationBrandingCopyWith<$Res> {
+  __$OrganizationBrandingCopyWithImpl(this._self, this._then);
+
+  final _OrganizationBranding _self;
+  final $Res Function(_OrganizationBranding) _then;
+
+  /// Create a copy of OrganizationBranding
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? organizationId = null,
+    Object? primaryColor = null,
+    Object? secondaryColor = null,
+    Object? logoUrl = freezed,
+    Object? invoiceTemplate = freezed,
+  }) {
+    return _then(_OrganizationBranding(
+      organizationId: null == organizationId
+          ? _self.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      primaryColor: null == primaryColor
+          ? _self.primaryColor
+          : primaryColor // ignore: cast_nullable_to_non_nullable
+              as String,
+      secondaryColor: null == secondaryColor
+          ? _self.secondaryColor
+          : secondaryColor // ignore: cast_nullable_to_non_nullable
+              as String,
+      logoUrl: freezed == logoUrl
+          ? _self.logoUrl
+          : logoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      invoiceTemplate: freezed == invoiceTemplate
+          ? _self.invoiceTemplate
+          : invoiceTemplate // ignore: cast_nullable_to_non_nullable
+              as InvoiceTemplate?,
+    ));
+  }
+
+  /// Create a copy of OrganizationBranding
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $InvoiceTemplateCopyWith<$Res>? get invoiceTemplate {
+    if (_self.invoiceTemplate == null) {
+      return null;
+    }
+
+    return $InvoiceTemplateCopyWith<$Res>(_self.invoiceTemplate!, (value) {
+      return _then(_self.copyWith(invoiceTemplate: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$InvoiceTemplate {
-  String? get headerText => throw _privateConstructorUsedError;
-  String? get footerText => throw _privateConstructorUsedError;
-  bool get showLogo => throw _privateConstructorUsedError;
+  String? get headerText;
+  String? get footerText;
+  bool get showLogo;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $InvoiceTemplateCopyWith<InvoiceTemplate> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $InvoiceTemplateCopyWith<$Res> {
-  factory $InvoiceTemplateCopyWith(
-          InvoiceTemplate value, $Res Function(InvoiceTemplate) then) =
-      _$InvoiceTemplateCopyWithImpl<$Res, InvoiceTemplate>;
-  @useResult
-  $Res call({String? headerText, String? footerText, bool showLogo});
-}
-
-/// @nodoc
-class _$InvoiceTemplateCopyWithImpl<$Res, $Val extends InvoiceTemplate>
-    implements $InvoiceTemplateCopyWith<$Res> {
-  _$InvoiceTemplateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of InvoiceTemplate
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $InvoiceTemplateCopyWith<InvoiceTemplate> get copyWith =>
+      _$InvoiceTemplateCopyWithImpl<InvoiceTemplate>(
+          this as InvoiceTemplate, _$identity);
+
+  /// Serializes this InvoiceTemplate to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? headerText = freezed,
-    Object? footerText = freezed,
-    Object? showLogo = null,
-  }) {
-    return _then(_value.copyWith(
-      headerText: freezed == headerText
-          ? _value.headerText
-          : headerText // ignore: cast_nullable_to_non_nullable
-              as String?,
-      footerText: freezed == footerText
-          ? _value.footerText
-          : footerText // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showLogo: null == showLogo
-          ? _value.showLogo
-          : showLogo // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is InvoiceTemplate &&
+            (identical(other.headerText, headerText) ||
+                other.headerText == headerText) &&
+            (identical(other.footerText, footerText) ||
+                other.footerText == footerText) &&
+            (identical(other.showLogo, showLogo) ||
+                other.showLogo == showLogo));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, headerText, footerText, showLogo);
+
+  @override
+  String toString() {
+    return 'InvoiceTemplate(headerText: $headerText, footerText: $footerText, showLogo: $showLogo)';
   }
 }
 
 /// @nodoc
-abstract class _$$InvoiceTemplateImplCopyWith<$Res>
-    implements $InvoiceTemplateCopyWith<$Res> {
-  factory _$$InvoiceTemplateImplCopyWith(_$InvoiceTemplateImpl value,
-          $Res Function(_$InvoiceTemplateImpl) then) =
-      __$$InvoiceTemplateImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $InvoiceTemplateCopyWith<$Res> {
+  factory $InvoiceTemplateCopyWith(
+          InvoiceTemplate value, $Res Function(InvoiceTemplate) _then) =
+      _$InvoiceTemplateCopyWithImpl;
   @useResult
   $Res call({String? headerText, String? footerText, bool showLogo});
 }
 
 /// @nodoc
-class __$$InvoiceTemplateImplCopyWithImpl<$Res>
-    extends _$InvoiceTemplateCopyWithImpl<$Res, _$InvoiceTemplateImpl>
-    implements _$$InvoiceTemplateImplCopyWith<$Res> {
-  __$$InvoiceTemplateImplCopyWithImpl(
-      _$InvoiceTemplateImpl _value, $Res Function(_$InvoiceTemplateImpl) _then)
-      : super(_value, _then);
+class _$InvoiceTemplateCopyWithImpl<$Res>
+    implements $InvoiceTemplateCopyWith<$Res> {
+  _$InvoiceTemplateCopyWithImpl(this._self, this._then);
 
+  final InvoiceTemplate _self;
+  final $Res Function(InvoiceTemplate) _then;
+
+  /// Create a copy of InvoiceTemplate
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -346,31 +522,190 @@ class __$$InvoiceTemplateImplCopyWithImpl<$Res>
     Object? footerText = freezed,
     Object? showLogo = null,
   }) {
-    return _then(_$InvoiceTemplateImpl(
+    return _then(_self.copyWith(
       headerText: freezed == headerText
-          ? _value.headerText
+          ? _self.headerText
           : headerText // ignore: cast_nullable_to_non_nullable
               as String?,
       footerText: freezed == footerText
-          ? _value.footerText
+          ? _self.footerText
           : footerText // ignore: cast_nullable_to_non_nullable
               as String?,
       showLogo: null == showLogo
-          ? _value.showLogo
+          ? _self.showLogo
           : showLogo // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [InvoiceTemplate].
+extension InvoiceTemplatePatterns on InvoiceTemplate {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_InvoiceTemplate value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _InvoiceTemplate() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_InvoiceTemplate value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _InvoiceTemplate():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_InvoiceTemplate value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _InvoiceTemplate() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String? headerText, String? footerText, bool showLogo)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _InvoiceTemplate() when $default != null:
+        return $default(_that.headerText, _that.footerText, _that.showLogo);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String? headerText, String? footerText, bool showLogo)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _InvoiceTemplate():
+        return $default(_that.headerText, _that.footerText, _that.showLogo);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String? headerText, String? footerText, bool showLogo)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _InvoiceTemplate() when $default != null:
+        return $default(_that.headerText, _that.footerText, _that.showLogo);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$InvoiceTemplateImpl implements _InvoiceTemplate {
-  const _$InvoiceTemplateImpl(
+class _InvoiceTemplate implements InvoiceTemplate {
+  const _InvoiceTemplate(
       {this.headerText, this.footerText, this.showLogo = true});
-
-  factory _$InvoiceTemplateImpl.fromJson(Map<String, dynamic> json) =>
-      _$$InvoiceTemplateImplFromJson(json);
+  factory _InvoiceTemplate.fromJson(Map<String, dynamic> json) =>
+      _$InvoiceTemplateFromJson(json);
 
   @override
   final String? headerText;
@@ -380,16 +715,26 @@ class _$InvoiceTemplateImpl implements _InvoiceTemplate {
   @JsonKey()
   final bool showLogo;
 
+  /// Create a copy of InvoiceTemplate
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'InvoiceTemplate(headerText: $headerText, footerText: $footerText, showLogo: $showLogo)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$InvoiceTemplateCopyWith<_InvoiceTemplate> get copyWith =>
+      __$InvoiceTemplateCopyWithImpl<_InvoiceTemplate>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$InvoiceTemplateToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$InvoiceTemplateImpl &&
+            other is _InvoiceTemplate &&
             (identical(other.headerText, headerText) ||
                 other.headerText == headerText) &&
             (identical(other.footerText, footerText) ||
@@ -398,43 +743,60 @@ class _$InvoiceTemplateImpl implements _InvoiceTemplate {
                 other.showLogo == showLogo));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, headerText, footerText, showLogo);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$InvoiceTemplateImplCopyWith<_$InvoiceTemplateImpl> get copyWith =>
-      __$$InvoiceTemplateImplCopyWithImpl<_$InvoiceTemplateImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$InvoiceTemplateImplToJson(
-      this,
-    );
+  String toString() {
+    return 'InvoiceTemplate(headerText: $headerText, footerText: $footerText, showLogo: $showLogo)';
   }
 }
 
-abstract class _InvoiceTemplate implements InvoiceTemplate {
-  const factory _InvoiceTemplate(
-      {final String? headerText,
-      final String? footerText,
-      final bool showLogo}) = _$InvoiceTemplateImpl;
-
-  factory _InvoiceTemplate.fromJson(Map<String, dynamic> json) =
-      _$InvoiceTemplateImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$InvoiceTemplateCopyWith<$Res>
+    implements $InvoiceTemplateCopyWith<$Res> {
+  factory _$InvoiceTemplateCopyWith(
+          _InvoiceTemplate value, $Res Function(_InvoiceTemplate) _then) =
+      __$InvoiceTemplateCopyWithImpl;
   @override
-  String? get headerText;
-  @override
-  String? get footerText;
-  @override
-  bool get showLogo;
-  @override
-  @JsonKey(ignore: true)
-  _$$InvoiceTemplateImplCopyWith<_$InvoiceTemplateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String? headerText, String? footerText, bool showLogo});
 }
+
+/// @nodoc
+class __$InvoiceTemplateCopyWithImpl<$Res>
+    implements _$InvoiceTemplateCopyWith<$Res> {
+  __$InvoiceTemplateCopyWithImpl(this._self, this._then);
+
+  final _InvoiceTemplate _self;
+  final $Res Function(_InvoiceTemplate) _then;
+
+  /// Create a copy of InvoiceTemplate
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? headerText = freezed,
+    Object? footerText = freezed,
+    Object? showLogo = null,
+  }) {
+    return _then(_InvoiceTemplate(
+      headerText: freezed == headerText
+          ? _self.headerText
+          : headerText // ignore: cast_nullable_to_non_nullable
+              as String?,
+      footerText: freezed == footerText
+          ? _self.footerText
+          : footerText // ignore: cast_nullable_to_non_nullable
+              as String?,
+      showLogo: null == showLogo
+          ? _self.showLogo
+          : showLogo // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+// dart format on

@@ -6,9 +6,8 @@ part of 'employee_document.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$EmployeeDocumentImpl _$$EmployeeDocumentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$EmployeeDocumentImpl(
+_EmployeeDocument _$EmployeeDocumentFromJson(Map<String, dynamic> json) =>
+    _EmployeeDocument(
       id: json['_id'] as String?,
       userId: json['userId'] as String,
       organizationId: json['organizationId'] as String,
@@ -29,8 +28,7 @@ _$EmployeeDocumentImpl _$$EmployeeDocumentImplFromJson(
       verifiedBy: json['verifiedBy'] as String?,
     );
 
-Map<String, dynamic> _$$EmployeeDocumentImplToJson(
-        _$EmployeeDocumentImpl instance) =>
+Map<String, dynamic> _$EmployeeDocumentToJson(_EmployeeDocument instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'userId': instance.userId,

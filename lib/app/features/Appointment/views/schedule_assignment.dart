@@ -1049,6 +1049,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
     showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.input,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

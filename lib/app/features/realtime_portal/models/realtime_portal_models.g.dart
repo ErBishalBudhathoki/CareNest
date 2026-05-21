@@ -6,8 +6,8 @@ part of 'realtime_portal_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$LiveLocationImpl _$$LiveLocationImplFromJson(Map<String, dynamic> json) =>
-    _$LiveLocationImpl(
+_LiveLocation _$LiveLocationFromJson(Map<String, dynamic> json) =>
+    _LiveLocation(
       appointmentId: json['appointmentId'] as String,
       workerId: json['workerId'] as String,
       latitude: (json['latitude'] as num).toDouble(),
@@ -19,7 +19,7 @@ _$LiveLocationImpl _$$LiveLocationImplFromJson(Map<String, dynamic> json) =>
       status: json['status'] as String?,
     );
 
-Map<String, dynamic> _$$LiveLocationImplToJson(_$LiveLocationImpl instance) =>
+Map<String, dynamic> _$LiveLocationToJson(_LiveLocation instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'workerId': instance.workerId,
@@ -32,16 +32,15 @@ Map<String, dynamic> _$$LiveLocationImplToJson(_$LiveLocationImpl instance) =>
       'status': instance.status,
     };
 
-_$LocationUpdateImpl _$$LocationUpdateImplFromJson(Map<String, dynamic> json) =>
-    _$LocationUpdateImpl(
+_LocationUpdate _$LocationUpdateFromJson(Map<String, dynamic> json) =>
+    _LocationUpdate(
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
       accuracy: (json['accuracy'] as num).toDouble(),
       timestamp: DateTime.parse(json['timestamp'] as String),
     );
 
-Map<String, dynamic> _$$LocationUpdateImplToJson(
-        _$LocationUpdateImpl instance) =>
+Map<String, dynamic> _$LocationUpdateToJson(_LocationUpdate instance) =>
     <String, dynamic>{
       'latitude': instance.latitude,
       'longitude': instance.longitude,
@@ -49,8 +48,8 @@ Map<String, dynamic> _$$LocationUpdateImplToJson(
       'timestamp': instance.timestamp.toIso8601String(),
     };
 
-_$GeofenceEventImpl _$$GeofenceEventImplFromJson(Map<String, dynamic> json) =>
-    _$GeofenceEventImpl(
+_GeofenceEvent _$GeofenceEventFromJson(Map<String, dynamic> json) =>
+    _GeofenceEvent(
       appointmentId: json['appointmentId'] as String,
       event: json['event'] as String,
       distance: (json['distance'] as num).toDouble(),
@@ -59,7 +58,7 @@ _$GeofenceEventImpl _$$GeofenceEventImplFromJson(Map<String, dynamic> json) =>
       approaching: json['approaching'] as bool?,
     );
 
-Map<String, dynamic> _$$GeofenceEventImplToJson(_$GeofenceEventImpl instance) =>
+Map<String, dynamic> _$GeofenceEventToJson(_GeofenceEvent instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'event': instance.event,
@@ -69,9 +68,8 @@ Map<String, dynamic> _$$GeofenceEventImplToJson(_$GeofenceEventImpl instance) =>
       'approaching': instance.approaching,
     };
 
-_$TrackingSessionImpl _$$TrackingSessionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TrackingSessionImpl(
+_TrackingSession _$TrackingSessionFromJson(Map<String, dynamic> json) =>
+    _TrackingSession(
       sessionId: json['sessionId'] as String,
       appointmentId: json['appointmentId'] as String,
       workerId: json['workerId'] as String,
@@ -91,8 +89,7 @@ _$TrackingSessionImpl _$$TrackingSessionImplFromJson(
       totalDistance: (json['totalDistance'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$$TrackingSessionImplToJson(
-        _$TrackingSessionImpl instance) =>
+Map<String, dynamic> _$TrackingSessionToJson(_TrackingSession instance) =>
     <String, dynamic>{
       'sessionId': instance.sessionId,
       'appointmentId': instance.appointmentId,
@@ -106,23 +103,22 @@ Map<String, dynamic> _$$TrackingSessionImplToJson(
       'totalDistance': instance.totalDistance,
     };
 
-_$ClientLocationImpl _$$ClientLocationImplFromJson(Map<String, dynamic> json) =>
-    _$ClientLocationImpl(
+_ClientLocation _$ClientLocationFromJson(Map<String, dynamic> json) =>
+    _ClientLocation(
       lat: (json['lat'] as num).toDouble(),
       lng: (json['lng'] as num).toDouble(),
       address: json['address'] as String?,
     );
 
-Map<String, dynamic> _$$ClientLocationImplToJson(
-        _$ClientLocationImpl instance) =>
+Map<String, dynamic> _$ClientLocationToJson(_ClientLocation instance) =>
     <String, dynamic>{
       'lat': instance.lat,
       'lng': instance.lng,
       'address': instance.address,
     };
 
-_$ETACalculationImpl _$$ETACalculationImplFromJson(Map<String, dynamic> json) =>
-    _$ETACalculationImpl(
+_ETACalculation _$ETACalculationFromJson(Map<String, dynamic> json) =>
+    _ETACalculation(
       minutes: (json['minutes'] as num).toInt(),
       distance: (json['distance'] as num).toDouble(),
       avgSpeed: (json['avgSpeed'] as num).toDouble(),
@@ -130,8 +126,7 @@ _$ETACalculationImpl _$$ETACalculationImplFromJson(Map<String, dynamic> json) =>
       trafficCondition: json['trafficCondition'] as String?,
     );
 
-Map<String, dynamic> _$$ETACalculationImplToJson(
-        _$ETACalculationImpl instance) =>
+Map<String, dynamic> _$ETACalculationToJson(_ETACalculation instance) =>
     <String, dynamic>{
       'minutes': instance.minutes,
       'distance': instance.distance,
@@ -140,9 +135,8 @@ Map<String, dynamic> _$$ETACalculationImplToJson(
       'trafficCondition': instance.trafficCondition,
     };
 
-_$AppointmentStatusImpl _$$AppointmentStatusImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AppointmentStatusImpl(
+_AppointmentStatus _$AppointmentStatusFromJson(Map<String, dynamic> json) =>
+    _AppointmentStatus(
       appointmentId: json['appointmentId'] as String,
       status: json['status'] as String,
       progress: (json['progress'] as num).toInt(),
@@ -150,8 +144,7 @@ _$AppointmentStatusImpl _$$AppointmentStatusImplFromJson(
       timestamp: DateTime.parse(json['timestamp'] as String),
     );
 
-Map<String, dynamic> _$$AppointmentStatusImplToJson(
-        _$AppointmentStatusImpl instance) =>
+Map<String, dynamic> _$AppointmentStatusToJson(_AppointmentStatus instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'status': instance.status,
@@ -160,9 +153,8 @@ Map<String, dynamic> _$$AppointmentStatusImplToJson(
       'timestamp': instance.timestamp.toIso8601String(),
     };
 
-_$ServiceProgressImpl _$$ServiceProgressImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ServiceProgressImpl(
+_ServiceProgress _$ServiceProgressFromJson(Map<String, dynamic> json) =>
+    _ServiceProgress(
       appointmentId: json['appointmentId'] as String,
       progress: (json['progress'] as num).toInt(),
       steps: (json['steps'] as List<dynamic>)
@@ -177,8 +169,7 @@ _$ServiceProgressImpl _$$ServiceProgressImplFromJson(
           : DateTime.parse(json['estimatedCompletion'] as String),
     );
 
-Map<String, dynamic> _$$ServiceProgressImplToJson(
-        _$ServiceProgressImpl instance) =>
+Map<String, dynamic> _$ServiceProgressToJson(_ServiceProgress instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'progress': instance.progress,
@@ -188,8 +179,8 @@ Map<String, dynamic> _$$ServiceProgressImplToJson(
       'estimatedCompletion': instance.estimatedCompletion?.toIso8601String(),
     };
 
-_$ProgressStepImpl _$$ProgressStepImplFromJson(Map<String, dynamic> json) =>
-    _$ProgressStepImpl(
+_ProgressStep _$ProgressStepFromJson(Map<String, dynamic> json) =>
+    _ProgressStep(
       id: json['id'] as String,
       name: json['name'] as String,
       completed: json['completed'] as bool,
@@ -198,7 +189,7 @@ _$ProgressStepImpl _$$ProgressStepImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['completedAt'] as String),
     );
 
-Map<String, dynamic> _$$ProgressStepImplToJson(_$ProgressStepImpl instance) =>
+Map<String, dynamic> _$ProgressStepToJson(_ProgressStep instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -206,8 +197,8 @@ Map<String, dynamic> _$$ProgressStepImplToJson(_$ProgressStepImpl instance) =>
       'completedAt': instance.completedAt?.toIso8601String(),
     };
 
-_$SecureMessageImpl _$$SecureMessageImplFromJson(Map<String, dynamic> json) =>
-    _$SecureMessageImpl(
+_SecureMessage _$SecureMessageFromJson(Map<String, dynamic> json) =>
+    _SecureMessage(
       id: json['id'] as String,
       conversationId: json['conversationId'] as String,
       senderId: json['senderId'] as String,
@@ -226,7 +217,7 @@ _$SecureMessageImpl _$$SecureMessageImplFromJson(Map<String, dynamic> json) =>
       type: json['type'] as String?,
     );
 
-Map<String, dynamic> _$$SecureMessageImplToJson(_$SecureMessageImpl instance) =>
+Map<String, dynamic> _$SecureMessageToJson(_SecureMessage instance) =>
     <String, dynamic>{
       'id': instance.id,
       'conversationId': instance.conversationId,
@@ -242,8 +233,8 @@ Map<String, dynamic> _$$SecureMessageImplToJson(_$SecureMessageImpl instance) =>
       'type': instance.type,
     };
 
-_$MessageThreadImpl _$$MessageThreadImplFromJson(Map<String, dynamic> json) =>
-    _$MessageThreadImpl(
+_MessageThread _$MessageThreadFromJson(Map<String, dynamic> json) =>
+    _MessageThread(
       id: json['id'] as String,
       appointmentId: json['appointmentId'] as String,
       clientId: json['clientId'] as String,
@@ -260,9 +251,11 @@ _$MessageThreadImpl _$$MessageThreadImplFromJson(Map<String, dynamic> json) =>
       unreadCount: (json['unreadCount'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toInt()),
       ),
+      workerName: json['workerName'] as String?,
+      clientName: json['clientName'] as String?,
     );
 
-Map<String, dynamic> _$$MessageThreadImplToJson(_$MessageThreadImpl instance) =>
+Map<String, dynamic> _$MessageThreadToJson(_MessageThread instance) =>
     <String, dynamic>{
       'id': instance.id,
       'appointmentId': instance.appointmentId,
@@ -274,11 +267,12 @@ Map<String, dynamic> _$$MessageThreadImplToJson(_$MessageThreadImpl instance) =>
       'lastMessage': instance.lastMessage,
       'lastMessageAt': instance.lastMessageAt?.toIso8601String(),
       'unreadCount': instance.unreadCount,
+      'workerName': instance.workerName,
+      'clientName': instance.clientName,
     };
 
-_$MessageAttachmentImpl _$$MessageAttachmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MessageAttachmentImpl(
+_MessageAttachment _$MessageAttachmentFromJson(Map<String, dynamic> json) =>
+    _MessageAttachment(
       url: json['url'] as String,
       name: json['name'] as String,
       type: json['type'] as String,
@@ -286,8 +280,7 @@ _$MessageAttachmentImpl _$$MessageAttachmentImplFromJson(
       thumbnail: json['thumbnail'] as String?,
     );
 
-Map<String, dynamic> _$$MessageAttachmentImplToJson(
-        _$MessageAttachmentImpl instance) =>
+Map<String, dynamic> _$MessageAttachmentToJson(_MessageAttachment instance) =>
     <String, dynamic>{
       'url': instance.url,
       'name': instance.name,
@@ -296,8 +289,8 @@ Map<String, dynamic> _$$MessageAttachmentImplToJson(
       'thumbnail': instance.thumbnail,
     };
 
-_$VoiceMessageImpl _$$VoiceMessageImplFromJson(Map<String, dynamic> json) =>
-    _$VoiceMessageImpl(
+_VoiceMessage _$VoiceMessageFromJson(Map<String, dynamic> json) =>
+    _VoiceMessage(
       id: json['id'] as String,
       conversationId: json['conversationId'] as String,
       senderId: json['senderId'] as String,
@@ -307,7 +300,7 @@ _$VoiceMessageImpl _$$VoiceMessageImplFromJson(Map<String, dynamic> json) =>
       played: json['played'] as bool?,
     );
 
-Map<String, dynamic> _$$VoiceMessageImplToJson(_$VoiceMessageImpl instance) =>
+Map<String, dynamic> _$VoiceMessageToJson(_VoiceMessage instance) =>
     <String, dynamic>{
       'id': instance.id,
       'conversationId': instance.conversationId,
@@ -318,17 +311,15 @@ Map<String, dynamic> _$$VoiceMessageImplToJson(_$VoiceMessageImpl instance) =>
       'played': instance.played,
     };
 
-_$TypingIndicatorImpl _$$TypingIndicatorImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TypingIndicatorImpl(
+_TypingIndicator _$TypingIndicatorFromJson(Map<String, dynamic> json) =>
+    _TypingIndicator(
       conversationId: json['conversationId'] as String,
       userId: json['userId'] as String,
       userName: json['userName'] as String,
       isTyping: json['isTyping'] as bool,
     );
 
-Map<String, dynamic> _$$TypingIndicatorImplToJson(
-        _$TypingIndicatorImpl instance) =>
+Map<String, dynamic> _$TypingIndicatorToJson(_TypingIndicator instance) =>
     <String, dynamic>{
       'conversationId': instance.conversationId,
       'userId': instance.userId,
@@ -336,9 +327,8 @@ Map<String, dynamic> _$$TypingIndicatorImplToJson(
       'isTyping': instance.isTyping,
     };
 
-_$DigitalSignatureImpl _$$DigitalSignatureImplFromJson(
-        Map<String, dynamic> json) =>
-    _$DigitalSignatureImpl(
+_DigitalSignature _$DigitalSignatureFromJson(Map<String, dynamic> json) =>
+    _DigitalSignature(
       id: json['id'] as String,
       appointmentId: json['appointmentId'] as String,
       clientId: json['clientId'] as String,
@@ -350,8 +340,7 @@ _$DigitalSignatureImpl _$$DigitalSignatureImplFromJson(
       deviceInfo: json['deviceInfo'] as String?,
     );
 
-Map<String, dynamic> _$$DigitalSignatureImplToJson(
-        _$DigitalSignatureImpl instance) =>
+Map<String, dynamic> _$DigitalSignatureToJson(_DigitalSignature instance) =>
     <String, dynamic>{
       'id': instance.id,
       'appointmentId': instance.appointmentId,
@@ -364,9 +353,8 @@ Map<String, dynamic> _$$DigitalSignatureImplToJson(
       'deviceInfo': instance.deviceInfo,
     };
 
-_$ServiceConfirmationImpl _$$ServiceConfirmationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ServiceConfirmationImpl(
+_ServiceConfirmation _$ServiceConfirmationFromJson(Map<String, dynamic> json) =>
+    _ServiceConfirmation(
       id: json['id'] as String,
       appointmentId: json['appointmentId'] as String,
       clientId: json['clientId'] as String,
@@ -387,8 +375,8 @@ _$ServiceConfirmationImpl _$$ServiceConfirmationImplFromJson(
       reportUrl: json['reportUrl'] as String?,
     );
 
-Map<String, dynamic> _$$ServiceConfirmationImplToJson(
-        _$ServiceConfirmationImpl instance) =>
+Map<String, dynamic> _$ServiceConfirmationToJson(
+        _ServiceConfirmation instance) =>
     <String, dynamic>{
       'id': instance.id,
       'appointmentId': instance.appointmentId,
@@ -405,8 +393,8 @@ Map<String, dynamic> _$$ServiceConfirmationImplToJson(
       'reportUrl': instance.reportUrl,
     };
 
-_$ChecklistItemImpl _$$ChecklistItemImplFromJson(Map<String, dynamic> json) =>
-    _$ChecklistItemImpl(
+_ChecklistItem _$ChecklistItemFromJson(Map<String, dynamic> json) =>
+    _ChecklistItem(
       id: (json['id'] as num).toInt(),
       item: json['item'] as String,
       required: json['required'] as bool,
@@ -417,7 +405,7 @@ _$ChecklistItemImpl _$$ChecklistItemImplFromJson(Map<String, dynamic> json) =>
       notes: json['notes'] as String?,
     );
 
-Map<String, dynamic> _$$ChecklistItemImplToJson(_$ChecklistItemImpl instance) =>
+Map<String, dynamic> _$ChecklistItemToJson(_ChecklistItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'item': instance.item,
@@ -427,8 +415,8 @@ Map<String, dynamic> _$$ChecklistItemImplToJson(_$ChecklistItemImpl instance) =>
       'notes': instance.notes,
     };
 
-_$ClientRatingImpl _$$ClientRatingImplFromJson(Map<String, dynamic> json) =>
-    _$ClientRatingImpl(
+_ClientRating _$ClientRatingFromJson(Map<String, dynamic> json) =>
+    _ClientRating(
       stars: (json['stars'] as num).toInt(),
       feedback: json['feedback'] as String?,
       tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
@@ -437,7 +425,7 @@ _$ClientRatingImpl _$$ClientRatingImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['timestamp'] as String),
     );
 
-Map<String, dynamic> _$$ClientRatingImplToJson(_$ClientRatingImpl instance) =>
+Map<String, dynamic> _$ClientRatingToJson(_ClientRating instance) =>
     <String, dynamic>{
       'stars': instance.stars,
       'feedback': instance.feedback,
@@ -445,8 +433,8 @@ Map<String, dynamic> _$$ClientRatingImplToJson(_$ClientRatingImpl instance) =>
       'timestamp': instance.timestamp?.toIso8601String(),
     };
 
-_$IncidentReportImpl _$$IncidentReportImplFromJson(Map<String, dynamic> json) =>
-    _$IncidentReportImpl(
+_IncidentReport _$IncidentReportFromJson(Map<String, dynamic> json) =>
+    _IncidentReport(
       id: json['id'] as String,
       appointmentId: json['appointmentId'] as String,
       reportedBy: json['reportedBy'] as String,
@@ -464,8 +452,7 @@ _$IncidentReportImpl _$$IncidentReportImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['resolvedAt'] as String),
     );
 
-Map<String, dynamic> _$$IncidentReportImplToJson(
-        _$IncidentReportImpl instance) =>
+Map<String, dynamic> _$IncidentReportToJson(_IncidentReport instance) =>
     <String, dynamic>{
       'id': instance.id,
       'appointmentId': instance.appointmentId,
@@ -481,15 +468,15 @@ Map<String, dynamic> _$$IncidentReportImplToJson(
       'resolvedAt': instance.resolvedAt?.toIso8601String(),
     };
 
-_$ServiceReportImpl _$$ServiceReportImplFromJson(Map<String, dynamic> json) =>
-    _$ServiceReportImpl(
+_ServiceReport _$ServiceReportFromJson(Map<String, dynamic> json) =>
+    _ServiceReport(
       appointmentId: json['appointmentId'] as String,
       reportUrl: json['reportUrl'] as String,
       generatedAt: DateTime.parse(json['generatedAt'] as String),
       pdfPath: json['pdfPath'] as String?,
     );
 
-Map<String, dynamic> _$$ServiceReportImplToJson(_$ServiceReportImpl instance) =>
+Map<String, dynamic> _$ServiceReportToJson(_ServiceReport instance) =>
     <String, dynamic>{
       'appointmentId': instance.appointmentId,
       'reportUrl': instance.reportUrl,
@@ -497,8 +484,8 @@ Map<String, dynamic> _$$ServiceReportImplToJson(_$ServiceReportImpl instance) =>
       'pdfPath': instance.pdfPath,
     };
 
-_$FamilyMemberImpl _$$FamilyMemberImplFromJson(Map<String, dynamic> json) =>
-    _$FamilyMemberImpl(
+_FamilyMember _$FamilyMemberFromJson(Map<String, dynamic> json) =>
+    _FamilyMember(
       id: json['id'] as String,
       userId: json['userId'] as String,
       clientId: json['clientId'] as String,
@@ -520,7 +507,7 @@ _$FamilyMemberImpl _$$FamilyMemberImplFromJson(Map<String, dynamic> json) =>
       updatedBy: json['updatedBy'] as String?,
     );
 
-Map<String, dynamic> _$$FamilyMemberImplToJson(_$FamilyMemberImpl instance) =>
+Map<String, dynamic> _$FamilyMemberToJson(_FamilyMember instance) =>
     <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
@@ -537,9 +524,8 @@ Map<String, dynamic> _$$FamilyMemberImplToJson(_$FamilyMemberImpl instance) =>
       'updatedBy': instance.updatedBy,
     };
 
-_$FamilyPermissionsImpl _$$FamilyPermissionsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$FamilyPermissionsImpl(
+_FamilyPermissions _$FamilyPermissionsFromJson(Map<String, dynamic> json) =>
+    _FamilyPermissions(
       viewAppointments: json['viewAppointments'] as bool,
       viewDocuments: json['viewDocuments'] as bool,
       viewInvoices: json['viewInvoices'] as bool,
@@ -552,8 +538,7 @@ _$FamilyPermissionsImpl _$$FamilyPermissionsImplFromJson(
       receiveNotifications: json['receiveNotifications'] as bool,
     );
 
-Map<String, dynamic> _$$FamilyPermissionsImplToJson(
-        _$FamilyPermissionsImpl instance) =>
+Map<String, dynamic> _$FamilyPermissionsToJson(_FamilyPermissions instance) =>
     <String, dynamic>{
       'viewAppointments': instance.viewAppointments,
       'viewDocuments': instance.viewDocuments,
@@ -567,9 +552,8 @@ Map<String, dynamic> _$$FamilyPermissionsImplToJson(
       'receiveNotifications': instance.receiveNotifications,
     };
 
-_$FamilyInvitationImpl _$$FamilyInvitationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$FamilyInvitationImpl(
+_FamilyInvitation _$FamilyInvitationFromJson(Map<String, dynamic> json) =>
+    _FamilyInvitation(
       id: json['id'] as String,
       clientId: json['clientId'] as String,
       invitedBy: json['invitedBy'] as String,
@@ -585,8 +569,7 @@ _$FamilyInvitationImpl _$$FamilyInvitationImplFromJson(
       token: json['token'] as String,
     );
 
-Map<String, dynamic> _$$FamilyInvitationImplToJson(
-        _$FamilyInvitationImpl instance) =>
+Map<String, dynamic> _$FamilyInvitationToJson(_FamilyInvitation instance) =>
     <String, dynamic>{
       'id': instance.id,
       'clientId': instance.clientId,
@@ -602,8 +585,8 @@ Map<String, dynamic> _$$FamilyInvitationImplToJson(
       'token': instance.token,
     };
 
-_$AccessAuditLogImpl _$$AccessAuditLogImplFromJson(Map<String, dynamic> json) =>
-    _$AccessAuditLogImpl(
+_AccessAuditLog _$AccessAuditLogFromJson(Map<String, dynamic> json) =>
+    _AccessAuditLog(
       id: json['id'] as String,
       clientId: json['clientId'] as String,
       userId: json['userId'] as String,
@@ -613,8 +596,7 @@ _$AccessAuditLogImpl _$$AccessAuditLogImplFromJson(Map<String, dynamic> json) =>
       timestamp: DateTime.parse(json['timestamp'] as String),
     );
 
-Map<String, dynamic> _$$AccessAuditLogImplToJson(
-        _$AccessAuditLogImpl instance) =>
+Map<String, dynamic> _$AccessAuditLogToJson(_AccessAuditLog instance) =>
     <String, dynamic>{
       'id': instance.id,
       'clientId': instance.clientId,
@@ -625,9 +607,9 @@ Map<String, dynamic> _$$AccessAuditLogImplToJson(
       'timestamp': instance.timestamp.toIso8601String(),
     };
 
-_$NotificationPreferencesImpl _$$NotificationPreferencesImplFromJson(
+_NotificationPreferences _$NotificationPreferencesFromJson(
         Map<String, dynamic> json) =>
-    _$NotificationPreferencesImpl(
+    _NotificationPreferences(
       email: json['email'] as bool? ?? true,
       sms: json['sms'] as bool? ?? false,
       push: json['push'] as bool? ?? true,
@@ -640,8 +622,8 @@ _$NotificationPreferencesImpl _$$NotificationPreferencesImplFromJson(
           : QuietHours.fromJson(json['quietHours'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$NotificationPreferencesImplToJson(
-        _$NotificationPreferencesImpl instance) =>
+Map<String, dynamic> _$NotificationPreferencesToJson(
+        _NotificationPreferences instance) =>
     <String, dynamic>{
       'email': instance.email,
       'sms': instance.sms,
@@ -653,20 +635,19 @@ Map<String, dynamic> _$$NotificationPreferencesImplToJson(
       'quietHours': instance.quietHours,
     };
 
-_$QuietHoursImpl _$$QuietHoursImplFromJson(Map<String, dynamic> json) =>
-    _$QuietHoursImpl(
+_QuietHours _$QuietHoursFromJson(Map<String, dynamic> json) => _QuietHours(
       start: json['start'] as String,
       end: json['end'] as String,
     );
 
-Map<String, dynamic> _$$QuietHoursImplToJson(_$QuietHoursImpl instance) =>
+Map<String, dynamic> _$QuietHoursToJson(_QuietHours instance) =>
     <String, dynamic>{
       'start': instance.start,
       'end': instance.end,
     };
 
-_$DocumentShareImpl _$$DocumentShareImplFromJson(Map<String, dynamic> json) =>
-    _$DocumentShareImpl(
+_DocumentShare _$DocumentShareFromJson(Map<String, dynamic> json) =>
+    _DocumentShare(
       id: json['id'] as String,
       clientId: json['clientId'] as String,
       documentId: json['documentId'] as String,
@@ -683,7 +664,7 @@ _$DocumentShareImpl _$$DocumentShareImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['expiresAt'] as String),
     );
 
-Map<String, dynamic> _$$DocumentShareImplToJson(_$DocumentShareImpl instance) =>
+Map<String, dynamic> _$DocumentShareToJson(_DocumentShare instance) =>
     <String, dynamic>{
       'id': instance.id,
       'clientId': instance.clientId,
@@ -695,9 +676,8 @@ Map<String, dynamic> _$$DocumentShareImplToJson(_$DocumentShareImpl instance) =>
       'expiresAt': instance.expiresAt?.toIso8601String(),
     };
 
-_$PushNotificationImpl _$$PushNotificationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PushNotificationImpl(
+_PushNotification _$PushNotificationFromJson(Map<String, dynamic> json) =>
+    _PushNotification(
       id: json['id'] as String,
       userId: json['userId'] as String,
       title: json['title'] as String,
@@ -715,8 +695,7 @@ _$PushNotificationImpl _$$PushNotificationImplFromJson(
           : DateTime.parse(json['readAt'] as String),
     );
 
-Map<String, dynamic> _$$PushNotificationImplToJson(
-        _$PushNotificationImpl instance) =>
+Map<String, dynamic> _$PushNotificationToJson(_PushNotification instance) =>
     <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
@@ -731,40 +710,36 @@ Map<String, dynamic> _$$PushNotificationImplToJson(
       'readAt': instance.readAt?.toIso8601String(),
     };
 
-_$NotificationActionImpl _$$NotificationActionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$NotificationActionImpl(
+_NotificationAction _$NotificationActionFromJson(Map<String, dynamic> json) =>
+    _NotificationAction(
       id: json['id'] as String,
       label: json['label'] as String,
       action: json['action'] as String,
     );
 
-Map<String, dynamic> _$$NotificationActionImplToJson(
-        _$NotificationActionImpl instance) =>
+Map<String, dynamic> _$NotificationActionToJson(_NotificationAction instance) =>
     <String, dynamic>{
       'id': instance.id,
       'label': instance.label,
       'action': instance.action,
     };
 
-_$WebSocketEventImpl _$$WebSocketEventImplFromJson(Map<String, dynamic> json) =>
-    _$WebSocketEventImpl(
+_WebSocketEvent _$WebSocketEventFromJson(Map<String, dynamic> json) =>
+    _WebSocketEvent(
       event: json['event'] as String,
       data: json['data'] as Map<String, dynamic>,
       timestamp: DateTime.parse(json['timestamp'] as String),
     );
 
-Map<String, dynamic> _$$WebSocketEventImplToJson(
-        _$WebSocketEventImpl instance) =>
+Map<String, dynamic> _$WebSocketEventToJson(_WebSocketEvent instance) =>
     <String, dynamic>{
       'event': instance.event,
       'data': instance.data,
       'timestamp': instance.timestamp.toIso8601String(),
     };
 
-_$ConnectionStatusImpl _$$ConnectionStatusImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ConnectionStatusImpl(
+_ConnectionStatus _$ConnectionStatusFromJson(Map<String, dynamic> json) =>
+    _ConnectionStatus(
       connected: json['connected'] as bool,
       error: json['error'] as String?,
       lastConnected: json['lastConnected'] == null
@@ -775,8 +750,7 @@ _$ConnectionStatusImpl _$$ConnectionStatusImplFromJson(
           : DateTime.parse(json['lastDisconnected'] as String),
     );
 
-Map<String, dynamic> _$$ConnectionStatusImplToJson(
-        _$ConnectionStatusImpl instance) =>
+Map<String, dynamic> _$ConnectionStatusToJson(_ConnectionStatus instance) =>
     <String, dynamic>{
       'connected': instance.connected,
       'error': instance.error,
@@ -784,8 +758,8 @@ Map<String, dynamic> _$$ConnectionStatusImplToJson(
       'lastDisconnected': instance.lastDisconnected?.toIso8601String(),
     };
 
-_$EmergencyAlertImpl _$$EmergencyAlertImplFromJson(Map<String, dynamic> json) =>
-    _$EmergencyAlertImpl(
+_EmergencyAlert _$EmergencyAlertFromJson(Map<String, dynamic> json) =>
+    _EmergencyAlert(
       id: json['id'] as String,
       appointmentId: json['appointmentId'] as String,
       userId: json['userId'] as String,
@@ -798,8 +772,7 @@ _$EmergencyAlertImpl _$$EmergencyAlertImplFromJson(Map<String, dynamic> json) =>
       priority: json['priority'] as String,
     );
 
-Map<String, dynamic> _$$EmergencyAlertImplToJson(
-        _$EmergencyAlertImpl instance) =>
+Map<String, dynamic> _$EmergencyAlertToJson(_EmergencyAlert instance) =>
     <String, dynamic>{
       'id': instance.id,
       'appointmentId': instance.appointmentId,
@@ -812,9 +785,9 @@ Map<String, dynamic> _$$EmergencyAlertImplToJson(
       'priority': instance.priority,
     };
 
-_$RealtimePortalDashboardImpl _$$RealtimePortalDashboardImplFromJson(
+_RealtimePortalDashboard _$RealtimePortalDashboardFromJson(
         Map<String, dynamic> json) =>
-    _$RealtimePortalDashboardImpl(
+    _RealtimePortalDashboard(
       upcomingAppointments: (json['upcomingAppointments'] as List<dynamic>)
           .map((e) => AppointmentStatus.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -835,8 +808,8 @@ _$RealtimePortalDashboardImpl _$$RealtimePortalDashboardImplFromJson(
               json['lastServiceConfirmation'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$RealtimePortalDashboardImplToJson(
-        _$RealtimePortalDashboardImpl instance) =>
+Map<String, dynamic> _$RealtimePortalDashboardToJson(
+        _RealtimePortalDashboard instance) =>
     <String, dynamic>{
       'upcomingAppointments': instance.upcomingAppointments,
       'activeTracking': instance.activeTracking,

@@ -5,7 +5,8 @@ import 'package:carenest/app/features/notifications/models/notification_model.da
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/messaging_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/widgets/message_bubble.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
@@ -188,9 +189,13 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         conversation.workerId == me;
 
     if (isWorkerPerspective) {
-      return 'Client ${_shortId(conversation.clientId)}';
+      return conversation.clientName?.isNotEmpty == true
+          ? conversation.clientName!
+          : 'Client ${_shortId(conversation.clientId)}';
     }
-    return 'Worker ${_shortId(conversation.workerId)}';
+    return conversation.workerName?.isNotEmpty == true
+        ? conversation.workerName!
+        : 'Worker ${_shortId(conversation.workerId)}';
   }
 
   String _shortId(String value) {
@@ -421,37 +426,93 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
 
     if (_isBootstrapping) {
       return Scaffold(
-        backgroundColor: AppColors.colorBackground,
+        backgroundColor: BauhausDesign.backgroundLight,
         appBar: AppBar(
-          backgroundColor: AppColors.colorPrimary,
-          title: const Text('Secure Messaging'),
+          backgroundColor: BauhausDesign.surfaceWhite,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            'Secure Messaging',
+            style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.5),
+            child: Container(color: BauhausDesign.neutral, height: 1.5),
+          ),
         ),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+          ),
+        ),
       );
     }
 
     if (_identityError != null) {
       return Scaffold(
-        backgroundColor: AppColors.colorBackground,
+        backgroundColor: BauhausDesign.backgroundLight,
         appBar: AppBar(
-          backgroundColor: AppColors.colorPrimary,
-          title: const Text('Secure Messaging'),
+          backgroundColor: BauhausDesign.surfaceWhite,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            'Secure Messaging',
+            style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.5),
+            child: Container(color: BauhausDesign.neutral, height: 1.5),
+          ),
         ),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline, size: 44),
-                const SizedBox(height: 12),
-                Text(_identityError!, textAlign: TextAlign.center),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: _bootstrap,
-                  child: const Text('Retry'),
-                ),
-              ],
+            padding: const EdgeInsets.all(BauhausDesign.space6),
+            child: Container(
+              padding: const EdgeInsets.all(BauhausDesign.space6),
+              decoration: BauhausDesign.cardDecoration,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: BauhausDesign.primary),
+                  const SizedBox(height: BauhausDesign.space4),
+                  Text(
+                    _identityError!,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: BauhausDesign.fontMd,
+                      fontWeight: FontWeight.w600,
+                      color: BauhausDesign.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: BauhausDesign.space6),
+                  ElevatedButton(
+                    onPressed: _bootstrap,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: BauhausDesign.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                        side: BorderSide(color: BauhausDesign.neutral, width: 2),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space6,
+                        vertical: BauhausDesign.space3,
+                      ),
+                    ),
+                    child: Text(
+                      'Retry',
+                      style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -459,49 +520,58 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
+      backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: AppColors.colorPrimary,
+        backgroundColor: BauhausDesign.surfaceWhite,
         elevation: 0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Secure Messaging',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+              style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                    color: BauhausDesign.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
             ),
             Text(
               widget.userType.toLowerCase() == 'worker'
-                  ? 'Client communication'
-                  : 'Worker communication',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 12,
+                  ? 'CLIENT COMMUNICATION'
+                  : 'WORKER COMMUNICATION',
+              style: BauhausDesign.neoMonoStyle(
+                context,
+                color: BauhausDesign.textMuted,
+                fontSize: 10,
               ),
             ),
           ],
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
           onPressed: () => Navigator.pop(context),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.5),
+          child: Container(color: BauhausDesign.neutral, height: 1.5),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
+            icon: const Icon(Icons.refresh, color: BauhausDesign.primary),
             onPressed: _loadConversations,
           ),
           IconButton(
-            icon: const Icon(Icons.info_outline, color: Colors.white),
+            icon: const Icon(Icons.info_outline, color: BauhausDesign.primary),
             onPressed: _showEncryptionInfo,
           ),
         ],
       ),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+              ),
+            )
           : state.activeConversation == null
               ? _buildConversationsList(state)
               : _buildChatView(state),
@@ -511,40 +581,47 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   Widget _buildConversationsList(MessagingState state) {
     if (state.conversations.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.chat_bubble_outline,
-              size: 64,
-              color: const Color(0xFF666666).withOpacity(0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No Conversations',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.colorFontPrimary,
+        child: Container(
+          margin: const EdgeInsets.all(BauhausDesign.space6),
+          padding: const EdgeInsets.all(BauhausDesign.space6),
+          decoration: BauhausDesign.cardDecoration,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.chat_bubble_outline,
+                size: 64,
+                color: BauhausDesign.primary,
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Messages for active service shifts will appear here.',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
+              const SizedBox(height: BauhausDesign.space4),
+              Text(
+                'No Conversations',
+                style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-            ),
-          ],
+              const SizedBox(height: BauhausDesign.space2),
+              Text(
+                'Messages for active service shifts will appear here.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: BauhausDesign.fontMd,
+                  color: BauhausDesign.textMuted,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
 
     return RefreshIndicator(
+      color: BauhausDesign.primary,
       onRefresh: _loadConversations,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
         itemCount: state.conversations.length,
         itemBuilder: (context, index) {
           final conversation = state.conversations[index];
@@ -557,75 +634,85 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   Widget _buildConversationCard(MessageThread conversation) {
     final unread = conversation.unreadCount?[_effectiveUserId ?? ''] ?? 0;
 
-    return InkWell(
-      onTap: () => _openConversation(conversation),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: AppColors.colorPrimary.withOpacity(0.1),
-              child: Icon(Icons.person, color: AppColors.colorPrimary),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _conversationTitle(conversation),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.colorFontPrimary,
+    return Container(
+      margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
+      decoration: BauhausDesign.cardDecoration,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _openConversation(conversation),
+          child: Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            child: Row(
+              children: [
+                // Square Avatar with black border
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.primaryBlue,
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: BauhausDesign.borderThick,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _sanitizePreview(conversation.lastMessage),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF666666),
+                  child: const Icon(Icons.person, color: Colors.white, size: 24),
+                ),
+                const SizedBox(width: BauhausDesign.space4),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _conversationTitle(conversation),
+                        style: GoogleFonts.inter(
+                          fontSize: BauhausDesign.fontLg,
+                          fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: BauhausDesign.space1),
+                      Text(
+                        _sanitizePreview(conversation.lastMessage),
+                        style: GoogleFonts.inter(
+                          fontSize: BauhausDesign.fontMd,
+                          color: BauhausDesign.textMuted,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                if (unread > 0)
+                  Container(
+                    margin: const EdgeInsets.only(right: BauhausDesign.space3),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.primaryRed,
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: BauhausDesign.borderThin,
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    child: Text(
+                      unread.toString(),
+                      style: BauhausDesign.neoMonoStyle(
+                        context,
+                        color: Colors.white,
+                        fontSize: BauhausDesign.fontXs,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  color: BauhausDesign.neutral,
+                  size: 16,
+                ),
+              ],
             ),
-            if (unread > 0)
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.colorPrimary,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  unread.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            const Icon(Icons.arrow_forward_ios,
-                color: Color(0xFF666666), size: 16),
-          ],
+          ),
         ),
       ),
     );
@@ -634,20 +721,30 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   Widget _buildChatView(MessagingState state) {
     return Column(
       children: [
+        // Solid black bottom border on active channel status block
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: AppColors.colorSuccess.withOpacity(0.1),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: const BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            border: Border(
+              bottom: BorderSide(
+                color: BauhausDesign.neutral,
+                width: BauhausDesign.borderThick,
+              ),
+            ),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.lock, color: AppColors.colorSuccess, size: 16),
+              const Icon(Icons.lock, color: BauhausDesign.success, size: 16),
               const SizedBox(width: 8),
               Text(
-                'Encrypted channel active',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.colorSuccess,
-                  fontWeight: FontWeight.w500,
+                'ENCRYPTED CHANNEL ACTIVE',
+                style: BauhausDesign.neoMonoStyle(
+                  context,
+                  color: BauhausDesign.success,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -655,15 +752,23 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         ),
         Expanded(
           child: state.messages.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No messages yet',
-                    style: TextStyle(fontSize: 14, color: Color(0xFF666666)),
+              ? Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space4),
+                    decoration: BauhausDesign.cardDecoration,
+                    child: Text(
+                      'No messages yet',
+                      style: GoogleFonts.inter(
+                        fontSize: BauhausDesign.fontMd,
+                        fontWeight: FontWeight.w600,
+                        color: BauhausDesign.textMuted,
+                      ),
+                    ),
                   ),
                 )
               : ListView.builder(
                   controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     final message = state.messages[index];
@@ -675,57 +780,53 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   },
                 ),
         ),
+        // Message composer with heavy border and solid outline button
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          decoration: const BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            border: Border(
+              top: BorderSide(
+                color: BauhausDesign.neutral,
+                width: BauhausDesign.borderThick,
               ),
-            ],
+            ),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  style: TextStyle(
-                    color: AppColors.colorFontPrimary,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  cursorColor: AppColors.colorFontPrimary,
-                  decoration: InputDecoration(
-                    hintText: 'Type a message...',
-                    hintStyle: const TextStyle(color: Color(0xFF666666)),
-                    filled: true,
-                    fillColor: AppColors.colorBackground,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      borderSide: BorderSide.none,
+          child: SafeArea(
+            top: false,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    style: GoogleFonts.inter(
+                      color: BauhausDesign.textDark,
+                      fontSize: BauhausDesign.fontMd,
+                      fontWeight: FontWeight.w500,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
+                    cursorColor: BauhausDesign.neutral,
+                    decoration: BauhausDesign.inputDecoration('Type a message...'),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.colorPrimary,
-                  shape: BoxShape.circle,
+                const SizedBox(width: BauhausDesign.space3),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.primary,
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: BauhausDesign.borderThick,
+                    ),
+                    boxShadow: const [BauhausDesign.shadowHardSm],
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.send, color: Colors.white, size: 18),
+                    onPressed: state.isSending ? null : _sendMessage,
+                  ),
                 ),
-                child: IconButton(
-                  icon: const Icon(Icons.send, color: Colors.white),
-                  onPressed: state.isSending ? null : _sendMessage,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -736,11 +837,22 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: BauhausDesign.backgroundLight,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: BauhausDesign.neutral, width: 2.5),
+        ),
         title: Row(
           children: [
-            Icon(Icons.lock, color: AppColors.colorSuccess),
+            const Icon(Icons.lock, color: BauhausDesign.success, size: 24),
             const SizedBox(width: 12),
-            const Text('Security Info'),
+            Text(
+              'SECURITY INFO',
+              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: BauhausDesign.textDark,
+                  ),
+            ),
           ],
         ),
         content: Column(
@@ -749,13 +861,13 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           children: [
             Text(
               'Current secure messaging protection:',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.colorFontPrimary,
+              style: GoogleFonts.inter(
+                fontSize: BauhausDesign.fontMd,
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             _buildEncryptionFeature('AES-256 message encryption'),
             _buildEncryptionFeature('Authenticated API requests'),
             _buildEncryptionFeature('Shift-scoped conversation access'),
@@ -765,10 +877,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Close',
-              style: TextStyle(color: AppColors.colorPrimary),
+            style: TextButton.styleFrom(
+              foregroundColor: BauhausDesign.primary,
+              textStyle: GoogleFonts.inter(fontWeight: FontWeight.bold),
             ),
+            child: const Text('CLOSE'),
           ),
         ],
       ),
@@ -777,17 +890,18 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
 
   Widget _buildEncryptionFeature(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: AppColors.colorSuccess, size: 16),
-          const SizedBox(width: 8),
+          const Icon(Icons.check_circle, color: BauhausDesign.success, size: 18),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Color(0xFF666666),
+              style: GoogleFonts.inter(
+                fontSize: BauhausDesign.fontMd,
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

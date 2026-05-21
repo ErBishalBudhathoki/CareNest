@@ -4,7 +4,7 @@ part 'trip.freezed.dart';
 part 'trip.g.dart';
 
 @freezed
-class Trip with _$Trip {
+abstract class Trip with _$Trip {
   const factory Trip({
     @JsonKey(name: '_id') required String id,
     required String organizationId,
@@ -28,7 +28,7 @@ class Trip with _$Trip {
 }
 
 @freezed
-class EmployeeInfo with _$EmployeeInfo {
+abstract class EmployeeInfo with _$EmployeeInfo {
   const factory EmployeeInfo({
     String? firstName,
     String? lastName,

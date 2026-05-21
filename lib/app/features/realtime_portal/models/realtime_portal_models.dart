@@ -8,7 +8,7 @@ part 'realtime_portal_models.g.dart';
 // ============================================================================
 
 @freezed
-class LiveLocation with _$LiveLocation {
+abstract class LiveLocation with _$LiveLocation {
   const factory LiveLocation({
     required String appointmentId,
     required String workerId,
@@ -26,7 +26,7 @@ class LiveLocation with _$LiveLocation {
 }
 
 @freezed
-class LocationUpdate with _$LocationUpdate {
+abstract class LocationUpdate with _$LocationUpdate {
   const factory LocationUpdate({
     required double latitude,
     required double longitude,
@@ -39,7 +39,7 @@ class LocationUpdate with _$LocationUpdate {
 }
 
 @freezed
-class GeofenceEvent with _$GeofenceEvent {
+abstract class GeofenceEvent with _$GeofenceEvent {
   const factory GeofenceEvent({
     required String appointmentId,
     required String event, // 'approaching', 'arrived', 'departed'
@@ -54,7 +54,7 @@ class GeofenceEvent with _$GeofenceEvent {
 }
 
 @freezed
-class TrackingSession with _$TrackingSession {
+abstract class TrackingSession with _$TrackingSession {
   const factory TrackingSession({
     required String sessionId,
     required String appointmentId,
@@ -73,7 +73,7 @@ class TrackingSession with _$TrackingSession {
 }
 
 @freezed
-class ClientLocation with _$ClientLocation {
+abstract class ClientLocation with _$ClientLocation {
   const factory ClientLocation({
     required double lat,
     required double lng,
@@ -85,7 +85,7 @@ class ClientLocation with _$ClientLocation {
 }
 
 @freezed
-class ETACalculation with _$ETACalculation {
+abstract class ETACalculation with _$ETACalculation {
   const factory ETACalculation({
     required int minutes,
     required double distance,
@@ -99,7 +99,7 @@ class ETACalculation with _$ETACalculation {
 }
 
 @freezed
-class AppointmentStatus with _$AppointmentStatus {
+abstract class AppointmentStatus with _$AppointmentStatus {
   const factory AppointmentStatus({
     required String appointmentId,
     required String status, // 'scheduled', 'en_route', 'arrived', 'in_progress', 'completed'
@@ -113,7 +113,7 @@ class AppointmentStatus with _$AppointmentStatus {
 }
 
 @freezed
-class ServiceProgress with _$ServiceProgress {
+abstract class ServiceProgress with _$ServiceProgress {
   const factory ServiceProgress({
     required String appointmentId,
     required int progress,
@@ -128,7 +128,7 @@ class ServiceProgress with _$ServiceProgress {
 }
 
 @freezed
-class ProgressStep with _$ProgressStep {
+abstract class ProgressStep with _$ProgressStep {
   const factory ProgressStep({
     required String id,
     required String name,
@@ -145,7 +145,7 @@ class ProgressStep with _$ProgressStep {
 // ============================================================================
 
 @freezed
-class SecureMessage with _$SecureMessage {
+abstract class SecureMessage with _$SecureMessage {
   const factory SecureMessage({
     required String id,
     required String conversationId,
@@ -166,7 +166,7 @@ class SecureMessage with _$SecureMessage {
 }
 
 @freezed
-class MessageThread with _$MessageThread {
+abstract class MessageThread with _$MessageThread {
   const factory MessageThread({
     required String id,
     required String appointmentId,
@@ -178,6 +178,11 @@ class MessageThread with _$MessageThread {
     String? lastMessage,
     DateTime? lastMessageAt,
     Map<String, int>? unreadCount,
+    /// Resolved human-readable name for the worker in this conversation.
+    /// Populated by the backend when listing conversations.
+    String? workerName,
+    /// Resolved human-readable name for the client in this conversation.
+    String? clientName,
   }) = _MessageThread;
 
   factory MessageThread.fromJson(Map<String, dynamic> json) =>
@@ -185,7 +190,7 @@ class MessageThread with _$MessageThread {
 }
 
 @freezed
-class MessageAttachment with _$MessageAttachment {
+abstract class MessageAttachment with _$MessageAttachment {
   const factory MessageAttachment({
     required String url,
     required String name,
@@ -199,7 +204,7 @@ class MessageAttachment with _$MessageAttachment {
 }
 
 @freezed
-class VoiceMessage with _$VoiceMessage {
+abstract class VoiceMessage with _$VoiceMessage {
   const factory VoiceMessage({
     required String id,
     required String conversationId,
@@ -215,7 +220,7 @@ class VoiceMessage with _$VoiceMessage {
 }
 
 @freezed
-class TypingIndicator with _$TypingIndicator {
+abstract class TypingIndicator with _$TypingIndicator {
   const factory TypingIndicator({
     required String conversationId,
     required String userId,
@@ -232,7 +237,7 @@ class TypingIndicator with _$TypingIndicator {
 // ============================================================================
 
 @freezed
-class DigitalSignature with _$DigitalSignature {
+abstract class DigitalSignature with _$DigitalSignature {
   const factory DigitalSignature({
     required String id,
     required String appointmentId,
@@ -250,7 +255,7 @@ class DigitalSignature with _$DigitalSignature {
 }
 
 @freezed
-class ServiceConfirmation with _$ServiceConfirmation {
+abstract class ServiceConfirmation with _$ServiceConfirmation {
   const factory ServiceConfirmation({
     required String id,
     required String appointmentId,
@@ -272,7 +277,7 @@ class ServiceConfirmation with _$ServiceConfirmation {
 }
 
 @freezed
-class ChecklistItem with _$ChecklistItem {
+abstract class ChecklistItem with _$ChecklistItem {
   const factory ChecklistItem({
     required int id,
     required String item,
@@ -287,7 +292,7 @@ class ChecklistItem with _$ChecklistItem {
 }
 
 @freezed
-class ClientRating with _$ClientRating {
+abstract class ClientRating with _$ClientRating {
   const factory ClientRating({
     required int stars, // 1-5
     String? feedback,
@@ -300,7 +305,7 @@ class ClientRating with _$ClientRating {
 }
 
 @freezed
-class IncidentReport with _$IncidentReport {
+abstract class IncidentReport with _$IncidentReport {
   const factory IncidentReport({
     required String id,
     required String appointmentId,
@@ -321,7 +326,7 @@ class IncidentReport with _$IncidentReport {
 }
 
 @freezed
-class ServiceReport with _$ServiceReport {
+abstract class ServiceReport with _$ServiceReport {
   const factory ServiceReport({
     required String appointmentId,
     required String reportUrl,
@@ -338,7 +343,7 @@ class ServiceReport with _$ServiceReport {
 // ============================================================================
 
 @freezed
-class FamilyMember with _$FamilyMember {
+abstract class FamilyMember with _$FamilyMember {
   const factory FamilyMember({
     required String id,
     required String userId,
@@ -360,7 +365,7 @@ class FamilyMember with _$FamilyMember {
 }
 
 @freezed
-class FamilyPermissions with _$FamilyPermissions {
+abstract class FamilyPermissions with _$FamilyPermissions {
   const factory FamilyPermissions({
     required bool viewAppointments,
     required bool viewDocuments,
@@ -379,7 +384,7 @@ class FamilyPermissions with _$FamilyPermissions {
 }
 
 @freezed
-class FamilyInvitation with _$FamilyInvitation {
+abstract class FamilyInvitation with _$FamilyInvitation {
   const factory FamilyInvitation({
     required String id,
     required String clientId,
@@ -400,7 +405,7 @@ class FamilyInvitation with _$FamilyInvitation {
 }
 
 @freezed
-class AccessAuditLog with _$AccessAuditLog {
+abstract class AccessAuditLog with _$AccessAuditLog {
   const factory AccessAuditLog({
     required String id,
     required String clientId,
@@ -416,7 +421,7 @@ class AccessAuditLog with _$AccessAuditLog {
 }
 
 @freezed
-class NotificationPreferences with _$NotificationPreferences {
+abstract class NotificationPreferences with _$NotificationPreferences {
   const factory NotificationPreferences({
     @Default(true) bool email,
     @Default(false) bool sms,
@@ -433,7 +438,7 @@ class NotificationPreferences with _$NotificationPreferences {
 }
 
 @freezed
-class QuietHours with _$QuietHours {
+abstract class QuietHours with _$QuietHours {
   const factory QuietHours({
     required String start,
     required String end,
@@ -444,7 +449,7 @@ class QuietHours with _$QuietHours {
 }
 
 @freezed
-class DocumentShare with _$DocumentShare {
+abstract class DocumentShare with _$DocumentShare {
   const factory DocumentShare({
     required String id,
     required String clientId,
@@ -465,7 +470,7 @@ class DocumentShare with _$DocumentShare {
 // ============================================================================
 
 @freezed
-class PushNotification with _$PushNotification {
+abstract class PushNotification with _$PushNotification {
   const factory PushNotification({
     required String id,
     required String userId,
@@ -485,7 +490,7 @@ class PushNotification with _$PushNotification {
 }
 
 @freezed
-class NotificationAction with _$NotificationAction {
+abstract class NotificationAction with _$NotificationAction {
   const factory NotificationAction({
     required String id,
     required String label,
@@ -501,7 +506,7 @@ class NotificationAction with _$NotificationAction {
 // ============================================================================
 
 @freezed
-class WebSocketEvent with _$WebSocketEvent {
+abstract class WebSocketEvent with _$WebSocketEvent {
   const factory WebSocketEvent({
     required String event,
     required Map<String, dynamic> data,
@@ -513,7 +518,7 @@ class WebSocketEvent with _$WebSocketEvent {
 }
 
 @freezed
-class ConnectionStatus with _$ConnectionStatus {
+abstract class ConnectionStatus with _$ConnectionStatus {
   const factory ConnectionStatus({
     required bool connected,
     String? error,
@@ -530,7 +535,7 @@ class ConnectionStatus with _$ConnectionStatus {
 // ============================================================================
 
 @freezed
-class EmergencyAlert with _$EmergencyAlert {
+abstract class EmergencyAlert with _$EmergencyAlert {
   const factory EmergencyAlert({
     required String id,
     required String appointmentId,
@@ -552,7 +557,7 @@ class EmergencyAlert with _$EmergencyAlert {
 // ============================================================================
 
 @freezed
-class RealtimePortalDashboard with _$RealtimePortalDashboard {
+abstract class RealtimePortalDashboard with _$RealtimePortalDashboard {
   const factory RealtimePortalDashboard({
     required List<AppointmentStatus> upcomingAppointments,
     LiveLocation? activeTracking,
