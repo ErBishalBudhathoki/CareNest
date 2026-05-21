@@ -61,10 +61,11 @@ class InvoiceAIRepository {
   /// Auto-generate invoices for a period
   Future<AutoGenerateResult> autoGenerateInvoices({
     required String organizationId,
-    required DateTime startDate,
-    required DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
     bool validateBeforeGeneration = true,
     bool groupByClient = false,
+    bool forceManual = false,
   }) async {
     try {
       final response = await _apiMethod.autoGenerateInvoices(
@@ -73,6 +74,7 @@ class InvoiceAIRepository {
         endDate: endDate,
         validateBeforeGeneration: validateBeforeGeneration,
         groupByClient: groupByClient,
+        forceManual: forceManual,
       );
 
       if (response['success'] == true && response['data'] != null) {
