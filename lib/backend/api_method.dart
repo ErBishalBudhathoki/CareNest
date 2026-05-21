@@ -7100,19 +7100,21 @@ class ApiMethod extends ChangeNotifier {
   /// Auto-generate invoices for a period
   Future<Map<String, dynamic>> autoGenerateInvoices({
     required String organizationId,
-    required DateTime startDate,
-    required DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
     bool validateBeforeGeneration = true,
     bool groupByClient = false,
+    bool forceManual = false,
   }) async {
     try {
       final endpoint = 'invoice-ai/auto-generate';
       final body = {
         'organizationId': organizationId,
-        'startDate': startDate.toIso8601String(),
-        'endDate': endDate.toIso8601String(),
+        if (startDate != null) 'startDate': startDate.toIso8601String(),
+        if (endDate != null) 'endDate': endDate.toIso8601String(),
         'validateBeforeGeneration': validateBeforeGeneration,
         'groupByClient': groupByClient,
+        'forceManual': forceManual,
       };
       return await post(endpoint, body: body);
     } catch (e) {
