@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,37 +9,69 @@ part of 'compliance_checklist.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-ComplianceChecklist _$ComplianceChecklistFromJson(Map<String, dynamic> json) {
-  return _ComplianceChecklist.fromJson(json);
-}
 
 /// @nodoc
 mixin _$ComplianceChecklist {
   @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  List<ChecklistItem> get items => throw _privateConstructorUsedError;
-  List<String>? get targetRoles => throw _privateConstructorUsedError;
+  String? get id;
+  String get title;
+  String get description;
+  List<ChecklistItem> get items;
+  List<String>? get targetRoles;
   @JsonKey(includeFromJson: false)
-  UserChecklistStatus? get userStatus => throw _privateConstructorUsedError;
+  UserChecklistStatus? get userStatus;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  /// Create a copy of ComplianceChecklist
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $ComplianceChecklistCopyWith<ComplianceChecklist> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$ComplianceChecklistCopyWithImpl<ComplianceChecklist>(
+          this as ComplianceChecklist, _$identity);
+
+  /// Serializes this ComplianceChecklist to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ComplianceChecklist &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(other.items, items) &&
+            const DeepCollectionEquality()
+                .equals(other.targetRoles, targetRoles) &&
+            (identical(other.userStatus, userStatus) ||
+                other.userStatus == userStatus));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      title,
+      description,
+      const DeepCollectionEquality().hash(items),
+      const DeepCollectionEquality().hash(targetRoles),
+      userStatus);
+
+  @override
+  String toString() {
+    return 'ComplianceChecklist(id: $id, title: $title, description: $description, items: $items, targetRoles: $targetRoles, userStatus: $userStatus)';
+  }
 }
 
 /// @nodoc
-abstract class $ComplianceChecklistCopyWith<$Res> {
+abstract mixin class $ComplianceChecklistCopyWith<$Res> {
   factory $ComplianceChecklistCopyWith(
-          ComplianceChecklist value, $Res Function(ComplianceChecklist) then) =
-      _$ComplianceChecklistCopyWithImpl<$Res, ComplianceChecklist>;
+          ComplianceChecklist value, $Res Function(ComplianceChecklist) _then) =
+      _$ComplianceChecklistCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
@@ -53,15 +85,15 @@ abstract class $ComplianceChecklistCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ComplianceChecklistCopyWithImpl<$Res, $Val extends ComplianceChecklist>
+class _$ComplianceChecklistCopyWithImpl<$Res>
     implements $ComplianceChecklistCopyWith<$Res> {
-  _$ComplianceChecklistCopyWithImpl(this._value, this._then);
+  _$ComplianceChecklistCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final ComplianceChecklist _self;
+  final $Res Function(ComplianceChecklist) _then;
 
+  /// Create a copy of ComplianceChecklist
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -72,118 +104,234 @@ class _$ComplianceChecklistCopyWithImpl<$Res, $Val extends ComplianceChecklist>
     Object? targetRoles = freezed,
     Object? userStatus = freezed,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
       title: null == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
       description: null == description
-          ? _value.description
+          ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
       items: null == items
-          ? _value.items
+          ? _self.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<ChecklistItem>,
       targetRoles: freezed == targetRoles
-          ? _value.targetRoles
+          ? _self.targetRoles
           : targetRoles // ignore: cast_nullable_to_non_nullable
               as List<String>?,
       userStatus: freezed == userStatus
-          ? _value.userStatus
+          ? _self.userStatus
           : userStatus // ignore: cast_nullable_to_non_nullable
               as UserChecklistStatus?,
-    ) as $Val);
+    ));
   }
 
+  /// Create a copy of ComplianceChecklist
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $UserChecklistStatusCopyWith<$Res>? get userStatus {
-    if (_value.userStatus == null) {
+    if (_self.userStatus == null) {
       return null;
     }
 
-    return $UserChecklistStatusCopyWith<$Res>(_value.userStatus!, (value) {
-      return _then(_value.copyWith(userStatus: value) as $Val);
+    return $UserChecklistStatusCopyWith<$Res>(_self.userStatus!, (value) {
+      return _then(_self.copyWith(userStatus: value));
     });
   }
 }
 
-/// @nodoc
-abstract class _$$ComplianceChecklistImplCopyWith<$Res>
-    implements $ComplianceChecklistCopyWith<$Res> {
-  factory _$$ComplianceChecklistImplCopyWith(_$ComplianceChecklistImpl value,
-          $Res Function(_$ComplianceChecklistImpl) then) =
-      __$$ComplianceChecklistImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String title,
-      String description,
-      List<ChecklistItem> items,
-      List<String>? targetRoles,
-      @JsonKey(includeFromJson: false) UserChecklistStatus? userStatus});
+/// Adds pattern-matching-related methods to [ComplianceChecklist].
+extension ComplianceChecklistPatterns on ComplianceChecklist {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-  @override
-  $UserChecklistStatusCopyWith<$Res>? get userStatus;
-}
-
-/// @nodoc
-class __$$ComplianceChecklistImplCopyWithImpl<$Res>
-    extends _$ComplianceChecklistCopyWithImpl<$Res, _$ComplianceChecklistImpl>
-    implements _$$ComplianceChecklistImplCopyWith<$Res> {
-  __$$ComplianceChecklistImplCopyWithImpl(_$ComplianceChecklistImpl _value,
-      $Res Function(_$ComplianceChecklistImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? title = null,
-    Object? description = null,
-    Object? items = null,
-    Object? targetRoles = freezed,
-    Object? userStatus = freezed,
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ComplianceChecklist value)? $default, {
+    required TResult orElse(),
   }) {
-    return _then(_$ComplianceChecklistImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<ChecklistItem>,
-      targetRoles: freezed == targetRoles
-          ? _value._targetRoles
-          : targetRoles // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      userStatus: freezed == userStatus
-          ? _value.userStatus
-          : userStatus // ignore: cast_nullable_to_non_nullable
-              as UserChecklistStatus?,
-    ));
+    final _that = this;
+    switch (_that) {
+      case _ComplianceChecklist() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ComplianceChecklist value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceChecklist():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ComplianceChecklist value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceChecklist() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String title,
+            String description,
+            List<ChecklistItem> items,
+            List<String>? targetRoles,
+            @JsonKey(includeFromJson: false) UserChecklistStatus? userStatus)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceChecklist() when $default != null:
+        return $default(_that.id, _that.title, _that.description, _that.items,
+            _that.targetRoles, _that.userStatus);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String title,
+            String description,
+            List<ChecklistItem> items,
+            List<String>? targetRoles,
+            @JsonKey(includeFromJson: false) UserChecklistStatus? userStatus)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceChecklist():
+        return $default(_that.id, _that.title, _that.description, _that.items,
+            _that.targetRoles, _that.userStatus);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String? id,
+            String title,
+            String description,
+            List<ChecklistItem> items,
+            List<String>? targetRoles,
+            @JsonKey(includeFromJson: false) UserChecklistStatus? userStatus)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceChecklist() when $default != null:
+        return $default(_that.id, _that.title, _that.description, _that.items,
+            _that.targetRoles, _that.userStatus);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$ComplianceChecklistImpl implements _ComplianceChecklist {
-  const _$ComplianceChecklistImpl(
+class _ComplianceChecklist implements ComplianceChecklist {
+  const _ComplianceChecklist(
       {@JsonKey(name: '_id') this.id,
       required this.title,
       required this.description,
@@ -192,9 +340,8 @@ class _$ComplianceChecklistImpl implements _ComplianceChecklist {
       @JsonKey(includeFromJson: false) this.userStatus})
       : _items = items,
         _targetRoles = targetRoles;
-
-  factory _$ComplianceChecklistImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ComplianceChecklistImplFromJson(json);
+  factory _ComplianceChecklist.fromJson(Map<String, dynamic> json) =>
+      _$ComplianceChecklistFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -225,16 +372,27 @@ class _$ComplianceChecklistImpl implements _ComplianceChecklist {
   @JsonKey(includeFromJson: false)
   final UserChecklistStatus? userStatus;
 
+  /// Create a copy of ComplianceChecklist
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ComplianceChecklist(id: $id, title: $title, description: $description, items: $items, targetRoles: $targetRoles, userStatus: $userStatus)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ComplianceChecklistCopyWith<_ComplianceChecklist> get copyWith =>
+      __$ComplianceChecklistCopyWithImpl<_ComplianceChecklist>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ComplianceChecklistToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ComplianceChecklistImpl &&
+            other is _ComplianceChecklist &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
@@ -246,7 +404,7 @@ class _$ComplianceChecklistImpl implements _ComplianceChecklist {
                 other.userStatus == userStatus));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -257,133 +415,153 @@ class _$ComplianceChecklistImpl implements _ComplianceChecklist {
       const DeepCollectionEquality().hash(_targetRoles),
       userStatus);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ComplianceChecklistImplCopyWith<_$ComplianceChecklistImpl> get copyWith =>
-      __$$ComplianceChecklistImplCopyWithImpl<_$ComplianceChecklistImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ComplianceChecklistImplToJson(
-      this,
-    );
+  String toString() {
+    return 'ComplianceChecklist(id: $id, title: $title, description: $description, items: $items, targetRoles: $targetRoles, userStatus: $userStatus)';
   }
 }
 
-abstract class _ComplianceChecklist implements ComplianceChecklist {
-  const factory _ComplianceChecklist(
-      {@JsonKey(name: '_id') final String? id,
-      required final String title,
-      required final String description,
-      required final List<ChecklistItem> items,
-      final List<String>? targetRoles,
-      @JsonKey(includeFromJson: false)
-      final UserChecklistStatus? userStatus}) = _$ComplianceChecklistImpl;
+/// @nodoc
+abstract mixin class _$ComplianceChecklistCopyWith<$Res>
+    implements $ComplianceChecklistCopyWith<$Res> {
+  factory _$ComplianceChecklistCopyWith(_ComplianceChecklist value,
+          $Res Function(_ComplianceChecklist) _then) =
+      __$ComplianceChecklistCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String title,
+      String description,
+      List<ChecklistItem> items,
+      List<String>? targetRoles,
+      @JsonKey(includeFromJson: false) UserChecklistStatus? userStatus});
 
-  factory _ComplianceChecklist.fromJson(Map<String, dynamic> json) =
-      _$ComplianceChecklistImpl.fromJson;
-
   @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  String get title;
-  @override
-  String get description;
-  @override
-  List<ChecklistItem> get items;
-  @override
-  List<String>? get targetRoles;
-  @override
-  @JsonKey(includeFromJson: false)
-  UserChecklistStatus? get userStatus;
-  @override
-  @JsonKey(ignore: true)
-  _$$ComplianceChecklistImplCopyWith<_$ComplianceChecklistImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $UserChecklistStatusCopyWith<$Res>? get userStatus;
 }
 
-ChecklistItem _$ChecklistItemFromJson(Map<String, dynamic> json) {
-  return _ChecklistItem.fromJson(json);
+/// @nodoc
+class __$ComplianceChecklistCopyWithImpl<$Res>
+    implements _$ComplianceChecklistCopyWith<$Res> {
+  __$ComplianceChecklistCopyWithImpl(this._self, this._then);
+
+  final _ComplianceChecklist _self;
+  final $Res Function(_ComplianceChecklist) _then;
+
+  /// Create a copy of ComplianceChecklist
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? title = null,
+    Object? description = null,
+    Object? items = null,
+    Object? targetRoles = freezed,
+    Object? userStatus = freezed,
+  }) {
+    return _then(_ComplianceChecklist(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      items: null == items
+          ? _self._items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<ChecklistItem>,
+      targetRoles: freezed == targetRoles
+          ? _self._targetRoles
+          : targetRoles // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      userStatus: freezed == userStatus
+          ? _self.userStatus
+          : userStatus // ignore: cast_nullable_to_non_nullable
+              as UserChecklistStatus?,
+    ));
+  }
+
+  /// Create a copy of ComplianceChecklist
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserChecklistStatusCopyWith<$Res>? get userStatus {
+    if (_self.userStatus == null) {
+      return null;
+    }
+
+    return $UserChecklistStatusCopyWith<$Res>(_self.userStatus!, (value) {
+      return _then(_self.copyWith(userStatus: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$ChecklistItem {
-  String get text => throw _privateConstructorUsedError;
-  bool get isRequired => throw _privateConstructorUsedError;
+  String get text;
+  bool get isRequired;
   @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
+  String? get id;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $ChecklistItemCopyWith<ChecklistItem> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ChecklistItemCopyWith<$Res> {
-  factory $ChecklistItemCopyWith(
-          ChecklistItem value, $Res Function(ChecklistItem) then) =
-      _$ChecklistItemCopyWithImpl<$Res, ChecklistItem>;
-  @useResult
-  $Res call({String text, bool isRequired, @JsonKey(name: '_id') String? id});
-}
-
-/// @nodoc
-class _$ChecklistItemCopyWithImpl<$Res, $Val extends ChecklistItem>
-    implements $ChecklistItemCopyWith<$Res> {
-  _$ChecklistItemCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of ChecklistItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $ChecklistItemCopyWith<ChecklistItem> get copyWith =>
+      _$ChecklistItemCopyWithImpl<ChecklistItem>(
+          this as ChecklistItem, _$identity);
+
+  /// Serializes this ChecklistItem to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? text = null,
-    Object? isRequired = null,
-    Object? id = freezed,
-  }) {
-    return _then(_value.copyWith(
-      text: null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
-      isRequired: null == isRequired
-          ? _value.isRequired
-          : isRequired // ignore: cast_nullable_to_non_nullable
-              as bool,
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ChecklistItem &&
+            (identical(other.text, text) || other.text == text) &&
+            (identical(other.isRequired, isRequired) ||
+                other.isRequired == isRequired) &&
+            (identical(other.id, id) || other.id == id));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, text, isRequired, id);
+
+  @override
+  String toString() {
+    return 'ChecklistItem(text: $text, isRequired: $isRequired, id: $id)';
   }
 }
 
 /// @nodoc
-abstract class _$$ChecklistItemImplCopyWith<$Res>
-    implements $ChecklistItemCopyWith<$Res> {
-  factory _$$ChecklistItemImplCopyWith(
-          _$ChecklistItemImpl value, $Res Function(_$ChecklistItemImpl) then) =
-      __$$ChecklistItemImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ChecklistItemCopyWith<$Res> {
+  factory $ChecklistItemCopyWith(
+          ChecklistItem value, $Res Function(ChecklistItem) _then) =
+      _$ChecklistItemCopyWithImpl;
   @useResult
   $Res call({String text, bool isRequired, @JsonKey(name: '_id') String? id});
 }
 
 /// @nodoc
-class __$$ChecklistItemImplCopyWithImpl<$Res>
-    extends _$ChecklistItemCopyWithImpl<$Res, _$ChecklistItemImpl>
-    implements _$$ChecklistItemImplCopyWith<$Res> {
-  __$$ChecklistItemImplCopyWithImpl(
-      _$ChecklistItemImpl _value, $Res Function(_$ChecklistItemImpl) _then)
-      : super(_value, _then);
+class _$ChecklistItemCopyWithImpl<$Res>
+    implements $ChecklistItemCopyWith<$Res> {
+  _$ChecklistItemCopyWithImpl(this._self, this._then);
 
+  final ChecklistItem _self;
+  final $Res Function(ChecklistItem) _then;
+
+  /// Create a copy of ChecklistItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -391,33 +569,195 @@ class __$$ChecklistItemImplCopyWithImpl<$Res>
     Object? isRequired = null,
     Object? id = freezed,
   }) {
-    return _then(_$ChecklistItemImpl(
+    return _then(_self.copyWith(
       text: null == text
-          ? _value.text
+          ? _self.text
           : text // ignore: cast_nullable_to_non_nullable
               as String,
       isRequired: null == isRequired
-          ? _value.isRequired
+          ? _self.isRequired
           : isRequired // ignore: cast_nullable_to_non_nullable
               as bool,
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [ChecklistItem].
+extension ChecklistItemPatterns on ChecklistItem {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ChecklistItem value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ChecklistItem() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ChecklistItem value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ChecklistItem():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ChecklistItem value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ChecklistItem() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String text, bool isRequired, @JsonKey(name: '_id') String? id)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ChecklistItem() when $default != null:
+        return $default(_that.text, _that.isRequired, _that.id);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String text, bool isRequired, @JsonKey(name: '_id') String? id)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ChecklistItem():
+        return $default(_that.text, _that.isRequired, _that.id);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String text, bool isRequired, @JsonKey(name: '_id') String? id)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ChecklistItem() when $default != null:
+        return $default(_that.text, _that.isRequired, _that.id);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$ChecklistItemImpl implements _ChecklistItem {
-  const _$ChecklistItemImpl(
+class _ChecklistItem implements ChecklistItem {
+  const _ChecklistItem(
       {required this.text,
       this.isRequired = true,
       @JsonKey(name: '_id') this.id});
-
-  factory _$ChecklistItemImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ChecklistItemImplFromJson(json);
+  factory _ChecklistItem.fromJson(Map<String, dynamic> json) =>
+      _$ChecklistItemFromJson(json);
 
   @override
   final String text;
@@ -428,153 +768,147 @@ class _$ChecklistItemImpl implements _ChecklistItem {
   @JsonKey(name: '_id')
   final String? id;
 
+  /// Create a copy of ChecklistItem
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ChecklistItem(text: $text, isRequired: $isRequired, id: $id)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ChecklistItemCopyWith<_ChecklistItem> get copyWith =>
+      __$ChecklistItemCopyWithImpl<_ChecklistItem>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ChecklistItemToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ChecklistItemImpl &&
+            other is _ChecklistItem &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.isRequired, isRequired) ||
                 other.isRequired == isRequired) &&
             (identical(other.id, id) || other.id == id));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, text, isRequired, id);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ChecklistItemImplCopyWith<_$ChecklistItemImpl> get copyWith =>
-      __$$ChecklistItemImplCopyWithImpl<_$ChecklistItemImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ChecklistItemImplToJson(
-      this,
-    );
+  String toString() {
+    return 'ChecklistItem(text: $text, isRequired: $isRequired, id: $id)';
   }
 }
 
-abstract class _ChecklistItem implements ChecklistItem {
-  const factory _ChecklistItem(
-      {required final String text,
-      final bool isRequired,
-      @JsonKey(name: '_id') final String? id}) = _$ChecklistItemImpl;
-
-  factory _ChecklistItem.fromJson(Map<String, dynamic> json) =
-      _$ChecklistItemImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$ChecklistItemCopyWith<$Res>
+    implements $ChecklistItemCopyWith<$Res> {
+  factory _$ChecklistItemCopyWith(
+          _ChecklistItem value, $Res Function(_ChecklistItem) _then) =
+      __$ChecklistItemCopyWithImpl;
   @override
-  String get text;
-  @override
-  bool get isRequired;
-  @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  @JsonKey(ignore: true)
-  _$$ChecklistItemImplCopyWith<_$ChecklistItemImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String text, bool isRequired, @JsonKey(name: '_id') String? id});
 }
 
-UserChecklistStatus _$UserChecklistStatusFromJson(Map<String, dynamic> json) {
-  return _UserChecklistStatus.fromJson(json);
+/// @nodoc
+class __$ChecklistItemCopyWithImpl<$Res>
+    implements _$ChecklistItemCopyWith<$Res> {
+  __$ChecklistItemCopyWithImpl(this._self, this._then);
+
+  final _ChecklistItem _self;
+  final $Res Function(_ChecklistItem) _then;
+
+  /// Create a copy of ChecklistItem
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? text = null,
+    Object? isRequired = null,
+    Object? id = freezed,
+  }) {
+    return _then(_ChecklistItem(
+      text: null == text
+          ? _self.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String,
+      isRequired: null == isRequired
+          ? _self.isRequired
+          : isRequired // ignore: cast_nullable_to_non_nullable
+              as bool,
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$UserChecklistStatus {
   @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get checklistId => throw _privateConstructorUsedError;
-  Map<String, bool> get itemsStatus => throw _privateConstructorUsedError;
-  bool get isCompleted => throw _privateConstructorUsedError;
-  DateTime get lastUpdated => throw _privateConstructorUsedError;
+  String? get id;
+  String get userId;
+  String get checklistId;
+  Map<String, bool> get itemsStatus;
+  bool get isCompleted;
+  DateTime get lastUpdated;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $UserChecklistStatusCopyWith<UserChecklistStatus> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $UserChecklistStatusCopyWith<$Res> {
-  factory $UserChecklistStatusCopyWith(
-          UserChecklistStatus value, $Res Function(UserChecklistStatus) then) =
-      _$UserChecklistStatusCopyWithImpl<$Res, UserChecklistStatus>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String userId,
-      String checklistId,
-      Map<String, bool> itemsStatus,
-      bool isCompleted,
-      DateTime lastUpdated});
-}
-
-/// @nodoc
-class _$UserChecklistStatusCopyWithImpl<$Res, $Val extends UserChecklistStatus>
-    implements $UserChecklistStatusCopyWith<$Res> {
-  _$UserChecklistStatusCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of UserChecklistStatus
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $UserChecklistStatusCopyWith<UserChecklistStatus> get copyWith =>
+      _$UserChecklistStatusCopyWithImpl<UserChecklistStatus>(
+          this as UserChecklistStatus, _$identity);
+
+  /// Serializes this UserChecklistStatus to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = freezed,
-    Object? userId = null,
-    Object? checklistId = null,
-    Object? itemsStatus = null,
-    Object? isCompleted = null,
-    Object? lastUpdated = null,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      checklistId: null == checklistId
-          ? _value.checklistId
-          : checklistId // ignore: cast_nullable_to_non_nullable
-              as String,
-      itemsStatus: null == itemsStatus
-          ? _value.itemsStatus
-          : itemsStatus // ignore: cast_nullable_to_non_nullable
-              as Map<String, bool>,
-      isCompleted: null == isCompleted
-          ? _value.isCompleted
-          : isCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      lastUpdated: null == lastUpdated
-          ? _value.lastUpdated
-          : lastUpdated // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is UserChecklistStatus &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.checklistId, checklistId) ||
+                other.checklistId == checklistId) &&
+            const DeepCollectionEquality()
+                .equals(other.itemsStatus, itemsStatus) &&
+            (identical(other.isCompleted, isCompleted) ||
+                other.isCompleted == isCompleted) &&
+            (identical(other.lastUpdated, lastUpdated) ||
+                other.lastUpdated == lastUpdated));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userId,
+      checklistId,
+      const DeepCollectionEquality().hash(itemsStatus),
+      isCompleted,
+      lastUpdated);
+
+  @override
+  String toString() {
+    return 'UserChecklistStatus(id: $id, userId: $userId, checklistId: $checklistId, itemsStatus: $itemsStatus, isCompleted: $isCompleted, lastUpdated: $lastUpdated)';
   }
 }
 
 /// @nodoc
-abstract class _$$UserChecklistStatusImplCopyWith<$Res>
-    implements $UserChecklistStatusCopyWith<$Res> {
-  factory _$$UserChecklistStatusImplCopyWith(_$UserChecklistStatusImpl value,
-          $Res Function(_$UserChecklistStatusImpl) then) =
-      __$$UserChecklistStatusImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $UserChecklistStatusCopyWith<$Res> {
+  factory $UserChecklistStatusCopyWith(
+          UserChecklistStatus value, $Res Function(UserChecklistStatus) _then) =
+      _$UserChecklistStatusCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
@@ -586,13 +920,15 @@ abstract class _$$UserChecklistStatusImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$UserChecklistStatusImplCopyWithImpl<$Res>
-    extends _$UserChecklistStatusCopyWithImpl<$Res, _$UserChecklistStatusImpl>
-    implements _$$UserChecklistStatusImplCopyWith<$Res> {
-  __$$UserChecklistStatusImplCopyWithImpl(_$UserChecklistStatusImpl _value,
-      $Res Function(_$UserChecklistStatusImpl) _then)
-      : super(_value, _then);
+class _$UserChecklistStatusCopyWithImpl<$Res>
+    implements $UserChecklistStatusCopyWith<$Res> {
+  _$UserChecklistStatusCopyWithImpl(this._self, this._then);
 
+  final UserChecklistStatus _self;
+  final $Res Function(UserChecklistStatus) _then;
+
+  /// Create a copy of UserChecklistStatus
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -603,39 +939,220 @@ class __$$UserChecklistStatusImplCopyWithImpl<$Res>
     Object? isCompleted = null,
     Object? lastUpdated = null,
   }) {
-    return _then(_$UserChecklistStatusImpl(
+    return _then(_self.copyWith(
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       checklistId: null == checklistId
-          ? _value.checklistId
+          ? _self.checklistId
           : checklistId // ignore: cast_nullable_to_non_nullable
               as String,
       itemsStatus: null == itemsStatus
-          ? _value._itemsStatus
+          ? _self.itemsStatus
           : itemsStatus // ignore: cast_nullable_to_non_nullable
               as Map<String, bool>,
       isCompleted: null == isCompleted
-          ? _value.isCompleted
+          ? _self.isCompleted
           : isCompleted // ignore: cast_nullable_to_non_nullable
               as bool,
       lastUpdated: null == lastUpdated
-          ? _value.lastUpdated
+          ? _self.lastUpdated
           : lastUpdated // ignore: cast_nullable_to_non_nullable
               as DateTime,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [UserChecklistStatus].
+extension UserChecklistStatusPatterns on UserChecklistStatus {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_UserChecklistStatus value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UserChecklistStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_UserChecklistStatus value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserChecklistStatus():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_UserChecklistStatus value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserChecklistStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String checklistId,
+            Map<String, bool> itemsStatus,
+            bool isCompleted,
+            DateTime lastUpdated)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UserChecklistStatus() when $default != null:
+        return $default(_that.id, _that.userId, _that.checklistId,
+            _that.itemsStatus, _that.isCompleted, _that.lastUpdated);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String checklistId,
+            Map<String, bool> itemsStatus,
+            bool isCompleted,
+            DateTime lastUpdated)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserChecklistStatus():
+        return $default(_that.id, _that.userId, _that.checklistId,
+            _that.itemsStatus, _that.isCompleted, _that.lastUpdated);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String checklistId,
+            Map<String, bool> itemsStatus,
+            bool isCompleted,
+            DateTime lastUpdated)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserChecklistStatus() when $default != null:
+        return $default(_that.id, _that.userId, _that.checklistId,
+            _that.itemsStatus, _that.isCompleted, _that.lastUpdated);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$UserChecklistStatusImpl implements _UserChecklistStatus {
-  const _$UserChecklistStatusImpl(
+class _UserChecklistStatus implements UserChecklistStatus {
+  const _UserChecklistStatus(
       {@JsonKey(name: '_id') this.id,
       required this.userId,
       required this.checklistId,
@@ -643,9 +1160,8 @@ class _$UserChecklistStatusImpl implements _UserChecklistStatus {
       required this.isCompleted,
       required this.lastUpdated})
       : _itemsStatus = itemsStatus;
-
-  factory _$UserChecklistStatusImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UserChecklistStatusImplFromJson(json);
+  factory _UserChecklistStatus.fromJson(Map<String, dynamic> json) =>
+      _$UserChecklistStatusFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -667,16 +1183,27 @@ class _$UserChecklistStatusImpl implements _UserChecklistStatus {
   @override
   final DateTime lastUpdated;
 
+  /// Create a copy of UserChecklistStatus
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'UserChecklistStatus(id: $id, userId: $userId, checklistId: $checklistId, itemsStatus: $itemsStatus, isCompleted: $isCompleted, lastUpdated: $lastUpdated)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$UserChecklistStatusCopyWith<_UserChecklistStatus> get copyWith =>
+      __$UserChecklistStatusCopyWithImpl<_UserChecklistStatus>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$UserChecklistStatusToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserChecklistStatusImpl &&
+            other is _UserChecklistStatus &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.checklistId, checklistId) ||
@@ -689,7 +1216,7 @@ class _$UserChecklistStatusImpl implements _UserChecklistStatus {
                 other.lastUpdated == lastUpdated));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -700,48 +1227,76 @@ class _$UserChecklistStatusImpl implements _UserChecklistStatus {
       isCompleted,
       lastUpdated);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$UserChecklistStatusImplCopyWith<_$UserChecklistStatusImpl> get copyWith =>
-      __$$UserChecklistStatusImplCopyWithImpl<_$UserChecklistStatusImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UserChecklistStatusImplToJson(
-      this,
-    );
+  String toString() {
+    return 'UserChecklistStatus(id: $id, userId: $userId, checklistId: $checklistId, itemsStatus: $itemsStatus, isCompleted: $isCompleted, lastUpdated: $lastUpdated)';
   }
 }
 
-abstract class _UserChecklistStatus implements UserChecklistStatus {
-  const factory _UserChecklistStatus(
-      {@JsonKey(name: '_id') final String? id,
-      required final String userId,
-      required final String checklistId,
-      required final Map<String, bool> itemsStatus,
-      required final bool isCompleted,
-      required final DateTime lastUpdated}) = _$UserChecklistStatusImpl;
-
-  factory _UserChecklistStatus.fromJson(Map<String, dynamic> json) =
-      _$UserChecklistStatusImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$UserChecklistStatusCopyWith<$Res>
+    implements $UserChecklistStatusCopyWith<$Res> {
+  factory _$UserChecklistStatusCopyWith(_UserChecklistStatus value,
+          $Res Function(_UserChecklistStatus) _then) =
+      __$UserChecklistStatusCopyWithImpl;
   @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  String get userId;
-  @override
-  String get checklistId;
-  @override
-  Map<String, bool> get itemsStatus;
-  @override
-  bool get isCompleted;
-  @override
-  DateTime get lastUpdated;
-  @override
-  @JsonKey(ignore: true)
-  _$$UserChecklistStatusImplCopyWith<_$UserChecklistStatusImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String userId,
+      String checklistId,
+      Map<String, bool> itemsStatus,
+      bool isCompleted,
+      DateTime lastUpdated});
 }
+
+/// @nodoc
+class __$UserChecklistStatusCopyWithImpl<$Res>
+    implements _$UserChecklistStatusCopyWith<$Res> {
+  __$UserChecklistStatusCopyWithImpl(this._self, this._then);
+
+  final _UserChecklistStatus _self;
+  final $Res Function(_UserChecklistStatus) _then;
+
+  /// Create a copy of UserChecklistStatus
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? userId = null,
+    Object? checklistId = null,
+    Object? itemsStatus = null,
+    Object? isCompleted = null,
+    Object? lastUpdated = null,
+  }) {
+    return _then(_UserChecklistStatus(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      checklistId: null == checklistId
+          ? _self.checklistId
+          : checklistId // ignore: cast_nullable_to_non_nullable
+              as String,
+      itemsStatus: null == itemsStatus
+          ? _self._itemsStatus
+          : itemsStatus // ignore: cast_nullable_to_non_nullable
+              as Map<String, bool>,
+      isCompleted: null == isCompleted
+          ? _self.isCompleted
+          : isCompleted // ignore: cast_nullable_to_non_nullable
+              as bool,
+      lastUpdated: null == lastUpdated
+          ? _self.lastUpdated
+          : lastUpdated // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
+}
+
+// dart format on

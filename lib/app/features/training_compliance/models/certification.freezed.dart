@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,151 +9,92 @@ part of 'certification.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Certification _$CertificationFromJson(Map<String, dynamic> json) {
-  return _Certification.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Certification {
   @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get issuer => throw _privateConstructorUsedError;
-  String? get certificationNumber => throw _privateConstructorUsedError;
-  String? get requirementId => throw _privateConstructorUsedError;
-  String get fileUrl => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  DateTime get expiryDate => throw _privateConstructorUsedError;
-  DateTime get uploadedAt => throw _privateConstructorUsedError;
-  String? get auditedBy => throw _privateConstructorUsedError;
-  DateTime? get auditDate => throw _privateConstructorUsedError;
-  String? get notes => throw _privateConstructorUsedError;
+  String? get id;
+  String get userId;
+  String get name;
+  String get issuer;
+  String? get certificationNumber;
+  String? get requirementId;
+  String get fileUrl;
+  String get status;
+  DateTime get expiryDate;
+  DateTime get uploadedAt;
+  String? get auditedBy;
+  DateTime? get auditDate;
+  String? get notes;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $CertificationCopyWith<Certification> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $CertificationCopyWith<$Res> {
-  factory $CertificationCopyWith(
-          Certification value, $Res Function(Certification) then) =
-      _$CertificationCopyWithImpl<$Res, Certification>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String userId,
-      String name,
-      String issuer,
-      String? certificationNumber,
-      String? requirementId,
-      String fileUrl,
-      String status,
-      DateTime expiryDate,
-      DateTime uploadedAt,
-      String? auditedBy,
-      DateTime? auditDate,
-      String? notes});
-}
-
-/// @nodoc
-class _$CertificationCopyWithImpl<$Res, $Val extends Certification>
-    implements $CertificationCopyWith<$Res> {
-  _$CertificationCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of Certification
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $CertificationCopyWith<Certification> get copyWith =>
+      _$CertificationCopyWithImpl<Certification>(
+          this as Certification, _$identity);
+
+  /// Serializes this Certification to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = freezed,
-    Object? userId = null,
-    Object? name = null,
-    Object? issuer = null,
-    Object? certificationNumber = freezed,
-    Object? requirementId = freezed,
-    Object? fileUrl = null,
-    Object? status = null,
-    Object? expiryDate = null,
-    Object? uploadedAt = null,
-    Object? auditedBy = freezed,
-    Object? auditDate = freezed,
-    Object? notes = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      issuer: null == issuer
-          ? _value.issuer
-          : issuer // ignore: cast_nullable_to_non_nullable
-              as String,
-      certificationNumber: freezed == certificationNumber
-          ? _value.certificationNumber
-          : certificationNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      requirementId: freezed == requirementId
-          ? _value.requirementId
-          : requirementId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fileUrl: null == fileUrl
-          ? _value.fileUrl
-          : fileUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiryDate: null == expiryDate
-          ? _value.expiryDate
-          : expiryDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      uploadedAt: null == uploadedAt
-          ? _value.uploadedAt
-          : uploadedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      auditedBy: freezed == auditedBy
-          ? _value.auditedBy
-          : auditedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      auditDate: freezed == auditDate
-          ? _value.auditDate
-          : auditDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Certification &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.issuer, issuer) || other.issuer == issuer) &&
+            (identical(other.certificationNumber, certificationNumber) ||
+                other.certificationNumber == certificationNumber) &&
+            (identical(other.requirementId, requirementId) ||
+                other.requirementId == requirementId) &&
+            (identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.expiryDate, expiryDate) ||
+                other.expiryDate == expiryDate) &&
+            (identical(other.uploadedAt, uploadedAt) ||
+                other.uploadedAt == uploadedAt) &&
+            (identical(other.auditedBy, auditedBy) ||
+                other.auditedBy == auditedBy) &&
+            (identical(other.auditDate, auditDate) ||
+                other.auditDate == auditDate) &&
+            (identical(other.notes, notes) || other.notes == notes));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userId,
+      name,
+      issuer,
+      certificationNumber,
+      requirementId,
+      fileUrl,
+      status,
+      expiryDate,
+      uploadedAt,
+      auditedBy,
+      auditDate,
+      notes);
+
+  @override
+  String toString() {
+    return 'Certification(id: $id, userId: $userId, name: $name, issuer: $issuer, certificationNumber: $certificationNumber, requirementId: $requirementId, fileUrl: $fileUrl, status: $status, expiryDate: $expiryDate, uploadedAt: $uploadedAt, auditedBy: $auditedBy, auditDate: $auditDate, notes: $notes)';
   }
 }
 
 /// @nodoc
-abstract class _$$CertificationImplCopyWith<$Res>
-    implements $CertificationCopyWith<$Res> {
-  factory _$$CertificationImplCopyWith(
-          _$CertificationImpl value, $Res Function(_$CertificationImpl) then) =
-      __$$CertificationImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $CertificationCopyWith<$Res> {
+  factory $CertificationCopyWith(
+          Certification value, $Res Function(Certification) _then) =
+      _$CertificationCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
@@ -172,13 +113,15 @@ abstract class _$$CertificationImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$CertificationImplCopyWithImpl<$Res>
-    extends _$CertificationCopyWithImpl<$Res, _$CertificationImpl>
-    implements _$$CertificationImplCopyWith<$Res> {
-  __$$CertificationImplCopyWithImpl(
-      _$CertificationImpl _value, $Res Function(_$CertificationImpl) _then)
-      : super(_value, _then);
+class _$CertificationCopyWithImpl<$Res>
+    implements $CertificationCopyWith<$Res> {
+  _$CertificationCopyWithImpl(this._self, this._then);
 
+  final Certification _self;
+  final $Res Function(Certification) _then;
+
+  /// Create a copy of Certification
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -196,67 +139,305 @@ class __$$CertificationImplCopyWithImpl<$Res>
     Object? auditDate = freezed,
     Object? notes = freezed,
   }) {
-    return _then(_$CertificationImpl(
+    return _then(_self.copyWith(
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
-          ? _value.name
+          ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
       issuer: null == issuer
-          ? _value.issuer
+          ? _self.issuer
           : issuer // ignore: cast_nullable_to_non_nullable
               as String,
       certificationNumber: freezed == certificationNumber
-          ? _value.certificationNumber
+          ? _self.certificationNumber
           : certificationNumber // ignore: cast_nullable_to_non_nullable
               as String?,
       requirementId: freezed == requirementId
-          ? _value.requirementId
+          ? _self.requirementId
           : requirementId // ignore: cast_nullable_to_non_nullable
               as String?,
       fileUrl: null == fileUrl
-          ? _value.fileUrl
+          ? _self.fileUrl
           : fileUrl // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
       expiryDate: null == expiryDate
-          ? _value.expiryDate
+          ? _self.expiryDate
           : expiryDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
       uploadedAt: null == uploadedAt
-          ? _value.uploadedAt
+          ? _self.uploadedAt
           : uploadedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
       auditedBy: freezed == auditedBy
-          ? _value.auditedBy
+          ? _self.auditedBy
           : auditedBy // ignore: cast_nullable_to_non_nullable
               as String?,
       auditDate: freezed == auditDate
-          ? _value.auditDate
+          ? _self.auditDate
           : auditDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       notes: freezed == notes
-          ? _value.notes
+          ? _self.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [Certification].
+extension CertificationPatterns on Certification {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Certification value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Certification() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Certification value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Certification():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Certification value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Certification() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String name,
+            String issuer,
+            String? certificationNumber,
+            String? requirementId,
+            String fileUrl,
+            String status,
+            DateTime expiryDate,
+            DateTime uploadedAt,
+            String? auditedBy,
+            DateTime? auditDate,
+            String? notes)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Certification() when $default != null:
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.name,
+            _that.issuer,
+            _that.certificationNumber,
+            _that.requirementId,
+            _that.fileUrl,
+            _that.status,
+            _that.expiryDate,
+            _that.uploadedAt,
+            _that.auditedBy,
+            _that.auditDate,
+            _that.notes);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String name,
+            String issuer,
+            String? certificationNumber,
+            String? requirementId,
+            String fileUrl,
+            String status,
+            DateTime expiryDate,
+            DateTime uploadedAt,
+            String? auditedBy,
+            DateTime? auditDate,
+            String? notes)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Certification():
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.name,
+            _that.issuer,
+            _that.certificationNumber,
+            _that.requirementId,
+            _that.fileUrl,
+            _that.status,
+            _that.expiryDate,
+            _that.uploadedAt,
+            _that.auditedBy,
+            _that.auditDate,
+            _that.notes);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String name,
+            String issuer,
+            String? certificationNumber,
+            String? requirementId,
+            String fileUrl,
+            String status,
+            DateTime expiryDate,
+            DateTime uploadedAt,
+            String? auditedBy,
+            DateTime? auditDate,
+            String? notes)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Certification() when $default != null:
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.name,
+            _that.issuer,
+            _that.certificationNumber,
+            _that.requirementId,
+            _that.fileUrl,
+            _that.status,
+            _that.expiryDate,
+            _that.uploadedAt,
+            _that.auditedBy,
+            _that.auditDate,
+            _that.notes);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$CertificationImpl implements _Certification {
-  const _$CertificationImpl(
+class _Certification implements Certification {
+  const _Certification(
       {@JsonKey(name: '_id') this.id,
       required this.userId,
       required this.name,
@@ -270,9 +451,8 @@ class _$CertificationImpl implements _Certification {
       this.auditedBy,
       this.auditDate,
       this.notes});
-
-  factory _$CertificationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CertificationImplFromJson(json);
+  factory _Certification.fromJson(Map<String, dynamic> json) =>
+      _$CertificationFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -303,16 +483,26 @@ class _$CertificationImpl implements _Certification {
   @override
   final String? notes;
 
+  /// Create a copy of Certification
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'Certification(id: $id, userId: $userId, name: $name, issuer: $issuer, certificationNumber: $certificationNumber, requirementId: $requirementId, fileUrl: $fileUrl, status: $status, expiryDate: $expiryDate, uploadedAt: $uploadedAt, auditedBy: $auditedBy, auditDate: $auditDate, notes: $notes)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$CertificationCopyWith<_Certification> get copyWith =>
+      __$CertificationCopyWithImpl<_Certification>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$CertificationToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CertificationImpl &&
+            other is _Certification &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.name, name) || other.name == name) &&
@@ -334,74 +524,136 @@ class _$CertificationImpl implements _Certification {
             (identical(other.notes, notes) || other.notes == notes));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, userId, name, issuer,
-      certificationNumber, requirementId, fileUrl, status, expiryDate,
-      uploadedAt, auditedBy, auditDate, notes);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userId,
+      name,
+      issuer,
+      certificationNumber,
+      requirementId,
+      fileUrl,
+      status,
+      expiryDate,
+      uploadedAt,
+      auditedBy,
+      auditDate,
+      notes);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$CertificationImplCopyWith<_$CertificationImpl> get copyWith =>
-      __$$CertificationImplCopyWithImpl<_$CertificationImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$CertificationImplToJson(
-      this,
-    );
+  String toString() {
+    return 'Certification(id: $id, userId: $userId, name: $name, issuer: $issuer, certificationNumber: $certificationNumber, requirementId: $requirementId, fileUrl: $fileUrl, status: $status, expiryDate: $expiryDate, uploadedAt: $uploadedAt, auditedBy: $auditedBy, auditDate: $auditDate, notes: $notes)';
   }
 }
 
-abstract class _Certification implements Certification {
-  const factory _Certification(
-      {@JsonKey(name: '_id') final String? id,
-      required final String userId,
-      required final String name,
-      required final String issuer,
-      final String? certificationNumber,
-      final String? requirementId,
-      required final String fileUrl,
-      final String status,
-      required final DateTime expiryDate,
-      required final DateTime uploadedAt,
-      final String? auditedBy,
-      final DateTime? auditDate,
-      final String? notes}) = _$CertificationImpl;
-
-  factory _Certification.fromJson(Map<String, dynamic> json) =
-      _$CertificationImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$CertificationCopyWith<$Res>
+    implements $CertificationCopyWith<$Res> {
+  factory _$CertificationCopyWith(
+          _Certification value, $Res Function(_Certification) _then) =
+      __$CertificationCopyWithImpl;
   @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  String get userId;
-  @override
-  String get name;
-  @override
-  String get issuer;
-  @override
-  String? get certificationNumber;
-  @override
-  String? get requirementId;
-  @override
-  String get fileUrl;
-  @override
-  String get status;
-  @override
-  DateTime get expiryDate;
-  @override
-  DateTime get uploadedAt;
-  @override
-  String? get auditedBy;
-  @override
-  DateTime? get auditDate;
-  @override
-  String? get notes;
-  @override
-  @JsonKey(ignore: true)
-  _$$CertificationImplCopyWith<_$CertificationImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String userId,
+      String name,
+      String issuer,
+      String? certificationNumber,
+      String? requirementId,
+      String fileUrl,
+      String status,
+      DateTime expiryDate,
+      DateTime uploadedAt,
+      String? auditedBy,
+      DateTime? auditDate,
+      String? notes});
 }
+
+/// @nodoc
+class __$CertificationCopyWithImpl<$Res>
+    implements _$CertificationCopyWith<$Res> {
+  __$CertificationCopyWithImpl(this._self, this._then);
+
+  final _Certification _self;
+  final $Res Function(_Certification) _then;
+
+  /// Create a copy of Certification
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? userId = null,
+    Object? name = null,
+    Object? issuer = null,
+    Object? certificationNumber = freezed,
+    Object? requirementId = freezed,
+    Object? fileUrl = null,
+    Object? status = null,
+    Object? expiryDate = null,
+    Object? uploadedAt = null,
+    Object? auditedBy = freezed,
+    Object? auditDate = freezed,
+    Object? notes = freezed,
+  }) {
+    return _then(_Certification(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      issuer: null == issuer
+          ? _self.issuer
+          : issuer // ignore: cast_nullable_to_non_nullable
+              as String,
+      certificationNumber: freezed == certificationNumber
+          ? _self.certificationNumber
+          : certificationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      requirementId: freezed == requirementId
+          ? _self.requirementId
+          : requirementId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileUrl: null == fileUrl
+          ? _self.fileUrl
+          : fileUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      expiryDate: null == expiryDate
+          ? _self.expiryDate
+          : expiryDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      uploadedAt: null == uploadedAt
+          ? _self.uploadedAt
+          : uploadedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      auditedBy: freezed == auditedBy
+          ? _self.auditedBy
+          : auditedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      auditDate: freezed == auditDate
+          ? _self.auditDate
+          : auditDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      notes: freezed == notes
+          ? _self.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

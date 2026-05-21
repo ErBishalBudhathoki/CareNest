@@ -4,7 +4,7 @@ part 'leave.freezed.dart';
 part 'leave.g.dart';
 
 @freezed
-class LeaveBalance with _$LeaveBalance {
+abstract class LeaveBalance with _$LeaveBalance {
   const factory LeaveBalance({
     required double annualLeave,
     required double sickLeave,
@@ -16,7 +16,7 @@ class LeaveBalance with _$LeaveBalance {
 }
 
 @freezed
-class LeaveRequest with _$LeaveRequest {
+abstract class LeaveRequest with _$LeaveRequest {
   const factory LeaveRequest({
     @JsonKey(name: '_id') String? id,
     required String userId,
@@ -41,7 +41,7 @@ class LeaveRequest with _$LeaveRequest {
 }
 
 @freezed
-class LeaveAttachment with _$LeaveAttachment {
+abstract class LeaveAttachment with _$LeaveAttachment {
   const factory LeaveAttachment({
     required String filename,
     required String url,
@@ -52,7 +52,7 @@ class LeaveAttachment with _$LeaveAttachment {
 }
 
 @freezed
-class LeaveHistory with _$LeaveHistory {
+abstract class LeaveHistory with _$LeaveHistory {
   const factory LeaveHistory({
     required String action,
     required String performedBy,
@@ -65,7 +65,7 @@ class LeaveHistory with _$LeaveHistory {
 }
 
 @freezed
-class PublicHoliday with _$PublicHoliday {
+abstract class PublicHoliday with _$PublicHoliday {
   const factory PublicHoliday({
     @JsonKey(name: '_id') String? id,
     required String name,
@@ -80,7 +80,7 @@ class PublicHoliday with _$PublicHoliday {
 }
 
 @freezed
-class LeaveForecast with _$LeaveForecast {
+abstract class LeaveForecast with _$LeaveForecast {
   const factory LeaveForecast({
     required LeaveBalance forecast,
     required Map<String, double> accrualRate,

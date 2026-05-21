@@ -216,6 +216,14 @@ class LoginViewModel extends ChangeNotifier {
         await _sharedPrefs.setString(
             'organizationCode', userData['organizationCode'] ?? '');
 
+        // Save user name
+        final firstName = userData['firstName'] ?? '';
+        final lastName = userData['lastName'] ?? '';
+        final fullName = '$firstName $lastName'.trim();
+        if (fullName.isNotEmpty) {
+          await _sharedPrefs.setString('First LastName', fullName);
+        }
+
         if (resolvedRole == UserRole.client && clientId.isEmpty) {
           throw Exception(
               'Client account is not linked yet. Please contact support.');

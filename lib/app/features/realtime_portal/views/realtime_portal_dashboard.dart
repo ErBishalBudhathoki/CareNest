@@ -1,11 +1,17 @@
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/client/providers/client_provider.dart';
+import 'package:carenest/app/features/employee_tracking/views/employee_tracking_view.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/family_access_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/messaging_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/realtime_tracking_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/service_confirmation_viewmodel.dart';
+import 'package:carenest/app/features/realtime_portal/views/admin_family_management_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/appointment_timeline_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/admin_service_confirmations_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/messaging_audit_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
@@ -28,11 +34,13 @@ class _RealtimePortalDashboardState
   String? _activeClientId;
   String? _activeClientName;
   String? _userIdentifier;
+  String? _userName;
+  UserRole? _userRole;
   bool _isFetching = false;
 
   static const List<_PortalModule> _modules = [
     _PortalModule(
-      title: 'Live Tracking',
+      title: 'Live Insights',
       description: 'Monitor worker location pings and arrival confidence.',
       route: Routes.liveTracking,
       icon: Icons.location_searching_rounded,
@@ -47,7 +55,7 @@ class _RealtimePortalDashboardState
     ),
     _PortalModule(
       title: 'Secure Messaging',
-      description: 'Track encrypted conversation flow and unread backlog.',
+      description: 'Monitor encrypted conversation flow and unread backlog.',
       route: Routes.secureMessaging,
       icon: Icons.mark_chat_unread_rounded,
       accent: BauhausDesign.accent,
@@ -98,9 +106,28 @@ class _RealtimePortalDashboardState
 
       final userId = prefs.getUserId();
       final userEmail = prefs.getUserEmail();
+      _userName = prefs.getName();
+      _userRole = prefs.getRole();
       _userIdentifier = (userId != null && userId.isNotEmpty)
           ? userId
           : (userEmail != null && userEmail.isNotEmpty ? userEmail : null);
+
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      if (userEmail != null && (_userName == null || _userName!.isEmpty)) {
+        try {
+          final initData = await apiMethod.getInitData(userEmail);
+          if (initData is Map<String, dynamic>) {
+            final firstName = initData['firstName'] ?? '';
+            final lastName = initData['lastName'] ?? '';
+            _userName = '$firstName $lastName'.trim();
+            if (_userName!.isNotEmpty) {
+              await prefs.setString('First LastName', _userName!);
+            }
+          }
+        } catch (e) {
+          debugPrint('Error resolving user name from initData: $e');
+        }
+      }
 
       await ref
           .read(clientProvider.notifier)
@@ -298,7 +325,7 @@ class _RealtimePortalDashboardState
                                 context,
                                 title: 'Activity Ledger',
                                 subtitle:
-                                    'Latest platform events across tracking, messaging, confirmation, and family access.',
+                                    'Latest platform events across insights, messaging, confirmation, and family access.',
                                 accent: BauhausDesign.primary,
                               ),
                               const SizedBox(height: BauhausDesign.space3),
@@ -417,6 +444,8 @@ class _RealtimePortalDashboardState
 
   Widget _buildContextStrip(BuildContext context) {
     final textTheme = BauhausDesign.getTextTheme(context);
+    final clientState = ref.watch(clientProvider);
+    final isAdmin = _userRole == UserRole.admin;
 
     return Container(
       width: double.infinity,
@@ -427,28 +456,48 @@ class _RealtimePortalDashboardState
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
-      child: Wrap(
-        spacing: BauhausDesign.space4,
-        runSpacing: BauhausDesign.space2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildContextPill(
-            context,
-            label: 'Client',
-            value: _activeClientName ?? 'Not selected',
-            accent: BauhausDesign.primary,
+          Wrap(
+            spacing: BauhausDesign.space4,
+            runSpacing: BauhausDesign.space2,
+            children: [
+              _buildContextPill(
+                context,
+                label: 'Insights Client',
+                value: _activeClientName ?? 'Not selected',
+                accent: BauhausDesign.primary,
+                onTap: isAdmin ? () => _showClientSelector(context) : null,
+              ),
+              _buildContextPill(
+                context,
+                label: 'Logged in as',
+                value: _userName ?? 'Unavailable',
+                accent: BauhausDesign.secondary,
+              ),
+              _buildContextPill(
+                context,
+                label: 'Role',
+                value:
+                    _userRole != null ? _humanize(_userRole!.name) : 'Unknown',
+                accent: BauhausDesign.success,
+              ),
+            ],
           ),
-          _buildContextPill(
-            context,
-            label: 'Client ID',
-            value: _activeClientId ?? 'Unavailable',
-            accent: BauhausDesign.secondary,
-          ),
-          _buildContextPill(
-            context,
-            label: 'User',
-            value: _userIdentifier ?? 'Unavailable',
-            accent: BauhausDesign.success,
-          ),
+          if (isAdmin && _loadedOrgId != null) ...[
+            const SizedBox(height: BauhausDesign.space2),
+            Text(
+              'Organization Context: $_loadedOrgId • ${clientState.clients.length} clients fetched',
+              style: textTheme.bodySmall?.copyWith(
+                color: BauhausDesign.textDark.withOpacity(0.6),
+                fontSize: 10,
+                fontFamily: 'Courier',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+          const SizedBox(height: BauhausDesign.space2),
           Text(
             'Auto-sync keeps this dashboard aligned with backend realtime APIs.',
             style: textTheme.bodySmall?.copyWith(
@@ -461,29 +510,200 @@ class _RealtimePortalDashboardState
     );
   }
 
+  void _showClientSelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: BauhausDesign.surfaceWhite,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusLg)),
+      ),
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final clientState = ref.watch(clientProvider);
+          final clients = clientState.clients
+              .where((c) => c.id != null && c.id!.isNotEmpty)
+              .toList();
+
+          return Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.7,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(
+                      vertical: BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.neutral,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    BauhausDesign.space4,
+                    0,
+                    BauhausDesign.space4,
+                    BauhausDesign.space4,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Select Client for Insights',
+                        style: BauhausDesign.getTextTheme(context)
+                            .headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: BauhausDesign.textDark,
+                            ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.refresh_rounded),
+                        onPressed: () {
+                          if (_loadedOrgId != null) {
+                            ref
+                                .read(clientProvider.notifier)
+                                .fetchClientsByOrganization(_loadedOrgId!);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(color: BauhausDesign.neutral, height: 1),
+                if (clientState.isLoading)
+                  const Padding(
+                    padding: EdgeInsets.all(BauhausDesign.space8),
+                    child:
+                        CircularProgressIndicator(color: BauhausDesign.primary),
+                  )
+                else if (clients.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(BauhausDesign.space8),
+                    child: Text(
+                      'No clients found for this organization.',
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
+                    ),
+                  )
+                else
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: clients.length,
+                      separatorBuilder: (_, __) =>
+                          Divider(color: BauhausDesign.neutral, height: 1),
+                      itemBuilder: (context, index) {
+                        final client = clients[index];
+                        final isSelected = client.id == _activeClientId;
+
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: isSelected
+                                ? BauhausDesign.primary
+                                : BauhausDesign.neutral.withOpacity(0.3),
+                            child: Text(
+                              client.displayName.isNotEmpty
+                                  ? client.displayName[0].toUpperCase()
+                                  : '?',
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Colors.white
+                                    : BauhausDesign.textDark,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            client.displayName,
+                            style: TextStyle(
+                              fontWeight: isSelected
+                                  ? FontWeight.w800
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? BauhausDesign.primary
+                                  : BauhausDesign.textDark,
+                            ),
+                          ),
+                          subtitle: Text(
+                            client.clientEmail,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodySmall
+                                ?.copyWith(fontSize: 11),
+                          ),
+                          trailing: isSelected
+                              ? const Icon(Icons.check_circle,
+                                  color: BauhausDesign.primary)
+                              : null,
+                          onTap: () {
+                            setState(() {
+                              _activeClientId = client.id;
+                              _activeClientName = client.displayName;
+                            });
+                            Navigator.pop(context);
+                            if (_loadedOrgId != null) {
+                              _initializeDashboard(_loadedOrgId!, force: true);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                SizedBox(
+                    height: MediaQuery.of(context).padding.bottom +
+                        BauhausDesign.space4),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildContextPill(
     BuildContext context, {
     required String label,
     required String value,
     required Color accent,
+    VoidCallback? onTap,
   }) {
     final textTheme = BauhausDesign.getTextTheme(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: BauhausDesign.space3,
-        vertical: BauhausDesign.space2,
-      ),
-      decoration: BoxDecoration(
-        color: accent.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
-      ),
-      child: Text(
-        '$label: $value',
-        style: textTheme.bodySmall?.copyWith(
-          color: BauhausDesign.textDark,
-          fontWeight: FontWeight.w600,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space3,
+          vertical: BauhausDesign.space2,
+        ),
+        decoration: BoxDecoration(
+          color: accent.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+          border: Border.all(
+            color: onTap != null ? accent : BauhausDesign.neutral,
+            width: onTap != null ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '$label: $value',
+              style: textTheme.bodySmall?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: onTap != null ? FontWeight.w800 : FontWeight.w600,
+              ),
+            ),
+            if (onTap != null) ...[
+              const SizedBox(width: 4),
+              Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: accent),
+            ],
+          ],
         ),
       ),
     );
@@ -1007,6 +1227,93 @@ class _RealtimePortalDashboardState
 
   void _openModule(BuildContext context, String route) {
     try {
+      final isAdmin = _userRole == UserRole.admin;
+
+      if (isAdmin) {
+        if (route == Routes.liveTracking) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const EmployeeTrackingView()),
+          );
+          return;
+        }
+        if (route == Routes.secureMessaging) {
+          if (_activeClientId == null || _activeClientId!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please select a client in the context bar first.'),
+                backgroundColor: BauhausDesign.neutral,
+              ),
+            );
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MessagingAuditView(
+                clientId: _activeClientId!,
+                clientName: _activeClientName ?? 'Client',
+              ),
+            ),
+          );
+          return;
+        }
+        if (route == Routes.appointmentTimeline) {
+          if (_activeClientId == null || _activeClientId!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please select a client in the context bar first.'),
+                backgroundColor: BauhausDesign.neutral,
+              ),
+            );
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AppointmentTimelineView(
+                clientId: _activeClientId!,
+                clientName: _activeClientName ?? 'Client',
+              ),
+            ),
+          );
+          return;
+        }
+        if (route == Routes.familyManagement) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AdminFamilyManagementView(
+                clientId: _activeClientId ?? '',
+              ),
+            ),
+          );
+          return;
+        }
+        if (route == Routes.serviceConfirmation) {
+          if (_activeClientId == null || _activeClientId!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please select a client in the context bar first.'),
+                backgroundColor: BauhausDesign.neutral,
+              ),
+            );
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AdminServiceConfirmationsView(
+                clientId: _activeClientId!,
+                clientName: _activeClientName ?? 'Client',
+              ),
+            ),
+          );
+          return;
+        }
+      }
+
+      // Handle Family Management with clientId argument for non-admins (or if push failed)
       if (route == Routes.familyManagement) {
         Navigator.pushNamed(
           context,
@@ -1018,11 +1325,27 @@ class _RealtimePortalDashboardState
         return;
       }
 
+      // Check for Timeline route specifically as it might not be in the map if not registered correctly
+      if (route == Routes.appointmentTimeline) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AppointmentTimelineView(
+              clientId: _activeClientId,
+              clientName: _activeClientName,
+            ),
+          ),
+        );
+        return;
+      }
+
       Navigator.pushNamed(context, route);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Navigation error to $route: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Route is not available in this build.'),
+        SnackBar(
+          content: Text(
+              'Navigation to ${_humanize(route.replaceAll("/", ""))} failed: $e'),
           backgroundColor: BauhausDesign.neutral,
         ),
       );
@@ -1050,7 +1373,7 @@ class _RealtimePortalDashboardState
 
     return [
       _PortalMetric(
-        label: 'Tracking State',
+        label: 'Insights State',
         value: trackingState.liveLocation != null
             ? (status != null && status.isNotEmpty
                 ? _humanize(status)
@@ -1058,7 +1381,7 @@ class _RealtimePortalDashboardState
             : 'Idle',
         detail: trackingState.liveLocation != null
             ? 'Last ping ${_formatRelative(trackingState.liveLocation?.timestamp)}'
-            : 'No active tracking session.',
+            : 'No active insights session.',
         icon: Icons.location_on_rounded,
         accent: BauhausDesign.primary,
       ),
@@ -1268,7 +1591,7 @@ class _RealtimePortalDashboardState
         const _ActivityEntry(
           title: 'No realtime events yet',
           detail:
-              'Once tracking, messaging, or confirmation events arrive, they will appear here.',
+              'Once insights, messaging, or confirmation events arrive, they will appear here.',
           timeLabel: 'Waiting for backend updates',
           icon: Icons.hourglass_bottom_rounded,
           accent: BauhausDesign.secondary,

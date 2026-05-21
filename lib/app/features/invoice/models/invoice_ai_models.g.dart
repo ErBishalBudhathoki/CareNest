@@ -6,8 +6,8 @@ part of 'invoice_ai_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$InvoiceAnomalyImpl _$$InvoiceAnomalyImplFromJson(Map<String, dynamic> json) =>
-    _$InvoiceAnomalyImpl(
+_InvoiceAnomaly _$InvoiceAnomalyFromJson(Map<String, dynamic> json) =>
+    _InvoiceAnomaly(
       anomalyType: json['anomalyType'] as String,
       severity: json['severity'] as String,
       description: json['description'] as String,
@@ -17,8 +17,7 @@ _$InvoiceAnomalyImpl _$$InvoiceAnomalyImplFromJson(Map<String, dynamic> json) =>
       suggestion: json['suggestion'] as String?,
     );
 
-Map<String, dynamic> _$$InvoiceAnomalyImplToJson(
-        _$InvoiceAnomalyImpl instance) =>
+Map<String, dynamic> _$InvoiceAnomalyToJson(_InvoiceAnomaly instance) =>
     <String, dynamic>{
       'anomalyType': instance.anomalyType,
       'severity': instance.severity,
@@ -29,9 +28,8 @@ Map<String, dynamic> _$$InvoiceAnomalyImplToJson(
       'suggestion': instance.suggestion,
     };
 
-_$InvoiceValidationImpl _$$InvoiceValidationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$InvoiceValidationImpl(
+_InvoiceValidation _$InvoiceValidationFromJson(Map<String, dynamic> json) =>
+    _InvoiceValidation(
       isValid: json['isValid'] as bool,
       anomalies: (json['anomalies'] as List<dynamic>)
           .map((e) => InvoiceAnomaly.fromJson(e as Map<String, dynamic>))
@@ -42,8 +40,7 @@ _$InvoiceValidationImpl _$$InvoiceValidationImplFromJson(
       summary: json['summary'] as String?,
     );
 
-Map<String, dynamic> _$$InvoiceValidationImplToJson(
-        _$InvoiceValidationImpl instance) =>
+Map<String, dynamic> _$InvoiceValidationToJson(_InvoiceValidation instance) =>
     <String, dynamic>{
       'isValid': instance.isValid,
       'anomalies': instance.anomalies,
@@ -52,9 +49,8 @@ Map<String, dynamic> _$$InvoiceValidationImplToJson(
       'summary': instance.summary,
     };
 
-_$PaymentPredictionImpl _$$PaymentPredictionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PaymentPredictionImpl(
+_PaymentPrediction _$PaymentPredictionFromJson(Map<String, dynamic> json) =>
+    _PaymentPrediction(
       invoiceId: json['invoiceId'] as String,
       predictedPaymentDate:
           DateTime.parse(json['predictedPaymentDate'] as String),
@@ -65,8 +61,7 @@ _$PaymentPredictionImpl _$$PaymentPredictionImplFromJson(
       recommendation: json['recommendation'] as String?,
     );
 
-Map<String, dynamic> _$$PaymentPredictionImplToJson(
-        _$PaymentPredictionImpl instance) =>
+Map<String, dynamic> _$PaymentPredictionToJson(_PaymentPrediction instance) =>
     <String, dynamic>{
       'invoiceId': instance.invoiceId,
       'predictedPaymentDate': instance.predictedPaymentDate.toIso8601String(),
@@ -76,9 +71,8 @@ Map<String, dynamic> _$$PaymentPredictionImplToJson(
       'recommendation': instance.recommendation,
     };
 
-_$AutoGenerateRequestImpl _$$AutoGenerateRequestImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AutoGenerateRequestImpl(
+_AutoGenerateRequest _$AutoGenerateRequestFromJson(Map<String, dynamic> json) =>
+    _AutoGenerateRequest(
       organizationId: json['organizationId'] as String,
       startDate: DateTime.parse(json['startDate'] as String),
       endDate: DateTime.parse(json['endDate'] as String),
@@ -87,8 +81,8 @@ _$AutoGenerateRequestImpl _$$AutoGenerateRequestImplFromJson(
       groupByClient: json['groupByClient'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$$AutoGenerateRequestImplToJson(
-        _$AutoGenerateRequestImpl instance) =>
+Map<String, dynamic> _$AutoGenerateRequestToJson(
+        _AutoGenerateRequest instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'startDate': instance.startDate.toIso8601String(),
@@ -97,9 +91,8 @@ Map<String, dynamic> _$$AutoGenerateRequestImplToJson(
       'groupByClient': instance.groupByClient,
     };
 
-_$AutoGenerateResultImpl _$$AutoGenerateResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AutoGenerateResultImpl(
+_AutoGenerateResult _$AutoGenerateResultFromJson(Map<String, dynamic> json) =>
+    _AutoGenerateResult(
       totalInvoices: (json['totalInvoices'] as num).toInt(),
       successfulInvoices: (json['successfulInvoices'] as num).toInt(),
       failedInvoices: (json['failedInvoices'] as num).toInt(),
@@ -111,8 +104,7 @@ _$AutoGenerateResultImpl _$$AutoGenerateResultImplFromJson(
       summary: json['summary'] as String?,
     );
 
-Map<String, dynamic> _$$AutoGenerateResultImplToJson(
-        _$AutoGenerateResultImpl instance) =>
+Map<String, dynamic> _$AutoGenerateResultToJson(_AutoGenerateResult instance) =>
     <String, dynamic>{
       'totalInvoices': instance.totalInvoices,
       'successfulInvoices': instance.successfulInvoices,
@@ -122,8 +114,8 @@ Map<String, dynamic> _$$AutoGenerateResultImplToJson(
       'summary': instance.summary,
     };
 
-_$SmartReminderImpl _$$SmartReminderImplFromJson(Map<String, dynamic> json) =>
-    _$SmartReminderImpl(
+_SmartReminder _$SmartReminderFromJson(Map<String, dynamic> json) =>
+    _SmartReminder(
       invoiceId: json['invoiceId'] as String,
       suggestedSendTime: DateTime.parse(json['suggestedSendTime'] as String),
       channel: json['channel'] as String,
@@ -132,7 +124,7 @@ _$SmartReminderImpl _$$SmartReminderImplFromJson(Map<String, dynamic> json) =>
       reason: json['reason'] as String?,
     );
 
-Map<String, dynamic> _$$SmartReminderImplToJson(_$SmartReminderImpl instance) =>
+Map<String, dynamic> _$SmartReminderToJson(_SmartReminder instance) =>
     <String, dynamic>{
       'invoiceId': instance.invoiceId,
       'suggestedSendTime': instance.suggestedSendTime.toIso8601String(),

@@ -6,8 +6,8 @@ part of 'certification.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$CertificationImpl _$$CertificationImplFromJson(Map<String, dynamic> json) =>
-    _$CertificationImpl(
+_Certification _$CertificationFromJson(Map<String, dynamic> json) =>
+    _Certification(
       id: json['_id'] as String?,
       userId: json['userId'] as String,
       name: json['name'] as String,
@@ -25,7 +25,7 @@ _$CertificationImpl _$$CertificationImplFromJson(Map<String, dynamic> json) =>
       notes: json['notes'] as String?,
     );
 
-Map<String, dynamic> _$$CertificationImplToJson(_$CertificationImpl instance) =>
+Map<String, dynamic> _$CertificationToJson(_Certification instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'userId': instance.userId,

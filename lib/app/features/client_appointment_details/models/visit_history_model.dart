@@ -4,7 +4,7 @@ part 'visit_history_model.freezed.dart';
 part 'visit_history_model.g.dart';
 
 @freezed
-class VisitHistoryModel with _$VisitHistoryModel {
+abstract class VisitHistoryModel with _$VisitHistoryModel {
   const factory VisitHistoryModel({
     required String id,
     required String shiftDate,

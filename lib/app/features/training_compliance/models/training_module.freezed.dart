@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,43 +9,94 @@ part of 'training_module.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-TrainingModule _$TrainingModuleFromJson(Map<String, dynamic> json) {
-  return _TrainingModule.fromJson(json);
-}
 
 /// @nodoc
 mixin _$TrainingModule {
   @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  String get contentType => throw _privateConstructorUsedError;
-  String? get contentUrl => throw _privateConstructorUsedError;
-  String? get contentText => throw _privateConstructorUsedError;
-  int get durationMinutes => throw _privateConstructorUsedError;
-  bool get isPublished => throw _privateConstructorUsedError;
-  String get createdBy => throw _privateConstructorUsedError;
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime get updatedAt => throw _privateConstructorUsedError;
+  String? get id;
+  String get title;
+  String get description;
+  String get contentType;
+  String? get contentUrl;
+  String? get contentText;
+  int get durationMinutes;
+  bool get isPublished;
+  String get createdBy;
+  DateTime get createdAt;
+  DateTime get updatedAt;
   @JsonKey(includeFromJson: false)
-  TrainingProgress? get userProgress => throw _privateConstructorUsedError;
+  TrainingProgress? get userProgress;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  /// Create a copy of TrainingModule
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $TrainingModuleCopyWith<TrainingModule> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$TrainingModuleCopyWithImpl<TrainingModule>(
+          this as TrainingModule, _$identity);
+
+  /// Serializes this TrainingModule to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is TrainingModule &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.contentType, contentType) ||
+                other.contentType == contentType) &&
+            (identical(other.contentUrl, contentUrl) ||
+                other.contentUrl == contentUrl) &&
+            (identical(other.contentText, contentText) ||
+                other.contentText == contentText) &&
+            (identical(other.durationMinutes, durationMinutes) ||
+                other.durationMinutes == durationMinutes) &&
+            (identical(other.isPublished, isPublished) ||
+                other.isPublished == isPublished) &&
+            (identical(other.createdBy, createdBy) ||
+                other.createdBy == createdBy) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            (identical(other.userProgress, userProgress) ||
+                other.userProgress == userProgress));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      title,
+      description,
+      contentType,
+      contentUrl,
+      contentText,
+      durationMinutes,
+      isPublished,
+      createdBy,
+      createdAt,
+      updatedAt,
+      userProgress);
+
+  @override
+  String toString() {
+    return 'TrainingModule(id: $id, title: $title, description: $description, contentType: $contentType, contentUrl: $contentUrl, contentText: $contentText, durationMinutes: $durationMinutes, isPublished: $isPublished, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, userProgress: $userProgress)';
+  }
 }
 
 /// @nodoc
-abstract class $TrainingModuleCopyWith<$Res> {
+abstract mixin class $TrainingModuleCopyWith<$Res> {
   factory $TrainingModuleCopyWith(
-          TrainingModule value, $Res Function(TrainingModule) then) =
-      _$TrainingModuleCopyWithImpl<$Res, TrainingModule>;
+          TrainingModule value, $Res Function(TrainingModule) _then) =
+      _$TrainingModuleCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
@@ -65,15 +116,15 @@ abstract class $TrainingModuleCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$TrainingModuleCopyWithImpl<$Res, $Val extends TrainingModule>
+class _$TrainingModuleCopyWithImpl<$Res>
     implements $TrainingModuleCopyWith<$Res> {
-  _$TrainingModuleCopyWithImpl(this._value, this._then);
+  _$TrainingModuleCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final TrainingModule _self;
+  final $Res Function(TrainingModule) _then;
 
+  /// Create a copy of TrainingModule
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -90,178 +141,309 @@ class _$TrainingModuleCopyWithImpl<$Res, $Val extends TrainingModule>
     Object? updatedAt = null,
     Object? userProgress = freezed,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
       title: null == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
       description: null == description
-          ? _value.description
+          ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
       contentType: null == contentType
-          ? _value.contentType
+          ? _self.contentType
           : contentType // ignore: cast_nullable_to_non_nullable
               as String,
       contentUrl: freezed == contentUrl
-          ? _value.contentUrl
+          ? _self.contentUrl
           : contentUrl // ignore: cast_nullable_to_non_nullable
               as String?,
       contentText: freezed == contentText
-          ? _value.contentText
+          ? _self.contentText
           : contentText // ignore: cast_nullable_to_non_nullable
               as String?,
       durationMinutes: null == durationMinutes
-          ? _value.durationMinutes
+          ? _self.durationMinutes
           : durationMinutes // ignore: cast_nullable_to_non_nullable
               as int,
       isPublished: null == isPublished
-          ? _value.isPublished
+          ? _self.isPublished
           : isPublished // ignore: cast_nullable_to_non_nullable
               as bool,
       createdBy: null == createdBy
-          ? _value.createdBy
+          ? _self.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
               as String,
       createdAt: null == createdAt
-          ? _value.createdAt
+          ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
       updatedAt: null == updatedAt
-          ? _value.updatedAt
+          ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
       userProgress: freezed == userProgress
-          ? _value.userProgress
+          ? _self.userProgress
           : userProgress // ignore: cast_nullable_to_non_nullable
               as TrainingProgress?,
-    ) as $Val);
+    ));
   }
 
+  /// Create a copy of TrainingModule
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $TrainingProgressCopyWith<$Res>? get userProgress {
-    if (_value.userProgress == null) {
+    if (_self.userProgress == null) {
       return null;
     }
 
-    return $TrainingProgressCopyWith<$Res>(_value.userProgress!, (value) {
-      return _then(_value.copyWith(userProgress: value) as $Val);
+    return $TrainingProgressCopyWith<$Res>(_self.userProgress!, (value) {
+      return _then(_self.copyWith(userProgress: value));
     });
   }
 }
 
-/// @nodoc
-abstract class _$$TrainingModuleImplCopyWith<$Res>
-    implements $TrainingModuleCopyWith<$Res> {
-  factory _$$TrainingModuleImplCopyWith(_$TrainingModuleImpl value,
-          $Res Function(_$TrainingModuleImpl) then) =
-      __$$TrainingModuleImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String title,
-      String description,
-      String contentType,
-      String? contentUrl,
-      String? contentText,
-      int durationMinutes,
-      bool isPublished,
-      String createdBy,
-      DateTime createdAt,
-      DateTime updatedAt,
-      @JsonKey(includeFromJson: false) TrainingProgress? userProgress});
+/// Adds pattern-matching-related methods to [TrainingModule].
+extension TrainingModulePatterns on TrainingModule {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-  @override
-  $TrainingProgressCopyWith<$Res>? get userProgress;
-}
-
-/// @nodoc
-class __$$TrainingModuleImplCopyWithImpl<$Res>
-    extends _$TrainingModuleCopyWithImpl<$Res, _$TrainingModuleImpl>
-    implements _$$TrainingModuleImplCopyWith<$Res> {
-  __$$TrainingModuleImplCopyWithImpl(
-      _$TrainingModuleImpl _value, $Res Function(_$TrainingModuleImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? title = null,
-    Object? description = null,
-    Object? contentType = null,
-    Object? contentUrl = freezed,
-    Object? contentText = freezed,
-    Object? durationMinutes = null,
-    Object? isPublished = null,
-    Object? createdBy = null,
-    Object? createdAt = null,
-    Object? updatedAt = null,
-    Object? userProgress = freezed,
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_TrainingModule value)? $default, {
+    required TResult orElse(),
   }) {
-    return _then(_$TrainingModuleImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      contentType: null == contentType
-          ? _value.contentType
-          : contentType // ignore: cast_nullable_to_non_nullable
-              as String,
-      contentUrl: freezed == contentUrl
-          ? _value.contentUrl
-          : contentUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      contentText: freezed == contentText
-          ? _value.contentText
-          : contentText // ignore: cast_nullable_to_non_nullable
-              as String?,
-      durationMinutes: null == durationMinutes
-          ? _value.durationMinutes
-          : durationMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      isPublished: null == isPublished
-          ? _value.isPublished
-          : isPublished // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdBy: null == createdBy
-          ? _value.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      userProgress: freezed == userProgress
-          ? _value.userProgress
-          : userProgress // ignore: cast_nullable_to_non_nullable
-              as TrainingProgress?,
-    ));
+    final _that = this;
+    switch (_that) {
+      case _TrainingModule() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_TrainingModule value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingModule():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_TrainingModule value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingModule() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String title,
+            String description,
+            String contentType,
+            String? contentUrl,
+            String? contentText,
+            int durationMinutes,
+            bool isPublished,
+            String createdBy,
+            DateTime createdAt,
+            DateTime updatedAt,
+            @JsonKey(includeFromJson: false) TrainingProgress? userProgress)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingModule() when $default != null:
+        return $default(
+            _that.id,
+            _that.title,
+            _that.description,
+            _that.contentType,
+            _that.contentUrl,
+            _that.contentText,
+            _that.durationMinutes,
+            _that.isPublished,
+            _that.createdBy,
+            _that.createdAt,
+            _that.updatedAt,
+            _that.userProgress);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String title,
+            String description,
+            String contentType,
+            String? contentUrl,
+            String? contentText,
+            int durationMinutes,
+            bool isPublished,
+            String createdBy,
+            DateTime createdAt,
+            DateTime updatedAt,
+            @JsonKey(includeFromJson: false) TrainingProgress? userProgress)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingModule():
+        return $default(
+            _that.id,
+            _that.title,
+            _that.description,
+            _that.contentType,
+            _that.contentUrl,
+            _that.contentText,
+            _that.durationMinutes,
+            _that.isPublished,
+            _that.createdBy,
+            _that.createdAt,
+            _that.updatedAt,
+            _that.userProgress);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String? id,
+            String title,
+            String description,
+            String contentType,
+            String? contentUrl,
+            String? contentText,
+            int durationMinutes,
+            bool isPublished,
+            String createdBy,
+            DateTime createdAt,
+            DateTime updatedAt,
+            @JsonKey(includeFromJson: false) TrainingProgress? userProgress)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingModule() when $default != null:
+        return $default(
+            _that.id,
+            _that.title,
+            _that.description,
+            _that.contentType,
+            _that.contentUrl,
+            _that.contentText,
+            _that.durationMinutes,
+            _that.isPublished,
+            _that.createdBy,
+            _that.createdAt,
+            _that.updatedAt,
+            _that.userProgress);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$TrainingModuleImpl implements _TrainingModule {
-  const _$TrainingModuleImpl(
+class _TrainingModule implements TrainingModule {
+  const _TrainingModule(
       {@JsonKey(name: '_id') this.id,
       required this.title,
       required this.description,
@@ -274,9 +456,8 @@ class _$TrainingModuleImpl implements _TrainingModule {
       required this.createdAt,
       required this.updatedAt,
       @JsonKey(includeFromJson: false) this.userProgress});
-
-  factory _$TrainingModuleImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TrainingModuleImplFromJson(json);
+  factory _TrainingModule.fromJson(Map<String, dynamic> json) =>
+      _$TrainingModuleFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -306,16 +487,26 @@ class _$TrainingModuleImpl implements _TrainingModule {
   @JsonKey(includeFromJson: false)
   final TrainingProgress? userProgress;
 
+  /// Create a copy of TrainingModule
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'TrainingModule(id: $id, title: $title, description: $description, contentType: $contentType, contentUrl: $contentUrl, contentText: $contentText, durationMinutes: $durationMinutes, isPublished: $isPublished, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, userProgress: $userProgress)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$TrainingModuleCopyWith<_TrainingModule> get copyWith =>
+      __$TrainingModuleCopyWithImpl<_TrainingModule>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$TrainingModuleToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TrainingModuleImpl &&
+            other is _TrainingModule &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
@@ -340,7 +531,7 @@ class _$TrainingModuleImpl implements _TrainingModule {
                 other.userProgress == userProgress));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -357,163 +548,184 @@ class _$TrainingModuleImpl implements _TrainingModule {
       updatedAt,
       userProgress);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$TrainingModuleImplCopyWith<_$TrainingModuleImpl> get copyWith =>
-      __$$TrainingModuleImplCopyWithImpl<_$TrainingModuleImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TrainingModuleImplToJson(
-      this,
-    );
+  String toString() {
+    return 'TrainingModule(id: $id, title: $title, description: $description, contentType: $contentType, contentUrl: $contentUrl, contentText: $contentText, durationMinutes: $durationMinutes, isPublished: $isPublished, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, userProgress: $userProgress)';
   }
 }
 
-abstract class _TrainingModule implements TrainingModule {
-  const factory _TrainingModule(
-      {@JsonKey(name: '_id') final String? id,
-      required final String title,
-      required final String description,
-      required final String contentType,
-      final String? contentUrl,
-      final String? contentText,
-      required final int durationMinutes,
-      final bool isPublished,
-      required final String createdBy,
-      required final DateTime createdAt,
-      required final DateTime updatedAt,
-      @JsonKey(includeFromJson: false)
-      final TrainingProgress? userProgress}) = _$TrainingModuleImpl;
+/// @nodoc
+abstract mixin class _$TrainingModuleCopyWith<$Res>
+    implements $TrainingModuleCopyWith<$Res> {
+  factory _$TrainingModuleCopyWith(
+          _TrainingModule value, $Res Function(_TrainingModule) _then) =
+      __$TrainingModuleCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String title,
+      String description,
+      String contentType,
+      String? contentUrl,
+      String? contentText,
+      int durationMinutes,
+      bool isPublished,
+      String createdBy,
+      DateTime createdAt,
+      DateTime updatedAt,
+      @JsonKey(includeFromJson: false) TrainingProgress? userProgress});
 
-  factory _TrainingModule.fromJson(Map<String, dynamic> json) =
-      _$TrainingModuleImpl.fromJson;
-
   @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  String get title;
-  @override
-  String get description;
-  @override
-  String get contentType;
-  @override
-  String? get contentUrl;
-  @override
-  String? get contentText;
-  @override
-  int get durationMinutes;
-  @override
-  bool get isPublished;
-  @override
-  String get createdBy;
-  @override
-  DateTime get createdAt;
-  @override
-  DateTime get updatedAt;
-  @override
-  @JsonKey(includeFromJson: false)
-  TrainingProgress? get userProgress;
-  @override
-  @JsonKey(ignore: true)
-  _$$TrainingModuleImplCopyWith<_$TrainingModuleImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $TrainingProgressCopyWith<$Res>? get userProgress;
 }
 
-TrainingProgress _$TrainingProgressFromJson(Map<String, dynamic> json) {
-  return _TrainingProgress.fromJson(json);
+/// @nodoc
+class __$TrainingModuleCopyWithImpl<$Res>
+    implements _$TrainingModuleCopyWith<$Res> {
+  __$TrainingModuleCopyWithImpl(this._self, this._then);
+
+  final _TrainingModule _self;
+  final $Res Function(_TrainingModule) _then;
+
+  /// Create a copy of TrainingModule
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? title = null,
+    Object? description = null,
+    Object? contentType = null,
+    Object? contentUrl = freezed,
+    Object? contentText = freezed,
+    Object? durationMinutes = null,
+    Object? isPublished = null,
+    Object? createdBy = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? userProgress = freezed,
+  }) {
+    return _then(_TrainingModule(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      contentType: null == contentType
+          ? _self.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as String,
+      contentUrl: freezed == contentUrl
+          ? _self.contentUrl
+          : contentUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contentText: freezed == contentText
+          ? _self.contentText
+          : contentText // ignore: cast_nullable_to_non_nullable
+              as String?,
+      durationMinutes: null == durationMinutes
+          ? _self.durationMinutes
+          : durationMinutes // ignore: cast_nullable_to_non_nullable
+              as int,
+      isPublished: null == isPublished
+          ? _self.isPublished
+          : isPublished // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdBy: null == createdBy
+          ? _self.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: null == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      userProgress: freezed == userProgress
+          ? _self.userProgress
+          : userProgress // ignore: cast_nullable_to_non_nullable
+              as TrainingProgress?,
+    ));
+  }
+
+  /// Create a copy of TrainingModule
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TrainingProgressCopyWith<$Res>? get userProgress {
+    if (_self.userProgress == null) {
+      return null;
+    }
+
+    return $TrainingProgressCopyWith<$Res>(_self.userProgress!, (value) {
+      return _then(_self.copyWith(userProgress: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$TrainingProgress {
   @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get moduleId => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  int get progressPercentage => throw _privateConstructorUsedError;
-  DateTime? get completedAt => throw _privateConstructorUsedError;
+  String? get id;
+  String get userId;
+  String get moduleId;
+  String get status;
+  int get progressPercentage;
+  DateTime? get completedAt;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $TrainingProgressCopyWith<TrainingProgress> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $TrainingProgressCopyWith<$Res> {
-  factory $TrainingProgressCopyWith(
-          TrainingProgress value, $Res Function(TrainingProgress) then) =
-      _$TrainingProgressCopyWithImpl<$Res, TrainingProgress>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String userId,
-      String moduleId,
-      String status,
-      int progressPercentage,
-      DateTime? completedAt});
-}
-
-/// @nodoc
-class _$TrainingProgressCopyWithImpl<$Res, $Val extends TrainingProgress>
-    implements $TrainingProgressCopyWith<$Res> {
-  _$TrainingProgressCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of TrainingProgress
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $TrainingProgressCopyWith<TrainingProgress> get copyWith =>
+      _$TrainingProgressCopyWithImpl<TrainingProgress>(
+          this as TrainingProgress, _$identity);
+
+  /// Serializes this TrainingProgress to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = freezed,
-    Object? userId = null,
-    Object? moduleId = null,
-    Object? status = null,
-    Object? progressPercentage = null,
-    Object? completedAt = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      moduleId: null == moduleId
-          ? _value.moduleId
-          : moduleId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      progressPercentage: null == progressPercentage
-          ? _value.progressPercentage
-          : progressPercentage // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedAt: freezed == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is TrainingProgress &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.moduleId, moduleId) ||
+                other.moduleId == moduleId) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.progressPercentage, progressPercentage) ||
+                other.progressPercentage == progressPercentage) &&
+            (identical(other.completedAt, completedAt) ||
+                other.completedAt == completedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, userId, moduleId, status,
+      progressPercentage, completedAt);
+
+  @override
+  String toString() {
+    return 'TrainingProgress(id: $id, userId: $userId, moduleId: $moduleId, status: $status, progressPercentage: $progressPercentage, completedAt: $completedAt)';
   }
 }
 
 /// @nodoc
-abstract class _$$TrainingProgressImplCopyWith<$Res>
-    implements $TrainingProgressCopyWith<$Res> {
-  factory _$$TrainingProgressImplCopyWith(_$TrainingProgressImpl value,
-          $Res Function(_$TrainingProgressImpl) then) =
-      __$$TrainingProgressImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $TrainingProgressCopyWith<$Res> {
+  factory $TrainingProgressCopyWith(
+          TrainingProgress value, $Res Function(TrainingProgress) _then) =
+      _$TrainingProgressCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
@@ -525,13 +737,15 @@ abstract class _$$TrainingProgressImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$TrainingProgressImplCopyWithImpl<$Res>
-    extends _$TrainingProgressCopyWithImpl<$Res, _$TrainingProgressImpl>
-    implements _$$TrainingProgressImplCopyWith<$Res> {
-  __$$TrainingProgressImplCopyWithImpl(_$TrainingProgressImpl _value,
-      $Res Function(_$TrainingProgressImpl) _then)
-      : super(_value, _then);
+class _$TrainingProgressCopyWithImpl<$Res>
+    implements $TrainingProgressCopyWith<$Res> {
+  _$TrainingProgressCopyWithImpl(this._self, this._then);
 
+  final TrainingProgress _self;
+  final $Res Function(TrainingProgress) _then;
+
+  /// Create a copy of TrainingProgress
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -542,48 +756,228 @@ class __$$TrainingProgressImplCopyWithImpl<$Res>
     Object? progressPercentage = null,
     Object? completedAt = freezed,
   }) {
-    return _then(_$TrainingProgressImpl(
+    return _then(_self.copyWith(
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       moduleId: null == moduleId
-          ? _value.moduleId
+          ? _self.moduleId
           : moduleId // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
       progressPercentage: null == progressPercentage
-          ? _value.progressPercentage
+          ? _self.progressPercentage
           : progressPercentage // ignore: cast_nullable_to_non_nullable
               as int,
       completedAt: freezed == completedAt
-          ? _value.completedAt
+          ? _self.completedAt
           : completedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [TrainingProgress].
+extension TrainingProgressPatterns on TrainingProgress {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_TrainingProgress value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingProgress() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_TrainingProgress value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingProgress():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_TrainingProgress value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingProgress() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String moduleId,
+            String status,
+            int progressPercentage,
+            DateTime? completedAt)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingProgress() when $default != null:
+        return $default(_that.id, _that.userId, _that.moduleId, _that.status,
+            _that.progressPercentage, _that.completedAt);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String moduleId,
+            String status,
+            int progressPercentage,
+            DateTime? completedAt)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingProgress():
+        return $default(_that.id, _that.userId, _that.moduleId, _that.status,
+            _that.progressPercentage, _that.completedAt);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String moduleId,
+            String status,
+            int progressPercentage,
+            DateTime? completedAt)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TrainingProgress() when $default != null:
+        return $default(_that.id, _that.userId, _that.moduleId, _that.status,
+            _that.progressPercentage, _that.completedAt);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$TrainingProgressImpl implements _TrainingProgress {
-  const _$TrainingProgressImpl(
+class _TrainingProgress implements TrainingProgress {
+  const _TrainingProgress(
       {@JsonKey(name: '_id') this.id,
       required this.userId,
       required this.moduleId,
       required this.status,
       required this.progressPercentage,
       this.completedAt});
-
-  factory _$TrainingProgressImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TrainingProgressImplFromJson(json);
+  factory _TrainingProgress.fromJson(Map<String, dynamic> json) =>
+      _$TrainingProgressFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -599,16 +993,26 @@ class _$TrainingProgressImpl implements _TrainingProgress {
   @override
   final DateTime? completedAt;
 
+  /// Create a copy of TrainingProgress
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'TrainingProgress(id: $id, userId: $userId, moduleId: $moduleId, status: $status, progressPercentage: $progressPercentage, completedAt: $completedAt)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$TrainingProgressCopyWith<_TrainingProgress> get copyWith =>
+      __$TrainingProgressCopyWithImpl<_TrainingProgress>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$TrainingProgressToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TrainingProgressImpl &&
+            other is _TrainingProgress &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.moduleId, moduleId) ||
@@ -620,53 +1024,81 @@ class _$TrainingProgressImpl implements _TrainingProgress {
                 other.completedAt == completedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, userId, moduleId, status,
       progressPercentage, completedAt);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$TrainingProgressImplCopyWith<_$TrainingProgressImpl> get copyWith =>
-      __$$TrainingProgressImplCopyWithImpl<_$TrainingProgressImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TrainingProgressImplToJson(
-      this,
-    );
+  String toString() {
+    return 'TrainingProgress(id: $id, userId: $userId, moduleId: $moduleId, status: $status, progressPercentage: $progressPercentage, completedAt: $completedAt)';
   }
 }
 
-abstract class _TrainingProgress implements TrainingProgress {
-  const factory _TrainingProgress(
-      {@JsonKey(name: '_id') final String? id,
-      required final String userId,
-      required final String moduleId,
-      required final String status,
-      required final int progressPercentage,
-      final DateTime? completedAt}) = _$TrainingProgressImpl;
-
-  factory _TrainingProgress.fromJson(Map<String, dynamic> json) =
-      _$TrainingProgressImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$TrainingProgressCopyWith<$Res>
+    implements $TrainingProgressCopyWith<$Res> {
+  factory _$TrainingProgressCopyWith(
+          _TrainingProgress value, $Res Function(_TrainingProgress) _then) =
+      __$TrainingProgressCopyWithImpl;
   @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  String get userId;
-  @override
-  String get moduleId;
-  @override
-  String get status;
-  @override
-  int get progressPercentage;
-  @override
-  DateTime? get completedAt;
-  @override
-  @JsonKey(ignore: true)
-  _$$TrainingProgressImplCopyWith<_$TrainingProgressImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String userId,
+      String moduleId,
+      String status,
+      int progressPercentage,
+      DateTime? completedAt});
 }
+
+/// @nodoc
+class __$TrainingProgressCopyWithImpl<$Res>
+    implements _$TrainingProgressCopyWith<$Res> {
+  __$TrainingProgressCopyWithImpl(this._self, this._then);
+
+  final _TrainingProgress _self;
+  final $Res Function(_TrainingProgress) _then;
+
+  /// Create a copy of TrainingProgress
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? userId = null,
+    Object? moduleId = null,
+    Object? status = null,
+    Object? progressPercentage = null,
+    Object? completedAt = freezed,
+  }) {
+    return _then(_TrainingProgress(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      moduleId: null == moduleId
+          ? _self.moduleId
+          : moduleId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      progressPercentage: null == progressPercentage
+          ? _self.progressPercentage
+          : progressPercentage // ignore: cast_nullable_to_non_nullable
+              as int,
+      completedAt: freezed == completedAt
+          ? _self.completedAt
+          : completedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+// dart format on

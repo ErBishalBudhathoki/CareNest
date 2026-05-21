@@ -665,7 +665,7 @@ class CareIntelligenceRepository {
 
         return {
           'success': true,
-          'patterns': IncidentPatterns.fromJson(normalized),
+          'patterns': IncidentPatternData.fromJson(normalized),
         };
       }
 

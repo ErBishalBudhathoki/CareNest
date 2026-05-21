@@ -7,7 +7,7 @@ import 'package:carenest/app/features/training_compliance/repositories/training_
 part 'certifications_viewmodel.freezed.dart';
 
 @freezed
-class CertificationsState with _$CertificationsState {
+abstract class CertificationsState with _$CertificationsState {
   const factory CertificationsState({
     @Default(false) bool isLoading,
     @Default([]) List<Certification> certifications,

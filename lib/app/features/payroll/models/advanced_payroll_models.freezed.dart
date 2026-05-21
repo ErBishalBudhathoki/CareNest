@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,40 +9,87 @@ part of 'advanced_payroll_models.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-PayrollCalculation _$PayrollCalculationFromJson(Map<String, dynamic> json) {
-  return _PayrollCalculation.fromJson(json);
-}
 
 /// @nodoc
 mixin _$PayrollCalculation {
-  String get userId => throw _privateConstructorUsedError;
-  String get period => throw _privateConstructorUsedError;
-  double get baseHours => throw _privateConstructorUsedError;
-  double get baseRate => throw _privateConstructorUsedError;
-  double get baseAmount => throw _privateConstructorUsedError;
-  PenaltyRates get penalties => throw _privateConstructorUsedError;
-  Allowances get allowances => throw _privateConstructorUsedError;
-  LeaveAccrual get leaveAccrual => throw _privateConstructorUsedError;
-  TaxAndSuper get taxAndSuper => throw _privateConstructorUsedError;
-  double get grossPay => throw _privateConstructorUsedError;
-  double get netPay => throw _privateConstructorUsedError;
+  String get userId;
+  String get period;
+  double get baseHours;
+  double get baseRate;
+  double get baseAmount;
+  PenaltyRates get penalties;
+  Allowances get allowances;
+  LeaveAccrual get leaveAccrual;
+  TaxAndSuper get taxAndSuper;
+  double get grossPay;
+  double get netPay;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $PayrollCalculationCopyWith<PayrollCalculation> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$PayrollCalculationCopyWithImpl<PayrollCalculation>(
+          this as PayrollCalculation, _$identity);
+
+  /// Serializes this PayrollCalculation to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PayrollCalculation &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.period, period) || other.period == period) &&
+            (identical(other.baseHours, baseHours) ||
+                other.baseHours == baseHours) &&
+            (identical(other.baseRate, baseRate) ||
+                other.baseRate == baseRate) &&
+            (identical(other.baseAmount, baseAmount) ||
+                other.baseAmount == baseAmount) &&
+            (identical(other.penalties, penalties) ||
+                other.penalties == penalties) &&
+            (identical(other.allowances, allowances) ||
+                other.allowances == allowances) &&
+            (identical(other.leaveAccrual, leaveAccrual) ||
+                other.leaveAccrual == leaveAccrual) &&
+            (identical(other.taxAndSuper, taxAndSuper) ||
+                other.taxAndSuper == taxAndSuper) &&
+            (identical(other.grossPay, grossPay) ||
+                other.grossPay == grossPay) &&
+            (identical(other.netPay, netPay) || other.netPay == netPay));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      userId,
+      period,
+      baseHours,
+      baseRate,
+      baseAmount,
+      penalties,
+      allowances,
+      leaveAccrual,
+      taxAndSuper,
+      grossPay,
+      netPay);
+
+  @override
+  String toString() {
+    return 'PayrollCalculation(userId: $userId, period: $period, baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, leaveAccrual: $leaveAccrual, taxAndSuper: $taxAndSuper, grossPay: $grossPay, netPay: $netPay)';
+  }
 }
 
 /// @nodoc
-abstract class $PayrollCalculationCopyWith<$Res> {
+abstract mixin class $PayrollCalculationCopyWith<$Res> {
   factory $PayrollCalculationCopyWith(
-          PayrollCalculation value, $Res Function(PayrollCalculation) then) =
-      _$PayrollCalculationCopyWithImpl<$Res, PayrollCalculation>;
+          PayrollCalculation value, $Res Function(PayrollCalculation) _then) =
+      _$PayrollCalculationCopyWithImpl;
   @useResult
   $Res call(
       {String userId,
@@ -64,15 +111,15 @@ abstract class $PayrollCalculationCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$PayrollCalculationCopyWithImpl<$Res, $Val extends PayrollCalculation>
+class _$PayrollCalculationCopyWithImpl<$Res>
     implements $PayrollCalculationCopyWith<$Res> {
-  _$PayrollCalculationCopyWithImpl(this._value, this._then);
+  _$PayrollCalculationCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final PayrollCalculation _self;
+  final $Res Function(PayrollCalculation) _then;
 
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -88,194 +135,325 @@ class _$PayrollCalculationCopyWithImpl<$Res, $Val extends PayrollCalculation>
     Object? grossPay = null,
     Object? netPay = null,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       period: null == period
-          ? _value.period
+          ? _self.period
           : period // ignore: cast_nullable_to_non_nullable
               as String,
       baseHours: null == baseHours
-          ? _value.baseHours
+          ? _self.baseHours
           : baseHours // ignore: cast_nullable_to_non_nullable
               as double,
       baseRate: null == baseRate
-          ? _value.baseRate
+          ? _self.baseRate
           : baseRate // ignore: cast_nullable_to_non_nullable
               as double,
       baseAmount: null == baseAmount
-          ? _value.baseAmount
+          ? _self.baseAmount
           : baseAmount // ignore: cast_nullable_to_non_nullable
               as double,
       penalties: null == penalties
-          ? _value.penalties
+          ? _self.penalties
           : penalties // ignore: cast_nullable_to_non_nullable
               as PenaltyRates,
       allowances: null == allowances
-          ? _value.allowances
+          ? _self.allowances
           : allowances // ignore: cast_nullable_to_non_nullable
               as Allowances,
       leaveAccrual: null == leaveAccrual
-          ? _value.leaveAccrual
+          ? _self.leaveAccrual
           : leaveAccrual // ignore: cast_nullable_to_non_nullable
               as LeaveAccrual,
       taxAndSuper: null == taxAndSuper
-          ? _value.taxAndSuper
+          ? _self.taxAndSuper
           : taxAndSuper // ignore: cast_nullable_to_non_nullable
               as TaxAndSuper,
       grossPay: null == grossPay
-          ? _value.grossPay
+          ? _self.grossPay
           : grossPay // ignore: cast_nullable_to_non_nullable
               as double,
       netPay: null == netPay
-          ? _value.netPay
-          : netPay // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PenaltyRatesCopyWith<$Res> get penalties {
-    return $PenaltyRatesCopyWith<$Res>(_value.penalties, (value) {
-      return _then(_value.copyWith(penalties: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $AllowancesCopyWith<$Res> get allowances {
-    return $AllowancesCopyWith<$Res>(_value.allowances, (value) {
-      return _then(_value.copyWith(allowances: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $LeaveAccrualCopyWith<$Res> get leaveAccrual {
-    return $LeaveAccrualCopyWith<$Res>(_value.leaveAccrual, (value) {
-      return _then(_value.copyWith(leaveAccrual: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $TaxAndSuperCopyWith<$Res> get taxAndSuper {
-    return $TaxAndSuperCopyWith<$Res>(_value.taxAndSuper, (value) {
-      return _then(_value.copyWith(taxAndSuper: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$PayrollCalculationImplCopyWith<$Res>
-    implements $PayrollCalculationCopyWith<$Res> {
-  factory _$$PayrollCalculationImplCopyWith(_$PayrollCalculationImpl value,
-          $Res Function(_$PayrollCalculationImpl) then) =
-      __$$PayrollCalculationImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String userId,
-      String period,
-      double baseHours,
-      double baseRate,
-      double baseAmount,
-      PenaltyRates penalties,
-      Allowances allowances,
-      LeaveAccrual leaveAccrual,
-      TaxAndSuper taxAndSuper,
-      double grossPay,
-      double netPay});
-
-  @override
-  $PenaltyRatesCopyWith<$Res> get penalties;
-  @override
-  $AllowancesCopyWith<$Res> get allowances;
-  @override
-  $LeaveAccrualCopyWith<$Res> get leaveAccrual;
-  @override
-  $TaxAndSuperCopyWith<$Res> get taxAndSuper;
-}
-
-/// @nodoc
-class __$$PayrollCalculationImplCopyWithImpl<$Res>
-    extends _$PayrollCalculationCopyWithImpl<$Res, _$PayrollCalculationImpl>
-    implements _$$PayrollCalculationImplCopyWith<$Res> {
-  __$$PayrollCalculationImplCopyWithImpl(_$PayrollCalculationImpl _value,
-      $Res Function(_$PayrollCalculationImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userId = null,
-    Object? period = null,
-    Object? baseHours = null,
-    Object? baseRate = null,
-    Object? baseAmount = null,
-    Object? penalties = null,
-    Object? allowances = null,
-    Object? leaveAccrual = null,
-    Object? taxAndSuper = null,
-    Object? grossPay = null,
-    Object? netPay = null,
-  }) {
-    return _then(_$PayrollCalculationImpl(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      period: null == period
-          ? _value.period
-          : period // ignore: cast_nullable_to_non_nullable
-              as String,
-      baseHours: null == baseHours
-          ? _value.baseHours
-          : baseHours // ignore: cast_nullable_to_non_nullable
-              as double,
-      baseRate: null == baseRate
-          ? _value.baseRate
-          : baseRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      baseAmount: null == baseAmount
-          ? _value.baseAmount
-          : baseAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      penalties: null == penalties
-          ? _value.penalties
-          : penalties // ignore: cast_nullable_to_non_nullable
-              as PenaltyRates,
-      allowances: null == allowances
-          ? _value.allowances
-          : allowances // ignore: cast_nullable_to_non_nullable
-              as Allowances,
-      leaveAccrual: null == leaveAccrual
-          ? _value.leaveAccrual
-          : leaveAccrual // ignore: cast_nullable_to_non_nullable
-              as LeaveAccrual,
-      taxAndSuper: null == taxAndSuper
-          ? _value.taxAndSuper
-          : taxAndSuper // ignore: cast_nullable_to_non_nullable
-              as TaxAndSuper,
-      grossPay: null == grossPay
-          ? _value.grossPay
-          : grossPay // ignore: cast_nullable_to_non_nullable
-              as double,
-      netPay: null == netPay
-          ? _value.netPay
+          ? _self.netPay
           : netPay // ignore: cast_nullable_to_non_nullable
               as double,
     ));
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRatesCopyWith<$Res> get penalties {
+    return $PenaltyRatesCopyWith<$Res>(_self.penalties, (value) {
+      return _then(_self.copyWith(penalties: value));
+    });
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AllowancesCopyWith<$Res> get allowances {
+    return $AllowancesCopyWith<$Res>(_self.allowances, (value) {
+      return _then(_self.copyWith(allowances: value));
+    });
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualCopyWith<$Res> get leaveAccrual {
+    return $LeaveAccrualCopyWith<$Res>(_self.leaveAccrual, (value) {
+      return _then(_self.copyWith(leaveAccrual: value));
+    });
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TaxAndSuperCopyWith<$Res> get taxAndSuper {
+    return $TaxAndSuperCopyWith<$Res>(_self.taxAndSuper, (value) {
+      return _then(_self.copyWith(taxAndSuper: value));
+    });
+  }
+}
+
+/// Adds pattern-matching-related methods to [PayrollCalculation].
+extension PayrollCalculationPatterns on PayrollCalculation {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PayrollCalculation value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollCalculation() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PayrollCalculation value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollCalculation():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PayrollCalculation value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollCalculation() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String userId,
+            String period,
+            double baseHours,
+            double baseRate,
+            double baseAmount,
+            PenaltyRates penalties,
+            Allowances allowances,
+            LeaveAccrual leaveAccrual,
+            TaxAndSuper taxAndSuper,
+            double grossPay,
+            double netPay)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollCalculation() when $default != null:
+        return $default(
+            _that.userId,
+            _that.period,
+            _that.baseHours,
+            _that.baseRate,
+            _that.baseAmount,
+            _that.penalties,
+            _that.allowances,
+            _that.leaveAccrual,
+            _that.taxAndSuper,
+            _that.grossPay,
+            _that.netPay);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String userId,
+            String period,
+            double baseHours,
+            double baseRate,
+            double baseAmount,
+            PenaltyRates penalties,
+            Allowances allowances,
+            LeaveAccrual leaveAccrual,
+            TaxAndSuper taxAndSuper,
+            double grossPay,
+            double netPay)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollCalculation():
+        return $default(
+            _that.userId,
+            _that.period,
+            _that.baseHours,
+            _that.baseRate,
+            _that.baseAmount,
+            _that.penalties,
+            _that.allowances,
+            _that.leaveAccrual,
+            _that.taxAndSuper,
+            _that.grossPay,
+            _that.netPay);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String userId,
+            String period,
+            double baseHours,
+            double baseRate,
+            double baseAmount,
+            PenaltyRates penalties,
+            Allowances allowances,
+            LeaveAccrual leaveAccrual,
+            TaxAndSuper taxAndSuper,
+            double grossPay,
+            double netPay)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollCalculation() when $default != null:
+        return $default(
+            _that.userId,
+            _that.period,
+            _that.baseHours,
+            _that.baseRate,
+            _that.baseAmount,
+            _that.penalties,
+            _that.allowances,
+            _that.leaveAccrual,
+            _that.taxAndSuper,
+            _that.grossPay,
+            _that.netPay);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$PayrollCalculationImpl implements _PayrollCalculation {
-  const _$PayrollCalculationImpl(
+class _PayrollCalculation implements PayrollCalculation {
+  const _PayrollCalculation(
       {required this.userId,
       required this.period,
       required this.baseHours,
@@ -287,9 +465,8 @@ class _$PayrollCalculationImpl implements _PayrollCalculation {
       required this.taxAndSuper,
       required this.grossPay,
       required this.netPay});
-
-  factory _$PayrollCalculationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PayrollCalculationImplFromJson(json);
+  factory _PayrollCalculation.fromJson(Map<String, dynamic> json) =>
+      _$PayrollCalculationFromJson(json);
 
   @override
   final String userId;
@@ -314,16 +491,26 @@ class _$PayrollCalculationImpl implements _PayrollCalculation {
   @override
   final double netPay;
 
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PayrollCalculation(userId: $userId, period: $period, baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, leaveAccrual: $leaveAccrual, taxAndSuper: $taxAndSuper, grossPay: $grossPay, netPay: $netPay)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PayrollCalculationCopyWith<_PayrollCalculation> get copyWith =>
+      __$PayrollCalculationCopyWithImpl<_PayrollCalculation>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PayrollCalculationToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PayrollCalculationImpl &&
+            other is _PayrollCalculation &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.period, period) || other.period == period) &&
             (identical(other.baseHours, baseHours) ||
@@ -345,7 +532,7 @@ class _$PayrollCalculationImpl implements _PayrollCalculation {
             (identical(other.netPay, netPay) || other.netPay == netPay));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -361,89 +548,207 @@ class _$PayrollCalculationImpl implements _PayrollCalculation {
       grossPay,
       netPay);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PayrollCalculationImplCopyWith<_$PayrollCalculationImpl> get copyWith =>
-      __$$PayrollCalculationImplCopyWithImpl<_$PayrollCalculationImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PayrollCalculationImplToJson(
-      this,
-    );
+  String toString() {
+    return 'PayrollCalculation(userId: $userId, period: $period, baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, leaveAccrual: $leaveAccrual, taxAndSuper: $taxAndSuper, grossPay: $grossPay, netPay: $netPay)';
   }
 }
 
-abstract class _PayrollCalculation implements PayrollCalculation {
-  const factory _PayrollCalculation(
-      {required final String userId,
-      required final String period,
-      required final double baseHours,
-      required final double baseRate,
-      required final double baseAmount,
-      required final PenaltyRates penalties,
-      required final Allowances allowances,
-      required final LeaveAccrual leaveAccrual,
-      required final TaxAndSuper taxAndSuper,
-      required final double grossPay,
-      required final double netPay}) = _$PayrollCalculationImpl;
+/// @nodoc
+abstract mixin class _$PayrollCalculationCopyWith<$Res>
+    implements $PayrollCalculationCopyWith<$Res> {
+  factory _$PayrollCalculationCopyWith(
+          _PayrollCalculation value, $Res Function(_PayrollCalculation) _then) =
+      __$PayrollCalculationCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String userId,
+      String period,
+      double baseHours,
+      double baseRate,
+      double baseAmount,
+      PenaltyRates penalties,
+      Allowances allowances,
+      LeaveAccrual leaveAccrual,
+      TaxAndSuper taxAndSuper,
+      double grossPay,
+      double netPay});
 
-  factory _PayrollCalculation.fromJson(Map<String, dynamic> json) =
-      _$PayrollCalculationImpl.fromJson;
-
   @override
-  String get userId;
+  $PenaltyRatesCopyWith<$Res> get penalties;
   @override
-  String get period;
+  $AllowancesCopyWith<$Res> get allowances;
   @override
-  double get baseHours;
+  $LeaveAccrualCopyWith<$Res> get leaveAccrual;
   @override
-  double get baseRate;
-  @override
-  double get baseAmount;
-  @override
-  PenaltyRates get penalties;
-  @override
-  Allowances get allowances;
-  @override
-  LeaveAccrual get leaveAccrual;
-  @override
-  TaxAndSuper get taxAndSuper;
-  @override
-  double get grossPay;
-  @override
-  double get netPay;
-  @override
-  @JsonKey(ignore: true)
-  _$$PayrollCalculationImplCopyWith<_$PayrollCalculationImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $TaxAndSuperCopyWith<$Res> get taxAndSuper;
 }
 
-PenaltyRates _$PenaltyRatesFromJson(Map<String, dynamic> json) {
-  return _PenaltyRates.fromJson(json);
+/// @nodoc
+class __$PayrollCalculationCopyWithImpl<$Res>
+    implements _$PayrollCalculationCopyWith<$Res> {
+  __$PayrollCalculationCopyWithImpl(this._self, this._then);
+
+  final _PayrollCalculation _self;
+  final $Res Function(_PayrollCalculation) _then;
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? userId = null,
+    Object? period = null,
+    Object? baseHours = null,
+    Object? baseRate = null,
+    Object? baseAmount = null,
+    Object? penalties = null,
+    Object? allowances = null,
+    Object? leaveAccrual = null,
+    Object? taxAndSuper = null,
+    Object? grossPay = null,
+    Object? netPay = null,
+  }) {
+    return _then(_PayrollCalculation(
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      period: null == period
+          ? _self.period
+          : period // ignore: cast_nullable_to_non_nullable
+              as String,
+      baseHours: null == baseHours
+          ? _self.baseHours
+          : baseHours // ignore: cast_nullable_to_non_nullable
+              as double,
+      baseRate: null == baseRate
+          ? _self.baseRate
+          : baseRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      baseAmount: null == baseAmount
+          ? _self.baseAmount
+          : baseAmount // ignore: cast_nullable_to_non_nullable
+              as double,
+      penalties: null == penalties
+          ? _self.penalties
+          : penalties // ignore: cast_nullable_to_non_nullable
+              as PenaltyRates,
+      allowances: null == allowances
+          ? _self.allowances
+          : allowances // ignore: cast_nullable_to_non_nullable
+              as Allowances,
+      leaveAccrual: null == leaveAccrual
+          ? _self.leaveAccrual
+          : leaveAccrual // ignore: cast_nullable_to_non_nullable
+              as LeaveAccrual,
+      taxAndSuper: null == taxAndSuper
+          ? _self.taxAndSuper
+          : taxAndSuper // ignore: cast_nullable_to_non_nullable
+              as TaxAndSuper,
+      grossPay: null == grossPay
+          ? _self.grossPay
+          : grossPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      netPay: null == netPay
+          ? _self.netPay
+          : netPay // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRatesCopyWith<$Res> get penalties {
+    return $PenaltyRatesCopyWith<$Res>(_self.penalties, (value) {
+      return _then(_self.copyWith(penalties: value));
+    });
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AllowancesCopyWith<$Res> get allowances {
+    return $AllowancesCopyWith<$Res>(_self.allowances, (value) {
+      return _then(_self.copyWith(allowances: value));
+    });
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualCopyWith<$Res> get leaveAccrual {
+    return $LeaveAccrualCopyWith<$Res>(_self.leaveAccrual, (value) {
+      return _then(_self.copyWith(leaveAccrual: value));
+    });
+  }
+
+  /// Create a copy of PayrollCalculation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TaxAndSuperCopyWith<$Res> get taxAndSuper {
+    return $TaxAndSuperCopyWith<$Res>(_self.taxAndSuper, (value) {
+      return _then(_self.copyWith(taxAndSuper: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$PenaltyRates {
-  PenaltyRate get saturday => throw _privateConstructorUsedError;
-  PenaltyRate get sunday => throw _privateConstructorUsedError;
-  PenaltyRate get publicHoliday => throw _privateConstructorUsedError;
-  PenaltyRate get overtime => throw _privateConstructorUsedError;
-  double get total => throw _privateConstructorUsedError;
+  PenaltyRate get saturday;
+  PenaltyRate get sunday;
+  PenaltyRate get publicHoliday;
+  PenaltyRate get overtime;
+  double get total;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $PenaltyRatesCopyWith<PenaltyRates> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$PenaltyRatesCopyWithImpl<PenaltyRates>(
+          this as PenaltyRates, _$identity);
+
+  /// Serializes this PenaltyRates to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PenaltyRates &&
+            (identical(other.saturday, saturday) ||
+                other.saturday == saturday) &&
+            (identical(other.sunday, sunday) || other.sunday == sunday) &&
+            (identical(other.publicHoliday, publicHoliday) ||
+                other.publicHoliday == publicHoliday) &&
+            (identical(other.overtime, overtime) ||
+                other.overtime == overtime) &&
+            (identical(other.total, total) || other.total == total));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, saturday, sunday, publicHoliday, overtime, total);
+
+  @override
+  String toString() {
+    return 'PenaltyRates(saturday: $saturday, sunday: $sunday, publicHoliday: $publicHoliday, overtime: $overtime, total: $total)';
+  }
 }
 
 /// @nodoc
-abstract class $PenaltyRatesCopyWith<$Res> {
+abstract mixin class $PenaltyRatesCopyWith<$Res> {
   factory $PenaltyRatesCopyWith(
-          PenaltyRates value, $Res Function(PenaltyRates) then) =
-      _$PenaltyRatesCopyWithImpl<$Res, PenaltyRates>;
+          PenaltyRates value, $Res Function(PenaltyRates) _then) =
+      _$PenaltyRatesCopyWithImpl;
   @useResult
   $Res call(
       {PenaltyRate saturday,
@@ -459,15 +764,14 @@ abstract class $PenaltyRatesCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$PenaltyRatesCopyWithImpl<$Res, $Val extends PenaltyRates>
-    implements $PenaltyRatesCopyWith<$Res> {
-  _$PenaltyRatesCopyWithImpl(this._value, this._then);
+class _$PenaltyRatesCopyWithImpl<$Res> implements $PenaltyRatesCopyWith<$Res> {
+  _$PenaltyRatesCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final PenaltyRates _self;
+  final $Res Function(PenaltyRates) _then;
 
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -477,142 +781,248 @@ class _$PenaltyRatesCopyWithImpl<$Res, $Val extends PenaltyRates>
     Object? overtime = null,
     Object? total = null,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       saturday: null == saturday
-          ? _value.saturday
+          ? _self.saturday
           : saturday // ignore: cast_nullable_to_non_nullable
               as PenaltyRate,
       sunday: null == sunday
-          ? _value.sunday
+          ? _self.sunday
           : sunday // ignore: cast_nullable_to_non_nullable
               as PenaltyRate,
       publicHoliday: null == publicHoliday
-          ? _value.publicHoliday
+          ? _self.publicHoliday
           : publicHoliday // ignore: cast_nullable_to_non_nullable
               as PenaltyRate,
       overtime: null == overtime
-          ? _value.overtime
+          ? _self.overtime
           : overtime // ignore: cast_nullable_to_non_nullable
               as PenaltyRate,
       total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PenaltyRateCopyWith<$Res> get saturday {
-    return $PenaltyRateCopyWith<$Res>(_value.saturday, (value) {
-      return _then(_value.copyWith(saturday: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PenaltyRateCopyWith<$Res> get sunday {
-    return $PenaltyRateCopyWith<$Res>(_value.sunday, (value) {
-      return _then(_value.copyWith(sunday: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PenaltyRateCopyWith<$Res> get publicHoliday {
-    return $PenaltyRateCopyWith<$Res>(_value.publicHoliday, (value) {
-      return _then(_value.copyWith(publicHoliday: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PenaltyRateCopyWith<$Res> get overtime {
-    return $PenaltyRateCopyWith<$Res>(_value.overtime, (value) {
-      return _then(_value.copyWith(overtime: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$PenaltyRatesImplCopyWith<$Res>
-    implements $PenaltyRatesCopyWith<$Res> {
-  factory _$$PenaltyRatesImplCopyWith(
-          _$PenaltyRatesImpl value, $Res Function(_$PenaltyRatesImpl) then) =
-      __$$PenaltyRatesImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {PenaltyRate saturday,
-      PenaltyRate sunday,
-      PenaltyRate publicHoliday,
-      PenaltyRate overtime,
-      double total});
-
-  @override
-  $PenaltyRateCopyWith<$Res> get saturday;
-  @override
-  $PenaltyRateCopyWith<$Res> get sunday;
-  @override
-  $PenaltyRateCopyWith<$Res> get publicHoliday;
-  @override
-  $PenaltyRateCopyWith<$Res> get overtime;
-}
-
-/// @nodoc
-class __$$PenaltyRatesImplCopyWithImpl<$Res>
-    extends _$PenaltyRatesCopyWithImpl<$Res, _$PenaltyRatesImpl>
-    implements _$$PenaltyRatesImplCopyWith<$Res> {
-  __$$PenaltyRatesImplCopyWithImpl(
-      _$PenaltyRatesImpl _value, $Res Function(_$PenaltyRatesImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? saturday = null,
-    Object? sunday = null,
-    Object? publicHoliday = null,
-    Object? overtime = null,
-    Object? total = null,
-  }) {
-    return _then(_$PenaltyRatesImpl(
-      saturday: null == saturday
-          ? _value.saturday
-          : saturday // ignore: cast_nullable_to_non_nullable
-              as PenaltyRate,
-      sunday: null == sunday
-          ? _value.sunday
-          : sunday // ignore: cast_nullable_to_non_nullable
-              as PenaltyRate,
-      publicHoliday: null == publicHoliday
-          ? _value.publicHoliday
-          : publicHoliday // ignore: cast_nullable_to_non_nullable
-              as PenaltyRate,
-      overtime: null == overtime
-          ? _value.overtime
-          : overtime // ignore: cast_nullable_to_non_nullable
-              as PenaltyRate,
-      total: null == total
-          ? _value.total
+          ? _self.total
           : total // ignore: cast_nullable_to_non_nullable
               as double,
     ));
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get saturday {
+    return $PenaltyRateCopyWith<$Res>(_self.saturday, (value) {
+      return _then(_self.copyWith(saturday: value));
+    });
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get sunday {
+    return $PenaltyRateCopyWith<$Res>(_self.sunday, (value) {
+      return _then(_self.copyWith(sunday: value));
+    });
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get publicHoliday {
+    return $PenaltyRateCopyWith<$Res>(_self.publicHoliday, (value) {
+      return _then(_self.copyWith(publicHoliday: value));
+    });
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get overtime {
+    return $PenaltyRateCopyWith<$Res>(_self.overtime, (value) {
+      return _then(_self.copyWith(overtime: value));
+    });
+  }
+}
+
+/// Adds pattern-matching-related methods to [PenaltyRates].
+extension PenaltyRatesPatterns on PenaltyRates {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PenaltyRates value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRates() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PenaltyRates value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRates():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PenaltyRates value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRates() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(PenaltyRate saturday, PenaltyRate sunday,
+            PenaltyRate publicHoliday, PenaltyRate overtime, double total)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRates() when $default != null:
+        return $default(_that.saturday, _that.sunday, _that.publicHoliday,
+            _that.overtime, _that.total);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(PenaltyRate saturday, PenaltyRate sunday,
+            PenaltyRate publicHoliday, PenaltyRate overtime, double total)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRates():
+        return $default(_that.saturday, _that.sunday, _that.publicHoliday,
+            _that.overtime, _that.total);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(PenaltyRate saturday, PenaltyRate sunday,
+            PenaltyRate publicHoliday, PenaltyRate overtime, double total)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRates() when $default != null:
+        return $default(_that.saturday, _that.sunday, _that.publicHoliday,
+            _that.overtime, _that.total);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$PenaltyRatesImpl implements _PenaltyRates {
-  const _$PenaltyRatesImpl(
+class _PenaltyRates implements PenaltyRates {
+  const _PenaltyRates(
       {required this.saturday,
       required this.sunday,
       required this.publicHoliday,
       required this.overtime,
       required this.total});
-
-  factory _$PenaltyRatesImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PenaltyRatesImplFromJson(json);
+  factory _PenaltyRates.fromJson(Map<String, dynamic> json) =>
+      _$PenaltyRatesFromJson(json);
 
   @override
   final PenaltyRate saturday;
@@ -625,16 +1035,26 @@ class _$PenaltyRatesImpl implements _PenaltyRates {
   @override
   final double total;
 
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PenaltyRates(saturday: $saturday, sunday: $sunday, publicHoliday: $publicHoliday, overtime: $overtime, total: $total)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PenaltyRatesCopyWith<_PenaltyRates> get copyWith =>
+      __$PenaltyRatesCopyWithImpl<_PenaltyRates>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PenaltyRatesToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PenaltyRatesImpl &&
+            other is _PenaltyRates &&
             (identical(other.saturday, saturday) ||
                 other.saturday == saturday) &&
             (identical(other.sunday, sunday) || other.sunday == sunday) &&
@@ -645,130 +1065,180 @@ class _$PenaltyRatesImpl implements _PenaltyRates {
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, saturday, sunday, publicHoliday, overtime, total);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PenaltyRatesImplCopyWith<_$PenaltyRatesImpl> get copyWith =>
-      __$$PenaltyRatesImplCopyWithImpl<_$PenaltyRatesImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PenaltyRatesImplToJson(
-      this,
-    );
+  String toString() {
+    return 'PenaltyRates(saturday: $saturday, sunday: $sunday, publicHoliday: $publicHoliday, overtime: $overtime, total: $total)';
   }
 }
 
-abstract class _PenaltyRates implements PenaltyRates {
-  const factory _PenaltyRates(
-      {required final PenaltyRate saturday,
-      required final PenaltyRate sunday,
-      required final PenaltyRate publicHoliday,
-      required final PenaltyRate overtime,
-      required final double total}) = _$PenaltyRatesImpl;
+/// @nodoc
+abstract mixin class _$PenaltyRatesCopyWith<$Res>
+    implements $PenaltyRatesCopyWith<$Res> {
+  factory _$PenaltyRatesCopyWith(
+          _PenaltyRates value, $Res Function(_PenaltyRates) _then) =
+      __$PenaltyRatesCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {PenaltyRate saturday,
+      PenaltyRate sunday,
+      PenaltyRate publicHoliday,
+      PenaltyRate overtime,
+      double total});
 
-  factory _PenaltyRates.fromJson(Map<String, dynamic> json) =
-      _$PenaltyRatesImpl.fromJson;
-
   @override
-  PenaltyRate get saturday;
+  $PenaltyRateCopyWith<$Res> get saturday;
   @override
-  PenaltyRate get sunday;
+  $PenaltyRateCopyWith<$Res> get sunday;
   @override
-  PenaltyRate get publicHoliday;
+  $PenaltyRateCopyWith<$Res> get publicHoliday;
   @override
-  PenaltyRate get overtime;
-  @override
-  double get total;
-  @override
-  @JsonKey(ignore: true)
-  _$$PenaltyRatesImplCopyWith<_$PenaltyRatesImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $PenaltyRateCopyWith<$Res> get overtime;
 }
 
-PenaltyRate _$PenaltyRateFromJson(Map<String, dynamic> json) {
-  return _PenaltyRate.fromJson(json);
+/// @nodoc
+class __$PenaltyRatesCopyWithImpl<$Res>
+    implements _$PenaltyRatesCopyWith<$Res> {
+  __$PenaltyRatesCopyWithImpl(this._self, this._then);
+
+  final _PenaltyRates _self;
+  final $Res Function(_PenaltyRates) _then;
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? saturday = null,
+    Object? sunday = null,
+    Object? publicHoliday = null,
+    Object? overtime = null,
+    Object? total = null,
+  }) {
+    return _then(_PenaltyRates(
+      saturday: null == saturday
+          ? _self.saturday
+          : saturday // ignore: cast_nullable_to_non_nullable
+              as PenaltyRate,
+      sunday: null == sunday
+          ? _self.sunday
+          : sunday // ignore: cast_nullable_to_non_nullable
+              as PenaltyRate,
+      publicHoliday: null == publicHoliday
+          ? _self.publicHoliday
+          : publicHoliday // ignore: cast_nullable_to_non_nullable
+              as PenaltyRate,
+      overtime: null == overtime
+          ? _self.overtime
+          : overtime // ignore: cast_nullable_to_non_nullable
+              as PenaltyRate,
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get saturday {
+    return $PenaltyRateCopyWith<$Res>(_self.saturday, (value) {
+      return _then(_self.copyWith(saturday: value));
+    });
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get sunday {
+    return $PenaltyRateCopyWith<$Res>(_self.sunday, (value) {
+      return _then(_self.copyWith(sunday: value));
+    });
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get publicHoliday {
+    return $PenaltyRateCopyWith<$Res>(_self.publicHoliday, (value) {
+      return _then(_self.copyWith(publicHoliday: value));
+    });
+  }
+
+  /// Create a copy of PenaltyRates
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<$Res> get overtime {
+    return $PenaltyRateCopyWith<$Res>(_self.overtime, (value) {
+      return _then(_self.copyWith(overtime: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$PenaltyRate {
-  double get hours => throw _privateConstructorUsedError;
-  double get rate => throw _privateConstructorUsedError;
-  double get amount => throw _privateConstructorUsedError;
+  double get hours;
+  double get rate;
+  double get amount;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PenaltyRateCopyWith<PenaltyRate> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PenaltyRateCopyWith<$Res> {
-  factory $PenaltyRateCopyWith(
-          PenaltyRate value, $Res Function(PenaltyRate) then) =
-      _$PenaltyRateCopyWithImpl<$Res, PenaltyRate>;
-  @useResult
-  $Res call({double hours, double rate, double amount});
-}
-
-/// @nodoc
-class _$PenaltyRateCopyWithImpl<$Res, $Val extends PenaltyRate>
-    implements $PenaltyRateCopyWith<$Res> {
-  _$PenaltyRateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of PenaltyRate
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $PenaltyRateCopyWith<PenaltyRate> get copyWith =>
+      _$PenaltyRateCopyWithImpl<PenaltyRate>(this as PenaltyRate, _$identity);
+
+  /// Serializes this PenaltyRate to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? hours = null,
-    Object? rate = null,
-    Object? amount = null,
-  }) {
-    return _then(_value.copyWith(
-      hours: null == hours
-          ? _value.hours
-          : hours // ignore: cast_nullable_to_non_nullable
-              as double,
-      rate: null == rate
-          ? _value.rate
-          : rate // ignore: cast_nullable_to_non_nullable
-              as double,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PenaltyRate &&
+            (identical(other.hours, hours) || other.hours == hours) &&
+            (identical(other.rate, rate) || other.rate == rate) &&
+            (identical(other.amount, amount) || other.amount == amount));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, hours, rate, amount);
+
+  @override
+  String toString() {
+    return 'PenaltyRate(hours: $hours, rate: $rate, amount: $amount)';
   }
 }
 
 /// @nodoc
-abstract class _$$PenaltyRateImplCopyWith<$Res>
-    implements $PenaltyRateCopyWith<$Res> {
-  factory _$$PenaltyRateImplCopyWith(
-          _$PenaltyRateImpl value, $Res Function(_$PenaltyRateImpl) then) =
-      __$$PenaltyRateImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $PenaltyRateCopyWith<$Res> {
+  factory $PenaltyRateCopyWith(
+          PenaltyRate value, $Res Function(PenaltyRate) _then) =
+      _$PenaltyRateCopyWithImpl;
   @useResult
   $Res call({double hours, double rate, double amount});
 }
 
 /// @nodoc
-class __$$PenaltyRateImplCopyWithImpl<$Res>
-    extends _$PenaltyRateCopyWithImpl<$Res, _$PenaltyRateImpl>
-    implements _$$PenaltyRateImplCopyWith<$Res> {
-  __$$PenaltyRateImplCopyWithImpl(
-      _$PenaltyRateImpl _value, $Res Function(_$PenaltyRateImpl) _then)
-      : super(_value, _then);
+class _$PenaltyRateCopyWithImpl<$Res> implements $PenaltyRateCopyWith<$Res> {
+  _$PenaltyRateCopyWithImpl(this._self, this._then);
 
+  final PenaltyRate _self;
+  final $Res Function(PenaltyRate) _then;
+
+  /// Create a copy of PenaltyRate
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -776,31 +1246,187 @@ class __$$PenaltyRateImplCopyWithImpl<$Res>
     Object? rate = null,
     Object? amount = null,
   }) {
-    return _then(_$PenaltyRateImpl(
+    return _then(_self.copyWith(
       hours: null == hours
-          ? _value.hours
+          ? _self.hours
           : hours // ignore: cast_nullable_to_non_nullable
               as double,
       rate: null == rate
-          ? _value.rate
+          ? _self.rate
           : rate // ignore: cast_nullable_to_non_nullable
               as double,
       amount: null == amount
-          ? _value.amount
+          ? _self.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [PenaltyRate].
+extension PenaltyRatePatterns on PenaltyRate {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PenaltyRate value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRate() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PenaltyRate value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRate():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PenaltyRate value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRate() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double hours, double rate, double amount)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRate() when $default != null:
+        return $default(_that.hours, _that.rate, _that.amount);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double hours, double rate, double amount) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRate():
+        return $default(_that.hours, _that.rate, _that.amount);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double hours, double rate, double amount)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PenaltyRate() when $default != null:
+        return $default(_that.hours, _that.rate, _that.amount);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$PenaltyRateImpl implements _PenaltyRate {
-  const _$PenaltyRateImpl(
+class _PenaltyRate implements PenaltyRate {
+  const _PenaltyRate(
       {required this.hours, required this.rate, required this.amount});
-
-  factory _$PenaltyRateImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PenaltyRateImplFromJson(json);
+  factory _PenaltyRate.fromJson(Map<String, dynamic> json) =>
+      _$PenaltyRateFromJson(json);
 
   @override
   final double hours;
@@ -809,206 +1435,362 @@ class _$PenaltyRateImpl implements _PenaltyRate {
   @override
   final double amount;
 
+  /// Create a copy of PenaltyRate
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PenaltyRate(hours: $hours, rate: $rate, amount: $amount)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PenaltyRateCopyWith<_PenaltyRate> get copyWith =>
+      __$PenaltyRateCopyWithImpl<_PenaltyRate>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PenaltyRateToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PenaltyRateImpl &&
+            other is _PenaltyRate &&
             (identical(other.hours, hours) || other.hours == hours) &&
             (identical(other.rate, rate) || other.rate == rate) &&
             (identical(other.amount, amount) || other.amount == amount));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, hours, rate, amount);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PenaltyRateImplCopyWith<_$PenaltyRateImpl> get copyWith =>
-      __$$PenaltyRateImplCopyWithImpl<_$PenaltyRateImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PenaltyRateImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _PenaltyRate implements PenaltyRate {
-  const factory _PenaltyRate(
-      {required final double hours,
-      required final double rate,
-      required final double amount}) = _$PenaltyRateImpl;
-
-  factory _PenaltyRate.fromJson(Map<String, dynamic> json) =
-      _$PenaltyRateImpl.fromJson;
-
-  @override
-  double get hours;
-  @override
-  double get rate;
-  @override
-  double get amount;
-  @override
-  @JsonKey(ignore: true)
-  _$$PenaltyRateImplCopyWith<_$PenaltyRateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-Allowances _$AllowancesFromJson(Map<String, dynamic> json) {
-  return _Allowances.fromJson(json);
-}
-
-/// @nodoc
-mixin _$Allowances {
-  double get travel => throw _privateConstructorUsedError;
-  double get meal => throw _privateConstructorUsedError;
-  double get sleepover => throw _privateConstructorUsedError;
-  double get firstAid => throw _privateConstructorUsedError;
-  double get total => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $AllowancesCopyWith<Allowances> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $AllowancesCopyWith<$Res> {
-  factory $AllowancesCopyWith(
-          Allowances value, $Res Function(Allowances) then) =
-      _$AllowancesCopyWithImpl<$Res, Allowances>;
-  @useResult
-  $Res call(
-      {double travel,
-      double meal,
-      double sleepover,
-      double firstAid,
-      double total});
-}
-
-/// @nodoc
-class _$AllowancesCopyWithImpl<$Res, $Val extends Allowances>
-    implements $AllowancesCopyWith<$Res> {
-  _$AllowancesCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? travel = null,
-    Object? meal = null,
-    Object? sleepover = null,
-    Object? firstAid = null,
-    Object? total = null,
-  }) {
-    return _then(_value.copyWith(
-      travel: null == travel
-          ? _value.travel
-          : travel // ignore: cast_nullable_to_non_nullable
-              as double,
-      meal: null == meal
-          ? _value.meal
-          : meal // ignore: cast_nullable_to_non_nullable
-              as double,
-      sleepover: null == sleepover
-          ? _value.sleepover
-          : sleepover // ignore: cast_nullable_to_non_nullable
-              as double,
-      firstAid: null == firstAid
-          ? _value.firstAid
-          : firstAid // ignore: cast_nullable_to_non_nullable
-              as double,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  String toString() {
+    return 'PenaltyRate(hours: $hours, rate: $rate, amount: $amount)';
   }
 }
 
 /// @nodoc
-abstract class _$$AllowancesImplCopyWith<$Res>
-    implements $AllowancesCopyWith<$Res> {
-  factory _$$AllowancesImplCopyWith(
-          _$AllowancesImpl value, $Res Function(_$AllowancesImpl) then) =
-      __$$AllowancesImplCopyWithImpl<$Res>;
+abstract mixin class _$PenaltyRateCopyWith<$Res>
+    implements $PenaltyRateCopyWith<$Res> {
+  factory _$PenaltyRateCopyWith(
+          _PenaltyRate value, $Res Function(_PenaltyRate) _then) =
+      __$PenaltyRateCopyWithImpl;
   @override
   @useResult
-  $Res call(
-      {double travel,
-      double meal,
-      double sleepover,
-      double firstAid,
-      double total});
+  $Res call({double hours, double rate, double amount});
 }
 
 /// @nodoc
-class __$$AllowancesImplCopyWithImpl<$Res>
-    extends _$AllowancesCopyWithImpl<$Res, _$AllowancesImpl>
-    implements _$$AllowancesImplCopyWith<$Res> {
-  __$$AllowancesImplCopyWithImpl(
-      _$AllowancesImpl _value, $Res Function(_$AllowancesImpl) _then)
-      : super(_value, _then);
+class __$PenaltyRateCopyWithImpl<$Res> implements _$PenaltyRateCopyWith<$Res> {
+  __$PenaltyRateCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _PenaltyRate _self;
+  final $Res Function(_PenaltyRate) _then;
+
+  /// Create a copy of PenaltyRate
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? travel = null,
-    Object? meal = null,
-    Object? sleepover = null,
-    Object? firstAid = null,
-    Object? total = null,
+    Object? hours = null,
+    Object? rate = null,
+    Object? amount = null,
   }) {
-    return _then(_$AllowancesImpl(
-      travel: null == travel
-          ? _value.travel
-          : travel // ignore: cast_nullable_to_non_nullable
+    return _then(_PenaltyRate(
+      hours: null == hours
+          ? _self.hours
+          : hours // ignore: cast_nullable_to_non_nullable
               as double,
-      meal: null == meal
-          ? _value.meal
-          : meal // ignore: cast_nullable_to_non_nullable
+      rate: null == rate
+          ? _self.rate
+          : rate // ignore: cast_nullable_to_non_nullable
               as double,
-      sleepover: null == sleepover
-          ? _value.sleepover
-          : sleepover // ignore: cast_nullable_to_non_nullable
-              as double,
-      firstAid: null == firstAid
-          ? _value.firstAid
-          : firstAid // ignore: cast_nullable_to_non_nullable
-              as double,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
+      amount: null == amount
+          ? _self.amount
+          : amount // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
 }
 
 /// @nodoc
+mixin _$Allowances {
+  double get travel;
+  double get meal;
+  double get sleepover;
+  double get firstAid;
+  double get total;
+
+  /// Create a copy of Allowances
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $AllowancesCopyWith<Allowances> get copyWith =>
+      _$AllowancesCopyWithImpl<Allowances>(this as Allowances, _$identity);
+
+  /// Serializes this Allowances to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Allowances &&
+            (identical(other.travel, travel) || other.travel == travel) &&
+            (identical(other.meal, meal) || other.meal == meal) &&
+            (identical(other.sleepover, sleepover) ||
+                other.sleepover == sleepover) &&
+            (identical(other.firstAid, firstAid) ||
+                other.firstAid == firstAid) &&
+            (identical(other.total, total) || other.total == total));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, travel, meal, sleepover, firstAid, total);
+
+  @override
+  String toString() {
+    return 'Allowances(travel: $travel, meal: $meal, sleepover: $sleepover, firstAid: $firstAid, total: $total)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $AllowancesCopyWith<$Res> {
+  factory $AllowancesCopyWith(
+          Allowances value, $Res Function(Allowances) _then) =
+      _$AllowancesCopyWithImpl;
+  @useResult
+  $Res call(
+      {double travel,
+      double meal,
+      double sleepover,
+      double firstAid,
+      double total});
+}
+
+/// @nodoc
+class _$AllowancesCopyWithImpl<$Res> implements $AllowancesCopyWith<$Res> {
+  _$AllowancesCopyWithImpl(this._self, this._then);
+
+  final Allowances _self;
+  final $Res Function(Allowances) _then;
+
+  /// Create a copy of Allowances
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? travel = null,
+    Object? meal = null,
+    Object? sleepover = null,
+    Object? firstAid = null,
+    Object? total = null,
+  }) {
+    return _then(_self.copyWith(
+      travel: null == travel
+          ? _self.travel
+          : travel // ignore: cast_nullable_to_non_nullable
+              as double,
+      meal: null == meal
+          ? _self.meal
+          : meal // ignore: cast_nullable_to_non_nullable
+              as double,
+      sleepover: null == sleepover
+          ? _self.sleepover
+          : sleepover // ignore: cast_nullable_to_non_nullable
+              as double,
+      firstAid: null == firstAid
+          ? _self.firstAid
+          : firstAid // ignore: cast_nullable_to_non_nullable
+              as double,
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [Allowances].
+extension AllowancesPatterns on Allowances {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Allowances value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Allowances() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Allowances value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Allowances():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Allowances value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Allowances() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double travel, double meal, double sleepover,
+            double firstAid, double total)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Allowances() when $default != null:
+        return $default(_that.travel, _that.meal, _that.sleepover,
+            _that.firstAid, _that.total);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double travel, double meal, double sleepover,
+            double firstAid, double total)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Allowances():
+        return $default(_that.travel, _that.meal, _that.sleepover,
+            _that.firstAid, _that.total);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double travel, double meal, double sleepover,
+            double firstAid, double total)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Allowances() when $default != null:
+        return $default(_that.travel, _that.meal, _that.sleepover,
+            _that.firstAid, _that.total);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$AllowancesImpl implements _Allowances {
-  const _$AllowancesImpl(
+class _Allowances implements Allowances {
+  const _Allowances(
       {required this.travel,
       required this.meal,
       required this.sleepover,
       required this.firstAid,
       required this.total});
-
-  factory _$AllowancesImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AllowancesImplFromJson(json);
+  factory _Allowances.fromJson(Map<String, dynamic> json) =>
+      _$AllowancesFromJson(json);
 
   @override
   final double travel;
@@ -1021,16 +1803,26 @@ class _$AllowancesImpl implements _Allowances {
   @override
   final double total;
 
+  /// Create a copy of Allowances
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'Allowances(travel: $travel, meal: $meal, sleepover: $sleepover, firstAid: $firstAid, total: $total)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$AllowancesCopyWith<_Allowances> get copyWith =>
+      __$AllowancesCopyWithImpl<_Allowances>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$AllowancesToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AllowancesImpl &&
+            other is _Allowances &&
             (identical(other.travel, travel) || other.travel == travel) &&
             (identical(other.meal, meal) || other.meal == meal) &&
             (identical(other.sleepover, sleepover) ||
@@ -1040,521 +1832,1034 @@ class _$AllowancesImpl implements _Allowances {
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, travel, meal, sleepover, firstAid, total);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$AllowancesImplCopyWith<_$AllowancesImpl> get copyWith =>
-      __$$AllowancesImplCopyWithImpl<_$AllowancesImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AllowancesImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _Allowances implements Allowances {
-  const factory _Allowances(
-      {required final double travel,
-      required final double meal,
-      required final double sleepover,
-      required final double firstAid,
-      required final double total}) = _$AllowancesImpl;
-
-  factory _Allowances.fromJson(Map<String, dynamic> json) =
-      _$AllowancesImpl.fromJson;
-
-  @override
-  double get travel;
-  @override
-  double get meal;
-  @override
-  double get sleepover;
-  @override
-  double get firstAid;
-  @override
-  double get total;
-  @override
-  @JsonKey(ignore: true)
-  _$$AllowancesImplCopyWith<_$AllowancesImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-LeaveAccrual _$LeaveAccrualFromJson(Map<String, dynamic> json) {
-  return _LeaveAccrual.fromJson(json);
-}
-
-/// @nodoc
-mixin _$LeaveAccrual {
-  LeaveAccrualDetail get annualLeave => throw _privateConstructorUsedError;
-  LeaveAccrualDetail get sickLeave => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $LeaveAccrualCopyWith<LeaveAccrual> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $LeaveAccrualCopyWith<$Res> {
-  factory $LeaveAccrualCopyWith(
-          LeaveAccrual value, $Res Function(LeaveAccrual) then) =
-      _$LeaveAccrualCopyWithImpl<$Res, LeaveAccrual>;
-  @useResult
-  $Res call({LeaveAccrualDetail annualLeave, LeaveAccrualDetail sickLeave});
-
-  $LeaveAccrualDetailCopyWith<$Res> get annualLeave;
-  $LeaveAccrualDetailCopyWith<$Res> get sickLeave;
-}
-
-/// @nodoc
-class _$LeaveAccrualCopyWithImpl<$Res, $Val extends LeaveAccrual>
-    implements $LeaveAccrualCopyWith<$Res> {
-  _$LeaveAccrualCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? annualLeave = null,
-    Object? sickLeave = null,
-  }) {
-    return _then(_value.copyWith(
-      annualLeave: null == annualLeave
-          ? _value.annualLeave
-          : annualLeave // ignore: cast_nullable_to_non_nullable
-              as LeaveAccrualDetail,
-      sickLeave: null == sickLeave
-          ? _value.sickLeave
-          : sickLeave // ignore: cast_nullable_to_non_nullable
-              as LeaveAccrualDetail,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $LeaveAccrualDetailCopyWith<$Res> get annualLeave {
-    return $LeaveAccrualDetailCopyWith<$Res>(_value.annualLeave, (value) {
-      return _then(_value.copyWith(annualLeave: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $LeaveAccrualDetailCopyWith<$Res> get sickLeave {
-    return $LeaveAccrualDetailCopyWith<$Res>(_value.sickLeave, (value) {
-      return _then(_value.copyWith(sickLeave: value) as $Val);
-    });
+  String toString() {
+    return 'Allowances(travel: $travel, meal: $meal, sleepover: $sleepover, firstAid: $firstAid, total: $total)';
   }
 }
 
 /// @nodoc
-abstract class _$$LeaveAccrualImplCopyWith<$Res>
-    implements $LeaveAccrualCopyWith<$Res> {
-  factory _$$LeaveAccrualImplCopyWith(
-          _$LeaveAccrualImpl value, $Res Function(_$LeaveAccrualImpl) then) =
-      __$$LeaveAccrualImplCopyWithImpl<$Res>;
+abstract mixin class _$AllowancesCopyWith<$Res>
+    implements $AllowancesCopyWith<$Res> {
+  factory _$AllowancesCopyWith(
+          _Allowances value, $Res Function(_Allowances) _then) =
+      __$AllowancesCopyWithImpl;
   @override
   @useResult
-  $Res call({LeaveAccrualDetail annualLeave, LeaveAccrualDetail sickLeave});
-
-  @override
-  $LeaveAccrualDetailCopyWith<$Res> get annualLeave;
-  @override
-  $LeaveAccrualDetailCopyWith<$Res> get sickLeave;
+  $Res call(
+      {double travel,
+      double meal,
+      double sleepover,
+      double firstAid,
+      double total});
 }
 
 /// @nodoc
-class __$$LeaveAccrualImplCopyWithImpl<$Res>
-    extends _$LeaveAccrualCopyWithImpl<$Res, _$LeaveAccrualImpl>
-    implements _$$LeaveAccrualImplCopyWith<$Res> {
-  __$$LeaveAccrualImplCopyWithImpl(
-      _$LeaveAccrualImpl _value, $Res Function(_$LeaveAccrualImpl) _then)
-      : super(_value, _then);
+class __$AllowancesCopyWithImpl<$Res> implements _$AllowancesCopyWith<$Res> {
+  __$AllowancesCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _Allowances _self;
+  final $Res Function(_Allowances) _then;
+
+  /// Create a copy of Allowances
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? annualLeave = null,
-    Object? sickLeave = null,
+    Object? travel = null,
+    Object? meal = null,
+    Object? sleepover = null,
+    Object? firstAid = null,
+    Object? total = null,
   }) {
-    return _then(_$LeaveAccrualImpl(
-      annualLeave: null == annualLeave
-          ? _value.annualLeave
-          : annualLeave // ignore: cast_nullable_to_non_nullable
-              as LeaveAccrualDetail,
-      sickLeave: null == sickLeave
-          ? _value.sickLeave
-          : sickLeave // ignore: cast_nullable_to_non_nullable
-              as LeaveAccrualDetail,
+    return _then(_Allowances(
+      travel: null == travel
+          ? _self.travel
+          : travel // ignore: cast_nullable_to_non_nullable
+              as double,
+      meal: null == meal
+          ? _self.meal
+          : meal // ignore: cast_nullable_to_non_nullable
+              as double,
+      sleepover: null == sleepover
+          ? _self.sleepover
+          : sleepover // ignore: cast_nullable_to_non_nullable
+              as double,
+      firstAid: null == firstAid
+          ? _self.firstAid
+          : firstAid // ignore: cast_nullable_to_non_nullable
+              as double,
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$LeaveAccrualImpl implements _LeaveAccrual {
-  const _$LeaveAccrualImpl(
-      {required this.annualLeave, required this.sickLeave});
+mixin _$LeaveAccrual {
+  LeaveAccrualDetail get annualLeave;
+  LeaveAccrualDetail get sickLeave;
 
-  factory _$LeaveAccrualImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaveAccrualImplFromJson(json);
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualCopyWith<LeaveAccrual> get copyWith =>
+      _$LeaveAccrualCopyWithImpl<LeaveAccrual>(
+          this as LeaveAccrual, _$identity);
 
-  @override
-  final LeaveAccrualDetail annualLeave;
-  @override
-  final LeaveAccrualDetail sickLeave;
-
-  @override
-  String toString() {
-    return 'LeaveAccrual(annualLeave: $annualLeave, sickLeave: $sickLeave)';
-  }
+  /// Serializes this LeaveAccrual to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LeaveAccrualImpl &&
+            other is LeaveAccrual &&
             (identical(other.annualLeave, annualLeave) ||
                 other.annualLeave == annualLeave) &&
             (identical(other.sickLeave, sickLeave) ||
                 other.sickLeave == sickLeave));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, annualLeave, sickLeave);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$LeaveAccrualImplCopyWith<_$LeaveAccrualImpl> get copyWith =>
-      __$$LeaveAccrualImplCopyWithImpl<_$LeaveAccrualImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LeaveAccrualImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _LeaveAccrual implements LeaveAccrual {
-  const factory _LeaveAccrual(
-      {required final LeaveAccrualDetail annualLeave,
-      required final LeaveAccrualDetail sickLeave}) = _$LeaveAccrualImpl;
-
-  factory _LeaveAccrual.fromJson(Map<String, dynamic> json) =
-      _$LeaveAccrualImpl.fromJson;
-
-  @override
-  LeaveAccrualDetail get annualLeave;
-  @override
-  LeaveAccrualDetail get sickLeave;
-  @override
-  @JsonKey(ignore: true)
-  _$$LeaveAccrualImplCopyWith<_$LeaveAccrualImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-LeaveAccrualDetail _$LeaveAccrualDetailFromJson(Map<String, dynamic> json) {
-  return _LeaveAccrualDetail.fromJson(json);
-}
-
-/// @nodoc
-mixin _$LeaveAccrualDetail {
-  double get hours => throw _privateConstructorUsedError;
-  double get amount => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $LeaveAccrualDetailCopyWith<LeaveAccrualDetail> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $LeaveAccrualDetailCopyWith<$Res> {
-  factory $LeaveAccrualDetailCopyWith(
-          LeaveAccrualDetail value, $Res Function(LeaveAccrualDetail) then) =
-      _$LeaveAccrualDetailCopyWithImpl<$Res, LeaveAccrualDetail>;
-  @useResult
-  $Res call({double hours, double amount});
-}
-
-/// @nodoc
-class _$LeaveAccrualDetailCopyWithImpl<$Res, $Val extends LeaveAccrualDetail>
-    implements $LeaveAccrualDetailCopyWith<$Res> {
-  _$LeaveAccrualDetailCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? hours = null,
-    Object? amount = null,
-  }) {
-    return _then(_value.copyWith(
-      hours: null == hours
-          ? _value.hours
-          : hours // ignore: cast_nullable_to_non_nullable
-              as double,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  String toString() {
+    return 'LeaveAccrual(annualLeave: $annualLeave, sickLeave: $sickLeave)';
   }
 }
 
 /// @nodoc
-abstract class _$$LeaveAccrualDetailImplCopyWith<$Res>
-    implements $LeaveAccrualDetailCopyWith<$Res> {
-  factory _$$LeaveAccrualDetailImplCopyWith(_$LeaveAccrualDetailImpl value,
-          $Res Function(_$LeaveAccrualDetailImpl) then) =
-      __$$LeaveAccrualDetailImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $LeaveAccrualCopyWith<$Res> {
+  factory $LeaveAccrualCopyWith(
+          LeaveAccrual value, $Res Function(LeaveAccrual) _then) =
+      _$LeaveAccrualCopyWithImpl;
   @useResult
-  $Res call({double hours, double amount});
+  $Res call({LeaveAccrualDetail annualLeave, LeaveAccrualDetail sickLeave});
+
+  $LeaveAccrualDetailCopyWith<$Res> get annualLeave;
+  $LeaveAccrualDetailCopyWith<$Res> get sickLeave;
 }
 
 /// @nodoc
-class __$$LeaveAccrualDetailImplCopyWithImpl<$Res>
-    extends _$LeaveAccrualDetailCopyWithImpl<$Res, _$LeaveAccrualDetailImpl>
-    implements _$$LeaveAccrualDetailImplCopyWith<$Res> {
-  __$$LeaveAccrualDetailImplCopyWithImpl(_$LeaveAccrualDetailImpl _value,
-      $Res Function(_$LeaveAccrualDetailImpl) _then)
-      : super(_value, _then);
+class _$LeaveAccrualCopyWithImpl<$Res> implements $LeaveAccrualCopyWith<$Res> {
+  _$LeaveAccrualCopyWithImpl(this._self, this._then);
 
+  final LeaveAccrual _self;
+  final $Res Function(LeaveAccrual) _then;
+
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? hours = null,
-    Object? amount = null,
+    Object? annualLeave = null,
+    Object? sickLeave = null,
   }) {
-    return _then(_$LeaveAccrualDetailImpl(
-      hours: null == hours
-          ? _value.hours
-          : hours // ignore: cast_nullable_to_non_nullable
-              as double,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
+    return _then(_self.copyWith(
+      annualLeave: null == annualLeave
+          ? _self.annualLeave
+          : annualLeave // ignore: cast_nullable_to_non_nullable
+              as LeaveAccrualDetail,
+      sickLeave: null == sickLeave
+          ? _self.sickLeave
+          : sickLeave // ignore: cast_nullable_to_non_nullable
+              as LeaveAccrualDetail,
     ));
+  }
+
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualDetailCopyWith<$Res> get annualLeave {
+    return $LeaveAccrualDetailCopyWith<$Res>(_self.annualLeave, (value) {
+      return _then(_self.copyWith(annualLeave: value));
+    });
+  }
+
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualDetailCopyWith<$Res> get sickLeave {
+    return $LeaveAccrualDetailCopyWith<$Res>(_self.sickLeave, (value) {
+      return _then(_self.copyWith(sickLeave: value));
+    });
+  }
+}
+
+/// Adds pattern-matching-related methods to [LeaveAccrual].
+extension LeaveAccrualPatterns on LeaveAccrual {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_LeaveAccrual value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrual() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_LeaveAccrual value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrual():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_LeaveAccrual value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrual() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            LeaveAccrualDetail annualLeave, LeaveAccrualDetail sickLeave)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrual() when $default != null:
+        return $default(_that.annualLeave, _that.sickLeave);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            LeaveAccrualDetail annualLeave, LeaveAccrualDetail sickLeave)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrual():
+        return $default(_that.annualLeave, _that.sickLeave);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            LeaveAccrualDetail annualLeave, LeaveAccrualDetail sickLeave)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrual() when $default != null:
+        return $default(_that.annualLeave, _that.sickLeave);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$LeaveAccrualDetailImpl implements _LeaveAccrualDetail {
-  const _$LeaveAccrualDetailImpl({required this.hours, required this.amount});
-
-  factory _$LeaveAccrualDetailImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaveAccrualDetailImplFromJson(json);
-
-  @override
-  final double hours;
-  @override
-  final double amount;
+class _LeaveAccrual implements LeaveAccrual {
+  const _LeaveAccrual({required this.annualLeave, required this.sickLeave});
+  factory _LeaveAccrual.fromJson(Map<String, dynamic> json) =>
+      _$LeaveAccrualFromJson(json);
 
   @override
-  String toString() {
-    return 'LeaveAccrualDetail(hours: $hours, amount: $amount)';
+  final LeaveAccrualDetail annualLeave;
+  @override
+  final LeaveAccrualDetail sickLeave;
+
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LeaveAccrualCopyWith<_LeaveAccrual> get copyWith =>
+      __$LeaveAccrualCopyWithImpl<_LeaveAccrual>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$LeaveAccrualToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LeaveAccrualDetailImpl &&
+            other is _LeaveAccrual &&
+            (identical(other.annualLeave, annualLeave) ||
+                other.annualLeave == annualLeave) &&
+            (identical(other.sickLeave, sickLeave) ||
+                other.sickLeave == sickLeave));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, annualLeave, sickLeave);
+
+  @override
+  String toString() {
+    return 'LeaveAccrual(annualLeave: $annualLeave, sickLeave: $sickLeave)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$LeaveAccrualCopyWith<$Res>
+    implements $LeaveAccrualCopyWith<$Res> {
+  factory _$LeaveAccrualCopyWith(
+          _LeaveAccrual value, $Res Function(_LeaveAccrual) _then) =
+      __$LeaveAccrualCopyWithImpl;
+  @override
+  @useResult
+  $Res call({LeaveAccrualDetail annualLeave, LeaveAccrualDetail sickLeave});
+
+  @override
+  $LeaveAccrualDetailCopyWith<$Res> get annualLeave;
+  @override
+  $LeaveAccrualDetailCopyWith<$Res> get sickLeave;
+}
+
+/// @nodoc
+class __$LeaveAccrualCopyWithImpl<$Res>
+    implements _$LeaveAccrualCopyWith<$Res> {
+  __$LeaveAccrualCopyWithImpl(this._self, this._then);
+
+  final _LeaveAccrual _self;
+  final $Res Function(_LeaveAccrual) _then;
+
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? annualLeave = null,
+    Object? sickLeave = null,
+  }) {
+    return _then(_LeaveAccrual(
+      annualLeave: null == annualLeave
+          ? _self.annualLeave
+          : annualLeave // ignore: cast_nullable_to_non_nullable
+              as LeaveAccrualDetail,
+      sickLeave: null == sickLeave
+          ? _self.sickLeave
+          : sickLeave // ignore: cast_nullable_to_non_nullable
+              as LeaveAccrualDetail,
+    ));
+  }
+
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualDetailCopyWith<$Res> get annualLeave {
+    return $LeaveAccrualDetailCopyWith<$Res>(_self.annualLeave, (value) {
+      return _then(_self.copyWith(annualLeave: value));
+    });
+  }
+
+  /// Create a copy of LeaveAccrual
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualDetailCopyWith<$Res> get sickLeave {
+    return $LeaveAccrualDetailCopyWith<$Res>(_self.sickLeave, (value) {
+      return _then(_self.copyWith(sickLeave: value));
+    });
+  }
+}
+
+/// @nodoc
+mixin _$LeaveAccrualDetail {
+  double get hours;
+  double get amount;
+
+  /// Create a copy of LeaveAccrualDetail
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $LeaveAccrualDetailCopyWith<LeaveAccrualDetail> get copyWith =>
+      _$LeaveAccrualDetailCopyWithImpl<LeaveAccrualDetail>(
+          this as LeaveAccrualDetail, _$identity);
+
+  /// Serializes this LeaveAccrualDetail to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LeaveAccrualDetail &&
             (identical(other.hours, hours) || other.hours == hours) &&
             (identical(other.amount, amount) || other.amount == amount));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, hours, amount);
 
-  @JsonKey(ignore: true)
   @override
+  String toString() {
+    return 'LeaveAccrualDetail(hours: $hours, amount: $amount)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $LeaveAccrualDetailCopyWith<$Res> {
+  factory $LeaveAccrualDetailCopyWith(
+          LeaveAccrualDetail value, $Res Function(LeaveAccrualDetail) _then) =
+      _$LeaveAccrualDetailCopyWithImpl;
+  @useResult
+  $Res call({double hours, double amount});
+}
+
+/// @nodoc
+class _$LeaveAccrualDetailCopyWithImpl<$Res>
+    implements $LeaveAccrualDetailCopyWith<$Res> {
+  _$LeaveAccrualDetailCopyWithImpl(this._self, this._then);
+
+  final LeaveAccrualDetail _self;
+  final $Res Function(LeaveAccrualDetail) _then;
+
+  /// Create a copy of LeaveAccrualDetail
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  _$$LeaveAccrualDetailImplCopyWith<_$LeaveAccrualDetailImpl> get copyWith =>
-      __$$LeaveAccrualDetailImplCopyWithImpl<_$LeaveAccrualDetailImpl>(
-          this, _$identity);
+  @override
+  $Res call({
+    Object? hours = null,
+    Object? amount = null,
+  }) {
+    return _then(_self.copyWith(
+      hours: null == hours
+          ? _self.hours
+          : hours // ignore: cast_nullable_to_non_nullable
+              as double,
+      amount: null == amount
+          ? _self.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [LeaveAccrualDetail].
+extension LeaveAccrualDetailPatterns on LeaveAccrualDetail {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_LeaveAccrualDetail value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrualDetail() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_LeaveAccrualDetail value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrualDetail():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_LeaveAccrualDetail value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrualDetail() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double hours, double amount)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrualDetail() when $default != null:
+        return $default(_that.hours, _that.amount);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double hours, double amount) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrualDetail():
+        return $default(_that.hours, _that.amount);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double hours, double amount)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAccrualDetail() when $default != null:
+        return $default(_that.hours, _that.amount);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _LeaveAccrualDetail implements LeaveAccrualDetail {
+  const _LeaveAccrualDetail({required this.hours, required this.amount});
+  factory _LeaveAccrualDetail.fromJson(Map<String, dynamic> json) =>
+      _$LeaveAccrualDetailFromJson(json);
+
+  @override
+  final double hours;
+  @override
+  final double amount;
+
+  /// Create a copy of LeaveAccrualDetail
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LeaveAccrualDetailCopyWith<_LeaveAccrualDetail> get copyWith =>
+      __$LeaveAccrualDetailCopyWithImpl<_LeaveAccrualDetail>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$LeaveAccrualDetailImplToJson(
+    return _$LeaveAccrualDetailToJson(
       this,
     );
   }
-}
-
-abstract class _LeaveAccrualDetail implements LeaveAccrualDetail {
-  const factory _LeaveAccrualDetail(
-      {required final double hours,
-      required final double amount}) = _$LeaveAccrualDetailImpl;
-
-  factory _LeaveAccrualDetail.fromJson(Map<String, dynamic> json) =
-      _$LeaveAccrualDetailImpl.fromJson;
 
   @override
-  double get hours;
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LeaveAccrualDetail &&
+            (identical(other.hours, hours) || other.hours == hours) &&
+            (identical(other.amount, amount) || other.amount == amount));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  double get amount;
+  int get hashCode => Object.hash(runtimeType, hours, amount);
+
   @override
-  @JsonKey(ignore: true)
-  _$$LeaveAccrualDetailImplCopyWith<_$LeaveAccrualDetailImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-TaxAndSuper _$TaxAndSuperFromJson(Map<String, dynamic> json) {
-  return _TaxAndSuper.fromJson(json);
-}
-
-/// @nodoc
-mixin _$TaxAndSuper {
-  double get tax => throw _privateConstructorUsedError;
-  @JsonKey(name: 'super')
-  double get superAmount => throw _privateConstructorUsedError;
-  double get taxRate => throw _privateConstructorUsedError;
-  double get superRate => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $TaxAndSuperCopyWith<TaxAndSuper> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $TaxAndSuperCopyWith<$Res> {
-  factory $TaxAndSuperCopyWith(
-          TaxAndSuper value, $Res Function(TaxAndSuper) then) =
-      _$TaxAndSuperCopyWithImpl<$Res, TaxAndSuper>;
-  @useResult
-  $Res call(
-      {double tax,
-      @JsonKey(name: 'super') double superAmount,
-      double taxRate,
-      double superRate});
-}
-
-/// @nodoc
-class _$TaxAndSuperCopyWithImpl<$Res, $Val extends TaxAndSuper>
-    implements $TaxAndSuperCopyWith<$Res> {
-  _$TaxAndSuperCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? tax = null,
-    Object? superAmount = null,
-    Object? taxRate = null,
-    Object? superRate = null,
-  }) {
-    return _then(_value.copyWith(
-      tax: null == tax
-          ? _value.tax
-          : tax // ignore: cast_nullable_to_non_nullable
-              as double,
-      superAmount: null == superAmount
-          ? _value.superAmount
-          : superAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      taxRate: null == taxRate
-          ? _value.taxRate
-          : taxRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      superRate: null == superRate
-          ? _value.superRate
-          : superRate // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  String toString() {
+    return 'LeaveAccrualDetail(hours: $hours, amount: $amount)';
   }
 }
 
 /// @nodoc
-abstract class _$$TaxAndSuperImplCopyWith<$Res>
-    implements $TaxAndSuperCopyWith<$Res> {
-  factory _$$TaxAndSuperImplCopyWith(
-          _$TaxAndSuperImpl value, $Res Function(_$TaxAndSuperImpl) then) =
-      __$$TaxAndSuperImplCopyWithImpl<$Res>;
+abstract mixin class _$LeaveAccrualDetailCopyWith<$Res>
+    implements $LeaveAccrualDetailCopyWith<$Res> {
+  factory _$LeaveAccrualDetailCopyWith(
+          _LeaveAccrualDetail value, $Res Function(_LeaveAccrualDetail) _then) =
+      __$LeaveAccrualDetailCopyWithImpl;
   @override
   @useResult
-  $Res call(
-      {double tax,
-      @JsonKey(name: 'super') double superAmount,
-      double taxRate,
-      double superRate});
+  $Res call({double hours, double amount});
 }
 
 /// @nodoc
-class __$$TaxAndSuperImplCopyWithImpl<$Res>
-    extends _$TaxAndSuperCopyWithImpl<$Res, _$TaxAndSuperImpl>
-    implements _$$TaxAndSuperImplCopyWith<$Res> {
-  __$$TaxAndSuperImplCopyWithImpl(
-      _$TaxAndSuperImpl _value, $Res Function(_$TaxAndSuperImpl) _then)
-      : super(_value, _then);
+class __$LeaveAccrualDetailCopyWithImpl<$Res>
+    implements _$LeaveAccrualDetailCopyWith<$Res> {
+  __$LeaveAccrualDetailCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _LeaveAccrualDetail _self;
+  final $Res Function(_LeaveAccrualDetail) _then;
+
+  /// Create a copy of LeaveAccrualDetail
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? tax = null,
-    Object? superAmount = null,
-    Object? taxRate = null,
-    Object? superRate = null,
+    Object? hours = null,
+    Object? amount = null,
   }) {
-    return _then(_$TaxAndSuperImpl(
-      tax: null == tax
-          ? _value.tax
-          : tax // ignore: cast_nullable_to_non_nullable
+    return _then(_LeaveAccrualDetail(
+      hours: null == hours
+          ? _self.hours
+          : hours // ignore: cast_nullable_to_non_nullable
               as double,
-      superAmount: null == superAmount
-          ? _value.superAmount
-          : superAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      taxRate: null == taxRate
-          ? _value.taxRate
-          : taxRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      superRate: null == superRate
-          ? _value.superRate
-          : superRate // ignore: cast_nullable_to_non_nullable
+      amount: null == amount
+          ? _self.amount
+          : amount // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
 }
 
 /// @nodoc
+mixin _$TaxAndSuper {
+  double get tax;
+  @JsonKey(name: 'super')
+  double get superAmount;
+  double get taxRate;
+  double get superRate;
+
+  /// Create a copy of TaxAndSuper
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $TaxAndSuperCopyWith<TaxAndSuper> get copyWith =>
+      _$TaxAndSuperCopyWithImpl<TaxAndSuper>(this as TaxAndSuper, _$identity);
+
+  /// Serializes this TaxAndSuper to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is TaxAndSuper &&
+            (identical(other.tax, tax) || other.tax == tax) &&
+            (identical(other.superAmount, superAmount) ||
+                other.superAmount == superAmount) &&
+            (identical(other.taxRate, taxRate) || other.taxRate == taxRate) &&
+            (identical(other.superRate, superRate) ||
+                other.superRate == superRate));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, tax, superAmount, taxRate, superRate);
+
+  @override
+  String toString() {
+    return 'TaxAndSuper(tax: $tax, superAmount: $superAmount, taxRate: $taxRate, superRate: $superRate)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $TaxAndSuperCopyWith<$Res> {
+  factory $TaxAndSuperCopyWith(
+          TaxAndSuper value, $Res Function(TaxAndSuper) _then) =
+      _$TaxAndSuperCopyWithImpl;
+  @useResult
+  $Res call(
+      {double tax,
+      @JsonKey(name: 'super') double superAmount,
+      double taxRate,
+      double superRate});
+}
+
+/// @nodoc
+class _$TaxAndSuperCopyWithImpl<$Res> implements $TaxAndSuperCopyWith<$Res> {
+  _$TaxAndSuperCopyWithImpl(this._self, this._then);
+
+  final TaxAndSuper _self;
+  final $Res Function(TaxAndSuper) _then;
+
+  /// Create a copy of TaxAndSuper
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tax = null,
+    Object? superAmount = null,
+    Object? taxRate = null,
+    Object? superRate = null,
+  }) {
+    return _then(_self.copyWith(
+      tax: null == tax
+          ? _self.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
+      superAmount: null == superAmount
+          ? _self.superAmount
+          : superAmount // ignore: cast_nullable_to_non_nullable
+              as double,
+      taxRate: null == taxRate
+          ? _self.taxRate
+          : taxRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      superRate: null == superRate
+          ? _self.superRate
+          : superRate // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [TaxAndSuper].
+extension TaxAndSuperPatterns on TaxAndSuper {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_TaxAndSuper value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _TaxAndSuper() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_TaxAndSuper value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TaxAndSuper():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_TaxAndSuper value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TaxAndSuper() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double tax, @JsonKey(name: 'super') double superAmount,
+            double taxRate, double superRate)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _TaxAndSuper() when $default != null:
+        return $default(
+            _that.tax, _that.superAmount, _that.taxRate, _that.superRate);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double tax, @JsonKey(name: 'super') double superAmount,
+            double taxRate, double superRate)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TaxAndSuper():
+        return $default(
+            _that.tax, _that.superAmount, _that.taxRate, _that.superRate);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double tax, @JsonKey(name: 'super') double superAmount,
+            double taxRate, double superRate)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TaxAndSuper() when $default != null:
+        return $default(
+            _that.tax, _that.superAmount, _that.taxRate, _that.superRate);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$TaxAndSuperImpl implements _TaxAndSuper {
-  const _$TaxAndSuperImpl(
+class _TaxAndSuper implements TaxAndSuper {
+  const _TaxAndSuper(
       {required this.tax,
       @JsonKey(name: 'super') required this.superAmount,
       required this.taxRate,
       required this.superRate});
-
-  factory _$TaxAndSuperImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TaxAndSuperImplFromJson(json);
+  factory _TaxAndSuper.fromJson(Map<String, dynamic> json) =>
+      _$TaxAndSuperFromJson(json);
 
   @override
   final double tax;
@@ -1566,16 +2871,26 @@ class _$TaxAndSuperImpl implements _TaxAndSuper {
   @override
   final double superRate;
 
+  /// Create a copy of TaxAndSuper
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'TaxAndSuper(tax: $tax, superAmount: $superAmount, taxRate: $taxRate, superRate: $superRate)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$TaxAndSuperCopyWith<_TaxAndSuper> get copyWith =>
+      __$TaxAndSuperCopyWithImpl<_TaxAndSuper>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$TaxAndSuperToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TaxAndSuperImpl &&
+            other is _TaxAndSuper &&
             (identical(other.tax, tax) || other.tax == tax) &&
             (identical(other.superAmount, superAmount) ||
                 other.superAmount == superAmount) &&
@@ -1584,259 +2899,441 @@ class _$TaxAndSuperImpl implements _TaxAndSuper {
                 other.superRate == superRate));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, tax, superAmount, taxRate, superRate);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$TaxAndSuperImplCopyWith<_$TaxAndSuperImpl> get copyWith =>
-      __$$TaxAndSuperImplCopyWithImpl<_$TaxAndSuperImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TaxAndSuperImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _TaxAndSuper implements TaxAndSuper {
-  const factory _TaxAndSuper(
-      {required final double tax,
-      @JsonKey(name: 'super') required final double superAmount,
-      required final double taxRate,
-      required final double superRate}) = _$TaxAndSuperImpl;
-
-  factory _TaxAndSuper.fromJson(Map<String, dynamic> json) =
-      _$TaxAndSuperImpl.fromJson;
-
-  @override
-  double get tax;
-  @override
-  @JsonKey(name: 'super')
-  double get superAmount;
-  @override
-  double get taxRate;
-  @override
-  double get superRate;
-  @override
-  @JsonKey(ignore: true)
-  _$$TaxAndSuperImplCopyWith<_$TaxAndSuperImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-Payslip _$PayslipFromJson(Map<String, dynamic> json) {
-  return _Payslip.fromJson(json);
-}
-
-/// @nodoc
-mixin _$Payslip {
-  String get payslipId => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get period => throw _privateConstructorUsedError;
-  String get generatedDate => throw _privateConstructorUsedError;
-  PayslipEarnings get earnings => throw _privateConstructorUsedError;
-  PayslipDeductions get deductions => throw _privateConstructorUsedError;
-  double get netPay => throw _privateConstructorUsedError;
-  PayslipYTD get ytd => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PayslipCopyWith<Payslip> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PayslipCopyWith<$Res> {
-  factory $PayslipCopyWith(Payslip value, $Res Function(Payslip) then) =
-      _$PayslipCopyWithImpl<$Res, Payslip>;
-  @useResult
-  $Res call(
-      {String payslipId,
-      String userId,
-      String period,
-      String generatedDate,
-      PayslipEarnings earnings,
-      PayslipDeductions deductions,
-      double netPay,
-      PayslipYTD ytd});
-
-  $PayslipEarningsCopyWith<$Res> get earnings;
-  $PayslipDeductionsCopyWith<$Res> get deductions;
-  $PayslipYTDCopyWith<$Res> get ytd;
-}
-
-/// @nodoc
-class _$PayslipCopyWithImpl<$Res, $Val extends Payslip>
-    implements $PayslipCopyWith<$Res> {
-  _$PayslipCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? payslipId = null,
-    Object? userId = null,
-    Object? period = null,
-    Object? generatedDate = null,
-    Object? earnings = null,
-    Object? deductions = null,
-    Object? netPay = null,
-    Object? ytd = null,
-  }) {
-    return _then(_value.copyWith(
-      payslipId: null == payslipId
-          ? _value.payslipId
-          : payslipId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      period: null == period
-          ? _value.period
-          : period // ignore: cast_nullable_to_non_nullable
-              as String,
-      generatedDate: null == generatedDate
-          ? _value.generatedDate
-          : generatedDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      earnings: null == earnings
-          ? _value.earnings
-          : earnings // ignore: cast_nullable_to_non_nullable
-              as PayslipEarnings,
-      deductions: null == deductions
-          ? _value.deductions
-          : deductions // ignore: cast_nullable_to_non_nullable
-              as PayslipDeductions,
-      netPay: null == netPay
-          ? _value.netPay
-          : netPay // ignore: cast_nullable_to_non_nullable
-              as double,
-      ytd: null == ytd
-          ? _value.ytd
-          : ytd // ignore: cast_nullable_to_non_nullable
-              as PayslipYTD,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PayslipEarningsCopyWith<$Res> get earnings {
-    return $PayslipEarningsCopyWith<$Res>(_value.earnings, (value) {
-      return _then(_value.copyWith(earnings: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PayslipDeductionsCopyWith<$Res> get deductions {
-    return $PayslipDeductionsCopyWith<$Res>(_value.deductions, (value) {
-      return _then(_value.copyWith(deductions: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PayslipYTDCopyWith<$Res> get ytd {
-    return $PayslipYTDCopyWith<$Res>(_value.ytd, (value) {
-      return _then(_value.copyWith(ytd: value) as $Val);
-    });
+  String toString() {
+    return 'TaxAndSuper(tax: $tax, superAmount: $superAmount, taxRate: $taxRate, superRate: $superRate)';
   }
 }
 
 /// @nodoc
-abstract class _$$PayslipImplCopyWith<$Res> implements $PayslipCopyWith<$Res> {
-  factory _$$PayslipImplCopyWith(
-          _$PayslipImpl value, $Res Function(_$PayslipImpl) then) =
-      __$$PayslipImplCopyWithImpl<$Res>;
+abstract mixin class _$TaxAndSuperCopyWith<$Res>
+    implements $TaxAndSuperCopyWith<$Res> {
+  factory _$TaxAndSuperCopyWith(
+          _TaxAndSuper value, $Res Function(_TaxAndSuper) _then) =
+      __$TaxAndSuperCopyWithImpl;
   @override
   @useResult
   $Res call(
-      {String payslipId,
-      String userId,
-      String period,
-      String generatedDate,
-      PayslipEarnings earnings,
-      PayslipDeductions deductions,
-      double netPay,
-      PayslipYTD ytd});
-
-  @override
-  $PayslipEarningsCopyWith<$Res> get earnings;
-  @override
-  $PayslipDeductionsCopyWith<$Res> get deductions;
-  @override
-  $PayslipYTDCopyWith<$Res> get ytd;
+      {double tax,
+      @JsonKey(name: 'super') double superAmount,
+      double taxRate,
+      double superRate});
 }
 
 /// @nodoc
-class __$$PayslipImplCopyWithImpl<$Res>
-    extends _$PayslipCopyWithImpl<$Res, _$PayslipImpl>
-    implements _$$PayslipImplCopyWith<$Res> {
-  __$$PayslipImplCopyWithImpl(
-      _$PayslipImpl _value, $Res Function(_$PayslipImpl) _then)
-      : super(_value, _then);
+class __$TaxAndSuperCopyWithImpl<$Res> implements _$TaxAndSuperCopyWith<$Res> {
+  __$TaxAndSuperCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _TaxAndSuper _self;
+  final $Res Function(_TaxAndSuper) _then;
+
+  /// Create a copy of TaxAndSuper
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? payslipId = null,
-    Object? userId = null,
-    Object? period = null,
-    Object? generatedDate = null,
-    Object? earnings = null,
-    Object? deductions = null,
-    Object? netPay = null,
-    Object? ytd = null,
+    Object? tax = null,
+    Object? superAmount = null,
+    Object? taxRate = null,
+    Object? superRate = null,
   }) {
-    return _then(_$PayslipImpl(
-      payslipId: null == payslipId
-          ? _value.payslipId
-          : payslipId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      period: null == period
-          ? _value.period
-          : period // ignore: cast_nullable_to_non_nullable
-              as String,
-      generatedDate: null == generatedDate
-          ? _value.generatedDate
-          : generatedDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      earnings: null == earnings
-          ? _value.earnings
-          : earnings // ignore: cast_nullable_to_non_nullable
-              as PayslipEarnings,
-      deductions: null == deductions
-          ? _value.deductions
-          : deductions // ignore: cast_nullable_to_non_nullable
-              as PayslipDeductions,
-      netPay: null == netPay
-          ? _value.netPay
-          : netPay // ignore: cast_nullable_to_non_nullable
+    return _then(_TaxAndSuper(
+      tax: null == tax
+          ? _self.tax
+          : tax // ignore: cast_nullable_to_non_nullable
               as double,
-      ytd: null == ytd
-          ? _value.ytd
-          : ytd // ignore: cast_nullable_to_non_nullable
-              as PayslipYTD,
+      superAmount: null == superAmount
+          ? _self.superAmount
+          : superAmount // ignore: cast_nullable_to_non_nullable
+              as double,
+      taxRate: null == taxRate
+          ? _self.taxRate
+          : taxRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      superRate: null == superRate
+          ? _self.superRate
+          : superRate // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
 
 /// @nodoc
+mixin _$Payslip {
+  String get payslipId;
+  String get userId;
+  String get period;
+  String get generatedDate;
+  PayslipEarnings get earnings;
+  PayslipDeductions get deductions;
+  double get netPay;
+  PayslipYTD get ytd;
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $PayslipCopyWith<Payslip> get copyWith =>
+      _$PayslipCopyWithImpl<Payslip>(this as Payslip, _$identity);
+
+  /// Serializes this Payslip to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Payslip &&
+            (identical(other.payslipId, payslipId) ||
+                other.payslipId == payslipId) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.period, period) || other.period == period) &&
+            (identical(other.generatedDate, generatedDate) ||
+                other.generatedDate == generatedDate) &&
+            (identical(other.earnings, earnings) ||
+                other.earnings == earnings) &&
+            (identical(other.deductions, deductions) ||
+                other.deductions == deductions) &&
+            (identical(other.netPay, netPay) || other.netPay == netPay) &&
+            (identical(other.ytd, ytd) || other.ytd == ytd));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, payslipId, userId, period,
+      generatedDate, earnings, deductions, netPay, ytd);
+
+  @override
+  String toString() {
+    return 'Payslip(payslipId: $payslipId, userId: $userId, period: $period, generatedDate: $generatedDate, earnings: $earnings, deductions: $deductions, netPay: $netPay, ytd: $ytd)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $PayslipCopyWith<$Res> {
+  factory $PayslipCopyWith(Payslip value, $Res Function(Payslip) _then) =
+      _$PayslipCopyWithImpl;
+  @useResult
+  $Res call(
+      {String payslipId,
+      String userId,
+      String period,
+      String generatedDate,
+      PayslipEarnings earnings,
+      PayslipDeductions deductions,
+      double netPay,
+      PayslipYTD ytd});
+
+  $PayslipEarningsCopyWith<$Res> get earnings;
+  $PayslipDeductionsCopyWith<$Res> get deductions;
+  $PayslipYTDCopyWith<$Res> get ytd;
+}
+
+/// @nodoc
+class _$PayslipCopyWithImpl<$Res> implements $PayslipCopyWith<$Res> {
+  _$PayslipCopyWithImpl(this._self, this._then);
+
+  final Payslip _self;
+  final $Res Function(Payslip) _then;
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? payslipId = null,
+    Object? userId = null,
+    Object? period = null,
+    Object? generatedDate = null,
+    Object? earnings = null,
+    Object? deductions = null,
+    Object? netPay = null,
+    Object? ytd = null,
+  }) {
+    return _then(_self.copyWith(
+      payslipId: null == payslipId
+          ? _self.payslipId
+          : payslipId // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      period: null == period
+          ? _self.period
+          : period // ignore: cast_nullable_to_non_nullable
+              as String,
+      generatedDate: null == generatedDate
+          ? _self.generatedDate
+          : generatedDate // ignore: cast_nullable_to_non_nullable
+              as String,
+      earnings: null == earnings
+          ? _self.earnings
+          : earnings // ignore: cast_nullable_to_non_nullable
+              as PayslipEarnings,
+      deductions: null == deductions
+          ? _self.deductions
+          : deductions // ignore: cast_nullable_to_non_nullable
+              as PayslipDeductions,
+      netPay: null == netPay
+          ? _self.netPay
+          : netPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      ytd: null == ytd
+          ? _self.ytd
+          : ytd // ignore: cast_nullable_to_non_nullable
+              as PayslipYTD,
+    ));
+  }
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PayslipEarningsCopyWith<$Res> get earnings {
+    return $PayslipEarningsCopyWith<$Res>(_self.earnings, (value) {
+      return _then(_self.copyWith(earnings: value));
+    });
+  }
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PayslipDeductionsCopyWith<$Res> get deductions {
+    return $PayslipDeductionsCopyWith<$Res>(_self.deductions, (value) {
+      return _then(_self.copyWith(deductions: value));
+    });
+  }
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PayslipYTDCopyWith<$Res> get ytd {
+    return $PayslipYTDCopyWith<$Res>(_self.ytd, (value) {
+      return _then(_self.copyWith(ytd: value));
+    });
+  }
+}
+
+/// Adds pattern-matching-related methods to [Payslip].
+extension PayslipPatterns on Payslip {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Payslip value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Payslip() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Payslip value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Payslip():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Payslip value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Payslip() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String payslipId,
+            String userId,
+            String period,
+            String generatedDate,
+            PayslipEarnings earnings,
+            PayslipDeductions deductions,
+            double netPay,
+            PayslipYTD ytd)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Payslip() when $default != null:
+        return $default(
+            _that.payslipId,
+            _that.userId,
+            _that.period,
+            _that.generatedDate,
+            _that.earnings,
+            _that.deductions,
+            _that.netPay,
+            _that.ytd);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String payslipId,
+            String userId,
+            String period,
+            String generatedDate,
+            PayslipEarnings earnings,
+            PayslipDeductions deductions,
+            double netPay,
+            PayslipYTD ytd)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Payslip():
+        return $default(
+            _that.payslipId,
+            _that.userId,
+            _that.period,
+            _that.generatedDate,
+            _that.earnings,
+            _that.deductions,
+            _that.netPay,
+            _that.ytd);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String payslipId,
+            String userId,
+            String period,
+            String generatedDate,
+            PayslipEarnings earnings,
+            PayslipDeductions deductions,
+            double netPay,
+            PayslipYTD ytd)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Payslip() when $default != null:
+        return $default(
+            _that.payslipId,
+            _that.userId,
+            _that.period,
+            _that.generatedDate,
+            _that.earnings,
+            _that.deductions,
+            _that.netPay,
+            _that.ytd);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$PayslipImpl implements _Payslip {
-  const _$PayslipImpl(
+class _Payslip implements Payslip {
+  const _Payslip(
       {required this.payslipId,
       required this.userId,
       required this.period,
@@ -1845,9 +3342,8 @@ class _$PayslipImpl implements _Payslip {
       required this.deductions,
       required this.netPay,
       required this.ytd});
-
-  factory _$PayslipImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PayslipImplFromJson(json);
+  factory _Payslip.fromJson(Map<String, dynamic> json) =>
+      _$PayslipFromJson(json);
 
   @override
   final String payslipId;
@@ -1866,16 +3362,26 @@ class _$PayslipImpl implements _Payslip {
   @override
   final PayslipYTD ytd;
 
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'Payslip(payslipId: $payslipId, userId: $userId, period: $period, generatedDate: $generatedDate, earnings: $earnings, deductions: $deductions, netPay: $netPay, ytd: $ytd)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PayslipCopyWith<_Payslip> get copyWith =>
+      __$PayslipCopyWithImpl<_Payslip>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PayslipToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PayslipImpl &&
+            other is _Payslip &&
             (identical(other.payslipId, payslipId) ||
                 other.payslipId == payslipId) &&
             (identical(other.userId, userId) || other.userId == userId) &&
@@ -1890,150 +3396,183 @@ class _$PayslipImpl implements _Payslip {
             (identical(other.ytd, ytd) || other.ytd == ytd));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, payslipId, userId, period,
       generatedDate, earnings, deductions, netPay, ytd);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PayslipImplCopyWith<_$PayslipImpl> get copyWith =>
-      __$$PayslipImplCopyWithImpl<_$PayslipImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PayslipImplToJson(
-      this,
-    );
+  String toString() {
+    return 'Payslip(payslipId: $payslipId, userId: $userId, period: $period, generatedDate: $generatedDate, earnings: $earnings, deductions: $deductions, netPay: $netPay, ytd: $ytd)';
   }
 }
 
-abstract class _Payslip implements Payslip {
-  const factory _Payslip(
-      {required final String payslipId,
-      required final String userId,
-      required final String period,
-      required final String generatedDate,
-      required final PayslipEarnings earnings,
-      required final PayslipDeductions deductions,
-      required final double netPay,
-      required final PayslipYTD ytd}) = _$PayslipImpl;
+/// @nodoc
+abstract mixin class _$PayslipCopyWith<$Res> implements $PayslipCopyWith<$Res> {
+  factory _$PayslipCopyWith(_Payslip value, $Res Function(_Payslip) _then) =
+      __$PayslipCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String payslipId,
+      String userId,
+      String period,
+      String generatedDate,
+      PayslipEarnings earnings,
+      PayslipDeductions deductions,
+      double netPay,
+      PayslipYTD ytd});
 
-  factory _Payslip.fromJson(Map<String, dynamic> json) = _$PayslipImpl.fromJson;
-
   @override
-  String get payslipId;
+  $PayslipEarningsCopyWith<$Res> get earnings;
   @override
-  String get userId;
+  $PayslipDeductionsCopyWith<$Res> get deductions;
   @override
-  String get period;
-  @override
-  String get generatedDate;
-  @override
-  PayslipEarnings get earnings;
-  @override
-  PayslipDeductions get deductions;
-  @override
-  double get netPay;
-  @override
-  PayslipYTD get ytd;
-  @override
-  @JsonKey(ignore: true)
-  _$$PayslipImplCopyWith<_$PayslipImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $PayslipYTDCopyWith<$Res> get ytd;
 }
 
-PayslipEarnings _$PayslipEarningsFromJson(Map<String, dynamic> json) {
-  return _PayslipEarnings.fromJson(json);
+/// @nodoc
+class __$PayslipCopyWithImpl<$Res> implements _$PayslipCopyWith<$Res> {
+  __$PayslipCopyWithImpl(this._self, this._then);
+
+  final _Payslip _self;
+  final $Res Function(_Payslip) _then;
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? payslipId = null,
+    Object? userId = null,
+    Object? period = null,
+    Object? generatedDate = null,
+    Object? earnings = null,
+    Object? deductions = null,
+    Object? netPay = null,
+    Object? ytd = null,
+  }) {
+    return _then(_Payslip(
+      payslipId: null == payslipId
+          ? _self.payslipId
+          : payslipId // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      period: null == period
+          ? _self.period
+          : period // ignore: cast_nullable_to_non_nullable
+              as String,
+      generatedDate: null == generatedDate
+          ? _self.generatedDate
+          : generatedDate // ignore: cast_nullable_to_non_nullable
+              as String,
+      earnings: null == earnings
+          ? _self.earnings
+          : earnings // ignore: cast_nullable_to_non_nullable
+              as PayslipEarnings,
+      deductions: null == deductions
+          ? _self.deductions
+          : deductions // ignore: cast_nullable_to_non_nullable
+              as PayslipDeductions,
+      netPay: null == netPay
+          ? _self.netPay
+          : netPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      ytd: null == ytd
+          ? _self.ytd
+          : ytd // ignore: cast_nullable_to_non_nullable
+              as PayslipYTD,
+    ));
+  }
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PayslipEarningsCopyWith<$Res> get earnings {
+    return $PayslipEarningsCopyWith<$Res>(_self.earnings, (value) {
+      return _then(_self.copyWith(earnings: value));
+    });
+  }
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PayslipDeductionsCopyWith<$Res> get deductions {
+    return $PayslipDeductionsCopyWith<$Res>(_self.deductions, (value) {
+      return _then(_self.copyWith(deductions: value));
+    });
+  }
+
+  /// Create a copy of Payslip
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PayslipYTDCopyWith<$Res> get ytd {
+    return $PayslipYTDCopyWith<$Res>(_self.ytd, (value) {
+      return _then(_self.copyWith(ytd: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$PayslipEarnings {
-  double get baseHours => throw _privateConstructorUsedError;
-  double get baseRate => throw _privateConstructorUsedError;
-  double get baseAmount => throw _privateConstructorUsedError;
-  double get penalties => throw _privateConstructorUsedError;
-  double get allowances => throw _privateConstructorUsedError;
-  double get total => throw _privateConstructorUsedError;
+  double get baseHours;
+  double get baseRate;
+  double get baseAmount;
+  double get penalties;
+  double get allowances;
+  double get total;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PayslipEarningsCopyWith<PayslipEarnings> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PayslipEarningsCopyWith<$Res> {
-  factory $PayslipEarningsCopyWith(
-          PayslipEarnings value, $Res Function(PayslipEarnings) then) =
-      _$PayslipEarningsCopyWithImpl<$Res, PayslipEarnings>;
-  @useResult
-  $Res call(
-      {double baseHours,
-      double baseRate,
-      double baseAmount,
-      double penalties,
-      double allowances,
-      double total});
-}
-
-/// @nodoc
-class _$PayslipEarningsCopyWithImpl<$Res, $Val extends PayslipEarnings>
-    implements $PayslipEarningsCopyWith<$Res> {
-  _$PayslipEarningsCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of PayslipEarnings
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $PayslipEarningsCopyWith<PayslipEarnings> get copyWith =>
+      _$PayslipEarningsCopyWithImpl<PayslipEarnings>(
+          this as PayslipEarnings, _$identity);
+
+  /// Serializes this PayslipEarnings to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? baseHours = null,
-    Object? baseRate = null,
-    Object? baseAmount = null,
-    Object? penalties = null,
-    Object? allowances = null,
-    Object? total = null,
-  }) {
-    return _then(_value.copyWith(
-      baseHours: null == baseHours
-          ? _value.baseHours
-          : baseHours // ignore: cast_nullable_to_non_nullable
-              as double,
-      baseRate: null == baseRate
-          ? _value.baseRate
-          : baseRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      baseAmount: null == baseAmount
-          ? _value.baseAmount
-          : baseAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      penalties: null == penalties
-          ? _value.penalties
-          : penalties // ignore: cast_nullable_to_non_nullable
-              as double,
-      allowances: null == allowances
-          ? _value.allowances
-          : allowances // ignore: cast_nullable_to_non_nullable
-              as double,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PayslipEarnings &&
+            (identical(other.baseHours, baseHours) ||
+                other.baseHours == baseHours) &&
+            (identical(other.baseRate, baseRate) ||
+                other.baseRate == baseRate) &&
+            (identical(other.baseAmount, baseAmount) ||
+                other.baseAmount == baseAmount) &&
+            (identical(other.penalties, penalties) ||
+                other.penalties == penalties) &&
+            (identical(other.allowances, allowances) ||
+                other.allowances == allowances) &&
+            (identical(other.total, total) || other.total == total));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, baseHours, baseRate, baseAmount,
+      penalties, allowances, total);
+
+  @override
+  String toString() {
+    return 'PayslipEarnings(baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, total: $total)';
   }
 }
 
 /// @nodoc
-abstract class _$$PayslipEarningsImplCopyWith<$Res>
-    implements $PayslipEarningsCopyWith<$Res> {
-  factory _$$PayslipEarningsImplCopyWith(_$PayslipEarningsImpl value,
-          $Res Function(_$PayslipEarningsImpl) then) =
-      __$$PayslipEarningsImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $PayslipEarningsCopyWith<$Res> {
+  factory $PayslipEarningsCopyWith(
+          PayslipEarnings value, $Res Function(PayslipEarnings) _then) =
+      _$PayslipEarningsCopyWithImpl;
   @useResult
   $Res call(
       {double baseHours,
@@ -2045,13 +3584,15 @@ abstract class _$$PayslipEarningsImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$PayslipEarningsImplCopyWithImpl<$Res>
-    extends _$PayslipEarningsCopyWithImpl<$Res, _$PayslipEarningsImpl>
-    implements _$$PayslipEarningsImplCopyWith<$Res> {
-  __$$PayslipEarningsImplCopyWithImpl(
-      _$PayslipEarningsImpl _value, $Res Function(_$PayslipEarningsImpl) _then)
-      : super(_value, _then);
+class _$PayslipEarningsCopyWithImpl<$Res>
+    implements $PayslipEarningsCopyWith<$Res> {
+  _$PayslipEarningsCopyWithImpl(this._self, this._then);
 
+  final PayslipEarnings _self;
+  final $Res Function(PayslipEarnings) _then;
+
+  /// Create a copy of PayslipEarnings
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2062,48 +3603,213 @@ class __$$PayslipEarningsImplCopyWithImpl<$Res>
     Object? allowances = null,
     Object? total = null,
   }) {
-    return _then(_$PayslipEarningsImpl(
+    return _then(_self.copyWith(
       baseHours: null == baseHours
-          ? _value.baseHours
+          ? _self.baseHours
           : baseHours // ignore: cast_nullable_to_non_nullable
               as double,
       baseRate: null == baseRate
-          ? _value.baseRate
+          ? _self.baseRate
           : baseRate // ignore: cast_nullable_to_non_nullable
               as double,
       baseAmount: null == baseAmount
-          ? _value.baseAmount
+          ? _self.baseAmount
           : baseAmount // ignore: cast_nullable_to_non_nullable
               as double,
       penalties: null == penalties
-          ? _value.penalties
+          ? _self.penalties
           : penalties // ignore: cast_nullable_to_non_nullable
               as double,
       allowances: null == allowances
-          ? _value.allowances
+          ? _self.allowances
           : allowances // ignore: cast_nullable_to_non_nullable
               as double,
       total: null == total
-          ? _value.total
+          ? _self.total
           : total // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [PayslipEarnings].
+extension PayslipEarningsPatterns on PayslipEarnings {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PayslipEarnings value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipEarnings() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PayslipEarnings value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipEarnings():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PayslipEarnings value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipEarnings() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double baseHours, double baseRate, double baseAmount,
+            double penalties, double allowances, double total)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipEarnings() when $default != null:
+        return $default(_that.baseHours, _that.baseRate, _that.baseAmount,
+            _that.penalties, _that.allowances, _that.total);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double baseHours, double baseRate, double baseAmount,
+            double penalties, double allowances, double total)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipEarnings():
+        return $default(_that.baseHours, _that.baseRate, _that.baseAmount,
+            _that.penalties, _that.allowances, _that.total);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double baseHours, double baseRate, double baseAmount,
+            double penalties, double allowances, double total)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipEarnings() when $default != null:
+        return $default(_that.baseHours, _that.baseRate, _that.baseAmount,
+            _that.penalties, _that.allowances, _that.total);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$PayslipEarningsImpl implements _PayslipEarnings {
-  const _$PayslipEarningsImpl(
+class _PayslipEarnings implements PayslipEarnings {
+  const _PayslipEarnings(
       {required this.baseHours,
       required this.baseRate,
       required this.baseAmount,
       required this.penalties,
       required this.allowances,
       required this.total});
-
-  factory _$PayslipEarningsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PayslipEarningsImplFromJson(json);
+  factory _PayslipEarnings.fromJson(Map<String, dynamic> json) =>
+      _$PayslipEarningsFromJson(json);
 
   @override
   final double baseHours;
@@ -2118,16 +3824,26 @@ class _$PayslipEarningsImpl implements _PayslipEarnings {
   @override
   final double total;
 
+  /// Create a copy of PayslipEarnings
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PayslipEarnings(baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, total: $total)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PayslipEarningsCopyWith<_PayslipEarnings> get copyWith =>
+      __$PayslipEarningsCopyWithImpl<_PayslipEarnings>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PayslipEarningsToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PayslipEarningsImpl &&
+            other is _PayslipEarnings &&
             (identical(other.baseHours, baseHours) ||
                 other.baseHours == baseHours) &&
             (identical(other.baseRate, baseRate) ||
@@ -2141,155 +3857,77 @@ class _$PayslipEarningsImpl implements _PayslipEarnings {
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, baseHours, baseRate, baseAmount,
       penalties, allowances, total);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PayslipEarningsImplCopyWith<_$PayslipEarningsImpl> get copyWith =>
-      __$$PayslipEarningsImplCopyWithImpl<_$PayslipEarningsImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PayslipEarningsImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _PayslipEarnings implements PayslipEarnings {
-  const factory _PayslipEarnings(
-      {required final double baseHours,
-      required final double baseRate,
-      required final double baseAmount,
-      required final double penalties,
-      required final double allowances,
-      required final double total}) = _$PayslipEarningsImpl;
-
-  factory _PayslipEarnings.fromJson(Map<String, dynamic> json) =
-      _$PayslipEarningsImpl.fromJson;
-
-  @override
-  double get baseHours;
-  @override
-  double get baseRate;
-  @override
-  double get baseAmount;
-  @override
-  double get penalties;
-  @override
-  double get allowances;
-  @override
-  double get total;
-  @override
-  @JsonKey(ignore: true)
-  _$$PayslipEarningsImplCopyWith<_$PayslipEarningsImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-PayslipDeductions _$PayslipDeductionsFromJson(Map<String, dynamic> json) {
-  return _PayslipDeductions.fromJson(json);
-}
-
-/// @nodoc
-mixin _$PayslipDeductions {
-  double get tax => throw _privateConstructorUsedError;
-  @JsonKey(name: 'super')
-  double get superAmount => throw _privateConstructorUsedError;
-  double get total => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PayslipDeductionsCopyWith<PayslipDeductions> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PayslipDeductionsCopyWith<$Res> {
-  factory $PayslipDeductionsCopyWith(
-          PayslipDeductions value, $Res Function(PayslipDeductions) then) =
-      _$PayslipDeductionsCopyWithImpl<$Res, PayslipDeductions>;
-  @useResult
-  $Res call(
-      {double tax, @JsonKey(name: 'super') double superAmount, double total});
-}
-
-/// @nodoc
-class _$PayslipDeductionsCopyWithImpl<$Res, $Val extends PayslipDeductions>
-    implements $PayslipDeductionsCopyWith<$Res> {
-  _$PayslipDeductionsCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? tax = null,
-    Object? superAmount = null,
-    Object? total = null,
-  }) {
-    return _then(_value.copyWith(
-      tax: null == tax
-          ? _value.tax
-          : tax // ignore: cast_nullable_to_non_nullable
-              as double,
-      superAmount: null == superAmount
-          ? _value.superAmount
-          : superAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  String toString() {
+    return 'PayslipEarnings(baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, total: $total)';
   }
 }
 
 /// @nodoc
-abstract class _$$PayslipDeductionsImplCopyWith<$Res>
-    implements $PayslipDeductionsCopyWith<$Res> {
-  factory _$$PayslipDeductionsImplCopyWith(_$PayslipDeductionsImpl value,
-          $Res Function(_$PayslipDeductionsImpl) then) =
-      __$$PayslipDeductionsImplCopyWithImpl<$Res>;
+abstract mixin class _$PayslipEarningsCopyWith<$Res>
+    implements $PayslipEarningsCopyWith<$Res> {
+  factory _$PayslipEarningsCopyWith(
+          _PayslipEarnings value, $Res Function(_PayslipEarnings) _then) =
+      __$PayslipEarningsCopyWithImpl;
   @override
   @useResult
   $Res call(
-      {double tax, @JsonKey(name: 'super') double superAmount, double total});
+      {double baseHours,
+      double baseRate,
+      double baseAmount,
+      double penalties,
+      double allowances,
+      double total});
 }
 
 /// @nodoc
-class __$$PayslipDeductionsImplCopyWithImpl<$Res>
-    extends _$PayslipDeductionsCopyWithImpl<$Res, _$PayslipDeductionsImpl>
-    implements _$$PayslipDeductionsImplCopyWith<$Res> {
-  __$$PayslipDeductionsImplCopyWithImpl(_$PayslipDeductionsImpl _value,
-      $Res Function(_$PayslipDeductionsImpl) _then)
-      : super(_value, _then);
+class __$PayslipEarningsCopyWithImpl<$Res>
+    implements _$PayslipEarningsCopyWith<$Res> {
+  __$PayslipEarningsCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _PayslipEarnings _self;
+  final $Res Function(_PayslipEarnings) _then;
+
+  /// Create a copy of PayslipEarnings
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? tax = null,
-    Object? superAmount = null,
+    Object? baseHours = null,
+    Object? baseRate = null,
+    Object? baseAmount = null,
+    Object? penalties = null,
+    Object? allowances = null,
     Object? total = null,
   }) {
-    return _then(_$PayslipDeductionsImpl(
-      tax: null == tax
-          ? _value.tax
-          : tax // ignore: cast_nullable_to_non_nullable
+    return _then(_PayslipEarnings(
+      baseHours: null == baseHours
+          ? _self.baseHours
+          : baseHours // ignore: cast_nullable_to_non_nullable
               as double,
-      superAmount: null == superAmount
-          ? _value.superAmount
-          : superAmount // ignore: cast_nullable_to_non_nullable
+      baseRate: null == baseRate
+          ? _self.baseRate
+          : baseRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      baseAmount: null == baseAmount
+          ? _self.baseAmount
+          : baseAmount // ignore: cast_nullable_to_non_nullable
+              as double,
+      penalties: null == penalties
+          ? _self.penalties
+          : penalties // ignore: cast_nullable_to_non_nullable
+              as double,
+      allowances: null == allowances
+          ? _self.allowances
+          : allowances // ignore: cast_nullable_to_non_nullable
               as double,
       total: null == total
-          ? _value.total
+          ? _self.total
           : total // ignore: cast_nullable_to_non_nullable
               as double,
     ));
@@ -2297,15 +3935,260 @@ class __$$PayslipDeductionsImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
+mixin _$PayslipDeductions {
+  double get tax;
+  @JsonKey(name: 'super')
+  double get superAmount;
+  double get total;
+
+  /// Create a copy of PayslipDeductions
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $PayslipDeductionsCopyWith<PayslipDeductions> get copyWith =>
+      _$PayslipDeductionsCopyWithImpl<PayslipDeductions>(
+          this as PayslipDeductions, _$identity);
+
+  /// Serializes this PayslipDeductions to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PayslipDeductions &&
+            (identical(other.tax, tax) || other.tax == tax) &&
+            (identical(other.superAmount, superAmount) ||
+                other.superAmount == superAmount) &&
+            (identical(other.total, total) || other.total == total));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, tax, superAmount, total);
+
+  @override
+  String toString() {
+    return 'PayslipDeductions(tax: $tax, superAmount: $superAmount, total: $total)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $PayslipDeductionsCopyWith<$Res> {
+  factory $PayslipDeductionsCopyWith(
+          PayslipDeductions value, $Res Function(PayslipDeductions) _then) =
+      _$PayslipDeductionsCopyWithImpl;
+  @useResult
+  $Res call(
+      {double tax, @JsonKey(name: 'super') double superAmount, double total});
+}
+
+/// @nodoc
+class _$PayslipDeductionsCopyWithImpl<$Res>
+    implements $PayslipDeductionsCopyWith<$Res> {
+  _$PayslipDeductionsCopyWithImpl(this._self, this._then);
+
+  final PayslipDeductions _self;
+  final $Res Function(PayslipDeductions) _then;
+
+  /// Create a copy of PayslipDeductions
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tax = null,
+    Object? superAmount = null,
+    Object? total = null,
+  }) {
+    return _then(_self.copyWith(
+      tax: null == tax
+          ? _self.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
+      superAmount: null == superAmount
+          ? _self.superAmount
+          : superAmount // ignore: cast_nullable_to_non_nullable
+              as double,
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [PayslipDeductions].
+extension PayslipDeductionsPatterns on PayslipDeductions {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PayslipDeductions value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipDeductions() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PayslipDeductions value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipDeductions():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PayslipDeductions value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipDeductions() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double tax, @JsonKey(name: 'super') double superAmount,
+            double total)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipDeductions() when $default != null:
+        return $default(_that.tax, _that.superAmount, _that.total);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double tax, @JsonKey(name: 'super') double superAmount,
+            double total)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipDeductions():
+        return $default(_that.tax, _that.superAmount, _that.total);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double tax, @JsonKey(name: 'super') double superAmount,
+            double total)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipDeductions() when $default != null:
+        return $default(_that.tax, _that.superAmount, _that.total);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$PayslipDeductionsImpl implements _PayslipDeductions {
-  const _$PayslipDeductionsImpl(
+class _PayslipDeductions implements PayslipDeductions {
+  const _PayslipDeductions(
       {required this.tax,
       @JsonKey(name: 'super') required this.superAmount,
       required this.total});
-
-  factory _$PayslipDeductionsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PayslipDeductionsImplFromJson(json);
+  factory _PayslipDeductions.fromJson(Map<String, dynamic> json) =>
+      _$PayslipDeductionsFromJson(json);
 
   @override
   final double tax;
@@ -2315,196 +4198,357 @@ class _$PayslipDeductionsImpl implements _PayslipDeductions {
   @override
   final double total;
 
+  /// Create a copy of PayslipDeductions
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PayslipDeductions(tax: $tax, superAmount: $superAmount, total: $total)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PayslipDeductionsCopyWith<_PayslipDeductions> get copyWith =>
+      __$PayslipDeductionsCopyWithImpl<_PayslipDeductions>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PayslipDeductionsToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PayslipDeductionsImpl &&
+            other is _PayslipDeductions &&
             (identical(other.tax, tax) || other.tax == tax) &&
             (identical(other.superAmount, superAmount) ||
                 other.superAmount == superAmount) &&
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, tax, superAmount, total);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PayslipDeductionsImplCopyWith<_$PayslipDeductionsImpl> get copyWith =>
-      __$$PayslipDeductionsImplCopyWithImpl<_$PayslipDeductionsImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PayslipDeductionsImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _PayslipDeductions implements PayslipDeductions {
-  const factory _PayslipDeductions(
-      {required final double tax,
-      @JsonKey(name: 'super') required final double superAmount,
-      required final double total}) = _$PayslipDeductionsImpl;
-
-  factory _PayslipDeductions.fromJson(Map<String, dynamic> json) =
-      _$PayslipDeductionsImpl.fromJson;
-
-  @override
-  double get tax;
-  @override
-  @JsonKey(name: 'super')
-  double get superAmount;
-  @override
-  double get total;
-  @override
-  @JsonKey(ignore: true)
-  _$$PayslipDeductionsImplCopyWith<_$PayslipDeductionsImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-PayslipYTD _$PayslipYTDFromJson(Map<String, dynamic> json) {
-  return _PayslipYTD.fromJson(json);
-}
-
-/// @nodoc
-mixin _$PayslipYTD {
-  double get grossPay => throw _privateConstructorUsedError;
-  double get tax => throw _privateConstructorUsedError;
-  @JsonKey(name: 'super')
-  double get superAmount => throw _privateConstructorUsedError;
-  double get netPay => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PayslipYTDCopyWith<PayslipYTD> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PayslipYTDCopyWith<$Res> {
-  factory $PayslipYTDCopyWith(
-          PayslipYTD value, $Res Function(PayslipYTD) then) =
-      _$PayslipYTDCopyWithImpl<$Res, PayslipYTD>;
-  @useResult
-  $Res call(
-      {double grossPay,
-      double tax,
-      @JsonKey(name: 'super') double superAmount,
-      double netPay});
-}
-
-/// @nodoc
-class _$PayslipYTDCopyWithImpl<$Res, $Val extends PayslipYTD>
-    implements $PayslipYTDCopyWith<$Res> {
-  _$PayslipYTDCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? grossPay = null,
-    Object? tax = null,
-    Object? superAmount = null,
-    Object? netPay = null,
-  }) {
-    return _then(_value.copyWith(
-      grossPay: null == grossPay
-          ? _value.grossPay
-          : grossPay // ignore: cast_nullable_to_non_nullable
-              as double,
-      tax: null == tax
-          ? _value.tax
-          : tax // ignore: cast_nullable_to_non_nullable
-              as double,
-      superAmount: null == superAmount
-          ? _value.superAmount
-          : superAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      netPay: null == netPay
-          ? _value.netPay
-          : netPay // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  String toString() {
+    return 'PayslipDeductions(tax: $tax, superAmount: $superAmount, total: $total)';
   }
 }
 
 /// @nodoc
-abstract class _$$PayslipYTDImplCopyWith<$Res>
-    implements $PayslipYTDCopyWith<$Res> {
-  factory _$$PayslipYTDImplCopyWith(
-          _$PayslipYTDImpl value, $Res Function(_$PayslipYTDImpl) then) =
-      __$$PayslipYTDImplCopyWithImpl<$Res>;
+abstract mixin class _$PayslipDeductionsCopyWith<$Res>
+    implements $PayslipDeductionsCopyWith<$Res> {
+  factory _$PayslipDeductionsCopyWith(
+          _PayslipDeductions value, $Res Function(_PayslipDeductions) _then) =
+      __$PayslipDeductionsCopyWithImpl;
   @override
   @useResult
   $Res call(
-      {double grossPay,
-      double tax,
-      @JsonKey(name: 'super') double superAmount,
-      double netPay});
+      {double tax, @JsonKey(name: 'super') double superAmount, double total});
 }
 
 /// @nodoc
-class __$$PayslipYTDImplCopyWithImpl<$Res>
-    extends _$PayslipYTDCopyWithImpl<$Res, _$PayslipYTDImpl>
-    implements _$$PayslipYTDImplCopyWith<$Res> {
-  __$$PayslipYTDImplCopyWithImpl(
-      _$PayslipYTDImpl _value, $Res Function(_$PayslipYTDImpl) _then)
-      : super(_value, _then);
+class __$PayslipDeductionsCopyWithImpl<$Res>
+    implements _$PayslipDeductionsCopyWith<$Res> {
+  __$PayslipDeductionsCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _PayslipDeductions _self;
+  final $Res Function(_PayslipDeductions) _then;
+
+  /// Create a copy of PayslipDeductions
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? grossPay = null,
     Object? tax = null,
     Object? superAmount = null,
-    Object? netPay = null,
+    Object? total = null,
   }) {
-    return _then(_$PayslipYTDImpl(
-      grossPay: null == grossPay
-          ? _value.grossPay
-          : grossPay // ignore: cast_nullable_to_non_nullable
-              as double,
+    return _then(_PayslipDeductions(
       tax: null == tax
-          ? _value.tax
+          ? _self.tax
           : tax // ignore: cast_nullable_to_non_nullable
               as double,
       superAmount: null == superAmount
-          ? _value.superAmount
+          ? _self.superAmount
           : superAmount // ignore: cast_nullable_to_non_nullable
               as double,
-      netPay: null == netPay
-          ? _value.netPay
-          : netPay // ignore: cast_nullable_to_non_nullable
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
 }
 
 /// @nodoc
+mixin _$PayslipYTD {
+  double get grossPay;
+  double get tax;
+  @JsonKey(name: 'super')
+  double get superAmount;
+  double get netPay;
+
+  /// Create a copy of PayslipYTD
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $PayslipYTDCopyWith<PayslipYTD> get copyWith =>
+      _$PayslipYTDCopyWithImpl<PayslipYTD>(this as PayslipYTD, _$identity);
+
+  /// Serializes this PayslipYTD to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PayslipYTD &&
+            (identical(other.grossPay, grossPay) ||
+                other.grossPay == grossPay) &&
+            (identical(other.tax, tax) || other.tax == tax) &&
+            (identical(other.superAmount, superAmount) ||
+                other.superAmount == superAmount) &&
+            (identical(other.netPay, netPay) || other.netPay == netPay));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, grossPay, tax, superAmount, netPay);
+
+  @override
+  String toString() {
+    return 'PayslipYTD(grossPay: $grossPay, tax: $tax, superAmount: $superAmount, netPay: $netPay)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $PayslipYTDCopyWith<$Res> {
+  factory $PayslipYTDCopyWith(
+          PayslipYTD value, $Res Function(PayslipYTD) _then) =
+      _$PayslipYTDCopyWithImpl;
+  @useResult
+  $Res call(
+      {double grossPay,
+      double tax,
+      @JsonKey(name: 'super') double superAmount,
+      double netPay});
+}
+
+/// @nodoc
+class _$PayslipYTDCopyWithImpl<$Res> implements $PayslipYTDCopyWith<$Res> {
+  _$PayslipYTDCopyWithImpl(this._self, this._then);
+
+  final PayslipYTD _self;
+  final $Res Function(PayslipYTD) _then;
+
+  /// Create a copy of PayslipYTD
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? grossPay = null,
+    Object? tax = null,
+    Object? superAmount = null,
+    Object? netPay = null,
+  }) {
+    return _then(_self.copyWith(
+      grossPay: null == grossPay
+          ? _self.grossPay
+          : grossPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      tax: null == tax
+          ? _self.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
+      superAmount: null == superAmount
+          ? _self.superAmount
+          : superAmount // ignore: cast_nullable_to_non_nullable
+              as double,
+      netPay: null == netPay
+          ? _self.netPay
+          : netPay // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [PayslipYTD].
+extension PayslipYTDPatterns on PayslipYTD {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PayslipYTD value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipYTD() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PayslipYTD value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipYTD():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PayslipYTD value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipYTD() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double grossPay, double tax,
+            @JsonKey(name: 'super') double superAmount, double netPay)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipYTD() when $default != null:
+        return $default(
+            _that.grossPay, _that.tax, _that.superAmount, _that.netPay);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double grossPay, double tax,
+            @JsonKey(name: 'super') double superAmount, double netPay)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipYTD():
+        return $default(
+            _that.grossPay, _that.tax, _that.superAmount, _that.netPay);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double grossPay, double tax,
+            @JsonKey(name: 'super') double superAmount, double netPay)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayslipYTD() when $default != null:
+        return $default(
+            _that.grossPay, _that.tax, _that.superAmount, _that.netPay);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$PayslipYTDImpl implements _PayslipYTD {
-  const _$PayslipYTDImpl(
+class _PayslipYTD implements PayslipYTD {
+  const _PayslipYTD(
       {required this.grossPay,
       required this.tax,
       @JsonKey(name: 'super') required this.superAmount,
       required this.netPay});
-
-  factory _$PayslipYTDImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PayslipYTDImplFromJson(json);
+  factory _PayslipYTD.fromJson(Map<String, dynamic> json) =>
+      _$PayslipYTDFromJson(json);
 
   @override
   final double grossPay;
@@ -2516,16 +4560,26 @@ class _$PayslipYTDImpl implements _PayslipYTD {
   @override
   final double netPay;
 
+  /// Create a copy of PayslipYTD
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PayslipYTD(grossPay: $grossPay, tax: $tax, superAmount: $superAmount, netPay: $netPay)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PayslipYTDCopyWith<_PayslipYTD> get copyWith =>
+      __$PayslipYTDCopyWithImpl<_PayslipYTD>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PayslipYTDToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PayslipYTDImpl &&
+            other is _PayslipYTD &&
             (identical(other.grossPay, grossPay) ||
                 other.grossPay == grossPay) &&
             (identical(other.tax, tax) || other.tax == tax) &&
@@ -2534,155 +4588,137 @@ class _$PayslipYTDImpl implements _PayslipYTD {
             (identical(other.netPay, netPay) || other.netPay == netPay));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, grossPay, tax, superAmount, netPay);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PayslipYTDImplCopyWith<_$PayslipYTDImpl> get copyWith =>
-      __$$PayslipYTDImplCopyWithImpl<_$PayslipYTDImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PayslipYTDImplToJson(
-      this,
-    );
+  String toString() {
+    return 'PayslipYTD(grossPay: $grossPay, tax: $tax, superAmount: $superAmount, netPay: $netPay)';
   }
 }
 
-abstract class _PayslipYTD implements PayslipYTD {
-  const factory _PayslipYTD(
-      {required final double grossPay,
-      required final double tax,
-      @JsonKey(name: 'super') required final double superAmount,
-      required final double netPay}) = _$PayslipYTDImpl;
-
-  factory _PayslipYTD.fromJson(Map<String, dynamic> json) =
-      _$PayslipYTDImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$PayslipYTDCopyWith<$Res>
+    implements $PayslipYTDCopyWith<$Res> {
+  factory _$PayslipYTDCopyWith(
+          _PayslipYTD value, $Res Function(_PayslipYTD) _then) =
+      __$PayslipYTDCopyWithImpl;
   @override
-  double get grossPay;
-  @override
-  double get tax;
-  @override
-  @JsonKey(name: 'super')
-  double get superAmount;
-  @override
-  double get netPay;
-  @override
-  @JsonKey(ignore: true)
-  _$$PayslipYTDImplCopyWith<_$PayslipYTDImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {double grossPay,
+      double tax,
+      @JsonKey(name: 'super') double superAmount,
+      double netPay});
 }
 
-PayrollSummary _$PayrollSummaryFromJson(Map<String, dynamic> json) {
-  return _PayrollSummary.fromJson(json);
+/// @nodoc
+class __$PayslipYTDCopyWithImpl<$Res> implements _$PayslipYTDCopyWith<$Res> {
+  __$PayslipYTDCopyWithImpl(this._self, this._then);
+
+  final _PayslipYTD _self;
+  final $Res Function(_PayslipYTD) _then;
+
+  /// Create a copy of PayslipYTD
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? grossPay = null,
+    Object? tax = null,
+    Object? superAmount = null,
+    Object? netPay = null,
+  }) {
+    return _then(_PayslipYTD(
+      grossPay: null == grossPay
+          ? _self.grossPay
+          : grossPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      tax: null == tax
+          ? _self.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
+      superAmount: null == superAmount
+          ? _self.superAmount
+          : superAmount // ignore: cast_nullable_to_non_nullable
+              as double,
+      netPay: null == netPay
+          ? _self.netPay
+          : netPay // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$PayrollSummary {
-  String get organizationId => throw _privateConstructorUsedError;
-  String get period => throw _privateConstructorUsedError;
-  int get totalEmployees => throw _privateConstructorUsedError;
-  double get totalGrossPay => throw _privateConstructorUsedError;
-  double get totalTax => throw _privateConstructorUsedError;
-  double get totalSuper => throw _privateConstructorUsedError;
-  double get totalNetPay => throw _privateConstructorUsedError;
-  List<EmployeePayrollSummary> get employees =>
-      throw _privateConstructorUsedError;
+  String get organizationId;
+  String get period;
+  int get totalEmployees;
+  double get totalGrossPay;
+  double get totalTax;
+  double get totalSuper;
+  double get totalNetPay;
+  List<EmployeePayrollSummary> get employees;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PayrollSummaryCopyWith<PayrollSummary> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PayrollSummaryCopyWith<$Res> {
-  factory $PayrollSummaryCopyWith(
-          PayrollSummary value, $Res Function(PayrollSummary) then) =
-      _$PayrollSummaryCopyWithImpl<$Res, PayrollSummary>;
-  @useResult
-  $Res call(
-      {String organizationId,
-      String period,
-      int totalEmployees,
-      double totalGrossPay,
-      double totalTax,
-      double totalSuper,
-      double totalNetPay,
-      List<EmployeePayrollSummary> employees});
-}
-
-/// @nodoc
-class _$PayrollSummaryCopyWithImpl<$Res, $Val extends PayrollSummary>
-    implements $PayrollSummaryCopyWith<$Res> {
-  _$PayrollSummaryCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of PayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $PayrollSummaryCopyWith<PayrollSummary> get copyWith =>
+      _$PayrollSummaryCopyWithImpl<PayrollSummary>(
+          this as PayrollSummary, _$identity);
+
+  /// Serializes this PayrollSummary to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? organizationId = null,
-    Object? period = null,
-    Object? totalEmployees = null,
-    Object? totalGrossPay = null,
-    Object? totalTax = null,
-    Object? totalSuper = null,
-    Object? totalNetPay = null,
-    Object? employees = null,
-  }) {
-    return _then(_value.copyWith(
-      organizationId: null == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      period: null == period
-          ? _value.period
-          : period // ignore: cast_nullable_to_non_nullable
-              as String,
-      totalEmployees: null == totalEmployees
-          ? _value.totalEmployees
-          : totalEmployees // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalGrossPay: null == totalGrossPay
-          ? _value.totalGrossPay
-          : totalGrossPay // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalTax: null == totalTax
-          ? _value.totalTax
-          : totalTax // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalSuper: null == totalSuper
-          ? _value.totalSuper
-          : totalSuper // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalNetPay: null == totalNetPay
-          ? _value.totalNetPay
-          : totalNetPay // ignore: cast_nullable_to_non_nullable
-              as double,
-      employees: null == employees
-          ? _value.employees
-          : employees // ignore: cast_nullable_to_non_nullable
-              as List<EmployeePayrollSummary>,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PayrollSummary &&
+            (identical(other.organizationId, organizationId) ||
+                other.organizationId == organizationId) &&
+            (identical(other.period, period) || other.period == period) &&
+            (identical(other.totalEmployees, totalEmployees) ||
+                other.totalEmployees == totalEmployees) &&
+            (identical(other.totalGrossPay, totalGrossPay) ||
+                other.totalGrossPay == totalGrossPay) &&
+            (identical(other.totalTax, totalTax) ||
+                other.totalTax == totalTax) &&
+            (identical(other.totalSuper, totalSuper) ||
+                other.totalSuper == totalSuper) &&
+            (identical(other.totalNetPay, totalNetPay) ||
+                other.totalNetPay == totalNetPay) &&
+            const DeepCollectionEquality().equals(other.employees, employees));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      organizationId,
+      period,
+      totalEmployees,
+      totalGrossPay,
+      totalTax,
+      totalSuper,
+      totalNetPay,
+      const DeepCollectionEquality().hash(employees));
+
+  @override
+  String toString() {
+    return 'PayrollSummary(organizationId: $organizationId, period: $period, totalEmployees: $totalEmployees, totalGrossPay: $totalGrossPay, totalTax: $totalTax, totalSuper: $totalSuper, totalNetPay: $totalNetPay, employees: $employees)';
   }
 }
 
 /// @nodoc
-abstract class _$$PayrollSummaryImplCopyWith<$Res>
-    implements $PayrollSummaryCopyWith<$Res> {
-  factory _$$PayrollSummaryImplCopyWith(_$PayrollSummaryImpl value,
-          $Res Function(_$PayrollSummaryImpl) then) =
-      __$$PayrollSummaryImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $PayrollSummaryCopyWith<$Res> {
+  factory $PayrollSummaryCopyWith(
+          PayrollSummary value, $Res Function(PayrollSummary) _then) =
+      _$PayrollSummaryCopyWithImpl;
   @useResult
   $Res call(
       {String organizationId,
@@ -2696,13 +4732,15 @@ abstract class _$$PayrollSummaryImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$PayrollSummaryImplCopyWithImpl<$Res>
-    extends _$PayrollSummaryCopyWithImpl<$Res, _$PayrollSummaryImpl>
-    implements _$$PayrollSummaryImplCopyWith<$Res> {
-  __$$PayrollSummaryImplCopyWithImpl(
-      _$PayrollSummaryImpl _value, $Res Function(_$PayrollSummaryImpl) _then)
-      : super(_value, _then);
+class _$PayrollSummaryCopyWithImpl<$Res>
+    implements $PayrollSummaryCopyWith<$Res> {
+  _$PayrollSummaryCopyWithImpl(this._self, this._then);
 
+  final PayrollSummary _self;
+  final $Res Function(PayrollSummary) _then;
+
+  /// Create a copy of PayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2715,47 +4753,255 @@ class __$$PayrollSummaryImplCopyWithImpl<$Res>
     Object? totalNetPay = null,
     Object? employees = null,
   }) {
-    return _then(_$PayrollSummaryImpl(
+    return _then(_self.copyWith(
       organizationId: null == organizationId
-          ? _value.organizationId
+          ? _self.organizationId
           : organizationId // ignore: cast_nullable_to_non_nullable
               as String,
       period: null == period
-          ? _value.period
+          ? _self.period
           : period // ignore: cast_nullable_to_non_nullable
               as String,
       totalEmployees: null == totalEmployees
-          ? _value.totalEmployees
+          ? _self.totalEmployees
           : totalEmployees // ignore: cast_nullable_to_non_nullable
               as int,
       totalGrossPay: null == totalGrossPay
-          ? _value.totalGrossPay
+          ? _self.totalGrossPay
           : totalGrossPay // ignore: cast_nullable_to_non_nullable
               as double,
       totalTax: null == totalTax
-          ? _value.totalTax
+          ? _self.totalTax
           : totalTax // ignore: cast_nullable_to_non_nullable
               as double,
       totalSuper: null == totalSuper
-          ? _value.totalSuper
+          ? _self.totalSuper
           : totalSuper // ignore: cast_nullable_to_non_nullable
               as double,
       totalNetPay: null == totalNetPay
-          ? _value.totalNetPay
+          ? _self.totalNetPay
           : totalNetPay // ignore: cast_nullable_to_non_nullable
               as double,
       employees: null == employees
-          ? _value._employees
+          ? _self.employees
           : employees // ignore: cast_nullable_to_non_nullable
               as List<EmployeePayrollSummary>,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [PayrollSummary].
+extension PayrollSummaryPatterns on PayrollSummary {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PayrollSummary value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollSummary() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PayrollSummary value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollSummary():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PayrollSummary value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollSummary() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String organizationId,
+            String period,
+            int totalEmployees,
+            double totalGrossPay,
+            double totalTax,
+            double totalSuper,
+            double totalNetPay,
+            List<EmployeePayrollSummary> employees)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollSummary() when $default != null:
+        return $default(
+            _that.organizationId,
+            _that.period,
+            _that.totalEmployees,
+            _that.totalGrossPay,
+            _that.totalTax,
+            _that.totalSuper,
+            _that.totalNetPay,
+            _that.employees);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String organizationId,
+            String period,
+            int totalEmployees,
+            double totalGrossPay,
+            double totalTax,
+            double totalSuper,
+            double totalNetPay,
+            List<EmployeePayrollSummary> employees)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollSummary():
+        return $default(
+            _that.organizationId,
+            _that.period,
+            _that.totalEmployees,
+            _that.totalGrossPay,
+            _that.totalTax,
+            _that.totalSuper,
+            _that.totalNetPay,
+            _that.employees);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String organizationId,
+            String period,
+            int totalEmployees,
+            double totalGrossPay,
+            double totalTax,
+            double totalSuper,
+            double totalNetPay,
+            List<EmployeePayrollSummary> employees)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PayrollSummary() when $default != null:
+        return $default(
+            _that.organizationId,
+            _that.period,
+            _that.totalEmployees,
+            _that.totalGrossPay,
+            _that.totalTax,
+            _that.totalSuper,
+            _that.totalNetPay,
+            _that.employees);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$PayrollSummaryImpl implements _PayrollSummary {
-  const _$PayrollSummaryImpl(
+class _PayrollSummary implements PayrollSummary {
+  const _PayrollSummary(
       {required this.organizationId,
       required this.period,
       required this.totalEmployees,
@@ -2765,9 +5011,8 @@ class _$PayrollSummaryImpl implements _PayrollSummary {
       required this.totalNetPay,
       required final List<EmployeePayrollSummary> employees})
       : _employees = employees;
-
-  factory _$PayrollSummaryImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PayrollSummaryImplFromJson(json);
+  factory _PayrollSummary.fromJson(Map<String, dynamic> json) =>
+      _$PayrollSummaryFromJson(json);
 
   @override
   final String organizationId;
@@ -2791,16 +5036,26 @@ class _$PayrollSummaryImpl implements _PayrollSummary {
     return EqualUnmodifiableListView(_employees);
   }
 
+  /// Create a copy of PayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PayrollSummary(organizationId: $organizationId, period: $period, totalEmployees: $totalEmployees, totalGrossPay: $totalGrossPay, totalTax: $totalTax, totalSuper: $totalSuper, totalNetPay: $totalNetPay, employees: $employees)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PayrollSummaryCopyWith<_PayrollSummary> get copyWith =>
+      __$PayrollSummaryCopyWithImpl<_PayrollSummary>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PayrollSummaryToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PayrollSummaryImpl &&
+            other is _PayrollSummary &&
             (identical(other.organizationId, organizationId) ||
                 other.organizationId == organizationId) &&
             (identical(other.period, period) || other.period == period) &&
@@ -2818,7 +5073,7 @@ class _$PayrollSummaryImpl implements _PayrollSummary {
                 .equals(other._employees, _employees));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -2831,147 +5086,151 @@ class _$PayrollSummaryImpl implements _PayrollSummary {
       totalNetPay,
       const DeepCollectionEquality().hash(_employees));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PayrollSummaryImplCopyWith<_$PayrollSummaryImpl> get copyWith =>
-      __$$PayrollSummaryImplCopyWithImpl<_$PayrollSummaryImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PayrollSummaryImplToJson(
-      this,
-    );
+  String toString() {
+    return 'PayrollSummary(organizationId: $organizationId, period: $period, totalEmployees: $totalEmployees, totalGrossPay: $totalGrossPay, totalTax: $totalTax, totalSuper: $totalSuper, totalNetPay: $totalNetPay, employees: $employees)';
   }
 }
 
-abstract class _PayrollSummary implements PayrollSummary {
-  const factory _PayrollSummary(
-          {required final String organizationId,
-          required final String period,
-          required final int totalEmployees,
-          required final double totalGrossPay,
-          required final double totalTax,
-          required final double totalSuper,
-          required final double totalNetPay,
-          required final List<EmployeePayrollSummary> employees}) =
-      _$PayrollSummaryImpl;
-
-  factory _PayrollSummary.fromJson(Map<String, dynamic> json) =
-      _$PayrollSummaryImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$PayrollSummaryCopyWith<$Res>
+    implements $PayrollSummaryCopyWith<$Res> {
+  factory _$PayrollSummaryCopyWith(
+          _PayrollSummary value, $Res Function(_PayrollSummary) _then) =
+      __$PayrollSummaryCopyWithImpl;
   @override
-  String get organizationId;
-  @override
-  String get period;
-  @override
-  int get totalEmployees;
-  @override
-  double get totalGrossPay;
-  @override
-  double get totalTax;
-  @override
-  double get totalSuper;
-  @override
-  double get totalNetPay;
-  @override
-  List<EmployeePayrollSummary> get employees;
-  @override
-  @JsonKey(ignore: true)
-  _$$PayrollSummaryImplCopyWith<_$PayrollSummaryImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String organizationId,
+      String period,
+      int totalEmployees,
+      double totalGrossPay,
+      double totalTax,
+      double totalSuper,
+      double totalNetPay,
+      List<EmployeePayrollSummary> employees});
 }
 
-EmployeePayrollSummary _$EmployeePayrollSummaryFromJson(
-    Map<String, dynamic> json) {
-  return _EmployeePayrollSummary.fromJson(json);
+/// @nodoc
+class __$PayrollSummaryCopyWithImpl<$Res>
+    implements _$PayrollSummaryCopyWith<$Res> {
+  __$PayrollSummaryCopyWithImpl(this._self, this._then);
+
+  final _PayrollSummary _self;
+  final $Res Function(_PayrollSummary) _then;
+
+  /// Create a copy of PayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? organizationId = null,
+    Object? period = null,
+    Object? totalEmployees = null,
+    Object? totalGrossPay = null,
+    Object? totalTax = null,
+    Object? totalSuper = null,
+    Object? totalNetPay = null,
+    Object? employees = null,
+  }) {
+    return _then(_PayrollSummary(
+      organizationId: null == organizationId
+          ? _self.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      period: null == period
+          ? _self.period
+          : period // ignore: cast_nullable_to_non_nullable
+              as String,
+      totalEmployees: null == totalEmployees
+          ? _self.totalEmployees
+          : totalEmployees // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalGrossPay: null == totalGrossPay
+          ? _self.totalGrossPay
+          : totalGrossPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      totalTax: null == totalTax
+          ? _self.totalTax
+          : totalTax // ignore: cast_nullable_to_non_nullable
+              as double,
+      totalSuper: null == totalSuper
+          ? _self.totalSuper
+          : totalSuper // ignore: cast_nullable_to_non_nullable
+              as double,
+      totalNetPay: null == totalNetPay
+          ? _self.totalNetPay
+          : totalNetPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      employees: null == employees
+          ? _self._employees
+          : employees // ignore: cast_nullable_to_non_nullable
+              as List<EmployeePayrollSummary>,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$EmployeePayrollSummary {
-  String get userId => throw _privateConstructorUsedError;
-  String get userName => throw _privateConstructorUsedError;
-  double get grossPay => throw _privateConstructorUsedError;
-  double get netPay => throw _privateConstructorUsedError;
+  String get userId;
+  String get userName;
+  double get grossPay;
+  double get netPay;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $EmployeePayrollSummaryCopyWith<EmployeePayrollSummary> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $EmployeePayrollSummaryCopyWith<$Res> {
-  factory $EmployeePayrollSummaryCopyWith(EmployeePayrollSummary value,
-          $Res Function(EmployeePayrollSummary) then) =
-      _$EmployeePayrollSummaryCopyWithImpl<$Res, EmployeePayrollSummary>;
-  @useResult
-  $Res call({String userId, String userName, double grossPay, double netPay});
-}
-
-/// @nodoc
-class _$EmployeePayrollSummaryCopyWithImpl<$Res,
-        $Val extends EmployeePayrollSummary>
-    implements $EmployeePayrollSummaryCopyWith<$Res> {
-  _$EmployeePayrollSummaryCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of EmployeePayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $EmployeePayrollSummaryCopyWith<EmployeePayrollSummary> get copyWith =>
+      _$EmployeePayrollSummaryCopyWithImpl<EmployeePayrollSummary>(
+          this as EmployeePayrollSummary, _$identity);
+
+  /// Serializes this EmployeePayrollSummary to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? userId = null,
-    Object? userName = null,
-    Object? grossPay = null,
-    Object? netPay = null,
-  }) {
-    return _then(_value.copyWith(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userName: null == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
-              as String,
-      grossPay: null == grossPay
-          ? _value.grossPay
-          : grossPay // ignore: cast_nullable_to_non_nullable
-              as double,
-      netPay: null == netPay
-          ? _value.netPay
-          : netPay // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is EmployeePayrollSummary &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.userName, userName) ||
+                other.userName == userName) &&
+            (identical(other.grossPay, grossPay) ||
+                other.grossPay == grossPay) &&
+            (identical(other.netPay, netPay) || other.netPay == netPay));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, userId, userName, grossPay, netPay);
+
+  @override
+  String toString() {
+    return 'EmployeePayrollSummary(userId: $userId, userName: $userName, grossPay: $grossPay, netPay: $netPay)';
   }
 }
 
 /// @nodoc
-abstract class _$$EmployeePayrollSummaryImplCopyWith<$Res>
-    implements $EmployeePayrollSummaryCopyWith<$Res> {
-  factory _$$EmployeePayrollSummaryImplCopyWith(
-          _$EmployeePayrollSummaryImpl value,
-          $Res Function(_$EmployeePayrollSummaryImpl) then) =
-      __$$EmployeePayrollSummaryImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $EmployeePayrollSummaryCopyWith<$Res> {
+  factory $EmployeePayrollSummaryCopyWith(EmployeePayrollSummary value,
+          $Res Function(EmployeePayrollSummary) _then) =
+      _$EmployeePayrollSummaryCopyWithImpl;
   @useResult
   $Res call({String userId, String userName, double grossPay, double netPay});
 }
 
 /// @nodoc
-class __$$EmployeePayrollSummaryImplCopyWithImpl<$Res>
-    extends _$EmployeePayrollSummaryCopyWithImpl<$Res,
-        _$EmployeePayrollSummaryImpl>
-    implements _$$EmployeePayrollSummaryImplCopyWith<$Res> {
-  __$$EmployeePayrollSummaryImplCopyWithImpl(
-      _$EmployeePayrollSummaryImpl _value,
-      $Res Function(_$EmployeePayrollSummaryImpl) _then)
-      : super(_value, _then);
+class _$EmployeePayrollSummaryCopyWithImpl<$Res>
+    implements $EmployeePayrollSummaryCopyWith<$Res> {
+  _$EmployeePayrollSummaryCopyWithImpl(this._self, this._then);
 
+  final EmployeePayrollSummary _self;
+  final $Res Function(EmployeePayrollSummary) _then;
+
+  /// Create a copy of EmployeePayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2980,38 +5239,203 @@ class __$$EmployeePayrollSummaryImplCopyWithImpl<$Res>
     Object? grossPay = null,
     Object? netPay = null,
   }) {
-    return _then(_$EmployeePayrollSummaryImpl(
+    return _then(_self.copyWith(
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       userName: null == userName
-          ? _value.userName
+          ? _self.userName
           : userName // ignore: cast_nullable_to_non_nullable
               as String,
       grossPay: null == grossPay
-          ? _value.grossPay
+          ? _self.grossPay
           : grossPay // ignore: cast_nullable_to_non_nullable
               as double,
       netPay: null == netPay
-          ? _value.netPay
+          ? _self.netPay
           : netPay // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [EmployeePayrollSummary].
+extension EmployeePayrollSummaryPatterns on EmployeePayrollSummary {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_EmployeePayrollSummary value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeePayrollSummary() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_EmployeePayrollSummary value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeePayrollSummary():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_EmployeePayrollSummary value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeePayrollSummary() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String userId, String userName, double grossPay, double netPay)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeePayrollSummary() when $default != null:
+        return $default(
+            _that.userId, _that.userName, _that.grossPay, _that.netPay);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String userId, String userName, double grossPay, double netPay)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeePayrollSummary():
+        return $default(
+            _that.userId, _that.userName, _that.grossPay, _that.netPay);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String userId, String userName, double grossPay, double netPay)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _EmployeePayrollSummary() when $default != null:
+        return $default(
+            _that.userId, _that.userName, _that.grossPay, _that.netPay);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$EmployeePayrollSummaryImpl implements _EmployeePayrollSummary {
-  const _$EmployeePayrollSummaryImpl(
+class _EmployeePayrollSummary implements EmployeePayrollSummary {
+  const _EmployeePayrollSummary(
       {required this.userId,
       required this.userName,
       required this.grossPay,
       required this.netPay});
-
-  factory _$EmployeePayrollSummaryImpl.fromJson(Map<String, dynamic> json) =>
-      _$$EmployeePayrollSummaryImplFromJson(json);
+  factory _EmployeePayrollSummary.fromJson(Map<String, dynamic> json) =>
+      _$EmployeePayrollSummaryFromJson(json);
 
   @override
   final String userId;
@@ -3022,16 +5446,27 @@ class _$EmployeePayrollSummaryImpl implements _EmployeePayrollSummary {
   @override
   final double netPay;
 
+  /// Create a copy of EmployeePayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'EmployeePayrollSummary(userId: $userId, userName: $userName, grossPay: $grossPay, netPay: $netPay)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$EmployeePayrollSummaryCopyWith<_EmployeePayrollSummary> get copyWith =>
+      __$EmployeePayrollSummaryCopyWithImpl<_EmployeePayrollSummary>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$EmployeePayrollSummaryToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$EmployeePayrollSummaryImpl &&
+            other is _EmployeePayrollSummary &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
@@ -3040,46 +5475,65 @@ class _$EmployeePayrollSummaryImpl implements _EmployeePayrollSummary {
             (identical(other.netPay, netPay) || other.netPay == netPay));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, userId, userName, grossPay, netPay);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$EmployeePayrollSummaryImplCopyWith<_$EmployeePayrollSummaryImpl>
-      get copyWith => __$$EmployeePayrollSummaryImplCopyWithImpl<
-          _$EmployeePayrollSummaryImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$EmployeePayrollSummaryImplToJson(
-      this,
-    );
+  String toString() {
+    return 'EmployeePayrollSummary(userId: $userId, userName: $userName, grossPay: $grossPay, netPay: $netPay)';
   }
 }
 
-abstract class _EmployeePayrollSummary implements EmployeePayrollSummary {
-  const factory _EmployeePayrollSummary(
-      {required final String userId,
-      required final String userName,
-      required final double grossPay,
-      required final double netPay}) = _$EmployeePayrollSummaryImpl;
-
-  factory _EmployeePayrollSummary.fromJson(Map<String, dynamic> json) =
-      _$EmployeePayrollSummaryImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$EmployeePayrollSummaryCopyWith<$Res>
+    implements $EmployeePayrollSummaryCopyWith<$Res> {
+  factory _$EmployeePayrollSummaryCopyWith(_EmployeePayrollSummary value,
+          $Res Function(_EmployeePayrollSummary) _then) =
+      __$EmployeePayrollSummaryCopyWithImpl;
   @override
-  String get userId;
-  @override
-  String get userName;
-  @override
-  double get grossPay;
-  @override
-  double get netPay;
-  @override
-  @JsonKey(ignore: true)
-  _$$EmployeePayrollSummaryImplCopyWith<_$EmployeePayrollSummaryImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String userId, String userName, double grossPay, double netPay});
 }
+
+/// @nodoc
+class __$EmployeePayrollSummaryCopyWithImpl<$Res>
+    implements _$EmployeePayrollSummaryCopyWith<$Res> {
+  __$EmployeePayrollSummaryCopyWithImpl(this._self, this._then);
+
+  final _EmployeePayrollSummary _self;
+  final $Res Function(_EmployeePayrollSummary) _then;
+
+  /// Create a copy of EmployeePayrollSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? userId = null,
+    Object? userName = null,
+    Object? grossPay = null,
+    Object? netPay = null,
+  }) {
+    return _then(_EmployeePayrollSummary(
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      userName: null == userName
+          ? _self.userName
+          : userName // ignore: cast_nullable_to_non_nullable
+              as String,
+      grossPay: null == grossPay
+          ? _self.grossPay
+          : grossPay // ignore: cast_nullable_to_non_nullable
+              as double,
+      netPay: null == netPay
+          ? _self.netPay
+          : netPay // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+// dart format on

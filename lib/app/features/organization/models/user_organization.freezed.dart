@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,137 +9,88 @@ part of 'user_organization.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-UserOrganization _$UserOrganizationFromJson(Map<String, dynamic> json) {
-  return _UserOrganization.fromJson(json);
-}
 
 /// @nodoc
 mixin _$UserOrganization {
-  String get id => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get organizationId => throw _privateConstructorUsedError;
-  String get role => throw _privateConstructorUsedError;
-  List<String> get permissions => throw _privateConstructorUsedError;
-  bool get isActive => throw _privateConstructorUsedError;
-  DateTime get joinedAt => throw _privateConstructorUsedError;
-  DateTime? get lastAccessedAt =>
-      throw _privateConstructorUsedError; // Flattened organization details for UI convenience
-  String? get organizationName => throw _privateConstructorUsedError;
-  String? get organizationCode => throw _privateConstructorUsedError;
-  String? get organizationLogoUrl => throw _privateConstructorUsedError;
+  String get id;
+  String get userId;
+  String get organizationId;
+  String get role;
+  List<String> get permissions;
+  bool get isActive;
+  DateTime get joinedAt;
+  DateTime?
+      get lastAccessedAt; // Flattened organization details for UI convenience
+  String? get organizationName;
+  String? get organizationCode;
+  String? get organizationLogoUrl;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $UserOrganizationCopyWith<UserOrganization> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $UserOrganizationCopyWith<$Res> {
-  factory $UserOrganizationCopyWith(
-          UserOrganization value, $Res Function(UserOrganization) then) =
-      _$UserOrganizationCopyWithImpl<$Res, UserOrganization>;
-  @useResult
-  $Res call(
-      {String id,
-      String userId,
-      String organizationId,
-      String role,
-      List<String> permissions,
-      bool isActive,
-      DateTime joinedAt,
-      DateTime? lastAccessedAt,
-      String? organizationName,
-      String? organizationCode,
-      String? organizationLogoUrl});
-}
-
-/// @nodoc
-class _$UserOrganizationCopyWithImpl<$Res, $Val extends UserOrganization>
-    implements $UserOrganizationCopyWith<$Res> {
-  _$UserOrganizationCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of UserOrganization
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $UserOrganizationCopyWith<UserOrganization> get copyWith =>
+      _$UserOrganizationCopyWithImpl<UserOrganization>(
+          this as UserOrganization, _$identity);
+
+  /// Serializes this UserOrganization to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? organizationId = null,
-    Object? role = null,
-    Object? permissions = null,
-    Object? isActive = null,
-    Object? joinedAt = null,
-    Object? lastAccessedAt = freezed,
-    Object? organizationName = freezed,
-    Object? organizationCode = freezed,
-    Object? organizationLogoUrl = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      organizationId: null == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      role: null == role
-          ? _value.role
-          : role // ignore: cast_nullable_to_non_nullable
-              as String,
-      permissions: null == permissions
-          ? _value.permissions
-          : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      joinedAt: null == joinedAt
-          ? _value.joinedAt
-          : joinedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      lastAccessedAt: freezed == lastAccessedAt
-          ? _value.lastAccessedAt
-          : lastAccessedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      organizationName: freezed == organizationName
-          ? _value.organizationName
-          : organizationName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      organizationCode: freezed == organizationCode
-          ? _value.organizationCode
-          : organizationCode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      organizationLogoUrl: freezed == organizationLogoUrl
-          ? _value.organizationLogoUrl
-          : organizationLogoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is UserOrganization &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.organizationId, organizationId) ||
+                other.organizationId == organizationId) &&
+            (identical(other.role, role) || other.role == role) &&
+            const DeepCollectionEquality()
+                .equals(other.permissions, permissions) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive) &&
+            (identical(other.joinedAt, joinedAt) ||
+                other.joinedAt == joinedAt) &&
+            (identical(other.lastAccessedAt, lastAccessedAt) ||
+                other.lastAccessedAt == lastAccessedAt) &&
+            (identical(other.organizationName, organizationName) ||
+                other.organizationName == organizationName) &&
+            (identical(other.organizationCode, organizationCode) ||
+                other.organizationCode == organizationCode) &&
+            (identical(other.organizationLogoUrl, organizationLogoUrl) ||
+                other.organizationLogoUrl == organizationLogoUrl));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userId,
+      organizationId,
+      role,
+      const DeepCollectionEquality().hash(permissions),
+      isActive,
+      joinedAt,
+      lastAccessedAt,
+      organizationName,
+      organizationCode,
+      organizationLogoUrl);
+
+  @override
+  String toString() {
+    return 'UserOrganization(id: $id, userId: $userId, organizationId: $organizationId, role: $role, permissions: $permissions, isActive: $isActive, joinedAt: $joinedAt, lastAccessedAt: $lastAccessedAt, organizationName: $organizationName, organizationCode: $organizationCode, organizationLogoUrl: $organizationLogoUrl)';
   }
 }
 
 /// @nodoc
-abstract class _$$UserOrganizationImplCopyWith<$Res>
-    implements $UserOrganizationCopyWith<$Res> {
-  factory _$$UserOrganizationImplCopyWith(_$UserOrganizationImpl value,
-          $Res Function(_$UserOrganizationImpl) then) =
-      __$$UserOrganizationImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $UserOrganizationCopyWith<$Res> {
+  factory $UserOrganizationCopyWith(
+          UserOrganization value, $Res Function(UserOrganization) _then) =
+      _$UserOrganizationCopyWithImpl;
   @useResult
   $Res call(
       {String id,
@@ -156,13 +107,15 @@ abstract class _$$UserOrganizationImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$UserOrganizationImplCopyWithImpl<$Res>
-    extends _$UserOrganizationCopyWithImpl<$Res, _$UserOrganizationImpl>
-    implements _$$UserOrganizationImplCopyWith<$Res> {
-  __$$UserOrganizationImplCopyWithImpl(_$UserOrganizationImpl _value,
-      $Res Function(_$UserOrganizationImpl) _then)
-      : super(_value, _then);
+class _$UserOrganizationCopyWithImpl<$Res>
+    implements $UserOrganizationCopyWith<$Res> {
+  _$UserOrganizationCopyWithImpl(this._self, this._then);
 
+  final UserOrganization _self;
+  final $Res Function(UserOrganization) _then;
+
+  /// Create a copy of UserOrganization
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -178,59 +131,285 @@ class __$$UserOrganizationImplCopyWithImpl<$Res>
     Object? organizationCode = freezed,
     Object? organizationLogoUrl = freezed,
   }) {
-    return _then(_$UserOrganizationImpl(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       organizationId: null == organizationId
-          ? _value.organizationId
+          ? _self.organizationId
           : organizationId // ignore: cast_nullable_to_non_nullable
               as String,
       role: null == role
-          ? _value.role
+          ? _self.role
           : role // ignore: cast_nullable_to_non_nullable
               as String,
       permissions: null == permissions
-          ? _value._permissions
+          ? _self.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<String>,
       isActive: null == isActive
-          ? _value.isActive
+          ? _self.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
               as bool,
       joinedAt: null == joinedAt
-          ? _value.joinedAt
+          ? _self.joinedAt
           : joinedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
       lastAccessedAt: freezed == lastAccessedAt
-          ? _value.lastAccessedAt
+          ? _self.lastAccessedAt
           : lastAccessedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       organizationName: freezed == organizationName
-          ? _value.organizationName
+          ? _self.organizationName
           : organizationName // ignore: cast_nullable_to_non_nullable
               as String?,
       organizationCode: freezed == organizationCode
-          ? _value.organizationCode
+          ? _self.organizationCode
           : organizationCode // ignore: cast_nullable_to_non_nullable
               as String?,
       organizationLogoUrl: freezed == organizationLogoUrl
-          ? _value.organizationLogoUrl
+          ? _self.organizationLogoUrl
           : organizationLogoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [UserOrganization].
+extension UserOrganizationPatterns on UserOrganization {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_UserOrganization value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UserOrganization() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_UserOrganization value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserOrganization():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_UserOrganization value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserOrganization() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String userId,
+            String organizationId,
+            String role,
+            List<String> permissions,
+            bool isActive,
+            DateTime joinedAt,
+            DateTime? lastAccessedAt,
+            String? organizationName,
+            String? organizationCode,
+            String? organizationLogoUrl)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UserOrganization() when $default != null:
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.organizationId,
+            _that.role,
+            _that.permissions,
+            _that.isActive,
+            _that.joinedAt,
+            _that.lastAccessedAt,
+            _that.organizationName,
+            _that.organizationCode,
+            _that.organizationLogoUrl);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String id,
+            String userId,
+            String organizationId,
+            String role,
+            List<String> permissions,
+            bool isActive,
+            DateTime joinedAt,
+            DateTime? lastAccessedAt,
+            String? organizationName,
+            String? organizationCode,
+            String? organizationLogoUrl)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserOrganization():
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.organizationId,
+            _that.role,
+            _that.permissions,
+            _that.isActive,
+            _that.joinedAt,
+            _that.lastAccessedAt,
+            _that.organizationName,
+            _that.organizationCode,
+            _that.organizationLogoUrl);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String id,
+            String userId,
+            String organizationId,
+            String role,
+            List<String> permissions,
+            bool isActive,
+            DateTime joinedAt,
+            DateTime? lastAccessedAt,
+            String? organizationName,
+            String? organizationCode,
+            String? organizationLogoUrl)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserOrganization() when $default != null:
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.organizationId,
+            _that.role,
+            _that.permissions,
+            _that.isActive,
+            _that.joinedAt,
+            _that.lastAccessedAt,
+            _that.organizationName,
+            _that.organizationCode,
+            _that.organizationLogoUrl);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$UserOrganizationImpl implements _UserOrganization {
-  const _$UserOrganizationImpl(
+class _UserOrganization implements UserOrganization {
+  const _UserOrganization(
       {required this.id,
       required this.userId,
       required this.organizationId,
@@ -243,9 +422,8 @@ class _$UserOrganizationImpl implements _UserOrganization {
       this.organizationCode,
       this.organizationLogoUrl})
       : _permissions = permissions;
-
-  factory _$UserOrganizationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UserOrganizationImplFromJson(json);
+  factory _UserOrganization.fromJson(Map<String, dynamic> json) =>
+      _$UserOrganizationFromJson(json);
 
   @override
   final String id;
@@ -279,16 +457,26 @@ class _$UserOrganizationImpl implements _UserOrganization {
   @override
   final String? organizationLogoUrl;
 
+  /// Create a copy of UserOrganization
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'UserOrganization(id: $id, userId: $userId, organizationId: $organizationId, role: $role, permissions: $permissions, isActive: $isActive, joinedAt: $joinedAt, lastAccessedAt: $lastAccessedAt, organizationName: $organizationName, organizationCode: $organizationCode, organizationLogoUrl: $organizationLogoUrl)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$UserOrganizationCopyWith<_UserOrganization> get copyWith =>
+      __$UserOrganizationCopyWithImpl<_UserOrganization>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$UserOrganizationToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserOrganizationImpl &&
+            other is _UserOrganization &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.organizationId, organizationId) ||
@@ -310,7 +498,7 @@ class _$UserOrganizationImpl implements _UserOrganization {
                 other.organizationLogoUrl == organizationLogoUrl));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -326,62 +514,106 @@ class _$UserOrganizationImpl implements _UserOrganization {
       organizationCode,
       organizationLogoUrl);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$UserOrganizationImplCopyWith<_$UserOrganizationImpl> get copyWith =>
-      __$$UserOrganizationImplCopyWithImpl<_$UserOrganizationImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UserOrganizationImplToJson(
-      this,
-    );
+  String toString() {
+    return 'UserOrganization(id: $id, userId: $userId, organizationId: $organizationId, role: $role, permissions: $permissions, isActive: $isActive, joinedAt: $joinedAt, lastAccessedAt: $lastAccessedAt, organizationName: $organizationName, organizationCode: $organizationCode, organizationLogoUrl: $organizationLogoUrl)';
   }
 }
 
-abstract class _UserOrganization implements UserOrganization {
-  const factory _UserOrganization(
-      {required final String id,
-      required final String userId,
-      required final String organizationId,
-      required final String role,
-      final List<String> permissions,
-      final bool isActive,
-      required final DateTime joinedAt,
-      final DateTime? lastAccessedAt,
-      final String? organizationName,
-      final String? organizationCode,
-      final String? organizationLogoUrl}) = _$UserOrganizationImpl;
-
-  factory _UserOrganization.fromJson(Map<String, dynamic> json) =
-      _$UserOrganizationImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$UserOrganizationCopyWith<$Res>
+    implements $UserOrganizationCopyWith<$Res> {
+  factory _$UserOrganizationCopyWith(
+          _UserOrganization value, $Res Function(_UserOrganization) _then) =
+      __$UserOrganizationCopyWithImpl;
   @override
-  String get id;
-  @override
-  String get userId;
-  @override
-  String get organizationId;
-  @override
-  String get role;
-  @override
-  List<String> get permissions;
-  @override
-  bool get isActive;
-  @override
-  DateTime get joinedAt;
-  @override
-  DateTime? get lastAccessedAt;
-  @override // Flattened organization details for UI convenience
-  String? get organizationName;
-  @override
-  String? get organizationCode;
-  @override
-  String? get organizationLogoUrl;
-  @override
-  @JsonKey(ignore: true)
-  _$$UserOrganizationImplCopyWith<_$UserOrganizationImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String id,
+      String userId,
+      String organizationId,
+      String role,
+      List<String> permissions,
+      bool isActive,
+      DateTime joinedAt,
+      DateTime? lastAccessedAt,
+      String? organizationName,
+      String? organizationCode,
+      String? organizationLogoUrl});
 }
+
+/// @nodoc
+class __$UserOrganizationCopyWithImpl<$Res>
+    implements _$UserOrganizationCopyWith<$Res> {
+  __$UserOrganizationCopyWithImpl(this._self, this._then);
+
+  final _UserOrganization _self;
+  final $Res Function(_UserOrganization) _then;
+
+  /// Create a copy of UserOrganization
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? userId = null,
+    Object? organizationId = null,
+    Object? role = null,
+    Object? permissions = null,
+    Object? isActive = null,
+    Object? joinedAt = null,
+    Object? lastAccessedAt = freezed,
+    Object? organizationName = freezed,
+    Object? organizationCode = freezed,
+    Object? organizationLogoUrl = freezed,
+  }) {
+    return _then(_UserOrganization(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      organizationId: null == organizationId
+          ? _self.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _self.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      permissions: null == permissions
+          ? _self._permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      isActive: null == isActive
+          ? _self.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      joinedAt: null == joinedAt
+          ? _self.joinedAt
+          : joinedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      lastAccessedAt: freezed == lastAccessedAt
+          ? _self.lastAccessedAt
+          : lastAccessedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      organizationName: freezed == organizationName
+          ? _self.organizationName
+          : organizationName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      organizationCode: freezed == organizationCode
+          ? _self.organizationCode
+          : organizationCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      organizationLogoUrl: freezed == organizationLogoUrl
+          ? _self.organizationLogoUrl
+          : organizationLogoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

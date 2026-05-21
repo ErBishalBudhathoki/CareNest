@@ -5,7 +5,7 @@ part 'organization_integrations.g.dart';
 
 /// Individual integration configuration
 @freezed
-class IntegrationConfig with _$IntegrationConfig {
+abstract class IntegrationConfig with _$IntegrationConfig {
   const factory IntegrationConfig({
     @Default(false) bool isConnected,
     String? apiKey,
@@ -22,7 +22,7 @@ class IntegrationConfig with _$IntegrationConfig {
 
 /// Organization integrations container
 @freezed
-class OrganizationIntegrations with _$OrganizationIntegrations {
+abstract class OrganizationIntegrations with _$OrganizationIntegrations {
   const factory OrganizationIntegrations({
     // Accounting
     IntegrationConfig? xero,
@@ -95,7 +95,7 @@ class OrganizationIntegrations with _$OrganizationIntegrations {
 
 /// Organization branding configuration
 @freezed
-class OrganizationBrandingConfig with _$OrganizationBrandingConfig {
+abstract class OrganizationBrandingConfig with _$OrganizationBrandingConfig {
   const factory OrganizationBrandingConfig({
     String? primaryColor,
     String? secondaryColor,

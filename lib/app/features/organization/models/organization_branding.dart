@@ -4,7 +4,7 @@ part 'organization_branding.freezed.dart';
 part 'organization_branding.g.dart';
 
 @freezed
-class OrganizationBranding with _$OrganizationBranding {
+abstract class OrganizationBranding with _$OrganizationBranding {
   const factory OrganizationBranding({
     required String organizationId,
     @Default('#DC143C') String primaryColor,
@@ -31,7 +31,7 @@ class OrganizationBranding with _$OrganizationBranding {
 }
 
 @freezed
-class InvoiceTemplate with _$InvoiceTemplate {
+abstract class InvoiceTemplate with _$InvoiceTemplate {
   const factory InvoiceTemplate({
     String? headerText,
     String? footerText,

@@ -4,7 +4,7 @@ part 'client_portal_models.freezed.dart';
 part 'client_portal_models.g.dart';
 
 @freezed
-class ClientDashboard with _$ClientDashboard {
+abstract class ClientDashboard with _$ClientDashboard {
   const factory ClientDashboard({
     required String clientId,
     required String clientName,
@@ -19,7 +19,7 @@ class ClientDashboard with _$ClientDashboard {
 }
 
 @freezed
-class TodayAppointment with _$TodayAppointment {
+abstract class TodayAppointment with _$TodayAppointment {
   const factory TodayAppointment({
     required String appointmentId,
     required String workerName,
@@ -36,7 +36,7 @@ class TodayAppointment with _$TodayAppointment {
 }
 
 @freezed
-class UpcomingAppointment with _$UpcomingAppointment {
+abstract class UpcomingAppointment with _$UpcomingAppointment {
   const factory UpcomingAppointment({
     required String appointmentId,
     required String workerName,
@@ -52,7 +52,7 @@ class UpcomingAppointment with _$UpcomingAppointment {
 }
 
 @freezed
-class RecentActivity with _$RecentActivity {
+abstract class RecentActivity with _$RecentActivity {
   const factory RecentActivity({
     required String type,
     required String message,
@@ -64,7 +64,7 @@ class RecentActivity with _$RecentActivity {
 }
 
 @freezed
-class ClientNotification with _$ClientNotification {
+abstract class ClientNotification with _$ClientNotification {
   const factory ClientNotification({
     required String id,
     required String type,
@@ -78,7 +78,7 @@ class ClientNotification with _$ClientNotification {
 }
 
 @freezed
-class WorkerLocation with _$WorkerLocation {
+abstract class WorkerLocation with _$WorkerLocation {
   const factory WorkerLocation({
     required String appointmentId,
     required String workerName,
@@ -97,7 +97,7 @@ class WorkerLocation with _$WorkerLocation {
 }
 
 @freezed
-class AppointmentStatus with _$AppointmentStatus {
+abstract class AppointmentStatus with _$AppointmentStatus {
   const factory AppointmentStatus({
     required String appointmentId,
     required String status,
@@ -119,7 +119,7 @@ class AppointmentStatus with _$AppointmentStatus {
 }
 
 @freezed
-class ChecklistItem with _$ChecklistItem {
+abstract class ChecklistItem with _$ChecklistItem {
   const factory ChecklistItem({
     required String item,
     required bool completed,
@@ -130,7 +130,7 @@ class ChecklistItem with _$ChecklistItem {
 }
 
 @freezed
-class ServiceHistory with _$ServiceHistory {
+abstract class ServiceHistory with _$ServiceHistory {
   const factory ServiceHistory({
     required String serviceId,
     required String workerName,
@@ -149,7 +149,7 @@ class ServiceHistory with _$ServiceHistory {
 
 // Additional models for existing client portal views
 @freezed
-class ClientAppointment with _$ClientAppointment {
+abstract class ClientAppointment with _$ClientAppointment {
   const factory ClientAppointment({
     required String id,
     required String date,
@@ -165,7 +165,7 @@ class ClientAppointment with _$ClientAppointment {
 }
 
 @freezed
-class ClientAppointmentDetail with _$ClientAppointmentDetail {
+abstract class ClientAppointmentDetail with _$ClientAppointmentDetail {
   const factory ClientAppointmentDetail({
     required String id,
     required String date,
@@ -186,7 +186,7 @@ class ClientAppointmentDetail with _$ClientAppointmentDetail {
 }
 
 @freezed
-class ClientEmployee with _$ClientEmployee {
+abstract class ClientEmployee with _$ClientEmployee {
   const factory ClientEmployee({
     required String email,
     required String firstName,
@@ -200,7 +200,7 @@ class ClientEmployee with _$ClientEmployee {
 }
 
 @freezed
-class ClientInvoice with _$ClientInvoice {
+abstract class ClientInvoice with _$ClientInvoice {
   const factory ClientInvoice({
     required String id,
     required String invoiceNumber,
@@ -214,7 +214,7 @@ class ClientInvoice with _$ClientInvoice {
 }
 
 @freezed
-class AppointmentParams with _$AppointmentParams {
+abstract class AppointmentParams with _$AppointmentParams {
   const factory AppointmentParams({
     required String assignmentId,
     required String scheduleId,

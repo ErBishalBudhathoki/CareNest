@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,76 +9,51 @@ part of 'compliance_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$ComplianceState {
-  bool get isLoading => throw _privateConstructorUsedError;
-  List<ComplianceChecklist> get checklists =>
-      throw _privateConstructorUsedError;
-  String? get errorMessage => throw _privateConstructorUsedError;
+  bool get isLoading;
+  List<ComplianceChecklist> get checklists;
+  String? get errorMessage;
 
-  @JsonKey(ignore: true)
-  $ComplianceStateCopyWith<ComplianceState> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ComplianceStateCopyWith<$Res> {
-  factory $ComplianceStateCopyWith(
-          ComplianceState value, $Res Function(ComplianceState) then) =
-      _$ComplianceStateCopyWithImpl<$Res, ComplianceState>;
-  @useResult
-  $Res call(
-      {bool isLoading,
-      List<ComplianceChecklist> checklists,
-      String? errorMessage});
-}
-
-/// @nodoc
-class _$ComplianceStateCopyWithImpl<$Res, $Val extends ComplianceState>
-    implements $ComplianceStateCopyWith<$Res> {
-  _$ComplianceStateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of ComplianceState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $ComplianceStateCopyWith<ComplianceState> get copyWith =>
+      _$ComplianceStateCopyWithImpl<ComplianceState>(
+          this as ComplianceState, _$identity);
+
   @override
-  $Res call({
-    Object? isLoading = null,
-    Object? checklists = null,
-    Object? errorMessage = freezed,
-  }) {
-    return _then(_value.copyWith(
-      isLoading: null == isLoading
-          ? _value.isLoading
-          : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      checklists: null == checklists
-          ? _value.checklists
-          : checklists // ignore: cast_nullable_to_non_nullable
-              as List<ComplianceChecklist>,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ComplianceState &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            const DeepCollectionEquality()
+                .equals(other.checklists, checklists) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, isLoading,
+      const DeepCollectionEquality().hash(checklists), errorMessage);
+
+  @override
+  String toString() {
+    return 'ComplianceState(isLoading: $isLoading, checklists: $checklists, errorMessage: $errorMessage)';
   }
 }
 
 /// @nodoc
-abstract class _$$ComplianceStateImplCopyWith<$Res>
-    implements $ComplianceStateCopyWith<$Res> {
-  factory _$$ComplianceStateImplCopyWith(_$ComplianceStateImpl value,
-          $Res Function(_$ComplianceStateImpl) then) =
-      __$$ComplianceStateImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ComplianceStateCopyWith<$Res> {
+  factory $ComplianceStateCopyWith(
+          ComplianceState value, $Res Function(ComplianceState) _then) =
+      _$ComplianceStateCopyWithImpl;
   @useResult
   $Res call(
       {bool isLoading,
@@ -87,13 +62,15 @@ abstract class _$$ComplianceStateImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ComplianceStateImplCopyWithImpl<$Res>
-    extends _$ComplianceStateCopyWithImpl<$Res, _$ComplianceStateImpl>
-    implements _$$ComplianceStateImplCopyWith<$Res> {
-  __$$ComplianceStateImplCopyWithImpl(
-      _$ComplianceStateImpl _value, $Res Function(_$ComplianceStateImpl) _then)
-      : super(_value, _then);
+class _$ComplianceStateCopyWithImpl<$Res>
+    implements $ComplianceStateCopyWith<$Res> {
+  _$ComplianceStateCopyWithImpl(this._self, this._then);
 
+  final ComplianceState _self;
+  final $Res Function(ComplianceState) _then;
+
+  /// Create a copy of ComplianceState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -101,27 +78,190 @@ class __$$ComplianceStateImplCopyWithImpl<$Res>
     Object? checklists = null,
     Object? errorMessage = freezed,
   }) {
-    return _then(_$ComplianceStateImpl(
+    return _then(_self.copyWith(
       isLoading: null == isLoading
-          ? _value.isLoading
+          ? _self.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       checklists: null == checklists
-          ? _value._checklists
+          ? _self.checklists
           : checklists // ignore: cast_nullable_to_non_nullable
               as List<ComplianceChecklist>,
       errorMessage: freezed == errorMessage
-          ? _value.errorMessage
+          ? _self.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [ComplianceState].
+extension ComplianceStatePatterns on ComplianceState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ComplianceState value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceState() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ComplianceState value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceState():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ComplianceState value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceState() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(bool isLoading, List<ComplianceChecklist> checklists,
+            String? errorMessage)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceState() when $default != null:
+        return $default(_that.isLoading, _that.checklists, _that.errorMessage);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(bool isLoading, List<ComplianceChecklist> checklists,
+            String? errorMessage)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceState():
+        return $default(_that.isLoading, _that.checklists, _that.errorMessage);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(bool isLoading, List<ComplianceChecklist> checklists,
+            String? errorMessage)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ComplianceState() when $default != null:
+        return $default(_that.isLoading, _that.checklists, _that.errorMessage);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 
-class _$ComplianceStateImpl implements _ComplianceState {
-  const _$ComplianceStateImpl(
+class _ComplianceState implements ComplianceState {
+  const _ComplianceState(
       {this.isLoading = false,
       final List<ComplianceChecklist> checklists = const [],
       this.errorMessage})
@@ -142,16 +282,19 @@ class _$ComplianceStateImpl implements _ComplianceState {
   @override
   final String? errorMessage;
 
+  /// Create a copy of ComplianceState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ComplianceState(isLoading: $isLoading, checklists: $checklists, errorMessage: $errorMessage)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ComplianceStateCopyWith<_ComplianceState> get copyWith =>
+      __$ComplianceStateCopyWithImpl<_ComplianceState>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ComplianceStateImpl &&
+            other is _ComplianceState &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             const DeepCollectionEquality()
@@ -164,28 +307,58 @@ class _$ComplianceStateImpl implements _ComplianceState {
   int get hashCode => Object.hash(runtimeType, isLoading,
       const DeepCollectionEquality().hash(_checklists), errorMessage);
 
-  @JsonKey(ignore: true)
+  @override
+  String toString() {
+    return 'ComplianceState(isLoading: $isLoading, checklists: $checklists, errorMessage: $errorMessage)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ComplianceStateCopyWith<$Res>
+    implements $ComplianceStateCopyWith<$Res> {
+  factory _$ComplianceStateCopyWith(
+          _ComplianceState value, $Res Function(_ComplianceState) _then) =
+      __$ComplianceStateCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {bool isLoading,
+      List<ComplianceChecklist> checklists,
+      String? errorMessage});
+}
+
+/// @nodoc
+class __$ComplianceStateCopyWithImpl<$Res>
+    implements _$ComplianceStateCopyWith<$Res> {
+  __$ComplianceStateCopyWithImpl(this._self, this._then);
+
+  final _ComplianceState _self;
+  final $Res Function(_ComplianceState) _then;
+
+  /// Create a copy of ComplianceState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  _$$ComplianceStateImplCopyWith<_$ComplianceStateImpl> get copyWith =>
-      __$$ComplianceStateImplCopyWithImpl<_$ComplianceStateImpl>(
-          this, _$identity);
+  $Res call({
+    Object? isLoading = null,
+    Object? checklists = null,
+    Object? errorMessage = freezed,
+  }) {
+    return _then(_ComplianceState(
+      isLoading: null == isLoading
+          ? _self.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      checklists: null == checklists
+          ? _self._checklists
+          : checklists // ignore: cast_nullable_to_non_nullable
+              as List<ComplianceChecklist>,
+      errorMessage: freezed == errorMessage
+          ? _self.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
-abstract class _ComplianceState implements ComplianceState {
-  const factory _ComplianceState(
-      {final bool isLoading,
-      final List<ComplianceChecklist> checklists,
-      final String? errorMessage}) = _$ComplianceStateImpl;
-
-  @override
-  bool get isLoading;
-  @override
-  List<ComplianceChecklist> get checklists;
-  @override
-  String? get errorMessage;
-  @override
-  @JsonKey(ignore: true)
-  _$$ComplianceStateImplCopyWith<_$ComplianceStateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

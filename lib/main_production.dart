@@ -4,6 +4,13 @@ import 'package:carenest/app/features/business/views/add_business_details_view.d
 import 'package:carenest/app/features/business/views/business_list_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
 import 'package:carenest/app/features/invoice/views/automatic_invoice_generation_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/admin_family_management_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/appointment_timeline_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/live_tracking_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/messaging_audit_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dashboard.dart';
+import 'package:carenest/app/features/realtime_portal/views/secure_messaging_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/service_confirmation_view.dart';
 import 'package:carenest/app/services/app_check/app_check_provider_resolver.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
@@ -492,6 +499,13 @@ class MyApp extends ConsumerWidget {
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
             );
           },
+          Routes.realtimePortal: (context) => const RealtimePortalDashboard(),
+          Routes.liveTracking: (context) => const LiveTrackingView(),
+          Routes.appointmentTimeline: (context) =>
+              const AppointmentTimelineView(),
+          Routes.secureMessaging: (context) => const SecureMessagingView(),
+          Routes.serviceConfirmation: (context) =>
+              const ServiceConfirmationView(),
           Routes.familyManagement: (context) {
             final arguments = ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
@@ -502,10 +516,27 @@ class MyApp extends ConsumerWidget {
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
             );
           },
+          Routes.adminFamilyManagement: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final clientId = arguments['clientId'] as String?;
+            return AdminFamilyManagementView(
+              clientId: clientId ?? '',
+            );
+          },
+          Routes.messagingAudit: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>? ??
+                {};
+            final appointmentId = arguments['appointmentId'] as String?;
+            return MessagingAuditView(
+              appointmentId: appointmentId,
+            );
+          },
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.onboarding: (context) => const OnboardingWelcomeView(),
-          Routes.onboardingStepper: (context) =>
-              const OnboardingStepperView(),
+          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
           Routes.onboardingAppIntro: (context) {
             final args = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;

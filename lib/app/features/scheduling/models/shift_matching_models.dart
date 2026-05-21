@@ -8,7 +8,7 @@ part 'shift_matching_models.g.dart';
 // ============================================================================
 
 @freezed
-class WorkerMatch with _$WorkerMatch {
+abstract class WorkerMatch with _$WorkerMatch {
   const factory WorkerMatch({
     required String workerId,
     required String workerName,
@@ -28,7 +28,7 @@ class WorkerMatch with _$WorkerMatch {
 }
 
 @freezed
-class MatchFactor with _$MatchFactor {
+abstract class MatchFactor with _$MatchFactor {
   const factory MatchFactor({
     required String factor,
     required double score,
@@ -52,7 +52,7 @@ enum MatchLevel {
 // ============================================================================
 
 @freezed
-class ShiftRecommendation with _$ShiftRecommendation {
+abstract class ShiftRecommendation with _$ShiftRecommendation {
   const factory ShiftRecommendation({
     required String shiftId,
     required DateTime shiftDate,
@@ -73,7 +73,7 @@ class ShiftRecommendation with _$ShiftRecommendation {
 // ============================================================================
 
 @freezed
-class AutoFillRequest with _$AutoFillRequest {
+abstract class AutoFillRequest with _$AutoFillRequest {
   const factory AutoFillRequest({
     required String organizationId,
     required List<String> shiftIds,
@@ -87,7 +87,7 @@ class AutoFillRequest with _$AutoFillRequest {
 }
 
 @freezed
-class AutoFillResult with _$AutoFillResult {
+abstract class AutoFillResult with _$AutoFillResult {
   const factory AutoFillResult({
     required int totalShifts,
     required int filledShifts,
@@ -102,7 +102,7 @@ class AutoFillResult with _$AutoFillResult {
 }
 
 @freezed
-class ShiftAssignment with _$ShiftAssignment {
+abstract class ShiftAssignment with _$ShiftAssignment {
   const factory ShiftAssignment({
     required String shiftId,
     required String workerId,
@@ -121,7 +121,7 @@ class ShiftAssignment with _$ShiftAssignment {
 // ============================================================================
 
 @freezed
-class MatchingCriteria with _$MatchingCriteria {
+abstract class MatchingCriteria with _$MatchingCriteria {
   const factory MatchingCriteria({
     @Default(true) bool requireSkillMatch,
     @Default(true) bool checkAvailability,
@@ -142,7 +142,7 @@ class MatchingCriteria with _$MatchingCriteria {
 // ============================================================================
 
 @freezed
-class RouteOptimization with _$RouteOptimization {
+abstract class RouteOptimization with _$RouteOptimization {
   const factory RouteOptimization({
     required String workerId,
     required String workerName,
@@ -158,7 +158,7 @@ class RouteOptimization with _$RouteOptimization {
 }
 
 @freezed
-class OptimizedShift with _$OptimizedShift {
+abstract class OptimizedShift with _$OptimizedShift {
   const factory OptimizedShift({
     required String shiftId,
     required DateTime startTime,
@@ -180,7 +180,7 @@ class OptimizedShift with _$OptimizedShift {
 // ============================================================================
 
 @freezed
-class ScheduleOptimization with _$ScheduleOptimization {
+abstract class ScheduleOptimization with _$ScheduleOptimization {
   const factory ScheduleOptimization({
     required String organizationId,
     required DateTime date,
@@ -201,7 +201,7 @@ class ScheduleOptimization with _$ScheduleOptimization {
 // ============================================================================
 
 @freezed
-class NoShowPrediction with _$NoShowPrediction {
+abstract class NoShowPrediction with _$NoShowPrediction {
   const factory NoShowPrediction({
     required String workerId,
     required String shiftId,

@@ -8,7 +8,7 @@ part 'invoice_ai_models.g.dart';
 // ============================================================================
 
 @freezed
-class InvoiceAnomaly with _$InvoiceAnomaly {
+abstract class InvoiceAnomaly with _$InvoiceAnomaly {
   const factory InvoiceAnomaly({
     required String anomalyType,
     required String severity,
@@ -35,7 +35,7 @@ enum AnomalySeverity {
 // ============================================================================
 
 @freezed
-class InvoiceValidation with _$InvoiceValidation {
+abstract class InvoiceValidation with _$InvoiceValidation {
   const factory InvoiceValidation({
     required bool isValid,
     required List<InvoiceAnomaly> anomalies,
@@ -53,7 +53,7 @@ class InvoiceValidation with _$InvoiceValidation {
 // ============================================================================
 
 @freezed
-class PaymentPrediction with _$PaymentPrediction {
+abstract class PaymentPrediction with _$PaymentPrediction {
   const factory PaymentPrediction({
     required String invoiceId,
     required DateTime predictedPaymentDate,
@@ -78,7 +78,7 @@ enum PaymentRiskLevel {
 // ============================================================================
 
 @freezed
-class AutoGenerateRequest with _$AutoGenerateRequest {
+abstract class AutoGenerateRequest with _$AutoGenerateRequest {
   const factory AutoGenerateRequest({
     required String organizationId,
     required DateTime startDate,
@@ -92,7 +92,7 @@ class AutoGenerateRequest with _$AutoGenerateRequest {
 }
 
 @freezed
-class AutoGenerateResult with _$AutoGenerateResult {
+abstract class AutoGenerateResult with _$AutoGenerateResult {
   const factory AutoGenerateResult({
     required int totalInvoices,
     required int successfulInvoices,
@@ -111,7 +111,7 @@ class AutoGenerateResult with _$AutoGenerateResult {
 // ============================================================================
 
 @freezed
-class SmartReminder with _$SmartReminder {
+abstract class SmartReminder with _$SmartReminder {
   const factory SmartReminder({
     required String invoiceId,
     required DateTime suggestedSendTime,

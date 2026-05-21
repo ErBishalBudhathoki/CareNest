@@ -6,9 +6,8 @@ part of 'visit_history_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$VisitHistoryModelImpl _$$VisitHistoryModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$VisitHistoryModelImpl(
+_VisitHistoryModel _$VisitHistoryModelFromJson(Map<String, dynamic> json) =>
+    _VisitHistoryModel(
       id: json['id'] as String,
       shiftDate: json['shiftDate'] as String,
       shiftStartTime: json['shiftStartTime'] as String,
@@ -22,8 +21,7 @@ _$VisitHistoryModelImpl _$$VisitHistoryModelImplFromJson(
           : DateTime.parse(json['createdAt'] as String),
     );
 
-Map<String, dynamic> _$$VisitHistoryModelImplToJson(
-        _$VisitHistoryModelImpl instance) =>
+Map<String, dynamic> _$VisitHistoryModelToJson(_VisitHistoryModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'shiftDate': instance.shiftDate,

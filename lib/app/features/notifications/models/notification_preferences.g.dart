@@ -6,9 +6,9 @@ part of 'notification_preferences.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$NotificationPreferencesImpl _$$NotificationPreferencesImplFromJson(
+_NotificationPreferences _$NotificationPreferencesFromJson(
         Map<String, dynamic> json) =>
-    _$NotificationPreferencesImpl(
+    _NotificationPreferences(
       userId: json['userId'] as String,
       categoryEnabled: (json['categoryEnabled'] as Map<String, dynamic>).map(
         (k, e) =>
@@ -34,8 +34,8 @@ _$NotificationPreferencesImpl _$$NotificationPreferencesImplFromJson(
           : DateTime.parse(json['lastUpdated'] as String),
     );
 
-Map<String, dynamic> _$$NotificationPreferencesImplToJson(
-        _$NotificationPreferencesImpl instance) =>
+Map<String, dynamic> _$NotificationPreferencesToJson(
+        _NotificationPreferences instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'categoryEnabled': instance.categoryEnabled
@@ -69,8 +69,7 @@ const _$NotificationChannelEnumMap = {
   NotificationChannel.email: 'email',
 };
 
-_$QuietHoursImpl _$$QuietHoursImplFromJson(Map<String, dynamic> json) =>
-    _$QuietHoursImpl(
+_QuietHours _$QuietHoursFromJson(Map<String, dynamic> json) => _QuietHours(
       enabled: json['enabled'] as bool? ?? false,
       startTime: json['startTime'] as String? ?? '22:00',
       endTime: json['endTime'] as String? ?? '08:00',
@@ -80,7 +79,7 @@ _$QuietHoursImpl _$$QuietHoursImplFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-Map<String, dynamic> _$$QuietHoursImplToJson(_$QuietHoursImpl instance) =>
+Map<String, dynamic> _$QuietHoursToJson(_QuietHours instance) =>
     <String, dynamic>{
       'enabled': instance.enabled,
       'startTime': instance.startTime,
@@ -88,8 +87,8 @@ Map<String, dynamic> _$$QuietHoursImplToJson(_$QuietHoursImpl instance) =>
       'daysOfWeek': instance.daysOfWeek,
     };
 
-_$GeofenceEventImpl _$$GeofenceEventImplFromJson(Map<String, dynamic> json) =>
-    _$GeofenceEventImpl(
+_GeofenceEvent _$GeofenceEventFromJson(Map<String, dynamic> json) =>
+    _GeofenceEvent(
       eventId: json['eventId'] as String,
       workerId: json['workerId'] as String,
       workerName: json['workerName'] as String,
@@ -104,7 +103,7 @@ _$GeofenceEventImpl _$$GeofenceEventImplFromJson(Map<String, dynamic> json) =>
       notes: json['notes'] as String?,
     );
 
-Map<String, dynamic> _$$GeofenceEventImplToJson(_$GeofenceEventImpl instance) =>
+Map<String, dynamic> _$GeofenceEventToJson(_GeofenceEvent instance) =>
     <String, dynamic>{
       'eventId': instance.eventId,
       'workerId': instance.workerId,
@@ -127,9 +126,9 @@ const _$GeofenceEventTypeEnumMap = {
   GeofenceEventType.nearLocation: 'nearLocation',
 };
 
-_$ShiftChangeNotificationImpl _$$ShiftChangeNotificationImplFromJson(
+_ShiftChangeNotification _$ShiftChangeNotificationFromJson(
         Map<String, dynamic> json) =>
-    _$ShiftChangeNotificationImpl(
+    _ShiftChangeNotification(
       notificationId: json['notificationId'] as String,
       shiftId: json['shiftId'] as String,
       workerId: json['workerId'] as String,
@@ -146,8 +145,8 @@ _$ShiftChangeNotificationImpl _$$ShiftChangeNotificationImplFromJson(
       timestamp: DateTime.parse(json['timestamp'] as String),
     );
 
-Map<String, dynamic> _$$ShiftChangeNotificationImplToJson(
-        _$ShiftChangeNotificationImpl instance) =>
+Map<String, dynamic> _$ShiftChangeNotificationToJson(
+        _ShiftChangeNotification instance) =>
     <String, dynamic>{
       'notificationId': instance.notificationId,
       'shiftId': instance.shiftId,
@@ -173,9 +172,9 @@ const _$ShiftChangeTypeEnumMap = {
   ShiftChangeType.replacementFound: 'replacementFound',
 };
 
-_$SmartTimingRecommendationImpl _$$SmartTimingRecommendationImplFromJson(
+_SmartTimingRecommendation _$SmartTimingRecommendationFromJson(
         Map<String, dynamic> json) =>
-    _$SmartTimingRecommendationImpl(
+    _SmartTimingRecommendation(
       userId: json['userId'] as String,
       category: $enumDecode(_$NotificationCategoryEnumMap, json['category']),
       recommendedTime: DateTime.parse(json['recommendedTime'] as String),
@@ -184,8 +183,8 @@ _$SmartTimingRecommendationImpl _$$SmartTimingRecommendationImplFromJson(
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$SmartTimingRecommendationImplToJson(
-        _$SmartTimingRecommendationImpl instance) =>
+Map<String, dynamic> _$SmartTimingRecommendationToJson(
+        _SmartTimingRecommendation instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'category': _$NotificationCategoryEnumMap[instance.category]!,
@@ -195,9 +194,9 @@ Map<String, dynamic> _$$SmartTimingRecommendationImplToJson(
       'metadata': instance.metadata,
     };
 
-_$NotificationDeliveryStatusImpl _$$NotificationDeliveryStatusImplFromJson(
+_NotificationDeliveryStatus _$NotificationDeliveryStatusFromJson(
         Map<String, dynamic> json) =>
-    _$NotificationDeliveryStatusImpl(
+    _NotificationDeliveryStatus(
       notificationId: json['notificationId'] as String,
       channelResults: (json['channelResults'] as Map<String, dynamic>).map(
         (k, e) => MapEntry($enumDecode(_$NotificationChannelEnumMap, k),
@@ -215,8 +214,8 @@ _$NotificationDeliveryStatusImpl _$$NotificationDeliveryStatusImplFromJson(
           : DateTime.parse(json['actionedAt'] as String),
     );
 
-Map<String, dynamic> _$$NotificationDeliveryStatusImplToJson(
-        _$NotificationDeliveryStatusImpl instance) =>
+Map<String, dynamic> _$NotificationDeliveryStatusToJson(
+        _NotificationDeliveryStatus instance) =>
     <String, dynamic>{
       'notificationId': instance.notificationId,
       'channelResults': instance.channelResults
@@ -227,8 +226,8 @@ Map<String, dynamic> _$$NotificationDeliveryStatusImplToJson(
       'actionedAt': instance.actionedAt?.toIso8601String(),
     };
 
-_$DeliveryResultImpl _$$DeliveryResultImplFromJson(Map<String, dynamic> json) =>
-    _$DeliveryResultImpl(
+_DeliveryResult _$DeliveryResultFromJson(Map<String, dynamic> json) =>
+    _DeliveryResult(
       success: json['success'] as bool,
       errorMessage: json['errorMessage'] as String?,
       messageId: json['messageId'] as String?,
@@ -237,8 +236,7 @@ _$DeliveryResultImpl _$$DeliveryResultImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['timestamp'] as String),
     );
 
-Map<String, dynamic> _$$DeliveryResultImplToJson(
-        _$DeliveryResultImpl instance) =>
+Map<String, dynamic> _$DeliveryResultToJson(_DeliveryResult instance) =>
     <String, dynamic>{
       'success': instance.success,
       'errorMessage': instance.errorMessage,

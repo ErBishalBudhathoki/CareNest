@@ -6,9 +6,9 @@ part of 'employee_tracking_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$EmployeeTrackingDataImpl _$$EmployeeTrackingDataImplFromJson(
+_EmployeeTrackingData _$EmployeeTrackingDataFromJson(
         Map<String, dynamic> json) =>
-    _$EmployeeTrackingDataImpl(
+    _EmployeeTrackingData(
       employees: (json['employees'] as List<dynamic>?)
               ?.map((e) => EmployeeStatus.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -27,8 +27,8 @@ _$EmployeeTrackingDataImpl _$$EmployeeTrackingDataImplFromJson(
       offlineEmployees: (json['offlineEmployees'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$$EmployeeTrackingDataImplToJson(
-        _$EmployeeTrackingDataImpl instance) =>
+Map<String, dynamic> _$EmployeeTrackingDataToJson(
+        _EmployeeTrackingData instance) =>
     <String, dynamic>{
       'employees': instance.employees,
       'shifts': instance.shifts,
@@ -39,8 +39,8 @@ Map<String, dynamic> _$$EmployeeTrackingDataImplToJson(
       'offlineEmployees': instance.offlineEmployees,
     };
 
-_$EmployeeStatusImpl _$$EmployeeStatusImplFromJson(Map<String, dynamic> json) =>
-    _$EmployeeStatusImpl(
+_EmployeeStatus _$EmployeeStatusFromJson(Map<String, dynamic> json) =>
+    _EmployeeStatus(
       id: json['id'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
@@ -69,8 +69,7 @@ _$EmployeeStatusImpl _$$EmployeeStatusImplFromJson(Map<String, dynamic> json) =>
       isOnBreak: json['isOnBreak'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$$EmployeeStatusImplToJson(
-        _$EmployeeStatusImpl instance) =>
+Map<String, dynamic> _$EmployeeStatusToJson(_EmployeeStatus instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -102,8 +101,7 @@ const _$WorkStatusEnumMap = {
   WorkStatus.clockedOut: 'clocked_out',
 };
 
-_$ShiftDetailImpl _$$ShiftDetailImplFromJson(Map<String, dynamic> json) =>
-    _$ShiftDetailImpl(
+_ShiftDetail _$ShiftDetailFromJson(Map<String, dynamic> json) => _ShiftDetail(
       id: json['id'] as String,
       title: json['title'] as String,
       startTime: DateTime.parse(json['startTime'] as String),
@@ -117,7 +115,7 @@ _$ShiftDetailImpl _$$ShiftDetailImplFromJson(Map<String, dynamic> json) =>
       notes: json['notes'] as String?,
     );
 
-Map<String, dynamic> _$$ShiftDetailImplToJson(_$ShiftDetailImpl instance) =>
+Map<String, dynamic> _$ShiftDetailToJson(_ShiftDetail instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
@@ -139,9 +137,8 @@ const _$ShiftStatusEnumMap = {
   ShiftStatus.cancelled: 'cancelled',
 };
 
-_$ClientAssignmentImpl _$$ClientAssignmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ClientAssignmentImpl(
+_ClientAssignment _$ClientAssignmentFromJson(Map<String, dynamic> json) =>
+    _ClientAssignment(
       id: json['id'] as String,
       clientName: json['clientName'] as String,
       employeeId: json['employeeId'] as String,
@@ -158,8 +155,7 @@ _$ClientAssignmentImpl _$$ClientAssignmentImplFromJson(
       location: json['location'] as String?,
     );
 
-Map<String, dynamic> _$$ClientAssignmentImplToJson(
-        _$ClientAssignmentImpl instance) =>
+Map<String, dynamic> _$ClientAssignmentToJson(_ClientAssignment instance) =>
     <String, dynamic>{
       'id': instance.id,
       'clientName': instance.clientName,

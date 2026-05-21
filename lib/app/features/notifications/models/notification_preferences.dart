@@ -31,7 +31,7 @@ enum NotificationPriority {
 
 /// User notification preferences
 @freezed
-class NotificationPreferences with _$NotificationPreferences {
+abstract class NotificationPreferences with _$NotificationPreferences {
   const factory NotificationPreferences({
     required String userId,
     required Map<NotificationCategory, bool> categoryEnabled,
@@ -91,7 +91,7 @@ class NotificationPreferences with _$NotificationPreferences {
 
 /// Quiet hours configuration
 @freezed
-class QuietHours with _$QuietHours {
+abstract class QuietHours with _$QuietHours {
   const factory QuietHours({
     @Default(false) bool enabled,
     @Default('22:00') String startTime, // HH:mm format
@@ -114,7 +114,7 @@ class QuietHours with _$QuietHours {
 
 /// Geofence notification event
 @freezed
-class GeofenceEvent with _$GeofenceEvent {
+abstract class GeofenceEvent with _$GeofenceEvent {
   const factory GeofenceEvent({
     required String eventId,
     required String workerId,
@@ -144,7 +144,7 @@ enum GeofenceEventType {
 
 /// Shift change notification
 @freezed
-class ShiftChangeNotification with _$ShiftChangeNotification {
+abstract class ShiftChangeNotification with _$ShiftChangeNotification {
   const factory ShiftChangeNotification({
     required String notificationId,
     required String shiftId,
@@ -177,7 +177,7 @@ enum ShiftChangeType {
 
 /// Smart timing recommendation
 @freezed
-class SmartTimingRecommendation with _$SmartTimingRecommendation {
+abstract class SmartTimingRecommendation with _$SmartTimingRecommendation {
   const factory SmartTimingRecommendation({
     required String userId,
     required NotificationCategory category,
@@ -193,7 +193,7 @@ class SmartTimingRecommendation with _$SmartTimingRecommendation {
 
 /// Notification delivery status
 @freezed
-class NotificationDeliveryStatus with _$NotificationDeliveryStatus {
+abstract class NotificationDeliveryStatus with _$NotificationDeliveryStatus {
   const factory NotificationDeliveryStatus({
     required String notificationId,
     required Map<NotificationChannel, DeliveryResult> channelResults,
@@ -209,7 +209,7 @@ class NotificationDeliveryStatus with _$NotificationDeliveryStatus {
 
 /// Delivery result for a channel
 @freezed
-class DeliveryResult with _$DeliveryResult {
+abstract class DeliveryResult with _$DeliveryResult {
   const factory DeliveryResult({
     required bool success,
     String? errorMessage,

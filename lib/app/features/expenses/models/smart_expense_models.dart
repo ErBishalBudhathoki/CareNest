@@ -5,7 +5,7 @@ part 'smart_expense_models.g.dart';
 
 /// Receipt scan result
 @freezed
-class ReceiptScan with _$ReceiptScan {
+abstract class ReceiptScan with _$ReceiptScan {
   const factory ReceiptScan({
     required String merchant,
     required String date,
@@ -24,7 +24,7 @@ class ReceiptScan with _$ReceiptScan {
 
 /// Receipt item
 @freezed
-class ReceiptItem with _$ReceiptItem {
+abstract class ReceiptItem with _$ReceiptItem {
   const factory ReceiptItem({
     required String description,
     required int quantity,
@@ -37,7 +37,7 @@ class ReceiptItem with _$ReceiptItem {
 
 /// Expense category with confidence
 @freezed
-class ExpenseCategory with _$ExpenseCategory {
+abstract class ExpenseCategory with _$ExpenseCategory {
   const factory ExpenseCategory({
     required String category,
     required double confidence,
@@ -50,7 +50,7 @@ class ExpenseCategory with _$ExpenseCategory {
 
 /// Category suggestion
 @freezed
-class CategorySuggestion with _$CategorySuggestion {
+abstract class CategorySuggestion with _$CategorySuggestion {
   const factory CategorySuggestion({
     required String category,
     required double confidence,
@@ -62,7 +62,7 @@ class CategorySuggestion with _$CategorySuggestion {
 
 /// Policy validation result
 @freezed
-class PolicyValidation with _$PolicyValidation {
+abstract class PolicyValidation with _$PolicyValidation {
   const factory PolicyValidation({
     required bool isCompliant,
     required bool requiresApproval,
@@ -77,7 +77,7 @@ class PolicyValidation with _$PolicyValidation {
 
 /// Policy violation or warning
 @freezed
-class PolicyViolation with _$PolicyViolation {
+abstract class PolicyViolation with _$PolicyViolation {
   const factory PolicyViolation({
     required String type,
     required String message,
@@ -90,7 +90,7 @@ class PolicyViolation with _$PolicyViolation {
 
 /// Policy rule
 @freezed
-class PolicyRule with _$PolicyRule {
+abstract class PolicyRule with _$PolicyRule {
   const factory PolicyRule({
     required double maxAmount,
     required bool requiresReceipt,
@@ -102,7 +102,7 @@ class PolicyRule with _$PolicyRule {
 
 /// Duplicate check result
 @freezed
-class DuplicateCheck with _$DuplicateCheck {
+abstract class DuplicateCheck with _$DuplicateCheck {
   const factory DuplicateCheck({
     required bool isDuplicate,
     required double confidence,
@@ -115,7 +115,7 @@ class DuplicateCheck with _$DuplicateCheck {
 
 /// Matched expense (for duplicate detection)
 @freezed
-class MatchedExpense with _$MatchedExpense {
+abstract class MatchedExpense with _$MatchedExpense {
   const factory MatchedExpense({
     required String expenseId,
     required String date,
@@ -129,7 +129,7 @@ class MatchedExpense with _$MatchedExpense {
 
 /// Mileage calculation result
 @freezed
-class MileageCalculation with _$MileageCalculation {
+abstract class MileageCalculation with _$MileageCalculation {
   const factory MileageCalculation({
     required double totalDistance,
     required String unit,
@@ -147,7 +147,7 @@ class MileageCalculation with _$MileageCalculation {
 
 /// Location point
 @freezed
-class LocationPoint with _$LocationPoint {
+abstract class LocationPoint with _$LocationPoint {
   const factory LocationPoint({
     required double lat,
     required double lng,

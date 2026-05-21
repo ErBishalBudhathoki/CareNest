@@ -6,9 +6,8 @@ part of 'client_detail_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ClientDetailModelImpl _$$ClientDetailModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ClientDetailModelImpl(
+_ClientDetailModel _$ClientDetailModelFromJson(Map<String, dynamic> json) =>
+    _ClientDetailModel(
       id: json['id'] as String,
       clientFirstName: json['clientFirstName'] as String,
       clientLastName: json['clientLastName'] as String,
@@ -28,8 +27,7 @@ _$ClientDetailModelImpl _$$ClientDetailModelImplFromJson(
       isActivated: json['isActivated'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$$ClientDetailModelImplToJson(
-        _$ClientDetailModelImpl instance) =>
+Map<String, dynamic> _$ClientDetailModelToJson(_ClientDetailModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'clientFirstName': instance.clientFirstName,

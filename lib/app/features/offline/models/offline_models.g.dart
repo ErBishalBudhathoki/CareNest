@@ -6,9 +6,8 @@ part of 'offline_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$OfflineQueueItemImpl _$$OfflineQueueItemImplFromJson(
-        Map<String, dynamic> json) =>
-    _$OfflineQueueItemImpl(
+_OfflineQueueItem _$OfflineQueueItemFromJson(Map<String, dynamic> json) =>
+    _OfflineQueueItem(
       queueId: json['queueId'] as String,
       userId: json['userId'] as String,
       dataType: json['dataType'] as String,
@@ -19,8 +18,7 @@ _$OfflineQueueItemImpl _$$OfflineQueueItemImplFromJson(
       retryCount: (json['retryCount'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$OfflineQueueItemImplToJson(
-        _$OfflineQueueItemImpl instance) =>
+Map<String, dynamic> _$OfflineQueueItemToJson(_OfflineQueueItem instance) =>
     <String, dynamic>{
       'queueId': instance.queueId,
       'userId': instance.userId,
@@ -32,8 +30,7 @@ Map<String, dynamic> _$$OfflineQueueItemImplToJson(
       'retryCount': instance.retryCount,
     };
 
-_$SyncStatusImpl _$$SyncStatusImplFromJson(Map<String, dynamic> json) =>
-    _$SyncStatusImpl(
+_SyncStatus _$SyncStatusFromJson(Map<String, dynamic> json) => _SyncStatus(
       total: (json['total'] as num).toInt(),
       successful: (json['successful'] as num).toInt(),
       failed: (json['failed'] as num).toInt(),
@@ -43,7 +40,7 @@ _$SyncStatusImpl _$$SyncStatusImplFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$SyncStatusImplToJson(_$SyncStatusImpl instance) =>
+Map<String, dynamic> _$SyncStatusToJson(_SyncStatus instance) =>
     <String, dynamic>{
       'total': instance.total,
       'successful': instance.successful,
@@ -52,8 +49,8 @@ Map<String, dynamic> _$$SyncStatusImplToJson(_$SyncStatusImpl instance) =>
       'items': instance.items,
     };
 
-_$SyncItemResultImpl _$$SyncItemResultImplFromJson(Map<String, dynamic> json) =>
-    _$SyncItemResultImpl(
+_SyncItemResult _$SyncItemResultFromJson(Map<String, dynamic> json) =>
+    _SyncItemResult(
       queueId: json['queueId'] as String,
       status: json['status'] as String,
       reason: json['reason'] as String?,
@@ -63,8 +60,7 @@ _$SyncItemResultImpl _$$SyncItemResultImplFromJson(Map<String, dynamic> json) =>
           : ConflictData.fromJson(json['conflictData'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$SyncItemResultImplToJson(
-        _$SyncItemResultImpl instance) =>
+Map<String, dynamic> _$SyncItemResultToJson(_SyncItemResult instance) =>
     <String, dynamic>{
       'queueId': instance.queueId,
       'status': instance.status,
@@ -73,8 +69,8 @@ Map<String, dynamic> _$$SyncItemResultImplToJson(
       'conflictData': instance.conflictData,
     };
 
-_$ConflictDataImpl _$$ConflictDataImplFromJson(Map<String, dynamic> json) =>
-    _$ConflictDataImpl(
+_ConflictData _$ConflictDataFromJson(Map<String, dynamic> json) =>
+    _ConflictData(
       conflictType: json['conflictType'] as String,
       localVersion: (json['localVersion'] as num).toInt(),
       serverVersion: (json['serverVersion'] as num).toInt(),
@@ -84,7 +80,7 @@ _$ConflictDataImpl _$$ConflictDataImplFromJson(Map<String, dynamic> json) =>
       resolution: json['resolution'] as String,
     );
 
-Map<String, dynamic> _$$ConflictDataImplToJson(_$ConflictDataImpl instance) =>
+Map<String, dynamic> _$ConflictDataToJson(_ConflictData instance) =>
     <String, dynamic>{
       'conflictType': instance.conflictType,
       'localVersion': instance.localVersion,
@@ -93,17 +89,15 @@ Map<String, dynamic> _$$ConflictDataImplToJson(_$ConflictDataImpl instance) =>
       'resolution': instance.resolution,
     };
 
-_$ConflictResolutionImpl _$$ConflictResolutionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ConflictResolutionImpl(
+_ConflictResolution _$ConflictResolutionFromJson(Map<String, dynamic> json) =>
+    _ConflictResolution(
       conflictId: json['conflictId'] as String,
       resolution: json['resolution'] as String,
       resolvedAt: json['resolvedAt'] as String,
       finalData: json['finalData'] as Map<String, dynamic>,
     );
 
-Map<String, dynamic> _$$ConflictResolutionImplToJson(
-        _$ConflictResolutionImpl instance) =>
+Map<String, dynamic> _$ConflictResolutionToJson(_ConflictResolution instance) =>
     <String, dynamic>{
       'conflictId': instance.conflictId,
       'resolution': instance.resolution,
@@ -111,17 +105,15 @@ Map<String, dynamic> _$$ConflictResolutionImplToJson(
       'finalData': instance.finalData,
     };
 
-_$OfflineCapableDataImpl _$$OfflineCapableDataImplFromJson(
-        Map<String, dynamic> json) =>
-    _$OfflineCapableDataImpl(
+_OfflineCapableData _$OfflineCapableDataFromJson(Map<String, dynamic> json) =>
+    _OfflineCapableData(
       userId: json['userId'] as String,
       downloadedAt: json['downloadedAt'] as String,
       expiresAt: json['expiresAt'] as String,
       data: OfflineDataPackage.fromJson(json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$OfflineCapableDataImplToJson(
-        _$OfflineCapableDataImpl instance) =>
+Map<String, dynamic> _$OfflineCapableDataToJson(_OfflineCapableData instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'downloadedAt': instance.downloadedAt,
@@ -129,9 +121,8 @@ Map<String, dynamic> _$$OfflineCapableDataImplToJson(
       'data': instance.data,
     };
 
-_$OfflineDataPackageImpl _$$OfflineDataPackageImplFromJson(
-        Map<String, dynamic> json) =>
-    _$OfflineDataPackageImpl(
+_OfflineDataPackage _$OfflineDataPackageFromJson(Map<String, dynamic> json) =>
+    _OfflineDataPackage(
       appointments: (json['appointments'] as List<dynamic>)
           .map((e) => OfflineAppointment.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -143,17 +134,15 @@ _$OfflineDataPackageImpl _$$OfflineDataPackageImplFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$OfflineDataPackageImplToJson(
-        _$OfflineDataPackageImpl instance) =>
+Map<String, dynamic> _$OfflineDataPackageToJson(_OfflineDataPackage instance) =>
     <String, dynamic>{
       'appointments': instance.appointments,
       'clients': instance.clients,
       'forms': instance.forms,
     };
 
-_$OfflineAppointmentImpl _$$OfflineAppointmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$OfflineAppointmentImpl(
+_OfflineAppointment _$OfflineAppointmentFromJson(Map<String, dynamic> json) =>
+    _OfflineAppointment(
       id: json['id'] as String,
       clientName: json['clientName'] as String,
       date: json['date'] as String,
@@ -163,8 +152,7 @@ _$OfflineAppointmentImpl _$$OfflineAppointmentImplFromJson(
       notes: json['notes'] as String,
     );
 
-Map<String, dynamic> _$$OfflineAppointmentImplToJson(
-        _$OfflineAppointmentImpl instance) =>
+Map<String, dynamic> _$OfflineAppointmentToJson(_OfflineAppointment instance) =>
     <String, dynamic>{
       'id': instance.id,
       'clientName': instance.clientName,
@@ -175,8 +163,8 @@ Map<String, dynamic> _$$OfflineAppointmentImplToJson(
       'notes': instance.notes,
     };
 
-_$OfflineClientImpl _$$OfflineClientImplFromJson(Map<String, dynamic> json) =>
-    _$OfflineClientImpl(
+_OfflineClient _$OfflineClientFromJson(Map<String, dynamic> json) =>
+    _OfflineClient(
       id: json['id'] as String,
       name: json['name'] as String,
       address: json['address'] as String,
@@ -184,7 +172,7 @@ _$OfflineClientImpl _$$OfflineClientImplFromJson(Map<String, dynamic> json) =>
       emergencyContact: json['emergencyContact'] as String,
     );
 
-Map<String, dynamic> _$$OfflineClientImplToJson(_$OfflineClientImpl instance) =>
+Map<String, dynamic> _$OfflineClientToJson(_OfflineClient instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -193,15 +181,14 @@ Map<String, dynamic> _$$OfflineClientImplToJson(_$OfflineClientImpl instance) =>
       'emergencyContact': instance.emergencyContact,
     };
 
-_$OfflineFormImpl _$$OfflineFormImplFromJson(Map<String, dynamic> json) =>
-    _$OfflineFormImpl(
+_OfflineForm _$OfflineFormFromJson(Map<String, dynamic> json) => _OfflineForm(
       id: json['id'] as String,
       name: json['name'] as String,
       fields:
           (json['fields'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$$OfflineFormImplToJson(_$OfflineFormImpl instance) =>
+Map<String, dynamic> _$OfflineFormToJson(_OfflineForm instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

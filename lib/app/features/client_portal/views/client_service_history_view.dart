@@ -1,5 +1,6 @@
 import 'package:carenest/app/features/client_portal/models/client_portal_models.dart';
 import 'package:carenest/app/features/client_portal/viewmodels/client_portal_viewmodel.dart';
+import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
@@ -386,192 +387,16 @@ class _ServiceHistoryCard extends ConsumerWidget {
     ServiceHistory service,
     String clientId,
   ) {
-    int rating = service.rating > 0 ? service.rating : 5;
-    final feedbackController =
-        TextEditingController(text: service.feedback ?? '');
-    bool isSubmitting = false;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => Dialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
-          ),
-          child: Container(
-            width: double.maxFinite,
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.accent,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(BauhausDesign.radiusMd),
-                      topRight: Radius.circular(BauhausDesign.radiusMd),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.star, color: BauhausDesign.textDark),
-                      const SizedBox(width: BauhausDesign.space3),
-                      Text(
-                        'SERVICE FEEDBACK',
-                        style: GoogleFonts.oswald(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(BauhausDesign.space5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Service: ${service.serviceName}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: BauhausDesign.space1),
-                      Text(
-                        'Worker: ${service.workerName}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
-                      ),
-                      const SizedBox(height: BauhausDesign.space4),
-                      Text(
-                        'Rate your service:',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: BauhausDesign.space4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: BauhausDesign.space4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.backgroundLight,
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
-                          border: Border.all(
-                              color: BauhausDesign.neutral.withOpacity(0.3)),
-                        ),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(5, (index) {
-                              return GestureDetector(
-                                onTap: () => setState(() => rating = index + 1),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 6),
-                                  child: Icon(
-                                    index < rating
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: BauhausDesign.accent,
-                                    size: 40,
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: BauhausDesign.space4),
-                      TextField(
-                        controller: feedbackController,
-                        decoration: BauhausDesign.inputDecoration(
-                            'Additional comments...'),
-                        maxLines: 4,
-                      ),
-                      const SizedBox(height: BauhausDesign.space5),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: BauhausActionButton(
-                              onPressed: () => Navigator.pop(context),
-                              text: 'CANCEL',
-                              variant: BauhausActionVariant.ghost,
-                              textColor: BauhausDesign.neutral,
-                            ),
-                          ),
-                          const SizedBox(width: BauhausDesign.space3),
-                          Expanded(
-                            child: BauhausActionButton(
-                              onPressed: () async {
-                                if (isSubmitting) return;
-                                setState(() => isSubmitting = true);
-
-                                final success = await ref
-                                    .read(
-                                        clientPortalViewModelProvider.notifier)
-                                    .submitFeedback({
-                                  'clientId': clientId,
-                                  'appointmentId': service.serviceId,
-                                  'rating': rating,
-                                  'comments': feedbackController.text.trim(),
-                                  'timestamp': DateTime.now().toIso8601String(),
-                                });
-
-                                if (!context.mounted) return;
-
-                                Navigator.pop(context);
-                                final latestState =
-                                    ref.read(clientPortalViewModelProvider);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      success
-                                          ? 'Feedback submitted. Thank you.'
-                                          : (latestState.error ??
-                                              'Feedback can only be submitted after service completion.'),
-                                    ),
-                                    backgroundColor: success
-                                        ? BauhausDesign.success
-                                        : BauhausDesign.error,
-                                  ),
-                                );
-
-                                if (success) {
-                                  ref
-                                      .read(clientPortalViewModelProvider
-                                          .notifier)
-                                      .loadServiceHistory(
-                                        clientId,
-                                        silent: true,
-                                      );
-                                }
-                              },
-                              text: isSubmitting ? 'SUBMITTING...' : 'SUBMIT',
-                              variant: BauhausActionVariant.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+    Navigator.pushNamed(
+      context,
+      Routes.serviceConfirmation,
+      arguments: {
+        'appointmentId': service.serviceId,
+        'clientId': clientId,
+        'workerId': 'worker_123',
+        'workerName': service.workerName,
+        'serviceName': service.serviceName,
+      },
     );
   }
 }

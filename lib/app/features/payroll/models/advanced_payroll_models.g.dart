@@ -6,9 +6,8 @@ part of 'advanced_payroll_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$PayrollCalculationImpl _$$PayrollCalculationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PayrollCalculationImpl(
+_PayrollCalculation _$PayrollCalculationFromJson(Map<String, dynamic> json) =>
+    _PayrollCalculation(
       userId: json['userId'] as String,
       period: json['period'] as String,
       baseHours: (json['baseHours'] as num).toDouble(),
@@ -26,8 +25,7 @@ _$PayrollCalculationImpl _$$PayrollCalculationImplFromJson(
       netPay: (json['netPay'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PayrollCalculationImplToJson(
-        _$PayrollCalculationImpl instance) =>
+Map<String, dynamic> _$PayrollCalculationToJson(_PayrollCalculation instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'period': instance.period,
@@ -42,8 +40,8 @@ Map<String, dynamic> _$$PayrollCalculationImplToJson(
       'netPay': instance.netPay,
     };
 
-_$PenaltyRatesImpl _$$PenaltyRatesImplFromJson(Map<String, dynamic> json) =>
-    _$PenaltyRatesImpl(
+_PenaltyRates _$PenaltyRatesFromJson(Map<String, dynamic> json) =>
+    _PenaltyRates(
       saturday: PenaltyRate.fromJson(json['saturday'] as Map<String, dynamic>),
       sunday: PenaltyRate.fromJson(json['sunday'] as Map<String, dynamic>),
       publicHoliday:
@@ -52,7 +50,7 @@ _$PenaltyRatesImpl _$$PenaltyRatesImplFromJson(Map<String, dynamic> json) =>
       total: (json['total'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PenaltyRatesImplToJson(_$PenaltyRatesImpl instance) =>
+Map<String, dynamic> _$PenaltyRatesToJson(_PenaltyRates instance) =>
     <String, dynamic>{
       'saturday': instance.saturday,
       'sunday': instance.sunday,
@@ -61,22 +59,20 @@ Map<String, dynamic> _$$PenaltyRatesImplToJson(_$PenaltyRatesImpl instance) =>
       'total': instance.total,
     };
 
-_$PenaltyRateImpl _$$PenaltyRateImplFromJson(Map<String, dynamic> json) =>
-    _$PenaltyRateImpl(
+_PenaltyRate _$PenaltyRateFromJson(Map<String, dynamic> json) => _PenaltyRate(
       hours: (json['hours'] as num).toDouble(),
       rate: (json['rate'] as num).toDouble(),
       amount: (json['amount'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PenaltyRateImplToJson(_$PenaltyRateImpl instance) =>
+Map<String, dynamic> _$PenaltyRateToJson(_PenaltyRate instance) =>
     <String, dynamic>{
       'hours': instance.hours,
       'rate': instance.rate,
       'amount': instance.amount,
     };
 
-_$AllowancesImpl _$$AllowancesImplFromJson(Map<String, dynamic> json) =>
-    _$AllowancesImpl(
+_Allowances _$AllowancesFromJson(Map<String, dynamic> json) => _Allowances(
       travel: (json['travel'] as num).toDouble(),
       meal: (json['meal'] as num).toDouble(),
       sleepover: (json['sleepover'] as num).toDouble(),
@@ -84,7 +80,7 @@ _$AllowancesImpl _$$AllowancesImplFromJson(Map<String, dynamic> json) =>
       total: (json['total'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$AllowancesImplToJson(_$AllowancesImpl instance) =>
+Map<String, dynamic> _$AllowancesToJson(_Allowances instance) =>
     <String, dynamic>{
       'travel': instance.travel,
       'meal': instance.meal,
@@ -93,43 +89,40 @@ Map<String, dynamic> _$$AllowancesImplToJson(_$AllowancesImpl instance) =>
       'total': instance.total,
     };
 
-_$LeaveAccrualImpl _$$LeaveAccrualImplFromJson(Map<String, dynamic> json) =>
-    _$LeaveAccrualImpl(
+_LeaveAccrual _$LeaveAccrualFromJson(Map<String, dynamic> json) =>
+    _LeaveAccrual(
       annualLeave: LeaveAccrualDetail.fromJson(
           json['annualLeave'] as Map<String, dynamic>),
       sickLeave: LeaveAccrualDetail.fromJson(
           json['sickLeave'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$LeaveAccrualImplToJson(_$LeaveAccrualImpl instance) =>
+Map<String, dynamic> _$LeaveAccrualToJson(_LeaveAccrual instance) =>
     <String, dynamic>{
       'annualLeave': instance.annualLeave,
       'sickLeave': instance.sickLeave,
     };
 
-_$LeaveAccrualDetailImpl _$$LeaveAccrualDetailImplFromJson(
-        Map<String, dynamic> json) =>
-    _$LeaveAccrualDetailImpl(
+_LeaveAccrualDetail _$LeaveAccrualDetailFromJson(Map<String, dynamic> json) =>
+    _LeaveAccrualDetail(
       hours: (json['hours'] as num).toDouble(),
       amount: (json['amount'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$LeaveAccrualDetailImplToJson(
-        _$LeaveAccrualDetailImpl instance) =>
+Map<String, dynamic> _$LeaveAccrualDetailToJson(_LeaveAccrualDetail instance) =>
     <String, dynamic>{
       'hours': instance.hours,
       'amount': instance.amount,
     };
 
-_$TaxAndSuperImpl _$$TaxAndSuperImplFromJson(Map<String, dynamic> json) =>
-    _$TaxAndSuperImpl(
+_TaxAndSuper _$TaxAndSuperFromJson(Map<String, dynamic> json) => _TaxAndSuper(
       tax: (json['tax'] as num).toDouble(),
       superAmount: (json['super'] as num).toDouble(),
       taxRate: (json['taxRate'] as num).toDouble(),
       superRate: (json['superRate'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$TaxAndSuperImplToJson(_$TaxAndSuperImpl instance) =>
+Map<String, dynamic> _$TaxAndSuperToJson(_TaxAndSuper instance) =>
     <String, dynamic>{
       'tax': instance.tax,
       'super': instance.superAmount,
@@ -137,8 +130,7 @@ Map<String, dynamic> _$$TaxAndSuperImplToJson(_$TaxAndSuperImpl instance) =>
       'superRate': instance.superRate,
     };
 
-_$PayslipImpl _$$PayslipImplFromJson(Map<String, dynamic> json) =>
-    _$PayslipImpl(
+_Payslip _$PayslipFromJson(Map<String, dynamic> json) => _Payslip(
       payslipId: json['payslipId'] as String,
       userId: json['userId'] as String,
       period: json['period'] as String,
@@ -151,8 +143,7 @@ _$PayslipImpl _$$PayslipImplFromJson(Map<String, dynamic> json) =>
       ytd: PayslipYTD.fromJson(json['ytd'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$PayslipImplToJson(_$PayslipImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PayslipToJson(_Payslip instance) => <String, dynamic>{
       'payslipId': instance.payslipId,
       'userId': instance.userId,
       'period': instance.period,
@@ -163,9 +154,8 @@ Map<String, dynamic> _$$PayslipImplToJson(_$PayslipImpl instance) =>
       'ytd': instance.ytd,
     };
 
-_$PayslipEarningsImpl _$$PayslipEarningsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PayslipEarningsImpl(
+_PayslipEarnings _$PayslipEarningsFromJson(Map<String, dynamic> json) =>
+    _PayslipEarnings(
       baseHours: (json['baseHours'] as num).toDouble(),
       baseRate: (json['baseRate'] as num).toDouble(),
       baseAmount: (json['baseAmount'] as num).toDouble(),
@@ -174,8 +164,7 @@ _$PayslipEarningsImpl _$$PayslipEarningsImplFromJson(
       total: (json['total'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PayslipEarningsImplToJson(
-        _$PayslipEarningsImpl instance) =>
+Map<String, dynamic> _$PayslipEarningsToJson(_PayslipEarnings instance) =>
     <String, dynamic>{
       'baseHours': instance.baseHours,
       'baseRate': instance.baseRate,
@@ -185,31 +174,28 @@ Map<String, dynamic> _$$PayslipEarningsImplToJson(
       'total': instance.total,
     };
 
-_$PayslipDeductionsImpl _$$PayslipDeductionsImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PayslipDeductionsImpl(
+_PayslipDeductions _$PayslipDeductionsFromJson(Map<String, dynamic> json) =>
+    _PayslipDeductions(
       tax: (json['tax'] as num).toDouble(),
       superAmount: (json['super'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PayslipDeductionsImplToJson(
-        _$PayslipDeductionsImpl instance) =>
+Map<String, dynamic> _$PayslipDeductionsToJson(_PayslipDeductions instance) =>
     <String, dynamic>{
       'tax': instance.tax,
       'super': instance.superAmount,
       'total': instance.total,
     };
 
-_$PayslipYTDImpl _$$PayslipYTDImplFromJson(Map<String, dynamic> json) =>
-    _$PayslipYTDImpl(
+_PayslipYTD _$PayslipYTDFromJson(Map<String, dynamic> json) => _PayslipYTD(
       grossPay: (json['grossPay'] as num).toDouble(),
       tax: (json['tax'] as num).toDouble(),
       superAmount: (json['super'] as num).toDouble(),
       netPay: (json['netPay'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$PayslipYTDImplToJson(_$PayslipYTDImpl instance) =>
+Map<String, dynamic> _$PayslipYTDToJson(_PayslipYTD instance) =>
     <String, dynamic>{
       'grossPay': instance.grossPay,
       'tax': instance.tax,
@@ -217,8 +203,8 @@ Map<String, dynamic> _$$PayslipYTDImplToJson(_$PayslipYTDImpl instance) =>
       'netPay': instance.netPay,
     };
 
-_$PayrollSummaryImpl _$$PayrollSummaryImplFromJson(Map<String, dynamic> json) =>
-    _$PayrollSummaryImpl(
+_PayrollSummary _$PayrollSummaryFromJson(Map<String, dynamic> json) =>
+    _PayrollSummary(
       organizationId: json['organizationId'] as String,
       period: json['period'] as String,
       totalEmployees: (json['totalEmployees'] as num).toInt(),
@@ -232,8 +218,7 @@ _$PayrollSummaryImpl _$$PayrollSummaryImplFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$PayrollSummaryImplToJson(
-        _$PayrollSummaryImpl instance) =>
+Map<String, dynamic> _$PayrollSummaryToJson(_PayrollSummary instance) =>
     <String, dynamic>{
       'organizationId': instance.organizationId,
       'period': instance.period,
@@ -245,17 +230,17 @@ Map<String, dynamic> _$$PayrollSummaryImplToJson(
       'employees': instance.employees,
     };
 
-_$EmployeePayrollSummaryImpl _$$EmployeePayrollSummaryImplFromJson(
+_EmployeePayrollSummary _$EmployeePayrollSummaryFromJson(
         Map<String, dynamic> json) =>
-    _$EmployeePayrollSummaryImpl(
+    _EmployeePayrollSummary(
       userId: json['userId'] as String,
       userName: json['userName'] as String,
       grossPay: (json['grossPay'] as num).toDouble(),
       netPay: (json['netPay'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$EmployeePayrollSummaryImplToJson(
-        _$EmployeePayrollSummaryImpl instance) =>
+Map<String, dynamic> _$EmployeePayrollSummaryToJson(
+        _EmployeePayrollSummary instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'userName': instance.userName,

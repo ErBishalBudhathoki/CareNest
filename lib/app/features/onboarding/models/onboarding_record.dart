@@ -4,7 +4,7 @@ part 'onboarding_record.freezed.dart';
 part 'onboarding_record.g.dart';
 
 @freezed
-class OnboardingRecord with _$OnboardingRecord {
+abstract class OnboardingRecord with _$OnboardingRecord {
   const factory OnboardingRecord({
     required String userId,
     required String organizationId,
@@ -21,7 +21,7 @@ class OnboardingRecord with _$OnboardingRecord {
 }
 
 @freezed
-class OnboardingSteps with _$OnboardingSteps {
+abstract class OnboardingSteps with _$OnboardingSteps {
   const factory OnboardingSteps({
     required StepDetail personalDetails,
     required BankDetailsStep bankDetails,
@@ -35,7 +35,7 @@ class OnboardingSteps with _$OnboardingSteps {
 }
 
 @freezed
-class BankDetailsStep with _$BankDetailsStep {
+abstract class BankDetailsStep with _$BankDetailsStep {
   const factory BankDetailsStep({
     required String status,
     String? bankName,
@@ -50,7 +50,7 @@ class BankDetailsStep with _$BankDetailsStep {
 }
 
 @freezed
-class StepDetail with _$StepDetail {
+abstract class StepDetail with _$StepDetail {
   const factory StepDetail({
     required String status,
     DateTime? updatedAt,
@@ -61,7 +61,7 @@ class StepDetail with _$StepDetail {
 }
 
 @freezed
-class TaxDetailsStep with _$TaxDetailsStep {
+abstract class TaxDetailsStep with _$TaxDetailsStep {
   const factory TaxDetailsStep({
     required String status,
     String? tfn,
@@ -74,7 +74,7 @@ class TaxDetailsStep with _$TaxDetailsStep {
 }
 
 @freezed
-class SuperannuationStep with _$SuperannuationStep {
+abstract class SuperannuationStep with _$SuperannuationStep {
   const factory SuperannuationStep({
     required String status,
     String? fundName,
@@ -88,7 +88,7 @@ class SuperannuationStep with _$SuperannuationStep {
 }
 
 @freezed
-class DocumentStep with _$DocumentStep {
+abstract class DocumentStep with _$DocumentStep {
   const factory DocumentStep({
     required String status,
     @Default(0) int count,
@@ -100,7 +100,7 @@ class DocumentStep with _$DocumentStep {
 }
 
 @freezed
-class ProbationDetails with _$ProbationDetails {
+abstract class ProbationDetails with _$ProbationDetails {
   const factory ProbationDetails({
     DateTime? startDate,
     DateTime? endDate,

@@ -6,8 +6,7 @@ part of 'communication_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
-    _$MessageImpl(
+_Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
       messageId: json['messageId'] as String,
       senderId: json['senderId'] as String,
       recipientId: json['recipientId'] as String,
@@ -18,8 +17,7 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       readAt: json['readAt'] as String?,
     );
 
-Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
       'messageId': instance.messageId,
       'senderId': instance.senderId,
       'recipientId': instance.recipientId,
@@ -30,8 +28,8 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'readAt': instance.readAt,
     };
 
-_$ConversationImpl _$$ConversationImplFromJson(Map<String, dynamic> json) =>
-    _$ConversationImpl(
+_Conversation _$ConversationFromJson(Map<String, dynamic> json) =>
+    _Conversation(
       conversationId: json['conversationId'] as String,
       participantName: json['participantName'] as String,
       lastMessage: json['lastMessage'] as String,
@@ -39,7 +37,7 @@ _$ConversationImpl _$$ConversationImplFromJson(Map<String, dynamic> json) =>
       unreadCount: (json['unreadCount'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$ConversationImplToJson(_$ConversationImpl instance) =>
+Map<String, dynamic> _$ConversationToJson(_Conversation instance) =>
     <String, dynamic>{
       'conversationId': instance.conversationId,
       'participantName': instance.participantName,
@@ -48,33 +46,29 @@ Map<String, dynamic> _$$ConversationImplToJson(_$ConversationImpl instance) =>
       'unreadCount': instance.unreadCount,
     };
 
-_$BroadcastMessageImpl _$$BroadcastMessageImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BroadcastMessageImpl(
+_BroadcastMessage _$BroadcastMessageFromJson(Map<String, dynamic> json) =>
+    _BroadcastMessage(
       broadcastId: json['broadcastId'] as String,
       recipientCount: (json['recipientCount'] as num).toInt(),
       sentAt: json['sentAt'] as String,
     );
 
-Map<String, dynamic> _$$BroadcastMessageImplToJson(
-        _$BroadcastMessageImpl instance) =>
+Map<String, dynamic> _$BroadcastMessageToJson(_BroadcastMessage instance) =>
     <String, dynamic>{
       'broadcastId': instance.broadcastId,
       'recipientCount': instance.recipientCount,
       'sentAt': instance.sentAt,
     };
 
-_$ScheduledMessageImpl _$$ScheduledMessageImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ScheduledMessageImpl(
+_ScheduledMessage _$ScheduledMessageFromJson(Map<String, dynamic> json) =>
+    _ScheduledMessage(
       scheduleId: json['scheduleId'] as String,
       message: json['message'] as String,
       scheduledFor: json['scheduledFor'] as String,
       status: json['status'] as String,
     );
 
-Map<String, dynamic> _$$ScheduledMessageImplToJson(
-        _$ScheduledMessageImpl instance) =>
+Map<String, dynamic> _$ScheduledMessageToJson(_ScheduledMessage instance) =>
     <String, dynamic>{
       'scheduleId': instance.scheduleId,
       'message': instance.message,
@@ -82,17 +76,15 @@ Map<String, dynamic> _$$ScheduledMessageImplToJson(
       'status': instance.status,
     };
 
-_$MessageTemplateImpl _$$MessageTemplateImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MessageTemplateImpl(
+_MessageTemplate _$MessageTemplateFromJson(Map<String, dynamic> json) =>
+    _MessageTemplate(
       templateId: json['templateId'] as String,
       name: json['name'] as String,
       content: json['content'] as String,
       category: json['category'] as String,
     );
 
-Map<String, dynamic> _$$MessageTemplateImplToJson(
-        _$MessageTemplateImpl instance) =>
+Map<String, dynamic> _$MessageTemplateToJson(_MessageTemplate instance) =>
     <String, dynamic>{
       'templateId': instance.templateId,
       'name': instance.name,
@@ -100,15 +92,15 @@ Map<String, dynamic> _$$MessageTemplateImplToJson(
       'category': instance.category,
     };
 
-_$MessageStatusImpl _$$MessageStatusImplFromJson(Map<String, dynamic> json) =>
-    _$MessageStatusImpl(
+_MessageStatus _$MessageStatusFromJson(Map<String, dynamic> json) =>
+    _MessageStatus(
       messageId: json['messageId'] as String,
       status: json['status'] as String,
       deliveredAt: json['deliveredAt'] as String?,
       readAt: json['readAt'] as String?,
     );
 
-Map<String, dynamic> _$$MessageStatusImplToJson(_$MessageStatusImpl instance) =>
+Map<String, dynamic> _$MessageStatusToJson(_MessageStatus instance) =>
     <String, dynamic>{
       'messageId': instance.messageId,
       'status': instance.status,

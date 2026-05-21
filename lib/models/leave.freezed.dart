@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,163 +9,32 @@ part of 'leave.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-LeaveBalance _$LeaveBalanceFromJson(Map<String, dynamic> json) {
-  return _LeaveBalance.fromJson(json);
-}
 
 /// @nodoc
 mixin _$LeaveBalance {
-  double get annualLeave => throw _privateConstructorUsedError;
-  double get sickLeave => throw _privateConstructorUsedError;
-  double get personalLeave => throw _privateConstructorUsedError;
-  double get longServiceLeave => throw _privateConstructorUsedError;
+  double get annualLeave;
+  double get sickLeave;
+  double get personalLeave;
+  double get longServiceLeave;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  /// Create a copy of LeaveBalance
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $LeaveBalanceCopyWith<LeaveBalance> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+      _$LeaveBalanceCopyWithImpl<LeaveBalance>(
+          this as LeaveBalance, _$identity);
 
-/// @nodoc
-abstract class $LeaveBalanceCopyWith<$Res> {
-  factory $LeaveBalanceCopyWith(
-          LeaveBalance value, $Res Function(LeaveBalance) then) =
-      _$LeaveBalanceCopyWithImpl<$Res, LeaveBalance>;
-  @useResult
-  $Res call(
-      {double annualLeave,
-      double sickLeave,
-      double personalLeave,
-      double longServiceLeave});
-}
-
-/// @nodoc
-class _$LeaveBalanceCopyWithImpl<$Res, $Val extends LeaveBalance>
-    implements $LeaveBalanceCopyWith<$Res> {
-  _$LeaveBalanceCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? annualLeave = null,
-    Object? sickLeave = null,
-    Object? personalLeave = null,
-    Object? longServiceLeave = null,
-  }) {
-    return _then(_value.copyWith(
-      annualLeave: null == annualLeave
-          ? _value.annualLeave
-          : annualLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-      sickLeave: null == sickLeave
-          ? _value.sickLeave
-          : sickLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-      personalLeave: null == personalLeave
-          ? _value.personalLeave
-          : personalLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-      longServiceLeave: null == longServiceLeave
-          ? _value.longServiceLeave
-          : longServiceLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$LeaveBalanceImplCopyWith<$Res>
-    implements $LeaveBalanceCopyWith<$Res> {
-  factory _$$LeaveBalanceImplCopyWith(
-          _$LeaveBalanceImpl value, $Res Function(_$LeaveBalanceImpl) then) =
-      __$$LeaveBalanceImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {double annualLeave,
-      double sickLeave,
-      double personalLeave,
-      double longServiceLeave});
-}
-
-/// @nodoc
-class __$$LeaveBalanceImplCopyWithImpl<$Res>
-    extends _$LeaveBalanceCopyWithImpl<$Res, _$LeaveBalanceImpl>
-    implements _$$LeaveBalanceImplCopyWith<$Res> {
-  __$$LeaveBalanceImplCopyWithImpl(
-      _$LeaveBalanceImpl _value, $Res Function(_$LeaveBalanceImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? annualLeave = null,
-    Object? sickLeave = null,
-    Object? personalLeave = null,
-    Object? longServiceLeave = null,
-  }) {
-    return _then(_$LeaveBalanceImpl(
-      annualLeave: null == annualLeave
-          ? _value.annualLeave
-          : annualLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-      sickLeave: null == sickLeave
-          ? _value.sickLeave
-          : sickLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-      personalLeave: null == personalLeave
-          ? _value.personalLeave
-          : personalLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-      longServiceLeave: null == longServiceLeave
-          ? _value.longServiceLeave
-          : longServiceLeave // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$LeaveBalanceImpl implements _LeaveBalance {
-  const _$LeaveBalanceImpl(
-      {required this.annualLeave,
-      required this.sickLeave,
-      required this.personalLeave,
-      required this.longServiceLeave});
-
-  factory _$LeaveBalanceImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaveBalanceImplFromJson(json);
-
-  @override
-  final double annualLeave;
-  @override
-  final double sickLeave;
-  @override
-  final double personalLeave;
-  @override
-  final double longServiceLeave;
-
-  @override
-  String toString() {
-    return 'LeaveBalance(annualLeave: $annualLeave, sickLeave: $sickLeave, personalLeave: $personalLeave, longServiceLeave: $longServiceLeave)';
-  }
+  /// Serializes this LeaveBalance to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LeaveBalanceImpl &&
+            other is LeaveBalance &&
             (identical(other.annualLeave, annualLeave) ||
                 other.annualLeave == annualLeave) &&
             (identical(other.sickLeave, sickLeave) ||
@@ -176,217 +45,449 @@ class _$LeaveBalanceImpl implements _LeaveBalance {
                 other.longServiceLeave == longServiceLeave));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, annualLeave, sickLeave, personalLeave, longServiceLeave);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$LeaveBalanceImplCopyWith<_$LeaveBalanceImpl> get copyWith =>
-      __$$LeaveBalanceImplCopyWithImpl<_$LeaveBalanceImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LeaveBalanceImplToJson(
-      this,
-    );
+  String toString() {
+    return 'LeaveBalance(annualLeave: $annualLeave, sickLeave: $sickLeave, personalLeave: $personalLeave, longServiceLeave: $longServiceLeave)';
   }
 }
 
-abstract class _LeaveBalance implements LeaveBalance {
-  const factory _LeaveBalance(
-      {required final double annualLeave,
-      required final double sickLeave,
-      required final double personalLeave,
-      required final double longServiceLeave}) = _$LeaveBalanceImpl;
-
-  factory _LeaveBalance.fromJson(Map<String, dynamic> json) =
-      _$LeaveBalanceImpl.fromJson;
-
-  @override
-  double get annualLeave;
-  @override
-  double get sickLeave;
-  @override
-  double get personalLeave;
-  @override
-  double get longServiceLeave;
-  @override
-  @JsonKey(ignore: true)
-  _$$LeaveBalanceImplCopyWith<_$LeaveBalanceImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+/// @nodoc
+abstract mixin class $LeaveBalanceCopyWith<$Res> {
+  factory $LeaveBalanceCopyWith(
+          LeaveBalance value, $Res Function(LeaveBalance) _then) =
+      _$LeaveBalanceCopyWithImpl;
+  @useResult
+  $Res call(
+      {double annualLeave,
+      double sickLeave,
+      double personalLeave,
+      double longServiceLeave});
 }
 
-LeaveRequest _$LeaveRequestFromJson(Map<String, dynamic> json) {
-  return _LeaveRequest.fromJson(json);
+/// @nodoc
+class _$LeaveBalanceCopyWithImpl<$Res> implements $LeaveBalanceCopyWith<$Res> {
+  _$LeaveBalanceCopyWithImpl(this._self, this._then);
+
+  final LeaveBalance _self;
+  final $Res Function(LeaveBalance) _then;
+
+  /// Create a copy of LeaveBalance
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? annualLeave = null,
+    Object? sickLeave = null,
+    Object? personalLeave = null,
+    Object? longServiceLeave = null,
+  }) {
+    return _then(_self.copyWith(
+      annualLeave: null == annualLeave
+          ? _self.annualLeave
+          : annualLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+      sickLeave: null == sickLeave
+          ? _self.sickLeave
+          : sickLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+      personalLeave: null == personalLeave
+          ? _self.personalLeave
+          : personalLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+      longServiceLeave: null == longServiceLeave
+          ? _self.longServiceLeave
+          : longServiceLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [LeaveBalance].
+extension LeaveBalancePatterns on LeaveBalance {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_LeaveBalance value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveBalance() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_LeaveBalance value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveBalance():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_LeaveBalance value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveBalance() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double annualLeave, double sickLeave, double personalLeave,
+            double longServiceLeave)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveBalance() when $default != null:
+        return $default(_that.annualLeave, _that.sickLeave, _that.personalLeave,
+            _that.longServiceLeave);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double annualLeave, double sickLeave, double personalLeave,
+            double longServiceLeave)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveBalance():
+        return $default(_that.annualLeave, _that.sickLeave, _that.personalLeave,
+            _that.longServiceLeave);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double annualLeave, double sickLeave,
+            double personalLeave, double longServiceLeave)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveBalance() when $default != null:
+        return $default(_that.annualLeave, _that.sickLeave, _that.personalLeave,
+            _that.longServiceLeave);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _LeaveBalance implements LeaveBalance {
+  const _LeaveBalance(
+      {required this.annualLeave,
+      required this.sickLeave,
+      required this.personalLeave,
+      required this.longServiceLeave});
+  factory _LeaveBalance.fromJson(Map<String, dynamic> json) =>
+      _$LeaveBalanceFromJson(json);
+
+  @override
+  final double annualLeave;
+  @override
+  final double sickLeave;
+  @override
+  final double personalLeave;
+  @override
+  final double longServiceLeave;
+
+  /// Create a copy of LeaveBalance
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LeaveBalanceCopyWith<_LeaveBalance> get copyWith =>
+      __$LeaveBalanceCopyWithImpl<_LeaveBalance>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$LeaveBalanceToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LeaveBalance &&
+            (identical(other.annualLeave, annualLeave) ||
+                other.annualLeave == annualLeave) &&
+            (identical(other.sickLeave, sickLeave) ||
+                other.sickLeave == sickLeave) &&
+            (identical(other.personalLeave, personalLeave) ||
+                other.personalLeave == personalLeave) &&
+            (identical(other.longServiceLeave, longServiceLeave) ||
+                other.longServiceLeave == longServiceLeave));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, annualLeave, sickLeave, personalLeave, longServiceLeave);
+
+  @override
+  String toString() {
+    return 'LeaveBalance(annualLeave: $annualLeave, sickLeave: $sickLeave, personalLeave: $personalLeave, longServiceLeave: $longServiceLeave)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$LeaveBalanceCopyWith<$Res>
+    implements $LeaveBalanceCopyWith<$Res> {
+  factory _$LeaveBalanceCopyWith(
+          _LeaveBalance value, $Res Function(_LeaveBalance) _then) =
+      __$LeaveBalanceCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {double annualLeave,
+      double sickLeave,
+      double personalLeave,
+      double longServiceLeave});
+}
+
+/// @nodoc
+class __$LeaveBalanceCopyWithImpl<$Res>
+    implements _$LeaveBalanceCopyWith<$Res> {
+  __$LeaveBalanceCopyWithImpl(this._self, this._then);
+
+  final _LeaveBalance _self;
+  final $Res Function(_LeaveBalance) _then;
+
+  /// Create a copy of LeaveBalance
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? annualLeave = null,
+    Object? sickLeave = null,
+    Object? personalLeave = null,
+    Object? longServiceLeave = null,
+  }) {
+    return _then(_LeaveBalance(
+      annualLeave: null == annualLeave
+          ? _self.annualLeave
+          : annualLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+      sickLeave: null == sickLeave
+          ? _self.sickLeave
+          : sickLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+      personalLeave: null == personalLeave
+          ? _self.personalLeave
+          : personalLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+      longServiceLeave: null == longServiceLeave
+          ? _self.longServiceLeave
+          : longServiceLeave // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$LeaveRequest {
   @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get organizationId => throw _privateConstructorUsedError;
-  String get createdBy => throw _privateConstructorUsedError;
-  String get leaveType => throw _privateConstructorUsedError;
-  DateTime get startDate => throw _privateConstructorUsedError;
-  DateTime get endDate => throw _privateConstructorUsedError;
-  double get totalHours => throw _privateConstructorUsedError;
-  String get reason => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  String? get approverId => throw _privateConstructorUsedError;
-  DateTime? get approvedAt => throw _privateConstructorUsedError;
-  String? get rejectionReason => throw _privateConstructorUsedError;
-  List<LeaveAttachment>? get attachments => throw _privateConstructorUsedError;
-  List<LeaveHistory>? get history => throw _privateConstructorUsedError;
-  DateTime? get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
+  String? get id;
+  String get userId;
+  String get organizationId;
+  String get createdBy;
+  String get leaveType;
+  DateTime get startDate;
+  DateTime get endDate;
+  double get totalHours;
+  String get reason;
+  String get status;
+  String? get approverId;
+  DateTime? get approvedAt;
+  String? get rejectionReason;
+  List<LeaveAttachment>? get attachments;
+  List<LeaveHistory>? get history;
+  DateTime? get createdAt;
+  DateTime? get updatedAt;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $LeaveRequestCopyWith<LeaveRequest> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $LeaveRequestCopyWith<$Res> {
-  factory $LeaveRequestCopyWith(
-          LeaveRequest value, $Res Function(LeaveRequest) then) =
-      _$LeaveRequestCopyWithImpl<$Res, LeaveRequest>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String userId,
-      String organizationId,
-      String createdBy,
-      String leaveType,
-      DateTime startDate,
-      DateTime endDate,
-      double totalHours,
-      String reason,
-      String status,
-      String? approverId,
-      DateTime? approvedAt,
-      String? rejectionReason,
-      List<LeaveAttachment>? attachments,
-      List<LeaveHistory>? history,
-      DateTime? createdAt,
-      DateTime? updatedAt});
-}
-
-/// @nodoc
-class _$LeaveRequestCopyWithImpl<$Res, $Val extends LeaveRequest>
-    implements $LeaveRequestCopyWith<$Res> {
-  _$LeaveRequestCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of LeaveRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $LeaveRequestCopyWith<LeaveRequest> get copyWith =>
+      _$LeaveRequestCopyWithImpl<LeaveRequest>(
+          this as LeaveRequest, _$identity);
+
+  /// Serializes this LeaveRequest to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = freezed,
-    Object? userId = null,
-    Object? organizationId = null,
-    Object? createdBy = null,
-    Object? leaveType = null,
-    Object? startDate = null,
-    Object? endDate = null,
-    Object? totalHours = null,
-    Object? reason = null,
-    Object? status = null,
-    Object? approverId = freezed,
-    Object? approvedAt = freezed,
-    Object? rejectionReason = freezed,
-    Object? attachments = freezed,
-    Object? history = freezed,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      organizationId: null == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdBy: null == createdBy
-          ? _value.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String,
-      leaveType: null == leaveType
-          ? _value.leaveType
-          : leaveType // ignore: cast_nullable_to_non_nullable
-              as String,
-      startDate: null == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      endDate: null == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      totalHours: null == totalHours
-          ? _value.totalHours
-          : totalHours // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: null == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      approverId: freezed == approverId
-          ? _value.approverId
-          : approverId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      approvedAt: freezed == approvedAt
-          ? _value.approvedAt
-          : approvedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      rejectionReason: freezed == rejectionReason
-          ? _value.rejectionReason
-          : rejectionReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      attachments: freezed == attachments
-          ? _value.attachments
-          : attachments // ignore: cast_nullable_to_non_nullable
-              as List<LeaveAttachment>?,
-      history: freezed == history
-          ? _value.history
-          : history // ignore: cast_nullable_to_non_nullable
-              as List<LeaveHistory>?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LeaveRequest &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.organizationId, organizationId) ||
+                other.organizationId == organizationId) &&
+            (identical(other.createdBy, createdBy) ||
+                other.createdBy == createdBy) &&
+            (identical(other.leaveType, leaveType) ||
+                other.leaveType == leaveType) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
+            (identical(other.endDate, endDate) || other.endDate == endDate) &&
+            (identical(other.totalHours, totalHours) ||
+                other.totalHours == totalHours) &&
+            (identical(other.reason, reason) || other.reason == reason) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.approverId, approverId) ||
+                other.approverId == approverId) &&
+            (identical(other.approvedAt, approvedAt) ||
+                other.approvedAt == approvedAt) &&
+            (identical(other.rejectionReason, rejectionReason) ||
+                other.rejectionReason == rejectionReason) &&
+            const DeepCollectionEquality()
+                .equals(other.attachments, attachments) &&
+            const DeepCollectionEquality().equals(other.history, history) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userId,
+      organizationId,
+      createdBy,
+      leaveType,
+      startDate,
+      endDate,
+      totalHours,
+      reason,
+      status,
+      approverId,
+      approvedAt,
+      rejectionReason,
+      const DeepCollectionEquality().hash(attachments),
+      const DeepCollectionEquality().hash(history),
+      createdAt,
+      updatedAt);
+
+  @override
+  String toString() {
+    return 'LeaveRequest(id: $id, userId: $userId, organizationId: $organizationId, createdBy: $createdBy, leaveType: $leaveType, startDate: $startDate, endDate: $endDate, totalHours: $totalHours, reason: $reason, status: $status, approverId: $approverId, approvedAt: $approvedAt, rejectionReason: $rejectionReason, attachments: $attachments, history: $history, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
 /// @nodoc
-abstract class _$$LeaveRequestImplCopyWith<$Res>
-    implements $LeaveRequestCopyWith<$Res> {
-  factory _$$LeaveRequestImplCopyWith(
-          _$LeaveRequestImpl value, $Res Function(_$LeaveRequestImpl) then) =
-      __$$LeaveRequestImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $LeaveRequestCopyWith<$Res> {
+  factory $LeaveRequestCopyWith(
+          LeaveRequest value, $Res Function(LeaveRequest) _then) =
+      _$LeaveRequestCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
@@ -409,13 +510,14 @@ abstract class _$$LeaveRequestImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$LeaveRequestImplCopyWithImpl<$Res>
-    extends _$LeaveRequestCopyWithImpl<$Res, _$LeaveRequestImpl>
-    implements _$$LeaveRequestImplCopyWith<$Res> {
-  __$$LeaveRequestImplCopyWithImpl(
-      _$LeaveRequestImpl _value, $Res Function(_$LeaveRequestImpl) _then)
-      : super(_value, _then);
+class _$LeaveRequestCopyWithImpl<$Res> implements $LeaveRequestCopyWith<$Res> {
+  _$LeaveRequestCopyWithImpl(this._self, this._then);
 
+  final LeaveRequest _self;
+  final $Res Function(LeaveRequest) _then;
+
+  /// Create a copy of LeaveRequest
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -437,83 +539,345 @@ class __$$LeaveRequestImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$LeaveRequestImpl(
+    return _then(_self.copyWith(
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       organizationId: null == organizationId
-          ? _value.organizationId
+          ? _self.organizationId
           : organizationId // ignore: cast_nullable_to_non_nullable
               as String,
       createdBy: null == createdBy
-          ? _value.createdBy
+          ? _self.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
               as String,
       leaveType: null == leaveType
-          ? _value.leaveType
+          ? _self.leaveType
           : leaveType // ignore: cast_nullable_to_non_nullable
               as String,
       startDate: null == startDate
-          ? _value.startDate
+          ? _self.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
       endDate: null == endDate
-          ? _value.endDate
+          ? _self.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
       totalHours: null == totalHours
-          ? _value.totalHours
+          ? _self.totalHours
           : totalHours // ignore: cast_nullable_to_non_nullable
               as double,
       reason: null == reason
-          ? _value.reason
+          ? _self.reason
           : reason // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
       approverId: freezed == approverId
-          ? _value.approverId
+          ? _self.approverId
           : approverId // ignore: cast_nullable_to_non_nullable
               as String?,
       approvedAt: freezed == approvedAt
-          ? _value.approvedAt
+          ? _self.approvedAt
           : approvedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       rejectionReason: freezed == rejectionReason
-          ? _value.rejectionReason
+          ? _self.rejectionReason
           : rejectionReason // ignore: cast_nullable_to_non_nullable
               as String?,
       attachments: freezed == attachments
-          ? _value._attachments
+          ? _self.attachments
           : attachments // ignore: cast_nullable_to_non_nullable
               as List<LeaveAttachment>?,
       history: freezed == history
-          ? _value._history
+          ? _self.history
           : history // ignore: cast_nullable_to_non_nullable
               as List<LeaveHistory>?,
       createdAt: freezed == createdAt
-          ? _value.createdAt
+          ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _value.updatedAt
+          ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [LeaveRequest].
+extension LeaveRequestPatterns on LeaveRequest {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_LeaveRequest value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveRequest() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_LeaveRequest value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveRequest():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_LeaveRequest value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveRequest() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String organizationId,
+            String createdBy,
+            String leaveType,
+            DateTime startDate,
+            DateTime endDate,
+            double totalHours,
+            String reason,
+            String status,
+            String? approverId,
+            DateTime? approvedAt,
+            String? rejectionReason,
+            List<LeaveAttachment>? attachments,
+            List<LeaveHistory>? history,
+            DateTime? createdAt,
+            DateTime? updatedAt)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveRequest() when $default != null:
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.organizationId,
+            _that.createdBy,
+            _that.leaveType,
+            _that.startDate,
+            _that.endDate,
+            _that.totalHours,
+            _that.reason,
+            _that.status,
+            _that.approverId,
+            _that.approvedAt,
+            _that.rejectionReason,
+            _that.attachments,
+            _that.history,
+            _that.createdAt,
+            _that.updatedAt);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String organizationId,
+            String createdBy,
+            String leaveType,
+            DateTime startDate,
+            DateTime endDate,
+            double totalHours,
+            String reason,
+            String status,
+            String? approverId,
+            DateTime? approvedAt,
+            String? rejectionReason,
+            List<LeaveAttachment>? attachments,
+            List<LeaveHistory>? history,
+            DateTime? createdAt,
+            DateTime? updatedAt)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveRequest():
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.organizationId,
+            _that.createdBy,
+            _that.leaveType,
+            _that.startDate,
+            _that.endDate,
+            _that.totalHours,
+            _that.reason,
+            _that.status,
+            _that.approverId,
+            _that.approvedAt,
+            _that.rejectionReason,
+            _that.attachments,
+            _that.history,
+            _that.createdAt,
+            _that.updatedAt);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String? id,
+            String userId,
+            String organizationId,
+            String createdBy,
+            String leaveType,
+            DateTime startDate,
+            DateTime endDate,
+            double totalHours,
+            String reason,
+            String status,
+            String? approverId,
+            DateTime? approvedAt,
+            String? rejectionReason,
+            List<LeaveAttachment>? attachments,
+            List<LeaveHistory>? history,
+            DateTime? createdAt,
+            DateTime? updatedAt)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveRequest() when $default != null:
+        return $default(
+            _that.id,
+            _that.userId,
+            _that.organizationId,
+            _that.createdBy,
+            _that.leaveType,
+            _that.startDate,
+            _that.endDate,
+            _that.totalHours,
+            _that.reason,
+            _that.status,
+            _that.approverId,
+            _that.approvedAt,
+            _that.rejectionReason,
+            _that.attachments,
+            _that.history,
+            _that.createdAt,
+            _that.updatedAt);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$LeaveRequestImpl implements _LeaveRequest {
-  const _$LeaveRequestImpl(
+class _LeaveRequest implements LeaveRequest {
+  const _LeaveRequest(
       {@JsonKey(name: '_id') this.id,
       required this.userId,
       required this.organizationId,
@@ -533,9 +897,8 @@ class _$LeaveRequestImpl implements _LeaveRequest {
       this.updatedAt})
       : _attachments = attachments,
         _history = history;
-
-  factory _$LeaveRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaveRequestImplFromJson(json);
+  factory _LeaveRequest.fromJson(Map<String, dynamic> json) =>
+      _$LeaveRequestFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -590,16 +953,26 @@ class _$LeaveRequestImpl implements _LeaveRequest {
   @override
   final DateTime? updatedAt;
 
+  /// Create a copy of LeaveRequest
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'LeaveRequest(id: $id, userId: $userId, organizationId: $organizationId, createdBy: $createdBy, leaveType: $leaveType, startDate: $startDate, endDate: $endDate, totalHours: $totalHours, reason: $reason, status: $status, approverId: $approverId, approvedAt: $approvedAt, rejectionReason: $rejectionReason, attachments: $attachments, history: $history, createdAt: $createdAt, updatedAt: $updatedAt)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LeaveRequestCopyWith<_LeaveRequest> get copyWith =>
+      __$LeaveRequestCopyWithImpl<_LeaveRequest>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$LeaveRequestToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LeaveRequestImpl &&
+            other is _LeaveRequest &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.organizationId, organizationId) ||
@@ -630,7 +1003,7 @@ class _$LeaveRequestImpl implements _LeaveRequest {
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -652,162 +1025,202 @@ class _$LeaveRequestImpl implements _LeaveRequest {
       createdAt,
       updatedAt);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$LeaveRequestImplCopyWith<_$LeaveRequestImpl> get copyWith =>
-      __$$LeaveRequestImplCopyWithImpl<_$LeaveRequestImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LeaveRequestImplToJson(
-      this,
-    );
+  String toString() {
+    return 'LeaveRequest(id: $id, userId: $userId, organizationId: $organizationId, createdBy: $createdBy, leaveType: $leaveType, startDate: $startDate, endDate: $endDate, totalHours: $totalHours, reason: $reason, status: $status, approverId: $approverId, approvedAt: $approvedAt, rejectionReason: $rejectionReason, attachments: $attachments, history: $history, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
-abstract class _LeaveRequest implements LeaveRequest {
-  const factory _LeaveRequest(
-      {@JsonKey(name: '_id') final String? id,
-      required final String userId,
-      required final String organizationId,
-      required final String createdBy,
-      required final String leaveType,
-      required final DateTime startDate,
-      required final DateTime endDate,
-      required final double totalHours,
-      required final String reason,
-      final String status,
-      final String? approverId,
-      final DateTime? approvedAt,
-      final String? rejectionReason,
-      final List<LeaveAttachment>? attachments,
-      final List<LeaveHistory>? history,
-      final DateTime? createdAt,
-      final DateTime? updatedAt}) = _$LeaveRequestImpl;
-
-  factory _LeaveRequest.fromJson(Map<String, dynamic> json) =
-      _$LeaveRequestImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$LeaveRequestCopyWith<$Res>
+    implements $LeaveRequestCopyWith<$Res> {
+  factory _$LeaveRequestCopyWith(
+          _LeaveRequest value, $Res Function(_LeaveRequest) _then) =
+      __$LeaveRequestCopyWithImpl;
   @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  String get userId;
-  @override
-  String get organizationId;
-  @override
-  String get createdBy;
-  @override
-  String get leaveType;
-  @override
-  DateTime get startDate;
-  @override
-  DateTime get endDate;
-  @override
-  double get totalHours;
-  @override
-  String get reason;
-  @override
-  String get status;
-  @override
-  String? get approverId;
-  @override
-  DateTime? get approvedAt;
-  @override
-  String? get rejectionReason;
-  @override
-  List<LeaveAttachment>? get attachments;
-  @override
-  List<LeaveHistory>? get history;
-  @override
-  DateTime? get createdAt;
-  @override
-  DateTime? get updatedAt;
-  @override
-  @JsonKey(ignore: true)
-  _$$LeaveRequestImplCopyWith<_$LeaveRequestImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String userId,
+      String organizationId,
+      String createdBy,
+      String leaveType,
+      DateTime startDate,
+      DateTime endDate,
+      double totalHours,
+      String reason,
+      String status,
+      String? approverId,
+      DateTime? approvedAt,
+      String? rejectionReason,
+      List<LeaveAttachment>? attachments,
+      List<LeaveHistory>? history,
+      DateTime? createdAt,
+      DateTime? updatedAt});
 }
 
-LeaveAttachment _$LeaveAttachmentFromJson(Map<String, dynamic> json) {
-  return _LeaveAttachment.fromJson(json);
+/// @nodoc
+class __$LeaveRequestCopyWithImpl<$Res>
+    implements _$LeaveRequestCopyWith<$Res> {
+  __$LeaveRequestCopyWithImpl(this._self, this._then);
+
+  final _LeaveRequest _self;
+  final $Res Function(_LeaveRequest) _then;
+
+  /// Create a copy of LeaveRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? userId = null,
+    Object? organizationId = null,
+    Object? createdBy = null,
+    Object? leaveType = null,
+    Object? startDate = null,
+    Object? endDate = null,
+    Object? totalHours = null,
+    Object? reason = null,
+    Object? status = null,
+    Object? approverId = freezed,
+    Object? approvedAt = freezed,
+    Object? rejectionReason = freezed,
+    Object? attachments = freezed,
+    Object? history = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_LeaveRequest(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      organizationId: null == organizationId
+          ? _self.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdBy: null == createdBy
+          ? _self.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
+              as String,
+      leaveType: null == leaveType
+          ? _self.leaveType
+          : leaveType // ignore: cast_nullable_to_non_nullable
+              as String,
+      startDate: null == startDate
+          ? _self.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      endDate: null == endDate
+          ? _self.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      totalHours: null == totalHours
+          ? _self.totalHours
+          : totalHours // ignore: cast_nullable_to_non_nullable
+              as double,
+      reason: null == reason
+          ? _self.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      approverId: freezed == approverId
+          ? _self.approverId
+          : approverId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      approvedAt: freezed == approvedAt
+          ? _self.approvedAt
+          : approvedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      rejectionReason: freezed == rejectionReason
+          ? _self.rejectionReason
+          : rejectionReason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      attachments: freezed == attachments
+          ? _self._attachments
+          : attachments // ignore: cast_nullable_to_non_nullable
+              as List<LeaveAttachment>?,
+      history: freezed == history
+          ? _self._history
+          : history // ignore: cast_nullable_to_non_nullable
+              as List<LeaveHistory>?,
+      createdAt: freezed == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$LeaveAttachment {
-  String get filename => throw _privateConstructorUsedError;
-  String get url => throw _privateConstructorUsedError;
-  DateTime get uploadedAt => throw _privateConstructorUsedError;
+  String get filename;
+  String get url;
+  DateTime get uploadedAt;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $LeaveAttachmentCopyWith<LeaveAttachment> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $LeaveAttachmentCopyWith<$Res> {
-  factory $LeaveAttachmentCopyWith(
-          LeaveAttachment value, $Res Function(LeaveAttachment) then) =
-      _$LeaveAttachmentCopyWithImpl<$Res, LeaveAttachment>;
-  @useResult
-  $Res call({String filename, String url, DateTime uploadedAt});
-}
-
-/// @nodoc
-class _$LeaveAttachmentCopyWithImpl<$Res, $Val extends LeaveAttachment>
-    implements $LeaveAttachmentCopyWith<$Res> {
-  _$LeaveAttachmentCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of LeaveAttachment
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $LeaveAttachmentCopyWith<LeaveAttachment> get copyWith =>
+      _$LeaveAttachmentCopyWithImpl<LeaveAttachment>(
+          this as LeaveAttachment, _$identity);
+
+  /// Serializes this LeaveAttachment to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? filename = null,
-    Object? url = null,
-    Object? uploadedAt = null,
-  }) {
-    return _then(_value.copyWith(
-      filename: null == filename
-          ? _value.filename
-          : filename // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      uploadedAt: null == uploadedAt
-          ? _value.uploadedAt
-          : uploadedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LeaveAttachment &&
+            (identical(other.filename, filename) ||
+                other.filename == filename) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.uploadedAt, uploadedAt) ||
+                other.uploadedAt == uploadedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, filename, url, uploadedAt);
+
+  @override
+  String toString() {
+    return 'LeaveAttachment(filename: $filename, url: $url, uploadedAt: $uploadedAt)';
   }
 }
 
 /// @nodoc
-abstract class _$$LeaveAttachmentImplCopyWith<$Res>
-    implements $LeaveAttachmentCopyWith<$Res> {
-  factory _$$LeaveAttachmentImplCopyWith(_$LeaveAttachmentImpl value,
-          $Res Function(_$LeaveAttachmentImpl) then) =
-      __$$LeaveAttachmentImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $LeaveAttachmentCopyWith<$Res> {
+  factory $LeaveAttachmentCopyWith(
+          LeaveAttachment value, $Res Function(LeaveAttachment) _then) =
+      _$LeaveAttachmentCopyWithImpl;
   @useResult
   $Res call({String filename, String url, DateTime uploadedAt});
 }
 
 /// @nodoc
-class __$$LeaveAttachmentImplCopyWithImpl<$Res>
-    extends _$LeaveAttachmentCopyWithImpl<$Res, _$LeaveAttachmentImpl>
-    implements _$$LeaveAttachmentImplCopyWith<$Res> {
-  __$$LeaveAttachmentImplCopyWithImpl(
-      _$LeaveAttachmentImpl _value, $Res Function(_$LeaveAttachmentImpl) _then)
-      : super(_value, _then);
+class _$LeaveAttachmentCopyWithImpl<$Res>
+    implements $LeaveAttachmentCopyWith<$Res> {
+  _$LeaveAttachmentCopyWithImpl(this._self, this._then);
 
+  final LeaveAttachment _self;
+  final $Res Function(LeaveAttachment) _then;
+
+  /// Create a copy of LeaveAttachment
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -815,31 +1228,189 @@ class __$$LeaveAttachmentImplCopyWithImpl<$Res>
     Object? url = null,
     Object? uploadedAt = null,
   }) {
-    return _then(_$LeaveAttachmentImpl(
+    return _then(_self.copyWith(
       filename: null == filename
-          ? _value.filename
+          ? _self.filename
           : filename // ignore: cast_nullable_to_non_nullable
               as String,
       url: null == url
-          ? _value.url
+          ? _self.url
           : url // ignore: cast_nullable_to_non_nullable
               as String,
       uploadedAt: null == uploadedAt
-          ? _value.uploadedAt
+          ? _self.uploadedAt
           : uploadedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [LeaveAttachment].
+extension LeaveAttachmentPatterns on LeaveAttachment {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_LeaveAttachment value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAttachment() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_LeaveAttachment value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAttachment():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_LeaveAttachment value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAttachment() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String filename, String url, DateTime uploadedAt)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAttachment() when $default != null:
+        return $default(_that.filename, _that.url, _that.uploadedAt);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String filename, String url, DateTime uploadedAt) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAttachment():
+        return $default(_that.filename, _that.url, _that.uploadedAt);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String filename, String url, DateTime uploadedAt)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveAttachment() when $default != null:
+        return $default(_that.filename, _that.url, _that.uploadedAt);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$LeaveAttachmentImpl implements _LeaveAttachment {
-  const _$LeaveAttachmentImpl(
+class _LeaveAttachment implements LeaveAttachment {
+  const _LeaveAttachment(
       {required this.filename, required this.url, required this.uploadedAt});
-
-  factory _$LeaveAttachmentImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaveAttachmentImplFromJson(json);
+  factory _LeaveAttachment.fromJson(Map<String, dynamic> json) =>
+      _$LeaveAttachmentFromJson(json);
 
   @override
   final String filename;
@@ -848,16 +1419,26 @@ class _$LeaveAttachmentImpl implements _LeaveAttachment {
   @override
   final DateTime uploadedAt;
 
+  /// Create a copy of LeaveAttachment
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'LeaveAttachment(filename: $filename, url: $url, uploadedAt: $uploadedAt)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LeaveAttachmentCopyWith<_LeaveAttachment> get copyWith =>
+      __$LeaveAttachmentCopyWithImpl<_LeaveAttachment>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$LeaveAttachmentToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LeaveAttachmentImpl &&
+            other is _LeaveAttachment &&
             (identical(other.filename, filename) ||
                 other.filename == filename) &&
             (identical(other.url, url) || other.url == url) &&
@@ -865,129 +1446,110 @@ class _$LeaveAttachmentImpl implements _LeaveAttachment {
                 other.uploadedAt == uploadedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, filename, url, uploadedAt);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$LeaveAttachmentImplCopyWith<_$LeaveAttachmentImpl> get copyWith =>
-      __$$LeaveAttachmentImplCopyWithImpl<_$LeaveAttachmentImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LeaveAttachmentImplToJson(
-      this,
-    );
+  String toString() {
+    return 'LeaveAttachment(filename: $filename, url: $url, uploadedAt: $uploadedAt)';
   }
 }
 
-abstract class _LeaveAttachment implements LeaveAttachment {
-  const factory _LeaveAttachment(
-      {required final String filename,
-      required final String url,
-      required final DateTime uploadedAt}) = _$LeaveAttachmentImpl;
-
-  factory _LeaveAttachment.fromJson(Map<String, dynamic> json) =
-      _$LeaveAttachmentImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$LeaveAttachmentCopyWith<$Res>
+    implements $LeaveAttachmentCopyWith<$Res> {
+  factory _$LeaveAttachmentCopyWith(
+          _LeaveAttachment value, $Res Function(_LeaveAttachment) _then) =
+      __$LeaveAttachmentCopyWithImpl;
   @override
-  String get filename;
-  @override
-  String get url;
-  @override
-  DateTime get uploadedAt;
-  @override
-  @JsonKey(ignore: true)
-  _$$LeaveAttachmentImplCopyWith<_$LeaveAttachmentImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String filename, String url, DateTime uploadedAt});
 }
 
-LeaveHistory _$LeaveHistoryFromJson(Map<String, dynamic> json) {
-  return _LeaveHistory.fromJson(json);
+/// @nodoc
+class __$LeaveAttachmentCopyWithImpl<$Res>
+    implements _$LeaveAttachmentCopyWith<$Res> {
+  __$LeaveAttachmentCopyWithImpl(this._self, this._then);
+
+  final _LeaveAttachment _self;
+  final $Res Function(_LeaveAttachment) _then;
+
+  /// Create a copy of LeaveAttachment
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? filename = null,
+    Object? url = null,
+    Object? uploadedAt = null,
+  }) {
+    return _then(_LeaveAttachment(
+      filename: null == filename
+          ? _self.filename
+          : filename // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _self.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      uploadedAt: null == uploadedAt
+          ? _self.uploadedAt
+          : uploadedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$LeaveHistory {
-  String get action => throw _privateConstructorUsedError;
-  String get performedBy => throw _privateConstructorUsedError;
-  DateTime get timestamp => throw _privateConstructorUsedError;
-  String? get status => throw _privateConstructorUsedError;
-  String? get reason => throw _privateConstructorUsedError;
+  String get action;
+  String get performedBy;
+  DateTime get timestamp;
+  String? get status;
+  String? get reason;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $LeaveHistoryCopyWith<LeaveHistory> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $LeaveHistoryCopyWith<$Res> {
-  factory $LeaveHistoryCopyWith(
-          LeaveHistory value, $Res Function(LeaveHistory) then) =
-      _$LeaveHistoryCopyWithImpl<$Res, LeaveHistory>;
-  @useResult
-  $Res call(
-      {String action,
-      String performedBy,
-      DateTime timestamp,
-      String? status,
-      String? reason});
-}
-
-/// @nodoc
-class _$LeaveHistoryCopyWithImpl<$Res, $Val extends LeaveHistory>
-    implements $LeaveHistoryCopyWith<$Res> {
-  _$LeaveHistoryCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of LeaveHistory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $LeaveHistoryCopyWith<LeaveHistory> get copyWith =>
+      _$LeaveHistoryCopyWithImpl<LeaveHistory>(
+          this as LeaveHistory, _$identity);
+
+  /// Serializes this LeaveHistory to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? action = null,
-    Object? performedBy = null,
-    Object? timestamp = null,
-    Object? status = freezed,
-    Object? reason = freezed,
-  }) {
-    return _then(_value.copyWith(
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      performedBy: null == performedBy
-          ? _value.performedBy
-          : performedBy // ignore: cast_nullable_to_non_nullable
-              as String,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LeaveHistory &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.performedBy, performedBy) ||
+                other.performedBy == performedBy) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.reason, reason) || other.reason == reason));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, action, performedBy, timestamp, status, reason);
+
+  @override
+  String toString() {
+    return 'LeaveHistory(action: $action, performedBy: $performedBy, timestamp: $timestamp, status: $status, reason: $reason)';
   }
 }
 
 /// @nodoc
-abstract class _$$LeaveHistoryImplCopyWith<$Res>
-    implements $LeaveHistoryCopyWith<$Res> {
-  factory _$$LeaveHistoryImplCopyWith(
-          _$LeaveHistoryImpl value, $Res Function(_$LeaveHistoryImpl) then) =
-      __$$LeaveHistoryImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $LeaveHistoryCopyWith<$Res> {
+  factory $LeaveHistoryCopyWith(
+          LeaveHistory value, $Res Function(LeaveHistory) _then) =
+      _$LeaveHistoryCopyWithImpl;
   @useResult
   $Res call(
       {String action,
@@ -998,13 +1560,14 @@ abstract class _$$LeaveHistoryImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$LeaveHistoryImplCopyWithImpl<$Res>
-    extends _$LeaveHistoryCopyWithImpl<$Res, _$LeaveHistoryImpl>
-    implements _$$LeaveHistoryImplCopyWith<$Res> {
-  __$$LeaveHistoryImplCopyWithImpl(
-      _$LeaveHistoryImpl _value, $Res Function(_$LeaveHistoryImpl) _then)
-      : super(_value, _then);
+class _$LeaveHistoryCopyWithImpl<$Res> implements $LeaveHistoryCopyWith<$Res> {
+  _$LeaveHistoryCopyWithImpl(this._self, this._then);
 
+  final LeaveHistory _self;
+  final $Res Function(LeaveHistory) _then;
+
+  /// Create a copy of LeaveHistory
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1014,43 +1577,208 @@ class __$$LeaveHistoryImplCopyWithImpl<$Res>
     Object? status = freezed,
     Object? reason = freezed,
   }) {
-    return _then(_$LeaveHistoryImpl(
+    return _then(_self.copyWith(
       action: null == action
-          ? _value.action
+          ? _self.action
           : action // ignore: cast_nullable_to_non_nullable
               as String,
       performedBy: null == performedBy
-          ? _value.performedBy
+          ? _self.performedBy
           : performedBy // ignore: cast_nullable_to_non_nullable
               as String,
       timestamp: null == timestamp
-          ? _value.timestamp
+          ? _self.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime,
       status: freezed == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String?,
       reason: freezed == reason
-          ? _value.reason
+          ? _self.reason
           : reason // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [LeaveHistory].
+extension LeaveHistoryPatterns on LeaveHistory {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_LeaveHistory value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveHistory() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_LeaveHistory value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveHistory():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_LeaveHistory value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveHistory() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String action, String performedBy, DateTime timestamp,
+            String? status, String? reason)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveHistory() when $default != null:
+        return $default(_that.action, _that.performedBy, _that.timestamp,
+            _that.status, _that.reason);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String action, String performedBy, DateTime timestamp,
+            String? status, String? reason)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveHistory():
+        return $default(_that.action, _that.performedBy, _that.timestamp,
+            _that.status, _that.reason);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String action, String performedBy, DateTime timestamp,
+            String? status, String? reason)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveHistory() when $default != null:
+        return $default(_that.action, _that.performedBy, _that.timestamp,
+            _that.status, _that.reason);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$LeaveHistoryImpl implements _LeaveHistory {
-  const _$LeaveHistoryImpl(
+class _LeaveHistory implements LeaveHistory {
+  const _LeaveHistory(
       {required this.action,
       required this.performedBy,
       required this.timestamp,
       this.status,
       this.reason});
-
-  factory _$LeaveHistoryImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaveHistoryImplFromJson(json);
+  factory _LeaveHistory.fromJson(Map<String, dynamic> json) =>
+      _$LeaveHistoryFromJson(json);
 
   @override
   final String action;
@@ -1063,16 +1791,26 @@ class _$LeaveHistoryImpl implements _LeaveHistory {
   @override
   final String? reason;
 
+  /// Create a copy of LeaveHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'LeaveHistory(action: $action, performedBy: $performedBy, timestamp: $timestamp, status: $status, reason: $reason)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LeaveHistoryCopyWith<_LeaveHistory> get copyWith =>
+      __$LeaveHistoryCopyWithImpl<_LeaveHistory>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$LeaveHistoryToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LeaveHistoryImpl &&
+            other is _LeaveHistory &&
             (identical(other.action, action) || other.action == action) &&
             (identical(other.performedBy, performedBy) ||
                 other.performedBy == performedBy) &&
@@ -1082,217 +1820,384 @@ class _$LeaveHistoryImpl implements _LeaveHistory {
             (identical(other.reason, reason) || other.reason == reason));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, action, performedBy, timestamp, status, reason);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$LeaveHistoryImplCopyWith<_$LeaveHistoryImpl> get copyWith =>
-      __$$LeaveHistoryImplCopyWithImpl<_$LeaveHistoryImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LeaveHistoryImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _LeaveHistory implements LeaveHistory {
-  const factory _LeaveHistory(
-      {required final String action,
-      required final String performedBy,
-      required final DateTime timestamp,
-      final String? status,
-      final String? reason}) = _$LeaveHistoryImpl;
-
-  factory _LeaveHistory.fromJson(Map<String, dynamic> json) =
-      _$LeaveHistoryImpl.fromJson;
-
-  @override
-  String get action;
-  @override
-  String get performedBy;
-  @override
-  DateTime get timestamp;
-  @override
-  String? get status;
-  @override
-  String? get reason;
-  @override
-  @JsonKey(ignore: true)
-  _$$LeaveHistoryImplCopyWith<_$LeaveHistoryImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-PublicHoliday _$PublicHolidayFromJson(Map<String, dynamic> json) {
-  return _PublicHoliday.fromJson(json);
-}
-
-/// @nodoc
-mixin _$PublicHoliday {
-  @JsonKey(name: '_id')
-  String? get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  DateTime get date => throw _privateConstructorUsedError;
-  String get day => throw _privateConstructorUsedError;
-  String? get organizationId => throw _privateConstructorUsedError;
-  bool get isCustom => throw _privateConstructorUsedError;
-  String? get state => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PublicHolidayCopyWith<PublicHoliday> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PublicHolidayCopyWith<$Res> {
-  factory $PublicHolidayCopyWith(
-          PublicHoliday value, $Res Function(PublicHoliday) then) =
-      _$PublicHolidayCopyWithImpl<$Res, PublicHoliday>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String name,
-      DateTime date,
-      String day,
-      String? organizationId,
-      bool isCustom,
-      String? state});
-}
-
-/// @nodoc
-class _$PublicHolidayCopyWithImpl<$Res, $Val extends PublicHoliday>
-    implements $PublicHolidayCopyWith<$Res> {
-  _$PublicHolidayCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? name = null,
-    Object? date = null,
-    Object? day = null,
-    Object? organizationId = freezed,
-    Object? isCustom = null,
-    Object? state = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      day: null == day
-          ? _value.day
-          : day // ignore: cast_nullable_to_non_nullable
-              as String,
-      organizationId: freezed == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isCustom: null == isCustom
-          ? _value.isCustom
-          : isCustom // ignore: cast_nullable_to_non_nullable
-              as bool,
-      state: freezed == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  String toString() {
+    return 'LeaveHistory(action: $action, performedBy: $performedBy, timestamp: $timestamp, status: $status, reason: $reason)';
   }
 }
 
 /// @nodoc
-abstract class _$$PublicHolidayImplCopyWith<$Res>
-    implements $PublicHolidayCopyWith<$Res> {
-  factory _$$PublicHolidayImplCopyWith(
-          _$PublicHolidayImpl value, $Res Function(_$PublicHolidayImpl) then) =
-      __$$PublicHolidayImplCopyWithImpl<$Res>;
+abstract mixin class _$LeaveHistoryCopyWith<$Res>
+    implements $LeaveHistoryCopyWith<$Res> {
+  factory _$LeaveHistoryCopyWith(
+          _LeaveHistory value, $Res Function(_LeaveHistory) _then) =
+      __$LeaveHistoryCopyWithImpl;
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: '_id') String? id,
-      String name,
-      DateTime date,
-      String day,
-      String? organizationId,
-      bool isCustom,
-      String? state});
+      {String action,
+      String performedBy,
+      DateTime timestamp,
+      String? status,
+      String? reason});
 }
 
 /// @nodoc
-class __$$PublicHolidayImplCopyWithImpl<$Res>
-    extends _$PublicHolidayCopyWithImpl<$Res, _$PublicHolidayImpl>
-    implements _$$PublicHolidayImplCopyWith<$Res> {
-  __$$PublicHolidayImplCopyWithImpl(
-      _$PublicHolidayImpl _value, $Res Function(_$PublicHolidayImpl) _then)
-      : super(_value, _then);
+class __$LeaveHistoryCopyWithImpl<$Res>
+    implements _$LeaveHistoryCopyWith<$Res> {
+  __$LeaveHistoryCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _LeaveHistory _self;
+  final $Res Function(_LeaveHistory) _then;
+
+  /// Create a copy of LeaveHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? id = freezed,
-    Object? name = null,
-    Object? date = null,
-    Object? day = null,
-    Object? organizationId = freezed,
-    Object? isCustom = null,
-    Object? state = freezed,
+    Object? action = null,
+    Object? performedBy = null,
+    Object? timestamp = null,
+    Object? status = freezed,
+    Object? reason = freezed,
   }) {
-    return _then(_$PublicHolidayImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+    return _then(_LeaveHistory(
+      action: null == action
+          ? _self.action
+          : action // ignore: cast_nullable_to_non_nullable
               as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
+      performedBy: null == performedBy
+          ? _self.performedBy
+          : performedBy // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      day: null == day
-          ? _value.day
-          : day // ignore: cast_nullable_to_non_nullable
-              as String,
-      organizationId: freezed == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
+      status: freezed == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
               as String?,
-      isCustom: null == isCustom
-          ? _value.isCustom
-          : isCustom // ignore: cast_nullable_to_non_nullable
-              as bool,
-      state: freezed == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
+      reason: freezed == reason
+          ? _self.reason
+          : reason // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
 }
 
 /// @nodoc
+mixin _$PublicHoliday {
+  @JsonKey(name: '_id')
+  String? get id;
+  String get name;
+  DateTime get date;
+  String get day;
+  String? get organizationId;
+  bool get isCustom;
+  String? get state;
+
+  /// Create a copy of PublicHoliday
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $PublicHolidayCopyWith<PublicHoliday> get copyWith =>
+      _$PublicHolidayCopyWithImpl<PublicHoliday>(
+          this as PublicHoliday, _$identity);
+
+  /// Serializes this PublicHoliday to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PublicHoliday &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.day, day) || other.day == day) &&
+            (identical(other.organizationId, organizationId) ||
+                other.organizationId == organizationId) &&
+            (identical(other.isCustom, isCustom) ||
+                other.isCustom == isCustom) &&
+            (identical(other.state, state) || other.state == state));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, name, date, day, organizationId, isCustom, state);
+
+  @override
+  String toString() {
+    return 'PublicHoliday(id: $id, name: $name, date: $date, day: $day, organizationId: $organizationId, isCustom: $isCustom, state: $state)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $PublicHolidayCopyWith<$Res> {
+  factory $PublicHolidayCopyWith(
+          PublicHoliday value, $Res Function(PublicHoliday) _then) =
+      _$PublicHolidayCopyWithImpl;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String name,
+      DateTime date,
+      String day,
+      String? organizationId,
+      bool isCustom,
+      String? state});
+}
+
+/// @nodoc
+class _$PublicHolidayCopyWithImpl<$Res>
+    implements $PublicHolidayCopyWith<$Res> {
+  _$PublicHolidayCopyWithImpl(this._self, this._then);
+
+  final PublicHoliday _self;
+  final $Res Function(PublicHoliday) _then;
+
+  /// Create a copy of PublicHoliday
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = null,
+    Object? date = null,
+    Object? day = null,
+    Object? organizationId = freezed,
+    Object? isCustom = null,
+    Object? state = freezed,
+  }) {
+    return _then(_self.copyWith(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      date: null == date
+          ? _self.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      day: null == day
+          ? _self.day
+          : day // ignore: cast_nullable_to_non_nullable
+              as String,
+      organizationId: freezed == organizationId
+          ? _self.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isCustom: null == isCustom
+          ? _self.isCustom
+          : isCustom // ignore: cast_nullable_to_non_nullable
+              as bool,
+      state: freezed == state
+          ? _self.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [PublicHoliday].
+extension PublicHolidayPatterns on PublicHoliday {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PublicHoliday value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PublicHoliday() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PublicHoliday value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublicHoliday():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PublicHoliday value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublicHoliday() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String name,
+            DateTime date,
+            String day,
+            String? organizationId,
+            bool isCustom,
+            String? state)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PublicHoliday() when $default != null:
+        return $default(_that.id, _that.name, _that.date, _that.day,
+            _that.organizationId, _that.isCustom, _that.state);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: '_id') String? id,
+            String name,
+            DateTime date,
+            String day,
+            String? organizationId,
+            bool isCustom,
+            String? state)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublicHoliday():
+        return $default(_that.id, _that.name, _that.date, _that.day,
+            _that.organizationId, _that.isCustom, _that.state);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: '_id') String? id,
+            String name,
+            DateTime date,
+            String day,
+            String? organizationId,
+            bool isCustom,
+            String? state)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublicHoliday() when $default != null:
+        return $default(_that.id, _that.name, _that.date, _that.day,
+            _that.organizationId, _that.isCustom, _that.state);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$PublicHolidayImpl implements _PublicHoliday {
-  const _$PublicHolidayImpl(
+class _PublicHoliday implements PublicHoliday {
+  const _PublicHoliday(
       {@JsonKey(name: '_id') this.id,
       required this.name,
       required this.date,
@@ -1300,9 +2205,8 @@ class _$PublicHolidayImpl implements _PublicHoliday {
       this.organizationId,
       this.isCustom = false,
       this.state});
-
-  factory _$PublicHolidayImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PublicHolidayImplFromJson(json);
+  factory _PublicHoliday.fromJson(Map<String, dynamic> json) =>
+      _$PublicHolidayFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -1321,16 +2225,26 @@ class _$PublicHolidayImpl implements _PublicHoliday {
   @override
   final String? state;
 
+  /// Create a copy of PublicHoliday
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'PublicHoliday(id: $id, name: $name, date: $date, day: $day, organizationId: $organizationId, isCustom: $isCustom, state: $state)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PublicHolidayCopyWith<_PublicHoliday> get copyWith =>
+      __$PublicHolidayCopyWithImpl<_PublicHoliday>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PublicHolidayToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PublicHolidayImpl &&
+            other is _PublicHoliday &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.date, date) || other.date == date) &&
@@ -1342,172 +2256,345 @@ class _$PublicHolidayImpl implements _PublicHoliday {
             (identical(other.state, state) || other.state == state));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, name, date, day, organizationId, isCustom, state);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$PublicHolidayImplCopyWith<_$PublicHolidayImpl> get copyWith =>
-      __$$PublicHolidayImplCopyWithImpl<_$PublicHolidayImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PublicHolidayImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _PublicHoliday implements PublicHoliday {
-  const factory _PublicHoliday(
-      {@JsonKey(name: '_id') final String? id,
-      required final String name,
-      required final DateTime date,
-      required final String day,
-      final String? organizationId,
-      final bool isCustom,
-      final String? state}) = _$PublicHolidayImpl;
-
-  factory _PublicHoliday.fromJson(Map<String, dynamic> json) =
-      _$PublicHolidayImpl.fromJson;
-
-  @override
-  @JsonKey(name: '_id')
-  String? get id;
-  @override
-  String get name;
-  @override
-  DateTime get date;
-  @override
-  String get day;
-  @override
-  String? get organizationId;
-  @override
-  bool get isCustom;
-  @override
-  String? get state;
-  @override
-  @JsonKey(ignore: true)
-  _$$PublicHolidayImplCopyWith<_$PublicHolidayImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-LeaveForecast _$LeaveForecastFromJson(Map<String, dynamic> json) {
-  return _LeaveForecast.fromJson(json);
-}
-
-/// @nodoc
-mixin _$LeaveForecast {
-  LeaveBalance get forecast => throw _privateConstructorUsedError;
-  Map<String, double> get accrualRate => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $LeaveForecastCopyWith<LeaveForecast> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $LeaveForecastCopyWith<$Res> {
-  factory $LeaveForecastCopyWith(
-          LeaveForecast value, $Res Function(LeaveForecast) then) =
-      _$LeaveForecastCopyWithImpl<$Res, LeaveForecast>;
-  @useResult
-  $Res call({LeaveBalance forecast, Map<String, double> accrualRate});
-
-  $LeaveBalanceCopyWith<$Res> get forecast;
-}
-
-/// @nodoc
-class _$LeaveForecastCopyWithImpl<$Res, $Val extends LeaveForecast>
-    implements $LeaveForecastCopyWith<$Res> {
-  _$LeaveForecastCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? forecast = null,
-    Object? accrualRate = null,
-  }) {
-    return _then(_value.copyWith(
-      forecast: null == forecast
-          ? _value.forecast
-          : forecast // ignore: cast_nullable_to_non_nullable
-              as LeaveBalance,
-      accrualRate: null == accrualRate
-          ? _value.accrualRate
-          : accrualRate // ignore: cast_nullable_to_non_nullable
-              as Map<String, double>,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $LeaveBalanceCopyWith<$Res> get forecast {
-    return $LeaveBalanceCopyWith<$Res>(_value.forecast, (value) {
-      return _then(_value.copyWith(forecast: value) as $Val);
-    });
+  String toString() {
+    return 'PublicHoliday(id: $id, name: $name, date: $date, day: $day, organizationId: $organizationId, isCustom: $isCustom, state: $state)';
   }
 }
 
 /// @nodoc
-abstract class _$$LeaveForecastImplCopyWith<$Res>
-    implements $LeaveForecastCopyWith<$Res> {
-  factory _$$LeaveForecastImplCopyWith(
-          _$LeaveForecastImpl value, $Res Function(_$LeaveForecastImpl) then) =
-      __$$LeaveForecastImplCopyWithImpl<$Res>;
+abstract mixin class _$PublicHolidayCopyWith<$Res>
+    implements $PublicHolidayCopyWith<$Res> {
+  factory _$PublicHolidayCopyWith(
+          _PublicHoliday value, $Res Function(_PublicHoliday) _then) =
+      __$PublicHolidayCopyWithImpl;
   @override
   @useResult
-  $Res call({LeaveBalance forecast, Map<String, double> accrualRate});
-
-  @override
-  $LeaveBalanceCopyWith<$Res> get forecast;
+  $Res call(
+      {@JsonKey(name: '_id') String? id,
+      String name,
+      DateTime date,
+      String day,
+      String? organizationId,
+      bool isCustom,
+      String? state});
 }
 
 /// @nodoc
-class __$$LeaveForecastImplCopyWithImpl<$Res>
-    extends _$LeaveForecastCopyWithImpl<$Res, _$LeaveForecastImpl>
-    implements _$$LeaveForecastImplCopyWith<$Res> {
-  __$$LeaveForecastImplCopyWithImpl(
-      _$LeaveForecastImpl _value, $Res Function(_$LeaveForecastImpl) _then)
-      : super(_value, _then);
+class __$PublicHolidayCopyWithImpl<$Res>
+    implements _$PublicHolidayCopyWith<$Res> {
+  __$PublicHolidayCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _PublicHoliday _self;
+  final $Res Function(_PublicHoliday) _then;
+
+  /// Create a copy of PublicHoliday
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? forecast = null,
-    Object? accrualRate = null,
+    Object? id = freezed,
+    Object? name = null,
+    Object? date = null,
+    Object? day = null,
+    Object? organizationId = freezed,
+    Object? isCustom = null,
+    Object? state = freezed,
   }) {
-    return _then(_$LeaveForecastImpl(
-      forecast: null == forecast
-          ? _value.forecast
-          : forecast // ignore: cast_nullable_to_non_nullable
-              as LeaveBalance,
-      accrualRate: null == accrualRate
-          ? _value._accrualRate
-          : accrualRate // ignore: cast_nullable_to_non_nullable
-              as Map<String, double>,
+    return _then(_PublicHoliday(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      date: null == date
+          ? _self.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      day: null == day
+          ? _self.day
+          : day // ignore: cast_nullable_to_non_nullable
+              as String,
+      organizationId: freezed == organizationId
+          ? _self.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isCustom: null == isCustom
+          ? _self.isCustom
+          : isCustom // ignore: cast_nullable_to_non_nullable
+              as bool,
+      state: freezed == state
+          ? _self.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
+mixin _$LeaveForecast {
+  LeaveBalance get forecast;
+  Map<String, double> get accrualRate;
+
+  /// Create a copy of LeaveForecast
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $LeaveForecastCopyWith<LeaveForecast> get copyWith =>
+      _$LeaveForecastCopyWithImpl<LeaveForecast>(
+          this as LeaveForecast, _$identity);
+
+  /// Serializes this LeaveForecast to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LeaveForecast &&
+            (identical(other.forecast, forecast) ||
+                other.forecast == forecast) &&
+            const DeepCollectionEquality()
+                .equals(other.accrualRate, accrualRate));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, forecast, const DeepCollectionEquality().hash(accrualRate));
+
+  @override
+  String toString() {
+    return 'LeaveForecast(forecast: $forecast, accrualRate: $accrualRate)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $LeaveForecastCopyWith<$Res> {
+  factory $LeaveForecastCopyWith(
+          LeaveForecast value, $Res Function(LeaveForecast) _then) =
+      _$LeaveForecastCopyWithImpl;
+  @useResult
+  $Res call({LeaveBalance forecast, Map<String, double> accrualRate});
+
+  $LeaveBalanceCopyWith<$Res> get forecast;
+}
+
+/// @nodoc
+class _$LeaveForecastCopyWithImpl<$Res>
+    implements $LeaveForecastCopyWith<$Res> {
+  _$LeaveForecastCopyWithImpl(this._self, this._then);
+
+  final LeaveForecast _self;
+  final $Res Function(LeaveForecast) _then;
+
+  /// Create a copy of LeaveForecast
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? forecast = null,
+    Object? accrualRate = null,
+  }) {
+    return _then(_self.copyWith(
+      forecast: null == forecast
+          ? _self.forecast
+          : forecast // ignore: cast_nullable_to_non_nullable
+              as LeaveBalance,
+      accrualRate: null == accrualRate
+          ? _self.accrualRate
+          : accrualRate // ignore: cast_nullable_to_non_nullable
+              as Map<String, double>,
+    ));
+  }
+
+  /// Create a copy of LeaveForecast
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveBalanceCopyWith<$Res> get forecast {
+    return $LeaveBalanceCopyWith<$Res>(_self.forecast, (value) {
+      return _then(_self.copyWith(forecast: value));
+    });
+  }
+}
+
+/// Adds pattern-matching-related methods to [LeaveForecast].
+extension LeaveForecastPatterns on LeaveForecast {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_LeaveForecast value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveForecast() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_LeaveForecast value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveForecast():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_LeaveForecast value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveForecast() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(LeaveBalance forecast, Map<String, double> accrualRate)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveForecast() when $default != null:
+        return $default(_that.forecast, _that.accrualRate);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(LeaveBalance forecast, Map<String, double> accrualRate)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveForecast():
+        return $default(_that.forecast, _that.accrualRate);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(LeaveBalance forecast, Map<String, double> accrualRate)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _LeaveForecast() when $default != null:
+        return $default(_that.forecast, _that.accrualRate);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$LeaveForecastImpl implements _LeaveForecast {
-  const _$LeaveForecastImpl(
+class _LeaveForecast implements LeaveForecast {
+  const _LeaveForecast(
       {required this.forecast, required final Map<String, double> accrualRate})
       : _accrualRate = accrualRate;
-
-  factory _$LeaveForecastImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaveForecastImplFromJson(json);
+  factory _LeaveForecast.fromJson(Map<String, dynamic> json) =>
+      _$LeaveForecastFromJson(json);
 
   @override
   final LeaveBalance forecast;
@@ -1519,55 +2606,94 @@ class _$LeaveForecastImpl implements _LeaveForecast {
     return EqualUnmodifiableMapView(_accrualRate);
   }
 
+  /// Create a copy of LeaveForecast
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'LeaveForecast(forecast: $forecast, accrualRate: $accrualRate)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LeaveForecastCopyWith<_LeaveForecast> get copyWith =>
+      __$LeaveForecastCopyWithImpl<_LeaveForecast>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$LeaveForecastToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LeaveForecastImpl &&
+            other is _LeaveForecast &&
             (identical(other.forecast, forecast) ||
                 other.forecast == forecast) &&
             const DeepCollectionEquality()
                 .equals(other._accrualRate, _accrualRate));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, forecast, const DeepCollectionEquality().hash(_accrualRate));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$LeaveForecastImplCopyWith<_$LeaveForecastImpl> get copyWith =>
-      __$$LeaveForecastImplCopyWithImpl<_$LeaveForecastImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LeaveForecastImplToJson(
-      this,
-    );
+  String toString() {
+    return 'LeaveForecast(forecast: $forecast, accrualRate: $accrualRate)';
   }
 }
 
-abstract class _LeaveForecast implements LeaveForecast {
-  const factory _LeaveForecast(
-      {required final LeaveBalance forecast,
-      required final Map<String, double> accrualRate}) = _$LeaveForecastImpl;
+/// @nodoc
+abstract mixin class _$LeaveForecastCopyWith<$Res>
+    implements $LeaveForecastCopyWith<$Res> {
+  factory _$LeaveForecastCopyWith(
+          _LeaveForecast value, $Res Function(_LeaveForecast) _then) =
+      __$LeaveForecastCopyWithImpl;
+  @override
+  @useResult
+  $Res call({LeaveBalance forecast, Map<String, double> accrualRate});
 
-  factory _LeaveForecast.fromJson(Map<String, dynamic> json) =
-      _$LeaveForecastImpl.fromJson;
-
   @override
-  LeaveBalance get forecast;
-  @override
-  Map<String, double> get accrualRate;
-  @override
-  @JsonKey(ignore: true)
-  _$$LeaveForecastImplCopyWith<_$LeaveForecastImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $LeaveBalanceCopyWith<$Res> get forecast;
 }
+
+/// @nodoc
+class __$LeaveForecastCopyWithImpl<$Res>
+    implements _$LeaveForecastCopyWith<$Res> {
+  __$LeaveForecastCopyWithImpl(this._self, this._then);
+
+  final _LeaveForecast _self;
+  final $Res Function(_LeaveForecast) _then;
+
+  /// Create a copy of LeaveForecast
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? forecast = null,
+    Object? accrualRate = null,
+  }) {
+    return _then(_LeaveForecast(
+      forecast: null == forecast
+          ? _self.forecast
+          : forecast // ignore: cast_nullable_to_non_nullable
+              as LeaveBalance,
+      accrualRate: null == accrualRate
+          ? _self._accrualRate
+          : accrualRate // ignore: cast_nullable_to_non_nullable
+              as Map<String, double>,
+    ));
+  }
+
+  /// Create a copy of LeaveForecast
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LeaveBalanceCopyWith<$Res> get forecast {
+    return $LeaveBalanceCopyWith<$Res>(_self.forecast, (value) {
+      return _then(_self.copyWith(forecast: value));
+    });
+  }
+}
+
+// dart format on

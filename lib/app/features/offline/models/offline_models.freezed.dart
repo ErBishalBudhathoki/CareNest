@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,115 +9,73 @@ part of 'offline_models.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-OfflineQueueItem _$OfflineQueueItemFromJson(Map<String, dynamic> json) {
-  return _OfflineQueueItem.fromJson(json);
-}
 
 /// @nodoc
 mixin _$OfflineQueueItem {
-  String get queueId => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get dataType => throw _privateConstructorUsedError;
-  String get action => throw _privateConstructorUsedError;
-  Map<String, dynamic> get payload => throw _privateConstructorUsedError;
-  String get timestamp => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  int get retryCount => throw _privateConstructorUsedError;
+  String get queueId;
+  String get userId;
+  String get dataType;
+  String get action;
+  Map<String, dynamic> get payload;
+  String get timestamp;
+  String get status;
+  int get retryCount;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $OfflineQueueItemCopyWith<OfflineQueueItem> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OfflineQueueItemCopyWith<$Res> {
-  factory $OfflineQueueItemCopyWith(
-          OfflineQueueItem value, $Res Function(OfflineQueueItem) then) =
-      _$OfflineQueueItemCopyWithImpl<$Res, OfflineQueueItem>;
-  @useResult
-  $Res call(
-      {String queueId,
-      String userId,
-      String dataType,
-      String action,
-      Map<String, dynamic> payload,
-      String timestamp,
-      String status,
-      int retryCount});
-}
-
-/// @nodoc
-class _$OfflineQueueItemCopyWithImpl<$Res, $Val extends OfflineQueueItem>
-    implements $OfflineQueueItemCopyWith<$Res> {
-  _$OfflineQueueItemCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of OfflineQueueItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $OfflineQueueItemCopyWith<OfflineQueueItem> get copyWith =>
+      _$OfflineQueueItemCopyWithImpl<OfflineQueueItem>(
+          this as OfflineQueueItem, _$identity);
+
+  /// Serializes this OfflineQueueItem to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? queueId = null,
-    Object? userId = null,
-    Object? dataType = null,
-    Object? action = null,
-    Object? payload = null,
-    Object? timestamp = null,
-    Object? status = null,
-    Object? retryCount = null,
-  }) {
-    return _then(_value.copyWith(
-      queueId: null == queueId
-          ? _value.queueId
-          : queueId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      dataType: null == dataType
-          ? _value.dataType
-          : dataType // ignore: cast_nullable_to_non_nullable
-              as String,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      payload: null == payload
-          ? _value.payload
-          : payload // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      retryCount: null == retryCount
-          ? _value.retryCount
-          : retryCount // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OfflineQueueItem &&
+            (identical(other.queueId, queueId) || other.queueId == queueId) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.dataType, dataType) ||
+                other.dataType == dataType) &&
+            (identical(other.action, action) || other.action == action) &&
+            const DeepCollectionEquality().equals(other.payload, payload) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.retryCount, retryCount) ||
+                other.retryCount == retryCount));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      queueId,
+      userId,
+      dataType,
+      action,
+      const DeepCollectionEquality().hash(payload),
+      timestamp,
+      status,
+      retryCount);
+
+  @override
+  String toString() {
+    return 'OfflineQueueItem(queueId: $queueId, userId: $userId, dataType: $dataType, action: $action, payload: $payload, timestamp: $timestamp, status: $status, retryCount: $retryCount)';
   }
 }
 
 /// @nodoc
-abstract class _$$OfflineQueueItemImplCopyWith<$Res>
-    implements $OfflineQueueItemCopyWith<$Res> {
-  factory _$$OfflineQueueItemImplCopyWith(_$OfflineQueueItemImpl value,
-          $Res Function(_$OfflineQueueItemImpl) then) =
-      __$$OfflineQueueItemImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $OfflineQueueItemCopyWith<$Res> {
+  factory $OfflineQueueItemCopyWith(
+          OfflineQueueItem value, $Res Function(OfflineQueueItem) _then) =
+      _$OfflineQueueItemCopyWithImpl;
   @useResult
   $Res call(
       {String queueId,
@@ -131,13 +89,15 @@ abstract class _$$OfflineQueueItemImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$OfflineQueueItemImplCopyWithImpl<$Res>
-    extends _$OfflineQueueItemCopyWithImpl<$Res, _$OfflineQueueItemImpl>
-    implements _$$OfflineQueueItemImplCopyWith<$Res> {
-  __$$OfflineQueueItemImplCopyWithImpl(_$OfflineQueueItemImpl _value,
-      $Res Function(_$OfflineQueueItemImpl) _then)
-      : super(_value, _then);
+class _$OfflineQueueItemCopyWithImpl<$Res>
+    implements $OfflineQueueItemCopyWith<$Res> {
+  _$OfflineQueueItemCopyWithImpl(this._self, this._then);
 
+  final OfflineQueueItem _self;
+  final $Res Function(OfflineQueueItem) _then;
+
+  /// Create a copy of OfflineQueueItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -150,47 +110,255 @@ class __$$OfflineQueueItemImplCopyWithImpl<$Res>
     Object? status = null,
     Object? retryCount = null,
   }) {
-    return _then(_$OfflineQueueItemImpl(
+    return _then(_self.copyWith(
       queueId: null == queueId
-          ? _value.queueId
+          ? _self.queueId
           : queueId // ignore: cast_nullable_to_non_nullable
               as String,
       userId: null == userId
-          ? _value.userId
+          ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       dataType: null == dataType
-          ? _value.dataType
+          ? _self.dataType
           : dataType // ignore: cast_nullable_to_non_nullable
               as String,
       action: null == action
-          ? _value.action
+          ? _self.action
           : action // ignore: cast_nullable_to_non_nullable
               as String,
       payload: null == payload
-          ? _value._payload
+          ? _self.payload
           : payload // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>,
       timestamp: null == timestamp
-          ? _value.timestamp
+          ? _self.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
-          ? _value.status
+          ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
       retryCount: null == retryCount
-          ? _value.retryCount
+          ? _self.retryCount
           : retryCount // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [OfflineQueueItem].
+extension OfflineQueueItemPatterns on OfflineQueueItem {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_OfflineQueueItem value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineQueueItem() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_OfflineQueueItem value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineQueueItem():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_OfflineQueueItem value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineQueueItem() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String queueId,
+            String userId,
+            String dataType,
+            String action,
+            Map<String, dynamic> payload,
+            String timestamp,
+            String status,
+            int retryCount)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineQueueItem() when $default != null:
+        return $default(
+            _that.queueId,
+            _that.userId,
+            _that.dataType,
+            _that.action,
+            _that.payload,
+            _that.timestamp,
+            _that.status,
+            _that.retryCount);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String queueId,
+            String userId,
+            String dataType,
+            String action,
+            Map<String, dynamic> payload,
+            String timestamp,
+            String status,
+            int retryCount)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineQueueItem():
+        return $default(
+            _that.queueId,
+            _that.userId,
+            _that.dataType,
+            _that.action,
+            _that.payload,
+            _that.timestamp,
+            _that.status,
+            _that.retryCount);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String queueId,
+            String userId,
+            String dataType,
+            String action,
+            Map<String, dynamic> payload,
+            String timestamp,
+            String status,
+            int retryCount)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineQueueItem() when $default != null:
+        return $default(
+            _that.queueId,
+            _that.userId,
+            _that.dataType,
+            _that.action,
+            _that.payload,
+            _that.timestamp,
+            _that.status,
+            _that.retryCount);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$OfflineQueueItemImpl implements _OfflineQueueItem {
-  const _$OfflineQueueItemImpl(
+class _OfflineQueueItem implements OfflineQueueItem {
+  const _OfflineQueueItem(
       {required this.queueId,
       required this.userId,
       required this.dataType,
@@ -200,9 +368,8 @@ class _$OfflineQueueItemImpl implements _OfflineQueueItem {
       required this.status,
       required this.retryCount})
       : _payload = payload;
-
-  factory _$OfflineQueueItemImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfflineQueueItemImplFromJson(json);
+  factory _OfflineQueueItem.fromJson(Map<String, dynamic> json) =>
+      _$OfflineQueueItemFromJson(json);
 
   @override
   final String queueId;
@@ -227,16 +394,26 @@ class _$OfflineQueueItemImpl implements _OfflineQueueItem {
   @override
   final int retryCount;
 
+  /// Create a copy of OfflineQueueItem
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OfflineQueueItem(queueId: $queueId, userId: $userId, dataType: $dataType, action: $action, payload: $payload, timestamp: $timestamp, status: $status, retryCount: $retryCount)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OfflineQueueItemCopyWith<_OfflineQueueItem> get copyWith =>
+      __$OfflineQueueItemCopyWithImpl<_OfflineQueueItem>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OfflineQueueItemToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OfflineQueueItemImpl &&
+            other is _OfflineQueueItem &&
             (identical(other.queueId, queueId) || other.queueId == queueId) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.dataType, dataType) ||
@@ -250,7 +427,7 @@ class _$OfflineQueueItemImpl implements _OfflineQueueItem {
                 other.retryCount == retryCount));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -263,140 +440,138 @@ class _$OfflineQueueItemImpl implements _OfflineQueueItem {
       status,
       retryCount);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OfflineQueueItemImplCopyWith<_$OfflineQueueItemImpl> get copyWith =>
-      __$$OfflineQueueItemImplCopyWithImpl<_$OfflineQueueItemImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfflineQueueItemImplToJson(
-      this,
-    );
+  String toString() {
+    return 'OfflineQueueItem(queueId: $queueId, userId: $userId, dataType: $dataType, action: $action, payload: $payload, timestamp: $timestamp, status: $status, retryCount: $retryCount)';
   }
 }
 
-abstract class _OfflineQueueItem implements OfflineQueueItem {
-  const factory _OfflineQueueItem(
-      {required final String queueId,
-      required final String userId,
-      required final String dataType,
-      required final String action,
-      required final Map<String, dynamic> payload,
-      required final String timestamp,
-      required final String status,
-      required final int retryCount}) = _$OfflineQueueItemImpl;
-
-  factory _OfflineQueueItem.fromJson(Map<String, dynamic> json) =
-      _$OfflineQueueItemImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$OfflineQueueItemCopyWith<$Res>
+    implements $OfflineQueueItemCopyWith<$Res> {
+  factory _$OfflineQueueItemCopyWith(
+          _OfflineQueueItem value, $Res Function(_OfflineQueueItem) _then) =
+      __$OfflineQueueItemCopyWithImpl;
   @override
-  String get queueId;
-  @override
-  String get userId;
-  @override
-  String get dataType;
-  @override
-  String get action;
-  @override
-  Map<String, dynamic> get payload;
-  @override
-  String get timestamp;
-  @override
-  String get status;
-  @override
-  int get retryCount;
-  @override
-  @JsonKey(ignore: true)
-  _$$OfflineQueueItemImplCopyWith<_$OfflineQueueItemImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String queueId,
+      String userId,
+      String dataType,
+      String action,
+      Map<String, dynamic> payload,
+      String timestamp,
+      String status,
+      int retryCount});
 }
 
-SyncStatus _$SyncStatusFromJson(Map<String, dynamic> json) {
-  return _SyncStatus.fromJson(json);
+/// @nodoc
+class __$OfflineQueueItemCopyWithImpl<$Res>
+    implements _$OfflineQueueItemCopyWith<$Res> {
+  __$OfflineQueueItemCopyWithImpl(this._self, this._then);
+
+  final _OfflineQueueItem _self;
+  final $Res Function(_OfflineQueueItem) _then;
+
+  /// Create a copy of OfflineQueueItem
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? queueId = null,
+    Object? userId = null,
+    Object? dataType = null,
+    Object? action = null,
+    Object? payload = null,
+    Object? timestamp = null,
+    Object? status = null,
+    Object? retryCount = null,
+  }) {
+    return _then(_OfflineQueueItem(
+      queueId: null == queueId
+          ? _self.queueId
+          : queueId // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      dataType: null == dataType
+          ? _self.dataType
+          : dataType // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _self.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      payload: null == payload
+          ? _self._payload
+          : payload // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      timestamp: null == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      retryCount: null == retryCount
+          ? _self.retryCount
+          : retryCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$SyncStatus {
-  int get total => throw _privateConstructorUsedError;
-  int get successful => throw _privateConstructorUsedError;
-  int get failed => throw _privateConstructorUsedError;
-  int get conflicts => throw _privateConstructorUsedError;
-  List<SyncItemResult> get items => throw _privateConstructorUsedError;
+  int get total;
+  int get successful;
+  int get failed;
+  int get conflicts;
+  List<SyncItemResult> get items;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $SyncStatusCopyWith<SyncStatus> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $SyncStatusCopyWith<$Res> {
-  factory $SyncStatusCopyWith(
-          SyncStatus value, $Res Function(SyncStatus) then) =
-      _$SyncStatusCopyWithImpl<$Res, SyncStatus>;
-  @useResult
-  $Res call(
-      {int total,
-      int successful,
-      int failed,
-      int conflicts,
-      List<SyncItemResult> items});
-}
-
-/// @nodoc
-class _$SyncStatusCopyWithImpl<$Res, $Val extends SyncStatus>
-    implements $SyncStatusCopyWith<$Res> {
-  _$SyncStatusCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of SyncStatus
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $SyncStatusCopyWith<SyncStatus> get copyWith =>
+      _$SyncStatusCopyWithImpl<SyncStatus>(this as SyncStatus, _$identity);
+
+  /// Serializes this SyncStatus to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? total = null,
-    Object? successful = null,
-    Object? failed = null,
-    Object? conflicts = null,
-    Object? items = null,
-  }) {
-    return _then(_value.copyWith(
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as int,
-      successful: null == successful
-          ? _value.successful
-          : successful // ignore: cast_nullable_to_non_nullable
-              as int,
-      failed: null == failed
-          ? _value.failed
-          : failed // ignore: cast_nullable_to_non_nullable
-              as int,
-      conflicts: null == conflicts
-          ? _value.conflicts
-          : conflicts // ignore: cast_nullable_to_non_nullable
-              as int,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<SyncItemResult>,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SyncStatus &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.successful, successful) ||
+                other.successful == successful) &&
+            (identical(other.failed, failed) || other.failed == failed) &&
+            (identical(other.conflicts, conflicts) ||
+                other.conflicts == conflicts) &&
+            const DeepCollectionEquality().equals(other.items, items));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, total, successful, failed,
+      conflicts, const DeepCollectionEquality().hash(items));
+
+  @override
+  String toString() {
+    return 'SyncStatus(total: $total, successful: $successful, failed: $failed, conflicts: $conflicts, items: $items)';
   }
 }
 
 /// @nodoc
-abstract class _$$SyncStatusImplCopyWith<$Res>
-    implements $SyncStatusCopyWith<$Res> {
-  factory _$$SyncStatusImplCopyWith(
-          _$SyncStatusImpl value, $Res Function(_$SyncStatusImpl) then) =
-      __$$SyncStatusImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $SyncStatusCopyWith<$Res> {
+  factory $SyncStatusCopyWith(
+          SyncStatus value, $Res Function(SyncStatus) _then) =
+      _$SyncStatusCopyWithImpl;
   @useResult
   $Res call(
       {int total,
@@ -407,13 +582,14 @@ abstract class _$$SyncStatusImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$SyncStatusImplCopyWithImpl<$Res>
-    extends _$SyncStatusCopyWithImpl<$Res, _$SyncStatusImpl>
-    implements _$$SyncStatusImplCopyWith<$Res> {
-  __$$SyncStatusImplCopyWithImpl(
-      _$SyncStatusImpl _value, $Res Function(_$SyncStatusImpl) _then)
-      : super(_value, _then);
+class _$SyncStatusCopyWithImpl<$Res> implements $SyncStatusCopyWith<$Res> {
+  _$SyncStatusCopyWithImpl(this._self, this._then);
 
+  final SyncStatus _self;
+  final $Res Function(SyncStatus) _then;
+
+  /// Create a copy of SyncStatus
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -423,44 +599,209 @@ class __$$SyncStatusImplCopyWithImpl<$Res>
     Object? conflicts = null,
     Object? items = null,
   }) {
-    return _then(_$SyncStatusImpl(
+    return _then(_self.copyWith(
       total: null == total
-          ? _value.total
+          ? _self.total
           : total // ignore: cast_nullable_to_non_nullable
               as int,
       successful: null == successful
-          ? _value.successful
+          ? _self.successful
           : successful // ignore: cast_nullable_to_non_nullable
               as int,
       failed: null == failed
-          ? _value.failed
+          ? _self.failed
           : failed // ignore: cast_nullable_to_non_nullable
               as int,
       conflicts: null == conflicts
-          ? _value.conflicts
+          ? _self.conflicts
           : conflicts // ignore: cast_nullable_to_non_nullable
               as int,
       items: null == items
-          ? _value._items
+          ? _self.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<SyncItemResult>,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [SyncStatus].
+extension SyncStatusPatterns on SyncStatus {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_SyncStatus value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SyncStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_SyncStatus value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncStatus():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_SyncStatus value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncStatus() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(int total, int successful, int failed, int conflicts,
+            List<SyncItemResult> items)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SyncStatus() when $default != null:
+        return $default(_that.total, _that.successful, _that.failed,
+            _that.conflicts, _that.items);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(int total, int successful, int failed, int conflicts,
+            List<SyncItemResult> items)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncStatus():
+        return $default(_that.total, _that.successful, _that.failed,
+            _that.conflicts, _that.items);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(int total, int successful, int failed, int conflicts,
+            List<SyncItemResult> items)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncStatus() when $default != null:
+        return $default(_that.total, _that.successful, _that.failed,
+            _that.conflicts, _that.items);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$SyncStatusImpl implements _SyncStatus {
-  const _$SyncStatusImpl(
+class _SyncStatus implements SyncStatus {
+  const _SyncStatus(
       {required this.total,
       required this.successful,
       required this.failed,
       required this.conflicts,
       required final List<SyncItemResult> items})
       : _items = items;
-
-  factory _$SyncStatusImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SyncStatusImplFromJson(json);
+  factory _SyncStatus.fromJson(Map<String, dynamic> json) =>
+      _$SyncStatusFromJson(json);
 
   @override
   final int total;
@@ -478,16 +819,26 @@ class _$SyncStatusImpl implements _SyncStatus {
     return EqualUnmodifiableListView(_items);
   }
 
+  /// Create a copy of SyncStatus
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'SyncStatus(total: $total, successful: $successful, failed: $failed, conflicts: $conflicts, items: $items)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$SyncStatusCopyWith<_SyncStatus> get copyWith =>
+      __$SyncStatusCopyWithImpl<_SyncStatus>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$SyncStatusToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SyncStatusImpl &&
+            other is _SyncStatus &&
             (identical(other.total, total) || other.total == total) &&
             (identical(other.successful, successful) ||
                 other.successful == successful) &&
@@ -497,215 +848,371 @@ class _$SyncStatusImpl implements _SyncStatus {
             const DeepCollectionEquality().equals(other._items, _items));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, total, successful, failed,
       conflicts, const DeepCollectionEquality().hash(_items));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$SyncStatusImplCopyWith<_$SyncStatusImpl> get copyWith =>
-      __$$SyncStatusImplCopyWithImpl<_$SyncStatusImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SyncStatusImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _SyncStatus implements SyncStatus {
-  const factory _SyncStatus(
-      {required final int total,
-      required final int successful,
-      required final int failed,
-      required final int conflicts,
-      required final List<SyncItemResult> items}) = _$SyncStatusImpl;
-
-  factory _SyncStatus.fromJson(Map<String, dynamic> json) =
-      _$SyncStatusImpl.fromJson;
-
-  @override
-  int get total;
-  @override
-  int get successful;
-  @override
-  int get failed;
-  @override
-  int get conflicts;
-  @override
-  List<SyncItemResult> get items;
-  @override
-  @JsonKey(ignore: true)
-  _$$SyncStatusImplCopyWith<_$SyncStatusImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-SyncItemResult _$SyncItemResultFromJson(Map<String, dynamic> json) {
-  return _SyncItemResult.fromJson(json);
-}
-
-/// @nodoc
-mixin _$SyncItemResult {
-  String get queueId => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  String? get reason => throw _privateConstructorUsedError;
-  String? get syncedAt => throw _privateConstructorUsedError;
-  ConflictData? get conflictData => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $SyncItemResultCopyWith<SyncItemResult> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $SyncItemResultCopyWith<$Res> {
-  factory $SyncItemResultCopyWith(
-          SyncItemResult value, $Res Function(SyncItemResult) then) =
-      _$SyncItemResultCopyWithImpl<$Res, SyncItemResult>;
-  @useResult
-  $Res call(
-      {String queueId,
-      String status,
-      String? reason,
-      String? syncedAt,
-      ConflictData? conflictData});
-
-  $ConflictDataCopyWith<$Res>? get conflictData;
-}
-
-/// @nodoc
-class _$SyncItemResultCopyWithImpl<$Res, $Val extends SyncItemResult>
-    implements $SyncItemResultCopyWith<$Res> {
-  _$SyncItemResultCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? queueId = null,
-    Object? status = null,
-    Object? reason = freezed,
-    Object? syncedAt = freezed,
-    Object? conflictData = freezed,
-  }) {
-    return _then(_value.copyWith(
-      queueId: null == queueId
-          ? _value.queueId
-          : queueId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      syncedAt: freezed == syncedAt
-          ? _value.syncedAt
-          : syncedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
-      conflictData: freezed == conflictData
-          ? _value.conflictData
-          : conflictData // ignore: cast_nullable_to_non_nullable
-              as ConflictData?,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $ConflictDataCopyWith<$Res>? get conflictData {
-    if (_value.conflictData == null) {
-      return null;
-    }
-
-    return $ConflictDataCopyWith<$Res>(_value.conflictData!, (value) {
-      return _then(_value.copyWith(conflictData: value) as $Val);
-    });
+  String toString() {
+    return 'SyncStatus(total: $total, successful: $successful, failed: $failed, conflicts: $conflicts, items: $items)';
   }
 }
 
 /// @nodoc
-abstract class _$$SyncItemResultImplCopyWith<$Res>
-    implements $SyncItemResultCopyWith<$Res> {
-  factory _$$SyncItemResultImplCopyWith(_$SyncItemResultImpl value,
-          $Res Function(_$SyncItemResultImpl) then) =
-      __$$SyncItemResultImplCopyWithImpl<$Res>;
+abstract mixin class _$SyncStatusCopyWith<$Res>
+    implements $SyncStatusCopyWith<$Res> {
+  factory _$SyncStatusCopyWith(
+          _SyncStatus value, $Res Function(_SyncStatus) _then) =
+      __$SyncStatusCopyWithImpl;
   @override
   @useResult
   $Res call(
-      {String queueId,
-      String status,
-      String? reason,
-      String? syncedAt,
-      ConflictData? conflictData});
-
-  @override
-  $ConflictDataCopyWith<$Res>? get conflictData;
+      {int total,
+      int successful,
+      int failed,
+      int conflicts,
+      List<SyncItemResult> items});
 }
 
 /// @nodoc
-class __$$SyncItemResultImplCopyWithImpl<$Res>
-    extends _$SyncItemResultCopyWithImpl<$Res, _$SyncItemResultImpl>
-    implements _$$SyncItemResultImplCopyWith<$Res> {
-  __$$SyncItemResultImplCopyWithImpl(
-      _$SyncItemResultImpl _value, $Res Function(_$SyncItemResultImpl) _then)
-      : super(_value, _then);
+class __$SyncStatusCopyWithImpl<$Res> implements _$SyncStatusCopyWith<$Res> {
+  __$SyncStatusCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _SyncStatus _self;
+  final $Res Function(_SyncStatus) _then;
+
+  /// Create a copy of SyncStatus
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? queueId = null,
-    Object? status = null,
-    Object? reason = freezed,
-    Object? syncedAt = freezed,
-    Object? conflictData = freezed,
+    Object? total = null,
+    Object? successful = null,
+    Object? failed = null,
+    Object? conflicts = null,
+    Object? items = null,
   }) {
-    return _then(_$SyncItemResultImpl(
-      queueId: null == queueId
-          ? _value.queueId
-          : queueId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      syncedAt: freezed == syncedAt
-          ? _value.syncedAt
-          : syncedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
-      conflictData: freezed == conflictData
-          ? _value.conflictData
-          : conflictData // ignore: cast_nullable_to_non_nullable
-              as ConflictData?,
+    return _then(_SyncStatus(
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      successful: null == successful
+          ? _self.successful
+          : successful // ignore: cast_nullable_to_non_nullable
+              as int,
+      failed: null == failed
+          ? _self.failed
+          : failed // ignore: cast_nullable_to_non_nullable
+              as int,
+      conflicts: null == conflicts
+          ? _self.conflicts
+          : conflicts // ignore: cast_nullable_to_non_nullable
+              as int,
+      items: null == items
+          ? _self._items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<SyncItemResult>,
     ));
   }
 }
 
 /// @nodoc
+mixin _$SyncItemResult {
+  String get queueId;
+  String get status;
+  String? get reason;
+  String? get syncedAt;
+  ConflictData? get conflictData;
+
+  /// Create a copy of SyncItemResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $SyncItemResultCopyWith<SyncItemResult> get copyWith =>
+      _$SyncItemResultCopyWithImpl<SyncItemResult>(
+          this as SyncItemResult, _$identity);
+
+  /// Serializes this SyncItemResult to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SyncItemResult &&
+            (identical(other.queueId, queueId) || other.queueId == queueId) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.reason, reason) || other.reason == reason) &&
+            (identical(other.syncedAt, syncedAt) ||
+                other.syncedAt == syncedAt) &&
+            (identical(other.conflictData, conflictData) ||
+                other.conflictData == conflictData));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, queueId, status, reason, syncedAt, conflictData);
+
+  @override
+  String toString() {
+    return 'SyncItemResult(queueId: $queueId, status: $status, reason: $reason, syncedAt: $syncedAt, conflictData: $conflictData)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $SyncItemResultCopyWith<$Res> {
+  factory $SyncItemResultCopyWith(
+          SyncItemResult value, $Res Function(SyncItemResult) _then) =
+      _$SyncItemResultCopyWithImpl;
+  @useResult
+  $Res call(
+      {String queueId,
+      String status,
+      String? reason,
+      String? syncedAt,
+      ConflictData? conflictData});
+
+  $ConflictDataCopyWith<$Res>? get conflictData;
+}
+
+/// @nodoc
+class _$SyncItemResultCopyWithImpl<$Res>
+    implements $SyncItemResultCopyWith<$Res> {
+  _$SyncItemResultCopyWithImpl(this._self, this._then);
+
+  final SyncItemResult _self;
+  final $Res Function(SyncItemResult) _then;
+
+  /// Create a copy of SyncItemResult
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? queueId = null,
+    Object? status = null,
+    Object? reason = freezed,
+    Object? syncedAt = freezed,
+    Object? conflictData = freezed,
+  }) {
+    return _then(_self.copyWith(
+      queueId: null == queueId
+          ? _self.queueId
+          : queueId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: freezed == reason
+          ? _self.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      syncedAt: freezed == syncedAt
+          ? _self.syncedAt
+          : syncedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      conflictData: freezed == conflictData
+          ? _self.conflictData
+          : conflictData // ignore: cast_nullable_to_non_nullable
+              as ConflictData?,
+    ));
+  }
+
+  /// Create a copy of SyncItemResult
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ConflictDataCopyWith<$Res>? get conflictData {
+    if (_self.conflictData == null) {
+      return null;
+    }
+
+    return $ConflictDataCopyWith<$Res>(_self.conflictData!, (value) {
+      return _then(_self.copyWith(conflictData: value));
+    });
+  }
+}
+
+/// Adds pattern-matching-related methods to [SyncItemResult].
+extension SyncItemResultPatterns on SyncItemResult {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_SyncItemResult value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SyncItemResult() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_SyncItemResult value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncItemResult():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_SyncItemResult value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncItemResult() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String queueId, String status, String? reason,
+            String? syncedAt, ConflictData? conflictData)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SyncItemResult() when $default != null:
+        return $default(_that.queueId, _that.status, _that.reason,
+            _that.syncedAt, _that.conflictData);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String queueId, String status, String? reason,
+            String? syncedAt, ConflictData? conflictData)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncItemResult():
+        return $default(_that.queueId, _that.status, _that.reason,
+            _that.syncedAt, _that.conflictData);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String queueId, String status, String? reason,
+            String? syncedAt, ConflictData? conflictData)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _SyncItemResult() when $default != null:
+        return $default(_that.queueId, _that.status, _that.reason,
+            _that.syncedAt, _that.conflictData);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$SyncItemResultImpl implements _SyncItemResult {
-  const _$SyncItemResultImpl(
+class _SyncItemResult implements SyncItemResult {
+  const _SyncItemResult(
       {required this.queueId,
       required this.status,
       this.reason,
       this.syncedAt,
       this.conflictData});
-
-  factory _$SyncItemResultImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SyncItemResultImplFromJson(json);
+  factory _SyncItemResult.fromJson(Map<String, dynamic> json) =>
+      _$SyncItemResultFromJson(json);
 
   @override
   final String queueId;
@@ -718,16 +1225,26 @@ class _$SyncItemResultImpl implements _SyncItemResult {
   @override
   final ConflictData? conflictData;
 
+  /// Create a copy of SyncItemResult
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'SyncItemResult(queueId: $queueId, status: $status, reason: $reason, syncedAt: $syncedAt, conflictData: $conflictData)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$SyncItemResultCopyWith<_SyncItemResult> get copyWith =>
+      __$SyncItemResultCopyWithImpl<_SyncItemResult>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$SyncItemResultToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SyncItemResultImpl &&
+            other is _SyncItemResult &&
             (identical(other.queueId, queueId) || other.queueId == queueId) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.reason, reason) || other.reason == reason) &&
@@ -737,136 +1254,151 @@ class _$SyncItemResultImpl implements _SyncItemResult {
                 other.conflictData == conflictData));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, queueId, status, reason, syncedAt, conflictData);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$SyncItemResultImplCopyWith<_$SyncItemResultImpl> get copyWith =>
-      __$$SyncItemResultImplCopyWithImpl<_$SyncItemResultImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SyncItemResultImplToJson(
-      this,
-    );
+  String toString() {
+    return 'SyncItemResult(queueId: $queueId, status: $status, reason: $reason, syncedAt: $syncedAt, conflictData: $conflictData)';
   }
 }
 
-abstract class _SyncItemResult implements SyncItemResult {
-  const factory _SyncItemResult(
-      {required final String queueId,
-      required final String status,
-      final String? reason,
-      final String? syncedAt,
-      final ConflictData? conflictData}) = _$SyncItemResultImpl;
+/// @nodoc
+abstract mixin class _$SyncItemResultCopyWith<$Res>
+    implements $SyncItemResultCopyWith<$Res> {
+  factory _$SyncItemResultCopyWith(
+          _SyncItemResult value, $Res Function(_SyncItemResult) _then) =
+      __$SyncItemResultCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String queueId,
+      String status,
+      String? reason,
+      String? syncedAt,
+      ConflictData? conflictData});
 
-  factory _SyncItemResult.fromJson(Map<String, dynamic> json) =
-      _$SyncItemResultImpl.fromJson;
-
   @override
-  String get queueId;
-  @override
-  String get status;
-  @override
-  String? get reason;
-  @override
-  String? get syncedAt;
-  @override
-  ConflictData? get conflictData;
-  @override
-  @JsonKey(ignore: true)
-  _$$SyncItemResultImplCopyWith<_$SyncItemResultImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $ConflictDataCopyWith<$Res>? get conflictData;
 }
 
-ConflictData _$ConflictDataFromJson(Map<String, dynamic> json) {
-  return _ConflictData.fromJson(json);
+/// @nodoc
+class __$SyncItemResultCopyWithImpl<$Res>
+    implements _$SyncItemResultCopyWith<$Res> {
+  __$SyncItemResultCopyWithImpl(this._self, this._then);
+
+  final _SyncItemResult _self;
+  final $Res Function(_SyncItemResult) _then;
+
+  /// Create a copy of SyncItemResult
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? queueId = null,
+    Object? status = null,
+    Object? reason = freezed,
+    Object? syncedAt = freezed,
+    Object? conflictData = freezed,
+  }) {
+    return _then(_SyncItemResult(
+      queueId: null == queueId
+          ? _self.queueId
+          : queueId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: freezed == reason
+          ? _self.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      syncedAt: freezed == syncedAt
+          ? _self.syncedAt
+          : syncedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      conflictData: freezed == conflictData
+          ? _self.conflictData
+          : conflictData // ignore: cast_nullable_to_non_nullable
+              as ConflictData?,
+    ));
+  }
+
+  /// Create a copy of SyncItemResult
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ConflictDataCopyWith<$Res>? get conflictData {
+    if (_self.conflictData == null) {
+      return null;
+    }
+
+    return $ConflictDataCopyWith<$Res>(_self.conflictData!, (value) {
+      return _then(_self.copyWith(conflictData: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$ConflictData {
-  String get conflictType => throw _privateConstructorUsedError;
-  int get localVersion => throw _privateConstructorUsedError;
-  int get serverVersion => throw _privateConstructorUsedError;
-  List<String> get conflictFields => throw _privateConstructorUsedError;
-  String get resolution => throw _privateConstructorUsedError;
+  String get conflictType;
+  int get localVersion;
+  int get serverVersion;
+  List<String> get conflictFields;
+  String get resolution;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $ConflictDataCopyWith<ConflictData> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ConflictDataCopyWith<$Res> {
-  factory $ConflictDataCopyWith(
-          ConflictData value, $Res Function(ConflictData) then) =
-      _$ConflictDataCopyWithImpl<$Res, ConflictData>;
-  @useResult
-  $Res call(
-      {String conflictType,
-      int localVersion,
-      int serverVersion,
-      List<String> conflictFields,
-      String resolution});
-}
-
-/// @nodoc
-class _$ConflictDataCopyWithImpl<$Res, $Val extends ConflictData>
-    implements $ConflictDataCopyWith<$Res> {
-  _$ConflictDataCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of ConflictData
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $ConflictDataCopyWith<ConflictData> get copyWith =>
+      _$ConflictDataCopyWithImpl<ConflictData>(
+          this as ConflictData, _$identity);
+
+  /// Serializes this ConflictData to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? conflictType = null,
-    Object? localVersion = null,
-    Object? serverVersion = null,
-    Object? conflictFields = null,
-    Object? resolution = null,
-  }) {
-    return _then(_value.copyWith(
-      conflictType: null == conflictType
-          ? _value.conflictType
-          : conflictType // ignore: cast_nullable_to_non_nullable
-              as String,
-      localVersion: null == localVersion
-          ? _value.localVersion
-          : localVersion // ignore: cast_nullable_to_non_nullable
-              as int,
-      serverVersion: null == serverVersion
-          ? _value.serverVersion
-          : serverVersion // ignore: cast_nullable_to_non_nullable
-              as int,
-      conflictFields: null == conflictFields
-          ? _value.conflictFields
-          : conflictFields // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      resolution: null == resolution
-          ? _value.resolution
-          : resolution // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ConflictData &&
+            (identical(other.conflictType, conflictType) ||
+                other.conflictType == conflictType) &&
+            (identical(other.localVersion, localVersion) ||
+                other.localVersion == localVersion) &&
+            (identical(other.serverVersion, serverVersion) ||
+                other.serverVersion == serverVersion) &&
+            const DeepCollectionEquality()
+                .equals(other.conflictFields, conflictFields) &&
+            (identical(other.resolution, resolution) ||
+                other.resolution == resolution));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      conflictType,
+      localVersion,
+      serverVersion,
+      const DeepCollectionEquality().hash(conflictFields),
+      resolution);
+
+  @override
+  String toString() {
+    return 'ConflictData(conflictType: $conflictType, localVersion: $localVersion, serverVersion: $serverVersion, conflictFields: $conflictFields, resolution: $resolution)';
   }
 }
 
 /// @nodoc
-abstract class _$$ConflictDataImplCopyWith<$Res>
-    implements $ConflictDataCopyWith<$Res> {
-  factory _$$ConflictDataImplCopyWith(
-          _$ConflictDataImpl value, $Res Function(_$ConflictDataImpl) then) =
-      __$$ConflictDataImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ConflictDataCopyWith<$Res> {
+  factory $ConflictDataCopyWith(
+          ConflictData value, $Res Function(ConflictData) _then) =
+      _$ConflictDataCopyWithImpl;
   @useResult
   $Res call(
       {String conflictType,
@@ -877,13 +1409,14 @@ abstract class _$$ConflictDataImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ConflictDataImplCopyWithImpl<$Res>
-    extends _$ConflictDataCopyWithImpl<$Res, _$ConflictDataImpl>
-    implements _$$ConflictDataImplCopyWith<$Res> {
-  __$$ConflictDataImplCopyWithImpl(
-      _$ConflictDataImpl _value, $Res Function(_$ConflictDataImpl) _then)
-      : super(_value, _then);
+class _$ConflictDataCopyWithImpl<$Res> implements $ConflictDataCopyWith<$Res> {
+  _$ConflictDataCopyWithImpl(this._self, this._then);
 
+  final ConflictData _self;
+  final $Res Function(ConflictData) _then;
+
+  /// Create a copy of ConflictData
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -893,44 +1426,209 @@ class __$$ConflictDataImplCopyWithImpl<$Res>
     Object? conflictFields = null,
     Object? resolution = null,
   }) {
-    return _then(_$ConflictDataImpl(
+    return _then(_self.copyWith(
       conflictType: null == conflictType
-          ? _value.conflictType
+          ? _self.conflictType
           : conflictType // ignore: cast_nullable_to_non_nullable
               as String,
       localVersion: null == localVersion
-          ? _value.localVersion
+          ? _self.localVersion
           : localVersion // ignore: cast_nullable_to_non_nullable
               as int,
       serverVersion: null == serverVersion
-          ? _value.serverVersion
+          ? _self.serverVersion
           : serverVersion // ignore: cast_nullable_to_non_nullable
               as int,
       conflictFields: null == conflictFields
-          ? _value._conflictFields
+          ? _self.conflictFields
           : conflictFields // ignore: cast_nullable_to_non_nullable
               as List<String>,
       resolution: null == resolution
-          ? _value.resolution
+          ? _self.resolution
           : resolution // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [ConflictData].
+extension ConflictDataPatterns on ConflictData {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ConflictData value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictData() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ConflictData value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictData():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ConflictData value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictData() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String conflictType, int localVersion, int serverVersion,
+            List<String> conflictFields, String resolution)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictData() when $default != null:
+        return $default(_that.conflictType, _that.localVersion,
+            _that.serverVersion, _that.conflictFields, _that.resolution);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String conflictType, int localVersion, int serverVersion,
+            List<String> conflictFields, String resolution)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictData():
+        return $default(_that.conflictType, _that.localVersion,
+            _that.serverVersion, _that.conflictFields, _that.resolution);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String conflictType, int localVersion, int serverVersion,
+            List<String> conflictFields, String resolution)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictData() when $default != null:
+        return $default(_that.conflictType, _that.localVersion,
+            _that.serverVersion, _that.conflictFields, _that.resolution);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$ConflictDataImpl implements _ConflictData {
-  const _$ConflictDataImpl(
+class _ConflictData implements ConflictData {
+  const _ConflictData(
       {required this.conflictType,
       required this.localVersion,
       required this.serverVersion,
       required final List<String> conflictFields,
       required this.resolution})
       : _conflictFields = conflictFields;
-
-  factory _$ConflictDataImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ConflictDataImplFromJson(json);
+  factory _ConflictData.fromJson(Map<String, dynamic> json) =>
+      _$ConflictDataFromJson(json);
 
   @override
   final String conflictType;
@@ -949,16 +1647,26 @@ class _$ConflictDataImpl implements _ConflictData {
   @override
   final String resolution;
 
+  /// Create a copy of ConflictData
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ConflictData(conflictType: $conflictType, localVersion: $localVersion, serverVersion: $serverVersion, conflictFields: $conflictFields, resolution: $resolution)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ConflictDataCopyWith<_ConflictData> get copyWith =>
+      __$ConflictDataCopyWithImpl<_ConflictData>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ConflictDataToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ConflictDataImpl &&
+            other is _ConflictData &&
             (identical(other.conflictType, conflictType) ||
                 other.conflictType == conflictType) &&
             (identical(other.localVersion, localVersion) ||
@@ -971,7 +1679,7 @@ class _$ConflictDataImpl implements _ConflictData {
                 other.resolution == resolution));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -981,123 +1689,120 @@ class _$ConflictDataImpl implements _ConflictData {
       const DeepCollectionEquality().hash(_conflictFields),
       resolution);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ConflictDataImplCopyWith<_$ConflictDataImpl> get copyWith =>
-      __$$ConflictDataImplCopyWithImpl<_$ConflictDataImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ConflictDataImplToJson(
-      this,
-    );
+  String toString() {
+    return 'ConflictData(conflictType: $conflictType, localVersion: $localVersion, serverVersion: $serverVersion, conflictFields: $conflictFields, resolution: $resolution)';
   }
 }
 
-abstract class _ConflictData implements ConflictData {
-  const factory _ConflictData(
-      {required final String conflictType,
-      required final int localVersion,
-      required final int serverVersion,
-      required final List<String> conflictFields,
-      required final String resolution}) = _$ConflictDataImpl;
-
-  factory _ConflictData.fromJson(Map<String, dynamic> json) =
-      _$ConflictDataImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$ConflictDataCopyWith<$Res>
+    implements $ConflictDataCopyWith<$Res> {
+  factory _$ConflictDataCopyWith(
+          _ConflictData value, $Res Function(_ConflictData) _then) =
+      __$ConflictDataCopyWithImpl;
   @override
-  String get conflictType;
-  @override
-  int get localVersion;
-  @override
-  int get serverVersion;
-  @override
-  List<String> get conflictFields;
-  @override
-  String get resolution;
-  @override
-  @JsonKey(ignore: true)
-  _$$ConflictDataImplCopyWith<_$ConflictDataImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String conflictType,
+      int localVersion,
+      int serverVersion,
+      List<String> conflictFields,
+      String resolution});
 }
 
-ConflictResolution _$ConflictResolutionFromJson(Map<String, dynamic> json) {
-  return _ConflictResolution.fromJson(json);
+/// @nodoc
+class __$ConflictDataCopyWithImpl<$Res>
+    implements _$ConflictDataCopyWith<$Res> {
+  __$ConflictDataCopyWithImpl(this._self, this._then);
+
+  final _ConflictData _self;
+  final $Res Function(_ConflictData) _then;
+
+  /// Create a copy of ConflictData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? conflictType = null,
+    Object? localVersion = null,
+    Object? serverVersion = null,
+    Object? conflictFields = null,
+    Object? resolution = null,
+  }) {
+    return _then(_ConflictData(
+      conflictType: null == conflictType
+          ? _self.conflictType
+          : conflictType // ignore: cast_nullable_to_non_nullable
+              as String,
+      localVersion: null == localVersion
+          ? _self.localVersion
+          : localVersion // ignore: cast_nullable_to_non_nullable
+              as int,
+      serverVersion: null == serverVersion
+          ? _self.serverVersion
+          : serverVersion // ignore: cast_nullable_to_non_nullable
+              as int,
+      conflictFields: null == conflictFields
+          ? _self._conflictFields
+          : conflictFields // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      resolution: null == resolution
+          ? _self.resolution
+          : resolution // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$ConflictResolution {
-  String get conflictId => throw _privateConstructorUsedError;
-  String get resolution => throw _privateConstructorUsedError;
-  String get resolvedAt => throw _privateConstructorUsedError;
-  Map<String, dynamic> get finalData => throw _privateConstructorUsedError;
+  String get conflictId;
+  String get resolution;
+  String get resolvedAt;
+  Map<String, dynamic> get finalData;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $ConflictResolutionCopyWith<ConflictResolution> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ConflictResolutionCopyWith<$Res> {
-  factory $ConflictResolutionCopyWith(
-          ConflictResolution value, $Res Function(ConflictResolution) then) =
-      _$ConflictResolutionCopyWithImpl<$Res, ConflictResolution>;
-  @useResult
-  $Res call(
-      {String conflictId,
-      String resolution,
-      String resolvedAt,
-      Map<String, dynamic> finalData});
-}
-
-/// @nodoc
-class _$ConflictResolutionCopyWithImpl<$Res, $Val extends ConflictResolution>
-    implements $ConflictResolutionCopyWith<$Res> {
-  _$ConflictResolutionCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of ConflictResolution
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $ConflictResolutionCopyWith<ConflictResolution> get copyWith =>
+      _$ConflictResolutionCopyWithImpl<ConflictResolution>(
+          this as ConflictResolution, _$identity);
+
+  /// Serializes this ConflictResolution to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? conflictId = null,
-    Object? resolution = null,
-    Object? resolvedAt = null,
-    Object? finalData = null,
-  }) {
-    return _then(_value.copyWith(
-      conflictId: null == conflictId
-          ? _value.conflictId
-          : conflictId // ignore: cast_nullable_to_non_nullable
-              as String,
-      resolution: null == resolution
-          ? _value.resolution
-          : resolution // ignore: cast_nullable_to_non_nullable
-              as String,
-      resolvedAt: null == resolvedAt
-          ? _value.resolvedAt
-          : resolvedAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      finalData: null == finalData
-          ? _value.finalData
-          : finalData // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ConflictResolution &&
+            (identical(other.conflictId, conflictId) ||
+                other.conflictId == conflictId) &&
+            (identical(other.resolution, resolution) ||
+                other.resolution == resolution) &&
+            (identical(other.resolvedAt, resolvedAt) ||
+                other.resolvedAt == resolvedAt) &&
+            const DeepCollectionEquality().equals(other.finalData, finalData));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, conflictId, resolution,
+      resolvedAt, const DeepCollectionEquality().hash(finalData));
+
+  @override
+  String toString() {
+    return 'ConflictResolution(conflictId: $conflictId, resolution: $resolution, resolvedAt: $resolvedAt, finalData: $finalData)';
   }
 }
 
 /// @nodoc
-abstract class _$$ConflictResolutionImplCopyWith<$Res>
-    implements $ConflictResolutionCopyWith<$Res> {
-  factory _$$ConflictResolutionImplCopyWith(_$ConflictResolutionImpl value,
-          $Res Function(_$ConflictResolutionImpl) then) =
-      __$$ConflictResolutionImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ConflictResolutionCopyWith<$Res> {
+  factory $ConflictResolutionCopyWith(
+          ConflictResolution value, $Res Function(ConflictResolution) _then) =
+      _$ConflictResolutionCopyWithImpl;
   @useResult
   $Res call(
       {String conflictId,
@@ -1107,13 +1812,15 @@ abstract class _$$ConflictResolutionImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ConflictResolutionImplCopyWithImpl<$Res>
-    extends _$ConflictResolutionCopyWithImpl<$Res, _$ConflictResolutionImpl>
-    implements _$$ConflictResolutionImplCopyWith<$Res> {
-  __$$ConflictResolutionImplCopyWithImpl(_$ConflictResolutionImpl _value,
-      $Res Function(_$ConflictResolutionImpl) _then)
-      : super(_value, _then);
+class _$ConflictResolutionCopyWithImpl<$Res>
+    implements $ConflictResolutionCopyWith<$Res> {
+  _$ConflictResolutionCopyWithImpl(this._self, this._then);
 
+  final ConflictResolution _self;
+  final $Res Function(ConflictResolution) _then;
+
+  /// Create a copy of ConflictResolution
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1122,39 +1829,204 @@ class __$$ConflictResolutionImplCopyWithImpl<$Res>
     Object? resolvedAt = null,
     Object? finalData = null,
   }) {
-    return _then(_$ConflictResolutionImpl(
+    return _then(_self.copyWith(
       conflictId: null == conflictId
-          ? _value.conflictId
+          ? _self.conflictId
           : conflictId // ignore: cast_nullable_to_non_nullable
               as String,
       resolution: null == resolution
-          ? _value.resolution
+          ? _self.resolution
           : resolution // ignore: cast_nullable_to_non_nullable
               as String,
       resolvedAt: null == resolvedAt
-          ? _value.resolvedAt
+          ? _self.resolvedAt
           : resolvedAt // ignore: cast_nullable_to_non_nullable
               as String,
       finalData: null == finalData
-          ? _value._finalData
+          ? _self.finalData
           : finalData // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [ConflictResolution].
+extension ConflictResolutionPatterns on ConflictResolution {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ConflictResolution value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictResolution() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ConflictResolution value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictResolution():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ConflictResolution value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictResolution() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String conflictId, String resolution, String resolvedAt,
+            Map<String, dynamic> finalData)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictResolution() when $default != null:
+        return $default(_that.conflictId, _that.resolution, _that.resolvedAt,
+            _that.finalData);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String conflictId, String resolution, String resolvedAt,
+            Map<String, dynamic> finalData)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictResolution():
+        return $default(_that.conflictId, _that.resolution, _that.resolvedAt,
+            _that.finalData);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String conflictId, String resolution, String resolvedAt,
+            Map<String, dynamic> finalData)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ConflictResolution() when $default != null:
+        return $default(_that.conflictId, _that.resolution, _that.resolvedAt,
+            _that.finalData);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$ConflictResolutionImpl implements _ConflictResolution {
-  const _$ConflictResolutionImpl(
+class _ConflictResolution implements ConflictResolution {
+  const _ConflictResolution(
       {required this.conflictId,
       required this.resolution,
       required this.resolvedAt,
       required final Map<String, dynamic> finalData})
       : _finalData = finalData;
-
-  factory _$ConflictResolutionImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ConflictResolutionImplFromJson(json);
+  factory _ConflictResolution.fromJson(Map<String, dynamic> json) =>
+      _$ConflictResolutionFromJson(json);
 
   @override
   final String conflictId;
@@ -1170,16 +2042,26 @@ class _$ConflictResolutionImpl implements _ConflictResolution {
     return EqualUnmodifiableMapView(_finalData);
   }
 
+  /// Create a copy of ConflictResolution
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ConflictResolution(conflictId: $conflictId, resolution: $resolution, resolvedAt: $resolvedAt, finalData: $finalData)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ConflictResolutionCopyWith<_ConflictResolution> get copyWith =>
+      __$ConflictResolutionCopyWithImpl<_ConflictResolution>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$ConflictResolutionToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ConflictResolutionImpl &&
+            other is _ConflictResolution &&
             (identical(other.conflictId, conflictId) ||
                 other.conflictId == conflictId) &&
             (identical(other.resolution, resolution) ||
@@ -1190,196 +2072,353 @@ class _$ConflictResolutionImpl implements _ConflictResolution {
                 .equals(other._finalData, _finalData));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, conflictId, resolution,
       resolvedAt, const DeepCollectionEquality().hash(_finalData));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ConflictResolutionImplCopyWith<_$ConflictResolutionImpl> get copyWith =>
-      __$$ConflictResolutionImplCopyWithImpl<_$ConflictResolutionImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ConflictResolutionImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _ConflictResolution implements ConflictResolution {
-  const factory _ConflictResolution(
-          {required final String conflictId,
-          required final String resolution,
-          required final String resolvedAt,
-          required final Map<String, dynamic> finalData}) =
-      _$ConflictResolutionImpl;
-
-  factory _ConflictResolution.fromJson(Map<String, dynamic> json) =
-      _$ConflictResolutionImpl.fromJson;
-
-  @override
-  String get conflictId;
-  @override
-  String get resolution;
-  @override
-  String get resolvedAt;
-  @override
-  Map<String, dynamic> get finalData;
-  @override
-  @JsonKey(ignore: true)
-  _$$ConflictResolutionImplCopyWith<_$ConflictResolutionImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-OfflineCapableData _$OfflineCapableDataFromJson(Map<String, dynamic> json) {
-  return _OfflineCapableData.fromJson(json);
-}
-
-/// @nodoc
-mixin _$OfflineCapableData {
-  String get userId => throw _privateConstructorUsedError;
-  String get downloadedAt => throw _privateConstructorUsedError;
-  String get expiresAt => throw _privateConstructorUsedError;
-  OfflineDataPackage get data => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $OfflineCapableDataCopyWith<OfflineCapableData> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OfflineCapableDataCopyWith<$Res> {
-  factory $OfflineCapableDataCopyWith(
-          OfflineCapableData value, $Res Function(OfflineCapableData) then) =
-      _$OfflineCapableDataCopyWithImpl<$Res, OfflineCapableData>;
-  @useResult
-  $Res call(
-      {String userId,
-      String downloadedAt,
-      String expiresAt,
-      OfflineDataPackage data});
-
-  $OfflineDataPackageCopyWith<$Res> get data;
-}
-
-/// @nodoc
-class _$OfflineCapableDataCopyWithImpl<$Res, $Val extends OfflineCapableData>
-    implements $OfflineCapableDataCopyWith<$Res> {
-  _$OfflineCapableDataCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userId = null,
-    Object? downloadedAt = null,
-    Object? expiresAt = null,
-    Object? data = null,
-  }) {
-    return _then(_value.copyWith(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      downloadedAt: null == downloadedAt
-          ? _value.downloadedAt
-          : downloadedAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      data: null == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as OfflineDataPackage,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $OfflineDataPackageCopyWith<$Res> get data {
-    return $OfflineDataPackageCopyWith<$Res>(_value.data, (value) {
-      return _then(_value.copyWith(data: value) as $Val);
-    });
+  String toString() {
+    return 'ConflictResolution(conflictId: $conflictId, resolution: $resolution, resolvedAt: $resolvedAt, finalData: $finalData)';
   }
 }
 
 /// @nodoc
-abstract class _$$OfflineCapableDataImplCopyWith<$Res>
-    implements $OfflineCapableDataCopyWith<$Res> {
-  factory _$$OfflineCapableDataImplCopyWith(_$OfflineCapableDataImpl value,
-          $Res Function(_$OfflineCapableDataImpl) then) =
-      __$$OfflineCapableDataImplCopyWithImpl<$Res>;
+abstract mixin class _$ConflictResolutionCopyWith<$Res>
+    implements $ConflictResolutionCopyWith<$Res> {
+  factory _$ConflictResolutionCopyWith(
+          _ConflictResolution value, $Res Function(_ConflictResolution) _then) =
+      __$ConflictResolutionCopyWithImpl;
   @override
   @useResult
   $Res call(
-      {String userId,
-      String downloadedAt,
-      String expiresAt,
-      OfflineDataPackage data});
-
-  @override
-  $OfflineDataPackageCopyWith<$Res> get data;
+      {String conflictId,
+      String resolution,
+      String resolvedAt,
+      Map<String, dynamic> finalData});
 }
 
 /// @nodoc
-class __$$OfflineCapableDataImplCopyWithImpl<$Res>
-    extends _$OfflineCapableDataCopyWithImpl<$Res, _$OfflineCapableDataImpl>
-    implements _$$OfflineCapableDataImplCopyWith<$Res> {
-  __$$OfflineCapableDataImplCopyWithImpl(_$OfflineCapableDataImpl _value,
-      $Res Function(_$OfflineCapableDataImpl) _then)
-      : super(_value, _then);
+class __$ConflictResolutionCopyWithImpl<$Res>
+    implements _$ConflictResolutionCopyWith<$Res> {
+  __$ConflictResolutionCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _ConflictResolution _self;
+  final $Res Function(_ConflictResolution) _then;
+
+  /// Create a copy of ConflictResolution
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
-    Object? userId = null,
-    Object? downloadedAt = null,
-    Object? expiresAt = null,
-    Object? data = null,
+    Object? conflictId = null,
+    Object? resolution = null,
+    Object? resolvedAt = null,
+    Object? finalData = null,
   }) {
-    return _then(_$OfflineCapableDataImpl(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
+    return _then(_ConflictResolution(
+      conflictId: null == conflictId
+          ? _self.conflictId
+          : conflictId // ignore: cast_nullable_to_non_nullable
               as String,
-      downloadedAt: null == downloadedAt
-          ? _value.downloadedAt
-          : downloadedAt // ignore: cast_nullable_to_non_nullable
+      resolution: null == resolution
+          ? _self.resolution
+          : resolution // ignore: cast_nullable_to_non_nullable
               as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
+      resolvedAt: null == resolvedAt
+          ? _self.resolvedAt
+          : resolvedAt // ignore: cast_nullable_to_non_nullable
               as String,
-      data: null == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as OfflineDataPackage,
+      finalData: null == finalData
+          ? _self._finalData
+          : finalData // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
     ));
   }
 }
 
 /// @nodoc
+mixin _$OfflineCapableData {
+  String get userId;
+  String get downloadedAt;
+  String get expiresAt;
+  OfflineDataPackage get data;
+
+  /// Create a copy of OfflineCapableData
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $OfflineCapableDataCopyWith<OfflineCapableData> get copyWith =>
+      _$OfflineCapableDataCopyWithImpl<OfflineCapableData>(
+          this as OfflineCapableData, _$identity);
+
+  /// Serializes this OfflineCapableData to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OfflineCapableData &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.downloadedAt, downloadedAt) ||
+                other.downloadedAt == downloadedAt) &&
+            (identical(other.expiresAt, expiresAt) ||
+                other.expiresAt == expiresAt) &&
+            (identical(other.data, data) || other.data == data));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, userId, downloadedAt, expiresAt, data);
+
+  @override
+  String toString() {
+    return 'OfflineCapableData(userId: $userId, downloadedAt: $downloadedAt, expiresAt: $expiresAt, data: $data)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $OfflineCapableDataCopyWith<$Res> {
+  factory $OfflineCapableDataCopyWith(
+          OfflineCapableData value, $Res Function(OfflineCapableData) _then) =
+      _$OfflineCapableDataCopyWithImpl;
+  @useResult
+  $Res call(
+      {String userId,
+      String downloadedAt,
+      String expiresAt,
+      OfflineDataPackage data});
+
+  $OfflineDataPackageCopyWith<$Res> get data;
+}
+
+/// @nodoc
+class _$OfflineCapableDataCopyWithImpl<$Res>
+    implements $OfflineCapableDataCopyWith<$Res> {
+  _$OfflineCapableDataCopyWithImpl(this._self, this._then);
+
+  final OfflineCapableData _self;
+  final $Res Function(OfflineCapableData) _then;
+
+  /// Create a copy of OfflineCapableData
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userId = null,
+    Object? downloadedAt = null,
+    Object? expiresAt = null,
+    Object? data = null,
+  }) {
+    return _then(_self.copyWith(
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      downloadedAt: null == downloadedAt
+          ? _self.downloadedAt
+          : downloadedAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      expiresAt: null == expiresAt
+          ? _self.expiresAt
+          : expiresAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      data: null == data
+          ? _self.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as OfflineDataPackage,
+    ));
+  }
+
+  /// Create a copy of OfflineCapableData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OfflineDataPackageCopyWith<$Res> get data {
+    return $OfflineDataPackageCopyWith<$Res>(_self.data, (value) {
+      return _then(_self.copyWith(data: value));
+    });
+  }
+}
+
+/// Adds pattern-matching-related methods to [OfflineCapableData].
+extension OfflineCapableDataPatterns on OfflineCapableData {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_OfflineCapableData value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineCapableData() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_OfflineCapableData value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineCapableData():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_OfflineCapableData value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineCapableData() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String userId, String downloadedAt, String expiresAt,
+            OfflineDataPackage data)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineCapableData() when $default != null:
+        return $default(
+            _that.userId, _that.downloadedAt, _that.expiresAt, _that.data);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String userId, String downloadedAt, String expiresAt,
+            OfflineDataPackage data)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineCapableData():
+        return $default(
+            _that.userId, _that.downloadedAt, _that.expiresAt, _that.data);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String userId, String downloadedAt, String expiresAt,
+            OfflineDataPackage data)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineCapableData() when $default != null:
+        return $default(
+            _that.userId, _that.downloadedAt, _that.expiresAt, _that.data);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$OfflineCapableDataImpl implements _OfflineCapableData {
-  const _$OfflineCapableDataImpl(
+class _OfflineCapableData implements OfflineCapableData {
+  const _OfflineCapableData(
       {required this.userId,
       required this.downloadedAt,
       required this.expiresAt,
       required this.data});
-
-  factory _$OfflineCapableDataImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfflineCapableDataImplFromJson(json);
+  factory _OfflineCapableData.fromJson(Map<String, dynamic> json) =>
+      _$OfflineCapableDataFromJson(json);
 
   @override
   final String userId;
@@ -1390,16 +2429,26 @@ class _$OfflineCapableDataImpl implements _OfflineCapableData {
   @override
   final OfflineDataPackage data;
 
+  /// Create a copy of OfflineCapableData
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OfflineCapableData(userId: $userId, downloadedAt: $downloadedAt, expiresAt: $expiresAt, data: $data)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OfflineCapableDataCopyWith<_OfflineCapableData> get copyWith =>
+      __$OfflineCapableDataCopyWithImpl<_OfflineCapableData>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OfflineCapableDataToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OfflineCapableDataImpl &&
+            other is _OfflineCapableData &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.downloadedAt, downloadedAt) ||
                 other.downloadedAt == downloadedAt) &&
@@ -1408,120 +2457,131 @@ class _$OfflineCapableDataImpl implements _OfflineCapableData {
             (identical(other.data, data) || other.data == data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, userId, downloadedAt, expiresAt, data);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OfflineCapableDataImplCopyWith<_$OfflineCapableDataImpl> get copyWith =>
-      __$$OfflineCapableDataImplCopyWithImpl<_$OfflineCapableDataImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfflineCapableDataImplToJson(
-      this,
-    );
+  String toString() {
+    return 'OfflineCapableData(userId: $userId, downloadedAt: $downloadedAt, expiresAt: $expiresAt, data: $data)';
   }
 }
 
-abstract class _OfflineCapableData implements OfflineCapableData {
-  const factory _OfflineCapableData(
-      {required final String userId,
-      required final String downloadedAt,
-      required final String expiresAt,
-      required final OfflineDataPackage data}) = _$OfflineCapableDataImpl;
+/// @nodoc
+abstract mixin class _$OfflineCapableDataCopyWith<$Res>
+    implements $OfflineCapableDataCopyWith<$Res> {
+  factory _$OfflineCapableDataCopyWith(
+          _OfflineCapableData value, $Res Function(_OfflineCapableData) _then) =
+      __$OfflineCapableDataCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String userId,
+      String downloadedAt,
+      String expiresAt,
+      OfflineDataPackage data});
 
-  factory _OfflineCapableData.fromJson(Map<String, dynamic> json) =
-      _$OfflineCapableDataImpl.fromJson;
-
   @override
-  String get userId;
-  @override
-  String get downloadedAt;
-  @override
-  String get expiresAt;
-  @override
-  OfflineDataPackage get data;
-  @override
-  @JsonKey(ignore: true)
-  _$$OfflineCapableDataImplCopyWith<_$OfflineCapableDataImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  $OfflineDataPackageCopyWith<$Res> get data;
 }
 
-OfflineDataPackage _$OfflineDataPackageFromJson(Map<String, dynamic> json) {
-  return _OfflineDataPackage.fromJson(json);
+/// @nodoc
+class __$OfflineCapableDataCopyWithImpl<$Res>
+    implements _$OfflineCapableDataCopyWith<$Res> {
+  __$OfflineCapableDataCopyWithImpl(this._self, this._then);
+
+  final _OfflineCapableData _self;
+  final $Res Function(_OfflineCapableData) _then;
+
+  /// Create a copy of OfflineCapableData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? userId = null,
+    Object? downloadedAt = null,
+    Object? expiresAt = null,
+    Object? data = null,
+  }) {
+    return _then(_OfflineCapableData(
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      downloadedAt: null == downloadedAt
+          ? _self.downloadedAt
+          : downloadedAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      expiresAt: null == expiresAt
+          ? _self.expiresAt
+          : expiresAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      data: null == data
+          ? _self.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as OfflineDataPackage,
+    ));
+  }
+
+  /// Create a copy of OfflineCapableData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OfflineDataPackageCopyWith<$Res> get data {
+    return $OfflineDataPackageCopyWith<$Res>(_self.data, (value) {
+      return _then(_self.copyWith(data: value));
+    });
+  }
 }
 
 /// @nodoc
 mixin _$OfflineDataPackage {
-  List<OfflineAppointment> get appointments =>
-      throw _privateConstructorUsedError;
-  List<OfflineClient> get clients => throw _privateConstructorUsedError;
-  List<OfflineForm> get forms => throw _privateConstructorUsedError;
+  List<OfflineAppointment> get appointments;
+  List<OfflineClient> get clients;
+  List<OfflineForm> get forms;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $OfflineDataPackageCopyWith<OfflineDataPackage> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OfflineDataPackageCopyWith<$Res> {
-  factory $OfflineDataPackageCopyWith(
-          OfflineDataPackage value, $Res Function(OfflineDataPackage) then) =
-      _$OfflineDataPackageCopyWithImpl<$Res, OfflineDataPackage>;
-  @useResult
-  $Res call(
-      {List<OfflineAppointment> appointments,
-      List<OfflineClient> clients,
-      List<OfflineForm> forms});
-}
-
-/// @nodoc
-class _$OfflineDataPackageCopyWithImpl<$Res, $Val extends OfflineDataPackage>
-    implements $OfflineDataPackageCopyWith<$Res> {
-  _$OfflineDataPackageCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of OfflineDataPackage
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $OfflineDataPackageCopyWith<OfflineDataPackage> get copyWith =>
+      _$OfflineDataPackageCopyWithImpl<OfflineDataPackage>(
+          this as OfflineDataPackage, _$identity);
+
+  /// Serializes this OfflineDataPackage to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? appointments = null,
-    Object? clients = null,
-    Object? forms = null,
-  }) {
-    return _then(_value.copyWith(
-      appointments: null == appointments
-          ? _value.appointments
-          : appointments // ignore: cast_nullable_to_non_nullable
-              as List<OfflineAppointment>,
-      clients: null == clients
-          ? _value.clients
-          : clients // ignore: cast_nullable_to_non_nullable
-              as List<OfflineClient>,
-      forms: null == forms
-          ? _value.forms
-          : forms // ignore: cast_nullable_to_non_nullable
-              as List<OfflineForm>,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OfflineDataPackage &&
+            const DeepCollectionEquality()
+                .equals(other.appointments, appointments) &&
+            const DeepCollectionEquality().equals(other.clients, clients) &&
+            const DeepCollectionEquality().equals(other.forms, forms));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(appointments),
+      const DeepCollectionEquality().hash(clients),
+      const DeepCollectionEquality().hash(forms));
+
+  @override
+  String toString() {
+    return 'OfflineDataPackage(appointments: $appointments, clients: $clients, forms: $forms)';
   }
 }
 
 /// @nodoc
-abstract class _$$OfflineDataPackageImplCopyWith<$Res>
-    implements $OfflineDataPackageCopyWith<$Res> {
-  factory _$$OfflineDataPackageImplCopyWith(_$OfflineDataPackageImpl value,
-          $Res Function(_$OfflineDataPackageImpl) then) =
-      __$$OfflineDataPackageImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $OfflineDataPackageCopyWith<$Res> {
+  factory $OfflineDataPackageCopyWith(
+          OfflineDataPackage value, $Res Function(OfflineDataPackage) _then) =
+      _$OfflineDataPackageCopyWithImpl;
   @useResult
   $Res call(
       {List<OfflineAppointment> appointments,
@@ -1530,13 +2590,15 @@ abstract class _$$OfflineDataPackageImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$OfflineDataPackageImplCopyWithImpl<$Res>
-    extends _$OfflineDataPackageCopyWithImpl<$Res, _$OfflineDataPackageImpl>
-    implements _$$OfflineDataPackageImplCopyWith<$Res> {
-  __$$OfflineDataPackageImplCopyWithImpl(_$OfflineDataPackageImpl _value,
-      $Res Function(_$OfflineDataPackageImpl) _then)
-      : super(_value, _then);
+class _$OfflineDataPackageCopyWithImpl<$Res>
+    implements $OfflineDataPackageCopyWith<$Res> {
+  _$OfflineDataPackageCopyWithImpl(this._self, this._then);
 
+  final OfflineDataPackage _self;
+  final $Res Function(OfflineDataPackage) _then;
+
+  /// Create a copy of OfflineDataPackage
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1544,36 +2606,198 @@ class __$$OfflineDataPackageImplCopyWithImpl<$Res>
     Object? clients = null,
     Object? forms = null,
   }) {
-    return _then(_$OfflineDataPackageImpl(
+    return _then(_self.copyWith(
       appointments: null == appointments
-          ? _value._appointments
+          ? _self.appointments
           : appointments // ignore: cast_nullable_to_non_nullable
               as List<OfflineAppointment>,
       clients: null == clients
-          ? _value._clients
+          ? _self.clients
           : clients // ignore: cast_nullable_to_non_nullable
               as List<OfflineClient>,
       forms: null == forms
-          ? _value._forms
+          ? _self.forms
           : forms // ignore: cast_nullable_to_non_nullable
               as List<OfflineForm>,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [OfflineDataPackage].
+extension OfflineDataPackagePatterns on OfflineDataPackage {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_OfflineDataPackage value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineDataPackage() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_OfflineDataPackage value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineDataPackage():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_OfflineDataPackage value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineDataPackage() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(List<OfflineAppointment> appointments,
+            List<OfflineClient> clients, List<OfflineForm> forms)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineDataPackage() when $default != null:
+        return $default(_that.appointments, _that.clients, _that.forms);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(List<OfflineAppointment> appointments,
+            List<OfflineClient> clients, List<OfflineForm> forms)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineDataPackage():
+        return $default(_that.appointments, _that.clients, _that.forms);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(List<OfflineAppointment> appointments,
+            List<OfflineClient> clients, List<OfflineForm> forms)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineDataPackage() when $default != null:
+        return $default(_that.appointments, _that.clients, _that.forms);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$OfflineDataPackageImpl implements _OfflineDataPackage {
-  const _$OfflineDataPackageImpl(
+class _OfflineDataPackage implements OfflineDataPackage {
+  const _OfflineDataPackage(
       {required final List<OfflineAppointment> appointments,
       required final List<OfflineClient> clients,
       required final List<OfflineForm> forms})
       : _appointments = appointments,
         _clients = clients,
         _forms = forms;
-
-  factory _$OfflineDataPackageImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfflineDataPackageImplFromJson(json);
+  factory _OfflineDataPackage.fromJson(Map<String, dynamic> json) =>
+      _$OfflineDataPackageFromJson(json);
 
   final List<OfflineAppointment> _appointments;
   @override
@@ -1599,23 +2823,33 @@ class _$OfflineDataPackageImpl implements _OfflineDataPackage {
     return EqualUnmodifiableListView(_forms);
   }
 
+  /// Create a copy of OfflineDataPackage
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OfflineDataPackage(appointments: $appointments, clients: $clients, forms: $forms)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OfflineDataPackageCopyWith<_OfflineDataPackage> get copyWith =>
+      __$OfflineDataPackageCopyWithImpl<_OfflineDataPackage>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OfflineDataPackageToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OfflineDataPackageImpl &&
+            other is _OfflineDataPackage &&
             const DeepCollectionEquality()
                 .equals(other._appointments, _appointments) &&
             const DeepCollectionEquality().equals(other._clients, _clients) &&
             const DeepCollectionEquality().equals(other._forms, _forms));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -1623,139 +2857,113 @@ class _$OfflineDataPackageImpl implements _OfflineDataPackage {
       const DeepCollectionEquality().hash(_clients),
       const DeepCollectionEquality().hash(_forms));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OfflineDataPackageImplCopyWith<_$OfflineDataPackageImpl> get copyWith =>
-      __$$OfflineDataPackageImplCopyWithImpl<_$OfflineDataPackageImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfflineDataPackageImplToJson(
-      this,
-    );
+  String toString() {
+    return 'OfflineDataPackage(appointments: $appointments, clients: $clients, forms: $forms)';
   }
 }
 
-abstract class _OfflineDataPackage implements OfflineDataPackage {
-  const factory _OfflineDataPackage(
-      {required final List<OfflineAppointment> appointments,
-      required final List<OfflineClient> clients,
-      required final List<OfflineForm> forms}) = _$OfflineDataPackageImpl;
-
-  factory _OfflineDataPackage.fromJson(Map<String, dynamic> json) =
-      _$OfflineDataPackageImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$OfflineDataPackageCopyWith<$Res>
+    implements $OfflineDataPackageCopyWith<$Res> {
+  factory _$OfflineDataPackageCopyWith(
+          _OfflineDataPackage value, $Res Function(_OfflineDataPackage) _then) =
+      __$OfflineDataPackageCopyWithImpl;
   @override
-  List<OfflineAppointment> get appointments;
-  @override
-  List<OfflineClient> get clients;
-  @override
-  List<OfflineForm> get forms;
-  @override
-  @JsonKey(ignore: true)
-  _$$OfflineDataPackageImplCopyWith<_$OfflineDataPackageImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {List<OfflineAppointment> appointments,
+      List<OfflineClient> clients,
+      List<OfflineForm> forms});
 }
 
-OfflineAppointment _$OfflineAppointmentFromJson(Map<String, dynamic> json) {
-  return _OfflineAppointment.fromJson(json);
+/// @nodoc
+class __$OfflineDataPackageCopyWithImpl<$Res>
+    implements _$OfflineDataPackageCopyWith<$Res> {
+  __$OfflineDataPackageCopyWithImpl(this._self, this._then);
+
+  final _OfflineDataPackage _self;
+  final $Res Function(_OfflineDataPackage) _then;
+
+  /// Create a copy of OfflineDataPackage
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? appointments = null,
+    Object? clients = null,
+    Object? forms = null,
+  }) {
+    return _then(_OfflineDataPackage(
+      appointments: null == appointments
+          ? _self._appointments
+          : appointments // ignore: cast_nullable_to_non_nullable
+              as List<OfflineAppointment>,
+      clients: null == clients
+          ? _self._clients
+          : clients // ignore: cast_nullable_to_non_nullable
+              as List<OfflineClient>,
+      forms: null == forms
+          ? _self._forms
+          : forms // ignore: cast_nullable_to_non_nullable
+              as List<OfflineForm>,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$OfflineAppointment {
-  String get id => throw _privateConstructorUsedError;
-  String get clientName => throw _privateConstructorUsedError;
-  String get date => throw _privateConstructorUsedError;
-  String get startTime => throw _privateConstructorUsedError;
-  String get endTime => throw _privateConstructorUsedError;
-  String get address => throw _privateConstructorUsedError;
-  String get notes => throw _privateConstructorUsedError;
+  String get id;
+  String get clientName;
+  String get date;
+  String get startTime;
+  String get endTime;
+  String get address;
+  String get notes;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $OfflineAppointmentCopyWith<OfflineAppointment> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OfflineAppointmentCopyWith<$Res> {
-  factory $OfflineAppointmentCopyWith(
-          OfflineAppointment value, $Res Function(OfflineAppointment) then) =
-      _$OfflineAppointmentCopyWithImpl<$Res, OfflineAppointment>;
-  @useResult
-  $Res call(
-      {String id,
-      String clientName,
-      String date,
-      String startTime,
-      String endTime,
-      String address,
-      String notes});
-}
-
-/// @nodoc
-class _$OfflineAppointmentCopyWithImpl<$Res, $Val extends OfflineAppointment>
-    implements $OfflineAppointmentCopyWith<$Res> {
-  _$OfflineAppointmentCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of OfflineAppointment
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $OfflineAppointmentCopyWith<OfflineAppointment> get copyWith =>
+      _$OfflineAppointmentCopyWithImpl<OfflineAppointment>(
+          this as OfflineAppointment, _$identity);
+
+  /// Serializes this OfflineAppointment to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = null,
-    Object? clientName = null,
-    Object? date = null,
-    Object? startTime = null,
-    Object? endTime = null,
-    Object? address = null,
-    Object? notes = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      clientName: null == clientName
-          ? _value.clientName
-          : clientName // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as String,
-      startTime: null == startTime
-          ? _value.startTime
-          : startTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      endTime: null == endTime
-          ? _value.endTime
-          : endTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
-      notes: null == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OfflineAppointment &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.clientName, clientName) ||
+                other.clientName == clientName) &&
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.notes, notes) || other.notes == notes));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, clientName, date, startTime, endTime, address, notes);
+
+  @override
+  String toString() {
+    return 'OfflineAppointment(id: $id, clientName: $clientName, date: $date, startTime: $startTime, endTime: $endTime, address: $address, notes: $notes)';
   }
 }
 
 /// @nodoc
-abstract class _$$OfflineAppointmentImplCopyWith<$Res>
-    implements $OfflineAppointmentCopyWith<$Res> {
-  factory _$$OfflineAppointmentImplCopyWith(_$OfflineAppointmentImpl value,
-          $Res Function(_$OfflineAppointmentImpl) then) =
-      __$$OfflineAppointmentImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $OfflineAppointmentCopyWith<$Res> {
+  factory $OfflineAppointmentCopyWith(
+          OfflineAppointment value, $Res Function(OfflineAppointment) _then) =
+      _$OfflineAppointmentCopyWithImpl;
   @useResult
   $Res call(
       {String id,
@@ -1768,13 +2976,15 @@ abstract class _$$OfflineAppointmentImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$OfflineAppointmentImplCopyWithImpl<$Res>
-    extends _$OfflineAppointmentCopyWithImpl<$Res, _$OfflineAppointmentImpl>
-    implements _$$OfflineAppointmentImplCopyWith<$Res> {
-  __$$OfflineAppointmentImplCopyWithImpl(_$OfflineAppointmentImpl _value,
-      $Res Function(_$OfflineAppointmentImpl) _then)
-      : super(_value, _then);
+class _$OfflineAppointmentCopyWithImpl<$Res>
+    implements $OfflineAppointmentCopyWith<$Res> {
+  _$OfflineAppointmentCopyWithImpl(this._self, this._then);
 
+  final OfflineAppointment _self;
+  final $Res Function(OfflineAppointment) _then;
+
+  /// Create a copy of OfflineAppointment
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1786,43 +2996,209 @@ class __$$OfflineAppointmentImplCopyWithImpl<$Res>
     Object? address = null,
     Object? notes = null,
   }) {
-    return _then(_$OfflineAppointmentImpl(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       clientName: null == clientName
-          ? _value.clientName
+          ? _self.clientName
           : clientName // ignore: cast_nullable_to_non_nullable
               as String,
       date: null == date
-          ? _value.date
+          ? _self.date
           : date // ignore: cast_nullable_to_non_nullable
               as String,
       startTime: null == startTime
-          ? _value.startTime
+          ? _self.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
               as String,
       endTime: null == endTime
-          ? _value.endTime
+          ? _self.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as String,
       address: null == address
-          ? _value.address
+          ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
               as String,
       notes: null == notes
-          ? _value.notes
+          ? _self.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [OfflineAppointment].
+extension OfflineAppointmentPatterns on OfflineAppointment {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_OfflineAppointment value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineAppointment() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_OfflineAppointment value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineAppointment():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_OfflineAppointment value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineAppointment() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String id, String clientName, String date,
+            String startTime, String endTime, String address, String notes)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineAppointment() when $default != null:
+        return $default(_that.id, _that.clientName, _that.date, _that.startTime,
+            _that.endTime, _that.address, _that.notes);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String id, String clientName, String date,
+            String startTime, String endTime, String address, String notes)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineAppointment():
+        return $default(_that.id, _that.clientName, _that.date, _that.startTime,
+            _that.endTime, _that.address, _that.notes);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String id, String clientName, String date,
+            String startTime, String endTime, String address, String notes)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineAppointment() when $default != null:
+        return $default(_that.id, _that.clientName, _that.date, _that.startTime,
+            _that.endTime, _that.address, _that.notes);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$OfflineAppointmentImpl implements _OfflineAppointment {
-  const _$OfflineAppointmentImpl(
+class _OfflineAppointment implements OfflineAppointment {
+  const _OfflineAppointment(
       {required this.id,
       required this.clientName,
       required this.date,
@@ -1830,9 +3206,8 @@ class _$OfflineAppointmentImpl implements _OfflineAppointment {
       required this.endTime,
       required this.address,
       required this.notes});
-
-  factory _$OfflineAppointmentImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfflineAppointmentImplFromJson(json);
+  factory _OfflineAppointment.fromJson(Map<String, dynamic> json) =>
+      _$OfflineAppointmentFromJson(json);
 
   @override
   final String id;
@@ -1849,16 +3224,26 @@ class _$OfflineAppointmentImpl implements _OfflineAppointment {
   @override
   final String notes;
 
+  /// Create a copy of OfflineAppointment
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OfflineAppointment(id: $id, clientName: $clientName, date: $date, startTime: $startTime, endTime: $endTime, address: $address, notes: $notes)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OfflineAppointmentCopyWith<_OfflineAppointment> get copyWith =>
+      __$OfflineAppointmentCopyWithImpl<_OfflineAppointment>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OfflineAppointmentToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OfflineAppointmentImpl &&
+            other is _OfflineAppointment &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.clientName, clientName) ||
                 other.clientName == clientName) &&
@@ -1870,205 +3255,367 @@ class _$OfflineAppointmentImpl implements _OfflineAppointment {
             (identical(other.notes, notes) || other.notes == notes));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, clientName, date, startTime, endTime, address, notes);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OfflineAppointmentImplCopyWith<_$OfflineAppointmentImpl> get copyWith =>
-      __$$OfflineAppointmentImplCopyWithImpl<_$OfflineAppointmentImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfflineAppointmentImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _OfflineAppointment implements OfflineAppointment {
-  const factory _OfflineAppointment(
-      {required final String id,
-      required final String clientName,
-      required final String date,
-      required final String startTime,
-      required final String endTime,
-      required final String address,
-      required final String notes}) = _$OfflineAppointmentImpl;
-
-  factory _OfflineAppointment.fromJson(Map<String, dynamic> json) =
-      _$OfflineAppointmentImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get clientName;
-  @override
-  String get date;
-  @override
-  String get startTime;
-  @override
-  String get endTime;
-  @override
-  String get address;
-  @override
-  String get notes;
-  @override
-  @JsonKey(ignore: true)
-  _$$OfflineAppointmentImplCopyWith<_$OfflineAppointmentImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-OfflineClient _$OfflineClientFromJson(Map<String, dynamic> json) {
-  return _OfflineClient.fromJson(json);
-}
-
-/// @nodoc
-mixin _$OfflineClient {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get address => throw _privateConstructorUsedError;
-  String get phone => throw _privateConstructorUsedError;
-  String get emergencyContact => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $OfflineClientCopyWith<OfflineClient> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OfflineClientCopyWith<$Res> {
-  factory $OfflineClientCopyWith(
-          OfflineClient value, $Res Function(OfflineClient) then) =
-      _$OfflineClientCopyWithImpl<$Res, OfflineClient>;
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      String address,
-      String phone,
-      String emergencyContact});
-}
-
-/// @nodoc
-class _$OfflineClientCopyWithImpl<$Res, $Val extends OfflineClient>
-    implements $OfflineClientCopyWith<$Res> {
-  _$OfflineClientCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? address = null,
-    Object? phone = null,
-    Object? emergencyContact = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      emergencyContact: null == emergencyContact
-          ? _value.emergencyContact
-          : emergencyContact // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+  String toString() {
+    return 'OfflineAppointment(id: $id, clientName: $clientName, date: $date, startTime: $startTime, endTime: $endTime, address: $address, notes: $notes)';
   }
 }
 
 /// @nodoc
-abstract class _$$OfflineClientImplCopyWith<$Res>
-    implements $OfflineClientCopyWith<$Res> {
-  factory _$$OfflineClientImplCopyWith(
-          _$OfflineClientImpl value, $Res Function(_$OfflineClientImpl) then) =
-      __$$OfflineClientImplCopyWithImpl<$Res>;
+abstract mixin class _$OfflineAppointmentCopyWith<$Res>
+    implements $OfflineAppointmentCopyWith<$Res> {
+  factory _$OfflineAppointmentCopyWith(
+          _OfflineAppointment value, $Res Function(_OfflineAppointment) _then) =
+      __$OfflineAppointmentCopyWithImpl;
   @override
   @useResult
   $Res call(
       {String id,
-      String name,
+      String clientName,
+      String date,
+      String startTime,
+      String endTime,
       String address,
-      String phone,
-      String emergencyContact});
+      String notes});
 }
 
 /// @nodoc
-class __$$OfflineClientImplCopyWithImpl<$Res>
-    extends _$OfflineClientCopyWithImpl<$Res, _$OfflineClientImpl>
-    implements _$$OfflineClientImplCopyWith<$Res> {
-  __$$OfflineClientImplCopyWithImpl(
-      _$OfflineClientImpl _value, $Res Function(_$OfflineClientImpl) _then)
-      : super(_value, _then);
+class __$OfflineAppointmentCopyWithImpl<$Res>
+    implements _$OfflineAppointmentCopyWith<$Res> {
+  __$OfflineAppointmentCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _OfflineAppointment _self;
+  final $Res Function(_OfflineAppointment) _then;
+
+  /// Create a copy of OfflineAppointment
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
-    Object? name = null,
+    Object? clientName = null,
+    Object? date = null,
+    Object? startTime = null,
+    Object? endTime = null,
     Object? address = null,
-    Object? phone = null,
-    Object? emergencyContact = null,
+    Object? notes = null,
   }) {
-    return _then(_$OfflineClientImpl(
+    return _then(_OfflineAppointment(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      clientName: null == clientName
+          ? _self.clientName
+          : clientName // ignore: cast_nullable_to_non_nullable
+              as String,
+      date: null == date
+          ? _self.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as String,
+      startTime: null == startTime
+          ? _self.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as String,
+      endTime: null == endTime
+          ? _self.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
               as String,
       address: null == address
-          ? _value.address
+          ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
               as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      emergencyContact: null == emergencyContact
-          ? _value.emergencyContact
-          : emergencyContact // ignore: cast_nullable_to_non_nullable
+      notes: null == notes
+          ? _self.notes
+          : notes // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
 }
 
 /// @nodoc
+mixin _$OfflineClient {
+  String get id;
+  String get name;
+  String get address;
+  String get phone;
+  String get emergencyContact;
+
+  /// Create a copy of OfflineClient
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $OfflineClientCopyWith<OfflineClient> get copyWith =>
+      _$OfflineClientCopyWithImpl<OfflineClient>(
+          this as OfflineClient, _$identity);
+
+  /// Serializes this OfflineClient to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OfflineClient &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.emergencyContact, emergencyContact) ||
+                other.emergencyContact == emergencyContact));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, address, phone, emergencyContact);
+
+  @override
+  String toString() {
+    return 'OfflineClient(id: $id, name: $name, address: $address, phone: $phone, emergencyContact: $emergencyContact)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $OfflineClientCopyWith<$Res> {
+  factory $OfflineClientCopyWith(
+          OfflineClient value, $Res Function(OfflineClient) _then) =
+      _$OfflineClientCopyWithImpl;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String address,
+      String phone,
+      String emergencyContact});
+}
+
+/// @nodoc
+class _$OfflineClientCopyWithImpl<$Res>
+    implements $OfflineClientCopyWith<$Res> {
+  _$OfflineClientCopyWithImpl(this._self, this._then);
+
+  final OfflineClient _self;
+  final $Res Function(OfflineClient) _then;
+
+  /// Create a copy of OfflineClient
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? address = null,
+    Object? phone = null,
+    Object? emergencyContact = null,
+  }) {
+    return _then(_self.copyWith(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _self.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _self.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      emergencyContact: null == emergencyContact
+          ? _self.emergencyContact
+          : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [OfflineClient].
+extension OfflineClientPatterns on OfflineClient {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_OfflineClient value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineClient() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_OfflineClient value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineClient():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_OfflineClient value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineClient() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String id, String name, String address, String phone,
+            String emergencyContact)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineClient() when $default != null:
+        return $default(_that.id, _that.name, _that.address, _that.phone,
+            _that.emergencyContact);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String id, String name, String address, String phone,
+            String emergencyContact)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineClient():
+        return $default(_that.id, _that.name, _that.address, _that.phone,
+            _that.emergencyContact);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String id, String name, String address, String phone,
+            String emergencyContact)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineClient() when $default != null:
+        return $default(_that.id, _that.name, _that.address, _that.phone,
+            _that.emergencyContact);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _$OfflineClientImpl implements _OfflineClient {
-  const _$OfflineClientImpl(
+class _OfflineClient implements OfflineClient {
+  const _OfflineClient(
       {required this.id,
       required this.name,
       required this.address,
       required this.phone,
       required this.emergencyContact});
-
-  factory _$OfflineClientImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfflineClientImplFromJson(json);
+  factory _OfflineClient.fromJson(Map<String, dynamic> json) =>
+      _$OfflineClientFromJson(json);
 
   @override
   final String id;
@@ -2081,16 +3628,26 @@ class _$OfflineClientImpl implements _OfflineClient {
   @override
   final String emergencyContact;
 
+  /// Create a copy of OfflineClient
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OfflineClient(id: $id, name: $name, address: $address, phone: $phone, emergencyContact: $emergencyContact)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OfflineClientCopyWith<_OfflineClient> get copyWith =>
+      __$OfflineClientCopyWithImpl<_OfflineClient>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OfflineClientToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OfflineClientImpl &&
+            other is _OfflineClient &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.address, address) || other.address == address) &&
@@ -2099,130 +3656,132 @@ class _$OfflineClientImpl implements _OfflineClient {
                 other.emergencyContact == emergencyContact));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, name, address, phone, emergencyContact);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OfflineClientImplCopyWith<_$OfflineClientImpl> get copyWith =>
-      __$$OfflineClientImplCopyWithImpl<_$OfflineClientImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfflineClientImplToJson(
-      this,
-    );
+  String toString() {
+    return 'OfflineClient(id: $id, name: $name, address: $address, phone: $phone, emergencyContact: $emergencyContact)';
   }
 }
 
-abstract class _OfflineClient implements OfflineClient {
-  const factory _OfflineClient(
-      {required final String id,
-      required final String name,
-      required final String address,
-      required final String phone,
-      required final String emergencyContact}) = _$OfflineClientImpl;
-
-  factory _OfflineClient.fromJson(Map<String, dynamic> json) =
-      _$OfflineClientImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$OfflineClientCopyWith<$Res>
+    implements $OfflineClientCopyWith<$Res> {
+  factory _$OfflineClientCopyWith(
+          _OfflineClient value, $Res Function(_OfflineClient) _then) =
+      __$OfflineClientCopyWithImpl;
   @override
-  String get id;
-  @override
-  String get name;
-  @override
-  String get address;
-  @override
-  String get phone;
-  @override
-  String get emergencyContact;
-  @override
-  @JsonKey(ignore: true)
-  _$$OfflineClientImplCopyWith<_$OfflineClientImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String address,
+      String phone,
+      String emergencyContact});
 }
 
-OfflineForm _$OfflineFormFromJson(Map<String, dynamic> json) {
-  return _OfflineForm.fromJson(json);
+/// @nodoc
+class __$OfflineClientCopyWithImpl<$Res>
+    implements _$OfflineClientCopyWith<$Res> {
+  __$OfflineClientCopyWithImpl(this._self, this._then);
+
+  final _OfflineClient _self;
+  final $Res Function(_OfflineClient) _then;
+
+  /// Create a copy of OfflineClient
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? address = null,
+    Object? phone = null,
+    Object? emergencyContact = null,
+  }) {
+    return _then(_OfflineClient(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _self.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _self.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      emergencyContact: null == emergencyContact
+          ? _self.emergencyContact
+          : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$OfflineForm {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  List<String> get fields => throw _privateConstructorUsedError;
+  String get id;
+  String get name;
+  List<String> get fields;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $OfflineFormCopyWith<OfflineForm> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OfflineFormCopyWith<$Res> {
-  factory $OfflineFormCopyWith(
-          OfflineForm value, $Res Function(OfflineForm) then) =
-      _$OfflineFormCopyWithImpl<$Res, OfflineForm>;
-  @useResult
-  $Res call({String id, String name, List<String> fields});
-}
-
-/// @nodoc
-class _$OfflineFormCopyWithImpl<$Res, $Val extends OfflineForm>
-    implements $OfflineFormCopyWith<$Res> {
-  _$OfflineFormCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of OfflineForm
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $OfflineFormCopyWith<OfflineForm> get copyWith =>
+      _$OfflineFormCopyWithImpl<OfflineForm>(this as OfflineForm, _$identity);
+
+  /// Serializes this OfflineForm to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? fields = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      fields: null == fields
-          ? _value.fields
-          : fields // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OfflineForm &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            const DeepCollectionEquality().equals(other.fields, fields));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, name, const DeepCollectionEquality().hash(fields));
+
+  @override
+  String toString() {
+    return 'OfflineForm(id: $id, name: $name, fields: $fields)';
   }
 }
 
 /// @nodoc
-abstract class _$$OfflineFormImplCopyWith<$Res>
-    implements $OfflineFormCopyWith<$Res> {
-  factory _$$OfflineFormImplCopyWith(
-          _$OfflineFormImpl value, $Res Function(_$OfflineFormImpl) then) =
-      __$$OfflineFormImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $OfflineFormCopyWith<$Res> {
+  factory $OfflineFormCopyWith(
+          OfflineForm value, $Res Function(OfflineForm) _then) =
+      _$OfflineFormCopyWithImpl;
   @useResult
   $Res call({String id, String name, List<String> fields});
 }
 
 /// @nodoc
-class __$$OfflineFormImplCopyWithImpl<$Res>
-    extends _$OfflineFormCopyWithImpl<$Res, _$OfflineFormImpl>
-    implements _$$OfflineFormImplCopyWith<$Res> {
-  __$$OfflineFormImplCopyWithImpl(
-      _$OfflineFormImpl _value, $Res Function(_$OfflineFormImpl) _then)
-      : super(_value, _then);
+class _$OfflineFormCopyWithImpl<$Res> implements $OfflineFormCopyWith<$Res> {
+  _$OfflineFormCopyWithImpl(this._self, this._then);
 
+  final OfflineForm _self;
+  final $Res Function(OfflineForm) _then;
+
+  /// Create a copy of OfflineForm
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2230,34 +3789,190 @@ class __$$OfflineFormImplCopyWithImpl<$Res>
     Object? name = null,
     Object? fields = null,
   }) {
-    return _then(_$OfflineFormImpl(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
-          ? _value.name
+          ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
       fields: null == fields
-          ? _value._fields
+          ? _self.fields
           : fields // ignore: cast_nullable_to_non_nullable
               as List<String>,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [OfflineForm].
+extension OfflineFormPatterns on OfflineForm {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_OfflineForm value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineForm() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_OfflineForm value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineForm():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_OfflineForm value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineForm() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String id, String name, List<String> fields)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineForm() when $default != null:
+        return $default(_that.id, _that.name, _that.fields);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String id, String name, List<String> fields) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineForm():
+        return $default(_that.id, _that.name, _that.fields);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String id, String name, List<String> fields)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _OfflineForm() when $default != null:
+        return $default(_that.id, _that.name, _that.fields);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$OfflineFormImpl implements _OfflineForm {
-  const _$OfflineFormImpl(
+class _OfflineForm implements OfflineForm {
+  const _OfflineForm(
       {required this.id,
       required this.name,
       required final List<String> fields})
       : _fields = fields;
-
-  factory _$OfflineFormImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OfflineFormImplFromJson(json);
+  factory _OfflineForm.fromJson(Map<String, dynamic> json) =>
+      _$OfflineFormFromJson(json);
 
   @override
   final String id;
@@ -2271,57 +3986,84 @@ class _$OfflineFormImpl implements _OfflineForm {
     return EqualUnmodifiableListView(_fields);
   }
 
+  /// Create a copy of OfflineForm
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OfflineForm(id: $id, name: $name, fields: $fields)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OfflineFormCopyWith<_OfflineForm> get copyWith =>
+      __$OfflineFormCopyWithImpl<_OfflineForm>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OfflineFormToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OfflineFormImpl &&
+            other is _OfflineForm &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             const DeepCollectionEquality().equals(other._fields, _fields));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, name, const DeepCollectionEquality().hash(_fields));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OfflineFormImplCopyWith<_$OfflineFormImpl> get copyWith =>
-      __$$OfflineFormImplCopyWithImpl<_$OfflineFormImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OfflineFormImplToJson(
-      this,
-    );
+  String toString() {
+    return 'OfflineForm(id: $id, name: $name, fields: $fields)';
   }
 }
 
-abstract class _OfflineForm implements OfflineForm {
-  const factory _OfflineForm(
-      {required final String id,
-      required final String name,
-      required final List<String> fields}) = _$OfflineFormImpl;
-
-  factory _OfflineForm.fromJson(Map<String, dynamic> json) =
-      _$OfflineFormImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$OfflineFormCopyWith<$Res>
+    implements $OfflineFormCopyWith<$Res> {
+  factory _$OfflineFormCopyWith(
+          _OfflineForm value, $Res Function(_OfflineForm) _then) =
+      __$OfflineFormCopyWithImpl;
   @override
-  String get id;
-  @override
-  String get name;
-  @override
-  List<String> get fields;
-  @override
-  @JsonKey(ignore: true)
-  _$$OfflineFormImplCopyWith<_$OfflineFormImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String id, String name, List<String> fields});
 }
+
+/// @nodoc
+class __$OfflineFormCopyWithImpl<$Res> implements _$OfflineFormCopyWith<$Res> {
+  __$OfflineFormCopyWithImpl(this._self, this._then);
+
+  final _OfflineForm _self;
+  final $Res Function(_OfflineForm) _then;
+
+  /// Create a copy of OfflineForm
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? fields = null,
+  }) {
+    return _then(_OfflineForm(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      fields: null == fields
+          ? _self._fields
+          : fields // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+// dart format on
