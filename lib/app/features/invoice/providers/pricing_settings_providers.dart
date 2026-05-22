@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/invoice/models/pricing_settings.dart';
 import 'package:carenest/app/features/invoice/repositories/pricing_settings_repository.dart';
 import 'package:carenest/app/features/invoice/viewmodels/pricing_settings_view_model.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/scheduling/models/shift_matching_models.dart';
 import 'package:carenest/app/features/scheduling/repositories/scheduling_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';

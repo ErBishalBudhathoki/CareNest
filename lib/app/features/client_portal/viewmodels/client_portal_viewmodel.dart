@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/client_portal/repositories/client_portal_repository.dart';
 import 'package:carenest/app/features/client_portal/models/client_portal_models.dart';
 

@@ -3,6 +3,7 @@ import 'package:carenest/app/features/analytics/repositories/analytics_repositor
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 // State class to hold all predictions
 class PredictiveInsightsState {
@@ -115,7 +116,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchForecast(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
         metric: metric,
         daysAhead: daysAhead,
       );
@@ -129,7 +130,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchChurnPredictions(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
       );
       state = state.copyWith(churnPredictions: result);
     } catch (e) {
@@ -141,7 +142,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchDemandForecast(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
         daysAhead: daysAhead,
       );
       state = state.copyWith(demandForecast: result);
@@ -154,7 +155,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchComplianceRisk(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
       );
       state = state.copyWith(complianceRisk: result);
     } catch (e) {
@@ -167,7 +168,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchClientRisk(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
       );
       state = state.copyWith(clientRisks: result);
     } catch (e) {
@@ -180,7 +181,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchServiceDemand(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
         daysAhead: daysAhead,
       );
       state = state.copyWith(serviceDemand: result);
@@ -195,7 +196,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     state = state.copyWith(isLoading: true, error: null);
     try {
       final result = await _repository.runScenarioModel(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
         scenario: scenario,
       );
       state = state.copyWith(
@@ -215,7 +216,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchRecommendations(
-        organizationId: _user!.organizationId,
+        organizationId: _user.organizationId,
       );
       state = state.copyWith(recommendations: result);
     } catch (e) {

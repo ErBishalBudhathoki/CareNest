@@ -83,7 +83,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  if (analyticsState.valueOrNull?.hasFinancialLoss == true)
+                  if (analyticsState.value?.hasFinancialLoss == true)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Container(

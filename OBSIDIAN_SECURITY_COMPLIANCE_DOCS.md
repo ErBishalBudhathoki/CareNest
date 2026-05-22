@@ -16,12 +16,16 @@ aliases:
 
 Security, audit, secrets, privacy, App Store readiness, and compliance note map across app and backend.
 
-Total linked markdown files: **38**
+Total linked markdown files: **46**
 
 
 ## .github
 
 - [[.github/SECURITY_CONFIG.md]]
+
+## .kilo/node_modules/msgpackr
+
+- [[.kilo/node_modules/msgpackr/SECURITY.md]]
 
 ## root
 
@@ -52,10 +56,12 @@ Total linked markdown files: **38**
 - [[backend/AUDIT_TRAIL_DOCUMENTATION.md]]
 - [[backend/AUTH_MANAGEMENT_README.md]]
 - [[backend/FINAL_AUDIT_REPORT.md]]
+- [[backend/INFRASTRUCTURE_SECURITY_AUDIT.md]]
 - [[backend/SECRETS_QUICKSTART.md]]
 - [[backend/SECURITY.md]]
 - [[backend/USERORG_AUDIT_FIXES.md]]
 - [[backend/ZERO_TRUST_AUDIT.md]]
+- [[backend/ZERO_TRUST_VERIFICATION_REPORT.md]]
 
 ## backend/docs/deployment
 
@@ -86,3 +92,20 @@ Total linked markdown files: **38**
 - [[docs/archive/root_docs/SECURITY.md]]
 - [[docs/archive/root_docs/SECURITY_AND_RELIABILITY_REPORT.md]]
 - [[docs/archive/root_docs/SECURITY_FIXES_APPLIED.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/02-guides
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/02-guides/data-security.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/02-guides
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/02-guides/content-security-policy.md]]
+
+## screenshot-generator/node_modules/tslib
+
+- [[screenshot-generator/node_modules/tslib/SECURITY.md]]
+
+## screenshot-generator/node_modules/typescript
+
+- [[screenshot-generator/node_modules/typescript/SECURITY.md]]

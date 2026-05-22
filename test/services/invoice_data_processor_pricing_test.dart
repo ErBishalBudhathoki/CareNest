@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:mockito/mockito.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_data_processor.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
@@ -40,29 +41,8 @@ class TestLineItemViewModel extends LineItemViewModel {
   }
 }
 
-/// Lightweight fake Ref to stub provider reads/watches during tests.
-class FakeRef implements Ref {
-  final Map<Object, Object> _overrides;
-  FakeRef(this._overrides);
-
-  @override
-  T read<T>(ProviderListenable<T> provider) {
-    final value = _overrides[provider];
-    if (value == null) {
-      throw StateError('Provider read not stubbed: $provider');
-    }
-    return value as T;
-  }
-
-  @override
-  T watch<T>(ProviderListenable<T> provider) => read(provider);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
 void main() {
-  late FakeRef fakeRef;
+  late Ref ref;
   late StubApiMethod mockApiMethod;
   late InvoiceDataProcessor processor;
 
@@ -70,22 +50,16 @@ void main() {
     mockApiMethod = StubApiMethod();
     final lineItemVM = TestLineItemViewModel(mockApiMethod);
 
-    // Basic provider overrides for the processor and any incidental reads.
-    final stateCtrl = StateController<invoice_providers.InvoiceGenerationState>(
-        invoice_providers.InvoiceGenerationState.initial);
-    final errorCtrl = StateController<String>('');
+    final container = ProviderContainer(
+      overrides: [
+        app_providers.lineItemViewModelProvider.overrideWith((ref) => lineItemVM),
+        app_providers.apiMethodProvider.overrideWith((ref) => mockApiMethod),
+      ],
+    );
+    addTearDown(container.dispose);
 
-    fakeRef = FakeRef({
-      app_providers.lineItemViewModelProvider.notifier: lineItemVM,
-      app_providers.lineItemViewModelProvider: <Map<String, dynamic>>[],
-      app_providers.apiMethodProvider: mockApiMethod,
-      invoice_providers.invoiceGenerationStateProvider.notifier: stateCtrl,
-      invoice_providers.invoiceGenerationErrorProvider.notifier: errorCtrl,
-      invoice_providers.invoiceGenerationStateProvider: invoice_providers.InvoiceGenerationState.initial,
-      invoice_providers.invoiceGenerationErrorProvider: '',
-    });
-
-    processor = InvoiceDataProcessor(fakeRef);
+    ref = container.read(Provider<Ref>((ref) => ref));
+    processor = InvoiceDataProcessor(ref);
   });
 
   group('Bulk pricing via cached data', () {
@@ -153,7 +127,7 @@ void main() {
 
       // Hook up the processor with an EnhancedInvoiceService using the same ref and mock api.
       // This enables bulk pricing caching/usage via the service.
-      final invoiceService = EnhancedInvoiceService(fakeRef, mockApiMethod);
+      final invoiceService = EnhancedInvoiceService(ref, mockApiMethod);
       processor.setEnhancedInvoiceService(invoiceService);
 
       final result = await processor.processInvoiceData(

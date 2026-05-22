@@ -1369,7 +1369,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(familyAccessViewModelProvider);
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider).value;
     final canManageMembers = _canManageMembers(currentUser, state);
     final clientId = _resolvedClientId;
 

@@ -2,6 +2,7 @@ import 'package:carenest/app/features/home/models/home_dashboard_data.dart';
 import 'package:carenest/app/features/home/repositories/home_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 /// Provider for HomeViewModel
 final homeViewModelProvider =
@@ -50,7 +51,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<HomeDashboardData>> {
       final freshBroadcasts = await _repository.getActiveBroadcasts();
 
       if (!mounted) return;
-      final current = state.valueOrNull;
+      final current = state.value;
       if (current == null) return;
 
       // Skip rebuild when the broadcast list has not changed.

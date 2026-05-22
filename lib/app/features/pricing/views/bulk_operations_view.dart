@@ -311,8 +311,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     final analyticsAsync =
         ref.watch(pricingOrgAnalyticsProvider(widget.organizationId));
 
-    final records = recordsAsync.valueOrNull ?? const <PricingLiveRecord>[];
-    final analytics = analyticsAsync.valueOrNull;
+    final records = recordsAsync.value ?? const <PricingLiveRecord>[];
+    final analytics = analyticsAsync.value;
     final isLoading = recordsAsync.isLoading || analyticsAsync.isLoading;
 
     final customCount = records.where((record) => record.isCustom).length;

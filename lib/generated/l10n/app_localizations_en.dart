@@ -5638,8 +5638,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String selectedEmployeesInfo(Object clientCount, Object clientLabel,
-      Object employeeCount, Object employeeLabel) {
+  String selectedEmployeesInfo(
+    Object clientCount,
+    Object clientLabel,
+    Object employeeCount,
+    Object employeeLabel,
+  ) {
     return 'SELECTED: $employeeCount $employeeLabel WITH $clientCount $clientLabel';
   }
 

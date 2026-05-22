@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 extension ExpenseListExtension on List<ExpenseModel> {
   /// Calculates the total amount of all expenses in the list
   double get totalAmount =>
-      fold<double>(0.0, (sum, expense) => sum + (expense.amount ?? 0.0));
+      fold<double>(0.0, (sum, expense) => sum + expense.amount);
 
   /// Filters expenses by status and returns a new list
   List<ExpenseModel> filterByStatus(String status) =>
@@ -12,7 +12,7 @@ extension ExpenseListExtension on List<ExpenseModel> {
 
   /// Calculates the total amount of expenses with a specific status
   double totalAmountByStatus(String status) => filterByStatus(status)
-      .fold<double>(0.0, (sum, expense) => sum + (expense.amount ?? 0.0));
+      .fold<double>(0.0, (sum, expense) => sum + expense.amount);
 
   /// Groups expenses by category and returns a map of category to total amount
   Map<String, double> groupByCategory({String? filterStatus}) {
@@ -22,7 +22,7 @@ extension ExpenseListExtension on List<ExpenseModel> {
       {},
       (map, expense) {
         final category = expense.category;
-        final amount = expense.amount ?? 0.0;
+        final amount = expense.amount;
         map[category] = (map[category] ?? 0.0) + amount;
         return map;
       },

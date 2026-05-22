@@ -261,7 +261,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
         final thread = state.conversations[index - 1];
         final unread = thread.unreadCount?[_resolvedClientId ?? ''] ?? 0;
 
-        final employeesMap = ref.watch(orgEmployeesProvider(thread.organizationId)).valueOrNull ?? {};
+        final employeesMap = ref.watch(orgEmployeesProvider(thread.organizationId)).value ?? {};
         final workerName = (thread.workerName?.isNotEmpty == true)
             ? thread.workerName!
             : employeesMap[thread.workerId] ?? employeesMap[thread.workerId.toLowerCase()] ?? 'Worker ${_shortId(thread.workerId)}';
@@ -345,7 +345,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
 
   Widget _buildChatView(MessagingState state) {
     final active = state.activeConversation!;
-    final employeesMap = ref.watch(orgEmployeesProvider(active.organizationId)).valueOrNull ?? {};
+    final employeesMap = ref.watch(orgEmployeesProvider(active.organizationId)).value ?? {};
     final workerName = (active.workerName?.isNotEmpty == true)
         ? active.workerName!
         : employeesMap[active.workerId] ?? employeesMap[active.workerId.toLowerCase()] ?? 'Worker ${_shortId(active.workerId)}';
