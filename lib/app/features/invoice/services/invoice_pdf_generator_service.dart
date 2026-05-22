@@ -404,8 +404,14 @@ class InvoicePdfGenerator {
       final bool shouldApplyTax = showTax == true; // respect caller intent
       final double effectiveTaxRate =
           _getSafeDouble(taxRate); // Convert percentage to decimal
+
+      // Tax applies ONLY to service items (itemsSubtotal).
+      // Expenses/reimbursements are pass-through costs — taxing them would be
+      // incorrect (the business is recovering money it already spent, not billing
+      // for a new service). GST/tax is never charged on reimbursements.
+      final double taxableBase = itemsSubtotal;
       final double taxAmount =
-          shouldApplyTax ? subtotal * effectiveTaxRate : 0.0;
+          shouldApplyTax ? taxableBase * effectiveTaxRate : 0.0;
       final double total = subtotal + taxAmount;
 
       // Write back into clientData so downstream save uses corrected values
@@ -424,7 +430,7 @@ class InvoicePdfGenerator {
       clientData['includesTax'] = shouldApplyTax;
 
       debugPrint(
-          'PDF Generator: Applied tax fixes -> itemsSubtotal=$itemsSubtotal, expensesTotal=$expensesTotal, subtotal=$subtotal, tax=$taxAmount (rate=$effectiveTaxRate), total=$total, showTax=$shouldApplyTax');
+          'PDF Generator: Applied tax fixes -> itemsSubtotal=$itemsSubtotal, expensesTotal=$expensesTotal, taxableBase=$taxableBase, subtotal=$subtotal, tax=$taxAmount (rate=$effectiveTaxRate), total=$total, showTax=$shouldApplyTax');
     } catch (e) {
       debugPrint('PDF Generator: Error applying tax fixes: $e');
     }

@@ -3611,17 +3611,7 @@ class ApiMethod extends ChangeNotifier {
   Future<Map<String, dynamic>> getAdminInvoiceProfile(
       String organizationId) async {
     try {
-      final response = await http.get(
-        Uri.parse('${_baseUrl}admin-invoice-profile/$organizationId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      );
-      final body = response.body.isNotEmpty ? json.decode(response.body) : {};
-      return body is Map<String, dynamic>
-          ? body
-          : {'success': false, 'message': 'Invalid response'};
+      return await get('admin-invoice-profile/$organizationId');
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -3631,25 +3621,12 @@ class ApiMethod extends ChangeNotifier {
   Future<Map<String, dynamic>> upsertAdminInvoiceProfile(
       Map<String, dynamic> payload) async {
     try {
-      final uri = Uri.parse(
-          '${_baseUrl}admin-invoice-profile${payload['profileId'] != null ? '/${payload['profileId']}' : ''}');
-      final response = payload['profileId'] != null
-          ? await http.put(uri,
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: json.encode(payload))
-          : await http.post(uri,
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: json.encode(payload));
-      final body = response.body.isNotEmpty ? json.decode(response.body) : {};
-      return body is Map<String, dynamic>
-          ? body
-          : {'success': false, 'message': 'Invalid response'};
+      final profileId = payload['profileId'];
+      if (profileId != null) {
+        return await put('admin-invoice-profile/$profileId', body: payload);
+      } else {
+        return await post('admin-invoice-profile', body: payload);
+      }
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
