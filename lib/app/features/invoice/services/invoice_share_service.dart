@@ -11,17 +11,16 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class InvoiceShareService {
   final InvoiceManagementService _invoiceService;
   final InvoicePdfGenerator _pdfGenerator;
   final ApiMethod _apiMethod;
 
-  InvoiceShareService(
-    this._invoiceService, {
-    required ApiMethod apiMethod,
-  })  : _apiMethod = apiMethod,
-        _pdfGenerator = InvoicePdfGenerator(api: apiMethod);
+  InvoiceShareService(this._invoiceService, {required ApiMethod apiMethod})
+    : _apiMethod = apiMethod,
+      _pdfGenerator = InvoicePdfGenerator(api: apiMethod);
 
   /// Share invoice with multiple options
   Future<Map<String, dynamic>> shareInvoice({
@@ -98,7 +97,8 @@ class InvoiceShareService {
       } else {
         return {
           'success': false,
-          'message': result['message'] ??
+          'message':
+              result['message'] ??
               result['error'] ??
               'Failed to generate shareable link',
         };
@@ -153,10 +153,7 @@ class InvoiceShareService {
 
       final pdfFile = File(pdfResult['pdfPath'].toString());
       if (!await pdfFile.exists()) {
-        return {
-          'success': false,
-          'message': 'PDF file not found on device',
-        };
+        return {'success': false, 'message': 'PDF file not found on device'};
       }
 
       // Share the PDF file directly
@@ -190,7 +187,8 @@ class InvoiceShareService {
     try {
       // Prefer attaching the actual PDF when sharing from app.
       final emailSubject = 'Invoice ${invoice.invoiceNumber}';
-      final emailBody = '''
+      final emailBody =
+          '''
 Dear ${invoice.clientName},
 
 Please find your invoice details below:
@@ -240,7 +238,8 @@ Your Invoice Team
   ) async {
     try {
       // Prefer attaching the actual PDF when sharing from app.
-      final message = '''
+      final message =
+          '''
 🧾 *Invoice ${invoice.invoiceNumber}*
 
 💰 Amount: \$${invoice.totalAmount.toStringAsFixed(2)}
@@ -334,8 +333,9 @@ Your Invoice Team
 
       // Check if PDF already exists locally using the same filename generation logic
       final output = await getApplicationDocumentsDirectory();
-      final expectedFileName =
-          InvoiceNumberGeneratorService.generateFileName(invoice.invoiceNumber);
+      final expectedFileName = InvoiceNumberGeneratorService.generateFileName(
+        invoice.invoiceNumber,
+      );
       final expectedFilePath = '${output.path}/$expectedFileName';
 
       debugPrint('Checking for existing PDF at: $expectedFilePath');
@@ -399,8 +399,8 @@ Your Invoice Team
       // Prefer immutable render snapshot when available.
       final calculatedPayloadData = invoiceData['calculatedPayloadData'];
       final persistedSnapshot = _extractPersistedPdfRenderSnapshot(invoiceData);
-      final defaultPdfGenerationParams = invoiceData['pdfGenerationParams']
-              is Map
+      final defaultPdfGenerationParams =
+          invoiceData['pdfGenerationParams'] is Map
           ? Map<String, dynamic>.from(invoiceData['pdfGenerationParams'] as Map)
           : <String, dynamic>{};
       final snapshotParams = persistedSnapshot?['renderParams'] is Map
@@ -412,9 +412,10 @@ Your Invoice Team
       };
       final snapshotFinancialSummary =
           persistedSnapshot?['financialSummary'] is Map
-              ? Map<String, dynamic>.from(
-                  persistedSnapshot!['financialSummary'] as Map)
-              : <String, dynamic>{};
+          ? Map<String, dynamic>.from(
+              persistedSnapshot!['financialSummary'] as Map,
+            )
+          : <String, dynamic>{};
       final metadata = invoiceData['metadata'] ?? {};
 
       Map<String, dynamic> pdfGenerationData;
@@ -422,9 +423,11 @@ Your Invoice Team
       if (persistedSnapshot != null &&
           persistedSnapshot['renderPayload'] is Map) {
         debugPrint(
-            'Using immutable pdfRenderSnapshot payload for deterministic PDF re-render');
+          'Using immutable pdfRenderSnapshot payload for deterministic PDF re-render',
+        );
         pdfGenerationData = Map<String, dynamic>.from(
-            persistedSnapshot['renderPayload'] as Map);
+          persistedSnapshot['renderPayload'] as Map,
+        );
 
         // Keep invoice number authoritative and ensure period dates exist.
         final snapClient = _extractSnapshotClient(pdfGenerationData);
@@ -434,12 +437,18 @@ Your Invoice Team
               snapClient['startDate'] ?? invoiceData['startDate'] ?? '';
           snapClient['endDate'] =
               snapClient['endDate'] ?? invoiceData['endDate'] ?? '';
+
+          // Tax must only apply to service items, not to reimbursements.
+          // The stored snapshot may have been generated before this fix, so
+          // always recalculate here to ensure correctness on every render.
+          _correctExpenseTaxInClientData(snapClient);
         }
       } else if (calculatedPayloadData != null) {
         // Use stored calculated payload data for accurate PDF regeneration
         debugPrint('Using stored calculated payload data for PDF regeneration');
         debugPrint(
-            'calculatedPayloadData structure: ${calculatedPayloadData.keys}');
+          'calculatedPayloadData structure: ${calculatedPayloadData.keys}',
+        );
 
         // The calculatedPayloadData contains the complete structure with clients array
         pdfGenerationData = Map<String, dynamic>.from(calculatedPayloadData);
@@ -460,7 +469,8 @@ Your Invoice Team
 
           debugPrint('Updated invoice number to: ${invoice.invoiceNumber}');
           debugPrint(
-              'Period dates - Start: ${clientData['startDate']}, End: ${clientData['endDate']}');
+            'Period dates - Start: ${clientData['startDate']}, End: ${clientData['endDate']}',
+          );
 
           // Debug: Print the complete client data structure to verify all fields are present
           debugPrint('Client data keys: ${clientData.keys}');
@@ -470,25 +480,27 @@ Your Invoice Team
           debugPrint('clientLastName: ${clientData['clientLastName']}');
           debugPrint('clientAddress: ${clientData['clientAddress']}');
           debugPrint(
-              'expenses count: ${(clientData['expenses'] as List?)?.length ?? 0}');
+            'expenses count: ${(clientData['expenses'] as List?)?.length ?? 0}',
+          );
 
           // Enrich missing provider details (employeeName, providerABN) when using calculated payload
           try {
             String employeeName = (clientData['employeeName'] ?? '').toString();
             String providerABN = (clientData['providerABN'] ?? '').toString();
-            String employeeEmail = (clientData['employeeEmail'] ??
-                    invoiceData['employeeEmail'] ??
-                    ((clientData['employeeDetails'] is Map)
-                        ? (clientData['employeeDetails']['email'] ??
-                            clientData['employeeDetails']['userEmail'])
-                        : null) ??
-                    ((invoiceData['employeeDetails'] is Map)
-                        ? (invoiceData['employeeDetails']['email'] ??
-                            invoiceData['employeeDetails']['userEmail'])
-                        : null) ??
-                    metadata['employeeEmail'] ??
-                    '')
-                .toString();
+            String employeeEmail =
+                (clientData['employeeEmail'] ??
+                        invoiceData['employeeEmail'] ??
+                        ((clientData['employeeDetails'] is Map)
+                            ? (clientData['employeeDetails']['email'] ??
+                                  clientData['employeeDetails']['userEmail'])
+                            : null) ??
+                        ((invoiceData['employeeDetails'] is Map)
+                            ? (invoiceData['employeeDetails']['email'] ??
+                                  invoiceData['employeeDetails']['userEmail'])
+                            : null) ??
+                        metadata['employeeEmail'] ??
+                        '')
+                    .toString();
 
             // First, try to fill from other available sources before calling APIs
             if (employeeName.trim().isEmpty ||
@@ -496,10 +508,11 @@ Your Invoice Team
               final invName = (invoiceData['employeeName'] ?? '').toString();
               final metaName = (metadata['providerName'] ?? '').toString();
               final ed = clientData['employeeDetails'] as Map<String, dynamic>?;
-              final edName = ((ed?['name']) ??
-                      ('${(ed?['firstName'] ?? '')} ${(ed?['lastName'] ?? '')}'))
-                  .toString()
-                  .trim();
+              final edName =
+                  ((ed?['name']) ??
+                          ('${(ed?['firstName'] ?? '')} ${(ed?['lastName'] ?? '')}'))
+                      .toString()
+                      .trim();
 
               if (invName.isNotEmpty) employeeName = invName;
               if (employeeName.trim().isEmpty && metaName.isNotEmpty) {
@@ -565,27 +578,30 @@ Your Invoice Team
                 providerABN.trim().isEmpty ||
                 providerABN == 'N/A') {
               debugPrint(
-                  'Provider details missing or generic in calculated payload, fetching fresh employee details...');
+                'Provider details missing or generic in calculated payload, fetching fresh employee details...',
+              );
               String fetchedEmail = employeeEmail.isNotEmpty
                   ? employeeEmail
                   : (invoiceData['employeeEmail'] ??
-                          ((clientData['employeeDetails'] is Map)
-                              ? (clientData['employeeDetails']['email'] ??
-                                  clientData['employeeDetails']['userEmail'])
-                              : null) ??
-                          ((invoiceData['employeeDetails'] is Map)
-                              ? (invoiceData['employeeDetails']['email'] ??
-                                  invoiceData['employeeDetails']['userEmail'])
-                              : null) ??
-                          metadata['employeeEmail'] ??
-                          '')
-                      .toString();
+                            ((clientData['employeeDetails'] is Map)
+                                ? (clientData['employeeDetails']['email'] ??
+                                      clientData['employeeDetails']['userEmail'])
+                                : null) ??
+                            ((invoiceData['employeeDetails'] is Map)
+                                ? (invoiceData['employeeDetails']['email'] ??
+                                      invoiceData['employeeDetails']['userEmail'])
+                                : null) ??
+                            metadata['employeeEmail'] ??
+                            '')
+                        .toString();
               if (fetchedEmail.isNotEmpty) {
-                final freshEmployeeDetails =
-                    await _apiMethod.checkEmail(fetchedEmail);
+                final freshEmployeeDetails = await _apiMethod.checkEmail(
+                  fetchedEmail,
+                );
                 if (freshEmployeeDetails != null) {
                   final userData = freshEmployeeDetails;
-                  employeeName = userData['name'] ??
+                  employeeName =
+                      userData['name'] ??
                       '${userData['firstName'] ?? ''} ${userData['lastName'] ?? ''}'
                           .trim();
                   if (employeeName.trim().isEmpty) {
@@ -607,19 +623,21 @@ Your Invoice Team
                   };
 
                   debugPrint(
-                      'Updated provider details - Name: $employeeName, ABN: $providerABN');
+                    'Updated provider details - Name: $employeeName, ABN: $providerABN',
+                  );
                 }
               }
             }
           } catch (e) {
             debugPrint(
-                'Failed to enrich employee details in calculated payload branch: $e');
+              'Failed to enrich employee details in calculated payload branch: $e',
+            );
           }
 
           // Enrich missing client address/phone/business details when using calculated payload
           try {
-            String clientAddress =
-                (clientData['clientAddress'] ?? '').toString();
+            String clientAddress = (clientData['clientAddress'] ?? '')
+                .toString();
             String clientCity = (clientData['clientCity'] ?? '').toString();
             String clientState = (clientData['clientState'] ?? '').toString();
             String clientZip = (clientData['clientZip'] ?? '').toString();
@@ -630,15 +648,18 @@ Your Invoice Team
                 clientCity.trim().isEmpty &&
                 clientState.trim().isEmpty) {
               debugPrint(
-                  'Client address fields missing in calculated payload, fetching fresh client details...');
-              final clientEmail = (clientData['clientEmail'] ??
-                      invoiceData['clientEmail'] ??
-                      invoice.clientEmail ??
-                      '')
-                  .toString();
+                'Client address fields missing in calculated payload, fetching fresh client details...',
+              );
+              final clientEmail =
+                  (clientData['clientEmail'] ??
+                          invoiceData['clientEmail'] ??
+                          invoice.clientEmail ??
+                          '')
+                      .toString();
               if (clientEmail.isNotEmpty) {
-                final freshClientDetails =
-                    await _apiMethod.getClientDetails(clientEmail);
+                final freshClientDetails = await _apiMethod.getClientDetails(
+                  clientEmail,
+                );
                 if (freshClientDetails != null) {
                   final c =
                       freshClientDetails['clientDetails'] ?? freshClientDetails;
@@ -652,19 +673,22 @@ Your Invoice Team
                       c['businessName'] ?? businessName;
 
                   debugPrint(
-                      'Updated client details - Address: ${clientData['clientAddress']}, City: ${clientData['clientCity']}, State: ${clientData['clientState']}, Zip: ${clientData['clientZip']}, Phone: ${clientData['clientPhone']}, Business: ${clientData['businessName']}');
+                    'Updated client details - Address: ${clientData['clientAddress']}, City: ${clientData['clientCity']}, State: ${clientData['clientState']}, Zip: ${clientData['clientZip']}, Phone: ${clientData['clientPhone']}, Business: ${clientData['businessName']}',
+                  );
                 }
               }
             }
           } catch (e) {
             debugPrint(
-                'Failed to enrich client details in calculated payload branch: $e');
+              'Failed to enrich client details in calculated payload branch: $e',
+            );
           }
         }
       } else {
         // Fallback to reconstructing data from stored invoice data (legacy support)
         debugPrint(
-            'No calculated payload data found, reconstructing from stored invoice data');
+          'No calculated payload data found, reconstructing from stored invoice data',
+        );
 
         // Extract basic invoice data
         final lineItems = invoiceData['lineItems'] ?? [];
@@ -680,7 +704,8 @@ Your Invoice Team
           try {
             final sp = SharedPreferencesUtils();
             await sp.init();
-            final spEmail = sp.getUserEmail() ??
+            final spEmail =
+                sp.getUserEmail() ??
                 await sp.getUserEmailFromSharedPreferences() ??
                 '';
             if (spEmail.isNotEmpty) {
@@ -690,38 +715,59 @@ Your Invoice Team
         }
 
         // Build complete client data structure that original PDF generator expects
-        // First, check if we need to fetch fresh client details for missing address information
+        // First, check if we need to fetch fresh client details for missing address or ABN information
         String clientAddress = invoiceData['clientAddress'] ?? '';
         String clientCity = invoiceData['clientCity'] ?? '';
         String clientState = invoiceData['clientState'] ?? '';
         String clientZip = invoiceData['clientZip'] ?? '';
         String clientPhone = invoiceData['clientPhone'] ?? '';
         String businessName = invoiceData['businessName'] ?? '';
+        String clientABN = invoiceData['clientABN'] ?? invoiceData['abn'] ?? '';
 
-        // If address fields are missing, try to fetch fresh client details
-        if (clientAddress.trim().isEmpty &&
-            clientCity.trim().isEmpty &&
-            clientState.trim().isEmpty) {
+        if (clientAddress.trim().isEmpty || clientABN.trim().isEmpty) {
           debugPrint(
-              'Address fields are empty, fetching fresh client details...');
+            'Client address or ABN missing, fetching fresh client details...',
+          );
           try {
             final clientEmail =
                 invoiceData['clientEmail'] ?? invoice.clientEmail;
             if (clientEmail.isNotEmpty) {
-              final freshClientDetails =
-                  await _apiMethod.getClientDetails(clientEmail);
+              final freshClientDetails = await _apiMethod.getClientDetails(
+                clientEmail,
+                clientId: invoiceData['clientId']?.toString(),
+                organizationId: organizationId,
+              );
               if (freshClientDetails != null) {
-                // Handle the response structure: { statusCode: 200, message: "...", clientDetails: {...} }
-                final clientData =
+                final clientDataMap =
                     freshClientDetails['clientDetails'] ?? freshClientDetails;
-                clientAddress = clientData['clientAddress'] ?? clientAddress;
-                clientCity = clientData['clientCity'] ?? clientCity;
-                clientState = clientData['clientState'] ?? clientState;
-                clientZip = clientData['clientZip'] ?? clientZip;
-                clientPhone = clientData['clientPhone'] ?? clientPhone;
-                businessName = clientData['businessName'] ?? businessName;
+                if (clientAddress.trim().isEmpty) {
+                  clientAddress = clientDataMap['clientAddress'] ?? '';
+                }
+                if (clientCity.trim().isEmpty) {
+                  clientCity = clientDataMap['clientCity'] ?? '';
+                }
+                if (clientState.trim().isEmpty) {
+                  clientState = clientDataMap['clientState'] ?? '';
+                }
+                if (clientZip.trim().isEmpty) {
+                  clientZip = clientDataMap['clientZip'] ?? '';
+                }
+                if (clientPhone.trim().isEmpty) {
+                  clientPhone = clientDataMap['clientPhone'] ?? '';
+                }
+                if (businessName.trim().isEmpty) {
+                  businessName = clientDataMap['businessName'] ?? '';
+                }
+                if (clientABN.trim().isEmpty) {
+                  clientABN =
+                      clientDataMap['abn'] ??
+                      clientDataMap['clientABN'] ??
+                      clientDataMap['businessABN'] ??
+                      '';
+                }
                 debugPrint(
-                    'Fresh client details fetched - Address: $clientAddress, City: $clientCity, State: $clientState, Zip: $clientZip, Phone: $clientPhone, Business: $businessName');
+                  'Fresh client details fetched - Address: $clientAddress, City: $clientCity, State: $clientState, Zip: $clientZip, Phone: $clientPhone, Business: $businessName, ABN: $clientABN',
+                );
               }
             }
           } catch (e) {
@@ -741,16 +787,18 @@ Your Invoice Team
             providerABN.trim().isEmpty ||
             providerABN == 'N/A') {
           debugPrint(
-              'Provider details are missing, fetching fresh employee details...');
+            'Provider details are missing, fetching fresh employee details...',
+          );
           try {
             String employeeEmail = employeeEmailForMeta;
             if (employeeEmail.isNotEmpty) {
-              final freshEmployeeDetails =
-                  await _apiMethod.checkEmail(employeeEmail);
+              final freshEmployeeDetails = await _apiMethod.checkEmail(
+                employeeEmail,
+              );
               if (freshEmployeeDetails != null) {
-                // Handle the response structure: { statusCode: 200, message: "...", firstName: "...", lastName: "...", abn: "...", name: "..." }
                 final userData = freshEmployeeDetails;
-                employeeName = userData['name'] ??
+                employeeName =
+                    userData['name'] ??
                     '${userData['firstName'] ?? ''} ${userData['lastName'] ?? ''}'
                         .trim();
                 if (employeeName.trim().isEmpty) {
@@ -758,7 +806,8 @@ Your Invoice Team
                 }
                 providerABN = userData['abn'] ?? userData['ABN'] ?? providerABN;
                 debugPrint(
-                    'Fresh employee details fetched - Name: $employeeName, ABN: $providerABN');
+                  'Fresh employee details fetched - Name: $employeeName, ABN: $providerABN',
+                );
               }
             }
           } catch (e) {
@@ -766,7 +815,213 @@ Your Invoice Team
           }
         }
 
+        // Fetch and populate adminProfile
+        Map<String, dynamic> adminProfile = {};
+        try {
+          if (organizationId.isNotEmpty) {
+            final orgResp = await _apiMethod.getOrganizationDetails(
+              organizationId,
+            );
+            final org =
+                (orgResp['organization'] ?? orgResp['data'])
+                    as Map<String, dynamic>?;
+            if (org != null) {
+              adminProfile = {
+                'businessName':
+                    org['name'] ?? org['organizationName'] ?? 'Business',
+                'businessAddress': _composeAddress(org['address']),
+                'contactEmail':
+                    (org['contactDetails'] ?? const {})['email'] ?? '',
+                'contactPhone':
+                    (org['contactDetails'] ?? const {})['phone'] ?? '',
+                'taxIdentifiers': {'abn': org['abn'] ?? ''},
+                'abn': org['abn'] ?? '',
+              };
+            } else {
+              final resp = await _apiMethod.getAdminInvoiceProfile(
+                organizationId,
+              );
+              if (resp['success'] == true &&
+                  resp['data'] is Map<String, dynamic>) {
+                final Map<String, dynamic> data = Map<String, dynamic>.from(
+                  resp['data'] as Map,
+                );
+                final abn =
+                    (data['taxIdentifiers'] ?? const {})['abn'] ??
+                    data['abn'] ??
+                    '';
+                adminProfile = {
+                  'businessName': data['businessName'] ?? 'Business',
+                  'businessAddress': data['businessAddress'] ?? '',
+                  'contactEmail': data['contactEmail'] ?? '',
+                  'contactPhone': data['contactPhone'] ?? '',
+                  'taxIdentifiers': data['taxIdentifiers'] ?? {'abn': abn},
+                  'abn': abn,
+                };
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Failed to load admin invoice profile: $e');
+        }
+
+        if (adminProfile.isEmpty) {
+          adminProfile = {
+            'businessName': metadata['providerName'] ?? 'Business',
+            'abn': providerABN,
+            'taxIdentifiers': {'abn': providerABN},
+          };
+        }
+
+        final clientFullName =
+            (invoiceData['clientFirstName'] != null ||
+                invoiceData['clientLastName'] != null)
+            ? '${invoiceData['clientFirstName'] ?? ''} ${invoiceData['clientLastName'] ?? ''}'
+                  .trim()
+            : (invoiceData['clientName'] ?? invoice.clientName ?? '')
+                  .toString();
+
+        final billTo = {
+          'name': clientFullName.isNotEmpty
+              ? clientFullName
+              : 'Client Name Not Available',
+          'email': invoiceData['clientEmail'] ?? invoice.clientEmail ?? '',
+          'address': _composeAddress({
+            'clientAddress': clientAddress,
+            'clientCity': clientCity,
+            'clientState': clientState,
+            'clientZip': clientZip,
+          }),
+          'phone': clientPhone,
+          'abn': clientABN,
+          'businessName': businessName,
+        };
+
+        String startDateStr = '';
+        String endDateStr = '';
+
+        dynamic rawStartDate = invoiceData['startDate'];
+        dynamic rawEndDate = invoiceData['endDate'];
+
+        if (rawStartDate != null && rawStartDate.toString().trim().isNotEmpty) {
+          try {
+            final parsedStart = DateTime.parse(rawStartDate.toString());
+            startDateStr = DateFormat('dd/MM/yyyy').format(parsedStart);
+          } catch (_) {
+            startDateStr = rawStartDate.toString();
+          }
+        }
+        if (rawEndDate != null && rawEndDate.toString().trim().isNotEmpty) {
+          try {
+            final parsedEnd = DateTime.parse(rawEndDate.toString());
+            endDateStr = DateFormat('dd/MM/yyyy').format(parsedEnd);
+          } catch (_) {
+            endDateStr = rawEndDate.toString();
+          }
+        }
+
+        if (startDateStr.isEmpty || endDateStr.isEmpty) {
+          DateTime refDate = invoice.createdAt;
+          if (invoiceData['issueDate'] != null) {
+            try {
+              refDate = DateTime.parse(invoiceData['issueDate'].toString());
+            } catch (_) {}
+          } else if (invoiceData['createdAt'] != null) {
+            try {
+              refDate = DateTime.parse(invoiceData['createdAt'].toString());
+            } catch (_) {}
+          }
+          final calculatedStart = refDate.subtract(const Duration(days: 13));
+          if (startDateStr.isEmpty) {
+            startDateStr = DateFormat('dd/MM/yyyy').format(calculatedStart);
+          }
+          if (endDateStr.isEmpty) {
+            endDateStr = DateFormat('dd/MM/yyyy').format(refDate);
+          }
+        }
+
+        // Map line items to match what PDF generator expects
+        final mappedItems = (lineItems as List).map((item) {
+          if (item is Map) {
+            final itemMap = Map<String, dynamic>.from(item);
+
+            final String itemName =
+                (itemMap['supportItemName'] ??
+                        itemMap['itemName'] ??
+                        itemMap['ndisItemName'] ??
+                        itemMap['description'] ??
+                        'Service')
+                    .toString();
+            final String description =
+                (itemMap['description'] ??
+                        itemMap['supportItemName'] ??
+                        itemMap['itemName'] ??
+                        itemMap['ndisItemName'] ??
+                        'Service')
+                    .toString();
+
+            final double quantity =
+                _asNullableDouble(itemMap['quantity'] ?? itemMap['hours']) ??
+                1.0;
+            final double rate =
+                _asNullableDouble(
+                  itemMap['price'] ?? itemMap['rate'] ?? itemMap['unitPrice'],
+                ) ??
+                0.0;
+            final double amount =
+                _asNullableDouble(
+                  itemMap['totalPrice'] ??
+                      itemMap['amount'] ??
+                      itemMap['total'] ??
+                      (quantity * rate),
+                ) ??
+                0.0;
+
+            final String dateVal =
+                (itemMap['date'] ??
+                        itemMap['shiftDate'] ??
+                        invoiceData['issueDate'] ??
+                        invoiceData['createdAt'] ??
+                        '')
+                    .toString();
+
+            String formattedDate = '';
+            if (dateVal.isNotEmpty) {
+              try {
+                final parsedDate = DateTime.parse(dateVal);
+                formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+              } catch (_) {
+                formattedDate = dateVal;
+              }
+            } else {
+              formattedDate = DateFormat(
+                'yyyy-MM-dd',
+              ).format(invoice.createdAt);
+            }
+
+            return {
+              ...itemMap,
+              'itemName': itemName,
+              'description': description,
+              'hours': quantity,
+              'quantity': quantity,
+              'rate': rate,
+              'unitPrice': rate,
+              'amount': amount,
+              'total': amount,
+              'totalPrice': amount,
+              'date': formattedDate,
+            };
+          }
+          return item;
+        }).toList();
+
         final clientData = {
+          'adminProfile': adminProfile,
+          'billTo': billTo,
+          'invoiceType':
+              invoiceData['metadata']?['invoiceType'] ?? invoice.invoiceType,
+
           // Provider details (use fetched fresh data or fallback to stored data)
           'employeeName': employeeName,
           'providerABN': providerABN,
@@ -783,31 +1038,32 @@ Your Invoice Team
           'clientZip': clientZip,
           'clientPhone': clientPhone,
           'businessName': businessName,
+          'abn': clientABN,
+          'clientABN': clientABN,
 
-          // Period dates (use stored data from calculated payload)
-          'startDate': invoiceData['startDate'] ?? '',
-          'endDate': invoiceData['endDate'] ?? '',
+          // Period dates
+          'startDate': startDateStr,
+          'endDate': endDateStr,
 
           // Invoice metadata (required by _buildInvoiceHeader and _buildBillingInfo)
-          'invoiceNumber': invoice
-              .invoiceNumber, // Always use the actual invoice number from the invoice object
+          'invoiceNumber': invoice.invoiceNumber,
           'jobTitle': invoiceData['jobTitle'] ?? 'Personal Care Assistance',
 
           // Financial data (match PDF generator expectations)
           'subtotal': financialSummary['subtotal'] ?? 0.0,
-          'tax': financialSummary['taxAmount'] ??
-              0.0, // PDF generator expects 'tax' not 'taxAmount'
+          'tax': financialSummary['taxAmount'] ?? 0.0,
           'total': financialSummary['totalAmount'] ?? invoice.totalAmount,
           'totalHours': invoiceData['totalHours'] ?? '0.00',
 
           // Breakdown totals for expenses (required by _buildInvoiceTotal)
-          'itemsSubtotal': financialSummary['itemsSubtotal'] ??
+          'itemsSubtotal':
+              financialSummary['itemsSubtotal'] ??
               financialSummary['subtotal'] ??
               0.0,
           'expensesTotal': financialSummary['expensesTotal'] ?? 0.0,
 
           // Line items and expenses (ensure expenses are properly formatted)
-          'items': lineItems,
+          'items': mappedItems,
           'expenses': expenses.map((expense) {
             // Ensure expense has all required fields for PDF generation
             if (expense is Map<String, dynamic>) {
@@ -815,7 +1071,8 @@ Your Invoice Team
                 ...expense,
                 'date': expense['date'] ?? expense['expenseDate'] ?? '',
                 'category': expense['category'] ?? 'Other',
-                'totalAmount': expense['totalAmount'] ??
+                'totalAmount':
+                    expense['totalAmount'] ??
                     expense['amount'] ??
                     expense['unitCost'] ??
                     0.0,
@@ -840,9 +1097,11 @@ Your Invoice Team
         debugPrint('clientLastName: ${clientData['clientLastName']}');
         debugPrint('clientAddress: ${clientData['clientAddress']}');
         debugPrint(
-            'expenses count: ${(clientData['expenses'] as List?)?.length ?? 0}');
+          'expenses count: ${(clientData['expenses'] as List?)?.length ?? 0}',
+        );
         debugPrint(
-            'items count: ${(clientData['items'] as List?)?.length ?? 0}');
+          'items count: ${(clientData['items'] as List?)?.length ?? 0}',
+        );
 
         pdfGenerationData = {
           'clients': [clientData],
@@ -860,9 +1119,10 @@ Your Invoice Team
       final financialSummary = snapshotFinancialSummary.isNotEmpty
           ? snapshotFinancialSummary
           : (invoiceData['financialSummary'] is Map
-              ? Map<String, dynamic>.from(
-                  invoiceData['financialSummary'] as Map)
-              : <String, dynamic>{});
+                ? Map<String, dynamic>.from(
+                    invoiceData['financialSummary'] as Map,
+                  )
+                : <String, dynamic>{});
       final snapshotClient = _extractSnapshotClient(pdfGenerationData);
       final shouldShowTax = _resolvePersistedShowTax(
         pdfGenerationParams: pdfGenerationParams,
@@ -890,8 +1150,9 @@ Your Invoice Team
       bool useAdminBankDetails = false;
       try {
         final prefs = await SharedPreferences.getInstance();
-        final stored =
-            prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+        final stored = prefs.getBool(
+          SharedPreferencesUtils.kUseAdminBankDetailsKey,
+        );
         if (stored != null) useAdminBankDetails = stored;
       } catch (_) {}
 
@@ -909,9 +1170,11 @@ Your Invoice Team
       );
 
       debugPrint(
-          'PDF regeneration - showTax: $shouldShowTax, taxRate: $originalTaxRate');
+        'PDF regeneration - showTax: $shouldShowTax, taxRate: $originalTaxRate',
+      );
       debugPrint(
-          'PDF regeneration - deterministic snapshot mode enabled; totals and tax flags preserved from stored invoice payload.');
+        'PDF regeneration - deterministic snapshot mode enabled; totals and tax flags preserved from stored invoice payload.',
+      );
 
       if (pdfPaths.isEmpty) {
         return {
@@ -939,7 +1202,8 @@ Your Invoice Team
   }
 
   Map<String, dynamic>? _extractSnapshotClient(
-      Map<String, dynamic> pdfGenerationData) {
+    Map<String, dynamic> pdfGenerationData,
+  ) {
     final clients = pdfGenerationData['clients'];
     if (clients is! List || clients.isEmpty) {
       return null;
@@ -958,7 +1222,8 @@ Your Invoice Team
   }
 
   Map<String, dynamic>? _extractPersistedPdfRenderSnapshot(
-      Map<String, dynamic> invoiceData) {
+    Map<String, dynamic> invoiceData,
+  ) {
     final raw = invoiceData['pdfRenderSnapshot'];
     if (raw is Map<String, dynamic>) {
       return raw;
@@ -985,9 +1250,8 @@ Your Invoice Team
       final source = (payload is Map<String, dynamic>)
           ? payload['source']?.toString()
           : result['source']?.toString();
-      final rawBase64 = ((payload is Map<String, dynamic>)
-                  ? payload['pdfData']
-                  : null) ??
+      final rawBase64 =
+          ((payload is Map<String, dynamic>) ? payload['pdfData'] : null) ??
           result['pdfData'];
       if (rawBase64 == null || rawBase64.toString().trim().isEmpty) {
         return null;
@@ -1000,13 +1264,15 @@ Your Invoice Team
       if (bytes.isEmpty) return null;
 
       final output = await getApplicationDocumentsDirectory();
-      final fileName =
-          InvoiceNumberGeneratorService.generateFileName(invoiceNumber);
+      final fileName = InvoiceNumberGeneratorService.generateFileName(
+        invoiceNumber,
+      );
       final targetPath = '${output.path}/$fileName';
       final file = File(targetPath);
       await file.writeAsBytes(bytes, flush: true);
       debugPrint(
-          'InvoiceShareService: backend PDF source=${source ?? 'unknown'}');
+        'InvoiceShareService: backend PDF source=${source ?? 'unknown'}',
+      );
 
       if (!await file.exists() || await file.length() <= 0) {
         return null;
@@ -1050,7 +1316,8 @@ Your Invoice Team
     }
 
     // Final fallback: only show tax if persisted tax amount is non-zero.
-    final persistedTaxAmount = _firstDouble(<dynamic>[
+    final persistedTaxAmount =
+        _firstDouble(<dynamic>[
           financialSummary['taxAmount'],
           financialSummary['tax'],
           snapshotClient?['taxAmount'],
@@ -1088,13 +1355,15 @@ Your Invoice Team
       return _normalizeTaxRate(explicitRate);
     }
 
-    final subtotal = _firstDouble(<dynamic>[
+    final subtotal =
+        _firstDouble(<dynamic>[
           financialSummary['subtotal'],
           snapshotClient?['subtotal'],
           invoiceData['subtotal'],
         ]) ??
         0.0;
-    final taxAmount = _firstDouble(<dynamic>[
+    final taxAmount =
+        _firstDouble(<dynamic>[
           financialSummary['taxAmount'],
           financialSummary['tax'],
           snapshotClient?['taxAmount'],
@@ -1116,18 +1385,21 @@ Your Invoice Team
     required bool showTax,
     required double taxRate,
   }) {
-    final itemsSubtotal = _firstDouble(<dynamic>[
+    final itemsSubtotal =
+        _firstDouble(<dynamic>[
           financialSummary['itemsSubtotal'],
           snapshotClient['itemsSubtotal'],
         ]) ??
         0.0;
-    final expensesTotal = _firstDouble(<dynamic>[
+    final expensesTotal =
+        _firstDouble(<dynamic>[
           financialSummary['expensesTotal'],
           snapshotClient['expensesTotal'],
         ]) ??
         0.0;
 
-    double subtotal = _firstDouble(<dynamic>[
+    double subtotal =
+        _firstDouble(<dynamic>[
           financialSummary['subtotal'],
           snapshotClient['subtotal'],
         ]) ??
@@ -1136,7 +1408,8 @@ Your Invoice Team
       subtotal = itemsSubtotal + expensesTotal;
     }
 
-    final taxAmount = _firstDouble(<dynamic>[
+    final taxAmount =
+        _firstDouble(<dynamic>[
           financialSummary['taxAmount'],
           financialSummary['tax'],
           snapshotClient['taxAmount'],
@@ -1144,7 +1417,8 @@ Your Invoice Team
         ]) ??
         0.0;
 
-    final total = _firstDouble(<dynamic>[
+    final total =
+        _firstDouble(<dynamic>[
           financialSummary['totalAmount'],
           financialSummary['total'],
           snapshotClient['total'],
@@ -1228,6 +1502,35 @@ Your Invoice Team
     return double.parse(value.toStringAsFixed(2));
   }
 
+  String _composeAddress(dynamic address) {
+    if (address == null) return '';
+    if (address is String) return address.trim();
+    try {
+      if (address is Map) {
+        final parts =
+            [
+                  address['street'] ??
+                      address['clientAddress'] ??
+                      address['address'],
+                  address['city'] ?? address['clientCity'],
+                  address['state'] ?? address['clientState'],
+                  address['postcode'] ??
+                      address['clientZip'] ??
+                      address['zip'] ??
+                      address['zipCode'],
+                  address['country'],
+                ]
+                .map((e) => (e ?? '').toString().trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
+        if (parts.isNotEmpty) {
+          return parts.join(', ');
+        }
+      }
+    } catch (_) {}
+    return address.toString().trim();
+  }
+
   /// Check storage permission
   Future<bool> _checkStoragePermission() async {
     try {
@@ -1245,7 +1548,8 @@ Your Invoice Team
 
   /// Show share options dialog
   static Future<ShareMethod?> showShareOptionsDialog(
-      BuildContext context) async {
+    BuildContext context,
+  ) async {
     return showDialog<ShareMethod>(
       context: context,
       builder: (BuildContext context) {
@@ -1282,12 +1586,55 @@ Your Invoice Team
       },
     );
   }
+  /// Recalculates tax and total so that expenses/reimbursements are NOT taxed.
+  ///
+  /// Expenses are pass-through costs — the business recovers money it already
+  /// spent on behalf of the client and must not charge GST on that amount.
+  /// Tax applies only to [itemsSubtotal] (billable service hours × rate).
+  ///
+  /// Called on both the snapshot and calculatedPayloadData paths so invoices
+  /// persisted before this fix are also corrected on every render.
+  void _correctExpenseTaxInClientData(Map<String, dynamic> clientData) {
+    try {
+      final double itemsSubtotal = _safeDouble(clientData['itemsSubtotal']);
+      final double expensesTotal = _safeDouble(clientData['expensesTotal']);
+
+      // Only correct when there are actually expenses.
+      if (expensesTotal == 0.0) return;
+
+      final double taxRate = _safeDouble(clientData['taxRate']);
+      final bool applyTax = clientData['applyTax'] == true ||
+          clientData['showTax'] == true ||
+          _safeDouble(clientData['taxAmount']) > 0;
+
+      // Tax base is service items only — never include reimbursements.
+      final double correctTax = applyTax ? itemsSubtotal * taxRate : 0.0;
+      final double correctSubtotal = itemsSubtotal + expensesTotal;
+      final double correctTotal = correctSubtotal + correctTax;
+
+      clientData['taxAmount'] = double.parse(correctTax.toStringAsFixed(2));
+      clientData['tax'] = clientData['taxAmount'];
+      clientData['subtotal'] =
+          double.parse(correctSubtotal.toStringAsFixed(2));
+      clientData['total'] = double.parse(correctTotal.toStringAsFixed(2));
+
+      debugPrint(
+        'Tax correction (reimbursement fix): '
+        'itemsSubtotal=$itemsSubtotal, expensesTotal=$expensesTotal, '
+        'taxRate=$taxRate, correctTax=$correctTax, correctTotal=$correctTotal',
+      );
+    } catch (e) {
+      debugPrint('_correctExpenseTaxInClientData error: $e');
+    }
+  }
+
+  double _safeDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    return double.tryParse(value.toString()) ?? 0.0;
+  }
 }
 
 /// Enum for different sharing methods
-enum ShareMethod {
-  link,
-  pdf,
-  email,
-  whatsapp,
-}
+enum ShareMethod { link, pdf, email, whatsapp }
