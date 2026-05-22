@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../repositories/clock_in_out_repository.dart';
 
 final clockInOutViewModelProvider =

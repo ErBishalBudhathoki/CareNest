@@ -394,12 +394,12 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         ? ref.watch(pricingAnalyticsSnapshotProvider(organizationId))
         : const AsyncData<PricingAnalytics?>(null);
 
-    final ndisItems = ndisItemsAsync.valueOrNull ?? const <NDISItem>[];
+    final ndisItems = ndisItemsAsync.value ?? const <NDISItem>[];
     final pricingLookup =
-        pricingLookupAsync.valueOrNull ?? const <String, dynamic>{};
+        pricingLookupAsync.value ?? const <String, dynamic>{};
     final employees =
-        employeesAsync.valueOrNull ?? const <Map<String, dynamic>>[];
-    final analytics = analyticsAsync.valueOrNull;
+        employeesAsync.value ?? const <Map<String, dynamic>>[];
+    final analytics = analyticsAsync.value;
     final moduleInsights = _buildModuleInsights(
       l10n: AppLocalizations.of(context)!,
       ndisItems: ndisItems,

@@ -2,6 +2,7 @@ import 'package:carenest/app/features/leave/providers/leave_providers.dart';
 import 'package:carenest/app/features/leave/repositories/leave_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 class LeaveViewModel extends ChangeNotifier {
   final Ref _ref;

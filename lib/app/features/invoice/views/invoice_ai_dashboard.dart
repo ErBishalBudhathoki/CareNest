@@ -30,11 +30,9 @@ class InvoiceAIDashboard extends ConsumerWidget {
             icon: const Icon(Icons.arrow_back_ios_new, size: 20),
             style: IconButton.styleFrom(
               backgroundColor: BauhausDesign.surfaceOffWhite,
-              side: const BorderSide(
-                  color: BauhausDesign.neutral, width: 1.5),
+              side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
               shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(BauhausDesign.radiusSm),
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
             ),
           ),
@@ -112,8 +110,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
               context,
               textTheme,
               title: 'Error Detection',
-              description:
-                  'AI-powered validation to catch billing errors',
+              description: 'AI-powered validation to catch billing errors',
               icon: Icons.bug_report_outlined,
               accentColor: BauhausDesign.warning,
               onTap: () => _showErrorDetectionDialog(context),
@@ -123,8 +120,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
               context,
               textTheme,
               title: 'Payment Predictions',
-              description:
-                  'Predict when clients will pay based on history',
+              description: 'Predict when clients will pay based on history',
               icon: Icons.trending_up,
               accentColor: BauhausDesign.secondary,
               onTap: () => _showPaymentPredictionDialog(context),
@@ -134,8 +130,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
               context,
               textTheme,
               title: 'Smart Reminders',
-              description:
-                  'Optimal timing for payment reminders',
+              description: 'Optimal timing for payment reminders',
               icon: Icons.notifications_active_outlined,
               accentColor: BauhausDesign.success,
               onTap: () => _showSmartRemindersDialog(context),
@@ -187,8 +182,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: BauhausDesign.primary.withValues(alpha: 0.08),
-                    borderRadius:
-                        BorderRadius.circular(BauhausDesign.radiusSm),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
                       color: BauhausDesign.primary.withValues(alpha: 0.3),
                       width: 1.5,
@@ -312,8 +306,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: accentColor.withValues(alpha: 0.08),
-              borderRadius:
-                  BorderRadius.circular(BauhausDesign.radiusSm),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(
                 color: accentColor.withValues(alpha: 0.3),
               ),
@@ -376,10 +369,8 @@ class InvoiceAIDashboard extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: accentColor,
                   borderRadius: const BorderRadius.only(
-                    topLeft:
-                        Radius.circular(BauhausDesign.radiusSm - 1),
-                    bottomLeft:
-                        Radius.circular(BauhausDesign.radiusSm - 1),
+                    topLeft: Radius.circular(BauhausDesign.radiusSm - 1),
+                    bottomLeft: Radius.circular(BauhausDesign.radiusSm - 1),
                   ),
                 ),
               ),
@@ -394,31 +385,25 @@ class InvoiceAIDashboard extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color:
-                              accentColor.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(
-                              BauhausDesign.radiusSm),
+                          color: accentColor.withValues(alpha: 0.08),
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusSm),
                           border: Border.all(
-                            color:
-                                accentColor.withValues(alpha: 0.3),
+                            color: accentColor.withValues(alpha: 0.3),
                             width: 1.5,
                           ),
                         ),
-                        child: Icon(icon,
-                            color: accentColor, size: 22),
+                        child: Icon(icon, color: accentColor, size: 22),
                       ),
                       const SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          mainAxisAlignment:
-                              MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               title.toUpperCase(),
-                              style:
-                                  textTheme.labelLarge?.copyWith(
+                              style: textTheme.labelLarge?.copyWith(
                                 color: BauhausDesign.textDark,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.5,
@@ -427,8 +412,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                             const SizedBox(height: 2),
                             Text(
                               description,
-                              style:
-                                  textTheme.bodySmall?.copyWith(
+                              style: textTheme.bodySmall?.copyWith(
                                 color: BauhausDesign.textMuted,
                               ),
                             ),
@@ -457,11 +441,12 @@ class InvoiceAIDashboard extends ConsumerWidget {
     _showBauhausDialog(
       context,
       title: 'CONFIRM AUTO-GENERATE',
-      body: 'Generate invoices manually right now for all un-invoiced appointments? Note: Automated background generation runs weekly based on organization settings.',
+      body:
+          'Generate invoices manually right now for all un-invoiced appointments? Note: Automated background generation runs weekly based on organization settings.',
       primaryLabel: 'GENERATE NOW',
       onPrimary: () async {
         Navigator.pop(context); // close dialog
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Generating invoices... Please wait.'),
@@ -474,13 +459,15 @@ class InvoiceAIDashboard extends ConsumerWidget {
           final result = await repo.autoGenerateInvoices(
             organizationId: organizationId ?? 'org_123',
             // passing null dates to generate all pending
-            forceManual: true, // This is explicitly triggered by a human in the UI
+            forceManual:
+                true, // This is explicitly triggered by a human in the UI
           );
 
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Success! Generated ${result.successfulInvoices} invoices.'),
+                content: Text(
+                    'Success! Generated ${result.successfulInvoices} invoices.'),
                 backgroundColor: BauhausDesign.success,
               ),
             );
@@ -491,7 +478,8 @@ class InvoiceAIDashboard extends ConsumerWidget {
               MaterialPageRoute(
                 builder: (context) => InvoiceListView(
                   organizationId: organizationId ?? '',
-                  userEmail: '', // Usually fetched from auth state in real usage
+                  userEmail:
+                      '', // Usually fetched from auth state in real usage
                 ),
               ),
             );
@@ -534,8 +522,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
     _showBauhausDialog(
       context,
       title: 'SMART REMINDERS',
-      body:
-          'AI determines the optimal time to send payment reminders based on '
+      body: 'AI determines the optimal time to send payment reminders based on '
           'client behavior and payment patterns.',
     );
   }
@@ -552,10 +539,8 @@ class InvoiceAIDashboard extends ConsumerWidget {
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(BauhausDesign.radiusSm),
-          side: const BorderSide(
-              color: BauhausDesign.neutral, width: 2),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
         ),
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space5),
@@ -596,14 +581,12 @@ class InvoiceAIDashboard extends ConsumerWidget {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: BauhausDesign.primary,
-                        foregroundColor:
-                            BauhausDesign.surfaceWhite,
+                        foregroundColor: BauhausDesign.surfaceWhite,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              BauhausDesign.radiusSm),
+                          borderRadius:
+                              BorderRadius.circular(BauhausDesign.radiusSm),
                           side: const BorderSide(
-                              color: BauhausDesign.neutral,
-                              width: 1.5),
+                              color: BauhausDesign.neutral, width: 1.5),
                         ),
                       ),
                       onPressed: onPrimary,
@@ -616,7 +599,6 @@ class InvoiceAIDashboard extends ConsumerWidget {
           ),
         ),
       ),
-      ),
     );
   }
 }
@@ -627,7 +609,8 @@ class _QuickGenerateWidget extends ConsumerStatefulWidget {
   const _QuickGenerateWidget({required this.organizationId});
 
   @override
-  ConsumerState<_QuickGenerateWidget> createState() => _QuickGenerateWidgetState();
+  ConsumerState<_QuickGenerateWidget> createState() =>
+      _QuickGenerateWidgetState();
 }
 
 class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
@@ -651,7 +634,8 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
         _controller.clear();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Success! Generated ${result.successfulInvoices} invoice(s).'),
+            content: Text(
+                'Success! Generated ${result.successfulInvoices} invoice(s).'),
             backgroundColor: BauhausDesign.success,
           ),
         );
@@ -714,7 +698,8 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
           const SizedBox(height: BauhausDesign.space2),
           Text(
             'Type a natural language note to auto-create an invoice.',
-            style: textTheme.bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style:
+                textTheme.bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space3),
           TextField(
@@ -722,21 +707,26 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
             maxLines: 3,
             minLines: 1,
             decoration: InputDecoration(
-              hintText: 'e.g., "Eva helped Harry with groceries and it took 2 hours, plus \$50 for the food"',
-              hintStyle: textTheme.bodyMedium?.copyWith(color: BauhausDesign.neutral),
+              hintText:
+                  'e.g., "Eva helped Harry with groceries and it took 2 hours, plus \$50 for the food"',
+              hintStyle:
+                  textTheme.bodyMedium?.copyWith(color: BauhausDesign.neutral),
               filled: true,
               fillColor: BauhausDesign.surfaceLight,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                borderSide: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                borderSide:
+                    const BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                borderSide: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                borderSide:
+                    const BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                borderSide: const BorderSide(color: BauhausDesign.primary, width: 2),
+                borderSide:
+                    const BorderSide(color: BauhausDesign.primary, width: 2),
               ),
             ),
           ),
@@ -750,7 +740,8 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
                 foregroundColor: BauhausDesign.surfaceWhite,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                  side:
+                      const BorderSide(color: BauhausDesign.neutral, width: 2),
                 ),
                 elevation: 0,
               ),
@@ -761,7 +752,8 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
                       height: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.surfaceWhite),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            BauhausDesign.surfaceWhite),
                       ),
                     )
                   : Text(
@@ -779,4 +771,3 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
     );
   }
 }
-

@@ -1,5 +1,3 @@
-library australian_validators;
-
 /// Validates an ABN using the modulo-89 algorithm.
 ///
 /// Strips non-digit chars, then: subtract 1 from first digit,

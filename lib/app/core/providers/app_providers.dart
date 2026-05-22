@@ -12,6 +12,7 @@ import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart'
 import 'package:carenest/app/features/invoice/viewmodels/line_items_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';

@@ -174,7 +174,7 @@ class ExpenseDetailView extends ConsumerWidget {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            currencyFormat.format(expense.amount ?? 0.0),
+                            currencyFormat.format(expense.amount),
                             style: BauhausDesign.getTextTheme(context)
                                 .headlineMedium
                                 ?.copyWith(

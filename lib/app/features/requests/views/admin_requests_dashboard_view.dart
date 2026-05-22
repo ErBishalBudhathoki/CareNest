@@ -37,8 +37,8 @@ class _AdminRequestsDashboardViewState
   Widget build(BuildContext context) {
     // Listen for new notifications
     ref.listen(notificationProvider, (previous, next) {
-      final NotificationState currentState = next as NotificationState;
-      final NotificationState? previousState = previous as NotificationState?;
+      final currentState = next;
+      final previousState = previous;
 
       if (previousState != null &&
           currentState.notifications.length >

@@ -16,7 +16,7 @@ aliases:
 
 Deployment, setup, workflows, migrations, runbooks, environment, and operational docs across app and backend.
 
-Total linked markdown files: **57**
+Total linked markdown files: **178**
 
 
 ## .github
@@ -63,6 +63,7 @@ Total linked markdown files: **57**
 
 ## backend/docs/operations
 
+- [[backend/docs/operations/ARTIFACT_REGISTRY_CLEANUP_ARCHITECTURE.md]]
 - [[backend/docs/operations/BACKEND_WORKFLOWS_OPTIMIZATION.md]]
 - [[backend/docs/operations/GITHUB_WORKFLOWS_OPTIMIZATION.md]]
 - [[backend/docs/operations/runbooks.md]]
@@ -89,6 +90,7 @@ Total linked markdown files: **57**
 - [[docs/FIREBASE_SHA256_SETUP_GUIDE.md]]
 - [[docs/FRONTEND_API_PROVIDER_MIGRATION_HANDOFF.md]]
 - [[docs/MAP_INTEGRATION_SETUP.md]]
+- [[docs/MIGRATION_PLAN_RIVERPOD_3.md]]
 - [[docs/QUICK_MIGRATION_STEPS.md]]
 - [[docs/README_DEPLOYMENT_WORKFLOWS.md]]
 - [[docs/SECURE_DEPLOYMENT_APPLIED.md]]
@@ -135,3 +137,161 @@ Total linked markdown files: **57**
 ## migration_scripts
 
 - [[migration_scripts/README.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/01-getting-started
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/01-getting-started/17-deploying.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/02-guides
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/02-guides/deploying-to-platforms.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/02-guides/migrating
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/02-guides/migrating/app-router-migration.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/02-route-segment-config
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/02-route-segment-config/dynamicParams.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/02-route-segment-config/index.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/02-route-segment-config/instant.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/02-route-segment-config/maxDuration.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/02-route-segment-config/preferredRegion.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/02-route-segment-config/runtime.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/adapterPath.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/allowedDevOrigins.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/appDir.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/assetPrefix.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/authInterrupts.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/basePath.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/cacheComponents.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/cacheHandlers.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/cacheLife.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/compress.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/crossOrigin.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/cssChunking.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/deploymentId.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/devIndicators.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/distDir.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/env.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/expireTime.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/exportPathMap.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/generateBuildId.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/generateEtags.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/headers.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/htmlLimitedBots.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/httpAgentOptions.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/images.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/incrementalCacheHandlerPath.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/index.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/inlineCss.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/logging.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/mdxRs.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/onDemandEntries.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/optimizePackageImports.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/output.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/pageExtensions.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/poweredByHeader.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/productionBrowserSourceMaps.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/proxyClientMaxBodySize.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/reactCompiler.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/reactMaxHeadersLength.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/reactStrictMode.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/redirects.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/rewrites.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/sassOptions.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/serverActions.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/serverComponentsHmrCache.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/serverExternalPackages.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/staleTimes.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/staticGeneration.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/taint.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/trailingSlash.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/transpilePackages.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/turbopack.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/turbopackFileSystemCache.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/turbopackIgnoreIssue.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/typedRoutes.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/typescript.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/urlImports.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/useLightningcss.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/viewTransition.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/webVitalsAttribution.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/webpack.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/02-typescript.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/03-eslint.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/05-config/index.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/07-adapters
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/07-adapters/01-configuration.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/01-getting-started
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/01-getting-started/11-deploying.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/02-guides/migrating
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/02-guides/migrating/app-router-migration.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/03-building-your-application/06-configuring
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/03-building-your-application/06-configuring/12-error-handling.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/03-building-your-application/06-configuring/index.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/adapterPath.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/allowedDevOrigins.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/assetPrefix.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/basePath.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/bundlePagesRouterDependencies.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/compress.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/crossOrigin.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/deploymentId.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/devIndicators.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/distDir.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/env.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/exportPathMap.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/generateBuildId.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/generateEtags.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/headers.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/httpAgentOptions.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/images.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/index.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/logging.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/onDemandEntries.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/optimizePackageImports.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/output.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/pageExtensions.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/poweredByHeader.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/productionBrowserSourceMaps.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/proxyClientMaxBodySize.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/reactStrictMode.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/redirects.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/rewrites.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/serverExternalPackages.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/trailingSlash.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/transpilePackages.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/turbopack.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/typescript.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/urlImports.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/useLightningcss.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/webVitalsAttribution.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/webpack.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-typescript.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/02-eslint.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/index.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/06-adapters
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/04-api-reference/06-adapters/01-configuration.md]]

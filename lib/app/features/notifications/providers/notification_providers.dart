@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/notifications/repositories/notification_repository.dart';
 import 'package:carenest/app/features/notifications/viewmodels/notification_settings_viewmodel.dart';
 import 'package:carenest/app/features/notifications/viewmodels/geofence_viewmodel.dart';

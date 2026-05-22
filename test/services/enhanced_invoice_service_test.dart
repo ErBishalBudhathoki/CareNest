@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:mockito/mockito.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -80,66 +81,23 @@ class StubApiMethod extends Mock implements ApiMethod {
   }
 }
 
-/// A lightweight fake Ref for tests that maps specific provider.notifier
-/// lookups to predefined StateControllers. This avoids Mockito's argument
-/// matching issues with provider.notifier instances.
-class FakeRef implements Ref {
-  final Map<Object, Object> _overrides;
-
-  FakeRef(this._overrides);
-
-  @override
-  T read<T>(ProviderListenable<T> provider) {
-    final value = _overrides[provider];
-    if (value == null) {
-      throw StateError('Provider read not stubbed: $provider');
-    }
-    return value as T;
-  }
-
-  @override
-  T watch<T>(ProviderListenable<T> provider) {
-    // For these tests, watch behaves same as read
-    return read(provider);
-  }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
 void main() {
-  late FakeRef fakeRef;
+  late Ref ref;
   late EnhancedInvoiceService invoiceService;
   late MockApiMethod mockApiMethod;
 
-  FakeRef buildFakeRef({
-    required ApiMethod apiMethod,
-    required StateController<InvoiceGenerationState> stateCtrl,
-    required StateController<String> errorCtrl,
-  }) {
-    return FakeRef({
-      invoiceGenerationStateProvider.notifier: stateCtrl,
-      invoiceGenerationErrorProvider.notifier: errorCtrl,
-      invoiceGenerationStateProvider: InvoiceGenerationState.initial,
-      invoiceGenerationErrorProvider: '',
-      app_providers.apiMethodProvider: apiMethod,
-    });
-  }
-
   setUp(() {
     mockApiMethod = MockApiMethod();
-    // Initialize state controllers we want the service to update
-    final stateCtrl =
-        StateController<InvoiceGenerationState>(InvoiceGenerationState.initial);
-    final errorCtrl = StateController<String>('');
-
-    fakeRef = buildFakeRef(
-      apiMethod: mockApiMethod,
-      stateCtrl: stateCtrl,
-      errorCtrl: errorCtrl,
+    
+    final container = ProviderContainer(
+      overrides: [
+        app_providers.apiMethodProvider.overrideWith((ref) => mockApiMethod),
+      ],
     );
+    addTearDown(container.dispose);
 
-    invoiceService = EnhancedInvoiceService(fakeRef, mockApiMethod);
+    ref = container.read(Provider<Ref>((ref) => ref));
+    invoiceService = EnhancedInvoiceService(ref, mockApiMethod);
   });
 
   tearDown(() {
@@ -401,8 +359,8 @@ void main() {
       );
 
       expect(result, isEmpty);
-      final stateCtrl = fakeRef.read(invoiceGenerationStateProvider.notifier);
-      final errorCtrl = fakeRef.read(invoiceGenerationErrorProvider.notifier);
+      final stateCtrl = ref.read(invoiceGenerationStateProvider.notifier);
+      final errorCtrl = ref.read(invoiceGenerationErrorProvider.notifier);
       expect(stateCtrl.state, InvoiceGenerationState.error);
       expect(errorCtrl.state, contains('Tax rate cannot be negative'));
     });
@@ -428,16 +386,14 @@ void main() {
           },
         }
         ..priceHistoryReturn = <Map<String, dynamic>>[];
-      final stateCtrl = StateController<InvoiceGenerationState>(
-        InvoiceGenerationState.initial,
+      final container = ProviderContainer(
+        overrides: [
+          app_providers.apiMethodProvider.overrideWith((ref) => stubApi),
+        ],
       );
-      final errorCtrl = StateController<String>('');
-      fakeRef = buildFakeRef(
-        apiMethod: stubApi,
-        stateCtrl: stateCtrl,
-        errorCtrl: errorCtrl,
-      );
-      invoiceService = EnhancedInvoiceService(fakeRef, stubApi);
+      addTearDown(container.dispose);
+      final testRef = container.read(Provider<Ref>((ref) => ref));
+      invoiceService = EnhancedInvoiceService(testRef, stubApi);
 
       final processedData = {
         'clients': [
@@ -509,16 +465,14 @@ void main() {
           },
         }
         ..priceHistoryReturn = <Map<String, dynamic>>[];
-      final stateCtrl = StateController<InvoiceGenerationState>(
-        InvoiceGenerationState.initial,
+      final container = ProviderContainer(
+        overrides: [
+          app_providers.apiMethodProvider.overrideWith((ref) => stubApi2),
+        ],
       );
-      final errorCtrl = StateController<String>('');
-      fakeRef = buildFakeRef(
-        apiMethod: stubApi2,
-        stateCtrl: stateCtrl,
-        errorCtrl: errorCtrl,
-      );
-      invoiceService = EnhancedInvoiceService(fakeRef, stubApi2);
+      addTearDown(container.dispose);
+      final testRef = container.read(Provider<Ref>((ref) => ref));
+      invoiceService = EnhancedInvoiceService(testRef, stubApi2);
 
       final processedData = {
         'clients': [
