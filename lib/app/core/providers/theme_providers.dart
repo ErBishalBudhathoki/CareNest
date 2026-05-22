@@ -8,11 +8,13 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 // ==================== THEME MODE NOTIFIER ====================
 
-class ThemeModeNotifier extends StateNotifier<ThemeMode> {
+class ThemeModeNotifier extends Notifier<ThemeMode> {
   final SharedPreferencesUtils _prefs = SharedPreferencesUtils();
 
-  ThemeModeNotifier() : super(ThemeMode.system) {
+  @override
+  ThemeMode build() {
     _loadTheme();
+    return ThemeMode.system;
   }
 
   Future<void> _loadTheme() async {
@@ -46,9 +48,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
 }
 
 final themeModeProvider =
-    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
-  return ThemeModeNotifier();
-});
+    NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
 
 // ==================== THEME DATA PROVIDER ====================
 

@@ -3,6 +3,7 @@
 // Contains providers for business management and invoice-related viewmodels.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/invoice/viewmodels/invoice_email_viewmodel.dart';
 import 'package:carenest/app/features/business/viewmodels/add_business_viewmodel.dart';
 import 'package:carenest/app/features/invoice/viewmodels/line_items_viewmodel.dart';

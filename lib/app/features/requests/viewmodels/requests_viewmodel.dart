@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
@@ -46,13 +47,13 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
     if (_user == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cacheKey = _getStatusCacheKey(_user!.organizationId, _user!.email);
+      final cacheKey = _getStatusCacheKey(_user.organizationId, _user.email);
       final previousStatuses = _loadCachedStatuses(prefs, cacheKey);
 
       final requests = await _repository.getRequests(
-        _user!.organizationId,
-        userId: _user!.id.isNotEmpty ? _user!.id : null,
-        userEmail: _user!.email,
+        _user.organizationId,
+        userId: _user.id.isNotEmpty ? _user.id : null,
+        userEmail: _user.email,
       );
 
       await _emitStatusChangeNotifications(previousStatuses, requests);
@@ -70,16 +71,16 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
 
     try {
       final newRequest = RequestModel(
-        organizationId: _user!.organizationId,
-        userId: _user!.id.isNotEmpty ? _user!.id : _user!.email,
-        createdBy: _user!.email,
+        organizationId: _user.organizationId,
+        userId: _user.id.isNotEmpty ? _user.id : _user.email,
+        createdBy: _user.email,
         type: type,
         status: RequestStatus.pending,
         details: details,
         note: note,
       );
 
-      await _repository.createRequest(newRequest, _user!.email);
+      await _repository.createRequest(newRequest, _user.email);
       await fetchRequests(); // Refresh list
       return true;
     } catch (e) {

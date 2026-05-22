@@ -3,6 +3,7 @@
 // Contains providers for user authentication, login state, and role management.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/signup_viewmodel.dart';

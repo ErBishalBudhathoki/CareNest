@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 import 'package:carenest/app/features/leave/repositories/leave_repository.dart';
 import 'package:carenest/app/features/leave/models/leave_balance.dart';

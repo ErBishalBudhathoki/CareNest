@@ -1596,6 +1596,45 @@ Your Invoice Team
   /// persisted before this fix are also corrected on every render.
   void _correctExpenseTaxInClientData(Map<String, dynamic> clientData) {
     try {
+      // 1. Retroactively migrate reimbursements that were incorrectly stored as
+      //    service items in older snapshots. If we don't migrate them here,
+      //    they'll be taxed.
+      if (clientData['items'] is List) {
+        final List<dynamic> items = clientData['items'];
+        final List<dynamic> expenses =
+            (clientData['expenses'] is List) ? clientData['expenses'] : [];
+        final List<dynamic> newItems = [];
+        double migratedItemsSubtotal = 0.0;
+        double migratedExpensesTotal = _safeDouble(clientData['expensesTotal']);
+
+        for (final item in items) {
+          if (item is Map) {
+            final String itemName =
+                (item['itemName'] ?? '').toString().toLowerCase();
+            if (itemName.contains('reimburse')) {
+              // Move to expenses
+              expenses.add({
+                'description': item['itemName'],
+                'totalAmount': item['amount'] ?? 0.0,
+                'unitCost': item['rate'] ?? item['amount'] ?? 0.0,
+                'quantity': item['hours'] ?? 1.0,
+                'isReimbursement': true,
+              });
+              migratedExpensesTotal += _safeDouble(item['amount']);
+            } else {
+              newItems.add(item);
+              migratedItemsSubtotal += _safeDouble(item['amount']);
+            }
+          }
+        }
+
+        // Apply migrations back to payload
+        clientData['items'] = newItems;
+        clientData['expenses'] = expenses;
+        clientData['itemsSubtotal'] = migratedItemsSubtotal;
+        clientData['expensesTotal'] = migratedExpensesTotal;
+      }
+
       final double itemsSubtotal = _safeDouble(clientData['itemsSubtotal']);
       final double expensesTotal = _safeDouble(clientData['expensesTotal']);
 

@@ -18,7 +18,7 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(workerDashboardViewModelProvider);
     final currentUserAsync = ref.watch(currentUserProvider);
-    final currentUser = currentUserAsync.valueOrNull;
+    final currentUser = currentUserAsync.value;
 
     void openScanInvoice() {
       final orgId = currentUser?.organizationId ?? '';

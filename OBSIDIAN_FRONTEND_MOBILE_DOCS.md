@@ -16,7 +16,7 @@ aliases:
 
 Frontend/mobile note map. Includes app docs, root docs, Android docs, and shared `docs/` content outside `backend/`.
 
-Total linked markdown files: **241**
+Total linked markdown files: **242**
 
 
 ## root
@@ -27,7 +27,6 @@ Total linked markdown files: **241**
 - [[CARENEST_PRIVACY_POLICY_DRAFT.md]]
 - [[CARENEST_SUPPORT_PAGE_DRAFT.md]]
 - [[DOCUMENTATION_INDEX.md]]
-- [[ONBOARDING_QUESTIONNAIRE_PROGRESS.md]]
 - [[README.md]]
 - [[TODO.md]]
 
@@ -97,6 +96,7 @@ Total linked markdown files: **241**
 - [[docs/INTEGRATION_UI_GUIDE.md]]
 - [[docs/MAP_INTEGRATION_SETUP.md]]
 - [[docs/MAP_WIDGET_COMPLETE.md]]
+- [[docs/MIGRATION_PLAN_RIVERPOD_3.md]]
 - [[docs/MILEAGE_TRACKER_INTEGRATION_REPORT.md]]
 - [[docs/MVVM_ARCHITECTURE_AUDIT.md]]
 - [[docs/PHASE_10_COMPLETE.md]]
@@ -317,6 +317,14 @@ Total linked markdown files: **241**
 - [[docs/prd/client_portal.md]]
 - [[docs/prd/leave_balance_tracker_prd.md]]
 
+## docs/superpowers/plans
+
+- [[docs/superpowers/plans/2026-05-03-clockin-redesign.md]]
+
+## docs/superpowers/specs
+
+- [[docs/superpowers/specs/2026-05-03-clockin-redesign-design.md]]
+
 ## docs
 
 - [[docs/testing_enhancements.md]]
@@ -332,5 +340,4 @@ Total linked markdown files: **241**
 
 ## root
 
-- [[endToEndTechDocPack.md]]
 - [[signup_flow_analysis.md]]

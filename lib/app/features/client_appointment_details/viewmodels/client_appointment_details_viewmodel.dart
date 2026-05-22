@@ -44,9 +44,9 @@ class ClientAppointmentDetailsViewModel extends ChangeNotifier {
 
       if (_clientId.trim().isEmpty &&
           _clientEmail != null &&
-          _clientEmail!.trim().isNotEmpty) {
+          _clientEmail.trim().isNotEmpty) {
         final resolved = await _repository.getClientByEmail(
-          _clientEmail!.trim(),
+          _clientEmail.trim(),
           organizationId,
         );
         if (resolved != null) {

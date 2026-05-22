@@ -12,7 +12,7 @@ final todayWorkHoursProvider =
   final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   final entries =
-      ref.watch(timesheetViewModelProvider(email)).valueOrNull ?? [];
+      ref.watch(timesheetViewModelProvider(email)).value ?? [];
   final timerService = ref.watch(timerServiceProvider);
 
   final secondsFromEntries = entries.fold<double>(

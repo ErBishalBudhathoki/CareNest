@@ -79,7 +79,7 @@ class _ServiceRateManagementViewState
     final employeesAsync =
         ref.watch(pricingOrgEmployeesProvider(widget.organizationId));
     final isLoading = employeesAsync.isLoading;
-    final employees = employeesAsync.valueOrNull ?? const [];
+    final employees = employeesAsync.value ?? const [];
 
     final query = _searchController.text.trim().toLowerCase();
     final filtered = employees.where((e) => _matchesFilters(e, query)).toList();

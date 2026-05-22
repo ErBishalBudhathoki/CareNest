@@ -68,9 +68,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     final clientsAsync =
         ref.watch(pricingOrgClientsProvider(widget.organizationId));
 
-    final records = recordsAsync.valueOrNull ?? const <PricingLiveRecord>[];
-    final clients = clientsAsync.valueOrNull ?? const <Map<String, dynamic>>[];
-    final analytics = analyticsAsync.valueOrNull;
+    final records = recordsAsync.value ?? const <PricingLiveRecord>[];
+    final clients = clientsAsync.value ?? const <Map<String, dynamic>>[];
+    final analytics = analyticsAsync.value;
 
     final filteredRecords = records.where((record) {
       if (!record.isCustom) return false;
@@ -98,7 +98,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             : const AsyncData<List<Map<String, dynamic>>>([]);
 
     final detailRows =
-        detailAsync.valueOrNull ?? const <Map<String, dynamic>>[];
+        detailAsync.value ?? const <Map<String, dynamic>>[];
 
     return Scaffold(
       backgroundColor: _screenGray,
