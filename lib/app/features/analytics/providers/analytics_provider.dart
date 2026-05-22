@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/analytics_models.dart';
 import '../repositories/analytics_repository.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';

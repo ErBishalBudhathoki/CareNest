@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
@@ -30,7 +31,7 @@ class AdminRequestsViewModel
                 ? AsyncValue.error(error, StackTrace.current)
                 : const AsyncValue.loading())) {
     if (_user != null) {
-      if (_user!.hasAdminAccess) {
+      if (_user.hasAdminAccess) {
         fetchRequests();
       } else {
         state = AsyncValue.error('Unauthorized', StackTrace.current);
@@ -41,16 +42,16 @@ class AdminRequestsViewModel
   }
 
   Future<void> fetchRequests() async {
-    if (_user == null || !_user!.hasAdminAccess) {
+    if (_user == null || !_user.hasAdminAccess) {
       debugPrint(
           'AdminRequestsViewModel: Unauthorized or no user. Role: ${_user?.role}, roles: ${_user?.roles}, organizationRole: ${_user?.organizationRole}');
       return;
     }
     try {
       debugPrint(
-          'AdminRequestsViewModel: Fetching requests for organization: ${_user!.organizationId}');
+          'AdminRequestsViewModel: Fetching requests for organization: ${_user.organizationId}');
       // Pass null for userEmail to fetch all requests for organization
-      final requests = await _repository.getRequests(_user!.organizationId);
+      final requests = await _repository.getRequests(_user.organizationId);
       debugPrint('AdminRequestsViewModel: Fetched ${requests.length} requests');
       state = AsyncValue.data(requests);
     } catch (e, st) {
@@ -61,11 +62,11 @@ class AdminRequestsViewModel
 
   Future<bool> updateRequestStatus(String requestId, String status,
       {String? reason}) async {
-    if (_user == null || !_user!.hasAdminAccess) return false;
+    if (_user == null || !_user.hasAdminAccess) return false;
 
     try {
       final success = await _repository
-          .updateRequestStatus(requestId, status, _user!.email, reason: reason);
+          .updateRequestStatus(requestId, status, _user.email, reason: reason);
       if (success) {
         await fetchRequests(); // Refresh list
       }

@@ -16,15 +16,18 @@ aliases:
 
 Plans, PRDs, roadmaps, phase reports, progress notes, summaries, TODOs, and implementation tracking docs.
 
-Total linked markdown files: **138**
+Total linked markdown files: **145**
 
+
+## .kilo/node_modules/@standard-schema/spec
+
+- [[.kilo/node_modules/@standard-schema/spec/README.md]]
 
 ## root
 
 - [[APP_STORE_SUBMISSION_CHECKLIST.md]]
 - [[DEPLOYMENT_WORKFLOWS_STATUS.md]]
 - [[OBSIDIAN_PRODUCT_PLANNING_DOCS.md]]
-- [[ONBOARDING_QUESTIONNAIRE_PROGRESS.md]]
 - [[TODO.md]]
 
 ## backend
@@ -90,6 +93,7 @@ Total linked markdown files: **138**
 - [[docs/FIREBASE_FLAVOR_STATUS.md]]
 - [[docs/INTEGRATION_COMPLETE_SUMMARY.md]]
 - [[docs/INTEGRATION_IMPLEMENTATION_STATUS.md]]
+- [[docs/MIGRATION_PLAN_RIVERPOD_3.md]]
 - [[docs/PHASE_10_COMPLETE.md]]
 - [[docs/PHASE_10_FINAL_SUMMARY.md]]
 - [[docs/PHASE_10_IMPLEMENTATION.md]]
@@ -200,6 +204,14 @@ Total linked markdown files: **138**
 - [[docs/prd/client_portal.md]]
 - [[docs/prd/leave_balance_tracker_prd.md]]
 
+## docs/superpowers/plans
+
+- [[docs/superpowers/plans/2026-05-03-clockin-redesign.md]]
+
+## docs/superpowers/specs
+
+- [[docs/superpowers/specs/2026-05-03-clockin-redesign-design.md]]
+
 ## docs
 
 - [[docs/todo.md]]
@@ -231,3 +243,16 @@ Total linked markdown files: **138**
 ## root
 
 - [[next step.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/02-guides
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/02-guides/production-checklist.md]]
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/02-guides/progressive-web-apps.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/04-functions
+
+- [[screenshot-generator/node_modules/next/dist/docs/01-app/03-api-reference/04-functions/use-link-status.md]]
+
+## screenshot-generator/node_modules/next/dist/docs/02-pages/02-guides
+
+- [[screenshot-generator/node_modules/next/dist/docs/02-pages/02-guides/production-checklist.md]]

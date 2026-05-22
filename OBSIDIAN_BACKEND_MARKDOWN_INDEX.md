@@ -16,8 +16,12 @@ aliases:
 
 Backend-only documentation map.
 
-Total backend markdown files: **65**
+Total backend markdown files: **71**
 
+
+## backend/.agents/rules
+
+- [[backend/.agents/rules/claude-mem-context.md]]
 
 ## backend
 
@@ -40,7 +44,9 @@ Total backend markdown files: **65**
 - [[backend/ENVIRONMENT_CONFIGURATION.md]]
 - [[backend/FINAL_AUDIT_REPORT.md]]
 - [[backend/FIREBASE_DEPLOYMENT_GUIDE.md]]
+- [[backend/GEMINI.md]]
 - [[backend/IMPLEMENTATION_REPORT.md]]
+- [[backend/INFRASTRUCTURE_SECURITY_AUDIT.md]]
 - [[backend/INVOICE_GENERATION_API.md]]
 - [[backend/KEEP_ALIVE_DOCUMENTATION.md]]
 - [[backend/PHASE_1_2_COMPLETE.md]]
@@ -49,6 +55,7 @@ Total backend markdown files: **65**
 - [[backend/SECURITY.md]]
 - [[backend/USERORG_AUDIT_FIXES.md]]
 - [[backend/ZERO_TRUST_AUDIT.md]]
+- [[backend/ZERO_TRUST_VERIFICATION_REPORT.md]]
 
 ## backend/docker
 
@@ -58,6 +65,7 @@ Total backend markdown files: **65**
 
 - [[backend/docs/NDIS_CATALOG_EVENT_SYNC.md]]
 - [[backend/docs/README.md]]
+- [[backend/docs/TEMPORAL_ARCHITECTURE.md]]
 
 ## backend/docs/analysis
 
@@ -102,6 +110,7 @@ Total backend markdown files: **65**
 
 ## backend/docs/operations
 
+- [[backend/docs/operations/ARTIFACT_REGISTRY_CLEANUP_ARCHITECTURE.md]]
 - [[backend/docs/operations/BACKEND_WORKFLOWS_OPTIMIZATION.md]]
 - [[backend/docs/operations/GITHUB_WORKFLOWS_OPTIMIZATION.md]]
 - [[backend/docs/operations/MULTI_TENANT_IMPLEMENTATION_COMPLETE.md]]

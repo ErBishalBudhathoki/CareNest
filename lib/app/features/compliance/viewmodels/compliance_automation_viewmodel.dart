@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/compliance/repositories/compliance_automation_repository.dart';
 import 'package:carenest/app/features/compliance/models/compliance_automation_models.dart';
 

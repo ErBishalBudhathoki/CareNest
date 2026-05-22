@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
@@ -39,7 +40,7 @@ class AdminRequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>
       state = const AsyncValue.loading();
       // Fetch ALL requests for the organization (userId: null)
       final requests = await _repository.getRequests(
-        _user!.organizationId,
+        _user.organizationId,
         userId: null,
         userEmail: null, // Force admin fetch
       );
@@ -59,7 +60,7 @@ class AdminRequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>
       final success = await _repository.updateRequestStatus(
         requestId,
         status.name,
-        _user!.email,
+        _user.email,
         reason: reason,
       );
 

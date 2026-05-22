@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/worker/models/worker_dashboard_data.dart';
 import 'package:carenest/app/features/worker/repositories/worker_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 /// Worker Dashboard ViewModel Provider
 ///
@@ -111,7 +112,7 @@ class WorkerDashboardViewModel
   bool get hasValue => state.hasValue;
 
   /// Get current data (if available)
-  WorkerDashboardData? get currentData => state.valueOrNull;
+  WorkerDashboardData? get currentData => state.value;
 
   /// Get error (if in error state)
   Object? get currentError => state.error;

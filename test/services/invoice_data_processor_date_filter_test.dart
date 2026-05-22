@@ -21,29 +21,8 @@ class TestLineItemViewModel extends LineItemViewModel {
   }
 }
 
-/// Lightweight fake Ref to stub provider reads in tests.
-class FakeRef implements Ref {
-  final Map<Object, Object> _overrides;
-  FakeRef(this._overrides);
-
-  @override
-  T read<T>(ProviderListenable<T> provider) {
-    final value = _overrides[provider];
-    if (value == null) {
-      throw StateError('Provider read not stubbed: $provider');
-    }
-    return value as T;
-  }
-
-  @override
-  T watch<T>(ProviderListenable<T> provider) => read(provider);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
 void main() {
-  late FakeRef fakeRef;
+  late Ref ref;
   late MockApiMethod mockApiMethod;
   late InvoiceDataProcessor processor;
 
@@ -52,14 +31,16 @@ void main() {
     // Use a test-specific viewmodel to avoid complex mocking
     final lineItemVM = TestLineItemViewModel(mockApiMethod);
 
-    fakeRef = FakeRef({
-      lineItemViewModelProvider.notifier: lineItemVM,
-      // Optionally provide base state
-      lineItemViewModelProvider: <Map<String, dynamic>>[],
-      apiMethodProvider: mockApiMethod,
-    });
+    final container = ProviderContainer(
+      overrides: [
+        lineItemViewModelProvider.overrideWith((ref) => lineItemVM),
+        apiMethodProvider.overrideWith((ref) => mockApiMethod),
+      ],
+    );
+    addTearDown(container.dispose);
 
-    processor = InvoiceDataProcessor(fakeRef);
+    ref = container.read(Provider<Ref>((ref) => ref));
+    processor = InvoiceDataProcessor(ref);
   });
 
   group('Date range filtering', () {

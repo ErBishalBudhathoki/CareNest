@@ -69,9 +69,9 @@ class _BauhausPricingDashboardViewState
         ? ref.watch(pricingOrgAnalyticsProvider(organizationId))
         : const AsyncData<PricingAnalytics?>(null);
 
-    final records = recordsAsync.valueOrNull ?? const <PricingLiveRecord>[];
-    final employees = employeesAsync.valueOrNull ?? const <User>[];
-    final analytics = analyticsAsync.valueOrNull;
+    final records = recordsAsync.value ?? const <PricingLiveRecord>[];
+    final employees = employeesAsync.value ?? const <User>[];
+    final analytics = analyticsAsync.value;
     final isLoading = recordsAsync.isLoading ||
         employeesAsync.isLoading ||
         analyticsAsync.isLoading;

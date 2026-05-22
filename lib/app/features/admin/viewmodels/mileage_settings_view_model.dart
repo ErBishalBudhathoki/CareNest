@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/admin/repositories/organization_repository.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 

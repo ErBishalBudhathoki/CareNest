@@ -15,8 +15,8 @@ aliases:
 > Open repo root as Obsidian vault. Internal hub note: [[OBSIDIAN_VAULT_HOME]].
 
 > [!tip] Vault overview
-> 441 real project markdown files indexed.
-> 65 backend markdown files indexed separately.
+> 950 real project markdown files indexed.
+> 71 backend markdown files indexed separately.
 
 ## Navigation
 

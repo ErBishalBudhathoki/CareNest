@@ -79,7 +79,6 @@ class AuthErrorHandler {
         await _showEmailAlreadyInUseDialog(context, userEmail);
         break;
       case AuthErrorType.unknown:
-      default:
         await _showGenericErrorDialog(
             context, errorMessage, onRetry, userEmail);
         break;

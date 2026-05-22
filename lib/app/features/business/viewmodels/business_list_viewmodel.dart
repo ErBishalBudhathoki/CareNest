@@ -3,6 +3,7 @@ import 'package:carenest/app/features/business/models/business_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 enum BusinessListStatus { initial, loading, loaded, error, empty }
 

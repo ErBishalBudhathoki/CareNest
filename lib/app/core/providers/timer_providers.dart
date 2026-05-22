@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 
 // ==================== TIMER STATE ====================

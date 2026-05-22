@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';

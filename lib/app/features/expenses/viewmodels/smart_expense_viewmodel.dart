@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/expenses/repositories/smart_expense_repository.dart';
 import 'package:carenest/app/features/expenses/models/smart_expense_models.dart';
 

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:carenest/app/features/earnings/models/earnings_data.dart';
 import 'package:carenest/app/features/earnings/repositories/earnings_repository.dart';
