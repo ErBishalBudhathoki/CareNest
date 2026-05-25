@@ -99,7 +99,7 @@ dependencies:
   shimmer: ^3.0.0
 
   logging: ^1.2.0
-  device_info_plus: ^10.1.2 
+  device_info_plus: ^12.4.0 
   package_info_plus: ^8.0.0
   archive: ^3.6.1
   iconsax: ^0.0.8
