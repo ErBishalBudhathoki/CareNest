@@ -121,7 +121,19 @@ class MileageTrackerView extends ConsumerWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: viewModel.recentTrips.length,
                 itemBuilder: (context, index) {
-                  return TripListItem(trip: viewModel.recentTrips[index]);
+                  final trip = viewModel.recentTrips[index];
+                  String? clientName;
+                  if (trip.tripType == 'WITH_CLIENT' && trip.clientId != null) {
+                    final clientMap = viewModel.assignableClients.firstWhere(
+                      (c) => c['id'] == trip.clientId,
+                      orElse: () => <String, String>{},
+                    );
+                    clientName = clientMap['name'];
+                  }
+                  return TripListItem(
+                    trip: trip,
+                    clientName: clientName,
+                  );
                 },
               ),
           ],

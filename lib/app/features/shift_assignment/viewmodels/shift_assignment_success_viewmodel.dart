@@ -15,16 +15,23 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
   bool get animationsCompleted => _animationsCompleted;
   bool get hasAssignment => _assignment != null;
 
+  String? _userFullName;
+  String? _clientFullName;
+
   /// Initialize the assignment data
   void initializeAssignment({
     required String userEmail,
     required String clientEmail,
+    String? userFullName,
+    String? clientFullName,
     required Map<String, dynamic> shiftData,
     String? assignmentId,
   }) {
     try {
       _isLoading = true;
       _error = null;
+      _userFullName = userFullName;
+      _clientFullName = clientFullName;
       notifyListeners();
 
       _assignment = ShiftAssignmentModel.fromShiftData(
@@ -68,8 +75,9 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Get formatted employee name (extract from email)
+  /// Get formatted employee name (full name > email-derived > default)
   String getEmployeeName({String defaultName = 'Unknown Employee'}) {
+    if (_userFullName != null && _userFullName!.trim().isNotEmpty) return _userFullName!;
     if (_assignment?.userEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.userEmail;
     final atIndex = email.indexOf('@');
@@ -85,8 +93,9 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
     return email;
   }
 
-  /// Get formatted client name (extract from email)
+  /// Get formatted client name (full name > email-derived > default)
   String getClientName({String defaultName = 'Unknown Client'}) {
+    if (_clientFullName != null && _clientFullName!.trim().isNotEmpty) return _clientFullName!;
     if (_assignment?.clientEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.clientEmail;
     final atIndex = email.indexOf('@');

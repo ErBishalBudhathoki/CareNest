@@ -7,26 +7,26 @@ part of 'communication_models.dart';
 // **************************************************************************
 
 _Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
-      messageId: json['messageId'] as String,
-      senderId: json['senderId'] as String,
-      recipientId: json['recipientId'] as String,
-      message: json['message'] as String,
-      channel: json['channel'] as String,
-      sentAt: json['sentAt'] as String,
-      status: json['status'] as String,
-      readAt: json['readAt'] as String?,
-    );
+  messageId: json['messageId'] as String,
+  senderId: json['senderId'] as String,
+  recipientId: json['recipientId'] as String,
+  message: json['message'] as String,
+  channel: json['channel'] as String,
+  sentAt: json['sentAt'] as String,
+  status: json['status'] as String,
+  readAt: json['readAt'] as String?,
+);
 
 Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
-      'messageId': instance.messageId,
-      'senderId': instance.senderId,
-      'recipientId': instance.recipientId,
-      'message': instance.message,
-      'channel': instance.channel,
-      'sentAt': instance.sentAt,
-      'status': instance.status,
-      'readAt': instance.readAt,
-    };
+  'messageId': instance.messageId,
+  'senderId': instance.senderId,
+  'recipientId': instance.recipientId,
+  'message': instance.message,
+  'channel': instance.channel,
+  'sentAt': instance.sentAt,
+  'status': instance.status,
+  'readAt': instance.readAt,
+};
 
 _Conversation _$ConversationFromJson(Map<String, dynamic> json) =>
     _Conversation(

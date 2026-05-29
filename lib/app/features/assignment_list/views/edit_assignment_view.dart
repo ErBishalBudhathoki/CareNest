@@ -5,6 +5,7 @@ import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/features/assignment/views/enhanced_ndis_item_selection_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
 import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
@@ -241,7 +242,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
         ),
         title: Text(
           'Edit Assignment',
-          style: BauhausDesign.getTextTheme(context).titleLarge,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -348,7 +352,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   // NDIS Item Selection
                   Text(
                     'NDIS Item Assignment',
-                    style: BauhausDesign.getTextTheme(context).titleMedium,
+                    style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                          color: BauhausDesign.textDark,
+                        ),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   GestureDetector(
@@ -421,7 +427,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     children: [
                       Text(
                         'Shifts (${dateList.length})',
-                        style: BauhausDesign.getTextTheme(context).titleMedium,
+                        style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                              color: BauhausDesign.textDark,
+                            ),
                       ),
                       BauhausActionButton(
                         onPressed: () {
@@ -525,7 +533,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
             children: [
               Text(
                 'Shift ${index + 1}',
-                style: BauhausDesign.getTextTheme(context).titleMedium,
+                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                      color: BauhausDesign.textDark,
+                    ),
               ),
               IconButton(
                 onPressed: () {
@@ -656,7 +666,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     ),
               ),
               const Spacer(),
-              Switch(
+              BauhausSwitch(
                 value: highIntensityList.length > index
                     ? highIntensityList[index]
                     : false,
@@ -667,7 +677,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     }
                   });
                 },
-                activeColor: BauhausDesign.primary,
+                variant: BauhausSwitchVariant.primary,
               ),
             ],
           ),

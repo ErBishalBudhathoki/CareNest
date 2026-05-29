@@ -6,20 +6,19 @@ part of 'dashboard_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_TodaySummary _$TodaySummaryFromJson(Map<String, dynamic> json) =>
-    _TodaySummary(
-      appointmentsToday: (json['appointmentsToday'] as num).toInt(),
-      workersOnShift: (json['workersOnShift'] as num).toInt(),
-      revenueToday: (json['revenueToday'] as num).toDouble(),
-      pendingApprovals: (json['pendingApprovals'] as num).toInt(),
-      lastUpdated: DateTime.parse(json['lastUpdated'] as String),
-      completedAppointments:
-          (json['completedAppointments'] as num?)?.toInt() ?? 0,
-      cancelledAppointments:
-          (json['cancelledAppointments'] as num?)?.toInt() ?? 0,
-      activeWorkers: (json['activeWorkers'] as num?)?.toInt() ?? 0,
-      availableWorkers: (json['availableWorkers'] as num?)?.toInt() ?? 0,
-    );
+_TodaySummary _$TodaySummaryFromJson(
+  Map<String, dynamic> json,
+) => _TodaySummary(
+  appointmentsToday: (json['appointmentsToday'] as num).toInt(),
+  workersOnShift: (json['workersOnShift'] as num).toInt(),
+  revenueToday: (json['revenueToday'] as num).toDouble(),
+  pendingApprovals: (json['pendingApprovals'] as num).toInt(),
+  lastUpdated: DateTime.parse(json['lastUpdated'] as String),
+  completedAppointments: (json['completedAppointments'] as num?)?.toInt() ?? 0,
+  cancelledAppointments: (json['cancelledAppointments'] as num?)?.toInt() ?? 0,
+  activeWorkers: (json['activeWorkers'] as num?)?.toInt() ?? 0,
+  availableWorkers: (json['availableWorkers'] as num?)?.toInt() ?? 0,
+);
 
 Map<String, dynamic> _$TodaySummaryToJson(_TodaySummary instance) =>
     <String, dynamic>{
@@ -77,14 +76,14 @@ const _$WorkerStatusEnumMap = {
 };
 
 _QuickAction _$QuickActionFromJson(Map<String, dynamic> json) => _QuickAction(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      icon: json['icon'] as String,
-      count: (json['count'] as num).toInt(),
-      type: $enumDecode(_$QuickActionTypeEnumMap, json['type']),
-      route: json['route'] as String?,
-      metadata: json['metadata'] as Map<String, dynamic>?,
-    );
+  id: json['id'] as String,
+  title: json['title'] as String,
+  icon: json['icon'] as String,
+  count: (json['count'] as num).toInt(),
+  type: $enumDecode(_$QuickActionTypeEnumMap, json['type']),
+  route: json['route'] as String?,
+  metadata: json['metadata'] as Map<String, dynamic>?,
+);
 
 Map<String, dynamic> _$QuickActionToJson(_QuickAction instance) =>
     <String, dynamic>{
@@ -167,27 +166,26 @@ Map<String, dynamic> _$RevenueDataPointToJson(_RevenueDataPoint instance) =>
       'label': instance.label,
     };
 
-_RevenueComparison _$RevenueComparisonFromJson(Map<String, dynamic> json) =>
-    _RevenueComparison(
-      todayRevenue: (json['todayRevenue'] as num).toDouble(),
-      yesterdayRevenue: (json['yesterdayRevenue'] as num).toDouble(),
-      weekToDateRevenue: (json['weekToDateRevenue'] as num).toDouble(),
-      monthToDateRevenue: (json['monthToDateRevenue'] as num).toDouble(),
-      todayVsYesterdayPercent:
-          (json['todayVsYesterdayPercent'] as num).toDouble(),
-      weekVsLastWeekPercent: (json['weekVsLastWeekPercent'] as num).toDouble(),
-      monthVsLastMonthPercent:
-          (json['monthVsLastMonthPercent'] as num).toDouble(),
-      todayTrend: $enumDecode(_$TrendDirectionEnumMap, json['todayTrend']),
-      weekTrend: $enumDecode(_$TrendDirectionEnumMap, json['weekTrend']),
-      monthTrend: $enumDecode(_$TrendDirectionEnumMap, json['monthTrend']),
-      last7Days: (json['last7Days'] as List<dynamic>)
-          .map((e) => RevenueDataPoint.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      last30Days: (json['last30Days'] as List<dynamic>)
-          .map((e) => RevenueDataPoint.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+_RevenueComparison _$RevenueComparisonFromJson(
+  Map<String, dynamic> json,
+) => _RevenueComparison(
+  todayRevenue: (json['todayRevenue'] as num).toDouble(),
+  yesterdayRevenue: (json['yesterdayRevenue'] as num).toDouble(),
+  weekToDateRevenue: (json['weekToDateRevenue'] as num).toDouble(),
+  monthToDateRevenue: (json['monthToDateRevenue'] as num).toDouble(),
+  todayVsYesterdayPercent: (json['todayVsYesterdayPercent'] as num).toDouble(),
+  weekVsLastWeekPercent: (json['weekVsLastWeekPercent'] as num).toDouble(),
+  monthVsLastMonthPercent: (json['monthVsLastMonthPercent'] as num).toDouble(),
+  todayTrend: $enumDecode(_$TrendDirectionEnumMap, json['todayTrend']),
+  weekTrend: $enumDecode(_$TrendDirectionEnumMap, json['weekTrend']),
+  monthTrend: $enumDecode(_$TrendDirectionEnumMap, json['monthTrend']),
+  last7Days: (json['last7Days'] as List<dynamic>)
+      .map((e) => RevenueDataPoint.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  last30Days: (json['last30Days'] as List<dynamic>)
+      .map((e) => RevenueDataPoint.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$RevenueComparisonToJson(_RevenueComparison instance) =>
     <String, dynamic>{
@@ -228,7 +226,8 @@ _DashboardState _$DashboardStateFromJson(Map<String, dynamic> json) =>
       revenueComparison: json['revenueComparison'] == null
           ? null
           : RevenueComparison.fromJson(
-              json['revenueComparison'] as Map<String, dynamic>),
+              json['revenueComparison'] as Map<String, dynamic>,
+            ),
       isLoading: json['isLoading'] as bool? ?? false,
       error: json['error'] as String?,
       lastRefreshed: json['lastRefreshed'] == null

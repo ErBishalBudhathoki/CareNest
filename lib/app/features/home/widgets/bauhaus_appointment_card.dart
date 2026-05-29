@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
 
-class BauhausAppointmentCard extends StatelessWidget {
+class BauhausAppointmentCard extends ConsumerWidget {
   final Map<String, dynamic> appointment;
   final VoidCallback? onTap;
 
@@ -12,7 +14,7 @@ class BauhausAppointmentCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Extract Data
     Map<String, dynamic>? clientDetails;
     if (appointment['clientDetails'] != null) {
@@ -27,7 +29,8 @@ class BauhausAppointmentCard extends StatelessWidget {
     String? clientName = appointment['clientName']?.toString();
     if (clientName == null || clientName.isEmpty) {
       if (clientDetails != null) {
-        clientName = clientDetails['clientName']?.toString() ??
+        clientName =
+            clientDetails['clientName']?.toString() ??
             "${clientDetails['clientFirstName'] ?? ''} ${clientDetails['clientLastName'] ?? ''}"
                 .trim();
       }
@@ -41,10 +44,16 @@ class BauhausAppointmentCard extends StatelessWidget {
     // Schedule parsing
     String date = 'Unknown Date';
     String time = 'Unknown Time';
+    final timerService = ref.watch(timerServiceProviderWithNotifier);
+    final clientEmail = appointment['clientEmail'];
+    final isClockedIn =
+        timerService.isRunning && timerService.timerClientEmail == clientEmail;
+
     final shiftStatus = appointment['_shiftStatus']?.toString();
-    final showShiftStatusBadge =
-        shiftStatus == 'in_progress' || shiftStatus == 'overdue';
     final isOverdue = shiftStatus == 'overdue';
+    final isOvertime = shiftStatus == 'overtime';
+    final showShiftStatusBadge =
+        shiftStatus == 'in_progress' || isOverdue || isOvertime;
 
     if (appointment['schedule'] != null &&
         appointment['schedule'] is List &&
@@ -59,10 +68,7 @@ class BauhausAppointmentCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceLight,
-        border: Border.all(
-          color: BauhausDesign.textDark,
-          width: 3,
-        ),
+        border: Border.all(color: BauhausDesign.textDark, width: 3),
         boxShadow: const [
           BoxShadow(
             color: BauhausDesign.textDark,
@@ -85,17 +91,19 @@ class BauhausAppointmentCard extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: BauhausDesign.space2,
-                          vertical: BauhausDesign.space1),
+                        horizontal: BauhausDesign.space2,
+                        vertical: BauhausDesign.space1,
+                      ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary, // Red background
-                        border:
-                            Border.all(color: BauhausDesign.textDark, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.textDark,
+                          width: 2,
+                        ),
                       ),
                       child: Text(
                         date.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: BauhausDesign.surfaceWhite,
@@ -104,19 +112,29 @@ class BauhausAppointmentCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     if (showShiftStatusBadge) ...[
-                      _buildShiftStatusBadge(context, isOverdue),
+                      _buildShiftStatusBadge(
+                        context,
+                        isOverdue: isOverdue,
+                        isOvertime: isOvertime,
+                        isClockedIn: isClockedIn,
+                      ),
                       const SizedBox(width: BauhausDesign.space2),
                     ],
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space1),
                       decoration: BoxDecoration(
                         color: BauhausDesign.surfaceWhite,
-                        border:
-                            Border.all(color: BauhausDesign.textDark, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.textDark,
+                          width: 2,
+                        ),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.arrow_forward,
-                          size: 16, color: BauhausDesign.textDark),
+                      child: const Icon(
+                        Icons.arrow_forward,
+                        size: 16,
+                        color: BauhausDesign.textDark,
+                      ),
                     ),
                   ],
                 ),
@@ -127,8 +145,7 @@ class BauhausAppointmentCard extends StatelessWidget {
                   clientName.isNotEmpty
                       ? clientName.toUpperCase()
                       : 'UNKNOWN CLIENT',
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineMedium
+                  style: BauhausDesign.getTextTheme(context).headlineMedium
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: BauhausDesign.textDark,
@@ -140,13 +157,15 @@ class BauhausAppointmentCard extends StatelessWidget {
                 // Time & Location
                 Row(
                   children: [
-                    const Icon(Icons.access_time,
-                        size: 18, color: BauhausDesign.neutral),
+                    const Icon(
+                      Icons.access_time,
+                      size: 18,
+                      color: BauhausDesign.neutral,
+                    ),
                     const SizedBox(width: BauhausDesign.space2),
                     Text(
                       time,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: BauhausDesign.textDark,
@@ -162,18 +181,34 @@ class BauhausAppointmentCard extends StatelessWidget {
     );
   }
 
-  Widget _buildShiftStatusBadge(BuildContext context, bool isOverdue) {
+  Widget _buildShiftStatusBadge(
+    BuildContext context, {
+    required bool isOverdue,
+    required bool isOvertime,
+    required bool isClockedIn,
+  }) {
+    Color badgeColor = BauhausDesign.success;
+    String badgeText = 'IN PROGRESS';
+
+    if (isOvertime) {
+      badgeColor = BauhausDesign.warning;
+      badgeText = 'OVERTIME';
+    } else if (isOverdue) {
+      badgeColor = BauhausDesign.error;
+      badgeText = 'OVERDUE';
+    } else if (!isClockedIn) {
+      badgeColor = BauhausDesign.warning;
+      badgeText = 'CLOCK IN';
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space2,
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: isOverdue ? BauhausDesign.error : BauhausDesign.success,
-        border: Border.all(
-          color: BauhausDesign.textDark,
-          width: 2,
-        ),
+        color: badgeColor,
+        border: Border.all(color: BauhausDesign.textDark, width: 2),
         boxShadow: const [
           BoxShadow(
             color: BauhausDesign.textDark,
@@ -183,12 +218,14 @@ class BauhausAppointmentCard extends StatelessWidget {
         ],
       ),
       child: Text(
-        isOverdue ? 'OVERDUE' : 'IN PROGRESS',
+        badgeText,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: BauhausDesign.surfaceWhite,
-              letterSpacing: 0.4,
-            ),
+          fontWeight: FontWeight.w800,
+          color: badgeColor == BauhausDesign.warning
+              ? BauhausDesign.textDark
+              : BauhausDesign.surfaceWhite,
+          letterSpacing: 0.4,
+        ),
       ),
     );
   }

@@ -150,6 +150,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           viewMessages: true,
           sendMessages: true,
           viewLocation: true,
+          viewServiceHistory: true,
           receiveNotifications: true,
         );
       case 'viewer':
@@ -163,20 +164,22 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           viewMessages: true,
           sendMessages: false,
           viewLocation: false,
+          viewServiceHistory: false,
           receiveNotifications: true,
         );
       default:
         return const FamilyPermissions(
-          viewAppointments: true,
-          viewDocuments: true,
-          viewInvoices: true,
+          viewAppointments: false,
+          viewDocuments: false,
+          viewInvoices: false,
           editProfile: false,
           approveServices: false,
           manageFamily: false,
-          viewMessages: true,
-          sendMessages: true,
-          viewLocation: true,
-          receiveNotifications: true,
+          viewMessages: false,
+          sendMessages: false,
+          viewLocation: false,
+          viewServiceHistory: false,
+          receiveNotifications: false,
         );
     }
   }
@@ -281,7 +284,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     );
   }
 
-  Widget _buildStatusBadge(String status) {
+  Widget _buildStatusBadge(String status, {bool onDarkBackground = false}) {
     final normalized = status.trim().toLowerCase();
     late final Color background;
     late final Color foreground;
@@ -289,18 +292,33 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
 
     switch (normalized) {
       case 'active':
-        background = BauhausDesign.success.withOpacity(0.14);
-        foreground = BauhausDesign.success;
+        if (onDarkBackground) {
+          background = BauhausDesign.surfaceWhite.withOpacity(0.18);
+          foreground = BauhausDesign.surfaceWhite;
+        } else {
+          background = BauhausDesign.success.withOpacity(0.14);
+          foreground = BauhausDesign.success;
+        }
         label = 'Active';
         break;
       case 'inactive':
-        background = BauhausDesign.error.withOpacity(0.14);
-        foreground = BauhausDesign.error;
+        if (onDarkBackground) {
+          background = BauhausDesign.surfaceWhite.withOpacity(0.18);
+          foreground = BauhausDesign.surfaceWhite;
+        } else {
+          background = BauhausDesign.error.withOpacity(0.14);
+          foreground = BauhausDesign.error;
+        }
         label = 'Inactive';
         break;
       default:
-        background = BauhausDesign.warning.withOpacity(0.14);
-        foreground = BauhausDesign.warning;
+        if (onDarkBackground) {
+          background = BauhausDesign.textDark.withOpacity(0.30);
+          foreground = BauhausDesign.surfaceWhite;
+        } else {
+          background = BauhausDesign.warning.withOpacity(0.14);
+          foreground = BauhausDesign.warning;
+        }
         label = 'Pending';
     }
 
@@ -312,7 +330,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-        border: Border.all(color: foreground.withOpacity(0.35)),
+        border: Border.all(
+          color: foreground.withOpacity(onDarkBackground ? 0.5 : 0.35),
+        ),
       ),
       child: Text(
         label,
@@ -360,6 +380,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       _buildPermissionChip('Messages', permissions.viewMessages),
       _buildPermissionChip('Send Msg', permissions.sendMessages),
       _buildPermissionChip('Location', permissions.viewLocation),
+      _buildPermissionChip('History', permissions.viewServiceHistory),
       _buildPermissionChip('Approvals', permissions.approveServices),
       _buildPermissionChip('Manage Family', permissions.manageFamily),
       _buildPermissionChip('Alerts', permissions.receiveNotifications),
@@ -715,6 +736,13 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           permissions.viewLocation,
           permissions.copyWith(
             viewLocation: !permissions.viewLocation,
+          ),
+        ),
+        tile(
+          'View service history',
+          permissions.viewServiceHistory,
+          permissions.copyWith(
+            viewServiceHistory: !permissions.viewServiceHistory,
           ),
         ),
         tile(
@@ -1152,12 +1180,13 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             ),
             decoration: BoxDecoration(
               color: statusTone,
-              border: Border(
-                bottom: BorderSide(
-                  color: BauhausDesign.neutral,
-                  width: 2,
-                ),
+              border: Border.all(
+                color: BauhausDesign.textDark,
+                width: 2,
               ),
+              boxShadow: const [
+                BauhausDesign.shadowHard,
+              ],
             ),
             child: Row(
               children: [
@@ -1174,7 +1203,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       ),
                 ),
                 const Spacer(),
-                _buildStatusBadge(member.status),
+                _buildStatusBadge(member.status, onDarkBackground: true),
               ],
             ),
           ),

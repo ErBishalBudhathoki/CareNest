@@ -41,6 +41,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   String? _identityError;
   String? _effectiveUserId;
   String? _fallbackUserId;
+  String? _myEmail;
+  Set<String> _myAlternateIds = const {};
+  Map<String, String> _nameCache = const {};
   Timer? _messagePollTimer;
   bool _pollInFlight = false;
   String? _pollConversationId;
@@ -67,17 +70,44 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       final prefs = SharedPreferencesUtils();
       await prefs.init();
 
-      final explicitId = widget.userId?.trim();
       final storedUserId = prefs.getUserId()?.trim();
       final storedEmail = prefs.getUserEmail()?.trim();
+      final storedName = prefs.getString('firstName')?.trim();
+      final storedLastName = prefs.getString('lastName')?.trim();
 
-      final resolvedId = (explicitId != null && explicitId.isNotEmpty)
-          ? explicitId
-          : (storedUserId != null && storedUserId.isNotEmpty)
-              ? storedUserId
-              : ((storedEmail != null && storedEmail.isNotEmpty)
-                  ? storedEmail
-                  : null);
+      _myEmail = storedEmail;
+      // Build a set of IDs that identify "me" — userId, email, and name.
+      // Also include the explicitId from the caller (may be a MongoDB _id)
+      // for isMe matching, even though we use storedUserId for API calls.
+      final explicitId = widget.userId?.trim();
+      _myAlternateIds = <String>{
+        if (storedUserId != null && storedUserId.isNotEmpty) storedUserId,
+        if (storedEmail != null && storedEmail.isNotEmpty) storedEmail,
+        if (storedName != null && storedName.isNotEmpty) storedName,
+        if (explicitId != null && explicitId.isNotEmpty) explicitId,
+      };
+      final fullName = [
+        if (storedName != null && storedName.isNotEmpty) storedName,
+        if (storedLastName != null && storedLastName.isNotEmpty) storedLastName,
+      ].join(' ');
+      if (fullName.isNotEmpty) {
+        _myAlternateIds.add(fullName);
+      }
+      // Cache name lookups keyed by email
+      if (storedEmail != null &&
+          storedEmail.isNotEmpty &&
+          fullName.isNotEmpty) {
+        _nameCache = {storedEmail: fullName};
+      }
+
+      // Always use stored userId (matches JWT) for loading conversations.
+      // explicitId can be a client/employee MongoDB _id, which the backend
+      // rejects with 403. The preferredConversationId handles targeting.
+      final resolvedId = (storedUserId != null && storedUserId.isNotEmpty)
+          ? storedUserId
+          : ((storedEmail != null && storedEmail.isNotEmpty)
+              ? storedEmail
+              : null);
 
       if (resolvedId == null || resolvedId.isEmpty) {
         setState(() {
@@ -135,6 +165,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       ref
           .read(messagingViewModelProvider.notifier)
           .setActiveConversation(selected);
+      _seedNameCacheFromConversation(selected);
       await ref
           .read(messagingViewModelProvider.notifier)
           .getMessages(conversationId: selected.id);
@@ -159,6 +190,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     ref
         .read(messagingViewModelProvider.notifier)
         .setActiveConversation(conversation);
+    _seedNameCacheFromConversation(conversation);
     await ref
         .read(messagingViewModelProvider.notifier)
         .getMessages(conversationId: conversation.id, silent: true);
@@ -169,6 +201,29 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     );
     _startMessagePolling();
     _scrollToBottom();
+  }
+
+  /// Seed [_nameCache] with resolved names from the conversation so
+  /// we never show raw emails in chat bubbles.
+  void _seedNameCacheFromConversation(MessageThread conversation) {
+    final me = _effectiveUserId;
+    final isWorker = widget.userType == 'employee' ||
+        widget.userType == 'worker' ||
+        conversation.workerId == me;
+    final otherName = isWorker
+        ? conversation.clientName
+        : conversation.workerName;
+    if (otherName != null && otherName.isNotEmpty) {
+      _nameCache = Map<String, String>.from(_nameCache);
+      _nameCache[otherName.toLowerCase()] = otherName;
+      // Also key by parts so "Harry James" can match emails that contain
+      // just first or last name
+      for (final part in otherName.split(' ')) {
+        if (part.isNotEmpty) {
+          _nameCache[part.toLowerCase()] = otherName;
+        }
+      }
+    }
   }
 
   String _getRecipientId(MessageThread conversation) {
@@ -284,7 +339,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   }
 
   Future<void> _pollMessages() async {
-    if (_pollInFlight) return;
+    if (!mounted || _pollInFlight) return;
 
     final state = ref.read(messagingViewModelProvider);
     final conversation = state.activeConversation;
@@ -772,9 +827,39 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     final message = state.messages[index];
-                    final isMe = message.senderId == _effectiveUserId;
+                    final isMe = message.senderId == _effectiveUserId ||
+                        _myAlternateIds.contains(message.senderId) ||
+                        (_myEmail != null &&
+                            message.senderId.toLowerCase() ==
+                                _myEmail!.toLowerCase());
+
+                    // Resolve email-looking sender names to human names
+                    var displayMessage = message;
+                    if (message.senderName.contains('@')) {
+                      final conversation = state.activeConversation;
+                      if (conversation != null) {
+                        if (isMe) {
+                          final nameFromCache =
+                              _nameCache[message.senderName.toLowerCase()];
+                          if (nameFromCache != null) {
+                            displayMessage =
+                                message.copyWith(senderName: nameFromCache);
+                          }
+                        } else {
+                          // Other sender — use resolved name from conversation
+                          final otherName = message.senderType == 'client'
+                              ? conversation.clientName
+                              : conversation.workerName;
+                          if (otherName != null && otherName.isNotEmpty) {
+                            displayMessage =
+                                message.copyWith(senderName: otherName);
+                          }
+                        }
+                      }
+                    }
+
                     return MessageBubble(
-                      message: message,
+                      message: displayMessage,
                       isMe: isMe,
                     );
                   },

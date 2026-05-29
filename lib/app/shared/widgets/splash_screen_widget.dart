@@ -60,11 +60,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               'organizationCode': sharedPrefs.getOrganizationCode(),
             },
           );
-        } else if (role == UserRole.client) {
+        } else if (role == UserRole.family || role == UserRole.client) {
           final clientId = sharedPrefs.getString('clientId') ?? '';
           if (clientId.isEmpty) {
             debugPrint(
-                '⚠️ Missing clientId for client session, forcing re-login');
+                '⚠️ Missing clientId for session, forcing re-login');
             await _sessionTimeoutService.logoutAndClearSession(
               reason: 'missing_client_id_on_splash',
             );
@@ -73,10 +73,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             return;
           }
 
-          Navigator.of(context).pushReplacementNamed(
-            Routes.clientDashboard,
-            arguments: {'email': userEmail, 'clientId': clientId},
-          );
+          if (role == UserRole.family) {
+            Navigator.of(context).pushReplacementNamed(
+              Routes.clientDashboard,
+              arguments: {'clientId': clientId, 'isFamilyViewer': true},
+            );
+          } else {
+            Navigator.of(context).pushReplacementNamed(
+              Routes.clientDashboard,
+              arguments: {'email': userEmail, 'clientId': clientId},
+            );
+          }
         } else {
           final onboardingTarget = await _onboardingGateService.resolveTarget(
             role: role,

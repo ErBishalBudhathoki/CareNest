@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
 import 'package:carenest/app/features/expenses/views/expense_management_view.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -17,6 +18,7 @@ import 'package:carenest/app/features/home/widgets/bauhaus_home_header.dart';
 import 'package:carenest/app/features/home/widgets/bauhaus_action_card.dart';
 import 'package:carenest/app/features/home/widgets/bauhaus_appointment_card.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
+import 'package:carenest/app/features/realtime_portal/views/secure_messaging_view.dart';
 import 'package:carenest/app/services/reminder/reminder_provider.dart';
 import 'package:carenest/app/services/geofence/geofence_provider.dart';
 import 'package:carenest/app/services/geofence/geofence_service.dart';
@@ -84,16 +86,14 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
     _startBroadcastPolling();
   }
 
-  /// Poll active broadcasts every 15 seconds so emergency alerts appear
-  /// immediately without requiring a manual pull-to-refresh.
+  /// Poll active broadcasts and recompute shift statuses every 15 seconds
+  /// so emergency alerts and shift badges update without manual refresh.
   void _startBroadcastPolling() {
-    _broadcastPollTimer = Timer.periodic(
-      const Duration(seconds: 15),
-      (_) {
-        if (!mounted) return;
-        ref.read(homeViewModelProvider.notifier).pollBroadcasts();
-      },
-    );
+    _broadcastPollTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (!mounted) return;
+      ref.read(homeViewModelProvider.notifier).pollBroadcasts();
+      ref.read(homeViewModelProvider.notifier).recomputeShiftStatuses();
+    });
   }
 
   Future<void> _initializeData() async {
@@ -105,7 +105,9 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
       await _loadEmployeeBankDetails();
 
       // Load home dashboard data using ViewModel
-      await ref.read(homeViewModelProvider.notifier).loadDashboard(widget.email);
+      await ref
+          .read(homeViewModelProvider.notifier)
+          .loadDashboard(widget.email);
     } catch (e) {
       debugPrint('Error initializing data: $e');
     }
@@ -152,7 +154,6 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
     }
   }
 
-
   DateTime? _parseDateTime(dynamic date, dynamic time) {
     try {
       if (date == null || time == null) return null;
@@ -167,12 +168,18 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
         final parts = dateStr.split('/');
         if (parts.length == 3) {
           parsedDate = DateTime(
-              int.parse(parts[2]), int.parse(parts[0]), int.parse(parts[1]));
+            int.parse(parts[2]),
+            int.parse(parts[0]),
+            int.parse(parts[1]),
+          );
         } else {
           try {
             // Try DD/MM/YYYY fallback
             parsedDate = DateTime(
-                int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+              int.parse(parts[2]),
+              int.parse(parts[1]),
+              int.parse(parts[0]),
+            );
           } catch (e) {
             return null;
           }
@@ -229,18 +236,22 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
         if (scheduleList == null || scheduleList.isEmpty) continue;
 
         final schedule = scheduleList[0];
-        final shiftStartTime =
-            _parseDateTime(schedule['date'], schedule['startTime']);
+        final shiftStartTime = _parseDateTime(
+          schedule['date'],
+          schedule['startTime'],
+        );
 
         if (shiftStartTime == null) continue;
 
         // Extract client name
-        final clientName = appointment['clientFirstName']?.toString() ??
+        final clientName =
+            appointment['clientFirstName']?.toString() ??
             appointment['clientName']?.toString() ??
             'Client';
 
         // Extract appointment ID (try multiple possible fields)
-        final appointmentId = appointment['_id']?.toString() ??
+        final appointmentId =
+            appointment['_id']?.toString() ??
             appointment['id']?.toString() ??
             '${appointment.hashCode}';
 
@@ -258,7 +269,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
       }
 
       debugPrint(
-          'HomeView: Scheduled reminders for ${appointments.length} appointments');
+        'HomeView: Scheduled reminders for ${appointments.length} appointments',
+      );
     } catch (e) {
       debugPrint('HomeView: Error scheduling reminders: $e');
     }
@@ -266,7 +278,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
 
   /// Register geofences for upcoming appointments with valid location data
   Future<void> _registerGeofences(
-      List<Map<String, dynamic>> appointments) async {
+    List<Map<String, dynamic>> appointments,
+  ) async {
     try {
       final geofenceService = ref.read(geofenceServiceProvider);
       final isEnabled = await geofenceService.isGeofencingEnabled();
@@ -279,8 +292,10 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
         if (scheduleList == null || scheduleList.isEmpty) continue;
 
         final schedule = scheduleList[0];
-        final shiftStartTime =
-            _parseDateTime(schedule['date'], schedule['startTime']);
+        final shiftStartTime = _parseDateTime(
+          schedule['date'],
+          schedule['startTime'],
+        );
 
         if (shiftStartTime == null) continue;
 
@@ -292,29 +307,35 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
         }
 
         // Extract location data
-        final clientLat =
-            double.tryParse(appointment['clientLatitude']?.toString() ?? '');
-        final clientLng =
-            double.tryParse(appointment['clientLongitude']?.toString() ?? '');
+        final clientLat = double.tryParse(
+          appointment['clientLatitude']?.toString() ?? '',
+        );
+        final clientLng = double.tryParse(
+          appointment['clientLongitude']?.toString() ?? '',
+        );
 
         if (clientLat == null || clientLng == null) continue;
 
         final clientId = appointment['clientId']?.toString() ?? '';
-        final clientName = appointment['clientFirstName']?.toString() ??
+        final clientName =
+            appointment['clientFirstName']?.toString() ??
             appointment['clientName']?.toString() ??
             'Client';
-        final appointmentId = appointment['_id']?.toString() ??
+        final appointmentId =
+            appointment['_id']?.toString() ??
             appointment['id']?.toString() ??
             '';
 
-        await geofenceService.registerGeofence(GeofenceLocation(
-          clientId: clientId,
-          clientName: clientName,
-          latitude: clientLat,
-          longitude: clientLng,
-          appointmentId: appointmentId,
-          shiftStartTime: shiftStartTime,
-        ));
+        await geofenceService.registerGeofence(
+          GeofenceLocation(
+            clientId: clientId,
+            clientName: clientName,
+            latitude: clientLat,
+            longitude: clientLng,
+            appointmentId: appointmentId,
+            shiftStartTime: shiftStartTime,
+          ),
+        );
       }
 
       // If we have geofences and enabled, ensure monitoring is active
@@ -331,11 +352,13 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
   Future<void> _refreshData() async {
     try {
       await _initializeData();
-      await ref.read(homeViewModelProvider.notifier).refreshSilently(widget.email);
+      await ref
+          .read(homeViewModelProvider.notifier)
+          .refreshSilently(widget.email);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data refreshed')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Data refreshed')));
       }
     } catch (e) {
       debugPrint('Error refreshing data: $e');
@@ -354,8 +377,16 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
     final photoData = photoDataState.photoData;
     final homeState = ref.watch(homeViewModelProvider);
 
+    // Trigger shift status recompute whenever the timer ticks
+    ref.listen<TimerService>(timerServiceProviderWithNotifier, (prev, next) {
+      ref.read(homeViewModelProvider.notifier).recomputeShiftStatuses();
+    });
+
     // Side effects for reminders and geofencing
-    ref.listen<AsyncValue<HomeDashboardData>>(homeViewModelProvider, (previous, next) {
+    ref.listen<AsyncValue<HomeDashboardData>>(homeViewModelProvider, (
+      previous,
+      next,
+    ) {
       if (next.hasValue) {
         final data = next.value!;
         if (data.upcomingAppointments.isNotEmpty) {
@@ -405,13 +436,18 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         homeState.when(
                           data: (data) {
                             final currentUserId = ref.watch(userIdProvider);
-                            final unacknowledged = data.activeBroadcasts.where((b) {
+                            final unacknowledged = data.activeBroadcasts.where((
+                              b,
+                            ) {
                               if (currentUserId == null) return true;
                               return !b.acknowledgments.contains(currentUserId);
                             }).toList();
 
                             return unacknowledged.isNotEmpty
-                                ? _buildEmergencyBanners(context, unacknowledged)
+                                ? _buildEmergencyBanners(
+                                    context,
+                                    unacknowledged,
+                                  )
                                 : const SizedBox.shrink();
                           },
                           loading: () => const SizedBox.shrink(),
@@ -419,29 +455,32 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         ),
                         // --- APPOINTMENTS ---
                         BauhausSectionHeader(
-                            title:
-                                AppLocalizations.of(context)!.upcomingShifts),
-                        const SizedBox(height: 16),
+                          title: AppLocalizations.of(context)!.upcomingShifts,
+                        ),
+                        const SizedBox(height: 8),
 
                         homeState.when(
                           data: (data) {
                             final appointments = data.upcomingAppointments;
-                            
+
                             // Side effects: Reminders and Geofences (only if not already done for this data)
                             // We can use ref.listen for this instead, see below
-                            
+
                             if (appointments.isEmpty) {
                               return BauhausEmptyState(
-                                title: AppLocalizations.of(context)!
-                                    .noUpcomingAppointments,
-                                message: AppLocalizations.of(context)!
-                                    .noUpcomingShiftsMessage,
+                                title: AppLocalizations.of(
+                                  context,
+                                )!.noUpcomingAppointments,
+                                message: AppLocalizations.of(
+                                  context,
+                                )!.noUpcomingShiftsMessage,
                                 icon: Icons.calendar_today_outlined,
                               );
                             }
 
                             return ListView.separated(
                               shrinkWrap: true,
+                              padding: EdgeInsets.zero,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: appointments.length,
                               separatorBuilder: (_, __) =>
@@ -459,9 +498,9 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               ClientAndAppointmentDetails(
-                                            userEmail: widget.email,
-                                            clientEmail: clientEmail,
-                                          ),
+                                                userEmail: widget.email,
+                                                clientEmail: clientEmail,
+                                              ),
                                         ),
                                       );
                                     }
@@ -477,14 +516,16 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
 
                         // --- QUICK ACTIONS ---
                         BauhausSectionHeader(
-                            title: AppLocalizations.of(context)!.quickActions),
+                          title: AppLocalizations.of(context)!.quickActions,
+                        ),
                         const SizedBox(height: 16),
 
                         // Clock In Action
                         BauhausActionCard(
                           title: AppLocalizations.of(context)!.timeClock,
-                          description:
-                              AppLocalizations.of(context)!.timeClockDesc,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.timeClockDesc,
                           icon: Icons.timer_outlined,
                           baseColor: BauhausDesign.success,
                           actionLabel: AppLocalizations.of(context)!.open,
@@ -492,9 +533,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ClockInAndOutView(
-                                  email: widget.email,
-                                ),
+                                builder: (context) =>
+                                    ClockInAndOutView(email: widget.email),
                               ),
                             );
                           },
@@ -502,11 +542,52 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
 
                         const SizedBox(height: 16),
 
+                        // Secure Messaging — only visible when on shift
+                        homeState.when(
+                          data: (data) {
+                            final hasActiveShift = data.upcomingAppointments.any(
+                              (appt) {
+                                final s = appt['_shiftStatus']?.toString();
+                                return s == 'in_progress' || s == 'overtime';
+                              },
+                            );
+                            if (!hasActiveShift) {
+                              return const SizedBox.shrink();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: BauhausActionCard(
+                                title: 'In-Shift Messaging',
+                                description:
+                                    'Securely chat with your client during your active shift.',
+                                icon: Icons.message_outlined,
+                                baseColor: BauhausDesign.secondary,
+                                actionLabel: 'OPEN CHAT',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          SecureMessagingView(
+                                            userId: widget.email,
+                                            userType: 'employee',
+                                          ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                        ),
+
                         // Leave Tracker
                         BauhausActionCard(
                           title: AppLocalizations.of(context)!.leaveTracker,
-                          description:
-                              AppLocalizations.of(context)!.leaveTrackerDesc,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.leaveTrackerDesc,
                           icon: Icons.flight_takeoff,
                           baseColor: BauhausDesign.secondary,
                           actionLabel: AppLocalizations.of(context)!.open,
@@ -514,9 +595,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LeaveTrackerView(
-                                  userEmail: widget.email,
-                                ),
+                                builder: (context) =>
+                                    LeaveTrackerView(userEmail: widget.email),
                               ),
                             );
                           },
@@ -526,10 +606,12 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
 
                         // Training & Compliance Action
                         BauhausActionCard(
-                          title:
-                              AppLocalizations.of(context)!.trainingCompliance,
-                          description: AppLocalizations.of(context)!
-                              .trainingComplianceDesc,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.trainingCompliance,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.trainingComplianceDesc,
                           icon: Icons.school_outlined,
                           baseColor: BauhausDesign.warning,
                           actionLabel: AppLocalizations.of(context)!.openHub,
@@ -549,12 +631,14 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         // Expense Action
                         BauhausActionCard(
                           title: AppLocalizations.of(context)!.trackExpenses,
-                          description:
-                              AppLocalizations.of(context)!.trackExpensesDesc,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.trackExpensesDesc,
                           icon: Icons.receipt_long_outlined,
                           baseColor: BauhausDesign.secondary,
-                          actionLabel:
-                              AppLocalizations.of(context)!.openDashboard,
+                          actionLabel: AppLocalizations.of(
+                            context,
+                          )!.openDashboard,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -574,8 +658,9 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         // Shift Exchange Action
                         BauhausActionCard(
                           title: AppLocalizations.of(context)!.shiftExchange,
-                          description:
-                              AppLocalizations.of(context)!.shiftExchangeDesc,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.shiftExchangeDesc,
                           icon: Icons
                               .swap_horiz_outlined, // or Icons.local_offer_outlined
                           baseColor:
@@ -596,13 +681,15 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         // Mileage Tracker Action
                         BauhausActionCard(
                           title: AppLocalizations.of(context)!.mileageTracker,
-                          description:
-                              AppLocalizations.of(context)!.mileageTrackerDesc,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.mileageTrackerDesc,
                           icon: Icons.route_outlined,
                           baseColor:
                               BauhausDesign.accent, // Yellow for distinction
-                          actionLabel:
-                              AppLocalizations.of(context)!.startTracking,
+                          actionLabel: AppLocalizations.of(
+                            context,
+                          )!.startTracking,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -619,12 +706,14 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         // Earnings Dashboard Action
                         BauhausActionCard(
                           title: AppLocalizations.of(context)!.earnings,
-                          description:
-                              AppLocalizations.of(context)!.earningsDesc,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.earningsDesc,
                           icon: Icons.monetization_on_outlined,
                           baseColor: const Color(0xFF4CAF50), // Green
-                          actionLabel:
-                              AppLocalizations.of(context)!.viewEarnings,
+                          actionLabel: AppLocalizations.of(
+                            context,
+                          )!.viewEarnings,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -641,14 +730,14 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         const SizedBox(height: 48),
 
                         // --- PERSONAL SETTINGS ---
-                        BauhausSectionHeader(
-                            title: 'Personal Settings'),
+                        BauhausSectionHeader(title: 'Personal Settings'),
                         const SizedBox(height: 16),
 
                         // Notification Settings
                         BauhausActionCard(
                           title: 'Smart Notifications',
-                          description: 'Configure geofence alerts, quiet hours, and notification preferences',
+                          description:
+                              'Configure geofence alerts, quiet hours, and notification preferences',
                           icon: Icons.notifications_active_outlined,
                           baseColor: BauhausDesign.warning,
                           actionLabel: 'Settings',
@@ -668,7 +757,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         // Offline Mode
                         BauhausActionCard(
                           title: 'Offline Mode',
-                          description: 'Work offline and sync your personal data when online',
+                          description:
+                              'Work offline and sync your personal data when online',
                           icon: Icons.cloud_off_outlined,
                           baseColor: BauhausDesign.secondary,
                           actionLabel: 'Open',
@@ -676,9 +766,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => OfflineSyncDashboard(
-                                  userId: widget.email,
-                                ),
+                                builder: (context) =>
+                                    OfflineSyncDashboard(userId: widget.email),
                               ),
                             );
                           },
@@ -688,8 +777,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
 
                         // --- BANKING DETAILS ---
                         BauhausSectionHeader(
-                            title:
-                                AppLocalizations.of(context)!.bankingPayouts),
+                          title: AppLocalizations.of(context)!.bankingPayouts,
+                        ),
                         const SizedBox(height: 16),
 
                         // Employee Bank Details Card (View/Edit)
@@ -732,21 +821,25 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
             decoration: const BoxDecoration(
               color: BauhausDesign.textDark, // Black Header
               border: Border(
-                  bottom: BorderSide(color: BauhausDesign.textDark, width: 0)),
+                bottom: BorderSide(color: BauhausDesign.textDark, width: 0),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   AppLocalizations.of(context)!.primaryAccount.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.surfaceWhite,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: BauhausDesign.surfaceWhite,
+                      ),
                 ),
-                const Icon(Icons.account_balance,
-                    color: BauhausDesign.surfaceWhite, size: 18),
+                const Icon(
+                  Icons.account_balance,
+                  color: BauhausDesign.surfaceWhite,
+                  size: 18,
+                ),
               ],
             ),
           ),
@@ -756,73 +849,71 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
             child: _bankDetailsLoading
                 ? const Center(child: BauhausLoadingState(showMessage: false))
                 : !_hasBankDetails
-                    ? Column(
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.noBankDetails,
-                            style:
-                                BauhausDesign.getTextTheme(context).bodyMedium,
-                          ),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: BauhausActionButton(
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const BankDetailsView()),
-                                );
-                                await _loadEmployeeBankDetails();
-                              },
-                              text: AppLocalizations.of(context)!
-                                  .addBankDetails
-                                  .toUpperCase(),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            bankName.toUpperCase(),
-                            style: BauhausDesign.getTextTheme(context)
-                                .headlineSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            maskedAccount,
-                            style: BauhausDesign.getTextTheme(context)
-                                .labelMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.neutral,
-                                ),
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            child: BauhausActionButton(
-                              variant: BauhausActionVariant.ghost,
-                              isOutlined: true,
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const BankDetailsView()),
-                                );
-                                await _loadEmployeeBankDetails();
-                              },
-                              icon: Icons.edit,
-                              text: AppLocalizations.of(context)!
-                                  .editButton
-                                  .toUpperCase(),
-                            ),
-                          ),
-                        ],
+                ? Column(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.noBankDetails,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium,
                       ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: BauhausActionButton(
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const BankDetailsView(),
+                              ),
+                            );
+                            await _loadEmployeeBankDetails();
+                          },
+                          text: AppLocalizations.of(
+                            context,
+                          )!.addBankDetails.toUpperCase(),
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        bankName.toUpperCase(),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).headlineSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        maskedAccount,
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).labelMedium?.copyWith(color: BauhausDesign.neutral),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: BauhausActionButton(
+                          variant: BauhausActionVariant.ghost,
+                          isOutlined: true,
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const BankDetailsView(),
+                              ),
+                            );
+                            await _loadEmployeeBankDetails();
+                          },
+                          icon: Icons.edit,
+                          text: AppLocalizations.of(
+                            context,
+                          )!.editButton.toUpperCase(),
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ],
       ),
@@ -837,14 +928,14 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
         color: BauhausDesign.surfaceWhite,
         border: Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
       ),
-      child: const Center(
-        child: BauhausLoadingState(showMessage: false),
-      ),
+      child: const Center(child: BauhausLoadingState(showMessage: false)),
     );
   }
 
   Widget _buildEmergencyBanners(
-      BuildContext context, List<EmergencyBroadcast> broadcasts) {
+    BuildContext context,
+    List<EmergencyBroadcast> broadcasts,
+  ) {
     return Column(
       children: broadcasts.map<Widget>((b) {
         return Container(
@@ -855,10 +946,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
             color: const Color(0xFFE63946), // Bauhaus Red
             border: Border.all(color: Colors.black, width: 2),
             boxShadow: const [
-              BoxShadow(
-                color: Colors.black,
-                offset: Offset(4, 4),
-              ),
+              BoxShadow(color: Colors.black, offset: Offset(4, 4)),
             ],
           ),
           child: Column(
@@ -866,8 +954,11 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.warning_amber_rounded,
-                      color: Colors.white, size: 32),
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.white,
+                    size: 32,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

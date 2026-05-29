@@ -196,7 +196,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
 
     int indexOffset = 1;
     if (widget.role == UserRole.admin) {
-      items.add(_buildNavItem(1, Icons.search, Icons.search_outlined, 'ASSIGN',
+      items.add(_buildNavItem(1, Icons.how_to_reg, Icons.how_to_reg_outlined, 'ASSIGN',
           BauhausDesign.accent, BauhausDesign.textDark));
       indexOffset = 2;
     }

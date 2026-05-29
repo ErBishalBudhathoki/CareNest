@@ -20,14 +20,14 @@ _ComplianceChecklist _$ComplianceChecklistFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ComplianceChecklistToJson(
-        _ComplianceChecklist instance) =>
-    <String, dynamic>{
-      '_id': instance.id,
-      'title': instance.title,
-      'description': instance.description,
-      'items': instance.items,
-      'targetRoles': instance.targetRoles,
-    };
+  _ComplianceChecklist instance,
+) => <String, dynamic>{
+  '_id': instance.id,
+  'title': instance.title,
+  'description': instance.description,
+  'items': instance.items,
+  'targetRoles': instance.targetRoles,
+};
 
 _ChecklistItem _$ChecklistItemFromJson(Map<String, dynamic> json) =>
     _ChecklistItem(
@@ -54,12 +54,12 @@ _UserChecklistStatus _$UserChecklistStatusFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$UserChecklistStatusToJson(
-        _UserChecklistStatus instance) =>
-    <String, dynamic>{
-      '_id': instance.id,
-      'userId': instance.userId,
-      'checklistId': instance.checklistId,
-      'itemsStatus': instance.itemsStatus,
-      'isCompleted': instance.isCompleted,
-      'lastUpdated': instance.lastUpdated.toIso8601String(),
-    };
+  _UserChecklistStatus instance,
+) => <String, dynamic>{
+  '_id': instance.id,
+  'userId': instance.userId,
+  'checklistId': instance.checklistId,
+  'itemsStatus': instance.itemsStatus,
+  'isCompleted': instance.isCompleted,
+  'lastUpdated': instance.lastUpdated.toIso8601String(),
+};

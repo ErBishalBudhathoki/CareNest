@@ -958,7 +958,9 @@ class BauhausEmptyState extends StatelessWidget {
             const SizedBox(height: BauhausDesign.space6),
             Text(
               title,
-              style: BauhausDesign.getTextTheme(context).headlineMedium,
+              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+                    color: BauhausDesign.textDark,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: BauhausDesign.space3),

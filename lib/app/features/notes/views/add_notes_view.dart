@@ -4,7 +4,8 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -16,11 +17,12 @@ class AddNotesView extends ConsumerStatefulWidget {
   final String userEmail;
   final String clientEmail;
   final Map<String, dynamic>? clientDetails;
-  const AddNotesView(
-      {super.key,
-      required this.userEmail,
-      required this.clientEmail,
-      this.clientDetails});
+  const AddNotesView({
+    super.key,
+    required this.userEmail,
+    required this.clientEmail,
+    this.clientDetails,
+  });
 
   @override
   ConsumerState<AddNotesView> createState() => _AddNotesViewState();
@@ -28,8 +30,9 @@ class AddNotesView extends ConsumerStatefulWidget {
 
 class _AddNotesViewState extends ConsumerState<AddNotesView> {
   late final TextEditingController _notesController = TextEditingController();
-  final GlobalKey<ScaffoldState> _scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: 'add_notes_scaffold_key');
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(
+    debugLabel: 'add_notes_scaffold_key',
+  );
   late final ApiMethod apiMethod;
 
   late stt.SpeechToText _speechToText;
@@ -45,11 +48,6 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
     apiMethod = ref.read(app_providers.apiMethodProvider);
     _speechToText = stt.SpeechToText();
     _initializeServices();
-    _notesController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
   }
 
   Future<void> _initializeServices() async {
@@ -79,8 +77,9 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
       } else {
         if (mounted) {
           _showSnackBar(
-              'Microphone permission is required for speech recognition',
-              isError: true);
+            'Microphone permission is required for speech recognition',
+            isError: true,
+          );
         }
       }
     } else {
@@ -108,8 +107,9 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? BauhausDesign.textLight : BauhausDesign.textDark;
-    final hintColor =
-        isDark ? BauhausDesign.textLight.withOpacity(0.4) : BauhausDesign.textMuted;
+    final hintColor = isDark
+        ? BauhausDesign.textLight.withOpacity(0.4)
+        : BauhausDesign.textMuted;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -131,10 +131,7 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: BauhausDesign.neutral,
-            height: 1,
-          ),
+          child: Container(color: BauhausDesign.neutral, height: 1),
         ),
       ),
       body: Padding(
@@ -150,16 +147,15 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
                   controller: _notesController,
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodyMedium
-                      ?.copyWith(color: textColor),
+                  enableInteractiveSelection: true,
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: textColor),
                   decoration: InputDecoration(
                     hintText: 'Add notes...',
-                    hintStyle: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: hintColor,
-                        ),
+                    hintStyle: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: hintColor),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -180,17 +176,17 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
               !_isInitialized
                   ? 'Initializing...'
                   : _speechToText.isListening
-                      ? accumulatedText.isEmpty
-                          ? 'Listening...'
-                          : accumulatedText
-                      : _speechEnabled
-                          ? 'Tap to start listening'
-                          : 'Speech not available',
+                  ? accumulatedText.isEmpty
+                        ? 'Listening...'
+                        : accumulatedText
+                  : _speechEnabled
+                  ? 'Tap to start listening'
+                  : 'Speech not available',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: (!_isInitialized || !_speechEnabled)
-                        ? BauhausDesign.textMuted
-                        : BauhausDesign.textDark,
-                  ),
+                color: (!_isInitialized || !_speechEnabled)
+                    ? BauhausDesign.textMuted
+                    : BauhausDesign.textDark,
+              ),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -246,9 +242,9 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
       SnackBar(
         content: Text(
           message,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
       ),

@@ -32,6 +32,9 @@ class AuthErrorHandler {
       errorMessage = error;
     } else {
       errorMessage = error.toString();
+      while (errorMessage.startsWith('Exception: ')) {
+        errorMessage = errorMessage.substring('Exception: '.length).trim();
+      }
     }
 
     final errorType = _categorizeError(errorMessage, errorCode, statusCode);
@@ -189,7 +192,12 @@ class AuthErrorHandler {
 
     if (lowerMessage.contains('user-disabled') ||
         lowerMessage.contains('account disabled') ||
-        lowerMessage.contains('account locked')) {
+        lowerMessage.contains('has been disabled') ||
+        lowerMessage.contains('account has been disabled')) {
+      return AuthErrorType.accountDisabled;
+    }
+
+    if (lowerMessage.contains('account locked')) {
       return AuthErrorType.accountLocked;
     }
 
