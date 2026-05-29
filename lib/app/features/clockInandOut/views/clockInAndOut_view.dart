@@ -11,10 +11,7 @@ import 'package:intl/intl.dart';
 class ClockInAndOutView extends ConsumerStatefulWidget {
   final String email;
 
-  const ClockInAndOutView({
-    super.key,
-    required this.email,
-  });
+  const ClockInAndOutView({super.key, required this.email});
 
   @override
   ConsumerState<ClockInAndOutView> createState() => _ClockInAndOutViewState();
@@ -32,11 +29,12 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 0);
+    _pageController = PageController(initialPage: 1);
     _pageController.addListener(() {
-      final page = _pageController.page?.round() ?? 0;
-      if (page != _currentDayOffset) {
-        setState(() => _currentDayOffset = page);
+      final page = _pageController.page?.round() ?? 1;
+      final offset = page - 1;
+      if (offset != _currentDayOffset) {
+        setState(() => _currentDayOffset = offset);
       }
     });
   }
@@ -95,18 +93,22 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
   Widget _buildTotalHoursHero() {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: BauhausDesign.space4, vertical: BauhausDesign.space2),
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space2,
+      ),
       child: Consumer(
         builder: (context, ref, child) {
           final hoursAsync = ref.watch(todayWorkHoursProvider(widget.email));
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('TOTAL TODAY',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(
-                          color: BauhausDesign.textMuted, letterSpacing: 2.0)),
+              Text(
+                'TOTAL TODAY',
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: BauhausDesign.textMuted,
+                  letterSpacing: 2.0,
+                ),
+              ),
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 hoursAsync.when(
@@ -114,22 +116,23 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                   loading: () => '--',
                   error: (_, __) => '--',
                 ),
-                style:
-                    BauhausDesign.getTextTheme(context).displayLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: BauhausDesign.primary,
-                          fontSize: 64,
-                          height: 1.0,
-                        ),
+                style: BauhausDesign.getTextTheme(context).displayLarge
+                    ?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: BauhausDesign.primary,
+                      fontSize: 64,
+                      height: 1.0,
+                    ),
               ),
               const SizedBox(height: BauhausDesign.space1),
-              Text('HOURS WORKED',
-                  style:
-                      BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: BauhausDesign.textDark,
-                            fontSize: 20,
-                          )),
+              Text(
+                'HOURS WORKED',
+                style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: BauhausDesign.textDark,
+                  fontSize: 20,
+                ),
+              ),
               const SizedBox(height: BauhausDesign.space2),
               Container(width: 40, height: 3, color: BauhausDesign.neutral),
             ],
@@ -148,21 +151,27 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
           BauhausIconButton(
             icon: Icons.chevron_left,
             onPressed: () => _pageController.previousPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            ),
             variant: BauhausActionVariant.neutral,
             isSmall: true,
           ),
           const SizedBox(width: BauhausDesign.space4),
-          Text(DateFormat('EEE dd MMM').format(_selectedDate).toUpperCase(),
-              style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.w900, color: BauhausDesign.textDark)),
+          Text(
+            DateFormat('EEE dd MMM').format(_selectedDate).toUpperCase(),
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: BauhausDesign.textDark,
+            ),
+          ),
           const SizedBox(width: BauhausDesign.space4),
           BauhausIconButton(
             icon: Icons.chevron_right,
             onPressed: () => _pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            ),
             variant: BauhausActionVariant.neutral,
             isSmall: true,
           ),
@@ -199,8 +208,11 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
   }
 
   Widget _buildDayShiftList(List<dynamic> allShifts, int dayOffset) {
-    final targetDate = DateTime(DateTime.now().year, DateTime.now().month,
-        DateTime.now().day + dayOffset);
+    final targetDate = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day + dayOffset,
+    );
     final shifts = allShifts.where((shift) {
       final shiftDate = shift.startTime is DateTime
           ? shift.startTime as DateTime
@@ -212,16 +224,18 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
     }).toList();
 
     if (shifts.isEmpty) {
-      return ListView(children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: const BauhausEmptyState(
-            icon: Icons.event_busy,
-            title: 'No shifts scheduled',
-            message: 'No shifts found for this date.',
+      return ListView(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: const BauhausEmptyState(
+              icon: Icons.event_busy,
+              title: 'No shifts scheduled',
+              message: 'No shifts found for this date.',
+            ),
           ),
-        ),
-      ]);
+        ],
+      );
     }
 
     return ListView.separated(
@@ -270,19 +284,27 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$startTime — $endTime',
-              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  fontWeight: FontWeight.w900, color: BauhausDesign.textDark)),
+          Text(
+            '$startTime — $endTime',
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: BauhausDesign.textDark,
+            ),
+          ),
           const SizedBox(height: BauhausDesign.space1),
-          Text('$employeeName · ${duration}h · ${breakMin}m break',
-              style: BauhausDesign.getTextTheme(context)
-                  .bodySmall
-                  ?.copyWith(color: BauhausDesign.textMuted)),
+          Text(
+            '$employeeName · ${duration}h · ${breakMin}m break',
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+          ),
           const SizedBox(height: BauhausDesign.space1),
-          Text('Client: $clientName',
-              style: BauhausDesign.getTextTheme(context)
-                  .bodySmall
-                  ?.copyWith(color: BauhausDesign.textMuted)),
+          Text(
+            'Client: $clientName',
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+          ),
         ],
       ),
     );
@@ -303,30 +325,40 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => RequestsView(email: widget.email))),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => RequestsView(email: widget.email),
+              ),
+            ),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
+              padding: const EdgeInsets.symmetric(
+                vertical: BauhausDesign.space4,
+              ),
               decoration: BoxDecoration(
                 color: BauhausDesign.accent,
                 border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: BauhausDesign.borderThick),
+                  color: BauhausDesign.neutral,
+                  width: BauhausDesign.borderThick,
+                ),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.check_circle_outline,
-                      color: BauhausDesign.textDark, size: 28),
+                  const Icon(
+                    Icons.check_circle_outline,
+                    color: BauhausDesign.textDark,
+                    size: 28,
+                  ),
                   const SizedBox(height: BauhausDesign.space2),
-                  Text('REQUESTS',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
-                          ?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: BauhausDesign.textDark)),
+                  Text(
+                    'REQUESTS',
+                    style: BauhausDesign.getTextTheme(context).labelLarge
+                        ?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: BauhausDesign.textDark,
+                        ),
+                  ),
                 ],
               ),
             ),
@@ -335,30 +367,40 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
         const SizedBox(width: BauhausDesign.space4),
         Expanded(
           child: GestureDetector(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => TimesheetView(email: widget.email))),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => TimesheetView(email: widget.email),
+              ),
+            ),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
+              padding: const EdgeInsets.symmetric(
+                vertical: BauhausDesign.space4,
+              ),
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary,
                 border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: BauhausDesign.borderThick),
+                  color: BauhausDesign.neutral,
+                  width: BauhausDesign.borderThick,
+                ),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.calendar_today,
-                      color: BauhausDesign.textLight, size: 28),
+                  const Icon(
+                    Icons.calendar_today,
+                    color: BauhausDesign.textLight,
+                    size: 28,
+                  ),
                   const SizedBox(height: BauhausDesign.space2),
-                  Text('TIMESHEET',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
-                          ?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: BauhausDesign.textLight)),
+                  Text(
+                    'TIMESHEET',
+                    style: BauhausDesign.getTextTheme(context).labelLarge
+                        ?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: BauhausDesign.textLight,
+                        ),
+                  ),
                 ],
               ),
             ),

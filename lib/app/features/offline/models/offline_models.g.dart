@@ -31,14 +31,14 @@ Map<String, dynamic> _$OfflineQueueItemToJson(_OfflineQueueItem instance) =>
     };
 
 _SyncStatus _$SyncStatusFromJson(Map<String, dynamic> json) => _SyncStatus(
-      total: (json['total'] as num).toInt(),
-      successful: (json['successful'] as num).toInt(),
-      failed: (json['failed'] as num).toInt(),
-      conflicts: (json['conflicts'] as num).toInt(),
-      items: (json['items'] as List<dynamic>)
-          .map((e) => SyncItemResult.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  total: (json['total'] as num).toInt(),
+  successful: (json['successful'] as num).toInt(),
+  failed: (json['failed'] as num).toInt(),
+  conflicts: (json['conflicts'] as num).toInt(),
+  items: (json['items'] as List<dynamic>)
+      .map((e) => SyncItemResult.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$SyncStatusToJson(_SyncStatus instance) =>
     <String, dynamic>{
@@ -182,11 +182,10 @@ Map<String, dynamic> _$OfflineClientToJson(_OfflineClient instance) =>
     };
 
 _OfflineForm _$OfflineFormFromJson(Map<String, dynamic> json) => _OfflineForm(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      fields:
-          (json['fields'] as List<dynamic>).map((e) => e as String).toList(),
-    );
+  id: json['id'] as String,
+  name: json['name'] as String,
+  fields: (json['fields'] as List<dynamic>).map((e) => e as String).toList(),
+);
 
 Map<String, dynamic> _$OfflineFormToJson(_OfflineForm instance) =>
     <String, dynamic>{

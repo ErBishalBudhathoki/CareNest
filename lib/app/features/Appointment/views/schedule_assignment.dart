@@ -1,3 +1,5 @@
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_time_picker.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/features/assignment/views/enhanced_ndis_item_selection_view.dart';
@@ -20,6 +22,8 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 class ScheduleAssignment extends ConsumerStatefulWidget {
   final String userEmail;
   final String clientEmail;
+  final String? userFullName;
+  final String? clientFullName;
   final String? clientId;
   final String? organizationId;
   final String? initialDate;
@@ -32,6 +36,8 @@ class ScheduleAssignment extends ConsumerStatefulWidget {
       {super.key,
       required this.userEmail,
       required this.clientEmail,
+      this.userFullName,
+      this.clientFullName,
       this.clientId,
       this.organizationId,
       this.initialDate,
@@ -1013,25 +1019,11 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   void _showDatePicker() {
     _clearValidationErrors();
-    showDatePicker(
+    showBauhausDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2010),
       lastDate: DateTime(2030),
-      locale: const Locale('en', 'AU'),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: BauhausDesign.surfaceWhite,
-              surface: BauhausDesign.surfaceWhite,
-              onSurface: BauhausDesign.textDark,
-            ),
-          ),
-          child: child!,
-        );
-      },
     ).then((value) {
       if (value != null) {
         DateFormat dateFormat = DateFormat("yyyy-MM-dd");
@@ -1046,23 +1038,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   void _showTimePicker(bool isStartTime) {
     _clearValidationErrors();
-    showTimePicker(
+    showBauhausTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-      initialEntryMode: TimePickerEntryMode.input,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: BauhausDesign.surfaceWhite,
-              surface: BauhausDesign.surfaceWhite,
-              onSurface: BauhausDesign.textDark,
-            ),
-          ),
-          child: child!,
-        );
-      },
     ).then((value) {
       if (value != null) {
         setState(() {
@@ -1193,10 +1171,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           ),
           const SizedBox(height: BauhausDesign.space4),
           _buildEnhancedInfoRow(AppLocalizations.of(context)!.employeeLabel,
-              widget.userEmail, Icons.person_rounded),
+              widget.userFullName ?? widget.userEmail, Icons.person_rounded),
           const SizedBox(height: BauhausDesign.space3),
           _buildEnhancedInfoRow(AppLocalizations.of(context)!.clientLabel,
-              widget.clientEmail, Icons.business_rounded),
+              widget.clientFullName ?? widget.clientEmail, Icons.business_rounded),
         ],
       ),
     );
@@ -1737,6 +1715,8 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               builder: (context) => ShiftAssignmentSuccessView(
                 userEmail: widget.userEmail,
                 clientEmail: widget.clientEmail,
+                userFullName: widget.userFullName,
+                clientFullName: widget.clientFullName,
                 shiftData: shiftData,
                 assignmentId: responseData['assignmentId']?.toString(),
               ),

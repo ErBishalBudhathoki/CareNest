@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/client_portal/models/client_portal_models.dart';
 import 'package:carenest/app/features/client_portal/viewmodels/client_invoice_viewmodel.dart';
 import 'package:carenest/app/features/client_portal/viewmodels/client_portal_viewmodel.dart';
+import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/realtime_portal/views/secure_messaging_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -37,6 +38,8 @@ class ClientPortalDashboardBody extends ConsumerStatefulWidget {
   final bool showHeroHeader;
   final bool useSafeArea;
   final Widget? footer;
+  final FamilyPermissions? viewerPermissions;
+  final bool isFamilyViewer;
 
   const ClientPortalDashboardBody({
     super.key,
@@ -44,7 +47,11 @@ class ClientPortalDashboardBody extends ConsumerStatefulWidget {
     this.showHeroHeader = true,
     this.useSafeArea = true,
     this.footer,
+    this.viewerPermissions,
+    this.isFamilyViewer = false,
   });
+
+  bool get _isViewer => isFamilyViewer || viewerPermissions != null;
 
   @override
   ConsumerState<ClientPortalDashboardBody> createState() =>
@@ -53,6 +60,12 @@ class ClientPortalDashboardBody extends ConsumerStatefulWidget {
 
 class _ClientPortalDashboardBodyState
     extends ConsumerState<ClientPortalDashboardBody> {
+  bool _perm(bool Function(FamilyPermissions p) check) {
+    if (!widget._isViewer) return true;
+    final perms = widget.viewerPermissions;
+    if (perms == null) return false;
+    return check(perms);
+  }
   static const List<String> _timePatterns = <String>[
     'HH:mm:ss',
     'H:mm:ss',
@@ -72,9 +85,13 @@ class _ClientPortalDashboardBodyState
         ref
             .read(clientPortalViewModelProvider.notifier)
             .loadDashboard(widget.clientId!);
-        ref
-            .read(clientPortalViewModelProvider.notifier)
-            .loadServiceHistory(widget.clientId!, silent: true);
+        // Only load service history when viewer has viewServiceHistory permission
+        // (non-family viewers always have access)
+        if (_perm((p) => p.viewServiceHistory)) {
+          ref
+              .read(clientPortalViewModelProvider.notifier)
+              .loadServiceHistory(widget.clientId!, silent: true);
+        }
       });
     }
   }
@@ -225,12 +242,14 @@ class _ClientPortalDashboardBodyState
                     await ref
                         .read(clientPortalViewModelProvider.notifier)
                         .loadDashboard(widget.clientId!);
-                    await ref
-                        .read(clientPortalViewModelProvider.notifier)
-                        .loadServiceHistory(
-                          widget.clientId!,
-                          silent: true,
-                        );
+                    if (_perm((p) => p.viewServiceHistory)) {
+                      await ref
+                          .read(clientPortalViewModelProvider.notifier)
+                          .loadServiceHistory(
+                            widget.clientId!,
+                            silent: true,
+                          );
+                    }
                   }
                 },
                 child: SingleChildScrollView(
@@ -243,29 +262,44 @@ class _ClientPortalDashboardBodyState
                         _buildHeader(context),
                         const SizedBox(height: BauhausDesign.space6),
                       ],
-                      _buildFamilyAccessSection(context),
-                      const SizedBox(height: BauhausDesign.space6),
-                      _buildTodayAppointmentsSection(
-                          context, todayAppointments),
-                      const SizedBox(height: BauhausDesign.space6),
-                      _buildWorkerLocationSection(
-                        context,
-                        todayAppointments,
-                        state,
-                      ),
-                      const SizedBox(height: BauhausDesign.space6),
-                      _buildMessagingSection(context, todayAppointments),
-                      const SizedBox(height: BauhausDesign.space6),
-                      _buildFeedbackSection(context, todayAppointments),
-                      const SizedBox(height: BauhausDesign.space6),
-                      _buildInvoicesSection(context, invoicesState),
-                      const SizedBox(height: BauhausDesign.space6),
-                      _buildUpcomingAppointmentsSection(
-                        context,
-                        upcomingAppointments,
-                      ),
-                      const SizedBox(height: BauhausDesign.space6),
-                      _buildServiceHistorySection(context, serviceHistory),
+                      if (_perm((p) => p.manageFamily))
+                        _buildFamilyAccessSection(context),
+                      if (_perm((p) => p.manageFamily))
+                        const SizedBox(height: BauhausDesign.space6),
+                      if (_perm((p) => p.viewAppointments))
+                        _buildTodayAppointmentsSection(
+                            context, todayAppointments),
+                      if (_perm((p) => p.viewAppointments))
+                        const SizedBox(height: BauhausDesign.space6),
+                      if (_perm((p) => p.viewLocation))
+                        _buildWorkerLocationSection(
+                          context,
+                          todayAppointments,
+                          state,
+                        ),
+                      if (_perm((p) => p.viewLocation))
+                        const SizedBox(height: BauhausDesign.space6),
+                      if (_perm((p) => p.viewMessages))
+                        _buildMessagingSection(context, todayAppointments),
+                      if (_perm((p) => p.viewMessages))
+                        const SizedBox(height: BauhausDesign.space6),
+                      if (_perm((p) => p.approveServices))
+                        _buildFeedbackSection(context, todayAppointments),
+                      if (_perm((p) => p.approveServices))
+                        const SizedBox(height: BauhausDesign.space6),
+                      if (_perm((p) => p.viewInvoices))
+                        _buildInvoicesSection(context, invoicesState),
+                      if (_perm((p) => p.viewInvoices))
+                        const SizedBox(height: BauhausDesign.space6),
+                      if (_perm((p) => p.viewAppointments))
+                        _buildUpcomingAppointmentsSection(
+                          context,
+                          upcomingAppointments,
+                        ),
+                      if (_perm((p) => p.viewAppointments))
+                        const SizedBox(height: BauhausDesign.space6),
+                      if (_perm((p) => p.viewServiceHistory))
+                        _buildServiceHistorySection(context, serviceHistory),
                       if (widget.footer != null) ...[
                         const SizedBox(height: BauhausDesign.space6),
                         widget.footer!,
@@ -653,7 +687,7 @@ class _ClientPortalDashboardBodyState
                     ),
                 textAlign: TextAlign.center,
               ),
-              if (state.workerLocation != null) ...[
+              if (state.workerLocation case final location?) ...[
                 const SizedBox(height: BauhausDesign.space4),
                 Container(
                   width: double.infinity,
@@ -675,13 +709,13 @@ class _ClientPortalDashboardBodyState
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
-                        '${state.workerLocation!.workerName} • ETA: ${state.workerLocation!.eta ?? 'N/A'}',
+                        '${location.workerName} • ETA: ${location.eta ?? 'N/A'}',
                         style: BauhausDesign.getTextTheme(context).bodyMedium,
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
-                        'Lat: ${state.workerLocation!.latitude.toStringAsFixed(6)}, '
-                        'Lng: ${state.workerLocation!.longitude.toStringAsFixed(6)}',
+                        'Lat: ${location.latitude.toStringAsFixed(6)}, '
+                        'Lng: ${location.longitude.toStringAsFixed(6)}',
                         style: BauhausDesign.getTextTheme(context)
                             .bodySmall
                             ?.copyWith(
@@ -689,16 +723,16 @@ class _ClientPortalDashboardBodyState
                               fontWeight: FontWeight.w600,
                             ),
                       ),
-                      if (state.workerLocation!.distanceRemaining != null)
+                      if (location.distanceRemaining != null)
                         Text(
-                          'Distance: ${state.workerLocation!.distanceRemaining!.toStringAsFixed(2)} km',
+                          'Distance: ${location.distanceRemaining!.toStringAsFixed(2)} km',
                           style: BauhausDesign.getTextTheme(context)
                               .bodySmall
                               ?.copyWith(color: BauhausDesign.textMuted),
                         ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
-                        'Updated: ${state.workerLocation!.lastUpdated ?? state.workerLocation!.timestamp}',
+                        'Updated: ${location.lastUpdated ?? location.timestamp}',
                         style: BauhausDesign.getTextTheme(context)
                             .bodySmall
                             ?.copyWith(color: BauhausDesign.textMuted),
@@ -714,14 +748,14 @@ class _ClientPortalDashboardBodyState
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     child: PlatformMapWidget(
                       center: LatLng(
-                        state.workerLocation!.latitude,
-                        state.workerLocation!.longitude,
+                        location.latitude,
+                        location.longitude,
                       ),
                       zoom: 16,
                       showMyLocation: false,
                       startMarker: LatLng(
-                        state.workerLocation!.latitude,
-                        state.workerLocation!.longitude,
+                        location.latitude,
+                        location.longitude,
                       ),
                     ),
                   ),

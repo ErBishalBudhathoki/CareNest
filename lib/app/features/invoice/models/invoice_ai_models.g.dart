@@ -34,8 +34,9 @@ _InvoiceValidation _$InvoiceValidationFromJson(Map<String, dynamic> json) =>
       anomalies: (json['anomalies'] as List<dynamic>)
           .map((e) => InvoiceAnomaly.fromJson(e as Map<String, dynamic>))
           .toList(),
-      warnings:
-          (json['warnings'] as List<dynamic>).map((e) => e as String).toList(),
+      warnings: (json['warnings'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       confidenceScore: (json['confidenceScore'] as num).toDouble(),
       summary: json['summary'] as String?,
     );
@@ -49,17 +50,16 @@ Map<String, dynamic> _$InvoiceValidationToJson(_InvoiceValidation instance) =>
       'summary': instance.summary,
     };
 
-_PaymentPrediction _$PaymentPredictionFromJson(Map<String, dynamic> json) =>
-    _PaymentPrediction(
-      invoiceId: json['invoiceId'] as String,
-      predictedPaymentDate:
-          DateTime.parse(json['predictedPaymentDate'] as String),
-      probability: (json['probability'] as num).toDouble(),
-      riskLevel: json['riskLevel'] as String,
-      factors:
-          (json['factors'] as List<dynamic>).map((e) => e as String).toList(),
-      recommendation: json['recommendation'] as String?,
-    );
+_PaymentPrediction _$PaymentPredictionFromJson(
+  Map<String, dynamic> json,
+) => _PaymentPrediction(
+  invoiceId: json['invoiceId'] as String,
+  predictedPaymentDate: DateTime.parse(json['predictedPaymentDate'] as String),
+  probability: (json['probability'] as num).toDouble(),
+  riskLevel: json['riskLevel'] as String,
+  factors: (json['factors'] as List<dynamic>).map((e) => e as String).toList(),
+  recommendation: json['recommendation'] as String?,
+);
 
 Map<String, dynamic> _$PaymentPredictionToJson(_PaymentPrediction instance) =>
     <String, dynamic>{
@@ -82,14 +82,14 @@ _AutoGenerateRequest _$AutoGenerateRequestFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$AutoGenerateRequestToJson(
-        _AutoGenerateRequest instance) =>
-    <String, dynamic>{
-      'organizationId': instance.organizationId,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
-      'validateBeforeGeneration': instance.validateBeforeGeneration,
-      'groupByClient': instance.groupByClient,
-    };
+  _AutoGenerateRequest instance,
+) => <String, dynamic>{
+  'organizationId': instance.organizationId,
+  'startDate': instance.startDate.toIso8601String(),
+  'endDate': instance.endDate.toIso8601String(),
+  'validateBeforeGeneration': instance.validateBeforeGeneration,
+  'groupByClient': instance.groupByClient,
+};
 
 _AutoGenerateResult _$AutoGenerateResultFromJson(Map<String, dynamic> json) =>
     _AutoGenerateResult(
@@ -99,8 +99,9 @@ _AutoGenerateResult _$AutoGenerateResultFromJson(Map<String, dynamic> json) =>
       invoiceIds: (json['invoiceIds'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      errors:
-          (json['errors'] as List<dynamic>).map((e) => e as String).toList(),
+      errors: (json['errors'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       summary: json['summary'] as String?,
     );
 

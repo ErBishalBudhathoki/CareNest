@@ -12,7 +12,8 @@ _UserOrganization _$UserOrganizationFromJson(Map<String, dynamic> json) =>
       userId: json['userId'] as String,
       organizationId: json['organizationId'] as String,
       role: json['role'] as String,
-      permissions: (json['permissions'] as List<dynamic>?)
+      permissions:
+          (json['permissions'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],

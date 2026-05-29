@@ -543,9 +543,11 @@ class MyApp extends ConsumerWidget {
                     as Map<String, dynamic>? ??
                 {};
             final clientId = arguments['clientId'] as String?;
+            final isFamilyViewer = arguments['isFamilyViewer'] as bool? ?? false;
             return ClientDashboardView(
               clientId:
                   (clientId != null && clientId.isNotEmpty) ? clientId : null,
+              isFamilyViewer: isFamilyViewer,
             );
           },
           Routes.realtimePortal: (context) => const RealtimePortalDashboard(),

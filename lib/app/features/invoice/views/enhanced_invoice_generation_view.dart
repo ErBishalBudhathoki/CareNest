@@ -22,6 +22,7 @@ import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Enhanced Invoice Generation View
@@ -1943,17 +1944,13 @@ class _EnhancedInvoiceGenerationViewState
                       onPressed: isLoading
                           ? null
                           : () async {
-                              final picked = await showDateRangePicker(
+                              final picked =
+                                  await showBauhausDateRangePicker(
                                 context: context,
+                                initialStart: startDateLocal,
+                                initialEnd: endDateLocal,
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2100),
-                                initialDateRange: (startDateLocal != null &&
-                                        endDateLocal != null)
-                                    ? DateTimeRange(
-                                        start: startDateLocal,
-                                        end: endDateLocal,
-                                      )
-                                    : null,
                               );
                               if (picked != null) {
                                 setState(() {

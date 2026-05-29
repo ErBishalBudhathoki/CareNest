@@ -6,24 +6,25 @@ part of 'advanced_payroll_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_PayrollCalculation _$PayrollCalculationFromJson(Map<String, dynamic> json) =>
-    _PayrollCalculation(
-      userId: json['userId'] as String,
-      period: json['period'] as String,
-      baseHours: (json['baseHours'] as num).toDouble(),
-      baseRate: (json['baseRate'] as num).toDouble(),
-      baseAmount: (json['baseAmount'] as num).toDouble(),
-      penalties:
-          PenaltyRates.fromJson(json['penalties'] as Map<String, dynamic>),
-      allowances:
-          Allowances.fromJson(json['allowances'] as Map<String, dynamic>),
-      leaveAccrual:
-          LeaveAccrual.fromJson(json['leaveAccrual'] as Map<String, dynamic>),
-      taxAndSuper:
-          TaxAndSuper.fromJson(json['taxAndSuper'] as Map<String, dynamic>),
-      grossPay: (json['grossPay'] as num).toDouble(),
-      netPay: (json['netPay'] as num).toDouble(),
-    );
+_PayrollCalculation _$PayrollCalculationFromJson(
+  Map<String, dynamic> json,
+) => _PayrollCalculation(
+  userId: json['userId'] as String,
+  period: json['period'] as String,
+  baseHours: (json['baseHours'] as num).toDouble(),
+  baseRate: (json['baseRate'] as num).toDouble(),
+  baseAmount: (json['baseAmount'] as num).toDouble(),
+  penalties: PenaltyRates.fromJson(json['penalties'] as Map<String, dynamic>),
+  allowances: Allowances.fromJson(json['allowances'] as Map<String, dynamic>),
+  leaveAccrual: LeaveAccrual.fromJson(
+    json['leaveAccrual'] as Map<String, dynamic>,
+  ),
+  taxAndSuper: TaxAndSuper.fromJson(
+    json['taxAndSuper'] as Map<String, dynamic>,
+  ),
+  grossPay: (json['grossPay'] as num).toDouble(),
+  netPay: (json['netPay'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$PayrollCalculationToJson(_PayrollCalculation instance) =>
     <String, dynamic>{
@@ -44,8 +45,9 @@ _PenaltyRates _$PenaltyRatesFromJson(Map<String, dynamic> json) =>
     _PenaltyRates(
       saturday: PenaltyRate.fromJson(json['saturday'] as Map<String, dynamic>),
       sunday: PenaltyRate.fromJson(json['sunday'] as Map<String, dynamic>),
-      publicHoliday:
-          PenaltyRate.fromJson(json['publicHoliday'] as Map<String, dynamic>),
+      publicHoliday: PenaltyRate.fromJson(
+        json['publicHoliday'] as Map<String, dynamic>,
+      ),
       overtime: PenaltyRate.fromJson(json['overtime'] as Map<String, dynamic>),
       total: (json['total'] as num).toDouble(),
     );
@@ -60,10 +62,10 @@ Map<String, dynamic> _$PenaltyRatesToJson(_PenaltyRates instance) =>
     };
 
 _PenaltyRate _$PenaltyRateFromJson(Map<String, dynamic> json) => _PenaltyRate(
-      hours: (json['hours'] as num).toDouble(),
-      rate: (json['rate'] as num).toDouble(),
-      amount: (json['amount'] as num).toDouble(),
-    );
+  hours: (json['hours'] as num).toDouble(),
+  rate: (json['rate'] as num).toDouble(),
+  amount: (json['amount'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$PenaltyRateToJson(_PenaltyRate instance) =>
     <String, dynamic>{
@@ -73,12 +75,12 @@ Map<String, dynamic> _$PenaltyRateToJson(_PenaltyRate instance) =>
     };
 
 _Allowances _$AllowancesFromJson(Map<String, dynamic> json) => _Allowances(
-      travel: (json['travel'] as num).toDouble(),
-      meal: (json['meal'] as num).toDouble(),
-      sleepover: (json['sleepover'] as num).toDouble(),
-      firstAid: (json['firstAid'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
-    );
+  travel: (json['travel'] as num).toDouble(),
+  meal: (json['meal'] as num).toDouble(),
+  sleepover: (json['sleepover'] as num).toDouble(),
+  firstAid: (json['firstAid'] as num).toDouble(),
+  total: (json['total'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$AllowancesToJson(_Allowances instance) =>
     <String, dynamic>{
@@ -92,9 +94,11 @@ Map<String, dynamic> _$AllowancesToJson(_Allowances instance) =>
 _LeaveAccrual _$LeaveAccrualFromJson(Map<String, dynamic> json) =>
     _LeaveAccrual(
       annualLeave: LeaveAccrualDetail.fromJson(
-          json['annualLeave'] as Map<String, dynamic>),
+        json['annualLeave'] as Map<String, dynamic>,
+      ),
       sickLeave: LeaveAccrualDetail.fromJson(
-          json['sickLeave'] as Map<String, dynamic>),
+        json['sickLeave'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$LeaveAccrualToJson(_LeaveAccrual instance) =>
@@ -110,17 +114,14 @@ _LeaveAccrualDetail _$LeaveAccrualDetailFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$LeaveAccrualDetailToJson(_LeaveAccrualDetail instance) =>
-    <String, dynamic>{
-      'hours': instance.hours,
-      'amount': instance.amount,
-    };
+    <String, dynamic>{'hours': instance.hours, 'amount': instance.amount};
 
 _TaxAndSuper _$TaxAndSuperFromJson(Map<String, dynamic> json) => _TaxAndSuper(
-      tax: (json['tax'] as num).toDouble(),
-      superAmount: (json['super'] as num).toDouble(),
-      taxRate: (json['taxRate'] as num).toDouble(),
-      superRate: (json['superRate'] as num).toDouble(),
-    );
+  tax: (json['tax'] as num).toDouble(),
+  superAmount: (json['super'] as num).toDouble(),
+  taxRate: (json['taxRate'] as num).toDouble(),
+  superRate: (json['superRate'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$TaxAndSuperToJson(_TaxAndSuper instance) =>
     <String, dynamic>{
@@ -131,28 +132,28 @@ Map<String, dynamic> _$TaxAndSuperToJson(_TaxAndSuper instance) =>
     };
 
 _Payslip _$PayslipFromJson(Map<String, dynamic> json) => _Payslip(
-      payslipId: json['payslipId'] as String,
-      userId: json['userId'] as String,
-      period: json['period'] as String,
-      generatedDate: json['generatedDate'] as String,
-      earnings:
-          PayslipEarnings.fromJson(json['earnings'] as Map<String, dynamic>),
-      deductions: PayslipDeductions.fromJson(
-          json['deductions'] as Map<String, dynamic>),
-      netPay: (json['netPay'] as num).toDouble(),
-      ytd: PayslipYTD.fromJson(json['ytd'] as Map<String, dynamic>),
-    );
+  payslipId: json['payslipId'] as String,
+  userId: json['userId'] as String,
+  period: json['period'] as String,
+  generatedDate: json['generatedDate'] as String,
+  earnings: PayslipEarnings.fromJson(json['earnings'] as Map<String, dynamic>),
+  deductions: PayslipDeductions.fromJson(
+    json['deductions'] as Map<String, dynamic>,
+  ),
+  netPay: (json['netPay'] as num).toDouble(),
+  ytd: PayslipYTD.fromJson(json['ytd'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$PayslipToJson(_Payslip instance) => <String, dynamic>{
-      'payslipId': instance.payslipId,
-      'userId': instance.userId,
-      'period': instance.period,
-      'generatedDate': instance.generatedDate,
-      'earnings': instance.earnings,
-      'deductions': instance.deductions,
-      'netPay': instance.netPay,
-      'ytd': instance.ytd,
-    };
+  'payslipId': instance.payslipId,
+  'userId': instance.userId,
+  'period': instance.period,
+  'generatedDate': instance.generatedDate,
+  'earnings': instance.earnings,
+  'deductions': instance.deductions,
+  'netPay': instance.netPay,
+  'ytd': instance.ytd,
+};
 
 _PayslipEarnings _$PayslipEarningsFromJson(Map<String, dynamic> json) =>
     _PayslipEarnings(
@@ -189,11 +190,11 @@ Map<String, dynamic> _$PayslipDeductionsToJson(_PayslipDeductions instance) =>
     };
 
 _PayslipYTD _$PayslipYTDFromJson(Map<String, dynamic> json) => _PayslipYTD(
-      grossPay: (json['grossPay'] as num).toDouble(),
-      tax: (json['tax'] as num).toDouble(),
-      superAmount: (json['super'] as num).toDouble(),
-      netPay: (json['netPay'] as num).toDouble(),
-    );
+  grossPay: (json['grossPay'] as num).toDouble(),
+  tax: (json['tax'] as num).toDouble(),
+  superAmount: (json['super'] as num).toDouble(),
+  netPay: (json['netPay'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$PayslipYTDToJson(_PayslipYTD instance) =>
     <String, dynamic>{
@@ -214,7 +215,8 @@ _PayrollSummary _$PayrollSummaryFromJson(Map<String, dynamic> json) =>
       totalNetPay: (json['totalNetPay'] as num).toDouble(),
       employees: (json['employees'] as List<dynamic>)
           .map(
-              (e) => EmployeePayrollSummary.fromJson(e as Map<String, dynamic>))
+            (e) => EmployeePayrollSummary.fromJson(e as Map<String, dynamic>),
+          )
           .toList(),
     );
 
@@ -231,19 +233,19 @@ Map<String, dynamic> _$PayrollSummaryToJson(_PayrollSummary instance) =>
     };
 
 _EmployeePayrollSummary _$EmployeePayrollSummaryFromJson(
-        Map<String, dynamic> json) =>
-    _EmployeePayrollSummary(
-      userId: json['userId'] as String,
-      userName: json['userName'] as String,
-      grossPay: (json['grossPay'] as num).toDouble(),
-      netPay: (json['netPay'] as num).toDouble(),
-    );
+  Map<String, dynamic> json,
+) => _EmployeePayrollSummary(
+  userId: json['userId'] as String,
+  userName: json['userName'] as String,
+  grossPay: (json['grossPay'] as num).toDouble(),
+  netPay: (json['netPay'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$EmployeePayrollSummaryToJson(
-        _EmployeePayrollSummary instance) =>
-    <String, dynamic>{
-      'userId': instance.userId,
-      'userName': instance.userName,
-      'grossPay': instance.grossPay,
-      'netPay': instance.netPay,
-    };
+  _EmployeePayrollSummary instance,
+) => <String, dynamic>{
+  'userId': instance.userId,
+  'userName': instance.userName,
+  'grossPay': instance.grossPay,
+  'netPay': instance.netPay,
+};

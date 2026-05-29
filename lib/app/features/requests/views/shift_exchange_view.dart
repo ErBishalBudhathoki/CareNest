@@ -48,8 +48,10 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
         final myEmail = _userEmail!.toLowerCase().trim();
 
         final openFuture = _apiMethod.getOpenShifts(_organizationId!);
-        final myFuture =
-            _apiMethod.getMyShiftSwapRequests(_organizationId!, _userEmail!);
+        final myFuture = _apiMethod.getMyShiftSwapRequests(
+          _organizationId!,
+          _userEmail!,
+        );
 
         final results = await Future.wait([openFuture, myFuture]);
         final openResponse = results[0];
@@ -98,17 +100,17 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
             children: [
               Text(
                 'SHIFT DETAILS',
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space4),
               _ShiftDetailsDialogContent(
                 details: details,
                 clientName: clientName,
-                creatorEmail: shift['userEmail']?.toString() ??
+                creatorEmail:
+                    shift['userEmail']?.toString() ??
                     shift['createdBy']?.toString(),
                 apiMethod: _apiMethod,
               ),
@@ -162,7 +164,8 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('Shift claimed! Waiting for approval.')),
+              content: Text('Shift claimed! Waiting for approval.'),
+            ),
           );
           _loadData();
         }
@@ -195,8 +198,9 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
         title: Text(
           'Shift Exchange',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
+          ),
         ),
         centerTitle: true,
         backgroundColor: BauhausDesign.surfaceLight,
@@ -206,8 +210,11 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
           child: Container(
             decoration: BoxDecoration(
               border: Border(
-                  bottom: BorderSide(
-                      color: BauhausDesign.neutral.withOpacity(0.2), width: 1)),
+                bottom: BorderSide(
+                  color: BauhausDesign.neutral.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
             ),
             child: TabBar(
               controller: _tabController,
@@ -215,9 +222,9 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
               unselectedLabelColor: BauhausDesign.textMuted,
               indicatorColor: BauhausDesign.primary,
               indicatorWeight: 3,
-              labelStyle: BauhausDesign.getTextTheme(context)
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              labelStyle: BauhausDesign.getTextTheme(
+                context,
+              ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
               tabs: const [
                 Tab(text: "OPEN SHIFTS"),
                 Tab(text: "MY OFFERS"),
@@ -228,7 +235,8 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : RefreshIndicator(
               onRefresh: _loadData,
               color: BauhausDesign.primary,
@@ -276,16 +284,17 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                 decoration: BoxDecoration(
                   color: BauhausDesign.secondary.withOpacity(0.1),
                   border: Border(
-                      bottom: BorderSide(
-                          color: BauhausDesign.neutral.withOpacity(0.1))),
+                    bottom: BorderSide(
+                      color: BauhausDesign.neutral.withOpacity(0.1),
+                    ),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       _formatDate(details['date']),
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
+                      style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: BauhausDesign.textDark,
@@ -300,17 +309,22 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildInfoRow(context, Icons.person,
-                        details['clientName'] ?? 'Unknown Client'),
+                    _buildInfoRow(
+                      context,
+                      Icons.person,
+                      details['clientName'] ?? 'Unknown Client',
+                    ),
                     const SizedBox(height: BauhausDesign.space2),
-                    _buildInfoRow(context, Icons.access_time,
-                        '${details['startTime']} - ${details['endTime']}'),
+                    _buildInfoRow(
+                      context,
+                      Icons.access_time,
+                      '${details['startTime']} - ${details['endTime']}',
+                    ),
                     if (details['reason'] != null) ...[
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
                         'Reason: ${details['reason']}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
+                        style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               fontStyle: FontStyle.italic,
                               color: BauhausDesign.textMuted,
@@ -331,23 +345,30 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: BauhausDesign.space3,
-                            vertical: BauhausDesign.space2),
+                          horizontal: BauhausDesign.space3,
+                          vertical: BauhausDesign.space2,
+                        ),
                         decoration: BoxDecoration(
-                          color:
-                              _getStatusColor(shift['status']).withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          color: _getStatusColor(
+                            shift['status'],
+                          ).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(
-                              color: _getStatusColor(shift['status'])
-                                  .withOpacity(0.3)),
+                            color: _getStatusColor(
+                              shift['status'],
+                            ).withOpacity(0.3),
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(_getStatusIcon(shift['status']),
-                                size: 16,
-                                color: _getStatusColor(shift['status'])),
+                            Icon(
+                              _getStatusIcon(shift['status']),
+                              size: 16,
+                              color: _getStatusColor(shift['status']),
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               'STATUS: ${shift['status']?.toString().toUpperCase() ?? 'PENDING'}',
@@ -378,9 +399,9 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
         const SizedBox(width: BauhausDesign.space3),
         Text(
           text,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -487,8 +508,12 @@ class _ShiftDetailsDialogContentState
       return;
     }
 
-    final fullAddress =
-        [address, city, state, zip].where((s) => s.isNotEmpty).join(', ');
+    final fullAddress = [
+      address,
+      city,
+      state,
+      zip,
+    ].where((s) => s.isNotEmpty).join(', ');
     if (mounted) {
       setState(() {
         _address = fullAddress;
@@ -505,8 +530,10 @@ class _ShiftDetailsDialogContentState
 
       if (lookupEmail == null) return;
 
-      final response = await widget.apiMethod
-          .getClientAndAppointmentData(lookupEmail, clientEmail);
+      final response = await widget.apiMethod.getClientAndAppointmentData(
+        lookupEmail,
+        clientEmail,
+      );
 
       if (response != null && response is Map && response['data'] != null) {
         final data = response['data'];
@@ -525,9 +552,12 @@ class _ShiftDetailsDialogContentState
               clientData['clientZipCode'] ?? clientData['clientZip'] ?? '';
 
           if (address.isNotEmpty || city.isNotEmpty) {
-            final fullAddress = [address, city, state, zip]
-                .where((s) => s.toString().isNotEmpty)
-                .join(', ');
+            final fullAddress = [
+              address,
+              city,
+              state,
+              zip,
+            ].where((s) => s.toString().isNotEmpty).join(', ');
             if (mounted && fullAddress.isNotEmpty) {
               setState(() {
                 _address = fullAddress;
@@ -542,7 +572,11 @@ class _ShiftDetailsDialogContentState
   }
 
   Widget _buildDetailRow(
-      BuildContext context, IconData icon, String label, String value) {
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -555,15 +589,15 @@ class _ShiftDetailsDialogContentState
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textMuted,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.textMuted,
+                ),
               ),
               Text(
                 value,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -590,11 +624,19 @@ class _ShiftDetailsDialogContentState
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDetailRow(context, Icons.calendar_today, 'Date',
-              _formatDate(widget.details['date'])),
+          _buildDetailRow(
+            context,
+            Icons.calendar_today,
+            'Date',
+            _formatDate(widget.details['date']),
+          ),
           const SizedBox(height: BauhausDesign.space3),
-          _buildDetailRow(context, Icons.access_time, 'Time',
-              '${widget.details['startTime']} - ${widget.details['endTime']}'),
+          _buildDetailRow(
+            context,
+            Icons.access_time,
+            'Time',
+            '${widget.details['startTime']} - ${widget.details['endTime']}',
+          ),
           const SizedBox(height: BauhausDesign.space3),
           _buildDetailRow(context, Icons.person, 'Client', widget.clientName),
           if (_address != null && _address!.isNotEmpty) ...[
@@ -610,8 +652,7 @@ class _ShiftDetailsDialogContentState
                     children: [
                       Text(
                         'Location',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: BauhausDesign.textMuted,
@@ -619,29 +660,33 @@ class _ShiftDetailsDialogContentState
                       ),
                       Text(
                         _address!,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       InkWell(
                         onTap: () => launchMap(_address!),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: BauhausDesign.space2,
-                              vertical: BauhausDesign.space1),
+                            horizontal: BauhausDesign.space2,
+                            vertical: BauhausDesign.space1,
+                          ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: BauhausDesign.textDark, width: 1),
+                              color: BauhausDesign.textDark,
+                              width: 1,
+                            ),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.map,
-                                  size: 14, color: BauhausDesign.textDark),
+                              const Icon(
+                                Icons.map,
+                                size: 14,
+                                color: BauhausDesign.textDark,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 'OPEN MAP',
@@ -651,29 +696,33 @@ class _ShiftDetailsDialogContentState
                                       fontWeight: FontWeight.bold,
                                       color: BauhausDesign.textDark,
                                     ),
-                              )
+                              ),
                             ],
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
               ],
-            )
+            ),
           ],
           if (widget.details['reason'] != null) ...[
             const SizedBox(height: BauhausDesign.space3),
-            _buildDetailRow(context, Icons.info_outline, 'Reason',
-                widget.details['reason']),
+            _buildDetailRow(
+              context,
+              Icons.info_outline,
+              'Reason',
+              widget.details['reason'],
+            ),
           ],
           const SizedBox(height: BauhausDesign.space4),
           Text(
             'Do you want to claim this shift?',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  fontStyle: FontStyle.italic,
-                  color: BauhausDesign.textMuted,
-                ),
+              fontStyle: FontStyle.italic,
+              color: BauhausDesign.textMuted,
+            ),
           ),
         ],
       ),
@@ -689,32 +738,36 @@ class _ShiftDetailsDialogContentState
       if (await canLaunchUrl(Uri.parse(appleMapsUrl))) {
         await launchUrl(Uri.parse(appleMapsUrl));
         return LaunchMapStatus(
-            success: true,
-            title: 'Success',
-            message: 'Launched Apple Maps',
-            surfaceColor: BauhausDesign.success);
+          success: true,
+          title: 'Success',
+          message: 'Launched Apple Maps',
+          surfaceColor: BauhausDesign.success,
+        );
       } else if (await canLaunchUrl(Uri.parse('comgooglemaps://?q=$query'))) {
         await launchUrl(Uri.parse('comgooglemaps://?q=$query'));
         return LaunchMapStatus(
-            success: true,
-            title: 'Success',
-            message: 'Launched Google Maps',
-            surfaceColor: BauhausDesign.success);
+          success: true,
+          title: 'Success',
+          message: 'Launched Google Maps',
+          surfaceColor: BauhausDesign.success,
+        );
       }
     } else if (Platform.isAndroid) {
       if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
         await launchUrl(Uri.parse(googleMapsUrl));
         return LaunchMapStatus(
-            success: true,
-            title: 'Success',
-            message: 'Launched Google Maps',
-            surfaceColor: BauhausDesign.success);
+          success: true,
+          title: 'Success',
+          message: 'Launched Google Maps',
+          surfaceColor: BauhausDesign.success,
+        );
       }
     }
     return LaunchMapStatus(
-        success: false,
-        title: 'Error',
-        message: 'Could not launch map',
-        surfaceColor: BauhausDesign.error);
+      success: false,
+      title: 'Error',
+      message: 'Could not launch map',
+      surfaceColor: BauhausDesign.error,
+    );
   }
 }

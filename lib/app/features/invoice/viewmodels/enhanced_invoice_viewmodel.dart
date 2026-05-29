@@ -73,10 +73,9 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
           return [];
         }
 
-        // Prevent excessively long periods (align with backend: max ~3 months)
+        // Allow periods up to ~1 year (366 days) for quarterly/annual billing.
         final diffDays = endDate.difference(startDate).inDays;
-        if (diffDays > 93) {
-          // ~3 months
+        if (diffDays > 366) {
           final msg = l10n.periodExceedsLimitError;
           state = state.copyWith(isLoading: false, errorMessage: msg);
           ref.read(invoiceGenerationStateProvider.notifier).state =
@@ -85,9 +84,11 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
           return [];
         }
 
-        // Optional: warn on future end dates (business-friendly safeguard)
+        // Soft future-date guard: allow current + next month billing, block
+        // only dates beyond one calendar month ahead (prevents accidental typos).
         final now = DateTime.now();
-        if (endDate.isAfter(now)) {
+        final maxFuture = DateTime(now.year, now.month + 1, now.day);
+        if (endDate.isAfter(maxFuture)) {
           final msg = l10n.futureEndDateError;
           state = state.copyWith(isLoading: false, errorMessage: msg);
           ref.read(invoiceGenerationStateProvider.notifier).state =

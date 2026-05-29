@@ -95,10 +95,12 @@ DateTime? _parseFlexibleTime(String? raw) {
 
 class ClientAppointmentView extends ConsumerStatefulWidget {
   final String? clientId;
+  final bool isFamilyViewer;
 
   const ClientAppointmentView({
     super.key,
     this.clientId,
+    this.isFamilyViewer = false,
   });
 
   @override
@@ -406,7 +408,7 @@ class _AppointmentCard extends StatelessWidget {
             child: Column(
               children: [
                 _buildTimeRow(context),
-                if (appointment.userEmail != null) ...[
+                if (appointment.workerName != null || appointment.userEmail != null) ...[
                   const SizedBox(height: BauhausDesign.space3),
                   _buildWorkerRow(context),
                 ],
@@ -571,7 +573,7 @@ class _AppointmentCard extends StatelessWidget {
                     ),
               ),
               Text(
-                appointment.userEmail!,
+                appointment.workerName ?? appointment.userEmail ?? '',
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),

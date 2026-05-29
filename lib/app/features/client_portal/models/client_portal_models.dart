@@ -156,6 +156,7 @@ abstract class ClientAppointment with _$ClientAppointment {
     required String startTime,
     required String endTime,
     String? userEmail,
+    String? workerName,
     String? assignmentId,
     String? scheduleId,
   }) = _ClientAppointment;

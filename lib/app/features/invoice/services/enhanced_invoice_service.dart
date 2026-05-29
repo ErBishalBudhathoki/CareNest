@@ -1007,8 +1007,8 @@ class EnhancedInvoiceService {
                 (validation['invalidItems'] as num).toInt();
             compliantItems += (validation['validItems'] as num).toInt();
             nonCompliantItems += (validation['invalidItems'] as num).toInt();
-            totalAmount += validation['totalAmount'] as double? ?? 0.0;
-            compliantAmount += validation['compliantAmount'] as double? ?? 0.0;
+            totalAmount += _asDouble(validation['totalAmount']);
+            compliantAmount += _asDouble(validation['compliantAmount']);
           }
 
           // Count non-compliant items for tracking
@@ -1503,12 +1503,13 @@ class EnhancedInvoiceService {
     for (int clientIndex = 0; clientIndex < clients.length; clientIndex++) {
       try {
         final client = clients[clientIndex] as Map<String, dynamic>;
-        if (!client.containsKey('lineItems')) {
-          debugPrint('Warning: Client at index $clientIndex has no lineItems');
-          continue; // Skip to next client
-        }
+        final lineItems = (client['lineItems'] as List<dynamic>?) ??
+            (client['items'] as List<dynamic>?) ??
+            <dynamic>[];
+        final items = (client['items'] as List<dynamic>?) ?? lineItems;
+        client['lineItems'] = lineItems;
+        client['items'] = items;
 
-        final lineItems = client['lineItems'] as List<dynamic>? ?? [];
         if (lineItems.isEmpty) {
           debugPrint(
               'Warning: Client at index $clientIndex has empty lineItems');
@@ -2095,7 +2096,7 @@ class EnhancedInvoiceService {
           final item = lineItems[itemIndex] as Map<String, dynamic>;
           final resolutionData =
               resolution['resolution'] as Map<String, dynamic>;
-          final providedPrice = resolutionData['providedPrice'] as double;
+          final providedPrice = _asDouble(resolutionData['providedPrice']);
 
           // Update the price in the line item with enhanced information
           item['price'] = providedPrice;
@@ -2105,7 +2106,7 @@ class EnhancedInvoiceService {
 
           // Add validation information
           if (item['priceCap'] != null &&
-              providedPrice > (item['priceCap'] as double)) {
+              providedPrice > _asDouble(item['priceCap'])) {
             item['exceedsPriceCap'] = true;
             item['priceCapExceedReason'] =
                 resolutionData['notes'] ?? l10n.sourceManualOverride;
@@ -2277,10 +2278,12 @@ class EnhancedInvoiceService {
       );
       if (trips.isEmpty) continue;
 
-      final items = (client['items'] as List<dynamic>?) ?? <dynamic>[];
-      final lineItems = (client['lineItems'] as List<dynamic>?) ?? <dynamic>[];
-      client['items'] = items;
+      final lineItems = (client['lineItems'] as List<dynamic>?) ??
+          (client['items'] as List<dynamic>?) ??
+          <dynamic>[];
+      final items = (client['items'] as List<dynamic>?) ?? lineItems;
       client['lineItems'] = lineItems;
+      client['items'] = items;
 
       var added = false;
       for (final trip in trips) {
@@ -2398,14 +2401,25 @@ class EnhancedInvoiceService {
   /// Recalculate invoice total for a client
   void _recalculateInvoiceTotal(Map<String, dynamic> client,
       {bool? applyTax, double? taxRate}) {
-    final lineItems = client['lineItems'] as List<dynamic>? ?? [];
+    final lineItems = (client['lineItems'] as List<dynamic>?) ??
+        (client['items'] as List<dynamic>?) ??
+        <dynamic>[];
+    final items = (client['items'] as List<dynamic>?) ?? lineItems;
+    client['lineItems'] = lineItems;
+    client['items'] = items;
     final expenses = client['expenses'] as List<dynamic>? ?? [];
 
     // Calculate items subtotal (line items only)
     double itemsSubtotal = 0;
     for (final item in lineItems) {
       if (item is Map<String, dynamic>) {
-        itemsSubtotal += item['total'] ?? 0;
+        final amount = _asDouble(item['total'] ?? item['amount'] ?? 0.0);
+        if (amount > 0) {
+          itemsSubtotal += amount;
+        } else {
+          itemsSubtotal += _asDouble(item['hours'] ?? item['quantity'] ?? 0.0) *
+              _asDouble(item['rate'] ?? item['unitPrice'] ?? 0.0);
+        }
       }
     }
 
@@ -2413,10 +2427,10 @@ class EnhancedInvoiceService {
     double expensesTotal = 0;
     for (final expense in expenses) {
       if (expense is Map<String, dynamic>) {
-        expensesTotal += expense['totalAmount'] ??
+        expensesTotal += _asDouble(expense['totalAmount'] ??
             expense['amount'] ??
             expense['unitCost'] ??
-            0;
+            0.0);
       }
     }
 
@@ -2492,7 +2506,7 @@ class EnhancedInvoiceService {
                 'suggestedPrice': item['suggestedPrice'] ?? 0.0,
                 'priceCap': item['priceCap'],
                 'exceedsPriceCap': item['priceCap'] != null &&
-                    price > (item['priceCap'] as double),
+                    price > _asDouble(item['priceCap']),
                 'source': 'invoice_generation',
                 'itemDescription': item['description'] ?? '',
               };

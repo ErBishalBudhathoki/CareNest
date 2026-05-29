@@ -6129,11 +6129,10 @@ class ApiMethod extends ChangeNotifier {
       Map<String, dynamic> shiftData) async {
     try {
       final url = '${_baseUrl}schedule/shift';
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('POST', url, payload: shiftData);
@@ -6196,11 +6195,10 @@ class ApiMethod extends ChangeNotifier {
   ) async {
     try {
       final url = '${_baseUrl}schedule/bulk';
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final payload = {
         'organizationId': organizationId,
@@ -6273,11 +6271,10 @@ class ApiMethod extends ChangeNotifier {
       final uri = Uri.parse('${_baseUrl}schedule/recommendations')
           .replace(queryParameters: queryParams);
 
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('GET', uri.toString(), payload: queryParams);
@@ -6344,11 +6341,10 @@ class ApiMethod extends ChangeNotifier {
           .replace(
               queryParameters: queryParams.isNotEmpty ? queryParams : null);
 
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('GET', uri.toString(), payload: queryParams);
@@ -6396,11 +6392,10 @@ class ApiMethod extends ChangeNotifier {
   ) async {
     try {
       final url = '${_baseUrl}schedule/shift/$shiftId';
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final response = await http.put(
         Uri.parse(url),
@@ -6439,11 +6434,10 @@ class ApiMethod extends ChangeNotifier {
   Future<Map<String, dynamic>> deleteShift(String shiftId) async {
     try {
       final url = '${_baseUrl}schedule/shift/$shiftId';
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final response = await http.delete(Uri.parse(url), headers: headers);
 
@@ -6476,11 +6470,10 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     try {
       final url = '${_baseUrl}schedule/check-conflicts';
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final payload = {
         if (employeeId != null) 'employeeId': employeeId,
@@ -6533,11 +6526,10 @@ class ApiMethod extends ChangeNotifier {
       if (searchTerm != null) queryString += '&searchTerm=$searchTerm';
 
       final url = '${_baseUrl}invoices?$queryString';
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final response = await http.get(Uri.parse(url), headers: headers);
       return json.decode(response.body);
@@ -6558,11 +6550,10 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     try {
       final url = '${_baseUrl}invoices/$invoiceId/payment-status';
-      final authValue = await _getAuthorizationHeaderValue();
-      final headers = {
-        'Content-Type': 'application/json',
-        if (authValue != null) 'Authorization': authValue,
-      };
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
 
       final body = {
         'organizationId': organizationId,
@@ -7861,6 +7852,15 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     return await get(
       'realtime-portal/family/members/$clientId',
+    );
+  }
+
+  /// Get own family permissions (self-lookup for family members)
+  Future<Map<String, dynamic>> getMyFamilyPermissions({
+    required String clientId,
+  }) async {
+    return await get(
+      'realtime-portal/family/my-permissions/$clientId',
     );
   }
 

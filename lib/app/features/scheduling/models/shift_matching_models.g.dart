@@ -7,21 +7,22 @@ part of 'shift_matching_models.dart';
 // **************************************************************************
 
 _WorkerMatch _$WorkerMatchFromJson(Map<String, dynamic> json) => _WorkerMatch(
-      workerId: json['workerId'] as String,
-      workerName: json['workerName'] as String,
-      workerEmail: json['workerEmail'] as String,
-      matchScore: (json['matchScore'] as num).toDouble(),
-      matchLevel: json['matchLevel'] as String,
-      factors: (json['factors'] as List<dynamic>)
-          .map((e) => MatchFactor.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      conflicts:
-          (json['conflicts'] as List<dynamic>).map((e) => e as String).toList(),
-      distance: (json['distance'] as num?)?.toDouble(),
-      travelTime: (json['travelTime'] as num?)?.toDouble(),
-      noShowProbability: (json['noShowProbability'] as num?)?.toDouble(),
-      workerProfile: json['workerProfile'] as Map<String, dynamic>?,
-    );
+  workerId: json['workerId'] as String,
+  workerName: json['workerName'] as String,
+  workerEmail: json['workerEmail'] as String,
+  matchScore: (json['matchScore'] as num).toDouble(),
+  matchLevel: json['matchLevel'] as String,
+  factors: (json['factors'] as List<dynamic>)
+      .map((e) => MatchFactor.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  conflicts: (json['conflicts'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  distance: (json['distance'] as num?)?.toDouble(),
+  travelTime: (json['travelTime'] as num?)?.toDouble(),
+  noShowProbability: (json['noShowProbability'] as num?)?.toDouble(),
+  workerProfile: json['workerProfile'] as Map<String, dynamic>?,
+);
 
 Map<String, dynamic> _$WorkerMatchToJson(_WorkerMatch instance) =>
     <String, dynamic>{
@@ -39,11 +40,11 @@ Map<String, dynamic> _$WorkerMatchToJson(_WorkerMatch instance) =>
     };
 
 _MatchFactor _$MatchFactorFromJson(Map<String, dynamic> json) => _MatchFactor(
-      factor: json['factor'] as String,
-      score: (json['score'] as num).toDouble(),
-      weight: (json['weight'] as num).toDouble(),
-      description: json['description'] as String,
-    );
+  factor: json['factor'] as String,
+  score: (json['score'] as num).toDouble(),
+  weight: (json['weight'] as num).toDouble(),
+  description: json['description'] as String,
+);
 
 Map<String, dynamic> _$MatchFactorToJson(_MatchFactor instance) =>
     <String, dynamic>{
@@ -68,25 +69,27 @@ _ShiftRecommendation _$ShiftRecommendationFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ShiftRecommendationToJson(
-        _ShiftRecommendation instance) =>
-    <String, dynamic>{
-      'shiftId': instance.shiftId,
-      'shiftDate': instance.shiftDate.toIso8601String(),
-      'shiftTime': instance.shiftTime,
-      'service': instance.service,
-      'clientName': instance.clientName,
-      'recommendedWorkers': instance.recommendedWorkers,
-      'currentAssignment': instance.currentAssignment,
-      'isUrgent': instance.isUrgent,
-    };
+  _ShiftRecommendation instance,
+) => <String, dynamic>{
+  'shiftId': instance.shiftId,
+  'shiftDate': instance.shiftDate.toIso8601String(),
+  'shiftTime': instance.shiftTime,
+  'service': instance.service,
+  'clientName': instance.clientName,
+  'recommendedWorkers': instance.recommendedWorkers,
+  'currentAssignment': instance.currentAssignment,
+  'isUrgent': instance.isUrgent,
+};
 
 _AutoFillRequest _$AutoFillRequestFromJson(Map<String, dynamic> json) =>
     _AutoFillRequest(
       organizationId: json['organizationId'] as String,
-      shiftIds:
-          (json['shiftIds'] as List<dynamic>).map((e) => e as String).toList(),
-      criteria:
-          MatchingCriteria.fromJson(json['criteria'] as Map<String, dynamic>),
+      shiftIds: (json['shiftIds'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      criteria: MatchingCriteria.fromJson(
+        json['criteria'] as Map<String, dynamic>,
+      ),
       allowConflicts: json['allowConflicts'] as bool?,
       optimizeRoute: json['optimizeRoute'] as bool?,
     );
@@ -205,8 +208,8 @@ _OptimizedShift _$OptimizedShiftFromJson(Map<String, dynamic> json) =>
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
       distanceFromPrevious: (json['distanceFromPrevious'] as num?)?.toDouble(),
-      travelTimeFromPrevious:
-          (json['travelTimeFromPrevious'] as num?)?.toDouble(),
+      travelTimeFromPrevious: (json['travelTimeFromPrevious'] as num?)
+          ?.toDouble(),
       sequenceOrder: (json['sequenceOrder'] as num?)?.toInt(),
     );
 
@@ -224,33 +227,34 @@ Map<String, dynamic> _$OptimizedShiftToJson(_OptimizedShift instance) =>
     };
 
 _ScheduleOptimization _$ScheduleOptimizationFromJson(
-        Map<String, dynamic> json) =>
-    _ScheduleOptimization(
-      organizationId: json['organizationId'] as String,
-      date: DateTime.parse(json['date'] as String),
-      totalShifts: (json['totalShifts'] as num).toInt(),
-      assignedShifts: (json['assignedShifts'] as num).toInt(),
-      overallEfficiency: (json['overallEfficiency'] as num).toDouble(),
-      workerRoutes: (json['workerRoutes'] as List<dynamic>)
-          .map((e) => RouteOptimization.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      warnings:
-          (json['warnings'] as List<dynamic>).map((e) => e as String).toList(),
-      summary: json['summary'] as String?,
-    );
+  Map<String, dynamic> json,
+) => _ScheduleOptimization(
+  organizationId: json['organizationId'] as String,
+  date: DateTime.parse(json['date'] as String),
+  totalShifts: (json['totalShifts'] as num).toInt(),
+  assignedShifts: (json['assignedShifts'] as num).toInt(),
+  overallEfficiency: (json['overallEfficiency'] as num).toDouble(),
+  workerRoutes: (json['workerRoutes'] as List<dynamic>)
+      .map((e) => RouteOptimization.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  warnings: (json['warnings'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  summary: json['summary'] as String?,
+);
 
 Map<String, dynamic> _$ScheduleOptimizationToJson(
-        _ScheduleOptimization instance) =>
-    <String, dynamic>{
-      'organizationId': instance.organizationId,
-      'date': instance.date.toIso8601String(),
-      'totalShifts': instance.totalShifts,
-      'assignedShifts': instance.assignedShifts,
-      'overallEfficiency': instance.overallEfficiency,
-      'workerRoutes': instance.workerRoutes,
-      'warnings': instance.warnings,
-      'summary': instance.summary,
-    };
+  _ScheduleOptimization instance,
+) => <String, dynamic>{
+  'organizationId': instance.organizationId,
+  'date': instance.date.toIso8601String(),
+  'totalShifts': instance.totalShifts,
+  'assignedShifts': instance.assignedShifts,
+  'overallEfficiency': instance.overallEfficiency,
+  'workerRoutes': instance.workerRoutes,
+  'warnings': instance.warnings,
+  'summary': instance.summary,
+};
 
 _NoShowPrediction _$NoShowPredictionFromJson(Map<String, dynamic> json) =>
     _NoShowPrediction(
