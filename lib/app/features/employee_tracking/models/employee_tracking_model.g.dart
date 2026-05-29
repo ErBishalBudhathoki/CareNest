@@ -7,37 +7,40 @@ part of 'employee_tracking_model.dart';
 // **************************************************************************
 
 _EmployeeTrackingData _$EmployeeTrackingDataFromJson(
-        Map<String, dynamic> json) =>
-    _EmployeeTrackingData(
-      employees: (json['employees'] as List<dynamic>?)
-              ?.map((e) => EmployeeStatus.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      shifts: (json['shifts'] as List<dynamic>?)
-              ?.map((e) => ShiftDetail.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      assignments: (json['assignments'] as List<dynamic>?)
-              ?.map((e) => ClientAssignment.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      totalEmployees: (json['totalEmployees'] as num?)?.toInt() ?? 0,
-      activeEmployees: (json['activeEmployees'] as num?)?.toInt() ?? 0,
-      onBreakEmployees: (json['onBreakEmployees'] as num?)?.toInt() ?? 0,
-      offlineEmployees: (json['offlineEmployees'] as num?)?.toInt() ?? 0,
-    );
+  Map<String, dynamic> json,
+) => _EmployeeTrackingData(
+  employees:
+      (json['employees'] as List<dynamic>?)
+          ?.map((e) => EmployeeStatus.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  shifts:
+      (json['shifts'] as List<dynamic>?)
+          ?.map((e) => ShiftDetail.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  assignments:
+      (json['assignments'] as List<dynamic>?)
+          ?.map((e) => ClientAssignment.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  totalEmployees: (json['totalEmployees'] as num?)?.toInt() ?? 0,
+  activeEmployees: (json['activeEmployees'] as num?)?.toInt() ?? 0,
+  onBreakEmployees: (json['onBreakEmployees'] as num?)?.toInt() ?? 0,
+  offlineEmployees: (json['offlineEmployees'] as num?)?.toInt() ?? 0,
+);
 
 Map<String, dynamic> _$EmployeeTrackingDataToJson(
-        _EmployeeTrackingData instance) =>
-    <String, dynamic>{
-      'employees': instance.employees,
-      'shifts': instance.shifts,
-      'assignments': instance.assignments,
-      'totalEmployees': instance.totalEmployees,
-      'activeEmployees': instance.activeEmployees,
-      'onBreakEmployees': instance.onBreakEmployees,
-      'offlineEmployees': instance.offlineEmployees,
-    };
+  _EmployeeTrackingData instance,
+) => <String, dynamic>{
+  'employees': instance.employees,
+  'shifts': instance.shifts,
+  'assignments': instance.assignments,
+  'totalEmployees': instance.totalEmployees,
+  'activeEmployees': instance.activeEmployees,
+  'onBreakEmployees': instance.onBreakEmployees,
+  'offlineEmployees': instance.offlineEmployees,
+};
 
 _EmployeeStatus _$EmployeeStatusFromJson(Map<String, dynamic> json) =>
     _EmployeeStatus(
@@ -62,8 +65,8 @@ _EmployeeStatus _$EmployeeStatusFromJson(Map<String, dynamic> json) =>
       liveAppointmentId: json['liveAppointmentId'] as String?,
       liveClientName: json['liveClientName'] as String?,
       liveDistanceMeters: (json['liveDistanceMeters'] as num?)?.toDouble(),
-      liveGeofenceRadiusMeters:
-          (json['liveGeofenceRadiusMeters'] as num?)?.toDouble(),
+      liveGeofenceRadiusMeters: (json['liveGeofenceRadiusMeters'] as num?)
+          ?.toDouble(),
       liveInsideGeofence: json['liveInsideGeofence'] as bool?,
       hoursWorked: (json['hoursWorked'] as num?)?.toDouble() ?? 0.0,
       isOnBreak: json['isOnBreak'] as bool? ?? false,
@@ -102,18 +105,18 @@ const _$WorkStatusEnumMap = {
 };
 
 _ShiftDetail _$ShiftDetailFromJson(Map<String, dynamic> json) => _ShiftDetail(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      startTime: DateTime.parse(json['startTime'] as String),
-      endTime: DateTime.parse(json['endTime'] as String),
-      employeeId: json['employeeId'] as String,
-      employeeName: json['employeeName'] as String,
-      clientId: json['clientId'] as String?,
-      clientName: json['clientName'] as String?,
-      location: json['location'] as String?,
-      status: $enumDecode(_$ShiftStatusEnumMap, json['status']),
-      notes: json['notes'] as String?,
-    );
+  id: json['id'] as String,
+  title: json['title'] as String,
+  startTime: DateTime.parse(json['startTime'] as String),
+  endTime: DateTime.parse(json['endTime'] as String),
+  employeeId: json['employeeId'] as String,
+  employeeName: json['employeeName'] as String,
+  clientId: json['clientId'] as String?,
+  clientName: json['clientName'] as String?,
+  location: json['location'] as String?,
+  status: $enumDecode(_$ShiftStatusEnumMap, json['status']),
+  notes: json['notes'] as String?,
+);
 
 Map<String, dynamic> _$ShiftDetailToJson(_ShiftDetail instance) =>
     <String, dynamic>{

@@ -14,6 +14,8 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 class ShiftAssignmentSuccessView extends StatefulWidget {
   final String userEmail;
   final String clientEmail;
+  final String? userFullName;
+  final String? clientFullName;
   final Map<String, dynamic> shiftData;
   final String? assignmentId;
 
@@ -21,6 +23,8 @@ class ShiftAssignmentSuccessView extends StatefulWidget {
     super.key,
     required this.userEmail,
     required this.clientEmail,
+    this.userFullName,
+    this.clientFullName,
     required this.shiftData,
     this.assignmentId,
   });
@@ -147,6 +151,8 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     _viewModel.initializeAssignment(
       userEmail: widget.userEmail,
       clientEmail: widget.clientEmail,
+      userFullName: widget.userFullName,
+      clientFullName: widget.clientFullName,
       shiftData: widget.shiftData,
       assignmentId: widget.assignmentId,
     );

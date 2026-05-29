@@ -12,6 +12,7 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 import '../../notes/views/add_notes_view.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_selection_dialog.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const int kTimerDurationInSeconds = 8 * 60 * 60; // 8 hours
 
@@ -83,9 +84,9 @@ class _ClientAndAppointmentDetailsState
         isInitCompleted = true;
         clientDetails =
             clientAndAppointmentData['data']?['clientDetails']?.isNotEmpty ==
-                    true
-                ? clientAndAppointmentData['data']!['clientDetails'][0]
-                : null;
+                true
+            ? clientAndAppointmentData['data']!['clientDetails'][0]
+            : null;
       });
       _startAnimations();
     });
@@ -135,34 +136,20 @@ class _ClientAndAppointmentDetailsState
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
 
-    _timerPulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _timerPulseController,
-      curve: Curves.easeInOut,
-    ));
+    _timerPulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _timerPulseController, curve: Curves.easeInOut),
+    );
   }
 
   void _startAnimations() {
@@ -187,11 +174,12 @@ class _ClientAndAppointmentDetailsState
 
   Future<void> updateTimerModel() async {
     if (timerModel.isRunning &&
-        timerModel
-            .getTimerClientEmail()
-            .contains(widget.clientEmail.toString())) {
+        timerModel.getTimerClientEmail().contains(
+          widget.clientEmail.toString(),
+        )) {
       debugPrint(
-          "1 : ${widget.clientEmail} : ${timerModel.getTimerClientEmail()}");
+        "1 : ${widget.clientEmail} : ${timerModel.getTimerClientEmail()}",
+      );
       //_stopTimer();
       timerModel.stop();
       timerModel.setTimerClientEmail(widget.clientEmail);
@@ -201,7 +189,8 @@ class _ClientAndAppointmentDetailsState
       return;
     } else {
       debugPrint(
-          "3: ${widget.clientEmail} : ${clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail']}");
+        "3: ${widget.clientEmail} : ${clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail']}",
+      );
       timerModel.start();
       // await _startTimer();
       timerModel.setTimerClientEmail(widget.clientEmail);
@@ -209,14 +198,20 @@ class _ClientAndAppointmentDetailsState
   }
 
   Future<dynamic> getAppointmentData() async {
-    clientAndAppointmentData = (await apiMethod.getClientAndAppointmentData(
-        widget.userEmail, widget.clientEmail)) as Map;
+    clientAndAppointmentData =
+        (await apiMethod.getClientAndAppointmentData(
+              widget.userEmail,
+              widget.clientEmail,
+            ))
+            as Map;
     setState(() {
-      debugPrint("Clinet Email: ${widget.clientEmail} "
-          "${clientAndAppointmentData['data']?['clientDetails'][0]}");
+      debugPrint(
+        "Clinet Email: ${widget.clientEmail} "
+        "${clientAndAppointmentData['data']?['clientDetails'][0]}",
+      );
       setClientAndAppointmentData = clientAndAppointmentData;
-      isCurrentClient = (clientAndAppointmentData['data']?['clientDetails'][0]
-              ?['clientEmail'] ==
+      isCurrentClient =
+          (clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail'] ==
           widget.clientEmail);
     });
     debugPrint("client apt det: $clientAndAppointmentData");
@@ -228,7 +223,9 @@ class _ClientAndAppointmentDetailsState
     if (!timerService.canStartTimer(widget.userEmail, widget.clientEmail)) {
       final activeTimer = timerService.getActiveTimerInfo();
       _showTimerConflictDialog(
-          activeTimer['userEmail'], activeTimer['clientEmail']);
+        activeTimer['userEmail'],
+        activeTimer['clientEmail'],
+      );
       return false;
     }
 
@@ -245,12 +242,15 @@ class _ClientAndAppointmentDetailsState
       );
 
       // Start the surface-persistent timer
-      final success =
-          await timerService.startTimer(widget.userEmail, widget.clientEmail);
+      final success = await timerService.startTimer(
+        widget.userEmail,
+        widget.clientEmail,
+      );
 
       if (success) {
         debugPrint(
-            "Timer started successfully for ${widget.userEmail} - ${widget.clientEmail}");
+          "Timer started successfully for ${widget.userEmail} - ${widget.clientEmail}",
+        );
         return true;
       } else {
         debugPrint("Failed to start timer - another timer is running");
@@ -281,94 +281,664 @@ class _ClientAndAppointmentDetailsState
   }
 
   void _showTimerConflictDialog(
-      String? activeUserEmail, String? activeClientEmail) {
+    String? activeUserEmail,
+    String? activeClientEmail,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Timer Already Running'),
-          content: Text(
-            'A timer is already running for:\n'
-            'User: ${activeUserEmail ?? 'Unknown'}\n'
-            'Client: ${activeClientEmail ?? 'Unknown'}\n\n'
-            'Please stop the current timer before starting a new one.',
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(BauhausDesign.space5),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardLg],
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'TIMER ALREADY RUNNING',
+                  style: GoogleFonts.oswald(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: BauhausDesign.primary,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                Text(
+                  'A timer is already running for:\n'
+                  'User: ${activeUserEmail ?? 'Unknown'}\n'
+                  'Client: ${activeClientEmail ?? 'Unknown'}\n\n'
+                  'Please stop the current timer before starting a new one.',
+                  style: GoogleFonts.inter(
+                    color: BauhausDesign.textDark,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space5),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.neutral,
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                    boxShadow: const [BauhausDesign.shadowHardSm],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          'OK',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.oswald(
+                            color: BauhausDesign.surfaceWhite,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
-  Future<void> _setWorkedTime() async {
-    try {
-      // Get fresh data before showing dialog
-      await _loadClientData();
+  Future<void> _setWorkedTime({int? elapsedSeconds}) async {
+    final int seconds = elapsedSeconds ?? timerModel.elapsedSeconds;
+    final formattedTime = _formatTime(seconds);
+    bool success = false;
+    bool shouldRetry = true;
 
-      if (clientAndAppointmentData['data'] == null ||
-          clientAndAppointmentData['data']['assignedClient'] == null) {
-        throw Exception('No client data available');
-      }
-
-      final selectedShiftIndex = await showShiftSelectionDialog(
-        context,
-        clientAndAppointmentData['data']['assignedClient'],
-        widget.clientEmail,
-      );
-
-      if (selectedShiftIndex == null) {
-        return; // User cancelled
-      }
-
-      final formattedTime = _formatTime(timerModel.elapsedSeconds);
-      final response = await apiMethod.setWorkedTime(
-        widget.userEmail,
-        widget.clientEmail,
-        formattedTime,
-        selectedShiftIndex,
-      );
-
-      if (response != null) {
-        // Update local data with response
-        setState(() {
-          // Ensure we maintain the structure of clientAndAppointmentData
-          if (response is Map) {
-            clientAndAppointmentData = response;
-          } else {
-            // If response is not in the expected format, refresh data
-            _loadClientData();
-          }
-        });
-
-        // Refresh the data again to ensure we have the latest
+    while (shouldRetry && !success) {
+      try {
+        // Get fresh data before showing dialog
         await _loadClientData();
 
-        // Show success message
+        if (clientAndAppointmentData['data'] == null ||
+            clientAndAppointmentData['data']['assignedClient'] == null) {
+          throw Exception('No client data available');
+        }
+
+        final selectedShiftIndex = await showShiftSelectionDialog(
+          context,
+          clientAndAppointmentData['data']['assignedClient'],
+          widget.clientEmail,
+        );
+
+        if (selectedShiftIndex == null) {
+          // User cancelled shift selection. Ask if they want to resume the timer or exit.
+          final resume = await _showResumeTimerDialog();
+          if (resume == true) {
+            await _resumeTimer(seconds);
+          }
+          return; // Exit setWorkedTime flow
+        }
+
+        // Extract shift details
+        final assignedClient =
+            clientAndAppointmentData['data']['assignedClient'];
+        Map<String, dynamic>? currentClient;
+        if (assignedClient is List) {
+          final found = assignedClient.firstWhere(
+            (c) => c['clientEmail'] == widget.clientEmail,
+            orElse: () => null,
+          );
+          if (found != null) {
+            currentClient = Map<String, dynamic>.from(found);
+          }
+        } else if (assignedClient is Map) {
+          currentClient = Map<String, dynamic>.from(assignedClient);
+        }
+
+        if (currentClient == null) {
+          throw Exception('Client details not found');
+        }
+
+        String? shiftDate;
+        String? shiftStartTime;
+        String? shiftEndTime;
+        dynamic shiftBreak;
+
+        if (currentClient['schedule'] != null &&
+            currentClient['schedule'] is List) {
+          final scheduleList = currentClient['schedule'] as List;
+          if (selectedShiftIndex >= 0 &&
+              selectedShiftIndex < scheduleList.length) {
+            final schedule = scheduleList[selectedShiftIndex];
+            shiftDate = schedule['date'];
+            shiftStartTime = schedule['startTime'];
+            shiftEndTime = schedule['endTime'];
+            shiftBreak = schedule['break'];
+          }
+        } else {
+          // Fallback to legacy format
+          List<dynamic> dates = currentClient['dateList'] ?? [];
+          List<dynamic> startTimes = currentClient['startTimeList'] ?? [];
+          List<dynamic> endTimes = currentClient['endTimeList'] ?? [];
+          List<dynamic> breaks = currentClient['breakList'] ?? [];
+
+          if (selectedShiftIndex >= 0 && selectedShiftIndex < dates.length) {
+            shiftDate = dates[selectedShiftIndex]?.toString();
+            shiftStartTime = startTimes[selectedShiftIndex]?.toString();
+            shiftEndTime = endTimes[selectedShiftIndex]?.toString();
+            shiftBreak = breaks[selectedShiftIndex];
+          }
+        }
+
+        // Confirm details with user first
+        final confirmChoice = await _showConfirmShiftDialog({
+          'date': shiftDate,
+          'startTime': shiftStartTime,
+          'endTime': shiftEndTime,
+          'break': shiftBreak,
+        });
+
+        if (confirmChoice == 'cancel') {
+          // Keep timer running
+          return;
+        } else if (confirmChoice == 'reselect') {
+          continue; // Loop back to shift selection
+        }
+
+        // If confirmed, stop the timer first!
+        await _stopTimer(timerModel);
+
+        final response = await apiMethod.setWorkedTime(
+          widget.userEmail,
+          widget.clientEmail,
+          formattedTime,
+          selectedShiftIndex,
+          shiftDate: shiftDate,
+          shiftStartTime: shiftStartTime,
+          shiftEndTime: shiftEndTime,
+          shiftBreak: shiftBreak,
+        );
+
+        if (response != null) {
+          success = true;
+          // Update local data with response
+          setState(() {
+            if (response is Map) {
+              clientAndAppointmentData = response;
+            } else {
+              _loadClientData();
+            }
+          });
+
+          await _loadClientData();
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Time updated successfully')),
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint('Error in _setWorkedTime: $e');
+
+        if (mounted) {
+          final choice = await _showInvalidShiftDialog(e.toString());
+          if (choice == 'reselect') {
+            shouldRetry = true;
+          } else if (choice == 'resume') {
+            shouldRetry = false;
+            await _resumeTimer(seconds);
+          } else {
+            shouldRetry = false;
+          }
+        } else {
+          shouldRetry = false;
+        }
+      }
+    }
+  }
+
+  Future<void> _resumeTimer(int seconds) async {
+    try {
+      final sharedPrefs = SharedPreferencesUtils();
+      await sharedPrefs.init();
+      final organizationId = sharedPrefs.getString('organizationId');
+
+      // Start the timer on backend
+      await apiMethod.startTimer(
+        userEmail: widget.userEmail,
+        clientEmail: widget.clientEmail,
+        organizationId: organizationId,
+      );
+
+      // Start the timer locally with the subtract duration to maintain correct elapsed seconds
+      final success = await timerModel.startTimer(
+        widget.userEmail,
+        widget.clientEmail,
+        startTime: DateTime.now().subtract(Duration(seconds: seconds)),
+      );
+
+      if (success) {
+        timerModel.setTimerClientEmail(widget.clientEmail);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Time updated successfully'),
-            ),
+            const SnackBar(content: Text('Timer resumed successfully')),
           );
         }
       }
     } catch (e) {
-      debugPrint('Error in _setWorkedTime: $e');
+      debugPrint('Error resuming timer: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error updating time: $e'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error resuming timer: $e')));
       }
     }
+  }
+
+  Future<String?> _showConfirmShiftDialog(Map<String, dynamic> shift) async {
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(BauhausDesign.space5),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardLg],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'CONFIRM SHIFT ASSOCIATION',
+                  style: GoogleFonts.oswald(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: BauhausDesign.secondary,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                Text(
+                  'Are you sure you want to end your shift and link it to this scheduled shift?\n\n'
+                  'Date: ${shift['date']}\n'
+                  'Time: ${shift['startTime']} - ${shift['endTime']}\n'
+                  'Break: ${shift['break'] ?? 'None'}',
+                  style: GoogleFonts.inter(
+                    color: BauhausDesign.textDark,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space5),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.success,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop('confirm'),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'CONFIRM',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.surfaceWhite,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space2),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.accent,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop('reselect'),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'RE-SELECT',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.textDark,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.surfaceOffWhite,
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                    boxShadow: const [BauhausDesign.shadowHardSm],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop('cancel'),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          'CANCEL & KEEP TIMER RUNNING',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.oswald(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<bool?> _showResumeTimerDialog() async {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(BauhausDesign.space5),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardLg],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'RESUME TIMER?',
+                  style: GoogleFonts.oswald(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: BauhausDesign.primary,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                Text(
+                  'You cancelled ending the shift. Do you want to resume the timer where it left off?',
+                  style: GoogleFonts.inter(
+                    color: BauhausDesign.textDark,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space5),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.success,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop(true),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'RESUME TIMER',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.surfaceWhite,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space2),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.surfaceOffWhite,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop(false),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'DISCARD TIMER',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.textDark,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String?> _showInvalidShiftDialog(String errorMessage) async {
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(BauhausDesign.space5),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardLg],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'SHIFT DETAILS INVALID',
+                  style: GoogleFonts.oswald(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: BauhausDesign.primary,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                Text(
+                  'Selected shift is invalid.\n\nError: $errorMessage\n\n'
+                  'Please select the correct shift, or resume the timer.',
+                  style: GoogleFonts.inter(
+                    color: BauhausDesign.textDark,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space5),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.accent,
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                    boxShadow: const [BauhausDesign.shadowHardSm],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop('reselect'),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          'RE-SELECT CORRECT SHIFT',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.oswald(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.success,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop('resume'),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'RESUME TIMER',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.surfaceWhite,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space2),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.surfaceOffWhite,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop('cancel'),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'DISCARD TIMER',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.textDark,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // Update the _loadClientData method to handle errors better
@@ -384,7 +954,8 @@ class _ClientAndAppointmentDetailsState
           if (response != null && response is Map) {
             clientAndAppointmentData = response;
             // Also update clientDetails if needed
-            clientDetails = clientAndAppointmentData['data']?['clientDetails']
+            clientDetails =
+                clientAndAppointmentData['data']?['clientDetails']
                         ?.isNotEmpty ==
                     true
                 ? clientAndAppointmentData['data']!['clientDetails'][0]
@@ -409,136 +980,218 @@ class _ClientAndAppointmentDetailsState
         builder: (context, setState) => Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
-            padding: const EdgeInsets.all(BauhausDesign.space4),
+            padding: const EdgeInsets.all(BauhausDesign.space5),
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceWhite,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHardLg],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'OFFER SHIFT SWAP',
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.oswald(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: BauhausDesign.neutral,
+                    letterSpacing: 1.0,
+                  ),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
                 Text(
                   '${shift['date']} (${shift['startTime']} - ${shift['endTime']})',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.robotoMono(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: BauhausDesign.neutral,
+                  ),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
                 DropdownButtonFormField<String>(
                   value: urgency,
-                  decoration: InputDecoration(
-                    labelText: 'Urgency',
-                    border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                  dropdownColor: BauhausDesign.surfaceWhite,
+                  iconEnabledColor: BauhausDesign.neutral,
+                  style: GoogleFonts.roboto(
+                    color: BauhausDesign.textDark,
+                    fontSize: 14,
+                  ),
+                  decoration: BauhausDesign.inputDecoration('Urgency').copyWith(
+                    labelText: 'URGENCY',
+                    labelStyle: GoogleFonts.oswald(
+                      color: BauhausDesign.neutral,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
                     ),
                   ),
                   items: ['Low', 'Medium', 'High']
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e,
+                            style: GoogleFonts.roboto(
+                              color: BauhausDesign.textDark,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) => setState(() => urgency = v!),
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 TextField(
                   controller: reasonController,
-                  decoration: InputDecoration(
-                    labelText: 'Reason',
-                    border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                  decoration: BauhausDesign.inputDecoration('Reason').copyWith(
+                    labelText: 'REASON',
+                    labelStyle: GoogleFonts.oswald(
+                      color: BauhausDesign.neutral,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
                     ),
                   ),
                   maxLines: 2,
                 ),
                 if (error != null) ...[
                   const SizedBox(height: BauhausDesign.space2),
-                  Text(error!, style: TextStyle(color: BauhausDesign.error)),
+                  Text(
+                    error!,
+                    style: const TextStyle(color: BauhausDesign.error),
+                  ),
                 ],
-                const SizedBox(height: BauhausDesign.space4),
+                const SizedBox(height: BauhausDesign.space5),
                 Row(
                   children: [
                     Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text('CANCEL',
-                            style: TextStyle(color: BauhausDesign.textMuted)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.surfaceWhite,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'CANCEL',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.neutral,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: BauhausDesign.space3),
                     Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: BauhausDesign.primary,
-                          foregroundColor: BauhausDesign.surfaceWhite,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.primary,
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1.5,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
                         ),
-                        onPressed: () async {
-                          final sharedPrefs = SharedPreferencesUtils();
-                          await sharedPrefs.init();
-                          final organizationId =
-                              sharedPrefs.getString('organizationId');
-                          final userId = sharedPrefs.getString('userId') ??
-                              widget.userEmail;
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () async {
+                              final sharedPrefs = SharedPreferencesUtils();
+                              await sharedPrefs.init();
+                              final organizationId = sharedPrefs.getString(
+                                'organizationId',
+                              );
+                              final userId =
+                                  sharedPrefs.getString('userId') ??
+                                  widget.userEmail;
 
-                          if (organizationId == null) {
-                            setState(() => error = 'Organization ID not found');
-                            return;
-                          }
-
-                          final details = {
-                            'date': shift['date'],
-                            'startTime': shift['startTime'],
-                            'endTime': shift['endTime'],
-                            'break': shift['break'],
-                            'clientName':
-                                '${clientDetails?['clientFirstName'] ?? ''} ${clientDetails?['clientLastName'] ?? ''}'
-                                    .trim(),
-                            'clientEmail': widget.clientEmail,
-                            'reason': reasonController.text,
-                            'urgency': urgency,
-                          };
-
-                          if (shift['ndisItem'] != null) {
-                            details['ndisItem'] = shift['ndisItem'];
-                          }
-
-                          Navigator.pop(context);
-
-                          try {
-                            final response = await apiMethod.createSwapOffer(
-                              organizationId: organizationId,
-                              userId: userId,
-                              userEmail: widget.userEmail,
-                              details: details,
-                            );
-
-                            if (response['success'] == true) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Swap offer created!')),
+                              if (organizationId == null) {
+                                setState(
+                                  () => error = 'Organization ID not found',
                                 );
+                                return;
                               }
-                            } else {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Failed: ${response['message']}')),
-                                );
+
+                              final details = {
+                                'date': shift['date'],
+                                'startTime': shift['startTime'],
+                                'endTime': shift['endTime'],
+                                'break': shift['break'],
+                                'clientName':
+                                    '${clientDetails?['clientFirstName'] ?? ''} ${clientDetails?['clientLastName'] ?? ''}'
+                                        .trim(),
+                                'clientEmail': widget.clientEmail,
+                                'reason': reasonController.text,
+                                'urgency': urgency,
+                              };
+
+                              if (shift['ndisItem'] != null) {
+                                details['ndisItem'] = shift['ndisItem'];
                               }
-                            }
-                          } catch (e) {
-                            debugPrint('Error creating swap: $e');
-                          }
-                        },
-                        child: const Text('OFFER'),
+
+                              Navigator.pop(context);
+
+                              try {
+                                final response = await apiMethod
+                                    .createSwapOffer(
+                                      organizationId: organizationId,
+                                      userId: userId,
+                                      userEmail: widget.userEmail,
+                                      details: details,
+                                    );
+
+                                if (response['success'] == true) {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Swap offer created!'),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Failed: ${response['message']}',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              } catch (e) {
+                                debugPrint('Error creating swap: $e');
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'OFFER',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.oswald(
+                                  color: BauhausDesign.surfaceWhite,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -552,16 +1205,45 @@ class _ClientAndAppointmentDetailsState
   }
 
   Widget _buildActionCell(Map<String, dynamic> shift) {
+    bool isPast = false;
+    final dateStr = shift['date'];
+    if (dateStr != null) {
+      try {
+        final shiftDate = DateTime.parse(dateStr);
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        isPast = shiftDate.isBefore(today);
+      } catch (_) {}
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(
-          vertical: BauhausDesign.space2, horizontal: BauhausDesign.space1),
+        vertical: BauhausDesign.space2,
+        horizontal: BauhausDesign.space1,
+      ),
       alignment: Alignment.center,
-      child: IconButton(
-        icon: Icon(Icons.swap_horiz, color: BauhausDesign.primary, size: 20),
-        onPressed: () => _showSwapOfferDialog(shift),
-        tooltip: 'Offer Swap',
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: isPast ? Colors.grey[200] : BauhausDesign.accent,
+          border: Border.all(
+            color: isPast ? BauhausDesign.textMuted : BauhausDesign.neutral,
+            width: 1.5,
+          ),
+          boxShadow: isPast ? null : const [BauhausDesign.shadowHardXs],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: isPast ? null : () => _showSwapOfferDialog(shift),
+            child: Icon(
+              Icons.swap_horiz,
+              color: isPast ? BauhausDesign.textMuted : BauhausDesign.neutral,
+              size: 18,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -580,16 +1262,27 @@ class _ClientAndAppointmentDetailsState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
-            strokeWidth: 3,
+          Container(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: const [BauhausDesign.shadowHard],
+            ),
+            child: const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+              strokeWidth: 4,
+            ),
           ),
-          const SizedBox(height: BauhausDesign.space4),
+          const SizedBox(height: BauhausDesign.space5),
           Text(
-            'Loading appointment details...',
-            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            'LOADING APPOINTMENT DETAILS...',
+            style: GoogleFonts.oswald(
+              color: BauhausDesign.neutral,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              letterSpacing: 1.0,
+            ),
           ),
         ],
       ),
@@ -633,16 +1326,18 @@ class _ClientAndAppointmentDetailsState
         final scheduleList = assignedClient['schedule'] as List;
         for (int i = 0; i < scheduleList.length; i++) {
           final schedule = scheduleList[i];
-          rows.add(_buildTableRow(
-            schedule['date'] ?? 'N/A',
-            schedule['startTime'] ?? 'N/A',
-            schedule['endTime'] ?? 'N/A',
-            schedule['break'] ?? 'N/A',
-            i,
-            schedule is Map<String, dynamic>
-                ? schedule
-                : Map<String, dynamic>.from(schedule),
-          ));
+          rows.add(
+            _buildTableRow(
+              schedule['date'] ?? 'N/A',
+              schedule['startTime'] ?? 'N/A',
+              schedule['endTime'] ?? 'N/A',
+              schedule['break'] ?? 'N/A',
+              i,
+              schedule is Map<String, dynamic>
+                  ? schedule
+                  : Map<String, dynamic>.from(schedule),
+            ),
+          );
         }
       } else {
         // Legacy format with separate arrays
@@ -655,26 +1350,30 @@ class _ClientAndAppointmentDetailsState
           dateList.length,
           startTimeList.length,
           endTimeList.length,
-          breakList.length
+          breakList.length,
         ].reduce((a, b) => a > b ? a : b);
 
         for (int i = 0; i < maxLength; i++) {
           final scheduleMap = {
             'date': i < dateList.length ? dateList[i].toString() : 'N/A',
-            'startTime':
-                i < startTimeList.length ? startTimeList[i].toString() : 'N/A',
-            'endTime':
-                i < endTimeList.length ? endTimeList[i].toString() : 'N/A',
+            'startTime': i < startTimeList.length
+                ? startTimeList[i].toString()
+                : 'N/A',
+            'endTime': i < endTimeList.length
+                ? endTimeList[i].toString()
+                : 'N/A',
             'break': i < breakList.length ? breakList[i].toString() : 'N/A',
           };
-          rows.add(_buildTableRow(
-            scheduleMap['date']!,
-            scheduleMap['startTime']!,
-            scheduleMap['endTime']!,
-            scheduleMap['break']!,
-            i,
-            scheduleMap,
-          ));
+          rows.add(
+            _buildTableRow(
+              scheduleMap['date']!,
+              scheduleMap['startTime']!,
+              scheduleMap['endTime']!,
+              scheduleMap['break']!,
+              i,
+              scheduleMap,
+            ),
+          );
         }
       }
     }
@@ -684,22 +1383,32 @@ class _ClientAndAppointmentDetailsState
 
   Widget _buildTableHeader(String title) {
     return Container(
+      color: BauhausDesign.neutral,
       padding: const EdgeInsets.symmetric(
-          vertical: BauhausDesign.space4, horizontal: BauhausDesign.space1),
+        vertical: BauhausDesign.space3,
+        horizontal: BauhausDesign.space1,
+      ),
       child: Text(
-        title,
+        title.toUpperCase(),
         textAlign: TextAlign.center,
-        style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: BauhausDesign.primary,
-              fontSize: 12,
-            ),
+        style: GoogleFonts.oswald(
+          fontWeight: FontWeight.bold,
+          color: BauhausDesign.surfaceWhite,
+          fontSize: 12,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
 
-  TableRow _buildTableRow(String date, String startTime, String endTime,
-      String breakTime, int index, Map<String, dynamic> schedule) {
+  TableRow _buildTableRow(
+    String date,
+    String startTime,
+    String endTime,
+    String breakTime,
+    int index,
+    Map<String, dynamic> schedule,
+  ) {
     return TableRow(
       decoration: BoxDecoration(
         color: index.isEven
@@ -719,14 +1428,17 @@ class _ClientAndAppointmentDetailsState
   Widget _buildTableCell(String content) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          vertical: BauhausDesign.space3, horizontal: BauhausDesign.space2),
+        vertical: BauhausDesign.space3,
+        horizontal: BauhausDesign.space2,
+      ),
       child: Text(
         content,
         textAlign: TextAlign.center,
-        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              fontSize: 13,
-              color: BauhausDesign.textDark,
-            ),
+        style: GoogleFonts.robotoMono(
+          fontSize: 12,
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
@@ -734,22 +1446,37 @@ class _ClientAndAppointmentDetailsState
   Widget _buildContent(TimerService timerService, bool isCurrentClientTimer) {
     if (clientAndAppointmentData['data'] == null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: BauhausDesign.neutral,
-            ),
-            const SizedBox(height: BauhausDesign.space4),
-            Text(
-              'No client data found',
-              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
-            ),
-          ],
+        child: Container(
+          margin: const EdgeInsets.all(BauhausDesign.space6),
+          padding: const EdgeInsets.all(BauhausDesign.space5),
+          decoration: BauhausDesign.cardDecoration,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.primary.withOpacity(0.1),
+                  border: Border.all(color: BauhausDesign.primary, width: 2),
+                ),
+                child: const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: BauhausDesign.primary,
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              Text(
+                'NO CLIENT DATA FOUND',
+                style: GoogleFonts.oswald(
+                  color: BauhausDesign.neutral,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -758,27 +1485,42 @@ class _ClientAndAppointmentDetailsState
         clientAndAppointmentData['data']['clientDetails'] as List?;
     final clientData =
         (clientDetailsList != null && clientDetailsList.isNotEmpty)
-            ? clientDetailsList[0]
-            : null;
+        ? clientDetailsList[0]
+        : null;
 
     if (clientData == null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: BauhausDesign.neutral,
-            ),
-            const SizedBox(height: BauhausDesign.space4),
-            Text(
-              'No client details found',
-              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
-            ),
-          ],
+        child: Container(
+          margin: const EdgeInsets.all(BauhausDesign.space6),
+          padding: const EdgeInsets.all(BauhausDesign.space5),
+          decoration: BauhausDesign.cardDecoration,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.primary.withOpacity(0.1),
+                  border: Border.all(color: BauhausDesign.primary, width: 2),
+                ),
+                child: const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: BauhausDesign.primary,
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              Text(
+                'NO CLIENT DETAILS FOUND',
+                style: GoogleFonts.oswald(
+                  color: BauhausDesign.neutral,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -807,7 +1549,7 @@ class _ClientAndAppointmentDetailsState
                 const SizedBox(height: BauhausDesign.space6),
 
                 // Visit History
-                _buildHistoryCard(),
+                _buildHistoryCard(timerService),
                 const SizedBox(height: BauhausDesign.space6),
 
                 // Timer Section
@@ -836,15 +1578,7 @@ class _ClientAndAppointmentDetailsState
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
-        decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(
-            color: BauhausDesign.neutral,
-            width: 2,
-          ),
-          boxShadow: const [BauhausDesign.shadowHard],
-        ),
+        decoration: BauhausDesign.cardDecoration,
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space5),
           child: Column(
@@ -855,13 +1589,15 @@ class _ClientAndAppointmentDetailsState
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: Colors.purple.shade100,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      color: BauhausDesign.secondary,
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.favorite,
-                      color: Colors.purple,
+                      color: BauhausDesign.surfaceWhite,
                       size: 24,
                     ),
                   ),
@@ -871,23 +1607,19 @@ class _ClientAndAppointmentDetailsState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Preferences & Care',
-                          style: BauhausDesign.getTextTheme(context)
-                              .titleLarge
-                              ?.copyWith(
-                                color: Colors.purple,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          'PREFERENCES & CARE',
+                          style: GoogleFonts.oswald(
+                            color: BauhausDesign.neutral,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                          ),
                         ),
                         const SizedBox(height: BauhausDesign.space1),
                         Text(
                           'Important client needs',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                              ),
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(color: BauhausDesign.textMuted),
                         ),
                       ],
                     ),
@@ -897,8 +1629,13 @@ class _ClientAndAppointmentDetailsState
               const SizedBox(height: BauhausDesign.space5),
               if (careNotes.isNotEmpty)
                 _buildInfoRow(Icons.medical_services, 'Care Notes', careNotes),
-              ...preferences.entries.map((e) => _buildInfoRow(
-                  Icons.star_outline, e.key.toUpperCase(), e.value.toString())),
+              ...preferences.entries.map(
+                (e) => _buildInfoRow(
+                  Icons.star_outline,
+                  e.key.toUpperCase(),
+                  e.value.toString(),
+                ),
+              ),
             ],
           ),
         ),
@@ -906,7 +1643,74 @@ class _ClientAndAppointmentDetailsState
     );
   }
 
-  Widget _buildHistoryCard() {
+  Map<String, int>? _parseTimeOfDay(String timeStr) {
+    try {
+      final cleanTime = timeStr.trim().toUpperCase();
+      int hour = 0;
+      int minute = 0;
+
+      if (cleanTime.contains('AM') || cleanTime.contains('PM')) {
+        final parts = cleanTime
+            .replaceAll(RegExp(r'[A-Z]'), '')
+            .trim()
+            .split(':');
+        hour = int.parse(parts[0]);
+        minute = parts.length > 1 ? int.parse(parts[1]) : 0;
+        if (cleanTime.contains('PM') && hour < 12) {
+          hour += 12;
+        } else if (cleanTime.contains('AM') && hour == 12) {
+          hour = 0;
+        }
+      } else {
+        final parts = cleanTime.split(':');
+        hour = int.parse(parts[0]);
+        minute = parts.length > 1 ? int.parse(parts[1]) : 0;
+      }
+      return {'hour': hour, 'minute': minute};
+    } catch (_) {
+      return null;
+    }
+  }
+
+  DateTime? getShiftEndDateTime(
+    String dateStr,
+    String? endTimeStr,
+    String? startTimeStr,
+  ) {
+    try {
+      final shiftDate = DateTime.parse(dateStr);
+      if (endTimeStr == null) return null;
+
+      final endParts = _parseTimeOfDay(endTimeStr);
+      if (endParts == null) return null;
+
+      var endDateTime = DateTime(
+        shiftDate.year,
+        shiftDate.month,
+        shiftDate.day,
+        endParts['hour']!,
+        endParts['minute']!,
+      );
+
+      // Check if overnight shift
+      if (startTimeStr != null) {
+        final startParts = _parseTimeOfDay(startTimeStr);
+        if (startParts != null) {
+          final startMinutes = startParts['hour']! * 60 + startParts['minute']!;
+          final endMinutes = endParts['hour']! * 60 + endParts['minute']!;
+          if (endMinutes <= startMinutes) {
+            // End time is on the next day
+            endDateTime = endDateTime.add(const Duration(days: 1));
+          }
+        }
+      }
+      return endDateTime;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _buildHistoryCard(TimerService timerService) {
     if (clientAndAppointmentData['data'] == null ||
         clientAndAppointmentData['data']['assignedClient'] == null) {
       return const SizedBox.shrink();
@@ -918,8 +1722,42 @@ class _ClientAndAppointmentDetailsState
     final now = DateTime.now();
     final pastVisits = scheduleList.where((s) {
       try {
-        final date = DateTime.parse(s['date']);
-        return date.isBefore(now);
+        final dateStr = s['date'];
+        final endTimeStr = s['endTime'];
+        final startTimeStr = s['startTime'];
+        if (dateStr == null) return false;
+
+        final shiftDate = DateTime.parse(dateStr);
+        final today = DateTime(now.year, now.month, now.day);
+
+        // If the timer is currently running for this client, and this shift is scheduled for today or yesterday (for overnight shifts)
+        if (timerService.isRunning &&
+            timerService.getTimerClientEmail() == widget.clientEmail) {
+          final isToday =
+              shiftDate.year == today.year &&
+              shiftDate.month == today.month &&
+              shiftDate.day == today.day;
+          final isYesterday =
+              shiftDate.year == today.subtract(const Duration(days: 1)).year &&
+              shiftDate.month ==
+                  today.subtract(const Duration(days: 1)).month &&
+              shiftDate.day == today.subtract(const Duration(days: 1)).day;
+          if (isToday || isYesterday) {
+            return false;
+          }
+        }
+
+        final endDateTime = getShiftEndDateTime(
+          dateStr,
+          endTimeStr,
+          startTimeStr,
+        );
+        if (endDateTime != null) {
+          return endDateTime.isBefore(now);
+        }
+
+        // Fallback to simple date check
+        return shiftDate.isBefore(today);
       } catch (e) {
         return false;
       }
@@ -934,16 +1772,16 @@ class _ClientAndAppointmentDetailsState
 
     if (recentVisits.isEmpty) return const SizedBox.shrink();
 
+    final timeRecords = (assignedClient['timeRecords'] as List?) ?? [];
+    final attendedShiftKeys = <String>{};
+    for (var record in timeRecords) {
+      if (record['date'] != null && record['startTime'] != null) {
+        attendedShiftKeys.add('${record['date']}_${record['startTime']}');
+      }
+    }
+
     return Container(
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2,
-        ),
-        boxShadow: const [BauhausDesign.shadowHard],
-      ),
+      decoration: BauhausDesign.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -954,12 +1792,12 @@ class _ClientAndAppointmentDetailsState
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: Colors.teal.shade100,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    color: BauhausDesign.success,
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.history,
-                    color: Colors.teal,
+                    color: BauhausDesign.surfaceWhite,
                     size: 24,
                   ),
                 ),
@@ -968,26 +1806,93 @@ class _ClientAndAppointmentDetailsState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Recent Visits',
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleLarge
-                          ?.copyWith(
-                            color: Colors.teal,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      'RECENT VISITS',
+                      style: GoogleFonts.oswald(
+                        color: BauhausDesign.neutral,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    const SizedBox(height: BauhausDesign.space1),
+                    Text(
+                      'Previous shifts logged',
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          ...recentVisits.map((visit) => ListTile(
-                leading: Icon(Icons.check_circle_outline,
-                    color: BauhausDesign.success),
-                title: Text(visit['date'] ?? 'Unknown Date'),
-                subtitle: Text('${visit['startTime']} - ${visit['endTime']}'),
-              )),
+          const Divider(
+            height: 1,
+            thickness: 1.5,
+            color: BauhausDesign.neutral,
+          ),
+          ...recentVisits.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final visit = entry.value;
+            final shiftKey = '${visit['date']}_${visit['startTime']}';
+            final isAttended = attendedShiftKeys.contains(shiftKey);
+
+            return Container(
+              decoration: BoxDecoration(
+                border: idx < recentVisits.length - 1
+                    ? const Border(
+                        bottom: BorderSide(
+                          color: BauhausDesign.neutral,
+                          width: 1.5,
+                        ),
+                      )
+                    : null,
+              ),
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space1),
+                  decoration: BoxDecoration(
+                    color: isAttended
+                        ? BauhausDesign.success.withOpacity(0.1)
+                        : BauhausDesign.error.withOpacity(0.1),
+                    border: Border.all(
+                      color: isAttended
+                          ? BauhausDesign.success
+                          : BauhausDesign.error,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Icon(
+                    isAttended ? Icons.check : Icons.close,
+                    color: isAttended
+                        ? BauhausDesign.success
+                        : BauhausDesign.error,
+                    size: 16,
+                  ),
+                ),
+                title: Text(
+                  visit['date'] ?? 'Unknown Date',
+                  style: GoogleFonts.oswald(
+                    color: BauhausDesign.neutral,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: Text(
+                  '${visit['startTime']} - ${visit['endTime']}${isAttended ? '' : ' (NOT ATTENDED)'}',
+                  style: GoogleFonts.robotoMono(
+                    color: isAttended
+                        ? BauhausDesign.textMuted
+                        : BauhausDesign.error,
+                    fontSize: 12,
+                    fontWeight: isAttended
+                        ? FontWeight.normal
+                        : FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -997,15 +1902,7 @@ class _ClientAndAppointmentDetailsState
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
-        decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(
-            color: BauhausDesign.neutral,
-            width: 2,
-          ),
-          boxShadow: const [BauhausDesign.shadowHard],
-        ),
+        decoration: BauhausDesign.cardDecoration,
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space5),
           child: Column(
@@ -1017,10 +1914,12 @@ class _ClientAndAppointmentDetailsState
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
                       color: BauhausDesign.primary,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.person,
                       color: BauhausDesign.surfaceWhite,
                       size: 24,
@@ -1032,23 +1931,19 @@ class _ClientAndAppointmentDetailsState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Client Information',
-                          style: BauhausDesign.getTextTheme(context)
-                              .titleLarge
-                              ?.copyWith(
-                                color: BauhausDesign.primary,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          'CLIENT INFORMATION',
+                          style: GoogleFonts.oswald(
+                            color: BauhausDesign.neutral,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                          ),
                         ),
                         const SizedBox(height: BauhausDesign.space1),
                         Text(
                           'Personal details and contact information',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                              ),
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(color: BauhausDesign.textMuted),
                         ),
                       ],
                     ),
@@ -1056,18 +1951,28 @@ class _ClientAndAppointmentDetailsState
                 ],
               ),
               const SizedBox(height: BauhausDesign.space5),
-              _buildInfoRow(Icons.badge, 'Full Name',
-                  '${clientData['clientFirstName'] ?? "No"} ${clientData['clientLastName'] ?? "Name"}'),
-              _buildInfoRow(Icons.email, 'Email',
-                  clientData['clientEmail'] ?? "No email data found"),
-              _buildInfoRow(Icons.phone, 'Phone',
-                  clientData['clientPhone'] ?? "No phone data found"),
               _buildInfoRow(
-                  Icons.location_on,
-                  'Address',
-                  '${clientData['clientAddress'] ?? "No address data found"}, '
-                      '${clientData['clientCity'] ?? ""}${clientData['clientCity'] != null && clientData['clientState'] != null ? ', ' : ''}'
-                      '${clientData['clientState'] ?? ""} ${clientData['clientZip'] ?? ""}'),
+                Icons.badge,
+                'Full Name',
+                '${clientData['clientFirstName'] ?? "No"} ${clientData['clientLastName'] ?? "Name"}',
+              ),
+              _buildInfoRow(
+                Icons.email,
+                'Email',
+                clientData['clientEmail'] ?? "No email data found",
+              ),
+              _buildInfoRow(
+                Icons.phone,
+                'Phone',
+                clientData['clientPhone'] ?? "No phone data found",
+              ),
+              _buildInfoRow(
+                Icons.location_on,
+                'Address',
+                '${clientData['clientAddress'] ?? "No address data found"}, '
+                    '${clientData['clientCity'] ?? ""}${clientData['clientCity'] != null && clientData['clientState'] != null ? ', ' : ''}'
+                    '${clientData['clientState'] ?? ""} ${clientData['clientZip'] ?? ""}',
+              ),
               const SizedBox(height: BauhausDesign.space4),
               // Navigation Button
               _buildNavigationButton(clientData),
@@ -1095,19 +2000,17 @@ class _ClientAndAppointmentDetailsState
       width: double.infinity,
       height: 48,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(
-          color: BauhausDesign.accent,
-          width: 2,
-        ),
+        color: BauhausDesign.accent,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Material(
-        color: BauhausDesign.accent.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        color: Colors.transparent,
         child: InkWell(
           onTap: () async {
-            final success =
-                await NavigationHelper.openDirectionsToAddress(fullAddress);
+            final success = await NavigationHelper.openDirectionsToAddress(
+              fullAddress,
+            );
             if (!success && mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -1117,23 +2020,25 @@ class _ClientAndAppointmentDetailsState
               );
             }
           },
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.directions,
-                color: BauhausDesign.accent,
+                color: BauhausDesign.neutral,
                 size: 22,
               ),
               const SizedBox(width: BauhausDesign.space2),
               Text(
-                AppLocalizations.of(context)?.appointmentDetailsOpenMaps ??
-                    'Get Directions',
-                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.accent,
-                      fontWeight: FontWeight.w600,
-                    ),
+                (AppLocalizations.of(context)?.appointmentDetailsOpenMaps ??
+                        'Get Directions')
+                    .toUpperCase(),
+                style: GoogleFonts.oswald(
+                  color: BauhausDesign.neutral,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  letterSpacing: 1.0,
+                ),
               ),
             ],
           ),
@@ -1151,14 +2056,10 @@ class _ClientAndAppointmentDetailsState
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
             ),
-            child: Icon(
-              icon,
-              size: 16,
-              color: BauhausDesign.textMuted,
-            ),
+            child: Icon(icon, size: 16, color: BauhausDesign.neutral),
           ),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
@@ -1166,20 +2067,22 @@ class _ClientAndAppointmentDetailsState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  label.toUpperCase(),
+                  style: GoogleFonts.oswald(
+                    color: BauhausDesign.textMuted,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
                 ),
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
                   value,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                  style: GoogleFonts.inter(
+                    color: BauhausDesign.textDark,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -1191,15 +2094,7 @@ class _ClientAndAppointmentDetailsState
 
   Widget _buildScheduleCard() {
     return Container(
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2,
-        ),
-        boxShadow: const [BauhausDesign.shadowHard],
-      ),
+      decoration: BauhausDesign.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1211,9 +2106,9 @@ class _ClientAndAppointmentDetailsState
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
                     color: BauhausDesign.accent,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.schedule,
                     color: BauhausDesign.surfaceWhite,
                     size: 24,
@@ -1224,23 +2119,20 @@ class _ClientAndAppointmentDetailsState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Schedule Details',
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleLarge
-                          ?.copyWith(
-                            color: BauhausDesign.accent,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      'SCHEDULE DETAILS',
+                      style: GoogleFonts.oswald(
+                        color: BauhausDesign.neutral,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
+                      ),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Appointment dates and times',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -1249,27 +2141,31 @@ class _ClientAndAppointmentDetailsState
           ),
           Container(
             margin: const EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space5,
-                vertical: BauhausDesign.space2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(
-                color: BauhausDesign.neutral,
-                width: 1,
-              ),
+              horizontal: BauhausDesign.space5,
+              vertical: BauhausDesign.space2,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              child: Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(2.5),
-                  1: FlexColumnWidth(1.5),
-                  2: FlexColumnWidth(1.5),
-                  3: FlexColumnWidth(1.2),
-                  4: FlexColumnWidth(1.0),
-                },
-                children: _buildTableRows(),
+            decoration: BoxDecoration(
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+            ),
+            child: Table(
+              border: const TableBorder(
+                horizontalInside: BorderSide(
+                  color: BauhausDesign.neutral,
+                  width: 1.5,
+                ),
+                verticalInside: BorderSide(
+                  color: BauhausDesign.neutral,
+                  width: 1.5,
+                ),
               ),
+              columnWidths: const {
+                0: FlexColumnWidth(2.5),
+                1: FlexColumnWidth(1.5),
+                2: FlexColumnWidth(1.5),
+                3: FlexColumnWidth(1.2),
+                4: FlexColumnWidth(1.0),
+              },
+              children: _buildTableRows(),
             ),
           ),
           const SizedBox(height: BauhausDesign.space5),
@@ -1279,19 +2175,15 @@ class _ClientAndAppointmentDetailsState
   }
 
   Widget _buildTimerSection(TimerService timerService) {
-    final isRunning = timerService.isRunning &&
+    final isRunning =
+        timerService.isRunning &&
         timerService.getTimerClientEmail() == widget.clientEmail;
 
     return Container(
       decoration: BoxDecoration(
-        color: isRunning
-            ? BauhausDesign.warning.withOpacity(0.05)
-            : BauhausDesign.primary.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: isRunning ? BauhausDesign.warning : BauhausDesign.primary,
-          width: 2,
-        ),
+        color: BauhausDesign.surfaceWhite,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Padding(
         padding: const EdgeInsets.all(BauhausDesign.space6),
@@ -1305,38 +2197,36 @@ class _ClientAndAppointmentDetailsState
                   scale: isRunning ? _timerPulseAnimation.value : 1.0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: BauhausDesign.space5,
-                        horizontal: BauhausDesign.space6),
+                      vertical: BauhausDesign.space5,
+                      horizontal: BauhausDesign.space6,
+                    ),
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceWhite,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusMd),
                       border: Border.all(
-                        color: isRunning
-                            ? BauhausDesign.warning
-                            : BauhausDesign.primary,
-                        width: 1.5,
+                        color: BauhausDesign.neutral,
+                        width: 2,
                       ),
-                      boxShadow: const [BauhausDesign.shadowSoft],
+                      boxShadow: const [BauhausDesign.shadowHardSm],
                     ),
                     child: Text(
                       (timerService.isRunning &&
                               (widget.clientEmail ==
                                   timerService.getTimerClientEmail()))
-                          ? timerService
-                              .getFormattedTime(timerService.elapsedSeconds)
+                          ? timerService.getFormattedTime(
+                              timerService.elapsedSeconds,
+                            )
                           : timerService.isRunning
-                              ? "00:00:00"
-                              : timerService.getFormattedTime(
-                                  timerService.elapsedSeconds),
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 42,
-                        fontWeight: FontWeight.w300,
+                          ? "00:00:00"
+                          : timerService.getFormattedTime(
+                              timerService.elapsedSeconds,
+                            ),
+                      style: GoogleFonts.robotoMono(
+                        fontSize: 38,
+                        fontWeight: FontWeight.bold,
                         color: isRunning
-                            ? BauhausDesign.warning
-                            : BauhausDesign.primary,
-                        letterSpacing: 2,
+                            ? BauhausDesign.success
+                            : BauhausDesign.neutral,
+                        letterSpacing: 1.5,
                       ),
                     ),
                   ),
@@ -1349,72 +2239,74 @@ class _ClientAndAppointmentDetailsState
             SizedBox(
               width: double.infinity,
               height: 56,
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (timerService.isRunning &&
-                      timerService.getTimerClientEmail() !=
-                          widget.clientEmail) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text('Another client\'s shift is currently active'),
-                      ),
-                    );
-                    return;
-                  }
-                  if (timerService.isRunning &&
-                      timerService.getTimerClientEmail() ==
-                          widget.clientEmail) {
-                    // Stop current timer
-                    await _stopTimer(timerService);
-                    await _setWorkedTime();
-                  } else {
-                    // Try to start new timer
-                    final success = await _startTimer(timerService);
-                    if (success) {
-                      timerService.setTimerClientEmail(widget.clientEmail);
-                      // Show success message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Timer started successfully'),
-                          duration: Duration(seconds: 2),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isRunning
+                      ? BauhausDesign.primary
+                      : BauhausDesign.success,
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [BauhausDesign.shadowHard],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () async {
+                      if (timerService.isRunning &&
+                          timerService.getTimerClientEmail() !=
+                              widget.clientEmail) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Another client\'s shift is currently active',
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+                      if (timerService.isRunning &&
+                          timerService.getTimerClientEmail() ==
+                              widget.clientEmail) {
+                        // Start the end shift flow (will confirm, stop timer, and log shift details)
+                        await _setWorkedTime(
+                          elapsedSeconds: timerService.elapsedSeconds,
+                        );
+                      } else {
+                        // Try to start new timer
+                        final success = await _startTimer(timerService);
+                        if (success) {
+                          timerService.setTimerClientEmail(widget.clientEmail);
+                          // Show success message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Timer started successfully'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isRunning ? Icons.stop : Icons.play_arrow,
+                          size: 24,
+                          color: BauhausDesign.surfaceWhite,
                         ),
-                      );
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      isRunning ? BauhausDesign.warning : BauhausDesign.primary,
-                  foregroundColor: BauhausDesign.surfaceWhite,
-                  elevation: 0,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    side: BorderSide(
-                      color: BauhausDesign.neutral,
-                      width: 2,
+                        const SizedBox(width: BauhausDesign.space2),
+                        Text(
+                          (isRunning ? 'End Shift' : 'Start Shift')
+                              .toUpperCase(),
+                          style: GoogleFonts.oswald(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: BauhausDesign.surfaceWhite,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      isRunning ? Icons.stop : Icons.play_arrow,
-                      size: 24,
-                      color: BauhausDesign.surfaceWhite,
-                    ),
-                    const SizedBox(width: BauhausDesign.space2),
-                    Text(
-                      isRunning ? 'End Shift' : 'Start Shift',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1432,89 +2324,88 @@ class _ClientAndAppointmentDetailsState
           width: double.infinity,
           height: 56,
           margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
-          child: ElevatedButton(
-            onPressed: () {
-              if (clientDetails != null) {
-                final address = clientDetails?['clientAddress'] ?? '';
-                final city = clientDetails?['clientCity'] ?? '';
-                final state = clientDetails?['clientState'] ?? '';
-                final zipCode = clientDetails?['clientZipCode'] ?? '';
-                final fullAddress = '$address, $city, $state, $zipCode';
-                navigationService.openMapWithAddress(fullAddress);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: BauhausDesign.accent,
-              foregroundColor: BauhausDesign.surfaceWhite,
-              elevation: 4,
-              shadowColor: BauhausDesign.shadowHard.color,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                side: BorderSide(
-                  color: BauhausDesign.neutral,
-                  width: 2,
-                ),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.map, size: 24),
-                const SizedBox(width: 8),
-                const Text(
-                  'View in Map',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+          decoration: BoxDecoration(
+            color: BauhausDesign.accent,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                if (clientDetails != null) {
+                  final address = clientDetails?['clientAddress'] ?? '';
+                  final city = clientDetails?['clientCity'] ?? '';
+                  final state = clientDetails?['clientState'] ?? '';
+                  final zipCode = clientDetails?['clientZipCode'] ?? '';
+                  final fullAddress = '$address, $city, $state, $zipCode';
+                  navigationService.openMapWithAddress(fullAddress);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.map, size: 24, color: BauhausDesign.neutral),
+                  const SizedBox(width: 8),
+                  Text(
+                    'VIEW IN MAP',
+                    style: GoogleFonts.oswald(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.neutral,
+                      letterSpacing: 1.0,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
 
         // Notes Button
-        SizedBox(
+        Container(
           width: double.infinity,
           height: 56,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddNotesView(
+          decoration: BoxDecoration(
+            color: BauhausDesign.primary,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddNotesView(
                       userEmail: widget.userEmail,
                       clientEmail: widget.clientEmail,
-                      clientDetails: clientDetails),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: BauhausDesign.primary,
-              foregroundColor: BauhausDesign.surfaceWhite,
-              elevation: 4,
-              shadowColor: BauhausDesign.shadowHard.color,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                side: BorderSide(
-                  color: BauhausDesign.neutral,
-                  width: 2,
-                ),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.note_add, size: 24),
-                const SizedBox(width: 8),
-                const Text(
-                  'Add Notes',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                      clientDetails: clientDetails,
+                    ),
                   ),
-                ),
-              ],
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.note_add,
+                    size: 24,
+                    color: BauhausDesign.surfaceWhite,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'ADD NOTES',
+                    style: GoogleFonts.oswald(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.surfaceWhite,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1537,23 +2428,40 @@ class _ClientAndAppointmentDetailsState
           backgroundColor: BauhausDesign.backgroundLight,
           appBar: AppBar(
             title: Text(
-              'Client Details',
-              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                    color: BauhausDesign.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
+              'CLIENT DETAILS',
+              style: GoogleFonts.oswald(
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                letterSpacing: 1.5,
+              ),
             ),
             backgroundColor: BauhausDesign.surfaceWhite,
             elevation: 0,
             centerTitle: true,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
-              onPressed: () => Navigator.of(context).pop(),
+            leading: Padding(
+              padding: const EdgeInsets.all(BauhausDesign.space2),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: BauhausDesign.surfaceWhite,
+                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: BauhausDesign.neutral,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
             ),
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(color: BauhausDesign.neutral, height: 1.5),
+              preferredSize: const Size.fromHeight(2),
+              child: Container(color: BauhausDesign.neutral, height: 2),
             ),
           ),
           body: isInitCompleted

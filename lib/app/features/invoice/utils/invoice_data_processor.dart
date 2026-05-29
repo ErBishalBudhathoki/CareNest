@@ -801,7 +801,9 @@ class InvoiceDataProcessor {
             }
             String startTime = schedule['startTime'] ?? '';
             String endTime = schedule['endTime'] ?? '';
-            double hoursWorked = record['actualWorkedTime'] as double? ?? 0.0;
+            double hoursWorked = _getSafeDouble(record['actualWorkedTime']);
+            // Round to 2 decimal places to avoid displaying values like 10.18138888888889
+            hoursWorked = double.parse(hoursWorked.toStringAsFixed(2));
 
             String dayOfWeek = helpers.findDayOfWeek([date])[0];
 
@@ -1281,7 +1283,7 @@ class InvoiceDataProcessor {
 
     // Calculate subtotal from items
     double itemsSubtotal =
-        items.fold(0, (sum, item) => sum + (item['amount'] as double));
+        items.fold(0.0, (sum, item) => sum + _getSafeDouble(item['amount']));
 
     // Calculate expenses total
     final clientExpensesList = clientData['expenses'] as List<dynamic>? ?? [];
@@ -1368,7 +1370,7 @@ class InvoiceDataProcessor {
           if (item['rateSource'] == 'EMP_OVERTIME') {
             continue;
           }
-          oteTotal += (item['amount'] as double);
+          oteTotal += _getSafeDouble(item['amount']);
         }
       }
 
@@ -1594,6 +1596,12 @@ class InvoiceDataProcessor {
       overtimeHours = effectiveHours - 10.0;
     }
 
+    debugPrint(
+        'InvoiceDataProcessor: Shift $date ($startTime-$endTime) '
+        'inputHours=$hours effectiveHours=$effectiveHours '
+        'ordinaryHours=$ordinaryHours overtimeHours=$overtimeHours '
+        'splitApplied=${effectiveHours > 10.0}');
+
     // Common Rate Calculation Logic
     DateTime? shiftDate = _tryParseDateFlexible(date);
     if (shiftDate == null) {
@@ -1679,12 +1687,15 @@ class InvoiceDataProcessor {
       'amount': ordinaryHours * ordinaryRate,
       'rateSource': rateSource,
       'itemName': itemName,
-      'itemCode': '', // Clear for employee
+      'itemCode': '',
       'workedTimeSource': workedTimeSource,
       'ndisItem': {'itemNumber': '', 'itemName': itemName},
       'ndisItemNumber': '',
       'ndisItemName': itemName,
     });
+    debugPrint(
+        'InvoiceDataProcessor: ORDINARY item "$itemName" hours=$ordinaryHours '
+        'rate=$ordinaryRate amount=${ordinaryHours * ordinaryRate}');
 
     // -- Calculate Overtime Item (if any) --
     if (overtimeHours > 0) {
@@ -1719,6 +1730,9 @@ class InvoiceDataProcessor {
         'ndisItemNumber': '',
         'ndisItemName': otItemName,
       });
+      debugPrint(
+          'InvoiceDataProcessor: OVERTIME item "$otItemName" hours=$overtimeHours '
+          'rate=$otRate amount=${overtimeHours * otRate}');
     }
 
     return resultItems;

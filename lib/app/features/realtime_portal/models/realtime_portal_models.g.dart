@@ -81,7 +81,8 @@ _TrackingSession _$TrackingSessionFromJson(Map<String, dynamic> json) =>
       clientLocation: json['clientLocation'] == null
           ? null
           : ClientLocation.fromJson(
-              json['clientLocation'] as Map<String, dynamic>),
+              json['clientLocation'] as Map<String, dynamic>,
+            ),
       locations: (json['locations'] as List<dynamic>?)
           ?.map((e) => LocationUpdate.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -365,8 +366,9 @@ _ServiceConfirmation _$ServiceConfirmationFromJson(Map<String, dynamic> json) =>
       checklist: (json['checklist'] as List<dynamic>?)
           ?.map((e) => ChecklistItem.fromJson(e as Map<String, dynamic>))
           .toList(),
-      photos:
-          (json['photos'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      photos: (json['photos'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       incidents: (json['incidents'] as List<dynamic>?)
           ?.map((e) => IncidentReport.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -376,22 +378,22 @@ _ServiceConfirmation _$ServiceConfirmationFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ServiceConfirmationToJson(
-        _ServiceConfirmation instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'appointmentId': instance.appointmentId,
-      'clientId': instance.clientId,
-      'workerId': instance.workerId,
-      'signatureId': instance.signatureId,
-      'rating': instance.rating,
-      'feedback': instance.feedback,
-      'checklist': instance.checklist,
-      'photos': instance.photos,
-      'incidents': instance.incidents,
-      'timestamp': instance.timestamp.toIso8601String(),
-      'status': instance.status,
-      'reportUrl': instance.reportUrl,
-    };
+  _ServiceConfirmation instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'appointmentId': instance.appointmentId,
+  'clientId': instance.clientId,
+  'workerId': instance.workerId,
+  'signatureId': instance.signatureId,
+  'rating': instance.rating,
+  'feedback': instance.feedback,
+  'checklist': instance.checklist,
+  'photos': instance.photos,
+  'incidents': instance.incidents,
+  'timestamp': instance.timestamp.toIso8601String(),
+  'status': instance.status,
+  'reportUrl': instance.reportUrl,
+};
 
 _ChecklistItem _$ChecklistItemFromJson(Map<String, dynamic> json) =>
     _ChecklistItem(
@@ -442,8 +444,9 @@ _IncidentReport _$IncidentReportFromJson(Map<String, dynamic> json) =>
       severity: json['severity'] as String,
       category: json['category'] as String,
       description: json['description'] as String,
-      photos:
-          (json['photos'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      photos: (json['photos'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       timestamp: DateTime.parse(json['timestamp'] as String),
       status: json['status'] as String,
       resolution: json['resolution'] as String?,
@@ -494,13 +497,15 @@ _FamilyMember _$FamilyMemberFromJson(Map<String, dynamic> json) =>
       relationship: json['relationship'] as String,
       role: json['role'] as String,
       permissions: FamilyPermissions.fromJson(
-          json['permissions'] as Map<String, dynamic>),
+        json['permissions'] as Map<String, dynamic>,
+      ),
       status: json['status'] as String,
       joinedAt: DateTime.parse(json['joinedAt'] as String),
       notificationPreferences: json['notificationPreferences'] == null
           ? null
           : NotificationPreferences.fromJson(
-              json['notificationPreferences'] as Map<String, dynamic>),
+              json['notificationPreferences'] as Map<String, dynamic>,
+            ),
       updatedAt: json['updatedAt'] == null
           ? null
           : DateTime.parse(json['updatedAt'] as String),
@@ -535,6 +540,7 @@ _FamilyPermissions _$FamilyPermissionsFromJson(Map<String, dynamic> json) =>
       viewMessages: json['viewMessages'] as bool,
       sendMessages: json['sendMessages'] as bool,
       viewLocation: json['viewLocation'] as bool,
+      viewServiceHistory: json['viewServiceHistory'] as bool? ?? false,
       receiveNotifications: json['receiveNotifications'] as bool,
     );
 
@@ -549,6 +555,7 @@ Map<String, dynamic> _$FamilyPermissionsToJson(_FamilyPermissions instance) =>
       'viewMessages': instance.viewMessages,
       'sendMessages': instance.sendMessages,
       'viewLocation': instance.viewLocation,
+      'viewServiceHistory': instance.viewServiceHistory,
       'receiveNotifications': instance.receiveNotifications,
     };
 
@@ -562,7 +569,8 @@ _FamilyInvitation _$FamilyInvitationFromJson(Map<String, dynamic> json) =>
       relationship: json['relationship'] as String,
       role: json['role'] as String,
       permissions: FamilyPermissions.fromJson(
-          json['permissions'] as Map<String, dynamic>),
+        json['permissions'] as Map<String, dynamic>,
+      ),
       status: json['status'] as String,
       invitedAt: DateTime.parse(json['invitedAt'] as String),
       expiresAt: DateTime.parse(json['expiresAt'] as String),
@@ -608,43 +616,38 @@ Map<String, dynamic> _$AccessAuditLogToJson(_AccessAuditLog instance) =>
     };
 
 _NotificationPreferences _$NotificationPreferencesFromJson(
-        Map<String, dynamic> json) =>
-    _NotificationPreferences(
-      email: json['email'] as bool? ?? true,
-      sms: json['sms'] as bool? ?? false,
-      push: json['push'] as bool? ?? true,
-      appointmentReminders: json['appointmentReminders'] as bool? ?? true,
-      statusUpdates: json['statusUpdates'] as bool? ?? true,
-      emergencyAlerts: json['emergencyAlerts'] as bool? ?? true,
-      serviceConfirmations: json['serviceConfirmations'] as bool? ?? true,
-      quietHours: json['quietHours'] == null
-          ? null
-          : QuietHours.fromJson(json['quietHours'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => _NotificationPreferences(
+  email: json['email'] as bool? ?? true,
+  sms: json['sms'] as bool? ?? false,
+  push: json['push'] as bool? ?? true,
+  appointmentReminders: json['appointmentReminders'] as bool? ?? true,
+  statusUpdates: json['statusUpdates'] as bool? ?? true,
+  emergencyAlerts: json['emergencyAlerts'] as bool? ?? true,
+  serviceConfirmations: json['serviceConfirmations'] as bool? ?? true,
+  quietHours: json['quietHours'] == null
+      ? null
+      : QuietHours.fromJson(json['quietHours'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$NotificationPreferencesToJson(
-        _NotificationPreferences instance) =>
-    <String, dynamic>{
-      'email': instance.email,
-      'sms': instance.sms,
-      'push': instance.push,
-      'appointmentReminders': instance.appointmentReminders,
-      'statusUpdates': instance.statusUpdates,
-      'emergencyAlerts': instance.emergencyAlerts,
-      'serviceConfirmations': instance.serviceConfirmations,
-      'quietHours': instance.quietHours,
-    };
+  _NotificationPreferences instance,
+) => <String, dynamic>{
+  'email': instance.email,
+  'sms': instance.sms,
+  'push': instance.push,
+  'appointmentReminders': instance.appointmentReminders,
+  'statusUpdates': instance.statusUpdates,
+  'emergencyAlerts': instance.emergencyAlerts,
+  'serviceConfirmations': instance.serviceConfirmations,
+  'quietHours': instance.quietHours,
+};
 
-_QuietHours _$QuietHoursFromJson(Map<String, dynamic> json) => _QuietHours(
-      start: json['start'] as String,
-      end: json['end'] as String,
-    );
+_QuietHours _$QuietHoursFromJson(Map<String, dynamic> json) =>
+    _QuietHours(start: json['start'] as String, end: json['end'] as String);
 
 Map<String, dynamic> _$QuietHoursToJson(_QuietHours instance) =>
-    <String, dynamic>{
-      'start': instance.start,
-      'end': instance.end,
-    };
+    <String, dynamic>{'start': instance.start, 'end': instance.end};
 
 _DocumentShare _$DocumentShareFromJson(Map<String, dynamic> json) =>
     _DocumentShare(
@@ -764,8 +767,9 @@ _EmergencyAlert _$EmergencyAlertFromJson(Map<String, dynamic> json) =>
       appointmentId: json['appointmentId'] as String,
       userId: json['userId'] as String,
       userType: json['userType'] as String,
-      location:
-          ClientLocation.fromJson(json['location'] as Map<String, dynamic>),
+      location: ClientLocation.fromJson(
+        json['location'] as Map<String, dynamic>,
+      ),
       message: json['message'] as String,
       timestamp: DateTime.parse(json['timestamp'] as String),
       status: json['status'] as String,
@@ -786,35 +790,35 @@ Map<String, dynamic> _$EmergencyAlertToJson(_EmergencyAlert instance) =>
     };
 
 _RealtimePortalDashboard _$RealtimePortalDashboardFromJson(
-        Map<String, dynamic> json) =>
-    _RealtimePortalDashboard(
-      upcomingAppointments: (json['upcomingAppointments'] as List<dynamic>)
-          .map((e) => AppointmentStatus.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      activeTracking: json['activeTracking'] == null
-          ? null
-          : LiveLocation.fromJson(
-              json['activeTracking'] as Map<String, dynamic>),
-      unreadMessages: (json['unreadMessages'] as num?)?.toInt(),
-      recentNotifications: (json['recentNotifications'] as List<dynamic>?)
-          ?.map((e) => PushNotification.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      familyMembers: (json['familyMembers'] as List<dynamic>?)
-          ?.map((e) => FamilyMember.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      lastServiceConfirmation: json['lastServiceConfirmation'] == null
-          ? null
-          : ServiceConfirmation.fromJson(
-              json['lastServiceConfirmation'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => _RealtimePortalDashboard(
+  upcomingAppointments: (json['upcomingAppointments'] as List<dynamic>)
+      .map((e) => AppointmentStatus.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  activeTracking: json['activeTracking'] == null
+      ? null
+      : LiveLocation.fromJson(json['activeTracking'] as Map<String, dynamic>),
+  unreadMessages: (json['unreadMessages'] as num?)?.toInt(),
+  recentNotifications: (json['recentNotifications'] as List<dynamic>?)
+      ?.map((e) => PushNotification.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  familyMembers: (json['familyMembers'] as List<dynamic>?)
+      ?.map((e) => FamilyMember.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  lastServiceConfirmation: json['lastServiceConfirmation'] == null
+      ? null
+      : ServiceConfirmation.fromJson(
+          json['lastServiceConfirmation'] as Map<String, dynamic>,
+        ),
+);
 
 Map<String, dynamic> _$RealtimePortalDashboardToJson(
-        _RealtimePortalDashboard instance) =>
-    <String, dynamic>{
-      'upcomingAppointments': instance.upcomingAppointments,
-      'activeTracking': instance.activeTracking,
-      'unreadMessages': instance.unreadMessages,
-      'recentNotifications': instance.recentNotifications,
-      'familyMembers': instance.familyMembers,
-      'lastServiceConfirmation': instance.lastServiceConfirmation,
-    };
+  _RealtimePortalDashboard instance,
+) => <String, dynamic>{
+  'upcomingAppointments': instance.upcomingAppointments,
+  'activeTracking': instance.activeTracking,
+  'unreadMessages': instance.unreadMessages,
+  'recentNotifications': instance.recentNotifications,
+  'familyMembers': instance.familyMembers,
+  'lastServiceConfirmation': instance.lastServiceConfirmation,
+};

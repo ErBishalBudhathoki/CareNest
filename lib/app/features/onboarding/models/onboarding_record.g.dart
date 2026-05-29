@@ -13,8 +13,9 @@ _OnboardingRecord _$OnboardingRecordFromJson(Map<String, dynamic> json) =>
       status: json['status'] as String,
       currentStep: (json['currentStep'] as num).toInt(),
       steps: OnboardingSteps.fromJson(json['steps'] as Map<String, dynamic>),
-      probation:
-          ProbationDetails.fromJson(json['probation'] as Map<String, dynamic>),
+      probation: ProbationDetails.fromJson(
+        json['probation'] as Map<String, dynamic>,
+      ),
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -37,16 +38,21 @@ Map<String, dynamic> _$OnboardingRecordToJson(_OnboardingRecord instance) =>
 
 _OnboardingSteps _$OnboardingStepsFromJson(Map<String, dynamic> json) =>
     _OnboardingSteps(
-      personalDetails:
-          StepDetail.fromJson(json['personalDetails'] as Map<String, dynamic>),
-      bankDetails:
-          BankDetailsStep.fromJson(json['bankDetails'] as Map<String, dynamic>),
-      taxDetails:
-          TaxDetailsStep.fromJson(json['taxDetails'] as Map<String, dynamic>),
+      personalDetails: StepDetail.fromJson(
+        json['personalDetails'] as Map<String, dynamic>,
+      ),
+      bankDetails: BankDetailsStep.fromJson(
+        json['bankDetails'] as Map<String, dynamic>,
+      ),
+      taxDetails: TaxDetailsStep.fromJson(
+        json['taxDetails'] as Map<String, dynamic>,
+      ),
       superannuation: SuperannuationStep.fromJson(
-          json['superannuation'] as Map<String, dynamic>),
-      documents:
-          DocumentStep.fromJson(json['documents'] as Map<String, dynamic>),
+        json['superannuation'] as Map<String, dynamic>,
+      ),
+      documents: DocumentStep.fromJson(
+        json['documents'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$OnboardingStepsToJson(_OnboardingSteps instance) =>
@@ -81,11 +87,11 @@ Map<String, dynamic> _$BankDetailsStepToJson(_BankDetailsStep instance) =>
     };
 
 _StepDetail _$StepDetailFromJson(Map<String, dynamic> json) => _StepDetail(
-      status: json['status'] as String,
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
-    );
+  status: json['status'] as String,
+  updatedAt: json['updatedAt'] == null
+      ? null
+      : DateTime.parse(json['updatedAt'] as String),
+);
 
 Map<String, dynamic> _$StepDetailToJson(_StepDetail instance) =>
     <String, dynamic>{

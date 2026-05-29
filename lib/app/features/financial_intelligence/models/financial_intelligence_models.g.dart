@@ -6,29 +6,30 @@ part of 'financial_intelligence_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_RevenueForecast _$RevenueForecastFromJson(Map<String, dynamic> json) =>
-    _RevenueForecast(
-      organizationId: json['organizationId'] as String,
-      generatedAt: json['generatedAt'] as String,
-      horizon: (json['horizon'] as num).toInt(),
-      model: json['model'] as String,
-      accuracy: (json['accuracy'] as num).toDouble(),
-      predictions: (json['predictions'] as List<dynamic>)
-          .map((e) => DailyPrediction.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      confidenceIntervals: json['confidenceIntervals'] == null
-          ? null
-          : ConfidenceIntervals.fromJson(
-              json['confidenceIntervals'] as Map<String, dynamic>),
-      scenarios: json['scenarios'] == null
-          ? null
-          : ForecastScenarios.fromJson(
-              json['scenarios'] as Map<String, dynamic>),
-      metrics:
-          ForecastMetrics.fromJson(json['metrics'] as Map<String, dynamic>),
-      insights:
-          (json['insights'] as List<dynamic>).map((e) => e as String).toList(),
-    );
+_RevenueForecast _$RevenueForecastFromJson(
+  Map<String, dynamic> json,
+) => _RevenueForecast(
+  organizationId: json['organizationId'] as String,
+  generatedAt: json['generatedAt'] as String,
+  horizon: (json['horizon'] as num).toInt(),
+  model: json['model'] as String,
+  accuracy: (json['accuracy'] as num).toDouble(),
+  predictions: (json['predictions'] as List<dynamic>)
+      .map((e) => DailyPrediction.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  confidenceIntervals: json['confidenceIntervals'] == null
+      ? null
+      : ConfidenceIntervals.fromJson(
+          json['confidenceIntervals'] as Map<String, dynamic>,
+        ),
+  scenarios: json['scenarios'] == null
+      ? null
+      : ForecastScenarios.fromJson(json['scenarios'] as Map<String, dynamic>),
+  metrics: ForecastMetrics.fromJson(json['metrics'] as Map<String, dynamic>),
+  insights: (json['insights'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+);
 
 Map<String, dynamic> _$RevenueForecastToJson(_RevenueForecast instance) =>
     <String, dynamic>{
@@ -66,10 +67,8 @@ _ConfidenceIntervals _$ConfidenceIntervalsFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ConfidenceIntervalsToJson(
-        _ConfidenceIntervals instance) =>
-    <String, dynamic>{
-      'intervals': instance.intervals,
-    };
+  _ConfidenceIntervals instance,
+) => <String, dynamic>{'intervals': instance.intervals};
 
 _ConfidenceInterval _$ConfidenceIntervalFromJson(Map<String, dynamic> json) =>
     _ConfidenceInterval(
@@ -208,10 +207,10 @@ Map<String, dynamic> _$PriceOptimizationToJson(_PriceOptimization instance) =>
     };
 
 _PriceImpact _$PriceImpactFromJson(Map<String, dynamic> json) => _PriceImpact(
-      demandChange: (json['demandChange'] as num).toDouble(),
-      revenueChange: (json['revenueChange'] as num).toDouble(),
-      marginChange: (json['marginChange'] as num).toDouble(),
-    );
+  demandChange: (json['demandChange'] as num).toDouble(),
+  revenueChange: (json['revenueChange'] as num).toDouble(),
+  marginChange: (json['marginChange'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$PriceImpactToJson(_PriceImpact instance) =>
     <String, dynamic>{
@@ -221,39 +220,39 @@ Map<String, dynamic> _$PriceImpactToJson(_PriceImpact instance) =>
     };
 
 _ABTest _$ABTestFromJson(Map<String, dynamic> json) => _ABTest(
-      testId: json['testId'] as String,
-      organizationId: json['organizationId'] as String,
-      status: json['status'] as String,
-      createdAt: json['createdAt'] as String,
-      variants: (json['variants'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(k, ABVariant.fromJson(e as Map<String, dynamic>)),
-      ),
-      duration: (json['duration'] as num).toInt(),
-      minimumSampleSize: (json['minimumSampleSize'] as num).toInt(),
-      significanceLevel: (json['significanceLevel'] as num).toDouble(),
-      successMetrics: (json['successMetrics'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-    );
+  testId: json['testId'] as String,
+  organizationId: json['organizationId'] as String,
+  status: json['status'] as String,
+  createdAt: json['createdAt'] as String,
+  variants: (json['variants'] as Map<String, dynamic>).map(
+    (k, e) => MapEntry(k, ABVariant.fromJson(e as Map<String, dynamic>)),
+  ),
+  duration: (json['duration'] as num).toInt(),
+  minimumSampleSize: (json['minimumSampleSize'] as num).toInt(),
+  significanceLevel: (json['significanceLevel'] as num).toDouble(),
+  successMetrics: (json['successMetrics'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+);
 
 Map<String, dynamic> _$ABTestToJson(_ABTest instance) => <String, dynamic>{
-      'testId': instance.testId,
-      'organizationId': instance.organizationId,
-      'status': instance.status,
-      'createdAt': instance.createdAt,
-      'variants': instance.variants,
-      'duration': instance.duration,
-      'minimumSampleSize': instance.minimumSampleSize,
-      'significanceLevel': instance.significanceLevel,
-      'successMetrics': instance.successMetrics,
-    };
+  'testId': instance.testId,
+  'organizationId': instance.organizationId,
+  'status': instance.status,
+  'createdAt': instance.createdAt,
+  'variants': instance.variants,
+  'duration': instance.duration,
+  'minimumSampleSize': instance.minimumSampleSize,
+  'significanceLevel': instance.significanceLevel,
+  'successMetrics': instance.successMetrics,
+};
 
 _ABVariant _$ABVariantFromJson(Map<String, dynamic> json) => _ABVariant(
-      name: json['name'] as String,
-      price: (json['price'] as num).toDouble(),
-      allocation: (json['allocation'] as num).toDouble(),
-      metrics: ABMetrics.fromJson(json['metrics'] as Map<String, dynamic>),
-    );
+  name: json['name'] as String,
+  price: (json['price'] as num).toDouble(),
+  allocation: (json['allocation'] as num).toDouble(),
+  metrics: ABMetrics.fromJson(json['metrics'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$ABVariantToJson(_ABVariant instance) =>
     <String, dynamic>{
@@ -264,10 +263,10 @@ Map<String, dynamic> _$ABVariantToJson(_ABVariant instance) =>
     };
 
 _ABMetrics _$ABMetricsFromJson(Map<String, dynamic> json) => _ABMetrics(
-      conversions: (json['conversions'] as num).toInt(),
-      revenue: (json['revenue'] as num).toDouble(),
-      sampleSize: (json['sampleSize'] as num).toInt(),
-    );
+  conversions: (json['conversions'] as num).toInt(),
+  revenue: (json['revenue'] as num).toDouble(),
+  sampleSize: (json['sampleSize'] as num).toInt(),
+);
 
 Map<String, dynamic> _$ABMetricsToJson(_ABMetrics instance) =>
     <String, dynamic>{
@@ -277,31 +276,32 @@ Map<String, dynamic> _$ABMetricsToJson(_ABMetrics instance) =>
     };
 
 _PricingRecommendations _$PricingRecommendationsFromJson(
-        Map<String, dynamic> json) =>
-    _PricingRecommendations(
-      serviceId: json['serviceId'] as String,
-      analyzedAt: json['analyzedAt'] as String,
-      current: CurrentPricing.fromJson(json['current'] as Map<String, dynamic>),
-      strategies: (json['strategies'] as List<dynamic>)
-          .map((e) => PricingStrategy.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      marketInsights: MarketInsights.fromJson(
-          json['marketInsights'] as Map<String, dynamic>),
-      topRecommendation: json['topRecommendation'] as String,
-      reasoning: json['reasoning'] as String,
-    );
+  Map<String, dynamic> json,
+) => _PricingRecommendations(
+  serviceId: json['serviceId'] as String,
+  analyzedAt: json['analyzedAt'] as String,
+  current: CurrentPricing.fromJson(json['current'] as Map<String, dynamic>),
+  strategies: (json['strategies'] as List<dynamic>)
+      .map((e) => PricingStrategy.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  marketInsights: MarketInsights.fromJson(
+    json['marketInsights'] as Map<String, dynamic>,
+  ),
+  topRecommendation: json['topRecommendation'] as String,
+  reasoning: json['reasoning'] as String,
+);
 
 Map<String, dynamic> _$PricingRecommendationsToJson(
-        _PricingRecommendations instance) =>
-    <String, dynamic>{
-      'serviceId': instance.serviceId,
-      'analyzedAt': instance.analyzedAt,
-      'current': instance.current,
-      'strategies': instance.strategies,
-      'marketInsights': instance.marketInsights,
-      'topRecommendation': instance.topRecommendation,
-      'reasoning': instance.reasoning,
-    };
+  _PricingRecommendations instance,
+) => <String, dynamic>{
+  'serviceId': instance.serviceId,
+  'analyzedAt': instance.analyzedAt,
+  'current': instance.current,
+  'strategies': instance.strategies,
+  'marketInsights': instance.marketInsights,
+  'topRecommendation': instance.topRecommendation,
+  'reasoning': instance.reasoning,
+};
 
 _CurrentPricing _$CurrentPricingFromJson(Map<String, dynamic> json) =>
     _CurrentPricing(
@@ -344,10 +344,11 @@ Map<String, dynamic> _$PricingStrategyToJson(_PricingStrategy instance) =>
 _MarketInsights _$MarketInsightsFromJson(Map<String, dynamic> json) =>
     _MarketInsights(
       competitorPricing: CompetitorPricing.fromJson(
-          json['competitorPricing'] as Map<String, dynamic>),
+        json['competitorPricing'] as Map<String, dynamic>,
+      ),
       demandElasticity: (json['demandElasticity'] as num).toDouble(),
-      priceOptimizationPotential:
-          (json['priceOptimizationPotential'] as num).toDouble(),
+      priceOptimizationPotential: (json['priceOptimizationPotential'] as num)
+          .toDouble(),
     );
 
 Map<String, dynamic> _$MarketInsightsToJson(_MarketInsights instance) =>
@@ -374,65 +375,66 @@ Map<String, dynamic> _$CompetitorPricingToJson(_CompetitorPricing instance) =>
     };
 
 _Invoice _$InvoiceFromJson(Map<String, dynamic> json) => _Invoice(
-      invoiceId: json['invoiceId'] as String,
-      organizationId: json['organizationId'] as String,
-      clientId: json['clientId'] as String,
-      period: json['period'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      gst: (json['gst'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
-      status: json['status'] as String,
-      createdAt: json['createdAt'] as String,
-      lineItems: (json['lineItems'] as List<dynamic>)
-          .map((e) => LineItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      validation: json['validation'] == null
-          ? null
-          : ValidationResult.fromJson(
-              json['validation'] as Map<String, dynamic>),
-      anomalies: (json['anomalies'] as List<dynamic>?)
-          ?.map((e) => BillingAnomaly.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      approvedAt: json['approvedAt'] as String?,
-    );
+  invoiceId: json['invoiceId'] as String,
+  organizationId: json['organizationId'] as String,
+  clientId: json['clientId'] as String,
+  period: json['period'] as String,
+  amount: (json['amount'] as num).toDouble(),
+  gst: (json['gst'] as num).toDouble(),
+  total: (json['total'] as num).toDouble(),
+  status: json['status'] as String,
+  createdAt: json['createdAt'] as String,
+  lineItems: (json['lineItems'] as List<dynamic>)
+      .map((e) => LineItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  validation: json['validation'] == null
+      ? null
+      : ValidationResult.fromJson(json['validation'] as Map<String, dynamic>),
+  anomalies: (json['anomalies'] as List<dynamic>?)
+      ?.map((e) => BillingAnomaly.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  approvedAt: json['approvedAt'] as String?,
+);
 
 Map<String, dynamic> _$InvoiceToJson(_Invoice instance) => <String, dynamic>{
-      'invoiceId': instance.invoiceId,
-      'organizationId': instance.organizationId,
-      'clientId': instance.clientId,
-      'period': instance.period,
-      'amount': instance.amount,
-      'gst': instance.gst,
-      'total': instance.total,
-      'status': instance.status,
-      'createdAt': instance.createdAt,
-      'lineItems': instance.lineItems,
-      'validation': instance.validation,
-      'anomalies': instance.anomalies,
-      'approvedAt': instance.approvedAt,
-    };
+  'invoiceId': instance.invoiceId,
+  'organizationId': instance.organizationId,
+  'clientId': instance.clientId,
+  'period': instance.period,
+  'amount': instance.amount,
+  'gst': instance.gst,
+  'total': instance.total,
+  'status': instance.status,
+  'createdAt': instance.createdAt,
+  'lineItems': instance.lineItems,
+  'validation': instance.validation,
+  'anomalies': instance.anomalies,
+  'approvedAt': instance.approvedAt,
+};
 
 _LineItem _$LineItemFromJson(Map<String, dynamic> json) => _LineItem(
-      description: json['description'] as String,
-      quantity: (json['quantity'] as num).toInt(),
-      rate: (json['rate'] as num).toDouble(),
-      amount: (json['amount'] as num).toDouble(),
-    );
+  description: json['description'] as String,
+  quantity: (json['quantity'] as num).toInt(),
+  rate: (json['rate'] as num).toDouble(),
+  amount: (json['amount'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$LineItemToJson(_LineItem instance) => <String, dynamic>{
-      'description': instance.description,
-      'quantity': instance.quantity,
-      'rate': instance.rate,
-      'amount': instance.amount,
-    };
+  'description': instance.description,
+  'quantity': instance.quantity,
+  'rate': instance.rate,
+  'amount': instance.amount,
+};
 
 _ValidationResult _$ValidationResultFromJson(Map<String, dynamic> json) =>
     _ValidationResult(
       passed: json['passed'] as bool,
-      errors:
-          (json['errors'] as List<dynamic>).map((e) => e as String).toList(),
-      warnings:
-          (json['warnings'] as List<dynamic>).map((e) => e as String).toList(),
+      errors: (json['errors'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      warnings: (json['warnings'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       checks: (json['checks'] as List<dynamic>)
           .map((e) => ValidationCheck.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -450,8 +452,9 @@ _ValidationCheck _$ValidationCheckFromJson(Map<String, dynamic> json) =>
     _ValidationCheck(
       check: json['check'] as String,
       passed: json['passed'] as bool,
-      errors:
-          (json['errors'] as List<dynamic>).map((e) => e as String).toList(),
+      errors: (json['errors'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       details: json['details'] as String,
     );
 
@@ -480,21 +483,22 @@ Map<String, dynamic> _$BillingAnomalyToJson(_BillingAnomaly instance) =>
     };
 
 _CreditNote _$CreditNoteFromJson(Map<String, dynamic> json) => _CreditNote(
-      creditNoteId: json['creditNoteId'] as String,
-      invoiceId: json['invoiceId'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      reason: json['reason'] as String,
-      status: json['status'] as String,
-      createdAt: json['createdAt'] as String,
-      gst: (json['gst'] as num).toDouble(),
-      totalCredit: (json['totalCredit'] as num).toDouble(),
-      workflow:
-          CreditNoteWorkflow.fromJson(json['workflow'] as Map<String, dynamic>),
-      auditTrail: (json['auditTrail'] as List<dynamic>)
-          .map((e) => AuditEntry.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      approvedAt: json['approvedAt'] as String?,
-    );
+  creditNoteId: json['creditNoteId'] as String,
+  invoiceId: json['invoiceId'] as String,
+  amount: (json['amount'] as num).toDouble(),
+  reason: json['reason'] as String,
+  status: json['status'] as String,
+  createdAt: json['createdAt'] as String,
+  gst: (json['gst'] as num).toDouble(),
+  totalCredit: (json['totalCredit'] as num).toDouble(),
+  workflow: CreditNoteWorkflow.fromJson(
+    json['workflow'] as Map<String, dynamic>,
+  ),
+  auditTrail: (json['auditTrail'] as List<dynamic>)
+      .map((e) => AuditEntry.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  approvedAt: json['approvedAt'] as String?,
+);
 
 Map<String, dynamic> _$CreditNoteToJson(_CreditNote instance) =>
     <String, dynamic>{
@@ -526,10 +530,10 @@ Map<String, dynamic> _$CreditNoteWorkflowToJson(_CreditNoteWorkflow instance) =>
     };
 
 _AuditEntry _$AuditEntryFromJson(Map<String, dynamic> json) => _AuditEntry(
-      action: json['action'] as String,
-      timestamp: json['timestamp'] as String,
-      reason: json['reason'] as String,
-    );
+  action: json['action'] as String,
+  timestamp: json['timestamp'] as String,
+  reason: json['reason'] as String,
+);
 
 Map<String, dynamic> _$AuditEntryToJson(_AuditEntry instance) =>
     <String, dynamic>{
@@ -544,12 +548,14 @@ _CashFlowForecast _$CashFlowForecastFromJson(Map<String, dynamic> json) =>
       horizon: (json['horizon'] as num).toInt(),
       generatedAt: json['generatedAt'] as String,
       currentPosition: CashPosition.fromJson(
-          json['currentPosition'] as Map<String, dynamic>),
+        json['currentPosition'] as Map<String, dynamic>,
+      ),
       dailyForecast: (json['dailyForecast'] as List<dynamic>)
           .map((e) => DailyCashFlow.fromJson(e as Map<String, dynamic>))
           .toList(),
-      summary:
-          CashFlowSummary.fromJson(json['summary'] as Map<String, dynamic>),
+      summary: CashFlowSummary.fromJson(
+        json['summary'] as Map<String, dynamic>,
+      ),
       risks: (json['risks'] as List<dynamic>)
           .map((e) => CashFlowRisk.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -653,8 +659,9 @@ _PaymentPrediction _$PaymentPredictionFromJson(Map<String, dynamic> json) =>
       expectedDaysLate: (json['expectedDaysLate'] as num).toInt(),
       latePaymentRisk: json['latePaymentRisk'] as String,
       badDebtProbability: (json['badDebtProbability'] as num).toDouble(),
-      actions:
-          (json['actions'] as List<dynamic>).map((e) => e as String).toList(),
+      actions: (json['actions'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$PaymentPredictionToJson(_PaymentPrediction instance) =>
@@ -685,8 +692,9 @@ _FinancialDashboard _$FinancialDashboardFromJson(Map<String, dynamic> json) =>
       profitabilityByClient: (json['profitabilityByClient'] as List<dynamic>)
           .map((e) => ClientProfitability.fromJson(e as Map<String, dynamic>))
           .toList(),
-      costAnalysis:
-          CostAnalysis.fromJson(json['costAnalysis'] as Map<String, dynamic>),
+      costAnalysis: CostAnalysis.fromJson(
+        json['costAnalysis'] as Map<String, dynamic>,
+      ),
       trends: (json['trends'] as List<dynamic>)
           .map((e) => TrendData.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -705,16 +713,16 @@ Map<String, dynamic> _$FinancialDashboardToJson(_FinancialDashboard instance) =>
     };
 
 _KPI _$KPIFromJson(Map<String, dynamic> json) => _KPI(
-      value: (json['value'] as num).toDouble(),
-      change: (json['change'] as num).toDouble(),
-      trend: json['trend'] as String,
-    );
+  value: (json['value'] as num).toDouble(),
+  change: (json['change'] as num).toDouble(),
+  trend: json['trend'] as String,
+);
 
 Map<String, dynamic> _$KPIToJson(_KPI instance) => <String, dynamic>{
-      'value': instance.value,
-      'change': instance.change,
-      'trend': instance.trend,
-    };
+  'value': instance.value,
+  'change': instance.change,
+  'trend': instance.trend,
+};
 
 _RevenueByService _$RevenueByServiceFromJson(Map<String, dynamic> json) =>
     _RevenueByService(
@@ -740,21 +748,22 @@ _ClientProfitability _$ClientProfitabilityFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ClientProfitabilityToJson(
-        _ClientProfitability instance) =>
-    <String, dynamic>{
-      'clientId': instance.clientId,
-      'revenue': instance.revenue,
-      'cost': instance.cost,
-      'profit': instance.profit,
-      'margin': instance.margin,
-    };
+  _ClientProfitability instance,
+) => <String, dynamic>{
+  'clientId': instance.clientId,
+  'revenue': instance.revenue,
+  'cost': instance.cost,
+  'profit': instance.profit,
+  'margin': instance.margin,
+};
 
 _CostAnalysis _$CostAnalysisFromJson(Map<String, dynamic> json) =>
     _CostAnalysis(
       labor: CostCategory.fromJson(json['labor'] as Map<String, dynamic>),
       overhead: CostCategory.fromJson(json['overhead'] as Map<String, dynamic>),
-      materials:
-          CostCategory.fromJson(json['materials'] as Map<String, dynamic>),
+      materials: CostCategory.fromJson(
+        json['materials'] as Map<String, dynamic>,
+      ),
       other: CostCategory.fromJson(json['other'] as Map<String, dynamic>),
     );
 
@@ -779,10 +788,10 @@ Map<String, dynamic> _$CostCategoryToJson(_CostCategory instance) =>
     };
 
 _TrendData _$TrendDataFromJson(Map<String, dynamic> json) => _TrendData(
-      month: json['month'] as String,
-      revenue: (json['revenue'] as num).toDouble(),
-      profit: (json['profit'] as num).toDouble(),
-    );
+  month: json['month'] as String,
+  revenue: (json['revenue'] as num).toDouble(),
+  profit: (json['profit'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$TrendDataToJson(_TrendData instance) =>
     <String, dynamic>{
@@ -792,32 +801,32 @@ Map<String, dynamic> _$TrendDataToJson(_TrendData instance) =>
     };
 
 _Budget _$BudgetFromJson(Map<String, dynamic> json) => _Budget(
-      budgetId: json['budgetId'] as String,
-      organizationId: json['organizationId'] as String,
-      period: json['period'] as String,
-      createdAt: json['createdAt'] as String,
-      revenue: BudgetCategory.fromJson(json['revenue'] as Map<String, dynamic>),
-      expenses:
-          BudgetCategory.fromJson(json['expenses'] as Map<String, dynamic>),
-      profit: BudgetCategory.fromJson(json['profit'] as Map<String, dynamic>),
-      assumptions: (json['assumptions'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      scenarios:
-          BudgetScenarios.fromJson(json['scenarios'] as Map<String, dynamic>),
-    );
+  budgetId: json['budgetId'] as String,
+  organizationId: json['organizationId'] as String,
+  period: json['period'] as String,
+  createdAt: json['createdAt'] as String,
+  revenue: BudgetCategory.fromJson(json['revenue'] as Map<String, dynamic>),
+  expenses: BudgetCategory.fromJson(json['expenses'] as Map<String, dynamic>),
+  profit: BudgetCategory.fromJson(json['profit'] as Map<String, dynamic>),
+  assumptions: (json['assumptions'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  scenarios: BudgetScenarios.fromJson(
+    json['scenarios'] as Map<String, dynamic>,
+  ),
+);
 
 Map<String, dynamic> _$BudgetToJson(_Budget instance) => <String, dynamic>{
-      'budgetId': instance.budgetId,
-      'organizationId': instance.organizationId,
-      'period': instance.period,
-      'createdAt': instance.createdAt,
-      'revenue': instance.revenue,
-      'expenses': instance.expenses,
-      'profit': instance.profit,
-      'assumptions': instance.assumptions,
-      'scenarios': instance.scenarios,
-    };
+  'budgetId': instance.budgetId,
+  'organizationId': instance.organizationId,
+  'period': instance.period,
+  'createdAt': instance.createdAt,
+  'revenue': instance.revenue,
+  'expenses': instance.expenses,
+  'profit': instance.profit,
+  'assumptions': instance.assumptions,
+  'scenarios': instance.scenarios,
+};
 
 _BudgetCategory _$BudgetCategoryFromJson(Map<String, dynamic> json) =>
     _BudgetCategory(
@@ -826,10 +835,7 @@ _BudgetCategory _$BudgetCategoryFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$BudgetCategoryToJson(_BudgetCategory instance) =>
-    <String, dynamic>{
-      'total': instance.total,
-      'breakdown': instance.breakdown,
-    };
+    <String, dynamic>{'total': instance.total, 'breakdown': instance.breakdown};
 
 _BudgetScenarios _$BudgetScenariosFromJson(Map<String, dynamic> json) =>
     _BudgetScenarios(
@@ -852,32 +858,29 @@ _BudgetScenario _$BudgetScenarioFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$BudgetScenarioToJson(_BudgetScenario instance) =>
-    <String, dynamic>{
-      'revenue': instance.revenue,
-      'profit': instance.profit,
-    };
+    <String, dynamic>{'revenue': instance.revenue, 'profit': instance.profit};
 
 _Payment _$PaymentFromJson(Map<String, dynamic> json) => _Payment(
-      paymentId: json['paymentId'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      method: json['method'] as String,
-      status: json['status'] as String,
-      processedAt: json['processedAt'] as String,
-      routing: PaymentRouting.fromJson(json['routing'] as Map<String, dynamic>),
-      fees: PaymentFees.fromJson(json['fees'] as Map<String, dynamic>),
-      estimatedCompletion: json['estimatedCompletion'] as String,
-    );
+  paymentId: json['paymentId'] as String,
+  amount: (json['amount'] as num).toDouble(),
+  method: json['method'] as String,
+  status: json['status'] as String,
+  processedAt: json['processedAt'] as String,
+  routing: PaymentRouting.fromJson(json['routing'] as Map<String, dynamic>),
+  fees: PaymentFees.fromJson(json['fees'] as Map<String, dynamic>),
+  estimatedCompletion: json['estimatedCompletion'] as String,
+);
 
 Map<String, dynamic> _$PaymentToJson(_Payment instance) => <String, dynamic>{
-      'paymentId': instance.paymentId,
-      'amount': instance.amount,
-      'method': instance.method,
-      'status': instance.status,
-      'processedAt': instance.processedAt,
-      'routing': instance.routing,
-      'fees': instance.fees,
-      'estimatedCompletion': instance.estimatedCompletion,
-    };
+  'paymentId': instance.paymentId,
+  'amount': instance.amount,
+  'method': instance.method,
+  'status': instance.status,
+  'processedAt': instance.processedAt,
+  'routing': instance.routing,
+  'fees': instance.fees,
+  'estimatedCompletion': instance.estimatedCompletion,
+};
 
 _PaymentRouting _$PaymentRoutingFromJson(Map<String, dynamic> json) =>
     _PaymentRouting(
@@ -894,10 +897,10 @@ Map<String, dynamic> _$PaymentRoutingToJson(_PaymentRouting instance) =>
     };
 
 _PaymentFees _$PaymentFeesFromJson(Map<String, dynamic> json) => _PaymentFees(
-      processing: (json['processing'] as num).toDouble(),
-      gateway: (json['gateway'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
-    );
+  processing: (json['processing'] as num).toDouble(),
+  gateway: (json['gateway'] as num).toDouble(),
+  total: (json['total'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$PaymentFeesToJson(_PaymentFees instance) =>
     <String, dynamic>{
@@ -906,22 +909,21 @@ Map<String, dynamic> _$PaymentFeesToJson(_PaymentFees instance) =>
       'total': instance.total,
     };
 
-_ComplianceCheck _$ComplianceCheckFromJson(Map<String, dynamic> json) =>
-    _ComplianceCheck(
-      organizationId: json['organizationId'] as String,
-      checkedAt: json['checkedAt'] as String,
-      ndis: ComplianceArea.fromJson(json['ndis'] as Map<String, dynamic>),
-      tax: ComplianceArea.fromJson(json['tax'] as Map<String, dynamic>),
-      reporting:
-          ComplianceArea.fromJson(json['reporting'] as Map<String, dynamic>),
-      overallStatus: json['overallStatus'] as String,
-      score: (json['score'] as num).toDouble(),
-      issues:
-          (json['issues'] as List<dynamic>).map((e) => e as String).toList(),
-      recommendations: (json['recommendations'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-    );
+_ComplianceCheck _$ComplianceCheckFromJson(
+  Map<String, dynamic> json,
+) => _ComplianceCheck(
+  organizationId: json['organizationId'] as String,
+  checkedAt: json['checkedAt'] as String,
+  ndis: ComplianceArea.fromJson(json['ndis'] as Map<String, dynamic>),
+  tax: ComplianceArea.fromJson(json['tax'] as Map<String, dynamic>),
+  reporting: ComplianceArea.fromJson(json['reporting'] as Map<String, dynamic>),
+  overallStatus: json['overallStatus'] as String,
+  score: (json['score'] as num).toDouble(),
+  issues: (json['issues'] as List<dynamic>).map((e) => e as String).toList(),
+  recommendations: (json['recommendations'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+);
 
 Map<String, dynamic> _$ComplianceCheckToJson(_ComplianceCheck instance) =>
     <String, dynamic>{
@@ -945,10 +947,7 @@ _ComplianceArea _$ComplianceAreaFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ComplianceAreaToJson(_ComplianceArea instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'checks': instance.checks,
-    };
+    <String, dynamic>{'status': instance.status, 'checks': instance.checks};
 
 _ComplianceAreaCheck _$ComplianceAreaCheckFromJson(Map<String, dynamic> json) =>
     _ComplianceAreaCheck(
@@ -957,11 +956,8 @@ _ComplianceAreaCheck _$ComplianceAreaCheckFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ComplianceAreaCheckToJson(
-        _ComplianceAreaCheck instance) =>
-    <String, dynamic>{
-      'check': instance.check,
-      'passed': instance.passed,
-    };
+  _ComplianceAreaCheck instance,
+) => <String, dynamic>{'check': instance.check, 'passed': instance.passed};
 
 _ClientCredit _$ClientCreditFromJson(Map<String, dynamic> json) =>
     _ClientCredit(
@@ -970,10 +966,12 @@ _ClientCredit _$ClientCreditFromJson(Map<String, dynamic> json) =>
       analyzedAt: json['analyzedAt'] as String,
       current: CreditCurrent.fromJson(json['current'] as Map<String, dynamic>),
       recommended: CreditRecommended.fromJson(
-          json['recommended'] as Map<String, dynamic>),
+        json['recommended'] as Map<String, dynamic>,
+      ),
       riskScore: (json['riskScore'] as num).toDouble(),
       paymentHistory: PaymentHistory.fromJson(
-          json['paymentHistory'] as Map<String, dynamic>),
+        json['paymentHistory'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$ClientCreditToJson(_ClientCredit instance) =>
@@ -1037,8 +1035,9 @@ _ClientLifetimeValue _$ClientLifetimeValueFromJson(Map<String, dynamic> json) =>
       organizationId: json['organizationId'] as String,
       calculatedAt: json['calculatedAt'] as String,
       current: CLVCurrent.fromJson(json['current'] as Map<String, dynamic>),
-      predicted:
-          CLVPredicted.fromJson(json['predicted'] as Map<String, dynamic>),
+      predicted: CLVPredicted.fromJson(
+        json['predicted'] as Map<String, dynamic>,
+      ),
       segments: json['segments'] as String,
       opportunities: (json['opportunities'] as List<dynamic>)
           .map((e) => UpsellOpportunity.fromJson(e as Map<String, dynamic>))
@@ -1046,22 +1045,22 @@ _ClientLifetimeValue _$ClientLifetimeValueFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ClientLifetimeValueToJson(
-        _ClientLifetimeValue instance) =>
-    <String, dynamic>{
-      'clientId': instance.clientId,
-      'organizationId': instance.organizationId,
-      'calculatedAt': instance.calculatedAt,
-      'current': instance.current,
-      'predicted': instance.predicted,
-      'segments': instance.segments,
-      'opportunities': instance.opportunities,
-    };
+  _ClientLifetimeValue instance,
+) => <String, dynamic>{
+  'clientId': instance.clientId,
+  'organizationId': instance.organizationId,
+  'calculatedAt': instance.calculatedAt,
+  'current': instance.current,
+  'predicted': instance.predicted,
+  'segments': instance.segments,
+  'opportunities': instance.opportunities,
+};
 
 _CLVCurrent _$CLVCurrentFromJson(Map<String, dynamic> json) => _CLVCurrent(
-      totalRevenue: (json['totalRevenue'] as num).toDouble(),
-      totalProfit: (json['totalProfit'] as num).toDouble(),
-      tenure: (json['tenure'] as num).toInt(),
-    );
+  totalRevenue: (json['totalRevenue'] as num).toDouble(),
+  totalProfit: (json['totalProfit'] as num).toDouble(),
+  tenure: (json['tenure'] as num).toInt(),
+);
 
 Map<String, dynamic> _$CLVCurrentToJson(_CLVCurrent instance) =>
     <String, dynamic>{
@@ -1103,17 +1102,21 @@ _ExecutiveReport _$ExecutiveReportFromJson(Map<String, dynamic> json) =>
       organizationId: json['organizationId'] as String,
       period: json['period'] as String,
       generatedAt: json['generatedAt'] as String,
-      profitAndLoss:
-          ProfitAndLoss.fromJson(json['profitAndLoss'] as Map<String, dynamic>),
-      balanceSheet:
-          BalanceSheet.fromJson(json['balanceSheet'] as Map<String, dynamic>),
-      cashFlow:
-          CashFlowStatement.fromJson(json['cashFlow'] as Map<String, dynamic>),
+      profitAndLoss: ProfitAndLoss.fromJson(
+        json['profitAndLoss'] as Map<String, dynamic>,
+      ),
+      balanceSheet: BalanceSheet.fromJson(
+        json['balanceSheet'] as Map<String, dynamic>,
+      ),
+      cashFlow: CashFlowStatement.fromJson(
+        json['cashFlow'] as Map<String, dynamic>,
+      ),
       keyMetrics: (json['keyMetrics'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ),
-      insights:
-          (json['insights'] as List<dynamic>).map((e) => e as String).toList(),
+      insights: (json['insights'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$ExecutiveReportToJson(_ExecutiveReport instance) =>
@@ -1148,10 +1151,12 @@ Map<String, dynamic> _$ProfitAndLossToJson(_ProfitAndLoss instance) =>
 
 _BalanceSheet _$BalanceSheetFromJson(Map<String, dynamic> json) =>
     _BalanceSheet(
-      assets:
-          BalanceSheetAssets.fromJson(json['assets'] as Map<String, dynamic>),
+      assets: BalanceSheetAssets.fromJson(
+        json['assets'] as Map<String, dynamic>,
+      ),
       liabilities: BalanceSheetLiabilities.fromJson(
-          json['liabilities'] as Map<String, dynamic>),
+        json['liabilities'] as Map<String, dynamic>,
+      ),
       equity: (json['equity'] as num).toDouble(),
     );
 
@@ -1177,20 +1182,20 @@ Map<String, dynamic> _$BalanceSheetAssetsToJson(_BalanceSheetAssets instance) =>
     };
 
 _BalanceSheetLiabilities _$BalanceSheetLiabilitiesFromJson(
-        Map<String, dynamic> json) =>
-    _BalanceSheetLiabilities(
-      current: (json['current'] as num).toDouble(),
-      longTerm: (json['longTerm'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
-    );
+  Map<String, dynamic> json,
+) => _BalanceSheetLiabilities(
+  current: (json['current'] as num).toDouble(),
+  longTerm: (json['longTerm'] as num).toDouble(),
+  total: (json['total'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$BalanceSheetLiabilitiesToJson(
-        _BalanceSheetLiabilities instance) =>
-    <String, dynamic>{
-      'current': instance.current,
-      'longTerm': instance.longTerm,
-      'total': instance.total,
-    };
+  _BalanceSheetLiabilities instance,
+) => <String, dynamic>{
+  'current': instance.current,
+  'longTerm': instance.longTerm,
+  'total': instance.total,
+};
 
 _CashFlowStatement _$CashFlowStatementFromJson(Map<String, dynamic> json) =>
     _CashFlowStatement(

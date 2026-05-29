@@ -366,7 +366,9 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                 MaterialPageRoute(
                   builder: (context) => ScheduleAssignment(
                     userEmail: widget.userEmail,
+                    userFullName: widget.userName,
                     clientEmail: client.clientEmail,
+                    clientFullName: client.displayName,
                     clientId:
                         (client.id != null && client.id!.trim().isNotEmpty)
                             ? client.id

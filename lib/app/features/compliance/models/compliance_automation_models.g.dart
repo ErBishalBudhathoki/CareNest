@@ -11,15 +11,17 @@ _ComplianceScan _$ComplianceScanFromJson(Map<String, dynamic> json) =>
       organizationId: json['organizationId'] as String,
       scanDate: json['scanDate'] as String,
       complianceScore: ComplianceScore.fromJson(
-          json['complianceScore'] as Map<String, dynamic>),
+        json['complianceScore'] as Map<String, dynamic>,
+      ),
       issues: (json['issues'] as List<dynamic>)
           .map((e) => ComplianceIssue.fromJson(e as Map<String, dynamic>))
           .toList(),
       warnings: (json['warnings'] as List<dynamic>)
           .map((e) => ComplianceIssue.fromJson(e as Map<String, dynamic>))
           .toList(),
-      summary:
-          ComplianceSummary.fromJson(json['summary'] as Map<String, dynamic>),
+      summary: ComplianceSummary.fromJson(
+        json['summary'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$ComplianceScanToJson(_ComplianceScan instance) =>
@@ -36,8 +38,9 @@ _ComplianceScore _$ComplianceScoreFromJson(Map<String, dynamic> json) =>
     _ComplianceScore(
       score: (json['score'] as num).toInt(),
       riskLevel: json['riskLevel'] as String,
-      breakdown:
-          ScoreBreakdown.fromJson(json['breakdown'] as Map<String, dynamic>),
+      breakdown: ScoreBreakdown.fromJson(
+        json['breakdown'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$ComplianceScoreToJson(_ComplianceScore instance) =>
@@ -143,33 +146,33 @@ Map<String, dynamic> _$ComplianceAlertToJson(_ComplianceAlert instance) =>
       'status': instance.status,
     };
 
-_ComplianceReport _$ComplianceReportFromJson(Map<String, dynamic> json) =>
-    _ComplianceReport(
-      reportId: json['reportId'] as String,
-      organizationId: json['organizationId'] as String,
-      reportType: json['reportType'] as String,
-      generatedDate: json['generatedDate'] as String,
-      complianceScore: ComplianceScore.fromJson(
-          json['complianceScore'] as Map<String, dynamic>),
-      summary:
-          ComplianceSummary.fromJson(json['summary'] as Map<String, dynamic>),
-      expiringDocuments: (json['expiringDocuments'] as List<dynamic>)
-          .map((e) => ExpiringDocument.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      recommendations: (json['recommendations'] as List<dynamic>)
-          .map((e) =>
-              ComplianceRecommendation.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      issues: (json['issues'] as List<dynamic>?)
-          ?.map((e) => ComplianceIssue.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      warnings: (json['warnings'] as List<dynamic>?)
-          ?.map((e) => ComplianceIssue.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      auditTrail: json['auditTrail'] == null
-          ? null
-          : AuditTrail.fromJson(json['auditTrail'] as Map<String, dynamic>),
-    );
+_ComplianceReport _$ComplianceReportFromJson(
+  Map<String, dynamic> json,
+) => _ComplianceReport(
+  reportId: json['reportId'] as String,
+  organizationId: json['organizationId'] as String,
+  reportType: json['reportType'] as String,
+  generatedDate: json['generatedDate'] as String,
+  complianceScore: ComplianceScore.fromJson(
+    json['complianceScore'] as Map<String, dynamic>,
+  ),
+  summary: ComplianceSummary.fromJson(json['summary'] as Map<String, dynamic>),
+  expiringDocuments: (json['expiringDocuments'] as List<dynamic>)
+      .map((e) => ExpiringDocument.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  recommendations: (json['recommendations'] as List<dynamic>)
+      .map((e) => ComplianceRecommendation.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  issues: (json['issues'] as List<dynamic>?)
+      ?.map((e) => ComplianceIssue.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  warnings: (json['warnings'] as List<dynamic>?)
+      ?.map((e) => ComplianceIssue.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  auditTrail: json['auditTrail'] == null
+      ? null
+      : AuditTrail.fromJson(json['auditTrail'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$ComplianceReportToJson(_ComplianceReport instance) =>
     <String, dynamic>{
@@ -187,26 +190,26 @@ Map<String, dynamic> _$ComplianceReportToJson(_ComplianceReport instance) =>
     };
 
 _ComplianceRecommendation _$ComplianceRecommendationFromJson(
-        Map<String, dynamic> json) =>
-    _ComplianceRecommendation(
-      priority: json['priority'] as String,
-      action: json['action'] as String,
-      description: json['description'] as String,
-    );
+  Map<String, dynamic> json,
+) => _ComplianceRecommendation(
+  priority: json['priority'] as String,
+  action: json['action'] as String,
+  description: json['description'] as String,
+);
 
 Map<String, dynamic> _$ComplianceRecommendationToJson(
-        _ComplianceRecommendation instance) =>
-    <String, dynamic>{
-      'priority': instance.priority,
-      'action': instance.action,
-      'description': instance.description,
-    };
+  _ComplianceRecommendation instance,
+) => <String, dynamic>{
+  'priority': instance.priority,
+  'action': instance.action,
+  'description': instance.description,
+};
 
 _AuditTrail _$AuditTrailFromJson(Map<String, dynamic> json) => _AuditTrail(
-      lastAuditDate: json['lastAuditDate'] as String,
-      nextAuditDate: json['nextAuditDate'] as String,
-      complianceHistory: json['complianceHistory'] as List<dynamic>,
-    );
+  lastAuditDate: json['lastAuditDate'] as String,
+  nextAuditDate: json['nextAuditDate'] as String,
+  complianceHistory: json['complianceHistory'] as List<dynamic>,
+);
 
 Map<String, dynamic> _$AuditTrailToJson(_AuditTrail instance) =>
     <String, dynamic>{

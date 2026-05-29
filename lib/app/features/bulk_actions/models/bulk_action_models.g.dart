@@ -38,12 +38,12 @@ _BulkTimesheetResult _$BulkTimesheetResultFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$BulkTimesheetResultToJson(
-        _BulkTimesheetResult instance) =>
-    <String, dynamic>{
-      'approvedCount': instance.approvedCount,
-      'rejectedCount': instance.rejectedCount,
-      'totalRequested': instance.totalRequested,
-    };
+  _BulkTimesheetResult instance,
+) => <String, dynamic>{
+  'approvedCount': instance.approvedCount,
+  'rejectedCount': instance.rejectedCount,
+  'totalRequested': instance.totalRequested,
+};
 
 _InvoicePreviewItem _$InvoicePreviewItemFromJson(Map<String, dynamic> json) =>
     _InvoicePreviewItem(
@@ -76,15 +76,15 @@ _AppointmentLineItem _$AppointmentLineItemFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$AppointmentLineItemToJson(
-        _AppointmentLineItem instance) =>
-    <String, dynamic>{
-      'appointmentId': instance.appointmentId,
-      'date': instance.date.toIso8601String(),
-      'service': instance.service,
-      'duration': instance.duration,
-      'rate': instance.rate,
-      'amount': instance.amount,
-    };
+  _AppointmentLineItem instance,
+) => <String, dynamic>{
+  'appointmentId': instance.appointmentId,
+  'date': instance.date.toIso8601String(),
+  'service': instance.service,
+  'duration': instance.duration,
+  'rate': instance.rate,
+  'amount': instance.amount,
+};
 
 _InvoicePreview _$InvoicePreviewFromJson(Map<String, dynamic> json) =>
     _InvoicePreview(
@@ -145,8 +145,9 @@ _WorkerSuggestion _$WorkerSuggestionFromJson(Map<String, dynamic> json) =>
       workerEmail: json['workerEmail'] as String,
       score: (json['score'] as num).toDouble(),
       matchReason: json['matchReason'] as String,
-      conflicts:
-          (json['conflicts'] as List<dynamic>).map((e) => e as String).toList(),
+      conflicts: (json['conflicts'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       rating: (json['rating'] as num).toDouble(),
     );
 
@@ -198,26 +199,26 @@ Map<String, dynamic> _$AssignmentResultToJson(_AssignmentResult instance) =>
     };
 
 _BulkAssignmentResult _$BulkAssignmentResultFromJson(
-        Map<String, dynamic> json) =>
-    _BulkAssignmentResult(
-      successfulCount: (json['successfulCount'] as num).toInt(),
-      failedCount: (json['failedCount'] as num).toInt(),
-      successful: (json['successful'] as List<dynamic>)
-          .map((e) => AssignmentResult.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      failed: (json['failed'] as List<dynamic>)
-          .map((e) => AssignmentResult.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => _BulkAssignmentResult(
+  successfulCount: (json['successfulCount'] as num).toInt(),
+  failedCount: (json['failedCount'] as num).toInt(),
+  successful: (json['successful'] as List<dynamic>)
+      .map((e) => AssignmentResult.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  failed: (json['failed'] as List<dynamic>)
+      .map((e) => AssignmentResult.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$BulkAssignmentResultToJson(
-        _BulkAssignmentResult instance) =>
-    <String, dynamic>{
-      'successfulCount': instance.successfulCount,
-      'failedCount': instance.failedCount,
-      'successful': instance.successful,
-      'failed': instance.failed,
-    };
+  _BulkAssignmentResult instance,
+) => <String, dynamic>{
+  'successfulCount': instance.successfulCount,
+  'failedCount': instance.failedCount,
+  'successful': instance.successful,
+  'failed': instance.failed,
+};
 
 _MessageRecipient _$MessageRecipientFromJson(Map<String, dynamic> json) =>
     _MessageRecipient(
@@ -243,8 +244,9 @@ _MessageTemplate _$MessageTemplateFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       subject: json['subject'] as String,
       body: json['body'] as String,
-      variables:
-          (json['variables'] as List<dynamic>).map((e) => e as String).toList(),
+      variables: (json['variables'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$MessageTemplateToJson(_MessageTemplate instance) =>
@@ -257,26 +259,27 @@ Map<String, dynamic> _$MessageTemplateToJson(_MessageTemplate instance) =>
     };
 
 _BulkMessage _$BulkMessageFromJson(Map<String, dynamic> json) => _BulkMessage(
-      recipientIds: (json['recipientIds'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      subject: json['subject'] as String,
-      message: json['message'] as String,
-      channels: (json['channels'] as List<dynamic>)
-          .map((e) => $enumDecode(_$MessageChannelEnumMap, e))
-          .toList(),
-      scheduledFor: json['scheduledFor'] == null
-          ? null
-          : DateTime.parse(json['scheduledFor'] as String),
-    );
+  recipientIds: (json['recipientIds'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  subject: json['subject'] as String,
+  message: json['message'] as String,
+  channels: (json['channels'] as List<dynamic>)
+      .map((e) => $enumDecode(_$MessageChannelEnumMap, e))
+      .toList(),
+  scheduledFor: json['scheduledFor'] == null
+      ? null
+      : DateTime.parse(json['scheduledFor'] as String),
+);
 
 Map<String, dynamic> _$BulkMessageToJson(_BulkMessage instance) =>
     <String, dynamic>{
       'recipientIds': instance.recipientIds,
       'subject': instance.subject,
       'message': instance.message,
-      'channels':
-          instance.channels.map((e) => _$MessageChannelEnumMap[e]!).toList(),
+      'channels': instance.channels
+          .map((e) => _$MessageChannelEnumMap[e]!)
+          .toList(),
       'scheduledFor': instance.scheduledFor?.toIso8601String(),
     };
 

@@ -77,6 +77,10 @@ class ClientPortalRepository {
             ? 'Support Item $supportItemNumber'
             : 'Support Item');
 
+    final roundedHours = hoursWorked > 0
+        ? double.parse(hoursWorked.toStringAsFixed(2))
+        : (quantityLooksLikeNumber ? (quantityInt?.toDouble() ?? 0.0) : 0.0);
+
     final normalized = <String, dynamic>{
       ...item,
       'supportItemNumber': supportItemNumber,
@@ -88,9 +92,8 @@ class ClientPortalRepository {
       'unit': unit.isNotEmpty ? unit : 'hr',
       'total': total,
       'totalPrice': total,
-      'hoursWorked': hoursWorked > 0
-          ? hoursWorked
-          : (quantityLooksLikeNumber ? (quantityInt?.toDouble() ?? 0.0) : 0.0),
+      'hoursWorked': roundedHours,
+      'hours': roundedHours, // Overwrite raw hours so fallback never shows long decimals
     };
 
     // If legacy payload stored support item number in quantity, recover it.
