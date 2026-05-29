@@ -81,8 +81,15 @@ class ClientPortalViewModel extends StateNotifier<ClientPortalState> {
       final response =
           await _repository.getWorkerLocation(appointmentId: appointmentId);
       if (response['success'] == true && response['data'] != null) {
-        final location = WorkerLocation.fromJson(response['data']);
-        state = state.copyWith(workerLocation: location, error: null);
+        try {
+          final location = WorkerLocation.fromJson(response['data']);
+          state = state.copyWith(workerLocation: location, error: null);
+        } catch (e) {
+          state = state.copyWith(
+            workerLocation: null,
+            error: 'Worker location data is currently unavailable',
+          );
+        }
       } else {
         state = state.copyWith(
           workerLocation: null,

@@ -70,16 +70,16 @@ _UpcomingAppointment _$UpcomingAppointmentFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$UpcomingAppointmentToJson(
-        _UpcomingAppointment instance) =>
-    <String, dynamic>{
-      'appointmentId': instance.appointmentId,
-      'workerName': instance.workerName,
-      'serviceName': instance.serviceName,
-      'date': instance.date,
-      'startTime': instance.startTime,
-      'endTime': instance.endTime,
-      'status': instance.status,
-    };
+  _UpcomingAppointment instance,
+) => <String, dynamic>{
+  'appointmentId': instance.appointmentId,
+  'workerName': instance.workerName,
+  'serviceName': instance.serviceName,
+  'date': instance.date,
+  'startTime': instance.startTime,
+  'endTime': instance.endTime,
+  'status': instance.status,
+};
 
 _RecentActivity _$RecentActivityFromJson(Map<String, dynamic> json) =>
     _RecentActivity(
@@ -153,8 +153,9 @@ _AppointmentStatus _$AppointmentStatusFromJson(Map<String, dynamic> json) =>
       actualEndTime: json['actualEndTime'] as String?,
       eta: json['eta'] as String?,
       notes: (json['notes'] as List<dynamic>).map((e) => e as String).toList(),
-      photos:
-          (json['photos'] as List<dynamic>).map((e) => e as String).toList(),
+      photos: (json['photos'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       checklistItems: (json['checklistItems'] as List<dynamic>)
           .map((e) => ChecklistItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -185,10 +186,7 @@ _ChecklistItem _$ChecklistItemFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ChecklistItemToJson(_ChecklistItem instance) =>
-    <String, dynamic>{
-      'item': instance.item,
-      'completed': instance.completed,
-    };
+    <String, dynamic>{'item': instance.item, 'completed': instance.completed};
 
 _ServiceHistory _$ServiceHistoryFromJson(Map<String, dynamic> json) =>
     _ServiceHistory(
@@ -221,6 +219,7 @@ _ClientAppointment _$ClientAppointmentFromJson(Map<String, dynamic> json) =>
       startTime: json['startTime'] as String,
       endTime: json['endTime'] as String,
       userEmail: json['userEmail'] as String?,
+      workerName: json['workerName'] as String?,
       assignmentId: json['assignmentId'] as String?,
       scheduleId: json['scheduleId'] as String?,
     );
@@ -232,47 +231,48 @@ Map<String, dynamic> _$ClientAppointmentToJson(_ClientAppointment instance) =>
       'startTime': instance.startTime,
       'endTime': instance.endTime,
       'userEmail': instance.userEmail,
+      'workerName': instance.workerName,
       'assignmentId': instance.assignmentId,
       'scheduleId': instance.scheduleId,
     };
 
 _ClientAppointmentDetail _$ClientAppointmentDetailFromJson(
-        Map<String, dynamic> json) =>
-    _ClientAppointmentDetail(
-      id: json['id'] as String,
-      date: json['date'] as String,
-      startTime: json['startTime'] as String,
-      endTime: json['endTime'] as String,
-      status: json['status'] as String,
-      notes: json['notes'] as String?,
-      employee: json['employee'] == null
-          ? null
-          : ClientEmployee.fromJson(json['employee'] as Map<String, dynamic>),
-      services: (json['services'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      serviceName: json['serviceName'] as String?,
-      location: json['location'] as String?,
-      assignmentId: json['assignmentId'] as String?,
-      scheduleId: json['scheduleId'] as String?,
-    );
+  Map<String, dynamic> json,
+) => _ClientAppointmentDetail(
+  id: json['id'] as String,
+  date: json['date'] as String,
+  startTime: json['startTime'] as String,
+  endTime: json['endTime'] as String,
+  status: json['status'] as String,
+  notes: json['notes'] as String?,
+  employee: json['employee'] == null
+      ? null
+      : ClientEmployee.fromJson(json['employee'] as Map<String, dynamic>),
+  services: (json['services'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  serviceName: json['serviceName'] as String?,
+  location: json['location'] as String?,
+  assignmentId: json['assignmentId'] as String?,
+  scheduleId: json['scheduleId'] as String?,
+);
 
 Map<String, dynamic> _$ClientAppointmentDetailToJson(
-        _ClientAppointmentDetail instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'date': instance.date,
-      'startTime': instance.startTime,
-      'endTime': instance.endTime,
-      'status': instance.status,
-      'notes': instance.notes,
-      'employee': instance.employee,
-      'services': instance.services,
-      'serviceName': instance.serviceName,
-      'location': instance.location,
-      'assignmentId': instance.assignmentId,
-      'scheduleId': instance.scheduleId,
-    };
+  _ClientAppointmentDetail instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'date': instance.date,
+  'startTime': instance.startTime,
+  'endTime': instance.endTime,
+  'status': instance.status,
+  'notes': instance.notes,
+  'employee': instance.employee,
+  'services': instance.services,
+  'serviceName': instance.serviceName,
+  'location': instance.location,
+  'assignmentId': instance.assignmentId,
+  'scheduleId': instance.scheduleId,
+};
 
 _ClientEmployee _$ClientEmployeeFromJson(Map<String, dynamic> json) =>
     _ClientEmployee(

@@ -5,10 +5,12 @@ import '../models/trip_model.dart';
 
 class TripListItem extends StatelessWidget {
   final Trip trip;
+  final String? clientName;
 
   const TripListItem({
     super.key,
     required this.trip,
+    this.clientName,
   });
 
   @override
@@ -33,6 +35,7 @@ class TripListItem extends StatelessWidget {
                         .titleMedium
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: BauhausDesign.textDark,
                         ),
                   ),
                   const SizedBox(height: BauhausDesign.space1),
@@ -73,7 +76,7 @@ class TripListItem extends StatelessWidget {
 
   String _getClientName() {
     if (trip.tripType == 'WITH_CLIENT') {
-      return trip.clientId ?? 'Client Trip';
+      return clientName ?? 'Client Trip';
     } else if (trip.tripType == 'BETWEEN_CLIENTS') {
       return 'Between Clients';
     } else {

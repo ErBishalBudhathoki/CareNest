@@ -224,9 +224,9 @@ class LoginViewModel extends ChangeNotifier {
           await _sharedPrefs.setString('First LastName', fullName);
         }
 
-        if (resolvedRole == UserRole.client && clientId.isEmpty) {
+        if ((resolvedRole == UserRole.client || resolvedRole == UserRole.family) && clientId.isEmpty) {
           throw Exception(
-              'Client account is not linked yet. Please contact support.');
+              'Account is not linked yet. Please contact support.');
         }
 
         await SessionTimeoutService(sharedPrefs: _sharedPrefs)
@@ -362,6 +362,19 @@ class LoginViewModel extends ChangeNotifier {
         arguments: {
           'email': userData['email'],
           'clientId': clientId,
+        },
+      );
+      return;
+    }
+
+    if (resolvedRole == UserRole.family) {
+      final clientId = userData['clientId']?.toString() ?? '';
+      Navigator.pushReplacementNamed(
+        context,
+        Routes.clientDashboard,
+        arguments: {
+          'clientId': clientId,
+          'isFamilyViewer': true,
         },
       );
       return;

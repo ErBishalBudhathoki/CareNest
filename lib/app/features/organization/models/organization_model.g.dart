@@ -7,20 +7,20 @@ part of 'organization_model.dart';
 // **************************************************************************
 
 _Address _$AddressFromJson(Map<String, dynamic> json) => _Address(
-      street: json['street'] as String?,
-      city: json['city'] as String?,
-      state: json['state'] as String?,
-      postcode: json['postcode'] as String?,
-      country: json['country'] as String?,
-    );
+  street: json['street'] as String?,
+  city: json['city'] as String?,
+  state: json['state'] as String?,
+  postcode: json['postcode'] as String?,
+  country: json['country'] as String?,
+);
 
 Map<String, dynamic> _$AddressToJson(_Address instance) => <String, dynamic>{
-      'street': instance.street,
-      'city': instance.city,
-      'state': instance.state,
-      'postcode': instance.postcode,
-      'country': instance.country,
-    };
+  'street': instance.street,
+  'city': instance.city,
+  'state': instance.state,
+  'postcode': instance.postcode,
+  'country': instance.country,
+};
 
 _ContactDetails _$ContactDetailsFromJson(Map<String, dynamic> json) =>
     _ContactDetails(
@@ -37,11 +37,11 @@ Map<String, dynamic> _$ContactDetailsToJson(_ContactDetails instance) =>
     };
 
 _BankDetails _$BankDetailsFromJson(Map<String, dynamic> json) => _BankDetails(
-      bankName: json['bankName'] as String?,
-      accountName: json['accountName'] as String?,
-      bsb: json['bsb'] as String?,
-      accountNumber: json['accountNumber'] as String?,
-    );
+  bankName: json['bankName'] as String?,
+  accountName: json['accountName'] as String?,
+  bsb: json['bsb'] as String?,
+  accountNumber: json['accountNumber'] as String?,
+);
 
 Map<String, dynamic> _$BankDetailsToJson(_BankDetails instance) =>
     <String, dynamic>{
@@ -75,14 +75,16 @@ _Organization _$OrganizationFromJson(Map<String, dynamic> json) =>
       contactDetails: json['contactDetails'] == null
           ? null
           : ContactDetails.fromJson(
-              json['contactDetails'] as Map<String, dynamic>),
+              json['contactDetails'] as Map<String, dynamic>,
+            ),
       bankDetails: json['bankDetails'] == null
           ? null
           : BankDetails.fromJson(json['bankDetails'] as Map<String, dynamic>),
       ndisRegistration: json['ndisRegistration'] == null
           ? null
           : NdisRegistration.fromJson(
-              json['ndisRegistration'] as Map<String, dynamic>),
+              json['ndisRegistration'] as Map<String, dynamic>,
+            ),
       stripeAccountId: json['stripeAccountId'] as String?,
       logoUrl: json['logoUrl'] as String?,
       branding: _brandingFromJson(json['branding']),

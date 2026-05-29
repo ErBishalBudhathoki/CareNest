@@ -12,13 +12,15 @@ _IntelligenceReport _$IntelligenceReportFromJson(Map<String, dynamic> json) =>
       organizationId: json['organizationId'] as String,
       generatedAt: json['generatedAt'] as String,
       intelligenceScore: (json['intelligenceScore'] as num).toInt(),
-      riskSummary:
-          RiskSummary.fromJson(json['riskSummary'] as Map<String, dynamic>),
+      riskSummary: RiskSummary.fromJson(
+        json['riskSummary'] as Map<String, dynamic>,
+      ),
       recommendations: (json['recommendations'] as List<dynamic>)
           .map((e) => Recommendation.fromJson(e as Map<String, dynamic>))
           .toList(),
       outcomePredictions: OutcomePredictions.fromJson(
-          json['outcomePredictions'] as Map<String, dynamic>),
+        json['outcomePredictions'] as Map<String, dynamic>,
+      ),
       alerts: (json['alerts'] as List<dynamic>)
           .map((e) => Alert.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -41,13 +43,13 @@ Map<String, dynamic> _$IntelligenceReportToJson(_IntelligenceReport instance) =>
     };
 
 _RiskSummary _$RiskSummaryFromJson(Map<String, dynamic> json) => _RiskSummary(
-      overallRisk: (json['overallRisk'] as num).toDouble(),
-      highRiskAreas: (json['highRiskAreas'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      trendDirection: json['trendDirection'] as String,
-      lastAssessment: json['lastAssessment'] as String,
-    );
+  overallRisk: (json['overallRisk'] as num).toDouble(),
+  highRiskAreas: (json['highRiskAreas'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  trendDirection: json['trendDirection'] as String,
+  lastAssessment: json['lastAssessment'] as String,
+);
 
 Map<String, dynamic> _$RiskSummaryToJson(_RiskSummary instance) =>
     <String, dynamic>{
@@ -76,11 +78,14 @@ Map<String, dynamic> _$RecommendationToJson(_Recommendation instance) =>
 _OutcomePredictions _$OutcomePredictionsFromJson(Map<String, dynamic> json) =>
     _OutcomePredictions(
       goalAchievement: GoalAchievementPrediction.fromJson(
-          json['goalAchievement'] as Map<String, dynamic>),
+        json['goalAchievement'] as Map<String, dynamic>,
+      ),
       healthStability: HealthStabilityPrediction.fromJson(
-          json['healthStability'] as Map<String, dynamic>),
+        json['healthStability'] as Map<String, dynamic>,
+      ),
       serviceUtilization: ServiceUtilizationPrediction.fromJson(
-          json['serviceUtilization'] as Map<String, dynamic>),
+        json['serviceUtilization'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$OutcomePredictionsToJson(_OutcomePredictions instance) =>
@@ -91,74 +96,73 @@ Map<String, dynamic> _$OutcomePredictionsToJson(_OutcomePredictions instance) =>
     };
 
 _GoalAchievementPrediction _$GoalAchievementPredictionFromJson(
-        Map<String, dynamic> json) =>
-    _GoalAchievementPrediction(
-      probability: (json['probability'] as num).toDouble(),
-      timeline: json['timeline'] as String,
-      confidence: (json['confidence'] as num).toDouble(),
-    );
+  Map<String, dynamic> json,
+) => _GoalAchievementPrediction(
+  probability: (json['probability'] as num).toDouble(),
+  timeline: json['timeline'] as String,
+  confidence: (json['confidence'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$GoalAchievementPredictionToJson(
-        _GoalAchievementPrediction instance) =>
-    <String, dynamic>{
-      'probability': instance.probability,
-      'timeline': instance.timeline,
-      'confidence': instance.confidence,
-    };
+  _GoalAchievementPrediction instance,
+) => <String, dynamic>{
+  'probability': instance.probability,
+  'timeline': instance.timeline,
+  'confidence': instance.confidence,
+};
 
 _HealthStabilityPrediction _$HealthStabilityPredictionFromJson(
-        Map<String, dynamic> json) =>
-    _HealthStabilityPrediction(
-      probability: (json['probability'] as num).toDouble(),
-      factors:
-          (json['factors'] as List<dynamic>).map((e) => e as String).toList(),
-      confidence: (json['confidence'] as num).toDouble(),
-    );
+  Map<String, dynamic> json,
+) => _HealthStabilityPrediction(
+  probability: (json['probability'] as num).toDouble(),
+  factors: (json['factors'] as List<dynamic>).map((e) => e as String).toList(),
+  confidence: (json['confidence'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$HealthStabilityPredictionToJson(
-        _HealthStabilityPrediction instance) =>
-    <String, dynamic>{
-      'probability': instance.probability,
-      'factors': instance.factors,
-      'confidence': instance.confidence,
-    };
+  _HealthStabilityPrediction instance,
+) => <String, dynamic>{
+  'probability': instance.probability,
+  'factors': instance.factors,
+  'confidence': instance.confidence,
+};
 
 _ServiceUtilizationPrediction _$ServiceUtilizationPredictionFromJson(
-        Map<String, dynamic> json) =>
-    _ServiceUtilizationPrediction(
-      predictedChange: json['predictedChange'] as String,
-      percentage: (json['percentage'] as num).toInt(),
-      confidence: (json['confidence'] as num).toDouble(),
-    );
+  Map<String, dynamic> json,
+) => _ServiceUtilizationPrediction(
+  predictedChange: json['predictedChange'] as String,
+  percentage: (json['percentage'] as num).toInt(),
+  confidence: (json['confidence'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$ServiceUtilizationPredictionToJson(
-        _ServiceUtilizationPrediction instance) =>
-    <String, dynamic>{
-      'predictedChange': instance.predictedChange,
-      'percentage': instance.percentage,
-      'confidence': instance.confidence,
-    };
+  _ServiceUtilizationPrediction instance,
+) => <String, dynamic>{
+  'predictedChange': instance.predictedChange,
+  'percentage': instance.percentage,
+  'confidence': instance.confidence,
+};
 
 _Alert _$AlertFromJson(Map<String, dynamic> json) => _Alert(
-      severity: json['severity'] as String,
-      type: json['type'] as String,
-      message: json['message'] as String,
-      action: json['action'] as String,
-    );
+  severity: json['severity'] as String,
+  type: json['type'] as String,
+  message: json['message'] as String,
+  action: json['action'] as String,
+);
 
 Map<String, dynamic> _$AlertToJson(_Alert instance) => <String, dynamic>{
-      'severity': instance.severity,
-      'type': instance.type,
-      'message': instance.message,
-      'action': instance.action,
-    };
+  'severity': instance.severity,
+  'type': instance.type,
+  'message': instance.message,
+  'action': instance.action,
+};
 
 _NextAction _$NextActionFromJson(Map<String, dynamic> json) => _NextAction(
-      action: json['action'] as String,
-      priority: json['priority'] as String,
-      deadline: json['deadline'] as String,
-      assignedTo: json['assignedTo'] as String,
-    );
+  action: json['action'] as String,
+  priority: json['priority'] as String,
+  deadline: json['deadline'] as String,
+  assignedTo: json['assignedTo'] as String,
+);
 
 Map<String, dynamic> _$NextActionToJson(_NextAction instance) =>
     <String, dynamic>{
@@ -171,15 +175,20 @@ Map<String, dynamic> _$NextActionToJson(_NextAction instance) =>
 _CarePatterns _$CarePatternsFromJson(Map<String, dynamic> json) =>
     _CarePatterns(
       serviceUtilization: ServiceUtilization.fromJson(
-          json['serviceUtilization'] as Map<String, dynamic>),
-      healthTrends:
-          HealthTrends.fromJson(json['healthTrends'] as Map<String, dynamic>),
+        json['serviceUtilization'] as Map<String, dynamic>,
+      ),
+      healthTrends: HealthTrends.fromJson(
+        json['healthTrends'] as Map<String, dynamic>,
+      ),
       behaviorPatterns: BehaviorPatterns.fromJson(
-          json['behaviorPatterns'] as Map<String, dynamic>),
-      goalProgress:
-          GoalProgress.fromJson(json['goalProgress'] as Map<String, dynamic>),
+        json['behaviorPatterns'] as Map<String, dynamic>,
+      ),
+      goalProgress: GoalProgress.fromJson(
+        json['goalProgress'] as Map<String, dynamic>,
+      ),
       familyEngagement: FamilyEngagement.fromJson(
-          json['familyEngagement'] as Map<String, dynamic>),
+        json['familyEngagement'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$CarePatternsToJson(_CarePatterns instance) =>
@@ -195,8 +204,9 @@ _ServiceUtilization _$ServiceUtilizationFromJson(Map<String, dynamic> json) =>
     _ServiceUtilization(
       trend: json['trend'] as String,
       averageHoursPerWeek: (json['averageHoursPerWeek'] as num).toInt(),
-      peakDays:
-          (json['peakDays'] as List<dynamic>).map((e) => e as String).toList(),
+      peakDays: (json['peakDays'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       preferredTimes: (json['preferredTimes'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -276,30 +286,31 @@ Map<String, dynamic> _$FamilyEngagementToJson(_FamilyEngagement instance) =>
       'participationLevel': instance.participationLevel,
     };
 
-_RiskAssessment _$RiskAssessmentFromJson(Map<String, dynamic> json) =>
-    _RiskAssessment(
-      clientId: json['clientId'] as String,
-      organizationId: json['organizationId'] as String,
-      assessmentDate: json['assessmentDate'] as String,
-      overallRisk: (json['overallRisk'] as num).toInt(),
-      fallsRisk:
-          RiskCategory.fromJson(json['fallsRisk'] as Map<String, dynamic>),
-      behaviorRisk:
-          RiskCategory.fromJson(json['behaviorRisk'] as Map<String, dynamic>),
-      healthRisk:
-          RiskCategory.fromJson(json['healthRisk'] as Map<String, dynamic>),
-      medicationRisk:
-          RiskCategory.fromJson(json['medicationRisk'] as Map<String, dynamic>),
-      socialRisk:
-          RiskCategory.fromJson(json['socialRisk'] as Map<String, dynamic>),
-      financialRisk:
-          RiskCategory.fromJson(json['financialRisk'] as Map<String, dynamic>),
-      trends: RiskTrends.fromJson(json['trends'] as Map<String, dynamic>),
-      recommendations: (json['recommendations'] as List<dynamic>)
-          .map((e) => RiskRecommendation.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      nextAssessment: json['nextAssessment'] as String,
-    );
+_RiskAssessment _$RiskAssessmentFromJson(
+  Map<String, dynamic> json,
+) => _RiskAssessment(
+  clientId: json['clientId'] as String,
+  organizationId: json['organizationId'] as String,
+  assessmentDate: json['assessmentDate'] as String,
+  overallRisk: (json['overallRisk'] as num).toInt(),
+  fallsRisk: RiskCategory.fromJson(json['fallsRisk'] as Map<String, dynamic>),
+  behaviorRisk: RiskCategory.fromJson(
+    json['behaviorRisk'] as Map<String, dynamic>,
+  ),
+  healthRisk: RiskCategory.fromJson(json['healthRisk'] as Map<String, dynamic>),
+  medicationRisk: RiskCategory.fromJson(
+    json['medicationRisk'] as Map<String, dynamic>,
+  ),
+  socialRisk: RiskCategory.fromJson(json['socialRisk'] as Map<String, dynamic>),
+  financialRisk: RiskCategory.fromJson(
+    json['financialRisk'] as Map<String, dynamic>,
+  ),
+  trends: RiskTrends.fromJson(json['trends'] as Map<String, dynamic>),
+  recommendations: (json['recommendations'] as List<dynamic>)
+      .map((e) => RiskRecommendation.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  nextAssessment: json['nextAssessment'] as String,
+);
 
 Map<String, dynamic> _$RiskAssessmentToJson(_RiskAssessment instance) =>
     <String, dynamic>{
@@ -343,10 +354,10 @@ Map<String, dynamic> _$RiskCategoryToJson(_RiskCategory instance) =>
     };
 
 _RiskTrends _$RiskTrendsFromJson(Map<String, dynamic> json) => _RiskTrends(
-      direction: json['direction'] as String,
-      changePercentage: (json['changePercentage'] as num).toInt(),
-      period: json['period'] as String,
-    );
+  direction: json['direction'] as String,
+  changePercentage: (json['changePercentage'] as num).toInt(),
+  period: json['period'] as String,
+);
 
 Map<String, dynamic> _$RiskTrendsToJson(_RiskTrends instance) =>
     <String, dynamic>{
@@ -381,23 +392,24 @@ _FallsRiskAssessment _$FallsRiskAssessmentFromJson(Map<String, dynamic> json) =>
           .map((e) => e as String)
           .toList(),
       monitoringPlan: MonitoringPlan.fromJson(
-          json['monitoringPlan'] as Map<String, dynamic>),
+        json['monitoringPlan'] as Map<String, dynamic>,
+      ),
       interventions: (json['interventions'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
     );
 
 Map<String, dynamic> _$FallsRiskAssessmentToJson(
-        _FallsRiskAssessment instance) =>
-    <String, dynamic>{
-      'riskScore': instance.riskScore,
-      'riskLevel': instance.riskLevel,
-      'confidence': instance.confidence,
-      'contributingFactors': instance.contributingFactors,
-      'preventionStrategies': instance.preventionStrategies,
-      'monitoringPlan': instance.monitoringPlan,
-      'interventions': instance.interventions,
-    };
+  _FallsRiskAssessment instance,
+) => <String, dynamic>{
+  'riskScore': instance.riskScore,
+  'riskLevel': instance.riskLevel,
+  'confidence': instance.confidence,
+  'contributingFactors': instance.contributingFactors,
+  'preventionStrategies': instance.preventionStrategies,
+  'monitoringPlan': instance.monitoringPlan,
+  'interventions': instance.interventions,
+};
 
 _ContributingFactor _$ContributingFactorFromJson(Map<String, dynamic> json) =>
     _ContributingFactor(
@@ -430,97 +442,97 @@ Map<String, dynamic> _$MonitoringPlanToJson(_MonitoringPlan instance) =>
     };
 
 _BehaviorEscalationPrediction _$BehaviorEscalationPredictionFromJson(
-        Map<String, dynamic> json) =>
-    _BehaviorEscalationPrediction(
-      escalationProbability: (json['escalationProbability'] as num).toDouble(),
-      timeframe: json['timeframe'] as String,
-      confidence: (json['confidence'] as num).toDouble(),
-      triggers: (json['triggers'] as List<dynamic>)
-          .map((e) => Trigger.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      earlyWarningSignals: (json['earlyWarningSignals'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      deEscalationStrategies: (json['deEscalationStrategies'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      preventiveMeasures: (json['preventiveMeasures'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => _BehaviorEscalationPrediction(
+  escalationProbability: (json['escalationProbability'] as num).toDouble(),
+  timeframe: json['timeframe'] as String,
+  confidence: (json['confidence'] as num).toDouble(),
+  triggers: (json['triggers'] as List<dynamic>)
+      .map((e) => Trigger.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  earlyWarningSignals: (json['earlyWarningSignals'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  deEscalationStrategies: (json['deEscalationStrategies'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  preventiveMeasures: (json['preventiveMeasures'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+);
 
 Map<String, dynamic> _$BehaviorEscalationPredictionToJson(
-        _BehaviorEscalationPrediction instance) =>
-    <String, dynamic>{
-      'escalationProbability': instance.escalationProbability,
-      'timeframe': instance.timeframe,
-      'confidence': instance.confidence,
-      'triggers': instance.triggers,
-      'earlyWarningSignals': instance.earlyWarningSignals,
-      'deEscalationStrategies': instance.deEscalationStrategies,
-      'preventiveMeasures': instance.preventiveMeasures,
-    };
+  _BehaviorEscalationPrediction instance,
+) => <String, dynamic>{
+  'escalationProbability': instance.escalationProbability,
+  'timeframe': instance.timeframe,
+  'confidence': instance.confidence,
+  'triggers': instance.triggers,
+  'earlyWarningSignals': instance.earlyWarningSignals,
+  'deEscalationStrategies': instance.deEscalationStrategies,
+  'preventiveMeasures': instance.preventiveMeasures,
+};
 
 _Trigger _$TriggerFromJson(Map<String, dynamic> json) => _Trigger(
-      trigger: json['trigger'] as String,
-      likelihood: (json['likelihood'] as num).toDouble(),
-    );
+  trigger: json['trigger'] as String,
+  likelihood: (json['likelihood'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$TriggerToJson(_Trigger instance) => <String, dynamic>{
-      'trigger': instance.trigger,
-      'likelihood': instance.likelihood,
-    };
+  'trigger': instance.trigger,
+  'likelihood': instance.likelihood,
+};
 
 _CarePlan _$CarePlanFromJson(Map<String, dynamic> json) => _CarePlan(
-      clientId: json['clientId'] as String,
-      organizationId: json['organizationId'] as String,
-      planId: json['planId'] as String,
-      createdAt: json['createdAt'] as String,
-      status: json['status'] as String,
-      assessment:
-          Assessment.fromJson(json['assessment'] as Map<String, dynamic>),
-      goals: (json['goals'] as List<dynamic>)
-          .map((e) => SmartGoal.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      services: (json['services'] as List<dynamic>)
-          .map((e) => ServiceRecommendation.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      resources: Resources.fromJson(json['resources'] as Map<String, dynamic>),
-      timeline: Timeline.fromJson(json['timeline'] as Map<String, dynamic>),
-      reviewSchedule: (json['reviewSchedule'] as List<dynamic>)
-          .map((e) => Review.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      successMetrics: (json['successMetrics'] as List<dynamic>)
-          .map((e) => SuccessMetric.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  clientId: json['clientId'] as String,
+  organizationId: json['organizationId'] as String,
+  planId: json['planId'] as String,
+  createdAt: json['createdAt'] as String,
+  status: json['status'] as String,
+  assessment: Assessment.fromJson(json['assessment'] as Map<String, dynamic>),
+  goals: (json['goals'] as List<dynamic>)
+      .map((e) => SmartGoal.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  services: (json['services'] as List<dynamic>)
+      .map((e) => ServiceRecommendation.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  resources: Resources.fromJson(json['resources'] as Map<String, dynamic>),
+  timeline: Timeline.fromJson(json['timeline'] as Map<String, dynamic>),
+  reviewSchedule: (json['reviewSchedule'] as List<dynamic>)
+      .map((e) => Review.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  successMetrics: (json['successMetrics'] as List<dynamic>)
+      .map((e) => SuccessMetric.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$CarePlanToJson(_CarePlan instance) => <String, dynamic>{
-      'clientId': instance.clientId,
-      'organizationId': instance.organizationId,
-      'planId': instance.planId,
-      'createdAt': instance.createdAt,
-      'status': instance.status,
-      'assessment': instance.assessment,
-      'goals': instance.goals,
-      'services': instance.services,
-      'resources': instance.resources,
-      'timeline': instance.timeline,
-      'reviewSchedule': instance.reviewSchedule,
-      'successMetrics': instance.successMetrics,
-    };
+  'clientId': instance.clientId,
+  'organizationId': instance.organizationId,
+  'planId': instance.planId,
+  'createdAt': instance.createdAt,
+  'status': instance.status,
+  'assessment': instance.assessment,
+  'goals': instance.goals,
+  'services': instance.services,
+  'resources': instance.resources,
+  'timeline': instance.timeline,
+  'reviewSchedule': instance.reviewSchedule,
+  'successMetrics': instance.successMetrics,
+};
 
 _Assessment _$AssessmentFromJson(Map<String, dynamic> json) => _Assessment(
-      strengths:
-          (json['strengths'] as List<dynamic>).map((e) => e as String).toList(),
-      needs: (json['needs'] as List<dynamic>).map((e) => e as String).toList(),
-      preferences: (json['preferences'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      riskFactors: (json['riskFactors'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-    );
+  strengths: (json['strengths'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  needs: (json['needs'] as List<dynamic>).map((e) => e as String).toList(),
+  preferences: (json['preferences'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  riskFactors: (json['riskFactors'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+);
 
 Map<String, dynamic> _$AssessmentToJson(_Assessment instance) =>
     <String, dynamic>{
@@ -531,21 +543,21 @@ Map<String, dynamic> _$AssessmentToJson(_Assessment instance) =>
     };
 
 _SmartGoal _$SmartGoalFromJson(Map<String, dynamic> json) => _SmartGoal(
-      goalId: json['goalId'] as String,
-      outcomeArea: json['outcomeArea'] as String,
-      goal: json['goal'] as String,
-      specific: json['specific'] as String,
-      measurable: json['measurable'] as String,
-      achievable: json['achievable'] as String,
-      relevant: json['relevant'] as String,
-      timeBound: json['timeBound'] as String,
-      priority: json['priority'] as String,
-      status: json['status'] as String,
-      progress: (json['progress'] as num).toInt(),
-      milestones: (json['milestones'] as List<dynamic>)
-          .map((e) => Milestone.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  goalId: json['goalId'] as String,
+  outcomeArea: json['outcomeArea'] as String,
+  goal: json['goal'] as String,
+  specific: json['specific'] as String,
+  measurable: json['measurable'] as String,
+  achievable: json['achievable'] as String,
+  relevant: json['relevant'] as String,
+  timeBound: json['timeBound'] as String,
+  priority: json['priority'] as String,
+  status: json['status'] as String,
+  progress: (json['progress'] as num).toInt(),
+  milestones: (json['milestones'] as List<dynamic>)
+      .map((e) => Milestone.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$SmartGoalToJson(_SmartGoal instance) =>
     <String, dynamic>{
@@ -564,10 +576,10 @@ Map<String, dynamic> _$SmartGoalToJson(_SmartGoal instance) =>
     };
 
 _Milestone _$MilestoneFromJson(Map<String, dynamic> json) => _Milestone(
-      milestone: json['milestone'] as String,
-      target: json['target'] as String,
-      date: json['date'] as String,
-    );
+  milestone: json['milestone'] as String,
+  target: json['target'] as String,
+  date: json['date'] as String,
+);
 
 Map<String, dynamic> _$MilestoneToJson(_Milestone instance) =>
     <String, dynamic>{
@@ -577,49 +589,50 @@ Map<String, dynamic> _$MilestoneToJson(_Milestone instance) =>
     };
 
 _ServiceRecommendation _$ServiceRecommendationFromJson(
-        Map<String, dynamic> json) =>
-    _ServiceRecommendation(
-      serviceType: json['serviceType'] as String,
-      frequency: json['frequency'] as String,
-      duration: json['duration'] as String,
-      priority: json['priority'] as String,
-      rationale: json['rationale'] as String,
-      estimatedCost: (json['estimatedCost'] as num).toInt(),
-      providers: (json['providers'] as List<dynamic>)
-          .map((e) => Provider.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => _ServiceRecommendation(
+  serviceType: json['serviceType'] as String,
+  frequency: json['frequency'] as String,
+  duration: json['duration'] as String,
+  priority: json['priority'] as String,
+  rationale: json['rationale'] as String,
+  estimatedCost: (json['estimatedCost'] as num).toInt(),
+  providers: (json['providers'] as List<dynamic>)
+      .map((e) => Provider.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$ServiceRecommendationToJson(
-        _ServiceRecommendation instance) =>
-    <String, dynamic>{
-      'serviceType': instance.serviceType,
-      'frequency': instance.frequency,
-      'duration': instance.duration,
-      'priority': instance.priority,
-      'rationale': instance.rationale,
-      'estimatedCost': instance.estimatedCost,
-      'providers': instance.providers,
-    };
+  _ServiceRecommendation instance,
+) => <String, dynamic>{
+  'serviceType': instance.serviceType,
+  'frequency': instance.frequency,
+  'duration': instance.duration,
+  'priority': instance.priority,
+  'rationale': instance.rationale,
+  'estimatedCost': instance.estimatedCost,
+  'providers': instance.providers,
+};
 
 _Provider _$ProviderFromJson(Map<String, dynamic> json) => _Provider(
-      name: json['name'] as String,
-      rating: (json['rating'] as num).toDouble(),
-      availability: json['availability'] as String,
-    );
+  name: json['name'] as String,
+  rating: (json['rating'] as num).toDouble(),
+  availability: json['availability'] as String,
+);
 
 Map<String, dynamic> _$ProviderToJson(_Provider instance) => <String, dynamic>{
-      'name': instance.name,
-      'rating': instance.rating,
-      'availability': instance.availability,
-    };
+  'name': instance.name,
+  'rating': instance.rating,
+  'availability': instance.availability,
+};
 
 _Resources _$ResourcesFromJson(Map<String, dynamic> json) => _Resources(
-      workers: (json['workers'] as num).toInt(),
-      equipment:
-          (json['equipment'] as List<dynamic>).map((e) => e as String).toList(),
-      budget: Budget.fromJson(json['budget'] as Map<String, dynamic>),
-    );
+  workers: (json['workers'] as num).toInt(),
+  equipment: (json['equipment'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  budget: Budget.fromJson(json['budget'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$ResourcesToJson(_Resources instance) =>
     <String, dynamic>{
@@ -629,50 +642,48 @@ Map<String, dynamic> _$ResourcesToJson(_Resources instance) =>
     };
 
 _Budget _$BudgetFromJson(Map<String, dynamic> json) => _Budget(
-      weekly: (json['weekly'] as num).toInt(),
-      monthly: (json['monthly'] as num).toInt(),
-    );
+  weekly: (json['weekly'] as num).toInt(),
+  monthly: (json['monthly'] as num).toInt(),
+);
 
 Map<String, dynamic> _$BudgetToJson(_Budget instance) => <String, dynamic>{
-      'weekly': instance.weekly,
-      'monthly': instance.monthly,
-    };
+  'weekly': instance.weekly,
+  'monthly': instance.monthly,
+};
 
 _Timeline _$TimelineFromJson(Map<String, dynamic> json) => _Timeline(
-      startDate: json['startDate'] as String,
-      endDate: json['endDate'] as String,
-      phases: (json['phases'] as List<dynamic>)
-          .map((e) => Phase.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  startDate: json['startDate'] as String,
+  endDate: json['endDate'] as String,
+  phases: (json['phases'] as List<dynamic>)
+      .map((e) => Phase.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$TimelineToJson(_Timeline instance) => <String, dynamic>{
-      'startDate': instance.startDate,
-      'endDate': instance.endDate,
-      'phases': instance.phases,
-    };
+  'startDate': instance.startDate,
+  'endDate': instance.endDate,
+  'phases': instance.phases,
+};
 
 _Phase _$PhaseFromJson(Map<String, dynamic> json) => _Phase(
-      phase: json['phase'] as String,
-      duration: json['duration'] as String,
-      focus: json['focus'] as String,
-    );
+  phase: json['phase'] as String,
+  duration: json['duration'] as String,
+  focus: json['focus'] as String,
+);
 
 Map<String, dynamic> _$PhaseToJson(_Phase instance) => <String, dynamic>{
-      'phase': instance.phase,
-      'duration': instance.duration,
-      'focus': instance.focus,
-    };
+  'phase': instance.phase,
+  'duration': instance.duration,
+  'focus': instance.focus,
+};
 
-_Review _$ReviewFromJson(Map<String, dynamic> json) => _Review(
-      type: json['type'] as String,
-      date: json['date'] as String,
-    );
+_Review _$ReviewFromJson(Map<String, dynamic> json) =>
+    _Review(type: json['type'] as String, date: json['date'] as String);
 
 Map<String, dynamic> _$ReviewToJson(_Review instance) => <String, dynamic>{
-      'type': instance.type,
-      'date': instance.date,
-    };
+  'type': instance.type,
+  'date': instance.date,
+};
 
 _SuccessMetric _$SuccessMetricFromJson(Map<String, dynamic> json) =>
     _SuccessMetric(
@@ -681,34 +692,33 @@ _SuccessMetric _$SuccessMetricFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$SuccessMetricToJson(_SuccessMetric instance) =>
-    <String, dynamic>{
-      'metric': instance.metric,
-      'target': instance.target,
-    };
+    <String, dynamic>{'metric': instance.metric, 'target': instance.target};
 
 _Incident _$IncidentFromJson(Map<String, dynamic> json) => _Incident(
-      incidentId: json['incidentId'] as String,
-      reportedAt: json['reportedAt'] as String,
-      severity: json['severity'] as String,
-      category: json['category'] as String,
-      immediateActions: (json['immediateActions'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      notifications: NotificationRouting.fromJson(
-          json['notifications'] as Map<String, dynamic>),
-      investigation:
-          Investigation.fromJson(json['investigation'] as Map<String, dynamic>),
-    );
+  incidentId: json['incidentId'] as String,
+  reportedAt: json['reportedAt'] as String,
+  severity: json['severity'] as String,
+  category: json['category'] as String,
+  immediateActions: (json['immediateActions'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  notifications: NotificationRouting.fromJson(
+    json['notifications'] as Map<String, dynamic>,
+  ),
+  investigation: Investigation.fromJson(
+    json['investigation'] as Map<String, dynamic>,
+  ),
+);
 
 Map<String, dynamic> _$IncidentToJson(_Incident instance) => <String, dynamic>{
-      'incidentId': instance.incidentId,
-      'reportedAt': instance.reportedAt,
-      'severity': instance.severity,
-      'category': instance.category,
-      'immediateActions': instance.immediateActions,
-      'notifications': instance.notifications,
-      'investigation': instance.investigation,
-    };
+  'incidentId': instance.incidentId,
+  'reportedAt': instance.reportedAt,
+  'severity': instance.severity,
+  'category': instance.category,
+  'immediateActions': instance.immediateActions,
+  'notifications': instance.notifications,
+  'investigation': instance.investigation,
+};
 
 _NotificationRouting _$NotificationRoutingFromJson(Map<String, dynamic> json) =>
     _NotificationRouting(
@@ -719,13 +729,13 @@ _NotificationRouting _$NotificationRoutingFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$NotificationRoutingToJson(
-        _NotificationRouting instance) =>
-    <String, dynamic>{
-      'family': instance.family,
-      'supervisor': instance.supervisor,
-      'careCoordinator': instance.careCoordinator,
-      'regulator': instance.regulator,
-    };
+  _NotificationRouting instance,
+) => <String, dynamic>{
+  'family': instance.family,
+  'supervisor': instance.supervisor,
+  'careCoordinator': instance.careCoordinator,
+  'regulator': instance.regulator,
+};
 
 _Investigation _$InvestigationFromJson(Map<String, dynamic> json) =>
     _Investigation(
@@ -749,8 +759,10 @@ _RootCauseAnalysis _$RootCauseAnalysisFromJson(Map<String, dynamic> json) =>
           .map((e) => RootCause.fromJson(e as Map<String, dynamic>))
           .toList(),
       contributingFactors: (json['contributingFactors'] as List<dynamic>)
-          .map((e) =>
-              ContributingFactorAnalysis.fromJson(e as Map<String, dynamic>))
+          .map(
+            (e) =>
+                ContributingFactorAnalysis.fromJson(e as Map<String, dynamic>),
+          )
           .toList(),
       systemicIssues: (json['systemicIssues'] as List<dynamic>)
           .map((e) => e as String)
@@ -775,9 +787,9 @@ Map<String, dynamic> _$RootCauseAnalysisToJson(_RootCauseAnalysis instance) =>
     };
 
 _RootCause _$RootCauseFromJson(Map<String, dynamic> json) => _RootCause(
-      cause: json['cause'] as String,
-      likelihood: json['likelihood'] as String,
-    );
+  cause: json['cause'] as String,
+  likelihood: json['likelihood'] as String,
+);
 
 Map<String, dynamic> _$RootCauseToJson(_RootCause instance) =>
     <String, dynamic>{
@@ -786,18 +798,18 @@ Map<String, dynamic> _$RootCauseToJson(_RootCause instance) =>
     };
 
 _ContributingFactorAnalysis _$ContributingFactorAnalysisFromJson(
-        Map<String, dynamic> json) =>
-    _ContributingFactorAnalysis(
-      factor: json['factor'] as String,
-      contribution: json['contribution'] as String,
-    );
+  Map<String, dynamic> json,
+) => _ContributingFactorAnalysis(
+  factor: json['factor'] as String,
+  contribution: json['contribution'] as String,
+);
 
 Map<String, dynamic> _$ContributingFactorAnalysisToJson(
-        _ContributingFactorAnalysis instance) =>
-    <String, dynamic>{
-      'factor': instance.factor,
-      'contribution': instance.contribution,
-    };
+  _ContributingFactorAnalysis instance,
+) => <String, dynamic>{
+  'factor': instance.factor,
+  'contribution': instance.contribution,
+};
 
 _SimilarIncident _$SimilarIncidentFromJson(Map<String, dynamic> json) =>
     _SimilarIncident(
@@ -819,7 +831,8 @@ _IncidentPatterns _$IncidentPatternsFromJson(Map<String, dynamic> json) =>
       timeframe: json['timeframe'] as String,
       analyzedAt: json['analyzedAt'] as String,
       frequencyPatterns: FrequencyPatterns.fromJson(
-          json['frequencyPatterns'] as Map<String, dynamic>),
+        json['frequencyPatterns'] as Map<String, dynamic>,
+      ),
       recurringIssues: (json['recurringIssues'] as List<dynamic>)
           .map((e) => RecurringIssue.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -875,16 +888,16 @@ Map<String, dynamic> _$RecurringIssueToJson(_RecurringIssue instance) =>
     };
 
 _Trends _$TrendsFromJson(Map<String, dynamic> json) => _Trends(
-      direction: json['direction'] as String,
-      changePercentage: (json['changePercentage'] as num).toInt(),
-      significance: json['significance'] as String,
-    );
+  direction: json['direction'] as String,
+  changePercentage: (json['changePercentage'] as num).toInt(),
+  significance: json['significance'] as String,
+);
 
 Map<String, dynamic> _$TrendsToJson(_Trends instance) => <String, dynamic>{
-      'direction': instance.direction,
-      'changePercentage': instance.changePercentage,
-      'significance': instance.significance,
-    };
+  'direction': instance.direction,
+  'changePercentage': instance.changePercentage,
+  'significance': instance.significance,
+};
 
 _HighRiskArea _$HighRiskAreaFromJson(Map<String, dynamic> json) =>
     _HighRiskArea(
@@ -893,10 +906,7 @@ _HighRiskArea _$HighRiskAreaFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$HighRiskAreaToJson(_HighRiskArea instance) =>
-    <String, dynamic>{
-      'area': instance.area,
-      'riskLevel': instance.riskLevel,
-    };
+    <String, dynamic>{'area': instance.area, 'riskLevel': instance.riskLevel};
 
 _DrugInteraction _$DrugInteractionFromJson(Map<String, dynamic> json) =>
     _DrugInteraction(
@@ -921,73 +931,76 @@ Map<String, dynamic> _$DrugInteractionToJson(_DrugInteraction instance) =>
     };
 
 _MedicationCompliance _$MedicationComplianceFromJson(
-        Map<String, dynamic> json) =>
-    _MedicationCompliance(
-      clientId: json['clientId'] as String,
-      period: json['period'] as String,
-      analyzedAt: json['analyzedAt'] as String,
-      overallCompliance: (json['overallCompliance'] as num).toDouble(),
-      byMedication: (json['byMedication'] as List<dynamic>)
-          .map((e) =>
-              MedicationComplianceDetail.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      patterns:
-          CompliancePatterns.fromJson(json['patterns'] as Map<String, dynamic>),
-      riskAssessment: ComplianceRiskAssessment.fromJson(
-          json['riskAssessment'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => _MedicationCompliance(
+  clientId: json['clientId'] as String,
+  period: json['period'] as String,
+  analyzedAt: json['analyzedAt'] as String,
+  overallCompliance: (json['overallCompliance'] as num).toDouble(),
+  byMedication: (json['byMedication'] as List<dynamic>)
+      .map(
+        (e) => MedicationComplianceDetail.fromJson(e as Map<String, dynamic>),
+      )
+      .toList(),
+  patterns: CompliancePatterns.fromJson(
+    json['patterns'] as Map<String, dynamic>,
+  ),
+  riskAssessment: ComplianceRiskAssessment.fromJson(
+    json['riskAssessment'] as Map<String, dynamic>,
+  ),
+);
 
 Map<String, dynamic> _$MedicationComplianceToJson(
-        _MedicationCompliance instance) =>
-    <String, dynamic>{
-      'clientId': instance.clientId,
-      'period': instance.period,
-      'analyzedAt': instance.analyzedAt,
-      'overallCompliance': instance.overallCompliance,
-      'byMedication': instance.byMedication,
-      'patterns': instance.patterns,
-      'riskAssessment': instance.riskAssessment,
-    };
+  _MedicationCompliance instance,
+) => <String, dynamic>{
+  'clientId': instance.clientId,
+  'period': instance.period,
+  'analyzedAt': instance.analyzedAt,
+  'overallCompliance': instance.overallCompliance,
+  'byMedication': instance.byMedication,
+  'patterns': instance.patterns,
+  'riskAssessment': instance.riskAssessment,
+};
 
 _MedicationComplianceDetail _$MedicationComplianceDetailFromJson(
-        Map<String, dynamic> json) =>
-    _MedicationComplianceDetail(
-      medication: json['medication'] as String,
-      prescribed: (json['prescribed'] as num).toInt(),
-      administered: (json['administered'] as num).toInt(),
-      missed: (json['missed'] as num).toInt(),
-      compliance: (json['compliance'] as num).toDouble(),
-    );
+  Map<String, dynamic> json,
+) => _MedicationComplianceDetail(
+  medication: json['medication'] as String,
+  prescribed: (json['prescribed'] as num).toInt(),
+  administered: (json['administered'] as num).toInt(),
+  missed: (json['missed'] as num).toInt(),
+  compliance: (json['compliance'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$MedicationComplianceDetailToJson(
-        _MedicationComplianceDetail instance) =>
-    <String, dynamic>{
-      'medication': instance.medication,
-      'prescribed': instance.prescribed,
-      'administered': instance.administered,
-      'missed': instance.missed,
-      'compliance': instance.compliance,
-    };
+  _MedicationComplianceDetail instance,
+) => <String, dynamic>{
+  'medication': instance.medication,
+  'prescribed': instance.prescribed,
+  'administered': instance.administered,
+  'missed': instance.missed,
+  'compliance': instance.compliance,
+};
 
 _CompliancePatterns _$CompliancePatternsFromJson(Map<String, dynamic> json) =>
     _CompliancePatterns(
-      missedDoses:
-          MissedDoses.fromJson(json['missedDoses'] as Map<String, dynamic>),
+      missedDoses: MissedDoses.fromJson(
+        json['missedDoses'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$CompliancePatternsToJson(_CompliancePatterns instance) =>
-    <String, dynamic>{
-      'missedDoses': instance.missedDoses,
-    };
+    <String, dynamic>{'missedDoses': instance.missedDoses};
 
 _MissedDoses _$MissedDosesFromJson(Map<String, dynamic> json) => _MissedDoses(
-      timeOfDay:
-          (json['timeOfDay'] as List<dynamic>).map((e) => e as String).toList(),
-      dayOfWeek:
-          (json['dayOfWeek'] as List<dynamic>).map((e) => e as String).toList(),
-      reasons:
-          (json['reasons'] as List<dynamic>).map((e) => e as String).toList(),
-    );
+  timeOfDay: (json['timeOfDay'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  dayOfWeek: (json['dayOfWeek'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  reasons: (json['reasons'] as List<dynamic>).map((e) => e as String).toList(),
+);
 
 Map<String, dynamic> _$MissedDosesToJson(_MissedDoses instance) =>
     <String, dynamic>{
@@ -997,23 +1010,22 @@ Map<String, dynamic> _$MissedDosesToJson(_MissedDoses instance) =>
     };
 
 _ComplianceRiskAssessment _$ComplianceRiskAssessmentFromJson(
-        Map<String, dynamic> json) =>
-    _ComplianceRiskAssessment(
-      nonComplianceRisk: (json['nonComplianceRisk'] as num).toDouble(),
-      factors:
-          (json['factors'] as List<dynamic>).map((e) => e as String).toList(),
-      recommendations: (json['recommendations'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => _ComplianceRiskAssessment(
+  nonComplianceRisk: (json['nonComplianceRisk'] as num).toDouble(),
+  factors: (json['factors'] as List<dynamic>).map((e) => e as String).toList(),
+  recommendations: (json['recommendations'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+);
 
 Map<String, dynamic> _$ComplianceRiskAssessmentToJson(
-        _ComplianceRiskAssessment instance) =>
-    <String, dynamic>{
-      'nonComplianceRisk': instance.nonComplianceRisk,
-      'factors': instance.factors,
-      'recommendations': instance.recommendations,
-    };
+  _ComplianceRiskAssessment instance,
+) => <String, dynamic>{
+  'nonComplianceRisk': instance.nonComplianceRisk,
+  'factors': instance.factors,
+  'recommendations': instance.recommendations,
+};
 
 _MedicationAlert _$MedicationAlertFromJson(Map<String, dynamic> json) =>
     _MedicationAlert(

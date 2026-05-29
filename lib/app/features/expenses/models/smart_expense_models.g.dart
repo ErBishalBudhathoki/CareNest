@@ -7,18 +7,18 @@ part of 'smart_expense_models.dart';
 // **************************************************************************
 
 _ReceiptScan _$ReceiptScanFromJson(Map<String, dynamic> json) => _ReceiptScan(
-      merchant: json['merchant'] as String,
-      date: json['date'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      currency: json['currency'] as String,
-      items: (json['items'] as List<dynamic>)
-          .map((e) => ReceiptItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      tax: (json['tax'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
-      paymentMethod: json['paymentMethod'] as String,
-      confidence: (json['confidence'] as num).toDouble(),
-    );
+  merchant: json['merchant'] as String,
+  date: json['date'] as String,
+  amount: (json['amount'] as num).toDouble(),
+  currency: json['currency'] as String,
+  items: (json['items'] as List<dynamic>)
+      .map((e) => ReceiptItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  tax: (json['tax'] as num).toDouble(),
+  total: (json['total'] as num).toDouble(),
+  paymentMethod: json['paymentMethod'] as String,
+  confidence: (json['confidence'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$ReceiptScanToJson(_ReceiptScan instance) =>
     <String, dynamic>{
@@ -34,10 +34,10 @@ Map<String, dynamic> _$ReceiptScanToJson(_ReceiptScan instance) =>
     };
 
 _ReceiptItem _$ReceiptItemFromJson(Map<String, dynamic> json) => _ReceiptItem(
-      description: json['description'] as String,
-      quantity: (json['quantity'] as num).toInt(),
-      price: (json['price'] as num).toDouble(),
-    );
+  description: json['description'] as String,
+  quantity: (json['quantity'] as num).toInt(),
+  price: (json['price'] as num).toDouble(),
+);
 
 Map<String, dynamic> _$ReceiptItemToJson(_ReceiptItem instance) =>
     <String, dynamic>{
@@ -84,8 +84,9 @@ _PolicyValidation _$PolicyValidationFromJson(Map<String, dynamic> json) =>
       warnings: (json['warnings'] as List<dynamic>)
           .map((e) => PolicyViolation.fromJson(e as Map<String, dynamic>))
           .toList(),
-      policyRule:
-          PolicyRule.fromJson(json['policyRule'] as Map<String, dynamic>),
+      policyRule: PolicyRule.fromJson(
+        json['policyRule'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$PolicyValidationToJson(_PolicyValidation instance) =>
@@ -112,9 +113,9 @@ Map<String, dynamic> _$PolicyViolationToJson(_PolicyViolation instance) =>
     };
 
 _PolicyRule _$PolicyRuleFromJson(Map<String, dynamic> json) => _PolicyRule(
-      maxAmount: (json['maxAmount'] as num).toDouble(),
-      requiresReceipt: json['requiresReceipt'] as bool,
-    );
+  maxAmount: (json['maxAmount'] as num).toDouble(),
+  requiresReceipt: json['requiresReceipt'] as bool,
+);
 
 Map<String, dynamic> _$PolicyRuleToJson(_PolicyRule instance) =>
     <String, dynamic>{
@@ -129,7 +130,8 @@ _DuplicateCheck _$DuplicateCheckFromJson(Map<String, dynamic> json) =>
       matchedExpense: json['matchedExpense'] == null
           ? null
           : MatchedExpense.fromJson(
-              json['matchedExpense'] as Map<String, dynamic>),
+              json['matchedExpense'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$DuplicateCheckToJson(_DuplicateCheck instance) =>
@@ -162,10 +164,12 @@ _MileageCalculation _$MileageCalculationFromJson(Map<String, dynamic> json) =>
       ratePerKm: (json['ratePerKm'] as num).toDouble(),
       reimbursement: (json['reimbursement'] as num).toDouble(),
       currency: json['currency'] as String,
-      startLocation:
-          LocationPoint.fromJson(json['startLocation'] as Map<String, dynamic>),
-      endLocation:
-          LocationPoint.fromJson(json['endLocation'] as Map<String, dynamic>),
+      startLocation: LocationPoint.fromJson(
+        json['startLocation'] as Map<String, dynamic>,
+      ),
+      endLocation: LocationPoint.fromJson(
+        json['endLocation'] as Map<String, dynamic>,
+      ),
       waypoints: (json['waypoints'] as num).toInt(),
     );
 

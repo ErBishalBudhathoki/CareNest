@@ -43,16 +43,20 @@ class MileageRepository {
   /// [userId] The ID of the employee.
   /// [startDate] Start date string (YYYY-MM-DD).
   /// [endDate] End date string (YYYY-MM-DD).
-  Future<List<Trip>> getTrips(String userId,
-      {String? startDate, String? endDate}) async {
+  Future<List<Trip>> getTrips(
+    String userId, {
+    String? startDate,
+    String? endDate,
+  }) async {
     try {
       String query = '';
       if (startDate != null && endDate != null) {
         query = '?startDate=$startDate&endDate=$endDate';
       }
 
-      final primaryResponse =
-          await _apiMethod.get('trips/employee/$userId$query');
+      final primaryResponse = await _apiMethod.get(
+        'trips/employee/$userId$query',
+      );
       final primaryTrips = _parseTrips(primaryResponse);
       if (primaryTrips.isNotEmpty ||
           (primaryResponse['success'] == true && primaryTrips.isEmpty)) {
@@ -82,12 +86,16 @@ class MileageRepository {
   }
 
   /// Fetches billable trips for a client within a date range.
-  Future<List<Trip>> getTripsForClient(String clientId,
-      {required String startDate, required String endDate}) async {
+  Future<List<Trip>> getTripsForClient(
+    String clientId, {
+    required String startDate,
+    required String endDate,
+  }) async {
     try {
       // Current backend route shape.
       final primaryResponse = await _apiMethod.get(
-          'trips?clientId=$clientId&startDate=$startDate&endDate=$endDate');
+        'trips?clientId=$clientId&startDate=$startDate&endDate=$endDate',
+      );
       final primaryTrips = _parseTrips(primaryResponse);
       final filteredPrimaryTrips = primaryTrips
           .where((trip) => trip.clientId == clientId)
@@ -100,9 +108,12 @@ class MileageRepository {
       // Compatibility fallback for deployments still exposing the old path.
       if (_isRouteNotFound(primaryResponse)) {
         final fallbackResponse = await _apiMethod.get(
-            'trips/client/$clientId?startDate=$startDate&endDate=$endDate');
+          'trips/client/$clientId?startDate=$startDate&endDate=$endDate',
+        );
         final fallbackTrips = _parseTrips(fallbackResponse);
-        return fallbackTrips.where((trip) => trip.clientId == clientId).toList();
+        return fallbackTrips
+            .where((trip) => trip.clientId == clientId)
+            .toList();
       }
       return [];
     } catch (e) {
@@ -124,7 +135,8 @@ class MileageRepository {
   }
 
   Future<List<Map<String, String>>> getAssignableClients(
-      String userEmail) async {
+    String userEmail,
+  ) async {
     try {
       final response = await _apiMethod.getUserAssignments(userEmail);
       if (response['success'] != true || response['assignments'] is! List) {
@@ -141,10 +153,25 @@ class MileageRepository {
         if (id.isEmpty || seen.contains(id)) continue;
         seen.add(id);
 
-        final name =
-            assignment['clientName']?.toString().trim().isNotEmpty == true
-                ? assignment['clientName'].toString()
-                : (assignment['clientEmail']?.toString() ?? id);
+        String name = '';
+        if (assignment['clientDetails'] is Map) {
+          final details = assignment['clientDetails'] as Map;
+          final firstName = details['clientFirstName']?.toString().trim() ?? '';
+          final lastName = details['clientLastName']?.toString().trim() ?? '';
+          if (firstName.isNotEmpty || lastName.isNotEmpty) {
+            name = '$firstName $lastName'.trim();
+          } else {
+            name = details['businessName']?.toString().trim() ?? '';
+          }
+        }
+
+        if (name.isEmpty) {
+          name = assignment['clientName']?.toString().trim() ?? '';
+        }
+
+        if (name.isEmpty) {
+          name = assignment['clientEmail']?.toString().trim() ?? id;
+        }
 
         clients.add({'id': id, 'name': name});
       }

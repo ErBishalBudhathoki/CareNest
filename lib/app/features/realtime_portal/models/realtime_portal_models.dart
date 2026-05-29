@@ -376,6 +376,7 @@ abstract class FamilyPermissions with _$FamilyPermissions {
     required bool viewMessages,
     required bool sendMessages,
     required bool viewLocation,
+    @Default(false) bool viewServiceHistory,
     required bool receiveNotifications,
   }) = _FamilyPermissions;
 

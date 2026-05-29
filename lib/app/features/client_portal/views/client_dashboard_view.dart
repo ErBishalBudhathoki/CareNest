@@ -1,11 +1,13 @@
 import 'package:carenest/app/core/utils/permission_manager.dart';
 import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
+import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
+import 'package:carenest/app/features/realtime_portal/repositories/realtime_portal_repository.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -18,10 +20,12 @@ import 'client_portal_dashboard.dart';
 
 class ClientDashboardView extends ConsumerStatefulWidget {
   final String? clientId;
+  final bool isFamilyViewer;
 
   const ClientDashboardView({
     super.key,
     this.clientId,
+    this.isFamilyViewer = false,
   });
 
   @override
@@ -31,17 +35,8 @@ class ClientDashboardView extends ConsumerStatefulWidget {
 
 class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
   int _currentIndex = 0;
-
-  List<Widget> _buildPages(BuildContext context) => [
-        ClientPortalDashboardBody(
-          clientId: widget.clientId,
-          showHeroHeader: false,
-          useSafeArea: false,
-          footer: _buildDeleteAccountFooter(context),
-        ),
-        const ClientInvoiceListView(),
-        ClientAppointmentView(clientId: widget.clientId),
-      ];
+  FamilyPermissions? _viewerPermissions;
+  bool _permissionsFetched = false;
 
   @override
   void initState() {
@@ -49,21 +44,212 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
         await PermissionManager.requestNotificationPermission(context);
+        if (widget.isFamilyViewer && widget.clientId != null) {
+          _loadMyPermissions();
+        }
       }
     });
   }
 
   @override
+  void didUpdateWidget(ClientDashboardView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final needsReload = (widget.isFamilyViewer != oldWidget.isFamilyViewer ||
+            widget.clientId != oldWidget.clientId) &&
+        widget.isFamilyViewer &&
+        widget.clientId != null;
+    if (needsReload) {
+      _permissionsFetched = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _loadMyPermissions();
+      });
+    }
+  }
+
+  Future<void> _loadMyPermissions() async {
+    if (widget.clientId == null) return;
+    try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final repository = RealtimePortalRepository(apiMethod);
+      final permissions = await repository.getMyFamilyPermissions(
+        clientId: widget.clientId!,
+      );
+      debugPrint(
+        '🔐 FAMILY PERMISSIONS: '
+        'appointments=${permissions?.viewAppointments}, '
+        'invoices=${permissions?.viewInvoices}, '
+        'messages=${permissions?.viewMessages}, '
+        'location=${permissions?.viewLocation}, '
+        'manage=${permissions?.manageFamily}, '
+        'feedback=${permissions?.approveServices}',
+      );
+      if (!mounted) return;
+      setState(() {
+        _viewerPermissions = permissions;
+        _permissionsFetched = true;
+      });
+    } catch (e) {
+      debugPrint('Error loading family permissions: $e');
+      debugPrint('Stack: ${StackTrace.current}');
+      if (!mounted) return;
+      setState(() => _permissionsFetched = true);
+    }
+  }
+
+  bool _canViewInvoices() =>
+      !widget.isFamilyViewer || (_viewerPermissions?.viewInvoices ?? false);
+
+  bool _canViewAppointments() =>
+      !widget.isFamilyViewer || (_viewerPermissions?.viewAppointments ?? false);
+
+  @override
   Widget build(BuildContext context) {
+    final viewerPermissions = widget.isFamilyViewer ? _viewerPermissions : null;
+    final showInvoices = _canViewInvoices();
+    final showAppointments = _canViewAppointments() || !_permissionsFetched;
+
+    final pages = <Widget>[
+      ClientPortalDashboardBody(
+        clientId: widget.clientId,
+        showHeroHeader: false,
+        useSafeArea: false,
+        isFamilyViewer: widget.isFamilyViewer,
+        viewerPermissions: viewerPermissions,
+        footer:
+            widget.isFamilyViewer ? null : _buildDeleteAccountFooter(context),
+      ),
+    ];
+
+    if (showInvoices) {
+      pages.add(ClientInvoiceListView(isFamilyViewer: widget.isFamilyViewer));
+    }
+
+    if (showAppointments) {
+      pages.add(ClientAppointmentView(
+        clientId: widget.clientId,
+        isFamilyViewer: widget.isFamilyViewer,
+      ));
+    }
+
+    final headerTitle =
+        widget.isFamilyViewer ? 'FAMILY DASHBOARD' : 'CLIENT DASHBOARD';
+    final headerSubtitle = widget.isFamilyViewer
+        ? 'View your loved one\'s care updates'
+        : 'Manage services, invoices, and appointments';
+
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       body: Column(
         children: [
-          _buildHeader(context),
-          Expanded(child: _buildPages(context)[_currentIndex]),
+          Container(
+            decoration: const BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border(
+                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+              ),
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space4,
+                  vertical: BauhausDesign.space3,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(BauhausDesign.space2),
+                      decoration: BoxDecoration(
+                        color: widget.isFamilyViewer
+                            ? BauhausDesign.warning.withOpacity(0.1)
+                            : BauhausDesign.primary.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        border: Border.all(
+                          color: widget.isFamilyViewer
+                              ? BauhausDesign.warning
+                              : BauhausDesign.primary,
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(
+                        widget.isFamilyViewer
+                            ? Icons.family_restroom_outlined
+                            : Icons.person_outline,
+                        color: widget.isFamilyViewer
+                            ? BauhausDesign.warning
+                            : BauhausDesign.primary,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space3),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            headerTitle,
+                            style: GoogleFonts.oswald(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textDark,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          Text(
+                            headerSubtitle,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodySmall
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!widget.isFamilyViewer)
+                      BauhausActionButton(
+                        onPressed: () => _openFamilyAccess(context),
+                        text: 'Family',
+                        icon: Icons.family_restroom_outlined,
+                        variant: BauhausActionVariant.secondary,
+                        isOutlined: true,
+                        isSmall: true,
+                      ),
+                    if (!widget.isFamilyViewer)
+                      const SizedBox(width: BauhausDesign.space2),
+                    BauhausIconButton(
+                      onPressed: () async {
+                        await SessionTimeoutService().logoutAndClearSession(
+                          reason: 'manual_logout_from_client_portal',
+                        );
+                        if (!mounted) return;
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          Routes.login,
+                          (route) => false,
+                        );
+                      },
+                      icon: Icons.logout,
+                      variant: BauhausActionVariant.neutral,
+                      tooltip: 'Logout',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: _currentIndex < pages.length
+                ? pages[_currentIndex]
+                : pages[0],
+          ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: _buildBottomNav(
+        context,
+        showInvoices: showInvoices,
+        showAppointments: showAppointments,
+      ),
     );
   }
 
@@ -73,92 +259,6 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
       arguments: {
         'clientId': widget.clientId,
       },
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: BauhausDesign.space4,
-            vertical: BauhausDesign.space3,
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.primary, width: 2),
-                ),
-                child: const Icon(
-                  Icons.person_outline,
-                  color: BauhausDesign.primary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: BauhausDesign.space3),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'CLIENT DASHBOARD',
-                      style: GoogleFonts.oswald(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    Text(
-                      'Manage services, invoices, and appointments',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-              BauhausActionButton(
-                onPressed: () => _openFamilyAccess(context),
-                text: 'Family',
-                icon: Icons.family_restroom_outlined,
-                variant: BauhausActionVariant.secondary,
-                isOutlined: true,
-                isSmall: true,
-              ),
-              const SizedBox(width: BauhausDesign.space2),
-              BauhausIconButton(
-                onPressed: () async {
-                  await SessionTimeoutService().logoutAndClearSession(
-                    reason: 'manual_logout_from_client_portal',
-                  );
-                  if (!mounted) return;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    Routes.login,
-                    (route) => false,
-                  );
-                },
-                icon: Icons.logout,
-                variant: BauhausActionVariant.neutral,
-                tooltip: 'Logout',
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -175,7 +275,52 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
     );
   }
 
-  Widget _buildBottomNav(BuildContext context) {
+  Widget _buildBottomNav(
+    BuildContext context, {
+    required bool showInvoices,
+    required bool showAppointments,
+  }) {
+    final navItems = <Widget>[];
+    // Track page indices separately from widget list length
+    // (navItems includes SizedBox spacers that inflate the count)
+    var pageIndex = 0;
+
+    navItems.add(
+      _buildNavItem(
+        icon: Icons.dashboard_outlined,
+        activeIcon: Icons.dashboard,
+        label: 'Dashboard',
+        index: pageIndex,
+      ),
+    );
+    pageIndex++;
+
+    if (showInvoices) {
+      navItems.add(const SizedBox(width: BauhausDesign.space4));
+      navItems.add(
+        _buildNavItem(
+          icon: Icons.receipt_long_outlined,
+          activeIcon: Icons.receipt_long,
+          label: 'Invoices',
+          index: pageIndex,
+        ),
+      );
+      pageIndex++;
+    }
+
+    if (showAppointments) {
+      navItems.add(const SizedBox(width: BauhausDesign.space4));
+      navItems.add(
+        _buildNavItem(
+          icon: Icons.calendar_today_outlined,
+          activeIcon: Icons.calendar_today,
+          label: 'Appointments',
+          index: pageIndex,
+        ),
+      );
+      pageIndex++;
+    }
+
     return Container(
       decoration: const BoxDecoration(
         color: BauhausDesign.surfaceWhite,
@@ -191,28 +336,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
             vertical: BauhausDesign.space2,
           ),
           child: Row(
-            children: [
-              _buildNavItem(
-                icon: Icons.dashboard_outlined,
-                activeIcon: Icons.dashboard,
-                label: 'Dashboard',
-                index: 0,
-              ),
-              const SizedBox(width: BauhausDesign.space4),
-              _buildNavItem(
-                icon: Icons.receipt_long_outlined,
-                activeIcon: Icons.receipt_long,
-                label: 'Invoices',
-                index: 1,
-              ),
-              const SizedBox(width: BauhausDesign.space4),
-              _buildNavItem(
-                icon: Icons.calendar_today_outlined,
-                activeIcon: Icons.calendar_today,
-                label: 'Appointments',
-                index: 2,
-              ),
-            ],
+            children: navItems,
           ),
         ),
       ),

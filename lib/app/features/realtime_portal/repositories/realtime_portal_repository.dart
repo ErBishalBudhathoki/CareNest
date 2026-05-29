@@ -1,5 +1,6 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
+import 'package:flutter/foundation.dart';
 
 class RealtimePortalRepository {
   final ApiMethod _apiMethod;
@@ -489,6 +490,40 @@ class RealtimePortalRepository {
       throw Exception(response['message'] ?? 'Failed to get family members');
     } catch (e) {
       throw Exception('Error getting family members: $e');
+    }
+  }
+
+  /// Get own family permissions (self-lookup)
+  Future<FamilyPermissions?> getMyFamilyPermissions({
+    required String clientId,
+  }) async {
+    try {
+      final response = await _apiMethod.getMyFamilyPermissions(
+        clientId: clientId,
+      );
+
+      debugPrint('🔐 getMyFamilyPermissions raw response: $response');
+
+      if (response['success'] == true && response['data'] != null) {
+        final data = response['data'] as Map<String, dynamic>;
+        debugPrint('🔐 getMyFamilyPermissions data keys: ${data.keys}');
+        debugPrint('🔐 getMyFamilyPermissions raw permissions: ${data['permissions']}');
+        final normalized = _normalizeFamilyMember(data);
+        debugPrint('🔐 getMyFamilyPermissions normalized permissions: ${normalized['permissions']}');
+        final member = FamilyMember.fromJson(normalized);
+        debugPrint('🔐 getMyFamilyPermissions parsed permissions: '
+            'viewApp=${member.permissions.viewAppointments}, '
+            'viewInv=${member.permissions.viewInvoices}, '
+            'viewMsg=${member.permissions.viewMessages}, '
+            'viewLoc=${member.permissions.viewLocation}');
+        return member.permissions;
+      }
+
+      throw Exception(
+          response['message'] ?? 'Failed to get family permissions');
+    } catch (e) {
+      debugPrint('🔐 getMyFamilyPermissions ERROR: $e');
+      throw Exception('Error getting family permissions: $e');
     }
   }
 

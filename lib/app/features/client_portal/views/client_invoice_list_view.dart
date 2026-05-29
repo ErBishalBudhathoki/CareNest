@@ -9,7 +9,12 @@ import 'client_invoice_detail_view.dart';
 import 'package:intl/intl.dart';
 
 class ClientInvoiceListView extends ConsumerStatefulWidget {
-  const ClientInvoiceListView({super.key});
+  final bool isFamilyViewer;
+
+  const ClientInvoiceListView({
+    super.key,
+    this.isFamilyViewer = false,
+  });
 
   @override
   ConsumerState<ClientInvoiceListView> createState() =>
