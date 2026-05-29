@@ -10,7 +10,7 @@ dependencies:
   get: 4.6.6
   get_storage: ^2.1.1
   cupertino_icons: ^1.0.8
-  connectivity_plus: ^6.1.1
+  connectivity_plus: ^7.1.1
   json_annotation: ^4.8.1
   provider: ^6.1.2
   email_validator: ^3.0.0
