@@ -1,19 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/workforce_planning_viewmodel.dart';
 
 // State class for Business Intelligence
 class BusinessIntelligenceState {
-  final bool isLoading;
-  final ExecutiveDashboard? dashboard;
-  final List<RevenueForecast> revenueForecast;
-  final List<ChurnPrediction> churnPredictions;
-  final List<ProfitabilityAnalysis> profitabilityAnalysis;
-  final WhatIfScenario? whatIfScenario;
-  final List<CustomerLifetimeValue> clvAnalysis;
-  final String? error;
+  late final bool isLoading;
+  late final ExecutiveDashboard? dashboard;
+  late final List<RevenueForecast> revenueForecast;
+  late final List<ChurnPrediction> churnPredictions;
+  late final List<ProfitabilityAnalysis> profitabilityAnalysis;
+  late final WhatIfScenario? whatIfScenario;
+  late final List<CustomerLifetimeValue> clvAnalysis;
+  late final String? error;
 
   BusinessIntelligenceState({
     this.isLoading = false,
@@ -50,10 +49,16 @@ class BusinessIntelligenceState {
 }
 
 // StateNotifier for Business Intelligence
-class BusinessIntelligenceViewModel extends StateNotifier<BusinessIntelligenceState> {
-  final WorkforceRepository _repository;
+class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> {
+  late final WorkforceRepository _repository;
 
-  BusinessIntelligenceViewModel(this._repository) : super(BusinessIntelligenceState());
+  
+  @override
+  BusinessIntelligenceState build() {
+    final repository = ref.watch(workforceRepositoryProvider);
+    
+    return BusinessIntelligenceState();
+  }
 
   // Get executive dashboard
   Future<void> getExecutiveDashboard({
@@ -261,8 +266,4 @@ class BusinessIntelligenceViewModel extends StateNotifier<BusinessIntelligenceSt
 }
 
 // Provider for BusinessIntelligenceViewModel
-final businessIntelligenceViewModelProvider =
-    StateNotifierProvider<BusinessIntelligenceViewModel, BusinessIntelligenceState>((ref) {
-  final repository = ref.watch(workforceRepositoryProvider);
-  return BusinessIntelligenceViewModel(repository);
-});
+final businessIntelligenceViewModelProvider = NotifierProvider<BusinessIntelligenceViewModel, BusinessIntelligenceState>(BusinessIntelligenceViewModel.new);

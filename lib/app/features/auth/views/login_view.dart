@@ -59,7 +59,8 @@ class _LoginViewState extends ConsumerState<LoginView>
 
   @override
   Widget build(BuildContext context) {
-    final loginViewModel = ref.watch(loginViewModelProvider);
+    ref.watch(loginViewModelProvider);
+    final loginViewModel = ref.read(loginViewModelProvider.notifier);
     final size = MediaQuery.of(context).size;
     final bool isSmallScreen = size.height < 700;
 
@@ -223,7 +224,8 @@ class _LoginViewState extends ConsumerState<LoginView>
             // Enhanced password field
             Consumer(
               builder: (context, ref, child) {
-                final viewModel = ref.watch(loginViewModelProvider);
+                ref.watch(loginViewModelProvider);
+              final viewModel = ref.read(loginViewModelProvider.notifier);
                 return BauhausTextField(
                   controller: viewModel.model.passwordController,
                   label: AppLocalizations.of(context)!.passwordLabel,

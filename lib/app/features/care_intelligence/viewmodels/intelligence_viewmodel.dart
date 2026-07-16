@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
     hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
@@ -14,13 +13,13 @@ final careIntelligenceRepositoryProvider =
 
 // State class for Care Intelligence
 class IntelligenceState {
-  final bool isLoading;
-  final IntelligenceReport? report;
-  final CarePatterns? patterns;
+  late final bool isLoading;
+  late final IntelligenceReport? report;
+  late final CarePatterns? patterns;
   final Map<String, dynamic>? predictions;
   final Map<String, dynamic>? optimization;
   final Map<String, dynamic>? insights;
-  final String? error;
+  late final String? error;
 
   IntelligenceState({
     this.isLoading = false,
@@ -54,10 +53,16 @@ class IntelligenceState {
 }
 
 // StateNotifier for Care Intelligence
-class IntelligenceViewModel extends StateNotifier<IntelligenceState> {
-  final CareIntelligenceRepository _repository;
+class IntelligenceViewModel extends Notifier<IntelligenceState> {
+  late final CareIntelligenceRepository _repository;
 
-  IntelligenceViewModel(this._repository) : super(IntelligenceState());
+  
+  @override
+  IntelligenceState build() {
+    final repository = ref.watch(careIntelligenceRepositoryProvider);
+    
+    return IntelligenceState();
+  }
 
   // Generate intelligence report
   Future<void> generateIntelligenceReport({
@@ -237,8 +242,4 @@ class IntelligenceViewModel extends StateNotifier<IntelligenceState> {
 }
 
 // Provider for IntelligenceViewModel
-final intelligenceViewModelProvider =
-    StateNotifierProvider<IntelligenceViewModel, IntelligenceState>((ref) {
-  final repository = ref.watch(careIntelligenceRepositoryProvider);
-  return IntelligenceViewModel(repository);
-});
+final intelligenceViewModelProvider = NotifierProvider<IntelligenceViewModel, IntelligenceState>(IntelligenceViewModel.new);

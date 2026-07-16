@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -40,19 +39,26 @@ class OcrState {
 }
 
 final ocrViewModelProvider =
-    StateNotifierProvider.autoDispose<OcrViewModel, OcrState>((ref) {
-  final repository = ref.watch(ocrRepositoryProvider);
-  return OcrViewModel(OcrService(), repository);
-});
+    NotifierProvider.autoDispose<OcrViewModel, OcrState>(OcrViewModel.new);
 
-class OcrViewModel extends StateNotifier<OcrState> {
-  final OcrService _ocrService;
-  final OcrRepository _repository;
+class OcrViewModel extends Notifier<OcrState> {
+  late final OcrService _ocrService;
+  late final OcrRepository _repository;
 
-  OcrViewModel(this._ocrService, this._repository) : super(const OcrState());
+  @override
+  OcrState build() {
+    _repository = ref.watch(ocrRepositoryProvider);
+    _ocrService = OcrService();
+    ref.onDispose(() {
+      _ocrService.dispose();
+    });
+    return const OcrState();
+  }
 
   Future<void> pickAndScanImage(
-      ImageSource source, BuildContext context) async {
+    ImageSource source,
+    BuildContext context,
+  ) async {
     state = state.copyWith(isLoading: true, errorMessage: null, result: null);
 
     try {
@@ -78,35 +84,27 @@ class OcrViewModel extends StateNotifier<OcrState> {
 
       // 4. Parse (Backend)
       final ocrSource = Platform.isIOS ? 'apple_vision' : 'google_mlkit';
-      final parsedData =
-          await _repository.parseReceipt(rawText, source: ocrSource);
+      final parsedData = await _repository.parseReceipt(
+        rawText,
+        source: ocrSource,
+      );
 
-      state = state.copyWith(
-        isLoading: false,
-        result: parsedData,
-      );
+      state = state.copyWith(isLoading: false, result: parsedData);
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
   }
 
   void clear() {
     state = state.clear();
   }
+}
 
-  @override
-  void dispose() {
-    _ocrService.dispose();
-    super.dispose();
-  }
-
-  void _logOcrPreview(String rawText) {
-    final preview = rawText.trim();
-    const maxLen = 200;
-    final snippet = preview.length > maxLen ? preview.substring(0, maxLen) : preview;
-    debugPrint('OcrViewModel: OCR preview (len=${preview.length}): $snippet');
-  }
+void _logOcrPreview(String rawText) {
+  final preview = rawText.trim();
+  const maxLen = 200;
+  final snippet = preview.length > maxLen
+      ? preview.substring(0, maxLen)
+      : preview;
+  debugPrint('OcrViewModel: OCR preview (len=${preview.length}): $snippet');
 }

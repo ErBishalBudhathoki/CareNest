@@ -1,118 +1,76 @@
-import 'package:flutter/foundation.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:carenest/app/features/invoice/repositories/fallback_pricing_repository.dart';
+import 'package:carenest/app/features/invoice/providers/fallback_pricing_providers.dart';
 
-/// ViewModel managing fallback pricing state, validation, and save lifecycle.
-///
-/// Encapsulates business rules to determine when fallback pricing is required
-/// and provides methods to load and update the organization fallback base rate.
-class FallbackPricingViewModel extends ChangeNotifier {
-  final FallbackPricingRepository _repository;
+part 'fallback_pricing_view_model.freezed.dart';
 
-  double? _fallbackRate;
-  bool _isLoading = false;
-  String? _errorMessage;
-  bool _saveSucceeded = false;
+@freezed
+abstract class FallbackPricingState with _$FallbackPricingState {
+  const factory FallbackPricingState({
+    double? fallbackRate,
+    @Default(false) bool isLoading,
+    String? errorMessage,
+    @Default(false) bool saveSucceeded,
+  }) = _FallbackPricingState;
+}
 
-  FallbackPricingViewModel(this._repository);
+class FallbackPricingViewModel extends Notifier<FallbackPricingState> {
+  late final FallbackPricingRepository _repository;
 
-  /// Currently configured fallback rate (null when not set).
-  double? get fallbackRate => _fallbackRate;
+  @override
+  FallbackPricingState build() {
+    _repository = ref.watch(fallbackPricingRepositoryProvider);
+    return const FallbackPricingState();
+  }
 
-  /// Loading flag for async operations.
-  bool get isLoading => _isLoading;
+  void resetSaveState() {
+    state = state.copyWith(saveSucceeded: false);
+  }
 
-  /// Last error message, if any.
-  String? get errorMessage => _errorMessage;
+  void clearError() {
+    state = state.copyWith(errorMessage: null);
+  }
 
-  /// True when the last save operation succeeded.
-  bool get saveSucceeded => _saveSucceeded;
+  void setFallbackRateLocally(double? rate) {
+    state = state.copyWith(fallbackRate: rate, errorMessage: null);
+  }
 
-  /// Load fallback base rate from backend and update state.
-  Future<void> load(String organizationId) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+  Future<void> loadOrganizationFallbackRate({required String organizationId}) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      _fallbackRate = await _repository.getFallbackBaseRate(
-        organizationId: organizationId,
-      );
-      _saveSucceeded = false;
+      final rate = await _repository.getFallbackBaseRate(organizationId: organizationId);
+      state = state.copyWith(fallbackRate: rate);
     } catch (e) {
-      _errorMessage = e.toString();
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
-  /// Validate a candidate fallback rate according to business requirements.
-  ///
-  /// Returns true if valid; otherwise sets a user-friendly error message.
-  bool validateRate(double? rate) {
-    if (rate == null || rate <= 0) {
-      _errorMessage = 'Please enter a valid positive amount.';
-      notifyListeners();
-      return false;
-    }
-    // Extend with additional rules (e.g., max cap constraints) if required.
-    _errorMessage = null;
-    return true;
-  }
-
-  /// Save the fallback rate via the repository.
-  Future<void> save({
+  Future<void> saveFallbackRate({
     required String organizationId,
     required double fallbackRate,
     required String userEmail,
   }) async {
-    if (!validateRate(fallbackRate)) return;
-    _isLoading = true;
-    _saveSucceeded = false;
-    notifyListeners();
+    if (fallbackRate <= 0) {
+      state = state.copyWith(errorMessage: 'Rate must be greater than zero.');
+      return;
+    }
+    
+    state = state.copyWith(isLoading: true, errorMessage: null, saveSucceeded: false);
+    
     try {
       final persisted = await _repository.setFallbackBaseRate(
         organizationId: organizationId,
         fallbackBaseRate: fallbackRate,
         userEmail: userEmail,
       );
-      _fallbackRate = persisted;
-      _saveSucceeded = true;
+      state = state.copyWith(fallbackRate: persisted, saveSucceeded: true);
     } catch (e) {
-      _errorMessage = e.toString();
-      _saveSucceeded = false;
+      state = state.copyWith(errorMessage: e.toString(), saveSucceeded: false);
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
-  }
-
-  /// Determine if fallback pricing is required based on supplied context.
-  ///
-  /// Parameters:
-  /// - [hasPrimaryRate]: true if a client/organization-specific rate exists.
-  /// - [hasServiceRate]: true if a defined service rate is available.
-  /// - [integrationConnected]: external pricing integration is connected.
-  /// - [validationPassed]: pricing validation rules passed.
-  ///
-  /// Returns true when the system should use fallback pricing. This is a
-  /// central hook for business rules that can be extended without touching
-  /// UI components.
-  bool evaluateFallbackNeed({
-    required bool hasPrimaryRate,
-    required bool hasServiceRate,
-    required bool integrationConnected,
-    required bool validationPassed,
-  }) {
-    // Basic rule: fallback when there is no primary nor service rate.
-    if (!hasPrimaryRate && !hasServiceRate) return true;
-
-    // If the external integration is disconnected, consider fallback.
-    if (!integrationConnected) return true;
-
-    // If validation fails, avoid fallback unless explicitly allowed.
-    if (!validationPassed) return false;
-
-    return false;
   }
 }

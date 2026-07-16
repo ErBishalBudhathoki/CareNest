@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart'
-    as app_providers;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import '../../../shared/widgets/flushbar_widget.dart';
 import '../../../shared/widgets/confirmation_alert_dialog_widget.dart';
 import '../viewmodels/bank_details_viewmodel.dart';
+import '../models/bank_details_state.dart';
 
-class BankDetailsView extends ConsumerWidget {
+class BankDetailsView extends ConsumerStatefulWidget {
   final BankDetailsScope scope;
 
   const BankDetailsView({
@@ -17,17 +16,66 @@ class BankDetailsView extends ConsumerWidget {
     this.scope = BankDetailsScope.personal,
   });
 
-  bool get _isOrganizationScope => scope == BankDetailsScope.organization;
+  @override
+  ConsumerState<BankDetailsView> createState() => _BankDetailsViewState();
+}
+
+class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
+  late final TextEditingController bankNameController;
+  late final TextEditingController accountNameController;
+  late final TextEditingController bsbController;
+  late final TextEditingController accountNumberController;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel =
-        ref.watch(app_providers.scopedBankDetailsViewModelProvider(scope));
+  void initState() {
+    super.initState();
+    final initialState = ref.read(bankDetailsViewModelProvider(widget.scope));
+    bankNameController = TextEditingController(text: initialState.bankName);
+    accountNameController = TextEditingController(text: initialState.accountName);
+    bsbController = TextEditingController(text: initialState.bsb);
+    accountNumberController = TextEditingController(text: initialState.accountNumber);
+  }
+
+  @override
+  void dispose() {
+    bankNameController.dispose();
+    accountNameController.dispose();
+    bsbController.dispose();
+    accountNumberController.dispose();
+    super.dispose();
+  }
+
+  bool get _isOrganizationScope => widget.scope == BankDetailsScope.organization;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(bankDetailsViewModelProvider(widget.scope));
+
+    ref.listen<BankDetailsState>(
+      bankDetailsViewModelProvider(widget.scope),
+      (previous, next) {
+        if (previous == null || (previous.isLoading && !next.isLoading)) {
+          if (bankNameController.text.isEmpty && next.bankName.isNotEmpty) {
+            bankNameController.text = next.bankName;
+          }
+          if (accountNameController.text.isEmpty && next.accountName.isNotEmpty) {
+            accountNameController.text = next.accountName;
+          }
+          if (bsbController.text.isEmpty && next.bsb.isNotEmpty) {
+            bsbController.text = next.bsb;
+          }
+          if (accountNumberController.text.isEmpty && next.accountNumber.isNotEmpty) {
+            accountNumberController.text = next.accountNumber;
+          }
+        }
+      },
+    );
+
     final detailsListenable = Listenable.merge([
-      viewModel.bankNameController,
-      viewModel.accountNameController,
-      viewModel.bsbController,
-      viewModel.accountNumberController,
+      bankNameController,
+      accountNameController,
+      bsbController,
+      accountNumberController,
     ]);
 
     return Scaffold(
@@ -94,7 +142,7 @@ class BankDetailsView extends ConsumerWidget {
                           children: [
                             Expanded(
                               flex: 7,
-                              child: _buildFormSection(context, viewModel),
+                              child: _buildFormSection(context, state),
                             ),
                             const SizedBox(width: BauhausDesign.space6),
                             Expanded(
@@ -102,8 +150,7 @@ class BankDetailsView extends ConsumerWidget {
                               child: AnimatedBuilder(
                                 animation: detailsListenable,
                                 builder: (context, _) {
-                                  return _buildSummarySection(
-                                      context, viewModel);
+                                  return _buildSummarySection(context);
                                 },
                               ),
                             ),
@@ -112,12 +159,12 @@ class BankDetailsView extends ConsumerWidget {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildFormSection(context, viewModel),
+                            _buildFormSection(context, state),
                             const SizedBox(height: BauhausDesign.space6),
                             AnimatedBuilder(
                               animation: detailsListenable,
                               builder: (context, _) {
-                                return _buildSummarySection(context, viewModel);
+                                return _buildSummarySection(context);
                               },
                             ),
                           ],
@@ -197,9 +244,8 @@ class BankDetailsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildFormSection(
-      BuildContext context, BankDetailsViewModel viewModel) {
-    final errorMessage = viewModel.errorMessage?.trim();
+  Widget _buildFormSection(BuildContext context, BankDetailsState state) {
+    final errorMessage = state.errorMessage?.trim();
 
     return Container(
       decoration: BoxDecoration(
@@ -233,7 +279,7 @@ class BankDetailsView extends ConsumerWidget {
               children: [
                 _buildFieldBlock(
                   context: context,
-                  controller: viewModel.bankNameController,
+                  controller: bankNameController,
                   label: 'Bank Name',
                   hint: 'e.g., Commonwealth Bank',
                   icon: Icons.account_balance_outlined,
@@ -242,7 +288,7 @@ class BankDetailsView extends ConsumerWidget {
                 const SizedBox(height: BauhausDesign.space5),
                 _buildFieldBlock(
                   context: context,
-                  controller: viewModel.accountNameController,
+                  controller: accountNameController,
                   label: 'Account Name',
                   hint: 'Full name as shown on account',
                   icon: Icons.person_outline,
@@ -252,7 +298,7 @@ class BankDetailsView extends ConsumerWidget {
                 const SizedBox(height: BauhausDesign.space5),
                 _buildFieldBlock(
                   context: context,
-                  controller: viewModel.bsbController,
+                  controller: bsbController,
                   label: 'BSB',
                   hint: '000-000',
                   icon: Icons.tag,
@@ -268,7 +314,7 @@ class BankDetailsView extends ConsumerWidget {
                 const SizedBox(height: BauhausDesign.space5),
                 _buildFieldBlock(
                   context: context,
-                  controller: viewModel.accountNumberController,
+                  controller: accountNumberController,
                   label: 'Account Number',
                   hint: '6-10 digits',
                   icon: Icons.numbers,
@@ -285,17 +331,13 @@ class BankDetailsView extends ConsumerWidget {
                 SizedBox(
                   width: double.infinity,
                   child: BauhausActionButton(
-                    onPressed: viewModel.isLoading
+                    onPressed: state.isLoading
                         ? null
-                        : () => _showSaveConfirmation(
-                              context,
-                              viewModel,
-                              scope: scope,
-                            ),
+                        : () => _showSaveConfirmation(context),
                     text: 'Save Bank Details',
                     icon: Icons.save_outlined,
                     variant: BauhausActionVariant.primary,
-                    isLoading: viewModel.isLoading,
+                    isLoading: state.isLoading,
                   ),
                 ),
                 if (errorMessage != null && errorMessage.isNotEmpty) ...[
@@ -310,14 +352,11 @@ class BankDetailsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummarySection(
-    BuildContext context,
-    BankDetailsViewModel viewModel,
-  ) {
-    final bankName = viewModel.bankNameController.text.trim();
-    final accountName = viewModel.accountNameController.text.trim();
-    final bsb = viewModel.bsbController.text.trim();
-    final accountNumber = viewModel.accountNumberController.text.trim();
+  Widget _buildSummarySection(BuildContext context) {
+    final bankName = bankNameController.text.trim();
+    final accountName = accountNameController.text.trim();
+    final bsb = bsbController.text.trim();
+    final accountNumber = accountNumberController.text.trim();
 
     final hasBankName = bankName.isNotEmpty;
     final hasAccountName = accountName.isNotEmpty;
@@ -447,7 +486,7 @@ class BankDetailsView extends ConsumerWidget {
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
                             height: 1.45,
-                          ),
+                  ),
                 ),
               ),
             ],
@@ -600,26 +639,39 @@ class BankDetailsView extends ConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 28,
-            height: 28,
-            color: BauhausDesign.accent,
-            alignment: Alignment.center,
-            child: const Icon(
-              Icons.rule_folder_outlined,
-              color: BauhausDesign.textDark,
-              size: 18,
-            ),
+          const Icon(
+            Icons.info_outline,
+            color: BauhausDesign.textDark,
+            size: 20,
           ),
-          const SizedBox(width: BauhausDesign.space3),
+          const SizedBox(width: BauhausDesign.space2),
           Expanded(
-            child: Text(
-              'Validation rules: BSB must be XXX-XXX. Account number must contain 6-10 digits.',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                    height: 1.4,
-                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'REQUIREMENTS',
+                  style:
+                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.5,
+                          ),
+                ),
+                const SizedBox(height: BauhausDesign.space1),
+                Text(
+                  '• BSB: exactly 6 digits (XXX-XXX format is auto-applied)\n'
+                  '• Account: 6 to 10 digits\n'
+                  '• Check details carefully—wrong info delays payouts.',
+                  style: BauhausDesign.getTextTheme(context)
+                      .bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textMuted,
+                        fontWeight: FontWeight.w600,
+                        height: 1.4,
+                      ),
+                ),
+              ],
             ),
           ),
         ],
@@ -631,20 +683,22 @@ class BankDetailsView extends ConsumerWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.error,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: BauhausDesign.error.withOpacity(0.1),
+        border: Border.all(color: BauhausDesign.error, width: 2),
       ),
       padding: const EdgeInsets.all(BauhausDesign.space3),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.error_outline, color: BauhausDesign.surfaceWhite),
+          const Icon(
+            Icons.error_outline,
+            color: BauhausDesign.error,
+          ),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(
               message,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
+                    color: BauhausDesign.error,
                     fontWeight: FontWeight.w700,
                   ),
             ),
@@ -653,9 +707,81 @@ class BankDetailsView extends ConsumerWidget {
       ),
     );
   }
+
+  void _showSaveConfirmation(BuildContext context) {
+    final maskedAcc = _maskAccountNumber(accountNumberController.text);
+    final bankName = bankNameController.text.trim();
+    final bsb = bsbController.text.trim();
+
+    final displayBank = bankName.isNotEmpty ? bankName : 'Bank details';
+    final displayBsb = bsb.isNotEmpty ? bsb : '—';
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) {
+        return ConfirmationAlertDialog(
+          title: 'Confirm save',
+          content:
+              '$displayBank\nAccount: $maskedAcc\nBSB: $displayBsb\n\nProceed to save these details?',
+          confirmText: 'Save',
+          cancelText: 'Cancel',
+          confirmColor: BauhausDesign.primary,
+          confirmAction: () {
+            Navigator.of(dialogContext).pop();
+            _handleSaveWithAlerts(context);
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _handleSaveWithAlerts(BuildContext context) async {
+    await ref.read(bankDetailsViewModelProvider(widget.scope).notifier).saveBankDetails(
+      bankName: bankNameController.text,
+      accountName: accountNameController.text,
+      bsb: bsbController.text,
+      accountNumber: accountNumberController.text,
+    );
+
+    final currentState = ref.read(bankDetailsViewModelProvider(widget.scope));
+    final flush = FlushBarWidget();
+
+    if (currentState.errorMessage != null) {
+      flush.flushBar(
+        context: context,
+        title: 'Save failed',
+        message: '${currentState.errorMessage}\nYour changes are saved locally.',
+        backgroundColor: BauhausDesign.error,
+      );
+    } else {
+      final maskedAcc = _maskAccountNumber(currentState.accountNumber);
+      final bankName = currentState.bankName.trim();
+      final bsb = currentState.bsb.trim();
+
+      final displayBank = bankName.isNotEmpty ? bankName : 'Bank details';
+      final displayBsb = bsb.isNotEmpty ? bsb : '—';
+
+      flush.flushBar(
+        context: context,
+        title: widget.scope == BankDetailsScope.organization
+            ? 'Organization bank details saved'
+            : 'Bank details saved',
+        message: '$displayBank • Account $maskedAcc • BSB $displayBsb',
+        backgroundColor: BauhausDesign.success,
+      );
+    }
+  }
+
+  String _maskAccountNumber(String val) {
+    final clean = val.trim();
+    if (clean.length < 4) return '****';
+    final end = clean.substring(clean.length - 4);
+    final mask = '*' * (clean.length - 4);
+    return '$mask$end';
+  }
 }
 
-// Custom formatter for BSB (adds hyphen after 3 digits)
 class _BSBFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -663,101 +789,18 @@ class _BSBFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final text = newValue.text.replaceAll('-', '');
+    if (text.isEmpty) return newValue;
 
-    if (text.length <= 3) {
-      return newValue.copyWith(text: text);
+    final buffer = StringBuffer();
+    for (int i = 0; i < text.length; i++) {
+      if (i == 3) buffer.write('-');
+      buffer.write(text[i]);
     }
 
-    final formatted = '${text.substring(0, 3)}-${text.substring(3)}';
-
-    return newValue.copyWith(
+    final formatted = buffer.toString();
+    return TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),
-    );
-  }
-}
-
-/// Masks the account number for display.
-String _maskAccountNumber(String input) {
-  final digits = input.replaceAll(RegExp(r'\D'), '');
-  if (digits.isEmpty) return '—';
-  final last4 =
-      digits.length > 4 ? digits.substring(digits.length - 4) : digits;
-  return '•••• $last4';
-}
-
-/// Shows a modal confirmation before saving bank details.
-void _showSaveConfirmation(
-  BuildContext context,
-  BankDetailsViewModel viewModel, {
-  required BankDetailsScope scope,
-}) {
-  // Dismiss keyboard before dialog
-  FocusScope.of(context).unfocus();
-
-  final maskedAcc = _maskAccountNumber(viewModel.accountNumberController.text);
-  final bankName = viewModel.bankNameController.text.trim();
-  final bsb = viewModel.bsbController.text.trim();
-
-  final displayBank = bankName.isNotEmpty ? bankName : 'Bank details';
-  final displayBsb = bsb.isNotEmpty ? bsb : '—';
-
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (dialogContext) {
-      return ConfirmationAlertDialog(
-        title: 'Confirm save',
-        content:
-            '$displayBank\nAccount: $maskedAcc\nBSB: $displayBsb\n\nProceed to save these details?',
-        confirmText: 'Save',
-        cancelText: 'Cancel',
-        confirmColor: BauhausDesign.primary,
-        confirmAction: () {
-          Navigator.of(dialogContext).pop();
-          _handleSaveWithAlerts(
-            context,
-            viewModel,
-            scope: scope,
-          );
-        },
-      );
-    },
-  );
-}
-
-/// Executes save via ViewModel, then shows success/error flushbars.
-Future<void> _handleSaveWithAlerts(
-  BuildContext context,
-  BankDetailsViewModel viewModel, {
-  required BankDetailsScope scope,
-}) async {
-  await viewModel.saveBankDetails();
-
-  final flush = FlushBarWidget();
-  if (viewModel.errorMessage != null) {
-    flush.flushBar(
-      context: context,
-      title: 'Save failed',
-      message: '${viewModel.errorMessage}\nYour changes are saved locally.',
-      backgroundColor: BauhausDesign.error,
-    );
-  } else {
-    final maskedAcc =
-        _maskAccountNumber(viewModel.accountNumberController.text);
-    final bankName = viewModel.bankNameController.text.trim();
-    final bsb = viewModel.bsbController.text.trim();
-
-    final displayBank = bankName.isNotEmpty ? bankName : 'Bank details';
-    final displayBsb = bsb.isNotEmpty ? bsb : '—';
-
-    flush.flushBar(
-      context: context,
-      title: scope == BankDetailsScope.organization
-          ? 'Organization bank details saved'
-          : 'Bank details saved',
-      message: '$displayBank • Account $maskedAcc • BSB $displayBsb',
-      backgroundColor: BauhausDesign.success,
     );
   }
 }

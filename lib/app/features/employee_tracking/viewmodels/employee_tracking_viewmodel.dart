@@ -1,42 +1,43 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../models/employee_tracking_model.dart';
 import '../repositories/employee_tracking_repository.dart';
 
 // Provider for the repository
-final employeeTrackingRepositoryProvider =
-    Provider<EmployeeTrackingRepository>((ref) {
-  return EmployeeTrackingRepository(apiMethod: ref.read(app_providers.apiMethodProvider));
-});
+final employeeTrackingRepositoryProvider = Provider<EmployeeTrackingRepository>(
+  (ref) {
+    return EmployeeTrackingRepository(
+      apiMethod: ref.read(app_providers.apiMethodProvider),
+    );
+  },
+);
 
 // Provider for the ViewModel
-final employeeTrackingViewModelProvider = StateNotifierProvider<
-    EmployeeTrackingViewModel, AsyncValue<EmployeeTrackingState>>((ref) {
-  final repository = ref.watch(employeeTrackingRepositoryProvider);
-  return EmployeeTrackingViewModel(repository);
-});
+final employeeTrackingViewModelProvider =
+    AsyncNotifierProvider<EmployeeTrackingViewModel, EmployeeTrackingState>(
+      EmployeeTrackingViewModel.new,
+    );
 
 // Provider for filtered employees based on status
 final filteredEmployeesProvider =
     Provider.family<List<EmployeeStatus>, WorkStatus?>((ref, status) {
-  final trackingState = ref.watch(employeeTrackingViewModelProvider);
+      final trackingState = ref.watch(employeeTrackingViewModelProvider);
 
-  return trackingState.when(
-    data: (state) {
-      if (status == null) {
-        return state.data.employees;
-      }
-      return state.data.employees
-          .where((employee) => employee.status == status)
-          .toList();
-    },
-    loading: () => [],
-    error: (_, __) => [],
-  );
-});
+      return trackingState.when(
+        data: (state) {
+          if (status == null) {
+            return state.data.employees;
+          }
+          return state.data.employees
+              .where((employee) => employee.status == status)
+              .toList();
+        },
+        loading: () => [],
+        error: (_, __) => [],
+      );
+    });
 
 // Provider for employee statistics
 final employeeStatsProvider = Provider<Map<String, int>>((ref) {
@@ -99,70 +100,59 @@ class EmployeeTrackingState {
   }) {
     return EmployeeTrackingState(
       data: data ?? this.data,
-      selectedFilter:
-          clearSelectedFilter ? null : (selectedFilter ?? this.selectedFilter),
+      selectedFilter: clearSelectedFilter
+          ? null
+          : (selectedFilter ?? this.selectedFilter),
       isRefreshing: isRefreshing ?? this.isRefreshing,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
 }
 
-class EmployeeTrackingViewModel
-    extends StateNotifier<AsyncValue<EmployeeTrackingState>> {
-  final EmployeeTrackingRepository _repository;
+class EmployeeTrackingViewModel extends AsyncNotifier<EmployeeTrackingState> {
+  late final EmployeeTrackingRepository _repository;
 
-  EmployeeTrackingViewModel(this._repository)
-      : super(const AsyncValue.loading()) {
-    loadEmployeeTrackingData();
+  @override
+  Future<EmployeeTrackingState> build() async {
+    _repository = ref.watch(employeeTrackingRepositoryProvider);
+    return _loadInitialData();
   }
 
-  /// Loads employee tracking data from the repository
+  Future<EmployeeTrackingState> _loadInitialData() async {
+    final data = await _repository.getEmployeeTrackingData();
+    return EmployeeTrackingState(
+      data: data,
+      selectedFilter: null,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
   Future<void> loadEmployeeTrackingData() async {
-    debugPrint(
-        '🔍 DEBUG: EmployeeTrackingViewModel.loadEmployeeTrackingData() called');
-
-    try {
-      state = const AsyncValue.loading();
-      debugPrint('🔍 DEBUG: State set to loading, fetching data from repository...');
-
-      final data = await _repository.getEmployeeTrackingData();
-      debugPrint('🔍 DEBUG: Data fetched successfully from repository');
-      debugPrint('🔍 DEBUG: Employee count: ${data.employees.length}');
-      debugPrint('🔍 DEBUG: Active employees: ${data.activeEmployees}');
-      debugPrint('🔍 DEBUG: Total employees: ${data.totalEmployees}');
-
-      state = AsyncValue.data(EmployeeTrackingState(
-        data: data,
-        selectedFilter: null, // Start with 'All' filter selected
-        lastUpdated: DateTime.now(),
-      ));
-      debugPrint('🔍 DEBUG: State updated with employee tracking data');
-    } catch (error, stackTrace) {
-      debugPrint('🔍 DEBUG: Error loading employee tracking data: $error');
-      debugPrint('🔍 DEBUG: Stack trace: $stackTrace');
-      state = AsyncValue.error(error, stackTrace);
-    }
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(_loadInitialData);
   }
 
   /// Refreshes employee tracking data
   Future<void> refreshEmployeeTrackingData() async {
     final currentState = state.value;
     if (currentState != null) {
-      state = AsyncValue.data(currentState.copyWith(isRefreshing: true));
+      state = AsyncData(currentState.copyWith(isRefreshing: true));
     }
 
     try {
       final data = await _repository.refreshEmployeeTrackingData();
 
-      state = AsyncValue.data(EmployeeTrackingState(
-        data: data,
-        selectedFilter: currentState?.selectedFilter,
-        isRefreshing: false,
-        lastUpdated: DateTime.now(),
-      ));
+      state = AsyncValue.data(
+        EmployeeTrackingState(
+          data: data,
+          selectedFilter: currentState?.selectedFilter,
+          isRefreshing: false,
+          lastUpdated: DateTime.now(),
+        ),
+      );
     } catch (e) {
       if (currentState != null) {
-        state = AsyncValue.data(currentState.copyWith(isRefreshing: false));
+        state = AsyncData(currentState.copyWith(isRefreshing: false));
       }
       // You might want to show a snackbar or toast here
       rethrow;
@@ -174,20 +164,25 @@ class EmployeeTrackingViewModel
     final currentState = state.value;
     if (currentState != null) {
       if (filter == null) {
-        state =
-            AsyncValue.data(currentState.copyWith(clearSelectedFilter: true));
+        state = AsyncValue.data(
+          currentState.copyWith(clearSelectedFilter: true),
+        );
       } else {
-        state = AsyncValue.data(currentState.copyWith(selectedFilter: filter));
+        state = AsyncData(currentState.copyWith(selectedFilter: filter));
       }
     }
   }
 
   /// Updates employee status
   Future<void> updateEmployeeStatus(
-      String employeeId, WorkStatus status) async {
+    String employeeId,
+    WorkStatus status,
+  ) async {
     try {
-      final success =
-          await _repository.updateEmployeeStatus(employeeId, status);
+      final success = await _repository.updateEmployeeStatus(
+        employeeId,
+        status,
+      );
       if (success) {
         // Refresh data to get updated status
         await refreshEmployeeTrackingData();
@@ -218,8 +213,9 @@ class EmployeeTrackingViewModel
     if (currentState == null) return null;
 
     try {
-      return currentState.data.employees
-          .firstWhere((employee) => employee.id == employeeId);
+      return currentState.data.employees.firstWhere(
+        (employee) => employee.id == employeeId,
+      );
     } catch (e) {
       return null;
     }

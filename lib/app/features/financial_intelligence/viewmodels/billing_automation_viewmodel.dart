@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class BillingAutomationState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? invoices;
   final Map<String, dynamic>? validation;
   final Map<String, dynamic>? anomalies;
-  final List<dynamic>? pendingInvoices;
-  final String? error;
+  late final List<dynamic>? pendingInvoices;
+  late final String? error;
 
   BillingAutomationState({
     this.isLoading = false,
@@ -40,11 +39,16 @@ class BillingAutomationState {
   }
 }
 
-class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
-  final FinancialIntelligenceRepository _repository;
+class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  BillingAutomationViewModel(this._repository)
-      : super(BillingAutomationState());
+  
+  @override
+  BillingAutomationState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return BillingAutomationState();
+  }
 
   Future<void> generateInvoices({
     required String organizationId,
@@ -121,10 +125,4 @@ class BillingAutomationViewModel extends StateNotifier<BillingAutomationState> {
   }
 }
 
-final billingAutomationViewModelProvider =
-    StateNotifierProvider<BillingAutomationViewModel, BillingAutomationState>(
-        (ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return BillingAutomationViewModel(repository);
-});
+final billingAutomationViewModelProvider = NotifierProvider<BillingAutomationViewModel, BillingAutomationState>(BillingAutomationViewModel.new);

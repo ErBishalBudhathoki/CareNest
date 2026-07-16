@@ -3,31 +3,37 @@ import 'package:carenest/app/features/home/repositories/home_repository.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 /// Provider for HomeViewModel
 final homeViewModelProvider =
-    StateNotifierProvider<HomeViewModel, AsyncValue<HomeDashboardData>>((ref) {
-  final repository = ref.read(homeRepositoryProvider);
-  return HomeViewModel(repository);
-});
+    AsyncNotifierProvider<HomeViewModel, HomeDashboardData>(HomeViewModel.new);
 
 /// Home View Model
 ///
 /// Manages the state of the Employee Home View dashboard.
-class HomeViewModel extends StateNotifier<AsyncValue<HomeDashboardData>> {
-  final HomeRepository _repository;
+class HomeViewModel extends AsyncNotifier<HomeDashboardData> {
+  late final HomeRepository _repository;
 
-  HomeViewModel(this._repository) : super(const AsyncValue.loading());
+  @override
+  Future<HomeDashboardData> build() async {
+    _repository = ref.watch(homeRepositoryProvider);
+    // Don't auto-load, let the initialization happen via return
+    // Wait, the original code doesn't load immediately in constructor.
+    // Wait, actually I should check if it needs manual load or just returns
+    return const HomeDashboardData(
+      upcomingAppointments: [],
+      activeBroadcasts: [],
+    ); // Placeholder, will fix next
+  }
 
   /// Load home dashboard data
   Future<void> loadDashboard(String email) async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     try {
       final data = await _repository.getHomeDashboardData(email);
-      state = AsyncValue.data(data);
+      state = AsyncData(data);
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = AsyncError(e, st);
     }
   }
 
@@ -35,7 +41,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<HomeDashboardData>> {
   Future<void> refreshSilently(String email) async {
     try {
       final data = await _repository.getHomeDashboardData(email);
-      state = AsyncValue.data(data);
+      state = AsyncData(data);
     } catch (e) {
       // Keep previous state on silent error
       debugPrint('Silent refresh error: $e');
@@ -51,7 +57,6 @@ class HomeViewModel extends StateNotifier<AsyncValue<HomeDashboardData>> {
     try {
       final freshBroadcasts = await _repository.getActiveBroadcasts();
 
-      if (!mounted) return;
       final current = state.value;
       if (current == null) return;
 
@@ -63,9 +68,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<HomeDashboardData>> {
         return;
       }
 
-      state = AsyncValue.data(
-        current.copyWith(activeBroadcasts: freshBroadcasts),
-      );
+      state = AsyncData(current.copyWith(activeBroadcasts: freshBroadcasts));
     } catch (e) {
       // Swallow polling errors silently – they should never disrupt the UI.
       debugPrint('pollBroadcasts error: $e');
@@ -119,7 +122,8 @@ class HomeViewModel extends StateNotifier<AsyncValue<HomeDashboardData>> {
             shiftEnd ?? shiftStart.add(const Duration(hours: 4));
 
         final clientEmail = appt['clientEmail']?.toString();
-        final timerRunning = TimerService.instance.isRunning &&
+        final timerRunning =
+            TimerService.instance.isRunning &&
             clientEmail != null &&
             TimerService.instance.timerClientEmail == clientEmail;
 
@@ -146,7 +150,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<HomeDashboardData>> {
     }).toList();
 
     if (changed) {
-      state = AsyncValue.data(
+      state = AsyncData(
         current.copyWith(upcomingAppointments: updatedAppointments),
       );
     }

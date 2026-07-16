@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/earnings/viewmodels/earnings_viewmodel.dart';
 import 'package:carenest/app/features/earnings/models/earnings_data.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -14,7 +13,19 @@ import 'package:carenest/app/features/earnings/services/employee_invoice_service
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
-final earningsChartHighlightProvider = StateProvider<double?>((ref) => null);
+class EarningsChartHighlightNotifier extends Notifier<double?> {
+  @override
+  double? build() => null;
+
+  @override
+  set state(double? val) => super.state = val;
+}
+
+final earningsChartHighlightProvider =
+    NotifierProvider.autoDispose<EarningsChartHighlightNotifier, double?>(
+  EarningsChartHighlightNotifier.new,
+);
+
 
 class EarningsDashboardView extends ConsumerWidget {
   final String? organizationId;

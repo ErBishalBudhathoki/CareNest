@@ -1,110 +1,126 @@
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/notifications/models/ai_models.dart';
 import 'package:carenest/app/features/notifications/repositories/ai_repository.dart';
 
-class AiViewModel extends ChangeNotifier {
-  final AiRepository _repository;
+class AiState {
+  final List<TimingPrediction> predictions;
+  final List<CalendarEvent> calendarEvents;
+  final List<SnoozeRule> snoozeRules;
+  final bool isLoading;
+  final String? errorMessage;
+  
+  const AiState({
+    this.predictions = const [],
+    this.calendarEvents = const [],
+    this.snoozeRules = const [],
+    this.isLoading = false,
+    this.errorMessage,
+  });
 
-  AiViewModel(this._repository);
+  AiState copyWith({
+    List<TimingPrediction>? predictions,
+    List<CalendarEvent>? calendarEvents,
+    List<SnoozeRule>? snoozeRules,
+    bool? isLoading,
+    String? errorMessage,
+  }) {
+    return AiState(
+      predictions: predictions ?? this.predictions,
+      calendarEvents: calendarEvents ?? this.calendarEvents,
+      snoozeRules: snoozeRules ?? this.snoozeRules,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+    );
+  }
+}
 
-  List<TimingPrediction> _predictions = [];
-  List<CalendarEvent> _calendarEvents = [];
-  List<SnoozeRule> _snoozeRules = [];
-  bool _isLoading = false;
-  String? _errorMessage;
+class AiViewModel extends Notifier<AiState> {
+  late final AiRepository _repository;
 
-  List<TimingPrediction> get predictions => _predictions;
-  List<CalendarEvent> get calendarEvents => _calendarEvents;
-  List<SnoozeRule> get snoozeRules => _snoozeRules;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  @override
+  AiState build() {
+    _repository = ref.watch(aiRepositoryProvider);
+    return const AiState();
+  }
 
   // --- Predictions ---
 
   Future<void> loadPredictions() async {
-    _setLoading(true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      _predictions = await _repository.getPredictions();
+      final result = await _repository.getPredictions();
+      state = state.copyWith(predictions: result);
     } catch (e) {
-      _setError(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _setLoading(false);
+      state = state.copyWith(isLoading: false);
     }
   }
 
   // --- Calendar ---
 
   Future<void> loadCalendarEvents({DateTime? start, DateTime? end}) async {
-    _setLoading(true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      _calendarEvents = await _repository.getCalendarEvents(start: start, end: end);
+      final result = await _repository.getCalendarEvents(start: start, end: end);
+      state = state.copyWith(calendarEvents: result);
     } catch (e) {
-      _setError(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _setLoading(false);
+      state = state.copyWith(isLoading: false);
     }
   }
 
   Future<void> syncCalendar(String provider) async {
-    _setLoading(true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       await _repository.syncCalendar(provider);
-      await loadCalendarEvents(); // Reload after sync
+      final result = await _repository.getCalendarEvents();
+      state = state.copyWith(calendarEvents: result); // Reload after sync
     } catch (e) {
-      _setError(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _setLoading(false);
+      state = state.copyWith(isLoading: false);
     }
   }
 
   // --- Snooze ---
 
   Future<void> loadSnoozeRules() async {
-    _setLoading(true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      _snoozeRules = await _repository.getSnoozeRules();
+      final result = await _repository.getSnoozeRules();
+      state = state.copyWith(snoozeRules: result);
     } catch (e) {
-      _setError(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _setLoading(false);
+      state = state.copyWith(isLoading: false);
     }
   }
 
   Future<void> createSnoozeRule(SnoozeRule rule) async {
-    _setLoading(true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       await _repository.createSnoozeRule(rule);
       await loadSnoozeRules(); // Reload list
     } catch (e) {
-      _setError(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _setLoading(false);
+      state = state.copyWith(isLoading: false);
     }
   }
 
   Future<void> deleteSnoozeRule(String id) async {
-    _setLoading(true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       await _repository.deleteSnoozeRule(id);
-      _snoozeRules.removeWhere((r) => r.id == id);
+      final updated = state.snoozeRules.where((r) => r.id != id).toList();
+      state = state.copyWith(snoozeRules: updated);
     } catch (e) {
-      _setError(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _setLoading(false);
+      state = state.copyWith(isLoading: false);
     }
-  }
-
-  // --- Helpers ---
-
-  void _setLoading(bool value) {
-    _isLoading = value;
-    _errorMessage = null;
-    notifyListeners();
-  }
-
-  void _setError(String message) {
-    _errorMessage = message;
-    debugPrint('AiViewModel Error: $message');
   }
 }

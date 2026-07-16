@@ -1,34 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/core/providers/core_providers.dart';
+import '../models/bank_details_state.dart';
 
 enum BankDetailsScope {
   personal,
   organization,
 }
 
-/// ViewModel for managing bank details inputs and persistence.
-/// - Holds text controllers for bank details fields.
-/// - Persists values locally via SharedPreferences.
-/// - Syncs with backend using ApiMethod.
-class BankDetailsViewModel extends ChangeNotifier {
-  final TextEditingController bankNameController = TextEditingController();
-  final TextEditingController accountNameController = TextEditingController();
-  final TextEditingController bsbController = TextEditingController();
-  final TextEditingController accountNumberController = TextEditingController();
-
-  final ApiMethod _apiMethod;
+class BankDetailsViewModel extends Notifier<BankDetailsState> {
   final BankDetailsScope scope;
+  late final ApiMethod _apiMethod;
 
-  bool _isLoading = false;
-  String? _errorMessage;
-
-  /// Indicates if a save/load operation is in progress.
-  bool get isLoading => _isLoading;
-
-  /// Last error message from network operations, if any.
-  String? get errorMessage => _errorMessage;
+  BankDetailsViewModel(this.scope);
 
   static const String bankNameKey = 'bankName';
   static const String accountNameKey = 'accountName';
@@ -40,38 +26,37 @@ class BankDetailsViewModel extends ChangeNotifier {
   String get _bsbStorageKey => '${scope.name}_$bsbKey';
   String get _accountNumberStorageKey => '${scope.name}_$accountNumberKey';
 
-  BankDetailsViewModel({
-    required ApiMethod apiMethod,
-    this.scope = BankDetailsScope.personal,
-  }) : _apiMethod = apiMethod {
+  @override
+  BankDetailsState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
     loadBankDetails();
+    return const BankDetailsState();
   }
 
   /// Save bank details locally and attempt to sync to backend.
-  /// Persists to SharedPreferences regardless; backend sync only if inputs are valid.
-  Future<void> saveBankDetails() async {
+  Future<void> saveBankDetails({
+    required String bankName,
+    required String accountName,
+    required String bsb,
+    required String accountNumber,
+  }) async {
     // Persist locally first for offline safety
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_bankNameStorageKey, bankNameController.text);
-    await prefs.setString(_accountNameStorageKey, accountNameController.text);
-    await prefs.setString(_bsbStorageKey, bsbController.text);
-    await prefs.setString(
-      _accountNumberStorageKey,
-      accountNumberController.text,
-    );
+    await prefs.setString(_bankNameStorageKey, bankName);
+    await prefs.setString(_accountNameStorageKey, accountName);
+    await prefs.setString(_bsbStorageKey, bsb);
+    await prefs.setString(_accountNumberStorageKey, accountNumber);
 
     // Validate before syncing to backend
-    final inputsValid = _validateInputs();
+    final inputsValid = _validateInputs(bsb, accountNumber);
     if (!inputsValid) {
-      _errorMessage =
-          'Please check BSB (XXX-XXX) and account number (6-10 digits).';
-      notifyListeners();
+      state = state.copyWith(
+        errorMessage: 'Please check BSB (XXX-XXX) and account number (6-10 digits).',
+      );
       return;
     }
 
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       late final Map<String, dynamic> response;
@@ -80,9 +65,10 @@ class BankDetailsViewModel extends ChangeNotifier {
         await sharedUtils.init();
         final organizationId = sharedUtils.getOrganizationId();
         if (organizationId == null || organizationId.isEmpty) {
-          _errorMessage = 'Missing organization context';
-          _isLoading = false;
-          notifyListeners();
+          state = state.copyWith(
+            errorMessage: 'Missing organization context',
+            isLoading: false,
+          );
           return;
         }
 
@@ -90,49 +76,63 @@ class BankDetailsViewModel extends ChangeNotifier {
           organizationId,
           {
             'bankDetails': {
-              'bankName': bankNameController.text.trim(),
-              'accountName': accountNameController.text.trim(),
-              'bsb': bsbController.text.trim(),
-              'accountNumber': accountNumberController.text.trim(),
+              'bankName': bankName.trim(),
+              'accountName': accountName.trim(),
+              'bsb': bsb.trim(),
+              'accountNumber': accountNumber.trim(),
             },
           },
         );
       } else {
         response = await _apiMethod.saveBankDetails(
-          bankName: bankNameController.text,
-          accountName: accountNameController.text,
-          bsb: bsbController.text,
-          accountNumber: accountNumberController.text,
+          bankName: bankName,
+          accountName: accountName,
+          bsb: bsb,
+          accountNumber: accountNumber,
         );
       }
 
       if (response['success'] != true) {
-        _errorMessage = response['message']?.toString() ??
-            'Failed to save bank details to server';
+        state = state.copyWith(
+          errorMessage: response['message']?.toString() ?? 'Failed to save bank details to server',
+          isLoading: false,
+        );
+      } else {
+        state = state.copyWith(
+          bankName: bankName,
+          accountName: accountName,
+          bsb: bsb,
+          accountNumber: accountNumber,
+          isLoading: false,
+          errorMessage: null,
+        );
       }
     } catch (e) {
-      _errorMessage = 'Error saving bank details: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(
+        errorMessage: 'Error saving bank details: $e',
+        isLoading: false,
+      );
     }
   }
 
   /// Load bank details from local storage, then attempt to fetch from backend.
-  /// If backend returns data, overrides local values and re-persists.
   Future<void> loadBankDetails() async {
     final prefs = await SharedPreferences.getInstance();
-    bankNameController.text = prefs.getString(_bankNameStorageKey) ?? '';
-    accountNameController.text = prefs.getString(_accountNameStorageKey) ?? '';
-    bsbController.text = prefs.getString(_bsbStorageKey) ?? '';
-    accountNumberController.text =
-        prefs.getString(_accountNumberStorageKey) ?? '';
-    notifyListeners();
+    final localBankName = prefs.getString(_bankNameStorageKey) ?? '';
+    final localAccountName = prefs.getString(_accountNameStorageKey) ?? '';
+    final localBsb = prefs.getString(_bsbStorageKey) ?? '';
+    final localAccountNumber = prefs.getString(_accountNumberStorageKey) ?? '';
+
+    state = state.copyWith(
+      bankName: localBankName,
+      accountName: localAccountName,
+      bsb: localBsb,
+      accountNumber: localAccountNumber,
+    );
 
     // Try backend fetch to keep local state in sync
     try {
-      _isLoading = true;
-      notifyListeners();
+      state = state.copyWith(isLoading: true);
 
       Map<String, dynamic> resolvedData = const {};
       bool resolvedSuccess = false;
@@ -176,41 +176,50 @@ class BankDetailsViewModel extends ChangeNotifier {
       }
 
       if (resolvedSuccess) {
-        bankNameController.text = (resolvedData['bankName'] ?? '').toString();
-        accountNameController.text =
-            (resolvedData['accountName'] ?? '').toString();
-        bsbController.text = (resolvedData['bsb'] ?? '').toString();
-        accountNumberController.text =
-            (resolvedData['accountNumber'] ?? '').toString();
+        final serverBankName = (resolvedData['bankName'] ?? '').toString();
+        final serverAccountName = (resolvedData['accountName'] ?? '').toString();
+        final serverBsb = (resolvedData['bsb'] ?? '').toString();
+        final serverAccountNumber = (resolvedData['accountNumber'] ?? '').toString();
 
         // Persist server values locally
-        await prefs.setString(_bankNameStorageKey, bankNameController.text);
-        await prefs.setString(
-          _accountNameStorageKey,
-          accountNameController.text,
+        await prefs.setString(_bankNameStorageKey, serverBankName);
+        await prefs.setString(_accountNameStorageKey, serverAccountName);
+        await prefs.setString(_bsbStorageKey, serverBsb);
+        await prefs.setString(_accountNumberStorageKey, serverAccountNumber);
+
+        state = state.copyWith(
+          bankName: serverBankName,
+          accountName: serverAccountName,
+          bsb: serverBsb,
+          accountNumber: serverAccountNumber,
+          isLoading: false,
+          errorMessage: null,
         );
-        await prefs.setString(_bsbStorageKey, bsbController.text);
-        await prefs.setString(
-          _accountNumberStorageKey,
-          accountNumberController.text,
-        );
-      } else if (resolvedError != null && resolvedError.isNotEmpty) {
-        _errorMessage = resolvedError;
+      } else {
+        state = state.copyWith(isLoading: false);
+        if (resolvedError != null && resolvedError.isNotEmpty) {
+          state = state.copyWith(errorMessage: resolvedError);
+        }
       }
     } catch (e) {
-      _errorMessage = 'Error loading bank details: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(
+        errorMessage: 'Error loading bank details: $e',
+        isLoading: false,
+      );
     }
   }
 
   /// Validate user inputs for BSB and account number formats.
-  bool _validateInputs() {
-    final bsb = bsbController.text.trim().replaceAll('-', '');
-    final acc = accountNumberController.text.trim();
+  bool _validateInputs(String bsb, String accountNumber) {
+    final cleanBsb = bsb.trim().replaceAll('-', '');
+    final acc = accountNumber.trim();
     final bsbRegex = RegExp(r'^\d{6}$');
     final accRegex = RegExp(r'^\d{6,10}$');
-    return bsbRegex.hasMatch(bsb) && accRegex.hasMatch(acc);
+    return bsbRegex.hasMatch(cleanBsb) && accRegex.hasMatch(acc);
   }
 }
+
+final bankDetailsViewModelProvider =
+    NotifierProvider.family<BankDetailsViewModel, BankDetailsState, BankDetailsScope>(
+  (scope) => BankDetailsViewModel(scope),
+);

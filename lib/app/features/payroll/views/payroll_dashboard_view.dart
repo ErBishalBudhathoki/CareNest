@@ -16,13 +16,14 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(payrollViewModelProvider).initialize();
+      ref.read(payrollViewModelProvider.notifier).initialize();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(payrollViewModelProvider);
+    final state = ref.watch(payrollViewModelProvider);
+    final notifier = ref.read(payrollViewModelProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -30,35 +31,35 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: viewModel.fetchSummary,
+            onPressed: notifier.fetchSummary,
           ),
         ],
       ),
-      body: viewModel.isLoading
+      body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : viewModel.errorMessage != null
-              ? Center(child: Text('Error: ${viewModel.errorMessage}'))
-              : viewModel.summary == null
+          : state.errorMessage != null
+              ? Center(child: Text('Error: ${state.errorMessage}'))
+              : state.summary == null
                   ? const Center(child: Text('No data available'))
-                  : _buildContent(context, viewModel),
+                  : _buildContent(context, state, notifier),
     );
   }
 
-  Widget _buildContent(BuildContext context, PayrollViewModel viewModel) {
-    final summary = viewModel.summary!;
+  Widget _buildContent(BuildContext context, PayrollState state, PayrollViewModel notifier) {
+    final summary = state.summary!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDateSelector(context, viewModel),
+          _buildDateSelector(context, state, notifier),
           const SizedBox(height: 16),
           _buildSummaryCards(summary),
           const SizedBox(height: 24),
           _buildBreakdownSection(summary),
           const SizedBox(height: 24),
-          _buildActionButtons(viewModel),
+          _buildActionButtons(notifier),
           const SizedBox(height: 24),
           const Text(
             'Employee Breakdown',
@@ -71,8 +72,8 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
     );
   }
 
-  Widget _buildDateSelector(BuildContext context, PayrollViewModel viewModel) {
-    final range = viewModel.selectedDateRange;
+  Widget _buildDateSelector(BuildContext context, PayrollState state, PayrollViewModel notifier) {
+    final range = state.selectedDateRange;
     final format = DateFormat('MMM dd, yyyy');
 
     return Card(
@@ -97,7 +98,7 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
                   initialDateRange: range,
                 );
                 if (newRange != null) {
-                  viewModel.updateDateRange(newRange);
+                  notifier.updateDateRange(newRange);
                 }
               },
               child: const Text('Change Period'),
@@ -209,17 +210,17 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
     );
   }
 
-  Widget _buildActionButtons(PayrollViewModel viewModel) {
+  Widget _buildActionButtons(PayrollViewModel notifier) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton.icon(
-          onPressed: () => viewModel.exportData('csv'),
+          onPressed: () => notifier.exportData('csv'),
           icon: const Icon(Icons.download),
           label: const Text('Export CSV'),
         ),
         OutlinedButton.icon(
-          onPressed: () => viewModel.exportData('json'),
+          onPressed: () => notifier.exportData('json'),
           icon: const Icon(Icons.code),
           label: const Text('Export JSON'),
         ),

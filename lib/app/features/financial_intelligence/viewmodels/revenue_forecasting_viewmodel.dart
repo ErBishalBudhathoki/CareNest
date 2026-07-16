@@ -1,17 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 /// Revenue Forecasting State
 class RevenueForecastingState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? forecast;
   final Map<String, dynamic>? drivers;
   final Map<String, dynamic>? scenarios;
   final Map<String, dynamic>? trends;
-  final String? error;
+  late final String? error;
 
   RevenueForecastingState({
     this.isLoading = false,
@@ -43,11 +42,16 @@ class RevenueForecastingState {
 
 /// Revenue Forecasting ViewModel
 class RevenueForecastingViewModel
-    extends StateNotifier<RevenueForecastingState> {
-  final FinancialIntelligenceRepository _repository;
+    extends Notifier<RevenueForecastingState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  RevenueForecastingViewModel(this._repository)
-      : super(RevenueForecastingState());
+  
+  @override
+  RevenueForecastingState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return RevenueForecastingState();
+  }
 
   /// Generate revenue forecast
   Future<void> generateForecast({
@@ -240,10 +244,4 @@ class RevenueForecastingViewModel
 }
 
 /// Provider for Revenue Forecasting ViewModel
-final revenueForecastingViewModelProvider =
-    StateNotifierProvider<RevenueForecastingViewModel, RevenueForecastingState>(
-        (ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return RevenueForecastingViewModel(repository);
-});
+final revenueForecastingViewModelProvider = NotifierProvider<RevenueForecastingViewModel, RevenueForecastingState>(RevenueForecastingViewModel.new);

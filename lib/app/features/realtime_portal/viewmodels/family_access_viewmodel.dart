@@ -1,19 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/realtime_portal/repositories/realtime_portal_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 /// State for family access management
 class FamilyAccessState {
-  final bool isLoading;
-  final String? error;
-  final List<FamilyMember> members;
-  final FamilyMember? selectedMember;
-  final List<AccessAuditLog> auditLogs;
-  final FamilyInvitation? pendingInvitation;
-  final bool isInviting;
+  late final bool isLoading;
+  late final String? error;
+  late final List<FamilyMember> members;
+  late final FamilyMember? selectedMember;
+  late final List<AccessAuditLog> auditLogs;
+  late final FamilyInvitation? pendingInvitation;
+  late final bool isInviting;
 
   FamilyAccessState({
     this.isLoading = false,
@@ -46,10 +45,16 @@ class FamilyAccessState {
   }
 }
 
-class FamilyAccessViewModel extends StateNotifier<FamilyAccessState> {
-  final RealtimePortalRepository _repository;
+class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
+  late final RealtimePortalRepository _repository;
 
-  FamilyAccessViewModel(this._repository) : super(FamilyAccessState());
+  
+  @override
+  FamilyAccessState build() {
+    final apiMethod = ref.watch(apiMethodProvider);
+    
+    return FamilyAccessState();
+  }
 
   String _cleanErrorMessage(Object error) {
     var message = error.toString().trim();
@@ -357,9 +362,4 @@ class FamilyAccessViewModel extends StateNotifier<FamilyAccessState> {
 }
 
 /// Provider for family access viewmodel
-final familyAccessViewModelProvider =
-    StateNotifierProvider<FamilyAccessViewModel, FamilyAccessState>((ref) {
-  final apiMethod = ref.watch(apiMethodProvider);
-  final repository = RealtimePortalRepository(apiMethod);
-  return FamilyAccessViewModel(repository);
-});
+final familyAccessViewModelProvider = NotifierProvider<FamilyAccessViewModel, FamilyAccessState>(FamilyAccessViewModel.new);

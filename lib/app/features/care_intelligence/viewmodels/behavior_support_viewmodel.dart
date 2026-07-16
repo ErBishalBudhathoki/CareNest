@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Behavior Support
 class BehaviorSupportState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? behaviorAnalysis;
   final Map<String, dynamic>? triggers;
   final Map<String, dynamic>? strategies;
   final Map<String, dynamic>? escalationPrediction;
-  final String? error;
+  late final String? error;
 
   BehaviorSupportState({
     this.isLoading = false,
@@ -41,10 +40,16 @@ class BehaviorSupportState {
 }
 
 // StateNotifier for Behavior Support
-class BehaviorSupportViewModel extends StateNotifier<BehaviorSupportState> {
-  final CareIntelligenceRepository _repository;
+class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
+  late final CareIntelligenceRepository _repository;
 
-  BehaviorSupportViewModel(this._repository) : super(BehaviorSupportState());
+  
+  @override
+  BehaviorSupportState build() {
+    final repository = ref.watch(careIntelligenceRepositoryProvider);
+    
+    return BehaviorSupportState();
+  }
 
   // Analyze behavior patterns (uses care patterns analysis)
   Future<void> analyzeBehaviorPatterns({
@@ -131,8 +136,4 @@ class BehaviorSupportViewModel extends StateNotifier<BehaviorSupportState> {
 }
 
 // Provider for BehaviorSupportViewModel
-final behaviorSupportViewModelProvider =
-    StateNotifierProvider<BehaviorSupportViewModel, BehaviorSupportState>((ref) {
-  final repository = ref.watch(careIntelligenceRepositoryProvider);
-  return BehaviorSupportViewModel(repository);
-});
+final behaviorSupportViewModelProvider = NotifierProvider<BehaviorSupportViewModel, BehaviorSupportState>(BehaviorSupportViewModel.new);

@@ -1,15 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class BudgetManagementState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? budget;
   final Map<String, dynamic>? monitoring;
   final Map<String, dynamic>? status;
-  final String? error;
+  late final String? error;
 
   BudgetManagementState({
     this.isLoading = false,
@@ -36,10 +35,16 @@ class BudgetManagementState {
   }
 }
 
-class BudgetManagementViewModel extends StateNotifier<BudgetManagementState> {
-  final FinancialIntelligenceRepository _repository;
+class BudgetManagementViewModel extends Notifier<BudgetManagementState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  BudgetManagementViewModel(this._repository) : super(BudgetManagementState());
+  
+  @override
+  BudgetManagementState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return BudgetManagementState();
+  }
 
   Future<void> createBudget({
     required String organizationId,
@@ -104,10 +109,4 @@ class BudgetManagementViewModel extends StateNotifier<BudgetManagementState> {
   }
 }
 
-final budgetManagementViewModelProvider =
-    StateNotifierProvider<BudgetManagementViewModel, BudgetManagementState>(
-        (ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return BudgetManagementViewModel(repository);
-});
+final budgetManagementViewModelProvider = NotifierProvider<BudgetManagementViewModel, BudgetManagementState>(BudgetManagementViewModel.new);

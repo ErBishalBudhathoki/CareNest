@@ -20,7 +20,7 @@ class DateFormatSettingsView extends ConsumerWidget {
     if (!vm.isLoaded && !vm.isLoading) {
       // Schedule asynchronously to avoid side-effects during build.
       Future.microtask(
-          () => ref.read(dateFormatSettingsViewModelProvider).load());
+          () => ref.read(dateFormatSettingsViewModelProvider.notifier).load());
     }
 
     return Scaffold(
@@ -83,7 +83,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                     subtitle: AppLocalizations.of(context)!.monthDayYearExample,
                     icon: Icons.flag_outlined,
                     isSelected: vm.selected == 'mdy',
-                    onTap: () => vm.select('mdy'),
+                    onTap: () => ref.read(dateFormatSettingsViewModelProvider.notifier).select('mdy'),
                   ),
                   const SizedBox(height: BauhausDesign.space4),
                   _buildOptionCard(
@@ -92,7 +92,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                     subtitle: AppLocalizations.of(context)!.dayMonthYearExample,
                     icon: Icons.public,
                     isSelected: vm.selected == 'dmy',
-                    onTap: () => vm.select('dmy'),
+                    onTap: () => ref.read(dateFormatSettingsViewModelProvider.notifier).select('dmy'),
                   ),
                   if (vm.errorMessage != null) ...[
                     const SizedBox(height: BauhausDesign.space4),
@@ -111,7 +111,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                       onPressed: vm.isLoading
                           ? null
                           : () async {
-                              await vm.save();
+                              await ref.read(dateFormatSettingsViewModelProvider.notifier).save();
                               if (vm.saveSucceeded && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

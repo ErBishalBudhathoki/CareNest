@@ -17,7 +17,10 @@ class AdminRequestsView extends ConsumerWidget {
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: _buildAppBar(
         context,
-        onRefresh: () => ref.refresh(adminRequestsViewModelProvider),
+        onRefresh: () async {
+          ref.invalidate(adminRequestsViewModelProvider);
+          await ref.read(adminRequestsViewModelProvider.future);
+        },
       ),
       body: requestsState.when(
         data: (loadedRequests) {
@@ -62,7 +65,7 @@ class AdminRequestsView extends ConsumerWidget {
             const BauhausLoadingState(message: 'Loading requests...'),
         error: (e, _) => BauhausErrorState(
           description: e.toString(),
-          onRetry: () => ref.refresh(adminRequestsViewModelProvider),
+          onRetry: () => ref.invalidate(adminRequestsViewModelProvider),
         ),
       ),
     );

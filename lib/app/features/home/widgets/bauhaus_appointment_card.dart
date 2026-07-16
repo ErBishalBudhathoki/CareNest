@@ -44,7 +44,7 @@ class BauhausAppointmentCard extends ConsumerWidget {
     // Schedule parsing
     String date = 'Unknown Date';
     String time = 'Unknown Time';
-    final timerService = ref.watch(timerServiceProviderWithNotifier);
+    final timerService = ref.watch(timerServiceProvider);
     final clientEmail = appointment['clientEmail'];
     final isClockedIn =
         timerService.isRunning && timerService.timerClientEmail == clientEmail;

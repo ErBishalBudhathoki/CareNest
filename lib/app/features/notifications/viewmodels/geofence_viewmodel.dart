@@ -1,72 +1,84 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/notifications/models/geofence_model.dart';
 import 'package:carenest/app/features/notifications/repositories/notification_repository.dart';
 
-class GeofenceViewModel extends ChangeNotifier {
-  final NotificationRepository _repository;
+class GeofenceState {
+  final List<GeofenceModel> geofences;
+  final bool isLoading;
+  final String? errorMessage;
+  
+  const GeofenceState({
+    this.geofences = const [],
+    this.isLoading = false,
+    this.errorMessage,
+  });
 
-  GeofenceViewModel(this._repository);
+  GeofenceState copyWith({
+    List<GeofenceModel>? geofences,
+    bool? isLoading,
+    String? errorMessage,
+  }) {
+    return GeofenceState(
+      geofences: geofences ?? this.geofences,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+    );
+  }
+}
 
-  List<GeofenceModel> _geofences = [];
-  bool _isLoading = false;
-  String? _errorMessage;
+class GeofenceViewModel extends Notifier<GeofenceState> {
+  late final NotificationRepository _repository;
 
-  List<GeofenceModel> get geofences => _geofences;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  @override
+  GeofenceState build() {
+    _repository = ref.watch(notificationRepositoryProvider);
+    return const GeofenceState();
+  }
 
   /// Load geofences
   Future<void> loadGeofences({String? clientId}) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      _geofences = await _repository.getGeofences(clientId: clientId);
+      final geofences = await _repository.getGeofences(clientId: clientId);
+      state = state.copyWith(geofences: geofences);
     } catch (e) {
-      _errorMessage = e.toString();
-      debugPrint('Error loading geofences: $e');
+      state = state.copyWith(errorMessage: e.toString());
+      // debugPrint('Error loading geofences: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
   /// Add a new geofence
   Future<void> addGeofence(GeofenceModel geofence) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       final newGeofence = await _repository.createGeofence(geofence);
-      _geofences.add(newGeofence);
+      state.geofences.add(newGeofence);
     } catch (e) {
-      _errorMessage = e.toString();
-      debugPrint('Error adding geofence: $e');
+      state = state.copyWith(errorMessage: e.toString());
+      // debugPrint('Error adding geofence: $e');
       rethrow; // Allow the view to handle the specific error (e.g., show a snackbar)
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
   /// Delete a geofence
   Future<void> deleteGeofence(String id) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       await _repository.deleteGeofence(id);
-      _geofences.removeWhere((g) => g.id == id);
+      state.geofences.removeWhere((g) => g.id == id);
     } catch (e) {
-      _errorMessage = e.toString();
-      debugPrint('Error deleting geofence: $e');
+      state = state.copyWith(errorMessage: e.toString());
+      // debugPrint('Error deleting geofence: $e');
       rethrow;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 }

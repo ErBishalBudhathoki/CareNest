@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 
 // ==================== TIMER STATE ====================
@@ -34,25 +33,21 @@ class TimerState {
 }
 
 // Notifier wrapper for TimerService
-class TimerServiceNotifier extends StateNotifier<TimerService> {
-  TimerServiceNotifier() : super(TimerService());
+class TimerServiceNotifier extends Notifier<TimerService> {
+  @override
+  TimerService build() => TimerService();
 }
 
-// Timer service provider (StateNotifier version)
-final timerServiceProvider = StateNotifierProvider<TimerServiceNotifier, TimerService>((ref) {
-  return TimerServiceNotifier();
-});
+// Timer service provider
+final timerServiceProvider = NotifierProvider<TimerServiceNotifier, TimerService>(TimerServiceNotifier.new);
 
-// Timer service provider (ChangeNotifier version for legacy compatibility)
-final timerServiceProviderWithNotifier = ChangeNotifierProvider<TimerService>((ref) {
-  return TimerService();
-});
 
 // ==================== SHIFT DATA ====================
 
 // Notifier for shift data management
-class ShiftDataNotifier extends StateNotifier<List<dynamic>> {
-  ShiftDataNotifier() : super([]);
+class ShiftDataNotifier extends Notifier<List<dynamic>> {
+  @override
+  List<dynamic> build() => [];
 
   /// Update all shifts
   void updateShifts(List<dynamic> newShifts) {
@@ -74,6 +69,4 @@ class ShiftDataNotifier extends StateNotifier<List<dynamic>> {
 }
 
 // Shift data provider
-final shiftDataProvider = StateNotifierProvider<ShiftDataNotifier, List<dynamic>>((ref) {
-  return ShiftDataNotifier();
-});
+final shiftDataProvider = NotifierProvider<ShiftDataNotifier, List<dynamic>>(ShiftDataNotifier.new);

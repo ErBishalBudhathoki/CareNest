@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,13 +13,13 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 class MileageState {
   static const Object _noErrorChange = Object();
 
-  final bool isTracking;
-  final Position? startPosition;
-  final DateTime? startTime;
-  final double currentDistance; // in meters
-  final bool isSyncing;
-  final String? error;
-  final List<Position> routePoints;
+  late final bool isTracking;
+  late final Position? startPosition;
+  late final DateTime? startTime;
+  late final double currentDistance; // in meters
+  late final bool isSyncing;
+  late final String? error;
+  late final List<Position> routePoints;
 
   MileageState({
     this.isTracking = false,
@@ -53,12 +52,19 @@ class MileageState {
   }
 }
 
-class MileageController extends StateNotifier<MileageState> {
-  final ApiMethod _api;
+class MileageController extends Notifier<MileageState> {
+  late final ApiMethod _api;
   StreamSubscription<Position>? _positionSubscription;
 
-  MileageController(this._api) : super(MileageState()) {
-    _loadState();
+  
+  @override
+  MileageState build() {
+    _api = ref.watch(app_providers.apiMethodProvider);
+    ref.onDispose(() {
+      _positionSubscription?.cancel();
+    });
+    Future.microtask(() => _loadState());
+    return MileageState();
   }
 
   // Keys for SharedPreferences
@@ -402,14 +408,6 @@ class MileageController extends StateNotifier<MileageState> {
     await prefs.setStringList(_kUnsyncedTrips, unsynced);
   }
 
-  @override
-  void dispose() {
-    _positionSubscription?.cancel();
-    super.dispose();
-  }
 }
 
-final mileageControllerProvider =
-    StateNotifierProvider<MileageController, MileageState>((ref) {
-  return MileageController(ref.read(app_providers.apiMethodProvider));
-});
+final mileageControllerProvider = NotifierProvider<MileageController, MileageState>(MileageController.new);

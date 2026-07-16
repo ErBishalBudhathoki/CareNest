@@ -3,7 +3,6 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 import 'package:carenest/app/features/client_appointment_details/repositories/client_appointment_repository.dart';
 import 'package:carenest/app/features/client_appointment_details/viewmodels/client_appointment_details_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 final clientAppointmentRepositoryProvider =
     Provider<ClientAppointmentRepository>((ref) {
@@ -30,15 +29,6 @@ class ClientAppointmentDetailsParams {
   int get hashCode => Object.hash(clientId, clientEmail);
 }
 
-final clientAppointmentDetailsViewModelProvider =
-    ChangeNotifierProvider.family.autoDispose<
-        ClientAppointmentDetailsViewModel, ClientAppointmentDetailsParams>(
-  (ref, params) {
-    final repository = ref.watch(clientAppointmentRepositoryProvider);
-    return ClientAppointmentDetailsViewModel(
-      repository,
-      params.clientId,
-      clientEmail: params.clientEmail,
-    );
-  },
-);
+
+
+final clientAppointmentDetailsViewModelProvider = NotifierProvider.autoDispose<ClientAppointmentDetailsViewModel, int>(ClientAppointmentDetailsViewModel.new);

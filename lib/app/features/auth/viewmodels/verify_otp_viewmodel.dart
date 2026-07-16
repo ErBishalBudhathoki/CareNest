@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-class VerifyOTPViewModel extends ChangeNotifier {
-  final TextEditingController pinController = TextEditingController();
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+class VerifyOTPViewModel extends Notifier<void> {
+  final TextEditingController pinController = TextEditingController();
   @override
-  void dispose() {
-    pinController.dispose();
-    super.dispose();
+  void build() {
+    ref.onDispose(() => pinController.dispose());
   }
+
+
 }

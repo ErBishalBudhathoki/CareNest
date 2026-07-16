@@ -14,12 +14,15 @@ import 'package:carenest/app/features/onboarding/services/onboarding_gate_servic
 
 import 'package:device_info_plus/device_info_plus.dart';
 
-class LoginViewModel extends ChangeNotifier {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
+class LoginViewModel extends Notifier<int> {
   final LoginModel model = LoginModel();
-  final ApiMethod _apiMethod;
-  final SharedPreferencesUtils _sharedPrefs;
-  final FcmTokenManager _fcmTokenManager;
-  final FirebaseAuthService _firebaseAuth;
+  late final ApiMethod _apiMethod;
+  late final SharedPreferencesUtils _sharedPrefs;
+  late final FcmTokenManager _fcmTokenManager;
+  late final FirebaseAuthService _firebaseAuth;
   final OnboardingGateService _onboardingGateService = OnboardingGateService();
 
   bool isLoading = false;
@@ -33,13 +36,18 @@ class LoginViewModel extends ChangeNotifier {
 
   final List<Map<String, dynamic>> _securityLogs = [];
 
-  LoginViewModel(
-    this._apiMethod,
-    this._sharedPrefs,
-    this._fcmTokenManager, {
-    FirebaseAuthService? firebaseAuthService,
-  }) : _firebaseAuth = firebaseAuthService ?? FirebaseAuthService() {
+  @override
+  int build() {
+    _apiMethod = ref.watch(app_providers.apiMethodProvider);
+    _sharedPrefs = ref.watch(app_providers.sharedPreferencesProvider);
+    _fcmTokenManager = ref.watch(app_providers.fcmTokenManagerProvider);
+    _firebaseAuth = FirebaseAuthService();
     _initializeSecurityContext();
+    return 0;
+  }
+
+  void notifyListeners() {
+    state = state + 1;
   }
 
   void togglePasswordVisibility() {
@@ -429,6 +437,6 @@ class LoginViewModel extends ChangeNotifier {
   @override
   void dispose() {
     model.dispose();
-    super.dispose();
+    
   }
 }

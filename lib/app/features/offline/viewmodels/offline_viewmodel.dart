@@ -1,18 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/offline/repositories/offline_repository.dart';
 import 'package:carenest/app/features/offline/models/offline_models.dart';
 
 /// State for offline sync
 class OfflineState {
-  final bool isLoading;
-  final String? error;
-  final List<OfflineQueueItem> queueItems;
-  final SyncStatus? syncStatus;
-  final OfflineCapableData? offlineData;
-  final ConflictResolution? conflictResolution;
-  final bool isOnline;
+  late final bool isLoading;
+  late final String? error;
+  late final List<OfflineQueueItem> queueItems;
+  late final SyncStatus? syncStatus;
+  late final OfflineCapableData? offlineData;
+  late final ConflictResolution? conflictResolution;
+  late final bool isOnline;
 
   OfflineState({
     this.isLoading = false,
@@ -46,10 +45,16 @@ class OfflineState {
 }
 
 /// ViewModel for offline sync
-class OfflineViewModel extends StateNotifier<OfflineState> {
-  final OfflineRepository repository;
+class OfflineViewModel extends Notifier<OfflineState> {
+  late final OfflineRepository repository;
 
-  OfflineViewModel(this.repository) : super(OfflineState());
+  
+  @override
+  OfflineState build() {
+    final repository = ref.watch(offlineRepositoryProvider);
+    
+    return OfflineState();
+  }
 
   /// Queue data for offline sync
   Future<void> queueData(Map<String, dynamic> data) async {
@@ -206,8 +211,4 @@ class OfflineViewModel extends StateNotifier<OfflineState> {
 }
 
 /// Provider for offline viewmodel
-final offlineViewModelProvider =
-    StateNotifierProvider<OfflineViewModel, OfflineState>((ref) {
-  final repository = ref.watch(offlineRepositoryProvider);
-  return OfflineViewModel(repository);
-});
+final offlineViewModelProvider = NotifierProvider<OfflineViewModel, OfflineState>(OfflineViewModel.new);

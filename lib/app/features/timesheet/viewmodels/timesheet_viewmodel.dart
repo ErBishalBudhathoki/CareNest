@@ -1,49 +1,50 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/timesheet/models/timesheet_model.dart';
 import 'package:carenest/app/features/timesheet/repositories/timesheet_repository.dart';
 import 'package:carenest/app/features/timesheet/services/timesheet_pdf_service.dart';
 
-// Provider for the current week's start date
-final timesheetDateProvider = StateProvider<DateTime>((ref) {
-  // Start on Monday of the current week at 00:00 local time.
-  final now = DateTime.now();
-  final monday = now.subtract(Duration(days: now.weekday - 1));
-  return DateTime(monday.year, monday.month, monday.day);
+class TimesheetDateNotifier extends Notifier<DateTime> {
+  @override
+  DateTime build() {
+    // Start on Monday of the current week at 00:00 local time.
+    final now = DateTime.now();
+    final monday = now.subtract(Duration(days: now.weekday - 1));
+    return DateTime(monday.year, monday.month, monday.day);
+  }
+
+  void setDate(DateTime date) {
+    state = date;
+  }
+}
+
+final timesheetDateProvider = NotifierProvider<TimesheetDateNotifier, DateTime>(() {
+  return TimesheetDateNotifier();
 });
 
-// Provider for the Timesheet ViewModel
-final timesheetViewModelProvider = StateNotifierProvider.family<
-    TimesheetViewModel, AsyncValue<List<TimesheetEntry>>, String>((ref, email) {
-  final repository = ref.watch(timesheetRepositoryProvider);
-  final startDate = ref.watch(timesheetDateProvider);
-  return TimesheetViewModel(repository, email, startDate);
+final timesheetViewModelProvider = AsyncNotifierProvider.family<
+    TimesheetViewModel, List<TimesheetEntry>, String>((email) {
+  return TimesheetViewModel(email);
 });
 
 class TimesheetViewModel
-    extends StateNotifier<AsyncValue<List<TimesheetEntry>>> {
-  final TimesheetRepository _repository;
+    extends AsyncNotifier<List<TimesheetEntry>> {
+  late final TimesheetRepository _repository;
   final String _email;
-  final DateTime _startDate;
+  late final DateTime _startDate;
 
-  TimesheetViewModel(this._repository, this._email, this._startDate)
-      : super(const AsyncValue.loading()) {
-    _fetchTimesheets();
-  }
+  TimesheetViewModel(this._email);
 
-  Future<void> _fetchTimesheets() async {
-    state = const AsyncValue.loading();
-    try {
-      final endDate = _startDate.add(const Duration(days: 6));
-      final entries = await _repository.fetchTimesheets(
-        email: _email,
-        startDate: _startDate,
-        endDate: endDate,
-      );
-      state = AsyncValue.data(entries);
-    } catch (e, s) {
-      state = AsyncValue.error(e, s);
-    }
+  @override
+  FutureOr<List<TimesheetEntry>> build() {
+    _repository = ref.watch(timesheetRepositoryProvider);
+    _startDate = ref.watch(timesheetDateProvider);
+    final endDate = _startDate.add(const Duration(days: 6));
+    return _repository.fetchTimesheets(
+      email: _email,
+      startDate: _startDate,
+      endDate: endDate,
+    );
   }
 
   // Helper to get total hours for the week

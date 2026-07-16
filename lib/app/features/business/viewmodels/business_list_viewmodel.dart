@@ -3,15 +3,22 @@ import 'package:carenest/app/features/business/models/business_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 enum BusinessListStatus { initial, loading, loaded, error, empty }
 
-class BusinessListViewModel extends ChangeNotifier {
-  final ApiMethod _apiMethod;
-  final Ref _ref;
+class BusinessListViewModel extends Notifier<int> {
+  late final ApiMethod _apiMethod;
 
-  BusinessListViewModel(this._ref) : _apiMethod = _ref.read(apiMethodProvider);
+
+  @override
+  int build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return 0;
+  }
+  
+  void notifyListeners() {
+    state = state + 1;
+  }
 
   BusinessListStatus _status = BusinessListStatus.initial;
   BusinessListStatus get status => _status;
@@ -27,9 +34,9 @@ class BusinessListViewModel extends ChangeNotifier {
       _status = BusinessListStatus.loading;
       notifyListeners();
 
-      var organizationId = _ref.read(organizationIdProvider);
+      var organizationId = ref.read(organizationIdProvider);
       if (organizationId == null || organizationId.isEmpty) {
-        final prefs = _ref.read(sharedPreferencesProvider);
+        final prefs = ref.read(sharedPreferencesProvider);
         await prefs.init();
         organizationId = prefs.getOrganizationId();
       }
@@ -118,4 +125,4 @@ class BusinessListViewModel extends ChangeNotifier {
 }
 
 final businessListViewModelProvider =
-    ChangeNotifierProvider((ref) => BusinessListViewModel(ref));
+    NotifierProvider<BusinessListViewModel, int>(BusinessListViewModel.new);

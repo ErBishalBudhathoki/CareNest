@@ -7,6 +7,7 @@ import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/app/features/earnings/models/earnings_data.dart';
 import 'package:carenest/app/features/earnings/repositories/earnings_repository.dart';
 import 'package:carenest/app/features/earnings/views/earnings_dashboard_view.dart';
+import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
@@ -134,10 +135,7 @@ void main() {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             locale: const Locale('en'),
-            home: EarningsDashboardView(
-              organizationId: 'org-1',
-              organizationName: 'Org',
-            ),
+            home: const AdminDashboardView(email: 'admin@example.com'),
           ),
         ),
       ),

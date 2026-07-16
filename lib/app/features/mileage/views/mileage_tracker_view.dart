@@ -13,7 +13,8 @@ class MileageTrackerView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(mileageViewModelProvider);
+    final state = ref.watch(mileageViewModelProvider);
+    final notifier = ref.read(mileageViewModelProvider.notifier);
     final textTheme = BauhausDesign.getTextTheme(context);
 
     // Show error snackbar if error exists
@@ -91,15 +92,15 @@ class MileageTrackerView extends ConsumerWidget {
 
             // 1. Tracker Card
             TrackerCard(
-              isTracking: viewModel.isTracking,
-              trackingStartTime: viewModel.trackingStartTime,
-              onToggle: () => _handleToggle(context, viewModel),
+              isTracking: state.isTracking,
+              trackingStartTime: state.trackingStartTime,
+              onToggle: () => _handleToggle(context, state, notifier),
             ),
 
             const SizedBox(height: BauhausDesign.space6),
 
             // 2. Manual Entry Form
-            ManualEntryForm(viewModel: viewModel),
+            ManualEntryForm(state: state, notifier: notifier),
 
             const SizedBox(height: BauhausDesign.space6),
 
@@ -109,7 +110,7 @@ class MileageTrackerView extends ConsumerWidget {
             const SizedBox(height: BauhausDesign.space4),
 
             // 4. Trip List
-            if (viewModel.recentTrips.isEmpty)
+            if (state.recentTrips.isEmpty)
               BauhausEmptyState(
                 title: 'No Trips Yet',
                 message: 'Start insights or add a manual entry.',
@@ -119,12 +120,12 @@ class MileageTrackerView extends ConsumerWidget {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: viewModel.recentTrips.length,
+                itemCount: state.recentTrips.length,
                 itemBuilder: (context, index) {
-                  final trip = viewModel.recentTrips[index];
+                  final trip = state.recentTrips[index];
                   String? clientName;
                   if (trip.tripType == 'WITH_CLIENT' && trip.clientId != null) {
-                    final clientMap = viewModel.assignableClients.firstWhere(
+                    final clientMap = state.assignableClients.firstWhere(
                       (c) => c['id'] == trip.clientId,
                       orElse: () => <String, String>{},
                     );
@@ -143,29 +144,29 @@ class MileageTrackerView extends ConsumerWidget {
   }
 
   Future<void> _handleToggle(
-      BuildContext context, MileageViewModel viewModel) async {
-    if (viewModel.isTracking) {
+      BuildContext context, MileageViewState state, MileageViewModel notifier) async {
+    if (state.isTracking) {
       // Stop tracking -> Confirm End Trip
-      final distance = await viewModel.stopTracking();
+      final distance = await notifier.stopTracking();
       if (context.mounted) {
-        _showEndTripDialog(context, viewModel, distance);
+        _showEndTripDialog(context, state, notifier, distance);
       }
     } else {
       // Start tracking
-      await viewModel.startTracking();
+      await notifier.startTracking();
     }
   }
 
   void _showEndTripDialog(
-      BuildContext context, MileageViewModel viewModel, double distance) {
+      BuildContext context, MileageViewState state, MileageViewModel notifier, double distance) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => _EndTripDialog(
         distance: distance,
-        clients: viewModel.assignableClients,
+        clients: state.assignableClients,
         onSubmit: (withClient, clientId) async {
-          final success = await viewModel.submitTrip(
+          final success = await notifier.submitTrip(
             withClient: withClient,
             clientId: clientId,
           );

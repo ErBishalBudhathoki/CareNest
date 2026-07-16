@@ -195,7 +195,8 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(addBusinessViewModelProvider);
+    ref.watch(addBusinessViewModelProvider);
+    final viewModel = ref.read(addBusinessViewModelProvider.notifier);
     final l10n = AppLocalizations.of(context)!;
     final isCompact = _isCompactLayout(context);
     final horizontalPadding =

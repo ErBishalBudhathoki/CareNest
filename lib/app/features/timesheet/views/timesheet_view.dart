@@ -31,18 +31,18 @@ class TimesheetView extends ConsumerWidget {
             weekStart: weekStart,
             weekEnd: weekEnd,
             onPreviousWeek: () {
-              ref.read(timesheetDateProvider.notifier).state =
-                  weekStart.subtract(const Duration(days: 7));
+              ref.read(timesheetDateProvider.notifier).setDate(
+                  weekStart.subtract(const Duration(days: 7)));
             },
             onNextWeek: () {
-              ref.read(timesheetDateProvider.notifier).state =
-                  weekStart.add(const Duration(days: 7));
+              ref.read(timesheetDateProvider.notifier).setDate(
+                  weekStart.add(const Duration(days: 7)));
             },
             onThisWeek: () {
               final now = DateTime.now();
               final monday = now.subtract(Duration(days: now.weekday - 1));
-              ref.read(timesheetDateProvider.notifier).state =
-                  DateTime(monday.year, monday.month, monday.day);
+              ref.read(timesheetDateProvider.notifier).setDate(
+                  DateTime(monday.year, monday.month, monday.day));
             },
           ),
           Expanded(

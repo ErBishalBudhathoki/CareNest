@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/realtime_portal/repositories/realtime_portal_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
@@ -9,13 +8,13 @@ const _realtimeTrackingNoChange = Object();
 
 /// State for real-time tracking
 class RealtimeTrackingState {
-  final bool isLoading;
-  final String? error;
-  final TrackingSession? activeSession;
-  final LiveLocation? liveLocation;
-  final List<GeofenceEvent> geofenceEvents;
-  final AppointmentStatus? appointmentStatus;
-  final bool isTracking;
+  late final bool isLoading;
+  late final String? error;
+  late final TrackingSession? activeSession;
+  late final LiveLocation? liveLocation;
+  late final List<GeofenceEvent> geofenceEvents;
+  late final AppointmentStatus? appointmentStatus;
+  late final bool isTracking;
 
   RealtimeTrackingState({
     this.isLoading = false,
@@ -56,10 +55,16 @@ class RealtimeTrackingState {
   }
 }
 
-class RealtimeTrackingViewModel extends StateNotifier<RealtimeTrackingState> {
-  final RealtimePortalRepository _repository;
+class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
+  late final RealtimePortalRepository _repository;
 
-  RealtimeTrackingViewModel(this._repository) : super(RealtimeTrackingState());
+  
+  @override
+  RealtimeTrackingState build() {
+    final apiMethod = ref.watch(apiMethodProvider);
+    
+    return RealtimeTrackingState();
+  }
 
   /// Start tracking session
   Future<void> startTracking({
@@ -191,10 +196,4 @@ class RealtimeTrackingViewModel extends StateNotifier<RealtimeTrackingState> {
 }
 
 /// Provider for realtime tracking viewmodel
-final realtimeTrackingViewModelProvider =
-    StateNotifierProvider<RealtimeTrackingViewModel, RealtimeTrackingState>(
-        (ref) {
-  final apiMethod = ref.watch(apiMethodProvider);
-  final repository = RealtimePortalRepository(apiMethod);
-  return RealtimeTrackingViewModel(repository);
-});
+final realtimeTrackingViewModelProvider = NotifierProvider<RealtimeTrackingViewModel, RealtimeTrackingState>(RealtimeTrackingViewModel.new);

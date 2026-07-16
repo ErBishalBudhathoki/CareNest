@@ -26,8 +26,8 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      final viewModel = ref.read(leaveViewModelProvider(widget.userEmail));
-      viewModel.loadForecast(_forecastTargetDate);
+      final viewModel = ref.read(leaveViewModelProvider(widget.userEmail).notifier);
+      ref.read(leaveViewModelProvider(widget.userEmail).notifier).loadForecast(_forecastTargetDate);
       viewModel.fetchHolidays();
     });
   }
@@ -63,7 +63,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: viewModel.refresh,
+        onRefresh: ref.read(leaveViewModelProvider(widget.userEmail).notifier).refresh,
         color: BauhausDesign.primary,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -130,7 +130,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                                 LeaveRequestForm(userEmail: widget.userEmail),
                           ),
                         );
-                        viewModel.refresh();
+                        ref.read(leaveViewModelProvider(widget.userEmail).notifier).refresh();
                       },
                       isFullWidth: true,
                     ),
@@ -307,7 +307,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
 
   Widget _buildForecastCard(
     AsyncValue<Map<String, dynamic>?> forecastAsync,
-    LeaveViewModel viewModel,
+    LeaveViewModelState viewModel,
   ) {
     final dateStr = DateFormat('dd MMM yyyy').format(_forecastTargetDate);
     return Container(
@@ -378,7 +378,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                   );
                   if (picked != null) {
                     setState(() => _forecastTargetDate = picked);
-                    viewModel.loadForecast(_forecastTargetDate);
+                    ref.read(leaveViewModelProvider(widget.userEmail).notifier).loadForecast(_forecastTargetDate);
                   }
                 },
               ),

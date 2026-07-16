@@ -1,37 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/admin/repositories/organization_repository.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import '../models/mileage_settings_state.dart';
 
-class MileageSettingsState {
-  final bool isLoading;
-  final double reimbursementRate;
-  final String? error;
+class MileageSettingsViewModel extends Notifier<MileageSettingsState> {
+  late final OrganizationRepository _repository;
 
-  MileageSettingsState({
-    this.isLoading = false,
-    this.reimbursementRate = 0.99, // Default SCHADS
-    this.error,
-  });
-
-  MileageSettingsState copyWith({
-    bool? isLoading,
-    double? reimbursementRate,
-    String? error,
-  }) {
-    return MileageSettingsState(
-      isLoading: isLoading ?? this.isLoading,
-      reimbursementRate: reimbursementRate ?? this.reimbursementRate,
-      error: error,
-    );
-  }
-}
-
-class MileageSettingsViewModel extends StateNotifier<MileageSettingsState> {
-  final OrganizationRepository _repository;
-
-  MileageSettingsViewModel(this._repository) : super(MileageSettingsState()) {
+  @override
+  MileageSettingsState build() {
+    _repository = ref.watch(organizationRepositoryProvider);
     _loadSettings();
+    return const MileageSettingsState();
   }
 
   Future<void> _loadSettings() async {
@@ -41,17 +20,16 @@ class MileageSettingsViewModel extends StateNotifier<MileageSettingsState> {
       final orgId = prefs.getOrganizationId();
       if (orgId != null) {
         final org = await _repository.getOrganization(orgId);
-        // Assuming org model has reimbursementRate
-        // If not, we use default or fetch from separate config endpoint
-        // For now, assuming it's part of org profile or we use a dedicated settings API
         if (org != null && org['reimbursementRate'] != null) {
-           state = state.copyWith(
-             reimbursementRate: (org['reimbursementRate'] as num).toDouble(),
-             isLoading: false
-           );
+          state = state.copyWith(
+            reimbursementRate: (org['reimbursementRate'] as num).toDouble(),
+            isLoading: false,
+          );
         } else {
-           state = state.copyWith(isLoading: false);
+          state = state.copyWith(isLoading: false);
         }
+      } else {
+        state = state.copyWith(isLoading: false);
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -64,9 +42,10 @@ class MileageSettingsViewModel extends StateNotifier<MileageSettingsState> {
       final prefs = await SharedPreferencesUtils.getInstance();
       final orgId = prefs.getOrganizationId();
       if (orgId != null) {
-        // Call repo to update
         await _repository.updateOrganization(orgId, {'reimbursementRate': newRate});
         state = state.copyWith(reimbursementRate: newRate, isLoading: false);
+      } else {
+        state = state.copyWith(isLoading: false);
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -74,8 +53,7 @@ class MileageSettingsViewModel extends StateNotifier<MileageSettingsState> {
   }
 }
 
-final mileageSettingsViewModelProvider = 
-    StateNotifierProvider<MileageSettingsViewModel, MileageSettingsState>((ref) {
-  final repo = ref.watch(organizationRepositoryProvider);
-  return MileageSettingsViewModel(repo);
-});
+final mileageSettingsViewModelProvider =
+    NotifierProvider<MileageSettingsViewModel, MileageSettingsState>(
+  MileageSettingsViewModel.new,
+);

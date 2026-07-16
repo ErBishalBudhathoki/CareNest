@@ -23,8 +23,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
       clientId: clientId ?? '',
       clientEmail: clientEmail,
     );
-    final viewModel =
-        ref.watch(clientAppointmentDetailsViewModelProvider(params));
+    ref.watch(clientAppointmentDetailsViewModelProvider);
+    final viewModel = ref.read(clientAppointmentDetailsViewModelProvider.notifier);
+    viewModel.initialize(params.clientId, params.clientEmail);
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -44,9 +45,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: viewModel.state == ViewState.busy
+      body: viewModel.viewState == ViewState.busy
           ? const Center(child: CircularProgressIndicator())
-          : viewModel.state == ViewState.error
+          : viewModel.viewState == ViewState.error
               ? Center(child: Text('Error: ${viewModel.errorMessage}'))
               : _buildContent(context, viewModel, ref),
     );
