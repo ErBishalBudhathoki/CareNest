@@ -5,11 +5,13 @@ import '../../../shared/constants/bauhaus_design.dart';
 import '../viewmodels/mileage_view_model.dart';
 
 class ManualEntryForm extends StatelessWidget {
-  final MileageViewModel viewModel;
+  final MileageViewState state;
+  final MileageViewModel notifier;
 
   const ManualEntryForm({
     super.key,
-    required this.viewModel,
+    required this.state,
+    required this.notifier,
   });
 
   @override
@@ -29,22 +31,22 @@ class ManualEntryForm extends StatelessWidget {
           const SizedBox(height: BauhausDesign.space6),
           BauhausTextField(
             label: 'Start Location',
-            controller: viewModel.startLocationController,
+            controller: notifier.startLocationController,
           ),
           const SizedBox(height: BauhausDesign.space4),
           BauhausTextField(
             label: 'End Location',
-            controller: viewModel.endLocationController,
+            controller: notifier.endLocationController,
           ),
           const SizedBox(height: BauhausDesign.space4),
           BauhausTextField(
             label: 'Distance (km)',
-            controller: viewModel.distanceController,
+            controller: notifier.distanceController,
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: BauhausDesign.space6),
           _buildClientToggle(context),
-          if (viewModel.isWithClient) ...[
+          if (state.isWithClient) ...[
             const SizedBox(height: BauhausDesign.space4),
             _buildClientDropdown(context),
           ],
@@ -53,7 +55,7 @@ class ManualEntryForm extends StatelessWidget {
             width: double.infinity,
             child: BauhausActionButton(
               text: 'Log Trip',
-              onPressed: () => viewModel.saveManualTrip(),
+              onPressed: () => notifier.saveManualTrip(),
               isFullWidth: true,
             ),
           ),
@@ -73,8 +75,8 @@ class ManualEntryForm extends StatelessWidget {
         ),
         const Spacer(),
         BauhausSwitch(
-          value: viewModel.isWithClient,
-          onChanged: (val) => viewModel.toggleWithClient(val),
+          value: state.isWithClient,
+          onChanged: (val) => notifier.toggleWithClient(val),
           variant: BauhausSwitchVariant.primary,
         ),
       ],
@@ -82,7 +84,7 @@ class ManualEntryForm extends StatelessWidget {
   }
 
   Widget _buildClientDropdown(BuildContext context) {
-    final clients = viewModel.assignableClients;
+    final clients = state.assignableClients;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +98,7 @@ class ManualEntryForm extends StatelessWidget {
           )
         else
           DropdownButtonFormField<String>(
-            value: viewModel.selectedClientId,
+            value: state.selectedClientId,
             decoration: BauhausDesign.inputDecoration('Select Client').copyWith(
               filled: true,
               fillColor: BauhausDesign.surfaceLight,
@@ -111,7 +113,7 @@ class ManualEntryForm extends StatelessWidget {
                 ),
               );
             }).toList(),
-            onChanged: viewModel.selectClient,
+            onChanged: notifier.selectClient,
           ),
       ],
     );

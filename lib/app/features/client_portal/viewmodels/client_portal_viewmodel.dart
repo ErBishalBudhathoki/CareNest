@@ -1,23 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/client_portal/repositories/client_portal_repository.dart';
 import 'package:carenest/app/features/client_portal/models/client_portal_models.dart';
 
-final clientPortalViewModelProvider =
-    StateNotifierProvider<ClientPortalViewModel, ClientPortalState>((ref) {
-  final repository = ref.watch(clientPortalRepositoryProvider);
-  return ClientPortalViewModel(repository);
-});
+final clientPortalViewModelProvider = NotifierProvider<ClientPortalViewModel, ClientPortalState>(ClientPortalViewModel.new);
 
 const Object _stateUnset = Object();
 
 class ClientPortalState {
-  final bool isLoading;
-  final String? error;
-  final ClientDashboard? dashboard;
-  final WorkerLocation? workerLocation;
-  final AppointmentStatus? appointmentStatus;
-  final List<ServiceHistory> serviceHistory;
+  late final bool isLoading;
+  late final String? error;
+  late final ClientDashboard? dashboard;
+  late final WorkerLocation? workerLocation;
+  late final AppointmentStatus? appointmentStatus;
+  late final List<ServiceHistory> serviceHistory;
 
   ClientPortalState({
     this.isLoading = false,
@@ -51,10 +46,16 @@ class ClientPortalState {
   }
 }
 
-class ClientPortalViewModel extends StateNotifier<ClientPortalState> {
-  final ClientPortalRepository _repository;
+class ClientPortalViewModel extends Notifier<ClientPortalState> {
+  late final ClientPortalRepository _repository;
 
-  ClientPortalViewModel(this._repository) : super(ClientPortalState());
+  
+  @override
+  ClientPortalState build() {
+    final repository = ref.watch(clientPortalRepositoryProvider);
+    
+    return ClientPortalState();
+  }
 
   /// Load client dashboard data
   Future<void> loadDashboard(String clientId) async {

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/services/invoice_management_service.dart';
 
@@ -9,9 +8,9 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 
 // State class for invoice list
 class InvoiceListState {
-  final List<InvoiceListModel> invoices;
-  final bool isLoading;
-  final String? error;
+  late final List<InvoiceListModel> invoices;
+  late final bool isLoading;
+  late final String? error;
   final Map<String, dynamic>? stats;
 
   InvoiceListState({
@@ -37,10 +36,16 @@ class InvoiceListState {
 }
 
 // StateNotifier for managing invoice list state
-class InvoiceListViewModel extends StateNotifier<InvoiceListState> {
-  final InvoiceManagementService _invoiceService;
+class InvoiceListViewModel extends Notifier<InvoiceListState> {
+  late final InvoiceManagementService _invoiceService;
 
-  InvoiceListViewModel(this._invoiceService) : super(InvoiceListState());
+  
+  @override
+  InvoiceListState build() {
+    final invoiceService = ref.watch(invoiceManagementServiceProvider);
+    
+    return InvoiceListState();
+  }
 
   Future<void> loadInvoices(
     String organizationId, {
@@ -217,8 +222,4 @@ final invoiceManagementServiceProvider =
 });
 
 // Provider for the invoice list view model
-final invoiceListViewModelProvider =
-    StateNotifierProvider<InvoiceListViewModel, InvoiceListState>((ref) {
-  final invoiceService = ref.watch(invoiceManagementServiceProvider);
-  return InvoiceListViewModel(invoiceService);
-});
+final invoiceListViewModelProvider = NotifierProvider<InvoiceListViewModel, InvoiceListState>(InvoiceListViewModel.new);

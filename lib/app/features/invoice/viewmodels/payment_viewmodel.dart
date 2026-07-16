@@ -1,16 +1,17 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../repositories/payment_repository.dart';
 
-final paymentViewModelProvider = StateNotifierProvider<PaymentViewModel, AsyncValue<void>>((ref) {
-  final repository = ref.watch(paymentRepositoryProvider);
-  return PaymentViewModel(repository);
-});
+final paymentViewModelProvider = AsyncNotifierProvider<PaymentViewModel, void>(PaymentViewModel.new);
 
-class PaymentViewModel extends StateNotifier<AsyncValue<void>> {
-  final PaymentRepository _repository;
+class PaymentViewModel extends AsyncNotifier<void> {
+  late final PaymentRepository _repository;
 
-  PaymentViewModel(this._repository) : super(const AsyncValue.data(null));
+  @override
+  FutureOr<void> build() {
+    _repository = ref.watch(paymentRepositoryProvider);
+    return null;
+  }
 
   Future<void> createPaymentIntent({
     required String invoiceId,
@@ -18,7 +19,7 @@ class PaymentViewModel extends StateNotifier<AsyncValue<void>> {
     required String currency,
     required String clientEmail,
   }) async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     try {
       final result = await _repository.createPaymentIntent(
         invoiceId: invoiceId,
@@ -28,13 +29,13 @@ class PaymentViewModel extends StateNotifier<AsyncValue<void>> {
       );
       
       if (result['clientSecret'] != null) {
-        state = const AsyncValue.data(null);
+        state = const AsyncData(null);
         // In a real app, we would return the clientSecret to the UI to initialize Stripe Elements
       } else {
          throw Exception(result['message'] ?? 'Failed to create payment intent');
       }
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = AsyncError(e, st);
     }
   }
 
@@ -45,7 +46,7 @@ class PaymentViewModel extends StateNotifier<AsyncValue<void>> {
     String? reference,
     String? notes,
   }) async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     try {
       final result = await _repository.recordPayment(
         invoiceId: invoiceId,
@@ -56,26 +57,26 @@ class PaymentViewModel extends StateNotifier<AsyncValue<void>> {
       );
       
       if (result['success'] == true) {
-        state = const AsyncValue.data(null);
+        state = const AsyncData(null);
       } else {
         throw Exception(result['message'] ?? 'Failed to record payment');
       }
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = AsyncError(e, st);
     }
   }
 
   Future<void> issueCreditNote(Map<String, dynamic> data) async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     try {
       final result = await _repository.createCreditNote(data);
       if (result['success'] == true) {
-        state = const AsyncValue.data(null);
+        state = const AsyncData(null);
       } else {
          throw Exception(result['message'] ?? 'Failed to issue credit note');
       }
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = AsyncError(e, st);
     }
   }
 

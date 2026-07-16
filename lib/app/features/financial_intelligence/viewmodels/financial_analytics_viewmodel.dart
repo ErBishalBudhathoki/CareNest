@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class FinancialAnalyticsState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? dashboard;
   final Map<String, dynamic>? profitability;
   final Map<String, dynamic>? kpis;
   final Map<String, dynamic>? trends;
-  final String? error;
+  late final String? error;
 
   FinancialAnalyticsState({
     this.isLoading = false,
@@ -41,11 +40,16 @@ class FinancialAnalyticsState {
 }
 
 class FinancialAnalyticsViewModel
-    extends StateNotifier<FinancialAnalyticsState> {
-  final FinancialIntelligenceRepository _repository;
+    extends Notifier<FinancialAnalyticsState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  FinancialAnalyticsViewModel(this._repository)
-      : super(FinancialAnalyticsState());
+  
+  @override
+  FinancialAnalyticsState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return FinancialAnalyticsState();
+  }
 
   Future<void> getDashboard({
     required String organizationId,
@@ -134,10 +138,4 @@ class FinancialAnalyticsViewModel
   }
 }
 
-final financialAnalyticsViewModelProvider =
-    StateNotifierProvider<FinancialAnalyticsViewModel, FinancialAnalyticsState>(
-        (ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return FinancialAnalyticsViewModel(repository);
-});
+final financialAnalyticsViewModelProvider = NotifierProvider<FinancialAnalyticsViewModel, FinancialAnalyticsState>(FinancialAnalyticsViewModel.new);

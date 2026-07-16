@@ -1,53 +1,65 @@
 
 import 'package:carenest/app/features/settings/repositories/date_preference_repository.dart';
-import 'package:flutter/material.dart';
 
 /// ViewModel for managing the date format preference UI state and lifecycle.
 ///
 /// Exposes loading, error, and save success states, along with the selected
 /// preference value ('mdy' or 'dmy').
-class DateFormatSettingsViewModel extends ChangeNotifier {
-  final DatePreferenceRepository _repository;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/settings_providers.dart';
 
-  String _selected = 'dmy';
-  bool _isLoading = false;
-  String? _errorMessage;
-  bool _saveSucceeded = false;
-  bool _loaded = false;
+class DateFormatSettingsState {
+  final String selected;
+  final bool isLoading;
+  final String? errorMessage;
+  final bool saveSucceeded;
+  final bool isLoaded;
 
-  /// Construct with an injected repository.
-  DateFormatSettingsViewModel(this._repository);
+  DateFormatSettingsState({
+    this.selected = 'dmy',
+    this.isLoading = false,
+    this.errorMessage,
+    this.saveSucceeded = false,
+    this.isLoaded = false,
+  });
 
-  /// Currently selected preference ('mdy' or 'dmy').
-  String get selected => _selected;
+  DateFormatSettingsState copyWith({
+    String? selected,
+    bool? isLoading,
+    String? errorMessage,
+    bool? saveSucceeded,
+    bool? isLoaded,
+  }) {
+    return DateFormatSettingsState(
+      selected: selected ?? this.selected,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+      saveSucceeded: saveSucceeded ?? this.saveSucceeded,
+      isLoaded: isLoaded ?? this.isLoaded,
+    );
+  }
+}
 
-  /// True while loading or saving.
-  bool get isLoading => _isLoading;
+class DateFormatSettingsViewModel extends Notifier<DateFormatSettingsState> {
+  late final DatePreferenceRepository _repository;
 
-  /// Last error message, if any.
-  String? get errorMessage => _errorMessage;
+  @override
+  DateFormatSettingsState build() {
+    _repository = ref.watch(datePreferenceRepositoryProvider);
+    return DateFormatSettingsState();
+  }
 
-  /// True when the last save completed successfully.
-  bool get saveSucceeded => _saveSucceeded;
-
-  /// True once a load attempt has completed.
-  bool get isLoaded => _loaded;
 
   /// Load the stored preference. Defaults to 'dmy' when not set.
   Future<void> load() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final pref = await _repository.getPreference();
-      _selected = (pref == 'mdy' || pref == 'dmy') ? pref! : 'dmy';
-      _saveSucceeded = false;
-      _loaded = true;
+      state = state.copyWith(selected: (pref == 'mdy' || pref == 'dmy') ? pref! : 'dmy', saveSucceeded: false, isLoaded: true);
     } catch (e) {
-      _errorMessage = 'Failed to load preference: $e';
+      state = state.copyWith(errorMessage: 'Failed to load preference: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -55,30 +67,22 @@ class DateFormatSettingsViewModel extends ChangeNotifier {
   void select(String preference) {
     final normalized = preference.trim().toLowerCase();
     if (normalized != 'mdy' && normalized != 'dmy') {
-      _errorMessage = 'Invalid preference';
-      notifyListeners();
+      state = state.copyWith(errorMessage: 'Invalid preference');
       return;
     }
-    _selected = normalized;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(selected: normalized, errorMessage: null);
   }
 
   /// Persist the selected preference via the repository.
   Future<void> save() async {
-    _isLoading = true;
-    _saveSucceeded = false;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, saveSucceeded: false, errorMessage: null);
     try {
-      await _repository.savePreference(_selected);
-      _saveSucceeded = true;
+      await _repository.savePreference(state.selected);
+      state = state.copyWith(saveSucceeded: true);
     } catch (e) {
-      _errorMessage = e.toString();
-      _saveSucceeded = false;
+      state = state.copyWith(errorMessage: e.toString(), saveSucceeded: false);
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 }

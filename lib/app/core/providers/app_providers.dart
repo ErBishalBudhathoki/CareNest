@@ -12,14 +12,12 @@ import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart'
 import 'package:carenest/app/features/invoice/viewmodels/line_items_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+// needed for ChangeNotifier viewmodels (migrated in Phase 3)
 
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 
 import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
-
-import 'package:carenest/app/features/admin/viewmodels/bank_details_viewmodel.dart';
 
 // Global providers
 final sharedPreferencesProvider = Provider<SharedPreferencesUtils>((ref) {
@@ -28,13 +26,13 @@ final sharedPreferencesProvider = Provider<SharedPreferencesUtils>((ref) {
   return prefs;
 });
 
-final invoiceEmailViewModelProvider = ChangeNotifierProvider((ref) {
-  return InvoiceEmailViewModel(); // pass ref if needed
-});
+final invoiceEmailViewModelProvider =
+    NotifierProvider<InvoiceEmailViewModel, int>(InvoiceEmailViewModel.new);
 
 // Navigation providers
 final navigationKeyProvider = Provider(
-    (ref) => GlobalKey<NavigatorState>(debugLabel: 'navigation_key_provider'));
+  (ref) => GlobalKey<NavigatorState>(debugLabel: 'navigation_key_provider'),
+);
 
 // API Service
 final apiMethodProvider = Provider<ApiMethod>((ref) => ApiMethod());
@@ -52,7 +50,7 @@ final userPhotoProvider = FutureProvider.autoDispose<Uint8List?>((ref) async {
 
 class UserPhotoService {
   final Map<String, Uint8List> _photoCache = {};
-  final ApiMethod _api;
+  late final ApiMethod _api;
 
   UserPhotoService({required ApiMethod api}) : _api = api;
 
@@ -74,21 +72,16 @@ class UserPhotoService {
 }
 
 // Photo Data Service
-final photoDataProvider =
-    StateNotifierProvider<PhotoDataNotifier, PhotoDataState>((ref) {
-  return PhotoDataNotifier(ref.read(apiMethodProvider));
-});
+final photoDataProvider = NotifierProvider<PhotoDataNotifier, PhotoDataState>(
+  PhotoDataNotifier.new,
+);
 
 class PhotoDataState {
   final Uint8List? photoData;
   final bool isLoading;
   final String? error;
 
-  const PhotoDataState({
-    this.photoData,
-    this.isLoading = false,
-    this.error,
-  });
+  const PhotoDataState({this.photoData, this.isLoading = false, this.error});
 
   PhotoDataState copyWith({
     Uint8List? photoData,
@@ -103,14 +96,19 @@ class PhotoDataState {
   }
 }
 
-class PhotoDataNotifier extends StateNotifier<PhotoDataState> {
-  final ApiMethod _apiMethod;
+class PhotoDataNotifier extends Notifier<PhotoDataState> {
+  late final ApiMethod _apiMethod;
 
-  PhotoDataNotifier(this._apiMethod) : super(const PhotoDataState());
+  @override
+  PhotoDataState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return const PhotoDataState();
+  }
 
   Future<void> fetchPhotoData(String email, {bool forceRefresh = false}) async {
     debugPrint(
-        "\n=== PhotoDataNotifier.fetchPhotoData called for email: $email (force: $forceRefresh) ===");
+      "\n=== PhotoDataNotifier.fetchPhotoData called for email: $email (force: $forceRefresh) ===",
+    );
 
     // If not forcing refresh, try to load from cache first for immediate display
     if (!forceRefresh) {
@@ -134,7 +132,8 @@ class PhotoDataNotifier extends StateNotifier<PhotoDataState> {
       // Always fetch from network to ensure synchronization
       final photoData = await _apiMethod.getUserPhoto(email);
       debugPrint(
-          "Network response received, photoData: ${photoData != null ? 'length ${photoData.length}' : 'null'}");
+        "Network response received, photoData: ${photoData != null ? 'length ${photoData.length}' : 'null'}",
+      );
 
       // Update state with fresh data
       state = state.copyWith(photoData: photoData, isLoading: false);
@@ -176,9 +175,9 @@ class PhotoDataNotifier extends StateNotifier<PhotoDataState> {
 
 // Appointment Service
 final appointmentProvider =
-    StateNotifierProvider<AppointmentNotifier, AppointmentState>((ref) {
-  return AppointmentNotifier(ref.read(apiMethodProvider));
-});
+    NotifierProvider<AppointmentNotifier, AppointmentState>(
+      AppointmentNotifier.new,
+    );
 
 class AppointmentState {
   final List<dynamic> appointments;
@@ -204,10 +203,14 @@ class AppointmentState {
   }
 }
 
-class AppointmentNotifier extends StateNotifier<AppointmentState> {
-  final ApiMethod _apiMethod;
+class AppointmentNotifier extends Notifier<AppointmentState> {
+  late final ApiMethod _apiMethod;
 
-  AppointmentNotifier(this._apiMethod) : super(const AppointmentState());
+  @override
+  AppointmentState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return const AppointmentState();
+  }
 
   Future<void> fetchAppointments(String email) async {
     state = state.copyWith(isLoading: true);
@@ -221,9 +224,9 @@ class AppointmentNotifier extends StateNotifier<AppointmentState> {
 }
 
 // User Authentication Service
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier(ref.read(apiMethodProvider));
-});
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);
 
 class AuthState {
   final bool isAuthenticated;
@@ -253,10 +256,14 @@ class AuthState {
   }
 }
 
-class AuthNotifier extends StateNotifier<AuthState> {
-  final ApiMethod _apiMethod;
+class AuthNotifier extends Notifier<AuthState> {
+  late final ApiMethod _apiMethod;
 
-  AuthNotifier(this._apiMethod) : super(const AuthState());
+  @override
+  AuthState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return const AuthState();
+  }
 
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true);
@@ -283,17 +290,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
-final timerServiceProviderWithNotifier =
-    ChangeNotifierProvider<TimerService>((ref) {
-  return TimerService();
-});
-// final timerServiceProviders = Provider.family<TimerService, String>((ref, clientEmail) {
-//   return TimerService(clientEmail);
-// });
 final timerServiceProvider =
-    StateNotifierProvider<TimerServiceNotifier, TimerService>((ref) {
-  return TimerServiceNotifier();
-});
+    NotifierProvider<TimerServiceNotifier, TimerService>(
+      TimerServiceNotifier.new,
+    );
 
 class TimerState {
   //final bool isRunning;
@@ -303,15 +303,9 @@ class TimerState {
   bool isRunning = false; // Whether the timer is running
   DateTime startTime = DateTime.now(); // Start time of the timer
 
-  TimerState({
-    this.isRunning = false,
-    this.elapsedTime = Duration.zero,
-  });
+  TimerState({this.isRunning = false, this.elapsedTime = Duration.zero});
 
-  TimerState copyWith({
-    bool? isRunning,
-    Duration? elapsedTime,
-  }) {
+  TimerState copyWith({bool? isRunning, Duration? elapsedTime}) {
     return TimerState(
       isRunning: isRunning ?? this.isRunning,
       elapsedTime: elapsedTime ?? this.elapsedTime,
@@ -319,17 +313,18 @@ class TimerState {
   }
 }
 
-class TimerServiceNotifier extends StateNotifier<TimerService> {
-  TimerServiceNotifier() : super(TimerService());
+class TimerServiceNotifier extends Notifier<TimerService> {
+  @override
+  TimerService build() => TimerService();
 }
 
-final shiftDataProvider =
-    StateNotifierProvider<ShiftDataNotifier, List<dynamic>>((ref) {
-  return ShiftDataNotifier();
-});
+final shiftDataProvider = NotifierProvider<ShiftDataNotifier, List<dynamic>>(
+  ShiftDataNotifier.new,
+);
 
-class ShiftDataNotifier extends StateNotifier<List<dynamic>> {
-  ShiftDataNotifier() : super([]);
+class ShiftDataNotifier extends Notifier<List<dynamic>> {
+  @override
+  List<dynamic> build() => [];
 
   void updateShifts(List<dynamic> newShifts) {
     state = newShifts;
@@ -338,33 +333,27 @@ class ShiftDataNotifier extends StateNotifier<List<dynamic>> {
   void markShiftCompleted(int index) {
     state = [
       for (var i = 0; i < state.length; i++)
-        if (i == index) {...state[i], 'isCompleted': true} else state[i]
+        if (i == index) {...state[i], 'isCompleted': true} else state[i],
     ];
   }
 }
 
 // User Role Provider
-final userRoleProvider =
-    StateNotifierProvider<UserRoleNotifier, UserRole>((ref) {
-  return UserRoleNotifier(
-    ref.read(sharedPreferencesProvider),
-    ref.read(apiMethodProvider),
-  );
-});
+final userRoleProvider = NotifierProvider<UserRoleNotifier, UserRole>(
+  UserRoleNotifier.new,
+);
 
-class UserRoleNotifier extends StateNotifier<UserRole> {
-  final SharedPreferencesUtils _sharedPrefs;
-  final ApiMethod _apiMethod;
+class UserRoleNotifier extends Notifier<UserRole> {
+  late final SharedPreferencesUtils _sharedPrefs;
+  late final ApiMethod _apiMethod;
 
-  UserRoleNotifier(this._sharedPrefs, this._apiMethod)
-      : super(UserRole.employee) {
-    _loadRole();
-  }
-
-  Future<void> _loadRole() async {
+  @override
+  UserRole build() {
+    _sharedPrefs = ref.watch(sharedPreferencesProvider);
+    _apiMethod = ref.watch(apiMethodProvider);
     final role = _sharedPrefs.getRole();
     debugPrint('👤 UserRoleNotifier: Loaded role from SharedPrefs: $role');
-    state = role ?? UserRole.employee;
+    return role ?? UserRole.employee;
   }
 
   Future<void> updateRole(UserRole newRole) async {
@@ -382,7 +371,8 @@ class UserRoleNotifier extends StateNotifier<UserRole> {
     if (email == null ||
         email.isEmpty ||
         firebaseUid == null ||
-        authToken == null) return;
+        authToken == null)
+      return;
 
     try {
       // API expects the raw token, not the 'Bearer ' prefixed one
@@ -421,63 +411,35 @@ class UserRoleNotifier extends StateNotifier<UserRole> {
   }
 }
 
-final bankDetailsViewModelProvider =
-    ChangeNotifierProvider.autoDispose<BankDetailsViewModel>((ref) {
-  return BankDetailsViewModel(
-    apiMethod: ref.read(apiMethodProvider),
-    scope: BankDetailsScope.personal,
-  );
-});
-
-final scopedBankDetailsViewModelProvider = ChangeNotifierProvider.autoDispose
-    .family<BankDetailsViewModel, BankDetailsScope>((ref, scope) {
-  return BankDetailsViewModel(
-    apiMethod: ref.read(apiMethodProvider),
-    scope: scope,
-  );
-});
-
 final loginViewModelProvider =
-    ChangeNotifierProvider.autoDispose<LoginViewModel>((ref) {
-  return LoginViewModel(
-    ref.read(apiMethodProvider),
-    ref.read(sharedPreferencesProvider),
-    ref.read(fcmTokenManagerProvider),
-  );
-});
+    NotifierProvider.autoDispose<LoginViewModel, int>(LoginViewModel.new);
 
 final signupViewModelProvider =
-    ChangeNotifierProvider.autoDispose<SignupViewModel>((ref) {
-  return SignupViewModel(ref.read(apiMethodProvider));
-});
+    NotifierProvider.autoDispose<SignupViewModel, int>(SignupViewModel.new);
 
 final forgotPasswordViewModelProvider =
-    ChangeNotifierProvider.autoDispose<ForgotPasswordViewModel>((ref) {
-  return ForgotPasswordViewModel(
-    ref.read(sharedPreferencesProvider),
-    ref.read(apiMethodProvider),
-  );
-});
+    NotifierProvider.autoDispose<ForgotPasswordViewModel, bool>(
+      ForgotPasswordViewModel.new,
+    );
 
 final verifyOTPViewModelProvider =
-    ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
-  return VerifyOTPViewModel();
-});
+    NotifierProvider.autoDispose<VerifyOTPViewModel, void>(
+      VerifyOTPViewModel.new,
+    );
 
 final addBusinessViewModelProvider =
-    ChangeNotifierProvider<AddBusinessViewModel>((ref) {
-  return AddBusinessViewModel(ref);
-});
+    NotifierProvider<AddBusinessViewModel, int>(() => AddBusinessViewModel());
 
-final sharedPreferencesUtilsProvider = Provider<SharedPreferencesUtils>((ref) {
-  return SharedPreferencesUtils();
-});
+final sharedPreferencesUtilsProvider = Provider<SharedPreferencesUtils>(
+  (ref) => SharedPreferencesUtils(),
+);
 
 /// Provider for line item view model that handles support items
 final lineItemViewModelProvider =
-    StateNotifierProvider<LineItemViewModel, List<Map<String, dynamic>>>((ref) {
-  return LineItemViewModel(ref.read(apiMethodProvider));
-});
+    // ignore: deprecated_member_use
+    NotifierProvider<LineItemViewModel, List<Map<String, dynamic>>>(
+      LineItemViewModel.new,
+    );
 
 // User email provider - retrieves the current user's email from SharedPreferences
 final userEmailProvider = Provider<String?>((ref) {
@@ -505,9 +467,9 @@ final organizationIdProvider = Provider<String?>((ref) {
 
 // Business Stats Provider
 final businessStatsProvider =
-    StateNotifierProvider<BusinessStatsNotifier, BusinessStatsState>((ref) {
-  return BusinessStatsNotifier(ref.read(apiMethodProvider));
-});
+    NotifierProvider<BusinessStatsNotifier, BusinessStatsState>(
+      BusinessStatsNotifier.new,
+    );
 
 class BusinessStatsState {
   final Map<String, dynamic> stats;
@@ -533,13 +495,14 @@ class BusinessStatsState {
   }
 }
 
-class BusinessStatsNotifier extends StateNotifier<BusinessStatsState> {
-  final ApiMethod _apiMethod;
+class BusinessStatsNotifier extends Notifier<BusinessStatsState> {
+  late final ApiMethod _apiMethod;
 
-  BusinessStatsNotifier(this._apiMethod)
-      : super(BusinessStatsState(
-          stats: _defaultBusinessStats(),
-        ));
+  @override
+  BusinessStatsState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return BusinessStatsState(stats: _defaultBusinessStats());
+  }
 
   static Map<String, dynamic> _defaultBusinessStats() {
     return {
@@ -547,14 +510,16 @@ class BusinessStatsNotifier extends StateNotifier<BusinessStatsState> {
       'totalClients': 0,
       'totalInvoices': 0,
       'totalRevenue': '\$0.00',
-      'rawRevenue': 0
+      'rawRevenue': 0,
     };
   }
 
   Future<void> loadBusinessStats(String? organizationId) async {
     if (organizationId == null || organizationId.isEmpty) {
       state = state.copyWith(
-          error: 'Organization ID not available', isLoading: false);
+        error: 'Organization ID not available',
+        isLoading: false,
+      );
       return;
     }
 
@@ -572,8 +537,9 @@ class BusinessStatsNotifier extends StateNotifier<BusinessStatsState> {
       } catch (_) {}
 
       try {
-        final clients =
-            await _apiMethod.getClientsByOrganizationId(organizationId);
+        final clients = await _apiMethod.getClientsByOrganizationId(
+          organizationId,
+        );
         if (clients.isNotEmpty || _toInt(stats['totalClients']) == 0) {
           stats['totalClients'] = clients.length;
         }

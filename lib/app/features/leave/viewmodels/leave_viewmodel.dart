@@ -2,40 +2,55 @@ import 'package:carenest/app/features/leave/providers/leave_providers.dart';
 import 'package:carenest/app/features/leave/repositories/leave_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
-class LeaveViewModel extends ChangeNotifier {
-  final Ref _ref;
-  final String _userEmail;
+class LeaveViewModelState {
+  final bool isLoading;
+  final String? errorMessage;
+  final List<dynamic> holidays;
 
-  LeaveViewModel(this._ref, this._userEmail);
+  LeaveViewModelState({
+    this.isLoading = false,
+    this.errorMessage,
+    this.holidays = const [],
+  });
 
-  LeaveRepository get _repository => _ref.read(leaveRepositoryProvider);
+  LeaveViewModelState copyWith({
+    bool? isLoading,
+    String? errorMessage,
+    List<dynamic>? holidays,
+  }) {
+    return LeaveViewModelState(
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage ?? this.errorMessage,
+      holidays: holidays ?? this.holidays,
+    );
+  }
+}
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+class LeaveViewModel extends Notifier<LeaveViewModelState> {
+  late final String _userEmail;
+  late final LeaveRepository _repository;
 
-  String? _errorMessage;
-  String? get errorMessage => _errorMessage;
+  LeaveViewModel(this._userEmail);
 
-  List<dynamic> _holidays = [];
-  List<dynamic> get holidays => _holidays;
+  @override
+  LeaveViewModelState build() {
+    _repository = ref.watch(leaveRepositoryProvider);
+    return LeaveViewModelState();
+  }
 
   Future<void> refresh() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       await Future.wait([
-        _ref.refresh(leaveBalancesProvider(_userEmail).future),
-        _ref.refresh(leaveRequestsProvider(_userEmail).future),
+        ref.refresh(leaveBalancesProvider(_userEmail).future),
+        ref.refresh(leaveRequestsProvider(_userEmail).future),
       ]);
     } catch (e) {
-      _errorMessage = e.toString();
+      state = state.copyWith(errorMessage: e.toString());
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -46,9 +61,7 @@ class LeaveViewModel extends ChangeNotifier {
     required String reason,
     required double totalHours,
   }) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       final result = await _repository.submitLeaveRequest(
@@ -64,27 +77,23 @@ class LeaveViewModel extends ChangeNotifier {
         await refresh();
         return true;
       } else {
-        _errorMessage = result['message'] ?? 'Failed to submit request';
+        state = state.copyWith(errorMessage: result['message'] ?? 'Failed to submit request');
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      state = state.copyWith(errorMessage: e.toString());
       return false;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
   Future<void> loadForecast(DateTime targetDate) async {
-    await _ref.read(leaveForecastProvider.notifier).fetchForecast(_userEmail, targetDate);
+    await ref.read(leaveForecastProvider.notifier).fetchForecast(_userEmail, targetDate);
   }
 
   Future<double> calculateLeaveHours(DateTime startDate, DateTime endDate) async {
     try {
-      // Get organizationId from shared prefs or user provider if needed
-      // For now passing null as backend handles null for global holidays
-      // Ideally we should get it from User provider
       final result = await _repository.calculateLeaveHours(
         startDate: startDate,
         endDate: endDate,
@@ -103,14 +112,12 @@ class LeaveViewModel extends ChangeNotifier {
 
   Future<void> fetchHolidays({String? organizationId}) async {
     try {
-      _holidays = await _repository.getHolidays(organizationId: organizationId);
-      notifyListeners();
+      final holidays = await _repository.getHolidays(organizationId: organizationId);
+      state = state.copyWith(holidays: holidays);
     } catch (e) {
       debugPrint('Error fetching holidays: $e');
     }
   }
 }
 
-final leaveViewModelProvider = ChangeNotifierProvider.family<LeaveViewModel, String>((ref, email) {
-  return LeaveViewModel(ref, email);
-});
+final leaveViewModelProvider = NotifierProvider.family<LeaveViewModel, LeaveViewModelState, String>(LeaveViewModel.new);

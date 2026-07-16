@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -17,12 +16,16 @@ class EmployeePayRateState {
   });
 }
 
-class EmployeePayRateViewModel extends StateNotifier<EmployeePayRateState> {
-  final ApiMethod _apiMethod;
+class EmployeePayRateViewModel extends Notifier<EmployeePayRateState> {
+  EmployeePayRateViewModel(this.organizationId);
   final String organizationId;
+  late final ApiMethod _apiMethod;
 
-  EmployeePayRateViewModel(this._apiMethod, this.organizationId)
-      : super(EmployeePayRateState());
+  @override
+  EmployeePayRateState build() {
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
+    return EmployeePayRateState();
+  }
 
   Future<void> fetchEmployees({bool showLoading = true}) async {
     if (showLoading) {
@@ -86,12 +89,4 @@ class EmployeePayRateViewModel extends StateNotifier<EmployeePayRateState> {
   }
 }
 
-final employeePayRateViewModelProvider = StateNotifierProvider.family<
-    EmployeePayRateViewModel,
-    EmployeePayRateState,
-    String>((ref, organizationId) {
-  return EmployeePayRateViewModel(
-    ref.read(app_providers.apiMethodProvider),
-    organizationId,
-  );
-});
+final employeePayRateViewModelProvider = NotifierProvider.family<EmployeePayRateViewModel, EmployeePayRateState, String>(EmployeePayRateViewModel.new);

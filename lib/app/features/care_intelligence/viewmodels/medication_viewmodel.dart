@@ -1,19 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Medication Management
 class MedicationState {
-  final bool isLoading;
-  final List<DrugInteraction> interactions;
-  final double? safetyScore;
-  final MedicationCompliance? compliance;
-  final List<MedicationAlert> alerts;
+  late final bool isLoading;
+  late final List<DrugInteraction> interactions;
+  late final double? safetyScore;
+  late final MedicationCompliance? compliance;
+  late final List<MedicationAlert> alerts;
   final Map<String, dynamic>? schedule;
   final Map<String, dynamic>? sideEffectMonitoring;
-  final String? error;
+  late final String? error;
 
   MedicationState({
     this.isLoading = false,
@@ -50,10 +49,16 @@ class MedicationState {
 }
 
 // StateNotifier for Medication Management
-class MedicationViewModel extends StateNotifier<MedicationState> {
-  final CareIntelligenceRepository _repository;
+class MedicationViewModel extends Notifier<MedicationState> {
+  late final CareIntelligenceRepository _repository;
 
-  MedicationViewModel(this._repository) : super(MedicationState());
+  
+  @override
+  MedicationState build() {
+    final repository = ref.watch(careIntelligenceRepositoryProvider);
+    
+    return MedicationState();
+  }
 
   // Check medication interactions
   Future<void> checkMedicationInteractions({
@@ -236,8 +241,4 @@ class MedicationViewModel extends StateNotifier<MedicationState> {
 }
 
 // Provider for MedicationViewModel
-final medicationViewModelProvider =
-    StateNotifierProvider<MedicationViewModel, MedicationState>((ref) {
-  final repository = ref.watch(careIntelligenceRepositoryProvider);
-  return MedicationViewModel(repository);
-});
+final medicationViewModelProvider = NotifierProvider<MedicationViewModel, MedicationState>(MedicationViewModel.new);

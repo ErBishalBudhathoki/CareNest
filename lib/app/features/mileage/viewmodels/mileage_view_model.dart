@@ -1,75 +1,117 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/trip_model.dart';
 import '../repositories/mileage_repository.dart';
 import '../../../shared/utils/shared_preferences_utils.dart';
 import '../controllers/mileage_controller.dart';
 
-class MileageViewModel extends ChangeNotifier {
-  final MileageController _controller;
-  MileageState _state;
-  final MileageRepository _repository;
-  bool _isDisposed = false;
-  String? _localError;
+class MileageViewState {
+  final bool isTracking;
+  final DateTime? trackingStartTime;
+  final String? error;
+  final bool isWithClient;
+  final String? selectedClientId;
+  final List<Map<String, String>> assignableClients;
+  final bool isLoadingClients;
+  final List<Trip> recentTrips;
+  final bool isLoadingHistory;
 
-  MileageViewModel(this._controller, this._state, this._repository) {
-    _fetchRecentTrips();
-    _loadAssignableClients();
+  const MileageViewState({
+    this.isTracking = false,
+    this.trackingStartTime,
+    this.error,
+    this.isWithClient = false,
+    this.selectedClientId,
+    this.assignableClients = const [],
+    this.isLoadingClients = false,
+    this.recentTrips = const [],
+    this.isLoadingHistory = false,
+  });
+
+  MileageViewState copyWith({
+    bool? isTracking,
+    DateTime? trackingStartTime,
+    String? error,
+    bool? isWithClient,
+    String? selectedClientId,
+    List<Map<String, String>>? assignableClients,
+    bool? isLoadingClients,
+    List<Trip>? recentTrips,
+    bool? isLoadingHistory,
+  }) {
+    return MileageViewState(
+      isTracking: isTracking ?? this.isTracking,
+      trackingStartTime: trackingStartTime ?? this.trackingStartTime,
+      error: error,
+      isWithClient: isWithClient ?? this.isWithClient,
+      selectedClientId: selectedClientId ?? this.selectedClientId,
+      assignableClients: assignableClients ?? this.assignableClients,
+      isLoadingClients: isLoadingClients ?? this.isLoadingClients,
+      recentTrips: recentTrips ?? this.recentTrips,
+      isLoadingHistory: isLoadingHistory ?? this.isLoadingHistory,
+    );
   }
+}
 
-  bool get isTracking => _state.isTracking;
-  DateTime? get trackingStartTime => _state.startTime;
-  String? get error => _localError ?? _state.error;
+final mileageViewModelProvider =
+    NotifierProvider<MileageViewModel, MileageViewState>(MileageViewModel.new);
 
-  bool _isWithClient = false;
-  bool get isWithClient => _isWithClient;
+class MileageViewModel extends Notifier<MileageViewState> {
+  late final MileageController _controller;
+  late final MileageRepository _repository;
 
-  String? _selectedClientId;
-  String? get selectedClientId => _selectedClientId;
-
-  List<Map<String, String>> _assignableClients = [];
-  List<Map<String, String>> get assignableClients => _assignableClients;
-  bool _loadingClients = false;
-  bool get isLoadingClients => _loadingClients;
-
-  // Manual Entry Form Controllers
+  // TextEditingControllers are not in state (they are Flutter objects, not serializable)
   final startLocationController = TextEditingController();
   final endLocationController = TextEditingController();
   final distanceController = TextEditingController();
 
-  List<Trip> _recentTrips = [];
-  List<Trip> get recentTrips => _recentTrips;
-  bool _isLoadingHistory = false;
-  bool get isLoadingHistory => _isLoadingHistory;
+  @override
+  MileageViewState build() {
+    _controller = ref.watch(mileageControllerProvider.notifier);
+    _repository = ref.watch(mileageRepositoryProvider);
 
-  void updateState(MileageState nextState) {
-    _state = nextState;
-    _notifyListenersSafely();
-  }
+    // Sync from the backing MileageController state
+    final controllerState = ref.watch(mileageControllerProvider);
+    ref.onDispose(() {
+      startLocationController.dispose();
+      endLocationController.dispose();
+      distanceController.dispose();
+    });
 
-  void _notifyListenersSafely() {
-    if (!_isDisposed) {
-      notifyListeners();
-    }
-  }
+    Future.microtask(() {
+      _fetchRecentTrips();
+      _loadAssignableClients();
+    });
 
-  void _setLocalError(String? message) {
-    _localError = message;
-    _notifyListenersSafely();
+    return MileageViewState(
+      isTracking: controllerState.isTracking,
+      trackingStartTime: controllerState.startTime,
+      error: controllerState.error,
+    );
   }
 
   // GPS Tracking Actions
   Future<void> startTracking() async {
-    _localError = null;
+    state = state.copyWith(error: null);
     await _controller.startTrip();
+    _syncFromController();
   }
 
   Future<double> stopTracking() async {
-    _localError = null;
+    state = state.copyWith(error: null);
     final distance = await _controller.stopTracking();
+    _syncFromController();
     return distance;
+  }
+
+  void _syncFromController() {
+    final cs = ref.read(mileageControllerProvider);
+    state = state.copyWith(
+      isTracking: cs.isTracking,
+      trackingStartTime: cs.startTime,
+      error: cs.error,
+    );
   }
 
   Future<bool> submitTrip({
@@ -78,16 +120,19 @@ class MileageViewModel extends ChangeNotifier {
     String? startLocation,
     String? endLocation,
   }) async {
-    final useWithClient = withClient ?? _isWithClient;
-    final resolvedClientId =
-        useWithClient ? (clientId ?? _selectedClientId) : null;
+    final useWithClient = withClient ?? state.isWithClient;
+    final resolvedClientId = useWithClient
+        ? (clientId ?? state.selectedClientId)
+        : null;
     if (useWithClient &&
         (resolvedClientId == null || resolvedClientId.isEmpty)) {
-      _setLocalError('Please select a client before submitting a client trip.');
+      state = state.copyWith(
+        error: 'Please select a client before submitting a client trip.',
+      );
       return false;
     }
 
-    _localError = null;
+    state = state.copyWith(error: null);
     final success = await _controller.submitTrip(
       withClient: useWithClient,
       clientId: resolvedClientId,
@@ -101,32 +146,35 @@ class MileageViewModel extends ChangeNotifier {
     return success;
   }
 
-  // UI Form Actions
   void toggleWithClient(bool value) {
-    _isWithClient = value;
-    if (!value) _selectedClientId = null;
-    if (value && _assignableClients.isEmpty) {
+    state = state.copyWith(
+      isWithClient: value,
+      selectedClientId: value ? state.selectedClientId : null,
+    );
+    if (value && state.assignableClients.isEmpty) {
       _loadAssignableClients(force: true);
     }
-    notifyListeners();
   }
 
   void selectClient(String? clientId) {
-    _selectedClientId = clientId;
-    notifyListeners();
+    state = state.copyWith(selectedClientId: clientId);
   }
 
   Future<void> saveManualTrip() async {
-    _localError = null;
+    state = state.copyWith(error: null);
     if (startLocationController.text.isEmpty ||
         endLocationController.text.isEmpty ||
         distanceController.text.isEmpty) {
-      _setLocalError('Please fill start location, end location and distance.');
+      state = state.copyWith(
+        error: 'Please fill start location, end location and distance.',
+      );
       return;
     }
-    if (_isWithClient &&
-        (_selectedClientId == null || _selectedClientId!.isEmpty)) {
-      _setLocalError('Please select a client before logging a client trip.');
+    if (state.isWithClient &&
+        (state.selectedClientId == null || state.selectedClientId!.isEmpty)) {
+      state = state.copyWith(
+        error: 'Please select a client before logging a client trip.',
+      );
       return;
     }
 
@@ -144,42 +192,39 @@ class MileageViewModel extends ChangeNotifier {
         'startLocation': startLocationController.text,
         'endLocation': endLocationController.text,
         'distance': double.tryParse(distanceController.text) ?? 0.0,
-        'tripType': _isWithClient ? 'WITH_CLIENT' : 'BETWEEN_CLIENTS',
-        'clientId': _selectedClientId,
+        'tripType': state.isWithClient ? 'WITH_CLIENT' : 'BETWEEN_CLIENTS',
+        'clientId': state.selectedClientId,
       };
 
       final success = await _repository.saveTrip(tripData);
 
       if (success) {
-        // Clear inputs
         startLocationController.clear();
         endLocationController.clear();
         distanceController.clear();
-        _isWithClient = false;
-        _selectedClientId = null;
-
+        state = state.copyWith(isWithClient: false, selectedClientId: null);
         await _fetchRecentTrips();
       } else {
-        _setLocalError('Could not save trip right now. Please try again.');
+        state = state.copyWith(
+          error: 'Could not save trip right now. Please try again.',
+        );
       }
     } catch (e) {
-      print('Error saving manual trip: $e');
-      _setLocalError('Failed to save manual trip.');
+      state = state.copyWith(error: 'Failed to save manual trip.');
     }
-    _notifyListenersSafely();
   }
 
   Future<void> _loadAssignableClients({bool force = false}) async {
-    if (_loadingClients && !force) return;
-    if (_assignableClients.isNotEmpty && !force) return;
+    if (state.isLoadingClients && !force) return;
+    if (state.assignableClients.isNotEmpty && !force) return;
 
-    _loadingClients = true;
-    _notifyListenersSafely();
+    state = state.copyWith(isLoadingClients: true);
 
     try {
       final prefs = await SharedPreferencesUtils.getInstance();
       String? userEmail =
-          prefs.getUserEmail() ?? await prefs.getUserEmailFromSharedPreferences();
+          prefs.getUserEmail() ??
+          await prefs.getUserEmailFromSharedPreferences();
 
       if ((userEmail == null || userEmail.isEmpty) &&
           FirebaseAuth.instance.currentUser != null) {
@@ -187,68 +232,45 @@ class MileageViewModel extends ChangeNotifier {
       }
 
       if (userEmail == null || userEmail.isEmpty) {
+        state = state.copyWith(isLoadingClients: false);
         return;
       }
 
-      _assignableClients = await _repository
-          .getAssignableClients(userEmail.toLowerCase().trim());
+      final clients = await _repository.getAssignableClients(
+        userEmail.toLowerCase().trim(),
+      );
 
-      if (_selectedClientId != null &&
-          !_assignableClients.any((c) => c['id'] == _selectedClientId)) {
-        _selectedClientId = null;
-      }
+      final resolvedClientId =
+          state.selectedClientId != null &&
+              !clients.any((c) => c['id'] == state.selectedClientId)
+          ? null
+          : state.selectedClientId;
+
+      state = state.copyWith(
+        assignableClients: clients,
+        selectedClientId: resolvedClientId,
+        isLoadingClients: false,
+      );
     } catch (e) {
-      print('Error loading assignable clients: $e');
-    } finally {
-      _loadingClients = false;
-      _notifyListenersSafely();
+      state = state.copyWith(isLoadingClients: false);
     }
   }
 
   Future<void> _fetchRecentTrips() async {
-    _isLoadingHistory = true;
-    _notifyListenersSafely();
+    state = state.copyWith(isLoadingHistory: true);
 
     try {
       final prefs = await SharedPreferencesUtils.getInstance();
       final userId = prefs.getUserId();
 
       if (userId != null) {
-        // Fetch recent trips (no date filter = all recent)
-        // Ideally API supports pagination or limit.
-        // For now, repo fetches all, we might want to optimize this later.
-        _recentTrips = await _repository.getTrips(userId);
+        final trips = await _repository.getTrips(userId);
+        state = state.copyWith(recentTrips: trips, isLoadingHistory: false);
+      } else {
+        state = state.copyWith(isLoadingHistory: false);
       }
     } catch (e) {
-      print('Error fetching history: $e');
-    } finally {
-      if (!_isDisposed) {
-        _isLoadingHistory = false;
-        _notifyListenersSafely();
-      }
+      state = state.copyWith(isLoadingHistory: false);
     }
   }
-
-  @override
-  void dispose() {
-    _isDisposed = true;
-    startLocationController.dispose();
-    endLocationController.dispose();
-    distanceController.dispose();
-    super.dispose();
-  }
 }
-
-final mileageViewModelProvider =
-    ChangeNotifierProvider<MileageViewModel>((ref) {
-  final controller = ref.read(mileageControllerProvider.notifier);
-  final initialState = ref.read(mileageControllerProvider);
-  final repository = ref.read(mileageRepositoryProvider);
-  final viewModel = MileageViewModel(controller, initialState, repository);
-
-  ref.listen<MileageState>(mileageControllerProvider, (_, next) {
-    viewModel.updateState(next);
-  });
-
-  return viewModel;
-});

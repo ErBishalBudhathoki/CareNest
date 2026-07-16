@@ -1,38 +1,45 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/invoice/models/employee_selection_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 
-class EmployeeSelectionViewModel extends StateNotifier<EmployeeSelectionState> {
-  final ApiMethod _apiMethod;
+class EmployeeSelectionViewModel extends Notifier<EmployeeSelectionState> {
   final String organizationId;
+  late final ApiMethod _apiMethod;
 
-  EmployeeSelectionViewModel(this._apiMethod, this.organizationId)
-      : super(EmployeeSelectionState());
+  EmployeeSelectionViewModel(this.organizationId);
+
+  @override
+  EmployeeSelectionState build() {
+    _apiMethod = ref.watch(app_providers.apiMethodProvider);
+    return EmployeeSelectionState();
+  }
 
   /// Fetch employees for the organization
   Future<void> fetchEmployees() async {
     try {
       state = state.copyWith(isLoading: true, errorMessage: '');
 
-      final response =
-          await _apiMethod.getOrganizationEmployees(organizationId);
+      final response = await _apiMethod.getOrganizationEmployees(
+        organizationId,
+      );
 
       if (response['success'] == true && response['employees'] != null) {
         final List<dynamic> employeesData = response['employees'];
-        final List<EmployeeSelectionModel> employees =
-            employeesData.map((employee) {
+        final List<EmployeeSelectionModel> employees = employeesData.map((
+          employee,
+        ) {
           return EmployeeSelectionModel(
             id: employee['_id']?.toString() ?? '',
             email: employee['email'] ?? '',
-            name: '${employee['firstName'] ?? ''} ${employee['lastName'] ?? ''}'
+            name:
+                '${employee['firstName'] ?? ''} ${employee['lastName'] ?? ''}'
                     .trim()
                     .isEmpty
                 ? employee['email'] ?? 'Unknown'
                 : '${employee['firstName'] ?? ''} ${employee['lastName'] ?? ''}'
-                    .trim(),
+                      .trim(),
             photoUrl: employee['photoUrl'],
           );
         }).toList();
@@ -75,8 +82,10 @@ class EmployeeSelectionViewModel extends StateNotifier<EmployeeSelectionState> {
         return employee;
       }).toList();
 
-      state =
-          state.copyWith(employees: updatedEmployeesLoading, errorMessage: '');
+      state = state.copyWith(
+        employees: updatedEmployeesLoading,
+        errorMessage: '',
+      );
 
       final response = await _apiMethod.getUserAssignments(employeeEmail);
 
@@ -86,7 +95,8 @@ class EmployeeSelectionViewModel extends StateNotifier<EmployeeSelectionState> {
           return ClientModel(
             id: assignment['clientId'] ?? '',
             email: assignment['clientEmail'] ?? '',
-            name: assignment['clientName'] ??
+            name:
+                assignment['clientName'] ??
                 assignment['clientEmail'] ??
                 'Unknown',
           );
@@ -168,13 +178,15 @@ class EmployeeSelectionViewModel extends StateNotifier<EmployeeSelectionState> {
       if (employee.isSelected) {
         final selectedClients = employee.clients
             .where((client) => client.isSelected)
-            .map((client) => {
-                  'id': client.id,
-                  'email': client.email,
-                  'name': client.name,
-                  'organizationId':
-                      organizationId, // Include organizationId in each client
-                })
+            .map(
+              (client) => {
+                'id': client.id,
+                'email': client.email,
+                'name': client.name,
+                'organizationId':
+                    organizationId, // Include organizationId in each client
+              },
+            )
             .toList();
 
         if (selectedClients.isNotEmpty) {
@@ -227,10 +239,5 @@ class EmployeeSelectionState {
 }
 
 /// Provider for EmployeeSelectionViewModel
-final employeeSelectionViewModelProvider = StateNotifierProvider.family<
-    EmployeeSelectionViewModel,
-    EmployeeSelectionState,
-    String>((ref, organizationId) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  return EmployeeSelectionViewModel(apiMethod, organizationId);
-});
+final employeeSelectionViewModelProvider =
+    NotifierProvider.family<EmployeeSelectionViewModel, EmployeeSelectionState, String>(EmployeeSelectionViewModel.new);

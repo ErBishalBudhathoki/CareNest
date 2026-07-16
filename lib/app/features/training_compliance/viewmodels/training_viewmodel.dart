@@ -1,5 +1,5 @@
+import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:carenest/app/features/training_compliance/models/training_module.dart';
 import 'package:carenest/app/features/training_compliance/repositories/training_compliance_repository.dart';
@@ -15,10 +15,14 @@ abstract class TrainingState with _$TrainingState {
   }) = _TrainingState;
 }
 
-class TrainingViewModel extends StateNotifier<TrainingState> {
-  final TrainingComplianceRepository _repository;
+class TrainingViewModel extends Notifier<TrainingState> {
+  late final TrainingComplianceRepository _repository;
 
-  TrainingViewModel(this._repository) : super(const TrainingState());
+  @override
+  TrainingState build() {
+    _repository = ref.watch(trainingComplianceRepositoryProvider);
+    return const TrainingState();
+  }
 
   Future<void> loadModules() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
@@ -40,7 +44,11 @@ class TrainingViewModel extends StateNotifier<TrainingState> {
     }
   }
 
-  Future<void> updateProgress(String moduleId, String status, int percentage) async {
+  Future<void> updateProgress(
+    String moduleId,
+    String status,
+    int percentage,
+  ) async {
     // Optimistic update or reload? Let's reload for simplicity for now
     try {
       await _repository.updateTrainingProgress(moduleId, status, percentage);

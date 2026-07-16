@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/features/auth/services/auth_service_new.dart';
 
@@ -37,14 +36,17 @@ class AuthState {
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier(ref.read(authServiceProvider));
-});
+final authStateProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
 
-class AuthNotifier extends StateNotifier<AuthState> {
-  final AuthService _authService;
+class AuthNotifier extends Notifier<AuthState> {
+  late final AuthService _authService;
 
-  AuthNotifier(this._authService) : super(AuthState.unauthenticated());
+  
+  @override
+  AuthState build() {
+    _authService = ref.watch(authServiceProvider);
+    return AuthState.unauthenticated();
+  }
 
   Future<void> login(String email, String password) async {
     state = AuthState.loading();

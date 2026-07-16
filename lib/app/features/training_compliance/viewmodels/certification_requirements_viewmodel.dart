@@ -1,5 +1,5 @@
+import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/training_compliance/models/certification_requirement.dart';
 import 'package:carenest/app/features/training_compliance/repositories/training_compliance_repository.dart';
 
@@ -28,11 +28,14 @@ class CertificationRequirementsState {
 }
 
 class CertificationRequirementsViewModel
-    extends StateNotifier<CertificationRequirementsState> {
-  final TrainingComplianceRepository _repository;
+    extends Notifier<CertificationRequirementsState> {
+  late final TrainingComplianceRepository _repository;
 
-  CertificationRequirementsViewModel(this._repository)
-      : super(const CertificationRequirementsState());
+  @override
+  CertificationRequirementsState build() {
+    _repository = ref.watch(trainingComplianceRepositoryProvider);
+    return const CertificationRequirementsState();
+  }
 
   Future<void> loadRequirements({bool includeInactive = false}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);

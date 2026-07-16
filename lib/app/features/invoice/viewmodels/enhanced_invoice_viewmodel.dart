@@ -2,19 +2,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Enhanced Invoice ViewModel
 /// Task 5.6: Update invoice service with enhanced pricing integration
-class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
-  final Ref ref;
-  final EnhancedInvoiceService _invoiceService;
+class EnhancedInvoiceViewModel extends Notifier<EnhancedInvoiceState> {
+  @override
+  late final Ref ref;
+  late final EnhancedInvoiceService _invoiceService;
 
-  EnhancedInvoiceViewModel(this.ref, this._invoiceService)
-      : super(EnhancedInvoiceState());
+  
+  @override
+  EnhancedInvoiceState build() {
+    final invoiceService = ref.watch(enhancedInvoiceServiceProvider);
+    
+    return EnhancedInvoiceState();
+  }
 
   /// Generate invoices with enhanced pricing integration
   ///
@@ -253,11 +258,11 @@ class EnhancedInvoiceViewModel extends StateNotifier<EnhancedInvoiceState> {
 
 /// State class for EnhancedInvoiceViewModel
 class EnhancedInvoiceState {
-  final bool isLoading;
-  final String errorMessage;
-  final List<String> generatedPdfPaths;
+  late final bool isLoading;
+  late final String errorMessage;
+  late final List<String> generatedPdfPaths;
   final List<Map<String, dynamic>> invoices;
-  final bool emailSent;
+  late final bool emailSent;
   final Map<String, dynamic> validationSummary;
   final List<Map<String, dynamic>> itemsExceedingPriceCap;
 
@@ -312,9 +317,4 @@ class EnhancedInvoiceState {
 }
 
 /// Provider for EnhancedInvoiceViewModel
-final enhancedInvoiceViewModelProvider =
-    StateNotifierProvider<EnhancedInvoiceViewModel, EnhancedInvoiceState>(
-        (ref) {
-  final invoiceService = ref.watch(enhancedInvoiceServiceProvider);
-  return EnhancedInvoiceViewModel(ref, invoiceService);
-});
+final enhancedInvoiceViewModelProvider = NotifierProvider<EnhancedInvoiceViewModel, EnhancedInvoiceState>(EnhancedInvoiceViewModel.new);

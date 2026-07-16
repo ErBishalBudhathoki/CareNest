@@ -378,7 +378,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
     final homeState = ref.watch(homeViewModelProvider);
 
     // Trigger shift status recompute whenever the timer ticks
-    ref.listen<TimerService>(timerServiceProviderWithNotifier, (prev, next) {
+    ref.listen<TimerService>(timerServiceProvider, (prev, next) {
       ref.read(homeViewModelProvider.notifier).recomputeShiftStatuses();
     });
 

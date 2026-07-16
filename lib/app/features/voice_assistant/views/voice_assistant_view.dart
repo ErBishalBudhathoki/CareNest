@@ -37,7 +37,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     _speechToText = stt.SpeechToText();
     _initializeVoiceAssistant();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(voiceViewModelProvider).loadHistory();
+      ref.read(voiceViewModelProvider.notifier).loadHistory();
     });
   }
 
@@ -115,7 +115,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     final trimmed = text.trim();
     if (trimmed.isEmpty) return;
 
-    final command = await ref.read(voiceViewModelProvider).processCommand(
+    final command = await ref.read(voiceViewModelProvider.notifier).processCommand(
       trimmed,
       context: const {
         'sourceScreen': 'voice_assistant',

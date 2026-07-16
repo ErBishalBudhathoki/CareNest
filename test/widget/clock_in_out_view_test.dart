@@ -1,4 +1,6 @@
 import 'package:carenest/app/features/clockInandOut/views/clockInAndOut_view.dart';
+import 'package:carenest/app/features/timesheet/models/timesheet_model.dart';
+import 'package:carenest/app/features/timesheet/repositories/timesheet_repository.dart';
 import 'package:carenest/app/features/worker/models/worker_dashboard_data.dart';
 import 'package:carenest/app/features/worker/repositories/worker_repository.dart';
 import 'package:carenest/app/features/worker/viewmodels/worker_dashboard_viewmodel.dart';
@@ -77,6 +79,19 @@ class FakeDashboardViewModel extends WorkerDashboardViewModel {
   FakeDashboardViewModel() : super(MockWorkerRepository());
 }
 
+// Stub repository that returns empty timesheets without needing SharedPreferences
+class _StubTimesheetRepository extends TimesheetRepository {
+  _StubTimesheetRepository() : super(ApiMethod());
+
+  @override
+  Future<List<TimesheetEntry>> fetchTimesheets({
+    required String email,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async =>
+      [];
+}
+
 // ---------------------------------------------------------------------------
 // Test helpers
 // ---------------------------------------------------------------------------
@@ -86,9 +101,13 @@ Widget buildTestApp() {
     overrides: [
       workerDashboardViewModelProvider
           .overrideWith((ref) => FakeDashboardViewModel()),
+      timesheetRepositoryProvider
+          .overrideWithValue(_StubTimesheetRepository()),
     ],
-    child:
-        const MaterialApp(home: ClockInAndOutView(email: 'test@example.com')),
+    child: const MediaQuery(
+      data: MediaQueryData(disableAnimations: true),
+      child: MaterialApp(home: ClockInAndOutView(email: 'test@example.com')),
+    ),
   );
 }
 
@@ -105,6 +124,9 @@ void main() {
 
   setUp(() {
     GeolocatorPlatform.instance = MockGeolocatorPlatform();
+    final binding = TestWidgetsFlutterBinding.ensureInitialized();
+    binding.platformDispatcher.views.first.physicalSize = const Size(1080, 1920);
+    binding.platformDispatcher.views.first.devicePixelRatio = 1.0;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
       const MethodChannel('flutter/platform_views'),
@@ -118,6 +140,9 @@ void main() {
   });
 
   tearDown(() {
+    final binding = TestWidgetsFlutterBinding.ensureInitialized();
+    binding.platformDispatcher.views.first.resetPhysicalSize();
+    binding.platformDispatcher.views.first.resetDevicePixelRatio();
     GeolocatorPlatform.instance = originalGeolocatorPlatform;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
@@ -129,7 +154,7 @@ void main() {
   group('ClockInAndOutView', () {
     testWidgets('renders total hours hero section', (tester) async {
       await tester.pumpWidget(buildTestApp());
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('TOTAL TODAY'), findsOneWidget);
       expect(find.text('HOURS WORKED'), findsOneWidget);
@@ -137,7 +162,7 @@ void main() {
 
     testWidgets('renders day navigation with arrows', (tester) async {
       await tester.pumpWidget(buildTestApp());
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.chevron_left), findsOneWidget);
       expect(find.byIcon(Icons.chevron_right), findsOneWidget);
@@ -145,7 +170,7 @@ void main() {
 
     testWidgets('renders action buttons', (tester) async {
       await tester.pumpWidget(buildTestApp());
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('REQUESTS'), findsOneWidget);
       expect(find.text('TIMESHEET'), findsOneWidget);
@@ -153,7 +178,7 @@ void main() {
 
     testWidgets('does not render clock in/out button', (tester) async {
       await tester.pumpWidget(buildTestApp());
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('Clock in'), findsNothing);
       expect(find.text('Clock out'), findsNothing);
@@ -161,7 +186,7 @@ void main() {
 
     testWidgets('renders back button', (tester) async {
       await tester.pumpWidget(buildTestApp());
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });

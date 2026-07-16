@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -31,11 +30,14 @@ class ClientState {
 }
 
 // Client notifier class
-class ClientNotifier extends StateNotifier<ClientState> {
-  final ApiMethod _apiMethod;
+class ClientNotifier extends Notifier<ClientState> {
+  late final ApiMethod _apiMethod;
 
-  ClientNotifier(this._apiMethod)
-      : super(ClientState(clients: [], isLoading: false));
+  @override
+  ClientState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return ClientState(clients: [], isLoading: false);
+  }
 
   // Fetch clients for an organization
   Future<void> fetchClientsByOrganization(String organizationId) async {
@@ -227,9 +229,8 @@ final apiMethodProvider = Provider<ApiMethod>(
 
 // Provider for ClientNotifier
 final clientProvider =
-    StateNotifierProvider<ClientNotifier, ClientState>((ref) {
-  final apiMethod = ref.watch(apiMethodProvider);
-  return ClientNotifier(apiMethod);
+    NotifierProvider<ClientNotifier, ClientState>(() {
+  return ClientNotifier();
 });
 
 // Provider for getting clients list

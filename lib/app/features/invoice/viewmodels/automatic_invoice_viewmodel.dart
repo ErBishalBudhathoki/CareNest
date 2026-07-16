@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
@@ -10,13 +9,20 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Automatic Invoice Generation ViewModel
 /// Handles automatic invoice generation for all employees and clients in an organization
-class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
-  final Ref ref;
-  final EnhancedInvoiceService _invoiceService;
-  final ApiMethod _apiMethod;
+class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
+  @override
+  late final Ref ref;
+  late final EnhancedInvoiceService _invoiceService;
+  late final ApiMethod _apiMethod;
 
-  AutomaticInvoiceViewModel(this.ref, this._invoiceService, this._apiMethod)
-      : super(AutomaticInvoiceState());
+  
+  @override
+  AutomaticInvoiceState build() {
+    final invoiceService = ref.watch(enhancedInvoiceServiceProvider);
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return AutomaticInvoiceState();
+  }
 
   /// Generate invoices automatically for all employees and clients
   Future<List<String>> generateAutomaticInvoices(
@@ -429,17 +435,17 @@ class AutomaticInvoiceViewModel extends StateNotifier<AutomaticInvoiceState> {
 
 /// State class for AutomaticInvoiceViewModel
 class AutomaticInvoiceState {
-  final bool isLoading;
-  final String errorMessage;
-  final String currentStep;
-  final double progress;
+  late final bool isLoading;
+  late final String errorMessage;
+  late final String currentStep;
+  late final double progress;
   final List<Map<String, dynamic>> employeeClientPairs;
-  final int totalEmployees;
-  final int totalClients;
-  final int validPairs;
-  final List<String> generatedPdfPaths;
+  late final int totalEmployees;
+  late final int totalClients;
+  late final int validPairs;
+  late final List<String> generatedPdfPaths;
   final List<Map<String, dynamic>> invoices;
-  final bool isCompleted;
+  late final bool isCompleted;
 
   AutomaticInvoiceState({
     this.isLoading = false,
@@ -485,10 +491,4 @@ class AutomaticInvoiceState {
 }
 
 /// Provider for AutomaticInvoiceViewModel
-final automaticInvoiceViewModelProvider =
-    StateNotifierProvider<AutomaticInvoiceViewModel, AutomaticInvoiceState>(
-        (ref) {
-  final invoiceService = ref.watch(enhancedInvoiceServiceProvider);
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  return AutomaticInvoiceViewModel(ref, invoiceService, apiMethod);
-});
+final automaticInvoiceViewModelProvider = NotifierProvider<AutomaticInvoiceViewModel, AutomaticInvoiceState>(AutomaticInvoiceViewModel.new);

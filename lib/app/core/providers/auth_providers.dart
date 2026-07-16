@@ -3,7 +3,7 @@
 // Contains providers for user authentication, login state, and role management.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+ // needed for ChangeNotifier auth viewmodels
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/signup_viewmodel.dart';
@@ -47,10 +47,14 @@ class AuthState {
 }
 
 // Notifier for authentication state changes
-class AuthNotifier extends StateNotifier<AuthState> {
-  final ApiMethod _apiMethod;
+class AuthNotifier extends Notifier<AuthState> {
+  late final ApiMethod _apiMethod;
 
-  AuthNotifier(this._apiMethod) : super(const AuthState());
+  @override
+  AuthState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return const AuthState();
+  }
 
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true);
@@ -78,23 +82,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
 }
 
 // Main auth state provider
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier(ref.read(apiMethodProvider));
-});
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
 
 // ==================== USER ROLE ====================
 
 // Notifier for user role management
-class UserRoleNotifier extends StateNotifier<UserRole> {
-  final SharedPreferencesUtils _sharedPrefs;
+class UserRoleNotifier extends Notifier<UserRole> {
+  late final SharedPreferencesUtils _sharedPrefs;
 
-  UserRoleNotifier(this._sharedPrefs) : super(UserRole.employee) {
-    _loadRole();
-  }
-
-  Future<void> _loadRole() async {
+  @override
+  UserRole build() {
+    _sharedPrefs = ref.watch(sharedPreferencesProvider);
     final role = _sharedPrefs.getRole();
-    state = role ?? UserRole.employee;
+    return role ?? UserRole.employee;
   }
 
   Future<void> updateRole(UserRole newRole) async {
@@ -105,39 +105,22 @@ class UserRoleNotifier extends StateNotifier<UserRole> {
 
 // User role provider
 final userRoleProvider =
-    StateNotifierProvider<UserRoleNotifier, UserRole>((ref) {
-  return UserRoleNotifier(ref.read(sharedPreferencesProvider));
-});
+    NotifierProvider<UserRoleNotifier, UserRole>(UserRoleNotifier.new);
 
 // ==================== AUTH VIEW MODEL PROVIDERS ====================
 
 // Login view model provider with autoDispose for proper cleanup
 final loginViewModelProvider =
-    ChangeNotifierProvider.autoDispose<LoginViewModel>((ref) {
-  return LoginViewModel(
-    ref.read(apiMethodProvider),
-    ref.read(sharedPreferencesProvider),
-    ref.read(app_providers.fcmTokenManagerProvider),
-  );
-});
+    NotifierProvider.autoDispose<LoginViewModel, int>(LoginViewModel.new);
 
 // Signup view model provider with autoDispose
-final signupViewModelProvider =
-    ChangeNotifierProvider.autoDispose<SignupViewModel>((ref) {
-  return SignupViewModel(ref.read(apiMethodProvider));
-});
+final signupViewModelProvider = NotifierProvider.autoDispose<SignupViewModel, int>(SignupViewModel.new);
 
 // Forgot password view model provider with autoDispose
-final forgotPasswordViewModelProvider =
-    ChangeNotifierProvider.autoDispose<ForgotPasswordViewModel>((ref) {
-  return ForgotPasswordViewModel(
-    ref.read(sharedPreferencesProvider),
-    ref.read(apiMethodProvider),
-  );
-});
+final forgotPasswordViewModelProvider = NotifierProvider.autoDispose<ForgotPasswordViewModel, bool>(ForgotPasswordViewModel.new);
 
 // OTP verification view model provider with autoDispose
 final verifyOTPViewModelProvider =
-    ChangeNotifierProvider.autoDispose<VerifyOTPViewModel>((ref) {
-  return VerifyOTPViewModel();
-});
+    NotifierProvider.autoDispose<VerifyOTPViewModel, void>(VerifyOTPViewModel.new);
+
+

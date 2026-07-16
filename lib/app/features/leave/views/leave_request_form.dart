@@ -51,7 +51,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
       return;
     }
 
-    final viewModel = ref.read(leaveViewModelProvider(widget.userEmail));
+    final viewModel = ref.read(leaveViewModelProvider(widget.userEmail).notifier);
     final success = await viewModel.submitRequest(
       leaveType: _selectedLeaveType!,
       startDate: _selectedDateRange!.start,
@@ -67,14 +67,14 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(viewModel.errorMessage ?? 'Failed to submit')));
+            SnackBar(content: Text(ref.read(leaveViewModelProvider(widget.userEmail)).errorMessage ?? 'Failed to submit')));
       }
     }
   }
 
   Future<void> _calculateHours() async {
     if (_selectedDateRange != null) {
-      final viewModel = ref.read(leaveViewModelProvider(widget.userEmail));
+      final viewModel = ref.read(leaveViewModelProvider(widget.userEmail).notifier);
       final hours = await viewModel.calculateLeaveHours(
         _selectedDateRange!.start,
         _selectedDateRange!.end,
