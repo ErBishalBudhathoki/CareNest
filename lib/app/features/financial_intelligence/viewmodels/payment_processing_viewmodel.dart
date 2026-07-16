@@ -1,15 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class PaymentProcessingState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? payment;
   final Map<String, dynamic>? analytics;
   final Map<String, dynamic>? fraudCheck;
-  final String? error;
+  late final String? error;
 
   PaymentProcessingState({
     this.isLoading = false,
@@ -36,11 +35,16 @@ class PaymentProcessingState {
   }
 }
 
-class PaymentProcessingViewModel extends StateNotifier<PaymentProcessingState> {
-  final FinancialIntelligenceRepository _repository;
+class PaymentProcessingViewModel extends Notifier<PaymentProcessingState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  PaymentProcessingViewModel(this._repository)
-      : super(PaymentProcessingState());
+  
+  @override
+  PaymentProcessingState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return PaymentProcessingState();
+  }
 
   Future<void> processPayment(Map<String, dynamic> paymentData) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -98,10 +102,4 @@ class PaymentProcessingViewModel extends StateNotifier<PaymentProcessingState> {
   }
 }
 
-final paymentProcessingViewModelProvider =
-    StateNotifierProvider<PaymentProcessingViewModel, PaymentProcessingState>(
-        (ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return PaymentProcessingViewModel(repository);
-});
+final paymentProcessingViewModelProvider = NotifierProvider<PaymentProcessingViewModel, PaymentProcessingState>(PaymentProcessingViewModel.new);

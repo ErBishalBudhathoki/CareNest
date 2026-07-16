@@ -2417,7 +2417,7 @@ class _ClientAndAppointmentDetailsState
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final timerService = ref.watch(timerServiceProviderWithNotifier);
+        final timerService = ref.watch(timerServiceProvider);
         final isCurrentClientTimer =
             timerService.timerClientEmail == widget.clientEmail;
         if (timerModel.elapsedSeconds == kTimerDurationInSeconds) {

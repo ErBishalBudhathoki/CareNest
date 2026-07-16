@@ -1,56 +1,78 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
 import 'package:carenest/app/features/notifications/repositories/notification_repository.dart';
 
-class NotificationHistoryViewModel extends ChangeNotifier {
-  final NotificationRepository _repository;
+class NotificationHistoryState {
+  final List<NotificationModel> notifications;
+  final bool isLoading;
+  final String? errorMessage;
+  final int page;
+  final bool hasMore;
 
-  NotificationHistoryViewModel(this._repository);
+  const NotificationHistoryState({
+    this.notifications = const [],
+    this.isLoading = false,
+    this.errorMessage,
+    this.page = 1,
+    this.hasMore = true,
+  });
 
-  List<NotificationModel> _notifications = [];
-  bool _isLoading = false;
-  String? _errorMessage;
-  int _page = 1;
-  bool _hasMore = true;
+  NotificationHistoryState copyWith({
+    List<NotificationModel>? notifications,
+    bool? isLoading,
+    String? errorMessage,
+    int? page,
+    bool? hasMore,
+  }) {
+    return NotificationHistoryState(
+      notifications: notifications ?? this.notifications,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+      page: page ?? this.page,
+      hasMore: hasMore ?? this.hasMore,
+    );
+  }
+}
 
-  List<NotificationModel> get notifications => _notifications;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  bool get hasMore => _hasMore;
+class NotificationHistoryViewModel extends Notifier<NotificationHistoryState> {
+  late final NotificationRepository _repository;
+
+  @override
+  NotificationHistoryState build() {
+    _repository = ref.watch(notificationRepositoryProvider);
+    return const NotificationHistoryState();
+  }
 
   /// Load initial history
   Future<void> loadHistory() async {
-    _page = 1;
-    _notifications = [];
-    _hasMore = true;
+    state = state.copyWith(page: 1, notifications: [], hasMore: true);
     await _fetchNotifications();
   }
 
   /// Load more notifications
   Future<void> loadMore() async {
-    if (!_hasMore || _isLoading) return;
-    _page++;
+    if (!state.hasMore || state.isLoading) return;
+    state = state.copyWith(page: state.page + 1);
     await _fetchNotifications();
   }
 
   Future<void> _fetchNotifications() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final newNotifications = await _repository.getHistory(page: _page);
+      final newNotifications = await _repository.getHistory(page: state.page);
       if (newNotifications.isEmpty) {
-        _hasMore = false;
+        state = state.copyWith(hasMore: false);
       } else {
-        _notifications.addAll(newNotifications);
+        state = state.copyWith(
+          notifications: [...state.notifications, ...newNotifications],
+        );
       }
     } catch (e) {
-      _errorMessage = e.toString();
-      debugPrint('Error loading notification history: $e');
+      state = state.copyWith(errorMessage: e.toString());
+      // debugPrint('Error loading notification history: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -58,17 +80,16 @@ class NotificationHistoryViewModel extends ChangeNotifier {
   Future<void> markAsRead(String id) async {
     try {
       await _repository.markAsRead(id);
-      final index = _notifications.indexWhere((n) => n.id == id);
+      final index = state.notifications.indexWhere((n) => n.id == id);
       if (index != -1) {
         // Create a copy with updated status locally to avoid full reload
-        // Assuming NotificationModel has copyWith or is immutable. 
-        // If not, we might need to rely on reload or just ignore strict immutability for list state.
-        // For now, let's assume we reload or just notify.
-        // _notifications[index] = _notifications[index].copyWith(status: 'read');
-        notifyListeners(); 
+        final updated = List<NotificationModel>.from(state.notifications);
+        // Assuming NotificationModel has copyWith. We will just trigger a state update.
+        // updated[index] = updated[index].copyWith(status: 'read');
+        state = state.copyWith(notifications: updated);
       }
     } catch (e) {
-      debugPrint('Error marking notification as read: $e');
+      // debugPrint('Error marking notification as read: $e');
     }
   }
 }

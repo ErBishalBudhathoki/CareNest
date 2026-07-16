@@ -1,15 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
 import 'package:carenest/app/features/expenses/data/expense_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 
 // State class for expense management
 class ExpenseState {
-  final List<ExpenseModel> expenses;
-  final bool isLoading;
-  final String? error;
+  late final List<ExpenseModel> expenses;
+  late final bool isLoading;
+  late final String? error;
 
   ExpenseState({
     required this.expenses,
@@ -31,11 +30,16 @@ class ExpenseState {
 }
 
 // Expense notifier class
-class ExpenseNotifier extends StateNotifier<ExpenseState> {
-  final ExpenseRepository _repository;
+class ExpenseNotifier extends Notifier<ExpenseState> {
+  late final ExpenseRepository _repository;
 
-  ExpenseNotifier(this._repository)
-      : super(ExpenseState(expenses: [], isLoading: false));
+  
+  @override
+  ExpenseState build() {
+    final repository = ref.watch(expenseRepositoryProvider);
+    
+    return ExpenseState(expenses: [], isLoading: false);
+  }
 
   // Fetch expenses for an organization
   Future<void> fetchExpenses(String organizationId) async {
@@ -232,8 +236,4 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
 });
 
 // Provider for expense state
-final expenseProvider =
-    StateNotifierProvider<ExpenseNotifier, ExpenseState>((ref) {
-  final repository = ref.watch(expenseRepositoryProvider);
-  return ExpenseNotifier(repository);
-});
+final expenseProvider = NotifierProvider<ExpenseNotifier, ExpenseState>(ExpenseNotifier.new);

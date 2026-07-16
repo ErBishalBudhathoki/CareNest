@@ -1,20 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/realtime_portal/repositories/realtime_portal_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 /// State for messaging
 class MessagingState {
-  final bool isLoading;
-  final String? error;
-  final List<MessageThread> conversations;
-  final MessageThread? activeConversation;
-  final List<SecureMessage> messages;
-  final bool isSending;
+  late final bool isLoading;
+  late final String? error;
+  late final List<MessageThread> conversations;
+  late final MessageThread? activeConversation;
+  late final List<SecureMessage> messages;
+  late final bool isSending;
   final Map<String, TypingIndicator> typingIndicators;
-  final int unreadCount;
+  late final int unreadCount;
 
   MessagingState({
     this.isLoading = false,
@@ -51,10 +50,16 @@ class MessagingState {
   }
 }
 
-class MessagingViewModel extends StateNotifier<MessagingState> {
-  final RealtimePortalRepository _repository;
+class MessagingViewModel extends Notifier<MessagingState> {
+  late final RealtimePortalRepository _repository;
 
-  MessagingViewModel(this._repository) : super(MessagingState());
+  
+  @override
+  MessagingState build() {
+    final apiMethod = ref.watch(apiMethodProvider);
+    
+    return MessagingState();
+  }
 
   /// Clear active conversation
   void clearActiveConversation() {
@@ -268,9 +273,4 @@ class MessagingViewModel extends StateNotifier<MessagingState> {
 }
 
 /// Provider for messaging viewmodel
-final messagingViewModelProvider =
-    StateNotifierProvider<MessagingViewModel, MessagingState>((ref) {
-  final apiMethod = ref.watch(apiMethodProvider);
-  final repository = RealtimePortalRepository(apiMethod);
-  return MessagingViewModel(repository);
-});
+final messagingViewModelProvider = NotifierProvider<MessagingViewModel, MessagingState>(MessagingViewModel.new);

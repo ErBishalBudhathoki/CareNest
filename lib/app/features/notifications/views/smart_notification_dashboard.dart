@@ -19,9 +19,9 @@ class _SmartNotificationDashboardState extends ConsumerState<SmartNotificationDa
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(aiViewModelProvider).loadPredictions();
-      ref.read(aiViewModelProvider).loadCalendarEvents();
-      ref.read(aiViewModelProvider).loadSnoozeRules();
+      ref.read(aiViewModelProvider.notifier).loadPredictions();
+      ref.read(aiViewModelProvider.notifier).loadCalendarEvents();
+      ref.read(aiViewModelProvider.notifier).loadSnoozeRules();
     });
   }
 
@@ -62,21 +62,22 @@ class AiPredictionsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(aiViewModelProvider);
+    final state = ref.watch(aiViewModelProvider);
+    final notifier = ref.read(aiViewModelProvider.notifier);
 
-    if (viewModel.isLoading) {
+    if (state.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (viewModel.predictions.isEmpty) {
+    if (state.predictions.isEmpty) {
       return const Center(child: Text('No predictions available yet.'));
     }
 
     return ListView.builder(
-      itemCount: viewModel.predictions.length,
+      itemCount: state.predictions.length,
       padding: const EdgeInsets.all(16),
       itemBuilder: (context, index) {
-        final prediction = viewModel.predictions[index];
+        final prediction = state.predictions[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
@@ -99,7 +100,8 @@ class CalendarEventsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(aiViewModelProvider);
+    final state = ref.watch(aiViewModelProvider);
+    final notifier = ref.read(aiViewModelProvider.notifier);
 
     return Column(
       children: [
@@ -108,27 +110,27 @@ class CalendarEventsTab extends ConsumerWidget {
           child: Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => ref.read(aiViewModelProvider).syncCalendar('google'),
+                onPressed: () => ref.read(aiViewModelProvider.notifier).syncCalendar('google'),
                 icon: const Icon(Icons.sync),
                 label: const Text('Sync Google'),
               ),
               const SizedBox(width: 12),
               ElevatedButton.icon(
-                onPressed: () => ref.read(aiViewModelProvider).syncCalendar('outlook'),
+                onPressed: () => ref.read(aiViewModelProvider.notifier).syncCalendar('outlook'),
                 icon: const Icon(Icons.sync),
                 label: const Text('Sync Outlook'),
               ),
             ],
           ),
         ),
-        if (viewModel.isLoading)
+        if (state.isLoading)
           const LinearProgressIndicator(),
         Expanded(
           child: ListView.builder(
-            itemCount: viewModel.calendarEvents.length,
+            itemCount: state.calendarEvents.length,
             padding: const EdgeInsets.all(16),
             itemBuilder: (context, index) {
-              final event = viewModel.calendarEvents[index];
+              final event = state.calendarEvents[index];
               return Card(
                 child: ListTile(
                   leading: const Icon(Icons.event),
@@ -150,7 +152,8 @@ class SnoozeRulesTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(aiViewModelProvider);
+    final state = ref.watch(aiViewModelProvider);
+    final notifier = ref.read(aiViewModelProvider.notifier);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -160,13 +163,13 @@ class SnoozeRulesTab extends ConsumerWidget {
         },
         child: const Icon(Icons.add),
       ),
-      body: viewModel.isLoading
+      body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: viewModel.snoozeRules.length,
+              itemCount: state.snoozeRules.length,
               padding: const EdgeInsets.all(16),
               itemBuilder: (context, index) {
-                final rule = viewModel.snoozeRules[index];
+                final rule = state.snoozeRules[index];
                 return Card(
                   child: ListTile(
                     title: Text(rule.keyword ?? 'Sender: ${rule.sender}'),
@@ -175,7 +178,7 @@ class SnoozeRulesTab extends ConsumerWidget {
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
                          if (rule.id != null) {
-                            ref.read(aiViewModelProvider).deleteSnoozeRule(rule.id!);
+                            ref.read(aiViewModelProvider.notifier).deleteSnoozeRule(rule.id!);
                          }
                       },
                     ),
@@ -220,7 +223,7 @@ class SnoozeRulesTab extends ConsumerWidget {
                 keyword: keywordController.text,
                 snoozeDurationMinutes: int.tryParse(durationController.text) ?? 60,
               );
-              ref.read(aiViewModelProvider).createSnoozeRule(rule);
+              ref.read(aiViewModelProvider.notifier).createSnoozeRule(rule);
               Navigator.pop(context);
             },
             child: const Text('Create'),

@@ -1,18 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Incident Management
 class IncidentManagementState {
-  final bool isLoading;
-  final Incident? incident;
-  final RootCauseAnalysis? rootCauseAnalysis;
-  final IncidentPatternData? patterns;
+  late final bool isLoading;
+  late final Incident? incident;
+  late final RootCauseAnalysis? rootCauseAnalysis;
+  late final IncidentPatternData? patterns;
   final Map<String, dynamic>? recurrencePrediction;
   final Map<String, dynamic>? correctiveActions;
-  final String? error;
+  late final String? error;
 
   IncidentManagementState({
     this.isLoading = false,
@@ -46,10 +45,16 @@ class IncidentManagementState {
 }
 
 // StateNotifier for Incident Management
-class IncidentManagementViewModel extends StateNotifier<IncidentManagementState> {
-  final CareIntelligenceRepository _repository;
+class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
+  late final CareIntelligenceRepository _repository;
 
-  IncidentManagementViewModel(this._repository) : super(IncidentManagementState());
+  
+  @override
+  IncidentManagementState build() {
+    final repository = ref.watch(careIntelligenceRepositoryProvider);
+    
+    return IncidentManagementState();
+  }
 
   // Report incident
   Future<void> reportIncident({
@@ -227,8 +232,4 @@ class IncidentManagementViewModel extends StateNotifier<IncidentManagementState>
 }
 
 // Provider for IncidentManagementViewModel
-final incidentManagementViewModelProvider =
-    StateNotifierProvider<IncidentManagementViewModel, IncidentManagementState>((ref) {
-  final repository = ref.watch(careIntelligenceRepositoryProvider);
-  return IncidentManagementViewModel(repository);
-});
+final incidentManagementViewModelProvider = NotifierProvider<IncidentManagementViewModel, IncidentManagementState>(IncidentManagementViewModel.new);

@@ -1,28 +1,27 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/organization/models/organization_model.dart';
 import 'package:carenest/app/features/organization/repositories/organization_repository.dart';
 
 final organizationViewModelProvider =
-    StateNotifierProvider<OrganizationViewModel, AsyncValue<Organization?>>(
-        (ref) {
-  final repository = ref.watch(organizationRepositoryProvider);
-  return OrganizationViewModel(repository);
-});
+    NotifierProvider<OrganizationViewModel, AsyncValue<Organization?>>(OrganizationViewModel.new);
 
-class OrganizationViewModel extends StateNotifier<AsyncValue<Organization?>> {
-  final OrganizationRepository _repository;
+class OrganizationViewModel extends Notifier<AsyncValue<Organization?>> {
+  late final OrganizationRepository _repository;
 
-  OrganizationViewModel(this._repository) : super(const AsyncValue.loading());
+  @override
+  AsyncValue<Organization?> build() {
+    _repository = ref.watch(organizationRepositoryProvider);
+    return const AsyncValue.loading();
+  }
 
   Future<void> loadOrganization(String id) async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     try {
       final organization = await _repository.getOrganization(id);
-      state = AsyncValue.data(organization);
+      state = AsyncData(organization);
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = AsyncError(e, st);
     }
   }
 

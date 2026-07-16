@@ -1,18 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/scheduling/models/shift_matching_models.dart';
 import 'package:carenest/app/features/scheduling/repositories/scheduling_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 /// State for shift matching
 class ShiftMatchingState {
-  final bool isLoading;
-  final String? error;
-  final List<WorkerMatch> matches;
-  final AutoFillResult? autoFillResult;
-  final RouteOptimization? routeOptimization;
-  final ShiftRecommendation? shiftRecommendation;
+  late final bool isLoading;
+  late final String? error;
+  late final List<WorkerMatch> matches;
+  late final AutoFillResult? autoFillResult;
+  late final RouteOptimization? routeOptimization;
+  late final ShiftRecommendation? shiftRecommendation;
 
   ShiftMatchingState({
     this.isLoading = false,
@@ -42,10 +41,16 @@ class ShiftMatchingState {
   }
 }
 
-class ShiftMatchingViewModel extends StateNotifier<ShiftMatchingState> {
-  final SchedulingRepository _repository;
+class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
+  late final SchedulingRepository _repository;
 
-  ShiftMatchingViewModel(this._repository) : super(ShiftMatchingState());
+  
+  @override
+  ShiftMatchingState build() {
+    final apiMethod = ref.watch(apiMethodProvider);
+    
+    return ShiftMatchingState();
+  }
 
   /// Match workers to a shift
   Future<void> matchWorkers({
@@ -161,9 +166,4 @@ class ShiftMatchingViewModel extends StateNotifier<ShiftMatchingState> {
 }
 
 /// Provider for shift matching viewmodel
-final shiftMatchingViewModelProvider =
-    StateNotifierProvider<ShiftMatchingViewModel, ShiftMatchingState>((ref) {
-  final apiMethod = ref.watch(apiMethodProvider);
-  final repository = SchedulingRepository(apiMethod);
-  return ShiftMatchingViewModel(repository);
-});
+final shiftMatchingViewModelProvider = NotifierProvider<ShiftMatchingViewModel, ShiftMatchingState>(ShiftMatchingViewModel.new);

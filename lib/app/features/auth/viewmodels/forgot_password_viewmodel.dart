@@ -4,25 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/forgotPassword_model.dart';
 import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
 
-class ForgotPasswordViewModel extends ChangeNotifier {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
+class ForgotPasswordViewModel extends Notifier<bool> {
   final ForgotPasswordModel model = ForgotPasswordModel();
   final GlobalKey<FormState> formKey =
       GlobalKey<FormState>(debugLabel: 'forgot_password_form_key');
   final TextEditingController emailController = TextEditingController();
-  final ApiMethod apiMethod;
-  final SharedPreferencesUtils _sharedPrefs;
+  late final ApiMethod apiMethod;
+  late final SharedPreferencesUtils _sharedPrefs;
 
-  ForgotPasswordViewModel(this._sharedPrefs, this.apiMethod);
-
-  bool _isLoading = false; // Loading state property
+  @override
+  bool build() {
+    apiMethod = ref.watch(app_providers.apiMethodProvider);
+    _sharedPrefs = ref.watch(app_providers.sharedPreferencesProvider);
+    ref.onDispose(() {
+      emailController.dispose();
+      model.dispose();
+    });
+    return false;
+  }
 
   /// Getter for loading state
-  bool get isLoading => _isLoading;
+  bool get isLoading => state;
 
   /// Sets the loading state and notifies listeners
   void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
+    state = loading;
   }
 
   Future<void> resetPassword(BuildContext context,
@@ -66,10 +75,5 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     );
   }
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    model.dispose(); // Dispose of the model's controllers
-    super.dispose();
-  }
+
 }

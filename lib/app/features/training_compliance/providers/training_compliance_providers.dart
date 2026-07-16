@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/features/training_compliance/repositories/training_compliance_repository.dart';
@@ -15,24 +14,14 @@ final trainingComplianceRepositoryProvider =
 });
 
 final certificationsViewModelProvider =
-    StateNotifierProvider<CertificationsViewModel, CertificationsState>((ref) {
-  return CertificationsViewModel(
-      ref.watch(trainingComplianceRepositoryProvider));
-});
+    NotifierProvider<CertificationsViewModel, CertificationsState>(CertificationsViewModel.new);
 
 final trainingViewModelProvider =
-    StateNotifierProvider<TrainingViewModel, TrainingState>((ref) {
-  return TrainingViewModel(ref.watch(trainingComplianceRepositoryProvider));
-});
+    NotifierProvider<TrainingViewModel, TrainingState>(TrainingViewModel.new);
 
 final complianceViewModelProvider =
-    StateNotifierProvider<ComplianceViewModel, ComplianceState>((ref) {
-  return ComplianceViewModel(ref.watch(trainingComplianceRepositoryProvider));
-});
+    NotifierProvider<ComplianceViewModel, ComplianceState>(ComplianceViewModel.new);
 
 final certificationRequirementsViewModelProvider =
-    StateNotifierProvider<CertificationRequirementsViewModel,
-        CertificationRequirementsState>((ref) {
-  return CertificationRequirementsViewModel(
-      ref.watch(trainingComplianceRepositoryProvider));
-});
+    NotifierProvider<CertificationRequirementsViewModel,
+        CertificationRequirementsState>(CertificationRequirementsViewModel.new);

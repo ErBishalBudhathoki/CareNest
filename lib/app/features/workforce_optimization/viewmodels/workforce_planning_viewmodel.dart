@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -12,14 +11,14 @@ final workforceRepositoryProvider = Provider<WorkforceRepository>((ref) {
 
 // State class for Workforce Planning
 class WorkforcePlanningState {
-  final bool isLoading;
-  final List<DemandForecast> forecast;
-  final ForecastConfidence? confidence;
-  final WorkforcePlan? optimization;
-  final List<SkillGap> skillGaps;
-  final List<TurnoverPrediction> turnoverPredictions;
-  final List<ScenarioAnalysis> scenarios;
-  final String? error;
+  late final bool isLoading;
+  late final List<DemandForecast> forecast;
+  late final ForecastConfidence? confidence;
+  late final WorkforcePlan? optimization;
+  late final List<SkillGap> skillGaps;
+  late final List<TurnoverPrediction> turnoverPredictions;
+  late final List<ScenarioAnalysis> scenarios;
+  late final String? error;
 
   WorkforcePlanningState({
     this.isLoading = false,
@@ -56,11 +55,16 @@ class WorkforcePlanningState {
 }
 
 // StateNotifier for Workforce Planning
-class WorkforcePlanningViewModel extends StateNotifier<WorkforcePlanningState> {
-  final WorkforceRepository _repository;
+class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
+  late final WorkforceRepository _repository;
 
-  WorkforcePlanningViewModel(this._repository)
-      : super(WorkforcePlanningState());
+  
+  @override
+  WorkforcePlanningState build() {
+    final repository = ref.watch(workforceRepositoryProvider);
+    
+    return WorkforcePlanningState();
+  }
 
   // Forecast demand
   Future<void> forecastDemand({
@@ -209,9 +213,4 @@ class WorkforcePlanningViewModel extends StateNotifier<WorkforcePlanningState> {
 }
 
 // Provider for WorkforcePlanningViewModel
-final workforcePlanningViewModelProvider =
-    StateNotifierProvider<WorkforcePlanningViewModel, WorkforcePlanningState>(
-        (ref) {
-  final repository = ref.watch(workforceRepositoryProvider);
-  return WorkforcePlanningViewModel(repository);
-});
+final workforcePlanningViewModelProvider = NotifierProvider<WorkforcePlanningViewModel, WorkforcePlanningState>(WorkforcePlanningViewModel.new);

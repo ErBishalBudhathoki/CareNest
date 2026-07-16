@@ -114,7 +114,7 @@ class AdminMileageDashboard extends ConsumerWidget {
                     items: const ['ALL', 'PENDING', 'APPROVED', 'REJECTED'],
                     onChanged: (val) {
                       if (val != null) {
-                        ref.read(adminMileageViewModelProvider).setFilter(val);
+                        ref.read(adminMileageViewModelProvider.notifier).setFilter(val);
                       }
                     },
                     label: 'Status',

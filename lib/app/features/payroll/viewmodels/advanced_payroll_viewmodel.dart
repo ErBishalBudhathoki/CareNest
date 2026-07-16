@@ -1,22 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/payroll/repositories/advanced_payroll_repository.dart';
 import 'package:carenest/app/features/payroll/models/advanced_payroll_models.dart';
 
-final advancedPayrollViewModelProvider =
-    StateNotifierProvider<AdvancedPayrollViewModel, AdvancedPayrollState>(
-        (ref) {
-  final repository = ref.watch(advancedPayrollRepositoryProvider);
-  return AdvancedPayrollViewModel(repository);
-});
+final advancedPayrollViewModelProvider = NotifierProvider<AdvancedPayrollViewModel, AdvancedPayrollState>(AdvancedPayrollViewModel.new);
 
 class AdvancedPayrollState {
-  final bool isLoading;
-  final String? error;
-  final PayrollCalculation? calculation;
-  final Payslip? payslip;
-  final PayrollSummary? summary;
-  final bool isExporting;
+  late final bool isLoading;
+  late final String? error;
+  late final PayrollCalculation? calculation;
+  late final Payslip? payslip;
+  late final PayrollSummary? summary;
+  late final bool isExporting;
 
   AdvancedPayrollState({
     this.isLoading = false,
@@ -46,10 +40,16 @@ class AdvancedPayrollState {
   }
 }
 
-class AdvancedPayrollViewModel extends StateNotifier<AdvancedPayrollState> {
-  final AdvancedPayrollRepository _repository;
+class AdvancedPayrollViewModel extends Notifier<AdvancedPayrollState> {
+  late final AdvancedPayrollRepository _repository;
 
-  AdvancedPayrollViewModel(this._repository) : super(AdvancedPayrollState());
+  
+  @override
+  AdvancedPayrollState build() {
+    final repository = ref.watch(advancedPayrollRepositoryProvider);
+    
+    return AdvancedPayrollState();
+  }
 
   /// Calculate payroll with award rates and penalties
   Future<bool> calculatePayroll(Map<String, dynamic> payrollData) async {

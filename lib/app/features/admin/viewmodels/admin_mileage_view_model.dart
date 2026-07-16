@@ -1,70 +1,50 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../../../../models/trip.dart';
 import '../../../../backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import '../models/admin_mileage_state.dart';
 
-class AdminMileageViewModel extends ChangeNotifier {
-  final ApiMethod _apiMethod;
-  List<Trip> _trips = [];
-  Map<String, Map<String, dynamic>> _rawTripsById = {};
-  bool _isLoading = false;
-  String? _error;
+class AdminMileageViewModel extends Notifier<AdminMileageState> {
+  late final ApiMethod _apiMethod;
 
-  // Filter state
-  String _filterStatus = 'PENDING'; // 'ALL', 'PENDING', 'APPROVED', 'REJECTED'
-
-  List<Trip> get trips => _trips;
-  Map<String, Map<String, dynamic>> get rawTripsById => _rawTripsById;
-  bool get isLoading => _isLoading;
-  String? get error => _error;
-  String get filterStatus => _filterStatus;
-  int get pendingTripsCount =>
-      _trips.where((trip) => trip.status == 'PENDING').length;
-
-  List<Trip> get filteredTrips {
-    if (_filterStatus == 'ALL') return _trips;
-    return _trips.where((t) => t.status == _filterStatus).toList();
-  }
-
-  AdminMileageViewModel(this._apiMethod) {
+  @override
+  AdminMileageState build() {
+    _apiMethod = ref.watch(app_providers.apiMethodProvider);
     fetchTrips();
+    return const AdminMileageState();
   }
 
   void setFilter(String status) {
-    if (_filterStatus == status) return;
-    _filterStatus = status;
+    if (state.filterStatus == status) return;
+    state = state.copyWith(filterStatus: status);
     fetchTrips();
   }
 
   Future<void> fetchTrips() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, error: null);
 
     try {
       // Using GET with query params if filters needed
       String endpoint = 'trips';
-      if (_filterStatus != 'ALL') {
-        endpoint += '?status=$_filterStatus';
+      if (state.filterStatus != 'ALL') {
+        endpoint += '?status=${state.filterStatus}';
       }
 
       final response = await _apiMethod.get(endpoint);
 
       if (response != null && response['success'] == true) {
         final List<dynamic> data = response['data'];
-        _rawTripsById = {};
+        final Map<String, Map<String, dynamic>> rawTripsById = {};
         for (final item in data) {
           if (item is! Map) continue;
           final map = Map<String, dynamic>.from(item);
           final id = (map['_id'] ?? map['id'])?.toString();
           if (id != null && id.isNotEmpty) {
-            _rawTripsById[id] = map;
+            rawTripsById[id] = map;
           }
         }
-        _trips = data.whereType<Map>().map((json) {
+        final trips = data.whereType<Map>().map((json) {
           final map = Map<String, dynamic>.from(json);
           map['status'] =
               (map['status'] ?? map['adminApprovalStatus'] ?? 'PENDING')
@@ -72,14 +52,20 @@ class AdminMileageViewModel extends ChangeNotifier {
                   .toUpperCase();
           return Trip.fromJson(map);
         }).toList();
+
+        state = state.copyWith(
+          trips: trips,
+          rawTripsById: rawTripsById,
+          isLoading: false,
+        );
       } else {
-        _error = response['message'] ?? 'Failed to fetch trips';
+        state = state.copyWith(
+          error: response['message'] ?? 'Failed to fetch trips',
+          isLoading: false,
+        );
       }
     } catch (e) {
-      _error = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
 
@@ -92,14 +78,22 @@ class AdminMileageViewModel extends ChangeNotifier {
 
       if (response != null && response['success'] == true) {
         // Optimistic update for immediate UI feedback
-        final index = _trips.indexWhere((t) => t.id == tripId);
+        final index = state.trips.indexWhere((t) => t.id == tripId);
         if (index != -1) {
-          _trips[index] = _trips[index].copyWith(status: status);
-          if (_rawTripsById[tripId] != null) {
-            _rawTripsById[tripId]!['status'] = status;
-            _rawTripsById[tripId]!['adminApprovalStatus'] = status;
+          final updatedTrips = List<Trip>.from(state.trips);
+          updatedTrips[index] = updatedTrips[index].copyWith(status: status);
+
+          final updatedRawTrips =
+              Map<String, Map<String, dynamic>>.from(state.rawTripsById);
+          if (updatedRawTrips[tripId] != null) {
+            updatedRawTrips[tripId]!['status'] = status;
+            updatedRawTrips[tripId]!['adminApprovalStatus'] = status;
           }
-          notifyListeners();
+
+          state = state.copyWith(
+            trips: updatedTrips,
+            rawTripsById: updatedRawTrips,
+          );
         }
         // Re-sync list from backend to avoid stale status/filter mismatches.
         await fetchTrips();
@@ -107,8 +101,7 @@ class AdminMileageViewModel extends ChangeNotifier {
       }
       return false;
     } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      state = state.copyWith(error: e.toString());
       return false;
     }
   }
@@ -131,14 +124,13 @@ class AdminMileageViewModel extends ChangeNotifier {
       }
       return false;
     } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      state = state.copyWith(error: e.toString());
       return false;
     }
   }
 }
 
 final adminMileageViewModelProvider =
-    ChangeNotifierProvider<AdminMileageViewModel>((ref) {
-  return AdminMileageViewModel(ref.read(app_providers.apiMethodProvider));
-});
+    NotifierProvider<AdminMileageViewModel, AdminMileageState>(
+  AdminMileageViewModel.new,
+);

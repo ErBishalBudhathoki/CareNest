@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
 
@@ -18,9 +17,9 @@ void _notifDebugLog(String message) {
 }
 
 class NotificationState {
-  final List<NotificationModel> notifications;
-  final bool isLoading;
-  final String? error;
+  late final List<NotificationModel> notifications;
+  late final bool isLoading;
+  late final String? error;
 
   NotificationState({
     this.notifications = const [],
@@ -44,14 +43,15 @@ class NotificationState {
   bool get hasUnreadNotifications => unreadCount > 0;
 }
 
-class NotificationNotifier extends StateNotifier<NotificationState> {
+class NotificationNotifier extends Notifier<NotificationState> {
   static const String _storageKey = 'app_notifications';
   static const String _surfaceStorageKey = 'surface_notifications';
 
-  NotificationNotifier() : super(NotificationState()) {
-    // The constructor now calls the single, unified loading method.
-    // This handles the "terminated app" scenario automatically and correctly.
-    loadNotifications();
+  @override
+  NotificationState build() {
+    // Load persisted notifications on initialisation
+    Future.microtask(() => loadNotifications());
+    return NotificationState();
   }
 
   /// This is now the single, authoritative method for loading notifications.
@@ -321,10 +321,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 
 // --- Providers remain the same ---
 
-final notificationProvider =
-    StateNotifierProvider<NotificationNotifier, NotificationState>(
-  (ref) => NotificationNotifier(),
-);
+final notificationProvider = NotifierProvider<NotificationNotifier, NotificationState>(NotificationNotifier.new);
 
 final unreadNotificationCountProvider = Provider<int>((ref) {
   return ref.watch(notificationProvider).unreadCount;

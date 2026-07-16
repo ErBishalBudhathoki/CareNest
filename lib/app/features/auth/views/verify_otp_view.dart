@@ -22,12 +22,19 @@ class VerifyOTPView extends ConsumerStatefulWidget {
 }
 
 class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
+  final _pinController = TextEditingController();
   bool _isResending = false;
   bool _isVerifying = false;
 
   @override
+  void dispose() {
+    _pinController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(verifyOTPViewModelProvider);
+    
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
@@ -62,7 +69,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
               const SizedBox(height: 20),
               _buildHeader(context),
               const SizedBox(height: 60),
-              _buildOTPSection(context, viewModel),
+              _buildOTPSection(context),
               const SizedBox(height: 40),
               _buildVerifyButton(context),
               const SizedBox(height: 24),
@@ -121,7 +128,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
     );
   }
 
-  Widget _buildOTPSection(BuildContext context, dynamic viewModel) {
+  Widget _buildOTPSection(BuildContext context) {
     final defaultPinTheme = PinTheme(
       width: 50,
       height: 60,
@@ -175,7 +182,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         children: [
           Pinput(
             length: 6,
-            controller: viewModel.pinController,
+            controller: _pinController,
             defaultPinTheme: defaultPinTheme,
             focusedPinTheme: focusedPinTheme,
             submittedPinTheme: submittedPinTheme,
@@ -223,8 +230,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
   }
 
   Future<void> _continueToResetPassword() async {
-    final viewModel = ref.read(verifyOTPViewModelProvider);
-    final enteredOtp = viewModel.pinController.text.trim();
+    final enteredOtp = _pinController.text.trim();
     if (enteredOtp.length != 6) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

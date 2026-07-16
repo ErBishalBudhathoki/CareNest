@@ -1,31 +1,31 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../repositories/accounting_repository.dart';
 
-final accountingViewModelProvider = StateNotifierProvider<AccountingViewModel, AsyncValue<void>>((ref) {
-  final repository = ref.watch(accountingRepositoryProvider);
-  return AccountingViewModel(repository);
-});
+final accountingViewModelProvider = NotifierProvider<AccountingViewModel, AsyncValue<void>>(AccountingViewModel.new);
 
-class AccountingViewModel extends StateNotifier<AsyncValue<void>> {
-  final AccountingRepository _repository;
+class AccountingViewModel extends Notifier<AsyncValue<void>> {
+  late final AccountingRepository _repository;
 
-  AccountingViewModel(this._repository) : super(const AsyncValue.data(null));
+  @override
+  AsyncValue<void> build() {
+    _repository = ref.watch(accountingRepositoryProvider);
+    return const AsyncData(null);
+  }
 
   Future<String?> connectProvider({
     required String provider,
     required String organizationId,
   }) async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     try {
       final result = await _repository.connectProvider(
         provider: provider,
         organizationId: organizationId,
       );
-      state = const AsyncValue.data(null);
+      state = const AsyncData(null);
       return result['url'] as String?;
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = AsyncError(e, st);
       rethrow;
     }
   }
@@ -34,15 +34,15 @@ class AccountingViewModel extends StateNotifier<AsyncValue<void>> {
     required String organizationId,
     required List<String> invoiceIds,
   }) async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     try {
       await _repository.syncInvoices(
         organizationId: organizationId,
         invoiceIds: invoiceIds,
       );
-      state = const AsyncValue.data(null);
+      state = const AsyncData(null);
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = AsyncError(e, st);
       rethrow;
     }
   }

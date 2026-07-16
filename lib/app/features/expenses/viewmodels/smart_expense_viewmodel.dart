@@ -1,18 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/expenses/repositories/smart_expense_repository.dart';
 import 'package:carenest/app/features/expenses/models/smart_expense_models.dart';
 
 /// State for smart expense
 class SmartExpenseState {
-  final bool isLoading;
-  final String? error;
-  final ReceiptScan? receiptScan;
-  final ExpenseCategory? category;
-  final PolicyValidation? policyValidation;
-  final DuplicateCheck? duplicateCheck;
-  final MileageCalculation? mileageCalculation;
+  late final bool isLoading;
+  late final String? error;
+  late final ReceiptScan? receiptScan;
+  late final ExpenseCategory? category;
+  late final PolicyValidation? policyValidation;
+  late final DuplicateCheck? duplicateCheck;
+  late final MileageCalculation? mileageCalculation;
 
   SmartExpenseState({
     this.isLoading = false,
@@ -46,10 +45,16 @@ class SmartExpenseState {
 }
 
 /// ViewModel for smart expense
-class SmartExpenseViewModel extends StateNotifier<SmartExpenseState> {
-  final SmartExpenseRepository repository;
+class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
+  late final SmartExpenseRepository repository;
 
-  SmartExpenseViewModel(this.repository) : super(SmartExpenseState());
+  
+  @override
+  SmartExpenseState build() {
+    final repository = ref.watch(smartExpenseRepositoryProvider);
+    
+    return SmartExpenseState();
+  }
 
   /// Scan receipt
   Future<void> scanReceipt(String imageBase64) async {
@@ -203,8 +208,4 @@ class SmartExpenseViewModel extends StateNotifier<SmartExpenseState> {
 }
 
 /// Provider for smart expense viewmodel
-final smartExpenseViewModelProvider =
-    StateNotifierProvider<SmartExpenseViewModel, SmartExpenseState>((ref) {
-  final repository = ref.watch(smartExpenseRepositoryProvider);
-  return SmartExpenseViewModel(repository);
-});
+final smartExpenseViewModelProvider = NotifierProvider<SmartExpenseViewModel, SmartExpenseState>(SmartExpenseViewModel.new);

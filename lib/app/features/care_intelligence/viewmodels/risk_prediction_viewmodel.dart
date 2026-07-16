@@ -1,19 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Risk Prediction
 class RiskPredictionState {
-  final bool isLoading;
-  final RiskAssessment? assessment;
-  final FallsRiskAssessment? fallsRisk;
-  final BehaviorEscalationPrediction? behaviorPrediction;
+  late final bool isLoading;
+  late final RiskAssessment? assessment;
+  late final FallsRiskAssessment? fallsRisk;
+  late final BehaviorEscalationPrediction? behaviorPrediction;
   final Map<String, dynamic>? healthPrediction;
   final Map<String, dynamic>? medicationRisk;
   final Map<String, dynamic>? trends;
-  final String? error;
+  late final String? error;
 
   RiskPredictionState({
     this.isLoading = false,
@@ -50,10 +49,16 @@ class RiskPredictionState {
 }
 
 // StateNotifier for Risk Prediction
-class RiskPredictionViewModel extends StateNotifier<RiskPredictionState> {
-  final CareIntelligenceRepository _repository;
+class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
+  late final CareIntelligenceRepository _repository;
 
-  RiskPredictionViewModel(this._repository) : super(RiskPredictionState());
+  
+  @override
+  RiskPredictionState build() {
+    final repository = ref.watch(careIntelligenceRepositoryProvider);
+    
+    return RiskPredictionState();
+  }
 
   // Predict all risks
   Future<void> predictAllRisks({
@@ -263,8 +268,4 @@ class RiskPredictionViewModel extends StateNotifier<RiskPredictionState> {
 }
 
 // Provider for RiskPredictionViewModel
-final riskPredictionViewModelProvider =
-    StateNotifierProvider<RiskPredictionViewModel, RiskPredictionState>((ref) {
-  final repository = ref.watch(careIntelligenceRepositoryProvider);
-  return RiskPredictionViewModel(repository);
-});
+final riskPredictionViewModelProvider = NotifierProvider<RiskPredictionViewModel, RiskPredictionState>(RiskPredictionViewModel.new);

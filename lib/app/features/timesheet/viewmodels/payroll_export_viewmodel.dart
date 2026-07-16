@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -8,14 +8,17 @@ import 'dart:io';
 import 'package:share_plus/share_plus.dart';
 
 final payrollExportViewModelProvider =
-    StateNotifierProvider<PayrollExportViewModel, AsyncValue<void>>((ref) {
-  return PayrollExportViewModel(ref.read(app_providers.apiMethodProvider));
+    AsyncNotifierProvider<PayrollExportViewModel, void>(() {
+  return PayrollExportViewModel();
 });
 
-class PayrollExportViewModel extends StateNotifier<AsyncValue<void>> {
-  final ApiMethod _apiMethod;
+class PayrollExportViewModel extends AsyncNotifier<void> {
+  late final ApiMethod _apiMethod;
 
-  PayrollExportViewModel(this._apiMethod) : super(const AsyncValue.data(null));
+  @override
+  FutureOr<void> build() {
+    _apiMethod = ref.watch(app_providers.apiMethodProvider);
+  }
 
   Future<void> exportPayroll({
     required DateTime startDate,

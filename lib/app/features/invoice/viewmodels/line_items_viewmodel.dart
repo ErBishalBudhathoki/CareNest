@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/core/providers/core_providers.dart';
 
-class LineItemViewModel extends StateNotifier<List<Map<String, dynamic>>> {
-  final ApiMethod _apiMethod;
+class LineItemViewModel extends Notifier<List<Map<String, dynamic>>> {
+  late final ApiMethod _apiMethod;
 
-  LineItemViewModel(this._apiMethod) : super([]);
+  @override
+  List<Map<String, dynamic>> build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return [];
+  }
 
   /// Fetch all support items from the backend
   Future<List<Map<String, dynamic>>> getSupportItems() async {

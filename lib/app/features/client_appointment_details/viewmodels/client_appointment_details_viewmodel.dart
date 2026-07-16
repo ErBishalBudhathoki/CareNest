@@ -4,29 +4,39 @@ import 'package:carenest/app/features/client_appointment_details/models/visit_hi
 import 'package:carenest/app/features/client_appointment_details/repositories/client_appointment_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/features/client_appointment_details/providers.dart';
 
-class ClientAppointmentDetailsViewModel extends ChangeNotifier {
-  final ClientAppointmentRepository _repository;
-  String _clientId;
-  final String? _clientEmail;
+class ClientAppointmentDetailsViewModel extends Notifier<int> {
+  late final ClientAppointmentRepository _repository;
+  late String _clientId;
+  late final String? _clientEmail;
   
   ClientDetailModel? _client;
   List<VisitHistoryModel> _visitHistory = [];
   ViewState _state = ViewState.idle;
   String? _errorMessage;
 
-  ClientAppointmentDetailsViewModel(
-    this._repository,
-    String clientId, {
-    String? clientEmail,
-  })  : _clientId = clientId,
-        _clientEmail = clientEmail {
+  @override
+  int build() {
+    _repository = ref.watch(clientAppointmentRepositoryProvider);
+    return 0;
+  }
+  
+  void initialize(String clientId, String? clientEmail) {
+    if (_state != ViewState.idle) return;
+    _clientId = clientId;
+    _clientEmail = clientEmail;
     _init();
+  }
+  
+  void notifyListeners() {
+    state = state + 1;
   }
 
   ClientDetailModel? get client => _client;
   List<VisitHistoryModel> get visitHistory => _visitHistory;
-  ViewState get state => _state;
+  ViewState get viewState => _state;
   String? get errorMessage => _errorMessage;
 
   Future<void> _init() async {

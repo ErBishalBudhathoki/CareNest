@@ -202,7 +202,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                 textColor: BauhausDesign.textDark,
                 onPressed: () async {
                   final success = await ref
-                      .read(adminMileageViewModelProvider)
+                      .read(adminMileageViewModelProvider.notifier)
                       .updateTripDetails(
                         trip.id,
                         double.tryParse(_distanceController.text) ??
@@ -225,7 +225,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                       backgroundColor: BauhausDesign.primary, // Red
                       onPressed: () async {
                         final success = await ref
-                            .read(adminMileageViewModelProvider)
+                            .read(adminMileageViewModelProvider.notifier)
                             .updateTripStatus(trip.id, 'REJECTED');
                         if (!mounted) return;
                         if (success) {
@@ -253,7 +253,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                       backgroundColor: BauhausDesign.secondary, // Blue
                       onPressed: () async {
                         final success = await ref
-                            .read(adminMileageViewModelProvider)
+                            .read(adminMileageViewModelProvider.notifier)
                             .updateTripStatus(trip.id, 'APPROVED');
                         if (!mounted) return;
                         if (success) {

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../../../../backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -20,15 +19,8 @@ final onboardingRepositoryProvider = Provider<OnboardingRepository>((ref) {
 
 // ViewModel Provider (User)
 final onboardingViewModelProvider =
-    StateNotifierProvider<OnboardingViewModel, OnboardingState>((ref) {
-  final repository = ref.watch(onboardingRepositoryProvider);
-  return OnboardingViewModel(repository);
-});
+    NotifierProvider<OnboardingViewModel, OnboardingState>(OnboardingViewModel.new);
 
 // ViewModel Provider (Admin)
 final adminOnboardingViewModelProvider =
-    StateNotifierProvider<AdminOnboardingViewModel, AdminOnboardingState>(
-        (ref) {
-  final repository = ref.watch(onboardingRepositoryProvider);
-  return AdminOnboardingViewModel(repository);
-});
+    NotifierProvider<AdminOnboardingViewModel, AdminOnboardingState>(AdminOnboardingViewModel.new);

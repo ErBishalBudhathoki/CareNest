@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class CashFlowState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? forecast;
   final Map<String, dynamic>? position;
-  final List<dynamic>? alerts;
+  late final List<dynamic>? alerts;
   final Map<String, dynamic>? optimization;
-  final String? error;
+  late final String? error;
 
   CashFlowState({
     this.isLoading = false,
@@ -40,10 +39,16 @@ class CashFlowState {
   }
 }
 
-class CashFlowViewModel extends StateNotifier<CashFlowState> {
-  final FinancialIntelligenceRepository _repository;
+class CashFlowViewModel extends Notifier<CashFlowState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  CashFlowViewModel(this._repository) : super(CashFlowState());
+  
+  @override
+  CashFlowState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return CashFlowState();
+  }
 
   Future<void> forecastCashFlow({
     required String organizationId,
@@ -123,9 +128,4 @@ class CashFlowViewModel extends StateNotifier<CashFlowState> {
   }
 }
 
-final cashFlowViewModelProvider =
-    StateNotifierProvider<CashFlowViewModel, CashFlowState>((ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return CashFlowViewModel(repository);
-});
+final cashFlowViewModelProvider = NotifierProvider<CashFlowViewModel, CashFlowState>(CashFlowViewModel.new);

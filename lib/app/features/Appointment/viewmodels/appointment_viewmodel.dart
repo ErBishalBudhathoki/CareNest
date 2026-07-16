@@ -1,13 +1,9 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../repositories/appointment_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final appointmentViewModelProvider =
-    StateNotifierProvider.autoDispose<AppointmentViewModel, AppointmentState>(
-        (ref) {
-  final repository = ref.watch(appointmentRepositoryProvider);
-  return AppointmentViewModel(repository);
-});
+    NotifierProvider.autoDispose<AppointmentViewModel, AppointmentState>(
+        AppointmentViewModel.new);
 
 class AppointmentState {
   final bool isLoading;
@@ -27,17 +23,20 @@ class AppointmentState {
   }) {
     return AppointmentState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage:
-          errorMessage, // Null resets error if not provided? No, explicit.
+      errorMessage: errorMessage,
       assignmentResult: assignmentResult ?? this.assignmentResult,
     );
   }
 }
 
-class AppointmentViewModel extends StateNotifier<AppointmentState> {
-  final AppointmentRepository _repository;
+class AppointmentViewModel extends Notifier<AppointmentState> {
+  late final AppointmentRepository _repository;
 
-  AppointmentViewModel(this._repository) : super(const AppointmentState());
+  @override
+  AppointmentState build() {
+    _repository = ref.watch(appointmentRepositoryProvider);
+    return const AppointmentState();
+  }
 
   Future<Map<String, dynamic>> assignClientToUser({
     required String userEmail,
@@ -69,8 +68,8 @@ class AppointmentViewModel extends StateNotifier<AppointmentState> {
       return result;
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
-      // Rethrow so UI can handle if it wants, or return error map
       return {'success': false, 'message': e.toString()};
     }
   }
 }
+

@@ -1,17 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/compliance/repositories/compliance_automation_repository.dart';
 import 'package:carenest/app/features/compliance/models/compliance_automation_models.dart';
 
 /// State for compliance automation
 class ComplianceAutomationState {
-  final bool isLoading;
-  final String? error;
-  final ComplianceScan? scanResult;
-  final List<ExpiringDocument>? expiringDocuments;
-  final ComplianceReport? report;
-  final ComplianceTrends? trends;
+  late final bool isLoading;
+  late final String? error;
+  late final ComplianceScan? scanResult;
+  late final List<ExpiringDocument>? expiringDocuments;
+  late final ComplianceReport? report;
+  late final ComplianceTrends? trends;
 
   ComplianceAutomationState({
     this.isLoading = false,
@@ -42,10 +41,16 @@ class ComplianceAutomationState {
 }
 
 /// ViewModel for compliance automation
-class ComplianceAutomationViewModel extends StateNotifier<ComplianceAutomationState> {
-  final ComplianceAutomationRepository repository;
+class ComplianceAutomationViewModel extends Notifier<ComplianceAutomationState> {
+  late final ComplianceAutomationRepository repository;
 
-  ComplianceAutomationViewModel(this.repository) : super(ComplianceAutomationState());
+  
+  @override
+  ComplianceAutomationState build() {
+    final repository = ref.watch(complianceAutomationRepositoryProvider);
+    
+    return ComplianceAutomationState();
+  }
 
   /// Run compliance scan
   Future<void> runComplianceScan(String organizationId) async {
@@ -174,8 +179,4 @@ class ComplianceAutomationViewModel extends StateNotifier<ComplianceAutomationSt
 }
 
 /// Provider for compliance automation viewmodel
-final complianceAutomationViewModelProvider =
-    StateNotifierProvider<ComplianceAutomationViewModel, ComplianceAutomationState>((ref) {
-  final repository = ref.watch(complianceAutomationRepositoryProvider);
-  return ComplianceAutomationViewModel(repository);
-});
+final complianceAutomationViewModelProvider = NotifierProvider<ComplianceAutomationViewModel, ComplianceAutomationState>(ComplianceAutomationViewModel.new);
