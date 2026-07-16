@@ -1,17 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../models/dashboard_models.dart';
 
-class DashboardViewModel extends StateNotifier<DashboardState> {
-  final ApiMethod _apiMethod;
-  final String _organizationId;
+class DashboardViewModel extends Notifier<DashboardState> {
+  late final ApiMethod _apiMethod;
+  late final String _organizationId;
 
-  DashboardViewModel(this._apiMethod, this._organizationId)
-      : super(DashboardState.initial()) {
-    loadDashboardData();
+  @override
+  DashboardState build() {
+    _apiMethod = ref.watch(app_providers.apiMethodProvider);
+    Future.microtask(() => loadDashboardData());
+    return DashboardState.initial();
   }
 
   /// Load all dashboard data
@@ -38,10 +39,7 @@ class DashboardViewModel extends StateNotifier<DashboardState> {
         lastRefreshed: DateTime.now(),
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -143,11 +141,6 @@ class DashboardViewModel extends StateNotifier<DashboardState> {
 }
 
 final dashboardViewModelProvider =
-    StateNotifierProvider<DashboardViewModel, DashboardState>((ref) {
-  // In production, get organizationId from auth provider
-  const organizationId = 'current-org-id'; // TODO: Get from auth
-  return DashboardViewModel(
-    ref.read(app_providers.apiMethodProvider),
-    organizationId,
-  );
-});
+    NotifierProvider<DashboardViewModel, DashboardState>(
+      DashboardViewModel.new,
+    );

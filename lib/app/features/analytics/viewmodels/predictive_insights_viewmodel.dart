@@ -3,7 +3,6 @@ import 'package:carenest/app/features/analytics/repositories/analytics_repositor
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 // State class to hold all predictions
 class PredictiveInsightsState {
@@ -59,38 +58,36 @@ class PredictiveInsightsState {
 }
 
 final predictiveInsightsViewModelProvider =
-    StateNotifierProvider<PredictiveInsightsViewModel, PredictiveInsightsState>((ref) {
-  final repository = ref.watch(analyticsRepositoryProvider);
-  final userAsync = ref.watch(currentUserProvider);
+    NotifierProvider<PredictiveInsightsViewModel, PredictiveInsightsState>(
+      PredictiveInsightsViewModel.new,
+    );
 
-  return userAsync.when(
-    data: (user) => PredictiveInsightsViewModel(repository, user),
-    loading: () => PredictiveInsightsViewModel(repository, null, loading: true),
-    error: (e, st) => PredictiveInsightsViewModel(repository, null, error: e.toString()),
-  );
-});
+class PredictiveInsightsViewModel extends Notifier<PredictiveInsightsState> {
+  late final AnalyticsRepository _repository;
+  User? _user;
 
-class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState> {
-  final AnalyticsRepository _repository;
-  final User? _user;
+  @override
+  PredictiveInsightsState build() {
+    _repository = ref.watch(analyticsRepositoryProvider);
+    final userAsync = ref.watch(currentUserProvider);
+    _user = userAsync.value;
 
-  PredictiveInsightsViewModel(this._repository, this._user,
-      {bool loading = false, String? error})
-      : super(PredictiveInsightsState(
-          isLoading: loading,
-          error: error,
-        )) {
     if (_user != null) {
-      fetchAllPredictions();
+      Future.microtask(() => fetchAllPredictions());
     }
+
+    return PredictiveInsightsState(
+      isLoading: userAsync.isLoading,
+      error: userAsync.error?.toString(),
+    );
   }
 
   // Fetch all predictions at once
   Future<void> fetchAllPredictions() async {
     if (_user == null) return;
-    
+
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       // Fetch all predictions in parallel
       final results = await Future.wait([
@@ -102,21 +99,21 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
         fetchServiceDemand(), // NEW Phase 5
         fetchRecommendations(), // NEW Phase 5
       ]);
-      
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
-  Future<void> fetchRevenueForecast({String metric = 'revenue', int daysAhead = 30}) async {
+  Future<void> fetchRevenueForecast({
+    String metric = 'revenue',
+    int daysAhead = 30,
+  }) async {
     if (_user == null) return;
     try {
       final result = await _repository.fetchForecast(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
         metric: metric,
         daysAhead: daysAhead,
       );
@@ -130,7 +127,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchChurnPredictions(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
       );
       state = state.copyWith(churnPredictions: result);
     } catch (e) {
@@ -142,7 +139,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchDemandForecast(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
         daysAhead: daysAhead,
       );
       state = state.copyWith(demandForecast: result);
@@ -155,7 +152,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchComplianceRisk(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
       );
       state = state.copyWith(complianceRisk: result);
     } catch (e) {
@@ -168,7 +165,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchClientRisk(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
       );
       state = state.copyWith(clientRisks: result);
     } catch (e) {
@@ -181,7 +178,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchServiceDemand(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
         daysAhead: daysAhead,
       );
       state = state.copyWith(serviceDemand: result);
@@ -196,13 +193,10 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     state = state.copyWith(isLoading: true, error: null);
     try {
       final result = await _repository.runScenarioModel(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
         scenario: scenario,
       );
-      state = state.copyWith(
-        isLoading: false,
-        scenarioResult: result,
-      );
+      state = state.copyWith(isLoading: false, scenarioResult: result);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -216,7 +210,7 @@ class PredictiveInsightsViewModel extends StateNotifier<PredictiveInsightsState>
     if (_user == null) return;
     try {
       final result = await _repository.fetchRecommendations(
-        organizationId: _user.organizationId,
+        organizationId: _user!.organizationId,
       );
       state = state.copyWith(recommendations: result);
     } catch (e) {

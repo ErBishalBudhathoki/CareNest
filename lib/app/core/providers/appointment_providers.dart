@@ -3,7 +3,6 @@
 // Contains providers for appointment data and state management.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
 
@@ -35,10 +34,14 @@ class AppointmentState {
 }
 
 // Notifier for appointment state management
-class AppointmentNotifier extends StateNotifier<AppointmentState> {
-  final ApiMethod _apiMethod;
+class AppointmentNotifier extends Notifier<AppointmentState> {
+  late final ApiMethod _apiMethod;
 
-  AppointmentNotifier(this._apiMethod) : super(const AppointmentState());
+  @override
+  AppointmentState build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return const AppointmentState();
+  }
 
   /// Fetch appointments for a specific user
   Future<void> fetchAppointments(String email) async {
@@ -58,9 +61,7 @@ class AppointmentNotifier extends StateNotifier<AppointmentState> {
 }
 
 // Appointment provider
-final appointmentProvider = StateNotifierProvider<AppointmentNotifier, AppointmentState>((ref) {
-  return AppointmentNotifier(ref.read(apiMethodProvider));
-});
+final appointmentProvider = NotifierProvider<AppointmentNotifier, AppointmentState>(AppointmentNotifier.new);
 
 // Derived provider for appointment count
 final appointmentCountProvider = Provider<int>((ref) {

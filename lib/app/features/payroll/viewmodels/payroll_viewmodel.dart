@@ -1,87 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:intl/intl.dart';
 import '../models/payroll_model.dart';
 import '../repositories/payroll_repository.dart';
 
-final payrollViewModelProvider = ChangeNotifierProvider<PayrollViewModel>((ref) {
-  final repository = ref.watch(payrollRepositoryProvider);
-  return PayrollViewModel(repository);
-});
+class PayrollState {
+  final bool isLoading;
+  final String? errorMessage;
+  final PayrollSummary? summary;
+  final DateTimeRange? selectedDateRange;
 
-class PayrollViewModel extends ChangeNotifier {
-  final PayrollRepository _repository;
+  const PayrollState({
+    this.isLoading = false,
+    this.errorMessage,
+    this.summary,
+    this.selectedDateRange,
+  });
 
-  PayrollViewModel(this._repository);
+  PayrollState copyWith({
+    bool? isLoading,
+    String? errorMessage,
+    PayrollSummary? summary,
+    DateTimeRange? selectedDateRange,
+  }) {
+    return PayrollState(
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+      summary: summary ?? this.summary,
+      selectedDateRange: selectedDateRange ?? this.selectedDateRange,
+    );
+  }
+}
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+final payrollViewModelProvider =
+    NotifierProvider<PayrollViewModel, PayrollState>(PayrollViewModel.new);
 
-  String? _errorMessage;
-  String? get errorMessage => _errorMessage;
+class PayrollViewModel extends Notifier<PayrollState> {
+  late final PayrollRepository _repository;
 
-  PayrollSummary? _summary;
-  PayrollSummary? get summary => _summary;
-
-  DateTimeRange? _selectedDateRange;
-  DateTimeRange? get selectedDateRange => _selectedDateRange;
-
-  // Initial fetch
-  Future<void> initialize() async {
-    // Default to current month
+  @override
+  PayrollState build() {
+    _repository = ref.watch(payrollRepositoryProvider);
     final now = DateTime.now();
-    final start = DateTime(now.year, now.month, 1);
-    final end = DateTime(now.year, now.month + 1, 0);
-    
-    _selectedDateRange = DateTimeRange(start: start, end: end);
-    await fetchSummary();
+    final defaultRange = DateTimeRange(
+      start: DateTime(now.year, now.month, 1),
+      end: DateTime(now.year, now.month + 1, 0),
+    );
+    Future.microtask(() => fetchSummary(dateRange: defaultRange));
+    return PayrollState(selectedDateRange: defaultRange);
+  }
+
+  Future<void> initialize() async {
+    final now = DateTime.now();
+    final range = DateTimeRange(
+      start: DateTime(now.year, now.month, 1),
+      end: DateTime(now.year, now.month + 1, 0),
+    );
+    state = state.copyWith(selectedDateRange: range);
+    await fetchSummary(dateRange: range);
   }
 
   void updateDateRange(DateTimeRange range) {
-    _selectedDateRange = range;
-    fetchSummary();
+    state = state.copyWith(selectedDateRange: range);
+    fetchSummary(dateRange: range);
   }
 
-  Future<void> fetchSummary() async {
-    if (_selectedDateRange == null) return;
+  Future<void> fetchSummary({DateTimeRange? dateRange}) async {
+    final range = dateRange ?? state.selectedDateRange;
+    if (range == null) return;
 
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       final dateFormat = DateFormat('yyyy-MM-dd');
-      final startDate = dateFormat.format(_selectedDateRange!.start);
-      final endDate = dateFormat.format(_selectedDateRange!.end);
+      final startDate = dateFormat.format(range.start);
+      final endDate = dateFormat.format(range.end);
 
-      _summary = await _repository.getPayrollSummary(
+      final summary = await _repository.getPayrollSummary(
         startDate: startDate,
         endDate: endDate,
       );
+      state = state.copyWith(isLoading: false, summary: summary);
     } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
   }
 
   Future<void> exportData(String format) async {
-    if (_selectedDateRange == null) return;
-    
-    // Implement export logic (show toast, etc)
-    // For now just call repository
+    final range = state.selectedDateRange;
+    if (range == null) return;
+
     try {
-        final dateFormat = DateFormat('yyyy-MM-dd');
-        await _repository.exportPayroll(
-            format: format,
-            startDate: dateFormat.format(_selectedDateRange!.start),
-            endDate: dateFormat.format(_selectedDateRange!.end),
-        );
+      final dateFormat = DateFormat('yyyy-MM-dd');
+      await _repository.exportPayroll(
+        format: format,
+        startDate: dateFormat.format(range.start),
+        endDate: dateFormat.format(range.end),
+      );
     } catch (e) {
-        _errorMessage = "Export failed: ${e.toString()}";
-        notifyListeners();
+      state = state.copyWith(errorMessage: 'Export failed: ${e.toString()}');
     }
   }
 }

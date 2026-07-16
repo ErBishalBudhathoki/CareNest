@@ -20,7 +20,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(businessListViewModelProvider).loadBusinesses();
+      ref.read(businessListViewModelProvider.notifier).loadBusinesses();
     });
   }
 
@@ -507,7 +507,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(businessListViewModelProvider);
+    ref.watch(businessListViewModelProvider);
+    final viewModel = ref.read(businessListViewModelProvider.notifier);
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(

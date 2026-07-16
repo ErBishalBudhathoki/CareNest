@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/settings/repositories/date_preference_repository.dart';
 import 'package:carenest/app/features/settings/viewmodels/date_format_settings_viewmodel.dart';
@@ -12,9 +11,4 @@ final datePreferenceRepositoryProvider = Provider<DatePreferenceRepository>((ref
 
 /// ViewModel provider for the Date Format Settings screen.
 final dateFormatSettingsViewModelProvider =
-    ChangeNotifierProvider<DateFormatSettingsViewModel>((ref) {
-  final repo = ref.watch(datePreferenceRepositoryProvider);
-  final vm = DateFormatSettingsViewModel(repo);
-  // Lazy load can be triggered by the view; keeping construction simple.
-  return vm;
-});
+    NotifierProvider<DateFormatSettingsViewModel, DateFormatSettingsState>(DateFormatSettingsViewModel.new);

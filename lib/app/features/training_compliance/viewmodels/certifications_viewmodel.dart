@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:carenest/app/features/training_compliance/models/certification.dart';
 import 'package:carenest/app/features/training_compliance/repositories/training_compliance_repository.dart';
@@ -16,15 +16,22 @@ abstract class CertificationsState with _$CertificationsState {
   }) = _CertificationsState;
 }
 
-class CertificationsViewModel extends StateNotifier<CertificationsState> {
-  final TrainingComplianceRepository _repository;
+class CertificationsViewModel extends Notifier<CertificationsState> {
+  late final TrainingComplianceRepository _repository;
 
-  CertificationsViewModel(this._repository) : super(const CertificationsState());
+  @override
+  CertificationsState build() {
+    _repository = ref.watch(trainingComplianceRepositoryProvider);
+    return const CertificationsState();
+  }
 
   Future<void> loadCertifications({String? status, String? userId}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final certs = await _repository.getCertifications(status: status, userId: userId);
+      final certs = await _repository.getCertifications(
+        status: status,
+        userId: userId,
+      );
       state = state.copyWith(isLoading: false, certifications: certs);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());

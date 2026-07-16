@@ -1,18 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Care Plan
 class CarePlanState {
-  final bool isLoading;
-  final CarePlan? carePlan;
-  final List<SmartGoal> goals;
-  final List<ServiceRecommendation> serviceRecommendations;
+  late final bool isLoading;
+  late final CarePlan? carePlan;
+  late final List<SmartGoal> goals;
+  late final List<ServiceRecommendation> serviceRecommendations;
   final Map<String, dynamic>? progress;
   final Map<String, dynamic>? evidenceBasedRecommendations;
-  final String? error;
+  late final String? error;
 
   CarePlanState({
     this.isLoading = false,
@@ -46,10 +45,16 @@ class CarePlanState {
 }
 
 // StateNotifier for Care Plan
-class CarePlanViewModel extends StateNotifier<CarePlanState> {
-  final CareIntelligenceRepository _repository;
+class CarePlanViewModel extends Notifier<CarePlanState> {
+  late final CareIntelligenceRepository _repository;
 
-  CarePlanViewModel(this._repository) : super(CarePlanState());
+  
+  @override
+  CarePlanState build() {
+    final repository = ref.watch(careIntelligenceRepositoryProvider);
+    
+    return CarePlanState();
+  }
 
   // Generate care plan
   Future<void> generateCarePlan({
@@ -265,8 +270,4 @@ class CarePlanViewModel extends StateNotifier<CarePlanState> {
 }
 
 // Provider for CarePlanViewModel
-final carePlanViewModelProvider =
-    StateNotifierProvider<CarePlanViewModel, CarePlanState>((ref) {
-  final repository = ref.watch(careIntelligenceRepositoryProvider);
-  return CarePlanViewModel(repository);
-});
+final carePlanViewModelProvider = NotifierProvider<CarePlanViewModel, CarePlanState>(CarePlanViewModel.new);

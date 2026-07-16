@@ -1,15 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class ComplianceState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? complianceCheck;
   final Map<String, dynamic>? auditTrail;
   final Map<String, dynamic>? status;
-  final String? error;
+  late final String? error;
 
   ComplianceState({
     this.isLoading = false,
@@ -36,10 +35,16 @@ class ComplianceState {
   }
 }
 
-class ComplianceViewModel extends StateNotifier<ComplianceState> {
-  final FinancialIntelligenceRepository _repository;
+class ComplianceViewModel extends Notifier<ComplianceState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  ComplianceViewModel(this._repository) : super(ComplianceState());
+  
+  @override
+  ComplianceState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    
+    return ComplianceState();
+  }
 
   Future<void> checkCompliance({
     required String organizationId,
@@ -104,9 +109,4 @@ class ComplianceViewModel extends StateNotifier<ComplianceState> {
   }
 }
 
-final complianceViewModelProvider =
-    StateNotifierProvider<ComplianceViewModel, ComplianceState>((ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return ComplianceViewModel(repository);
-});
+final complianceViewModelProvider = NotifierProvider<ComplianceViewModel, ComplianceState>(ComplianceViewModel.new);

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
@@ -43,11 +42,15 @@ class PricingOptimizationState {
 
 /// Pricing Optimization ViewModel
 class PricingOptimizationViewModel
-    extends StateNotifier<PricingOptimizationState> {
-  final FinancialIntelligenceRepository _repository;
+    extends Notifier<PricingOptimizationState> {
+  late final FinancialIntelligenceRepository _repository;
 
-  PricingOptimizationViewModel(this._repository)
-      : super(PricingOptimizationState());
+  @override
+  PricingOptimizationState build() {
+    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    _repository = FinancialIntelligenceRepository(apiMethod);
+    return PricingOptimizationState();
+  }
 
   /// Optimize prices
   Future<void> optimizePrices({
@@ -210,9 +213,4 @@ class PricingOptimizationViewModel
 }
 
 /// Provider for Pricing Optimization ViewModel
-final pricingOptimizationViewModelProvider = StateNotifierProvider<
-    PricingOptimizationViewModel, PricingOptimizationState>((ref) {
-  final apiMethod = ref.read(app_providers.apiMethodProvider);
-  final repository = FinancialIntelligenceRepository(apiMethod);
-  return PricingOptimizationViewModel(repository);
-});
+final pricingOptimizationViewModelProvider = NotifierProvider<PricingOptimizationViewModel, PricingOptimizationState>(PricingOptimizationViewModel.new);

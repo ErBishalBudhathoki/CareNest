@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -9,11 +10,15 @@ enum AddBusinessStatus { idle, processing, success, error }
 
 /// ViewModel for handling business addition logic
 /// Follows MVVM pattern by keeping only business logic and state management
-class AddBusinessViewModel extends ChangeNotifier {
-  final ApiMethod _apiMethod;
-  final Ref _ref;
+class AddBusinessViewModel extends Notifier<int> {
 
-  AddBusinessViewModel(this._ref) : _apiMethod = _ref.read(apiMethodProvider);
+  late final ApiMethod _apiMethod;
+
+  @override
+  int build() {
+    _apiMethod = ref.watch(apiMethodProvider);
+    return 0;
+  }
 
   // Status notifier for UI to react to state changes
   final ValueNotifier<AddBusinessStatus> addBusinessStatus =
@@ -49,8 +54,8 @@ class AddBusinessViewModel extends ChangeNotifier {
   /// Private method to handle API call
   Future<String> _addBusinessToApi(Map<String, String> businessData) async {
     // Get current user's email and organization ID from providers
-    final userEmail = _ref.read(userEmailProvider);
-    final organizationId = _ref.read(organizationIdProvider);
+    final userEmail = ref.read(userEmailProvider);
+    final organizationId = ref.read(organizationIdProvider);
 
     // Debug prints to check what values we're getting
     debugPrint('🔍 DEBUG AddBusiness: userEmail from provider: $userEmail');
@@ -91,6 +96,6 @@ class AddBusinessViewModel extends ChangeNotifier {
   @override
   void dispose() {
     addBusinessStatus.dispose();
-    super.dispose();
+    
   }
 }

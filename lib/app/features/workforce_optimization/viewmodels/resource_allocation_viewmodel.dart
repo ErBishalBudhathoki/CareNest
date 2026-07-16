@@ -1,17 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/workforce_planning_viewmodel.dart';
 
 // State class for Resource Allocation
 class ResourceAllocationState {
-  final bool isLoading;
-  final List<ResourceAllocation> allocations;
-  final AllocationMetrics? metrics;
-  final List<WorkerRecommendation> recommendations;
-  final List<WorkloadAnalysis> workloadAnalysis;
-  final String? error;
+  late final bool isLoading;
+  late final List<ResourceAllocation> allocations;
+  late final AllocationMetrics? metrics;
+  late final List<WorkerRecommendation> recommendations;
+  late final List<WorkloadAnalysis> workloadAnalysis;
+  late final String? error;
 
   ResourceAllocationState({
     this.isLoading = false,
@@ -42,10 +41,16 @@ class ResourceAllocationState {
 }
 
 // StateNotifier for Resource Allocation
-class ResourceAllocationViewModel extends StateNotifier<ResourceAllocationState> {
-  final WorkforceRepository _repository;
+class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
+  late final WorkforceRepository _repository;
 
-  ResourceAllocationViewModel(this._repository) : super(ResourceAllocationState());
+  
+  @override
+  ResourceAllocationState build() {
+    final repository = ref.watch(workforceRepositoryProvider);
+    
+    return ResourceAllocationState();
+  }
 
   // Optimize allocation
   Future<void> optimizeAllocation({
@@ -194,8 +199,4 @@ class ResourceAllocationViewModel extends StateNotifier<ResourceAllocationState>
 }
 
 // Provider for ResourceAllocationViewModel
-final resourceAllocationViewModelProvider =
-    StateNotifierProvider<ResourceAllocationViewModel, ResourceAllocationState>((ref) {
-  final repository = ref.watch(workforceRepositoryProvider);
-  return ResourceAllocationViewModel(repository);
-});
+final resourceAllocationViewModelProvider = NotifierProvider<ResourceAllocationViewModel, ResourceAllocationState>(ResourceAllocationViewModel.new);

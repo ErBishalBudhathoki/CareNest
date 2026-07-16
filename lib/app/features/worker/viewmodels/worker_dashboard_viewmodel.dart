@@ -1,7 +1,6 @@
 import 'package:carenest/app/features/worker/models/worker_dashboard_data.dart';
 import 'package:carenest/app/features/worker/repositories/worker_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 /// Worker Dashboard ViewModel Provider
 ///
@@ -22,11 +21,8 @@ import 'package:flutter_riverpod/legacy.dart';
 ///   error: (error, stack) => ErrorWidget(error),
 /// );
 /// ```
-final workerDashboardViewModelProvider = StateNotifierProvider<
-    WorkerDashboardViewModel, AsyncValue<WorkerDashboardData>>((ref) {
-  final repository = ref.read(workerRepositoryProvider);
-  return WorkerDashboardViewModel(repository);
-});
+final workerDashboardViewModelProvider = AsyncNotifierProvider<
+    WorkerDashboardViewModel, WorkerDashboardData>(WorkerDashboardViewModel.new);
 
 /// Worker Dashboard ViewModel
 ///
@@ -35,14 +31,13 @@ final workerDashboardViewModelProvider = StateNotifierProvider<
 /// - Manage loading/success/error states
 /// - Provide refresh functionality
 /// - Handle errors gracefully
-class WorkerDashboardViewModel
-    extends StateNotifier<AsyncValue<WorkerDashboardData>> {
-  final WorkerRepository _repository;
+class WorkerDashboardViewModel extends AsyncNotifier<WorkerDashboardData> {
+  late final WorkerRepository _repository;
 
-  WorkerDashboardViewModel(this._repository)
-      : super(const AsyncValue.loading()) {
-    // Auto-load dashboard on initialization
-    loadDashboard();
+  @override
+  Future<WorkerDashboardData> build() async {
+    _repository = ref.watch(workerRepositoryProvider);
+    return _repository.getDashboardData();
   }
 
   /// Load dashboard data
@@ -52,23 +47,23 @@ class WorkerDashboardViewModel
   /// On error: Sets state to AsyncValue.error(error, stackTrace)
   Future<void> loadDashboard() async {
     // Set loading state (preserves previous data if available for optimistic UI)
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
 
     try {
       // Fetch data from repository (which uses ApiMethod)
       final data = await _repository.getDashboardData();
 
       // Check if still mounted (user might have navigated away)
-      if (!mounted) return;
+      
 
       // Update state with fetched data
-      state = AsyncValue.data(data);
+      state = AsyncData(data);
     } catch (error, stackTrace) {
       // Check if still mounted
-      if (!mounted) return;
+      
 
       // Update state with error
-      state = AsyncValue.error(error, stackTrace);
+      state = AsyncError(error, stackTrace);
 
       // Log error for debugging (in production, this would go to error tracking service)
       print('Worker dashboard load error: $error');
@@ -93,11 +88,11 @@ class WorkerDashboardViewModel
       // Don't set loading state - keep current data visible
       final data = await _repository.getDashboardData();
 
-      if (!mounted) return;
+      
 
-      state = AsyncValue.data(data);
+      state = AsyncData(data);
     } catch (error) {
-      if (!mounted) return;
+      
 
       // On error, keep current state (don't disrupt user if background refresh fails)
       print('Silent refresh failed: $error');

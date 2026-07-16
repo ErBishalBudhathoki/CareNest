@@ -4,7 +4,10 @@ import 'package:carenest/app/services/firebase_auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/signup_model.dart';
 
-class SignupViewModel extends ChangeNotifier {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
+class SignupViewModel extends Notifier<int> {
   final SignupModel model = SignupModel();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -12,11 +15,19 @@ class SignupViewModel extends ChangeNotifier {
       TextEditingController();
   var ins;
   dynamic result;
-  final ApiMethod apiMethod;
-  final FirebaseAuthService _firebaseAuthService;
+  late final ApiMethod apiMethod;
+  late final FirebaseAuthService _firebaseAuthService;
 
-  SignupViewModel(this.apiMethod, {FirebaseAuthService? firebaseAuthService})
-      : _firebaseAuthService = firebaseAuthService ?? FirebaseAuthService();
+  @override
+  int build() {
+    apiMethod = ref.watch(app_providers.apiMethodProvider);
+    _firebaseAuthService = FirebaseAuthService();
+    return 0;
+  }
+
+  void notifyListeners() {
+    state = state + 1;
+  }
 
   // Loading state property
   bool _isLoading = false;
@@ -224,6 +235,6 @@ class SignupViewModel extends ChangeNotifier {
     passwordController.dispose();
     confirmPasswordController.dispose();
     model.dispose();
-    super.dispose();
+    
   }
 }

@@ -1,15 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../models/shift_model.dart';
 
 import '../repositories/schedule_repository.dart';
 
 final scheduleViewModelProvider =
-    StateNotifierProvider.family<ScheduleViewModel, ScheduleState, String>(
-        (ref, organizationId) {
-  final repository = ref.watch(scheduleRepositoryProvider);
-  return ScheduleViewModel(repository, organizationId);
-});
+    NotifierProvider.family<ScheduleViewModel, ScheduleState, String>(
+        ScheduleViewModel.new);
 
 class ScheduleState {
   final AsyncValue<List<ShiftModel>> shifts;
@@ -35,13 +31,16 @@ class ScheduleState {
   }
 }
 
-class ScheduleViewModel extends StateNotifier<ScheduleState> {
-  final ScheduleRepository _repository;
+class ScheduleViewModel extends Notifier<ScheduleState> {
+  ScheduleViewModel(this._organizationId);
   final String _organizationId;
+  late final ScheduleRepository _repository;
 
-  ScheduleViewModel(this._repository, this._organizationId)
-      : super(ScheduleState(selectedDate: DateTime.now())) {
-    loadShifts();
+  @override
+  ScheduleState build() {
+    _repository = ref.watch(scheduleRepositoryProvider);
+    Future.microtask(() => loadShifts());
+    return ScheduleState(selectedDate: DateTime.now());
   }
 
   Future<void> loadShifts() async {
@@ -59,13 +58,10 @@ class ScheduleViewModel extends StateNotifier<ScheduleState> {
         endDate: endOfWeek,
         status: state.selectedFilter == 'all' ? null : state.selectedFilter,
       );
-      if (mounted) {
+      
         state = state.copyWith(shifts: AsyncValue.data(shifts));
-      }
     } catch (e, st) {
-      if (mounted) {
-        state = state.copyWith(shifts: AsyncValue.error(e, st));
-      }
+      state = state.copyWith(shifts: AsyncValue.error(e, st));
     }
   }
 

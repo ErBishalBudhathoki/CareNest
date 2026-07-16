@@ -79,7 +79,8 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
           padding: const EdgeInsets.all(24),
           child: Consumer(
             builder: (context, ref, child) {
-              final viewModel = ref.watch(forgotPasswordViewModelProvider);
+              final isLoading = ref.watch(forgotPasswordViewModelProvider);
+              final viewModel = ref.read(forgotPasswordViewModelProvider.notifier);
               return Form(
                 key: _formKey,
                 child: Column(

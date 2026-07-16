@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Health Monitoring
 class HealthMonitoringState {
-  final bool isLoading;
+  late final bool isLoading;
   final Map<String, dynamic>? healthTrends;
   final Map<String, dynamic>? vitalSigns;
   final Map<String, dynamic>? deteriorationPrediction;
   final Map<String, dynamic>? alerts;
-  final String? error;
+  late final String? error;
 
   HealthMonitoringState({
     this.isLoading = false,
@@ -41,10 +40,16 @@ class HealthMonitoringState {
 }
 
 // StateNotifier for Health Monitoring
-class HealthMonitoringViewModel extends StateNotifier<HealthMonitoringState> {
-  final CareIntelligenceRepository _repository;
+class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
+  late final CareIntelligenceRepository _repository;
 
-  HealthMonitoringViewModel(this._repository) : super(HealthMonitoringState());
+  
+  @override
+  HealthMonitoringState build() {
+    final repository = ref.watch(careIntelligenceRepositoryProvider);
+    
+    return HealthMonitoringState();
+  }
 
   // Analyze health trends (uses care patterns analysis)
   Future<void> analyzeHealthTrends({
@@ -164,8 +169,4 @@ class HealthMonitoringViewModel extends StateNotifier<HealthMonitoringState> {
 }
 
 // Provider for HealthMonitoringViewModel
-final healthMonitoringViewModelProvider =
-    StateNotifierProvider<HealthMonitoringViewModel, HealthMonitoringState>((ref) {
-  final repository = ref.watch(careIntelligenceRepositoryProvider);
-  return HealthMonitoringViewModel(repository);
-});
+final healthMonitoringViewModelProvider = NotifierProvider<HealthMonitoringViewModel, HealthMonitoringState>(HealthMonitoringViewModel.new);

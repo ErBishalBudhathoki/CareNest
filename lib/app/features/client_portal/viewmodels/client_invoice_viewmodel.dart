@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
@@ -58,35 +58,25 @@ final clientInvoiceReceiptUrlsProvider = FutureProvider.autoDispose
   return const [];
 });
 
-class InvoiceActionsViewModel extends StateNotifier<AsyncValue<void>> {
-  final ClientPortalRepository _repository;
+class InvoiceActionsViewModel extends AsyncNotifier<void> {
+  late final ClientPortalRepository _repository;
 
-  InvoiceActionsViewModel(this._repository)
-      : super(const AsyncValue.data(null));
+  @override
+  FutureOr<void> build() {
+    _repository = ref.watch(clientPortalRepositoryProvider);
+    return null;
+  }
 
   Future<void> approve(String id) async {
-    state = const AsyncValue.loading();
-    try {
-      await _repository.approveInvoice(id);
-      state = const AsyncValue.data(null);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _repository.approveInvoice(id));
   }
 
   Future<void> dispute(String id, String reason) async {
-    state = const AsyncValue.loading();
-    try {
-      await _repository.disputeInvoice(id, reason);
-      state = const AsyncValue.data(null);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _repository.disputeInvoice(id, reason));
   }
 }
 
 final invoiceActionsViewModelProvider =
-    StateNotifierProvider<InvoiceActionsViewModel, AsyncValue<void>>((ref) {
-  final repository = ref.watch(clientPortalRepositoryProvider);
-  return InvoiceActionsViewModel(repository);
-});
+    AsyncNotifierProvider<InvoiceActionsViewModel, void>(InvoiceActionsViewModel.new);

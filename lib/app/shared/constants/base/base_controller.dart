@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 /// Base state for controllers using Riverpod
 abstract class BaseState {
@@ -17,19 +16,11 @@ mixin ErrorState {
   String? get error;
 }
 
-/// Base controller using Riverpod StateNotifier
-abstract class BaseController<T extends BaseState> extends StateNotifier<T> {
-  BaseController(super.initialState);
-
+/// Base controller using Riverpod 3.x Notifier
+abstract class BaseController<T extends BaseState> extends Notifier<T> {
   void initData();
   void onViewReady();
   void disposeData();
-
-  @override
-  void dispose() {
-    disposeData();
-    super.dispose();
-  }
 
   void hideKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();

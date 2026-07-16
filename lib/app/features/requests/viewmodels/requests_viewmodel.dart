@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
@@ -11,55 +10,46 @@ import 'package:carenest/app/features/notifications/providers/notification_provi
 import 'package:shared_preferences/shared_preferences.dart';
 
 final requestsViewModelProvider =
-    StateNotifierProvider<RequestsViewModel, AsyncValue<List<RequestModel>>>(
-        (ref) {
-  final repository = ref.watch(requestRepositoryProvider);
-  final userAsync = ref.watch(currentUserProvider);
+    AsyncNotifierProvider<RequestsViewModel, List<RequestModel>>(
+        RequestsViewModel.new);
 
-  return userAsync.when(
-    data: (user) => RequestsViewModel(ref, repository, user),
-    loading: () => RequestsViewModel(ref, repository, null, loading: true),
-    error: (e, st) => RequestsViewModel(ref, repository, null, error: e),
-  );
-});
+class RequestsViewModel extends AsyncNotifier<List<RequestModel>> {
+  late final RequestRepository _repository;
+  User? _user;
 
-class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
-  final Ref _ref;
-  final RequestRepository _repository;
-  final User? _user;
-
-  RequestsViewModel(this._ref, this._repository, this._user,
-      {bool loading = false, Object? error})
-      : super(loading
-            ? const AsyncValue.loading()
-            : (error != null
-                ? AsyncValue.error(error, StackTrace.current)
-                : const AsyncValue.loading())) {
+  @override
+  Future<List<RequestModel>> build() async {
+    _repository = ref.watch(requestRepositoryProvider);
+    final userAsync = ref.watch(currentUserProvider);
+    _user = userAsync.value;
     if (_user != null) {
-      fetchRequests();
-    } else if (!loading && error == null) {
-      // If user is null and no error/loading passed, it means we failed to get user
-      state = AsyncValue.error('User not authenticated', StackTrace.current);
+      return fetchRequests();
     }
+    return [];
   }
 
-  Future<void> fetchRequests() async {
-    if (_user == null) return;
+  Future<List<RequestModel>> fetchRequests() async {
+    final user = _user;
+    if (user == null) return [];
+    final prefs = await SharedPreferences.getInstance();
+    final cacheKey = _getStatusCacheKey(user.organizationId, user.email);
+    final previousStatuses = _loadCachedStatuses(prefs, cacheKey);
+
+    final requests = await _repository.getRequests(
+      user.organizationId,
+      userId: user.id.isNotEmpty ? user.id : null,
+      userEmail: user.email,
+    );
+
+    await _emitStatusChangeNotifications(previousStatuses, requests);
+    await _saveCachedStatuses(prefs, cacheKey, requests);
+    return requests;
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final cacheKey = _getStatusCacheKey(_user.organizationId, _user.email);
-      final previousStatuses = _loadCachedStatuses(prefs, cacheKey);
-
-      final requests = await _repository.getRequests(
-        _user.organizationId,
-        userId: _user.id.isNotEmpty ? _user.id : null,
-        userEmail: _user.email,
-      );
-
-      await _emitStatusChangeNotifications(previousStatuses, requests);
-      await _saveCachedStatuses(prefs, cacheKey, requests);
-
-      state = AsyncValue.data(requests);
+      state = AsyncValue.data(await fetchRequests());
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -67,21 +57,22 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
 
   Future<bool> createRequest(
       String type, Map<String, dynamic> details, String? note) async {
-    if (_user == null) return false;
+    final user = _user;
+    if (user == null) return false;
 
     try {
       final newRequest = RequestModel(
-        organizationId: _user.organizationId,
-        userId: _user.id.isNotEmpty ? _user.id : _user.email,
-        createdBy: _user.email,
+        organizationId: user.organizationId,
+        userId: user.id.isNotEmpty ? user.id : user.email,
+        createdBy: user.email,
         type: type,
         status: RequestStatus.pending,
         details: details,
         note: note,
       );
 
-      await _repository.createRequest(newRequest, _user.email);
-      await fetchRequests(); // Refresh list
+      await _repository.createRequest(newRequest, user.email);
+      await refresh();
       return true;
     } catch (e) {
       return false;
@@ -148,7 +139,7 @@ class RequestsViewModel extends StateNotifier<AsyncValue<List<RequestModel>>> {
         },
       );
 
-      await _ref.read(notificationProvider.notifier).addNotification(
+      await ref.read(notificationProvider.notifier).addNotification(
             notification,
           );
     }

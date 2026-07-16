@@ -1,17 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/workforce_planning_viewmodel.dart';
 
 // State class for Performance Analytics
 class PerformanceAnalyticsState {
-  final bool isLoading;
-  final List<PerformanceAnalytics> analytics;
+  late final bool isLoading;
+  late final List<PerformanceAnalytics> analytics;
   final Map<String, dynamic>? trends;
   final Map<String, dynamic>? prediction;
-  final List<SkillProficiency> skillProficiency;
-  final String? error;
+  late final List<SkillProficiency> skillProficiency;
+  late final String? error;
 
   PerformanceAnalyticsState({
     this.isLoading = false,
@@ -42,10 +41,16 @@ class PerformanceAnalyticsState {
 }
 
 // StateNotifier for Performance Analytics
-class PerformanceAnalyticsViewModel extends StateNotifier<PerformanceAnalyticsState> {
-  final WorkforceRepository _repository;
+class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> {
+  late final WorkforceRepository _repository;
 
-  PerformanceAnalyticsViewModel(this._repository) : super(PerformanceAnalyticsState());
+  
+  @override
+  PerformanceAnalyticsState build() {
+    final repository = ref.watch(workforceRepositoryProvider);
+    
+    return PerformanceAnalyticsState();
+  }
 
   // Get performance analytics
   Future<void> getPerformanceAnalytics({
@@ -193,8 +198,4 @@ class PerformanceAnalyticsViewModel extends StateNotifier<PerformanceAnalyticsSt
 }
 
 // Provider for PerformanceAnalyticsViewModel
-final performanceAnalyticsViewModelProvider =
-    StateNotifierProvider<PerformanceAnalyticsViewModel, PerformanceAnalyticsState>((ref) {
-  final repository = ref.watch(workforceRepositoryProvider);
-  return PerformanceAnalyticsViewModel(repository);
-});
+final performanceAnalyticsViewModelProvider = NotifierProvider<PerformanceAnalyticsViewModel, PerformanceAnalyticsState>(PerformanceAnalyticsViewModel.new);

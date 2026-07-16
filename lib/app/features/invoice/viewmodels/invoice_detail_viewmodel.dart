@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/services/invoice_management_service.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -47,11 +46,15 @@ class InvoiceDetailState {
 }
 
 // ViewModel for invoice detail
-class InvoiceDetailViewModel extends StateNotifier<InvoiceDetailState> {
-  final InvoiceManagementService _invoiceService;
+class InvoiceDetailViewModel extends Notifier<InvoiceDetailState> {
+  late final InvoiceManagementService _invoiceService;
 
-  InvoiceDetailViewModel(this._invoiceService)
-      : super(const InvoiceDetailState());
+  
+  @override
+  InvoiceDetailState build() {
+    _invoiceService = ref.watch(invoiceManagementServiceProvider);
+    return const InvoiceDetailState();
+  }
 
   void setInitialInvoice(InvoiceListModel invoice) {
     state = state.copyWith(invoice: invoice, error: null, warning: null);
@@ -159,13 +162,7 @@ class InvoiceDetailViewModel extends StateNotifier<InvoiceDetailState> {
 }
 
 // Providers
-final invoiceDetailViewModelProvider =
-    StateNotifierProvider<InvoiceDetailViewModel, InvoiceDetailState>(
-  (ref) {
-    final invoiceService = ref.watch(invoiceManagementServiceProvider);
-    return InvoiceDetailViewModel(invoiceService);
-  },
-);
+final invoiceDetailViewModelProvider = NotifierProvider<InvoiceDetailViewModel, InvoiceDetailState>(InvoiceDetailViewModel.new);
 
 // Provider for invoice service
 final invoiceManagementServiceProvider = Provider<InvoiceManagementService>(

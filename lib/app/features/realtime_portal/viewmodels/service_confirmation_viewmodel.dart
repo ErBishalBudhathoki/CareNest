@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/realtime_portal/repositories/realtime_portal_repository.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
@@ -54,12 +53,15 @@ class ServiceConfirmationState {
   }
 }
 
-class ServiceConfirmationViewModel
-    extends StateNotifier<ServiceConfirmationState> {
-  final RealtimePortalRepository _repository;
+class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
+  late final RealtimePortalRepository _repository;
 
-  ServiceConfirmationViewModel(this._repository)
-      : super(ServiceConfirmationState());
+  @override
+  ServiceConfirmationState build() {
+    final apiMethod = ref.watch(apiMethodProvider);
+    _repository = RealtimePortalRepository(apiMethod);
+    return ServiceConfirmationState();
+  }
 
   /// Save digital signature
   Future<void> saveSignature({
@@ -268,9 +270,5 @@ class ServiceConfirmationViewModel
 }
 
 /// Provider for service confirmation viewmodel
-final serviceConfirmationViewModelProvider = StateNotifierProvider<
-    ServiceConfirmationViewModel, ServiceConfirmationState>((ref) {
-  final apiMethod = ref.watch(apiMethodProvider);
-  final repository = RealtimePortalRepository(apiMethod);
-  return ServiceConfirmationViewModel(repository);
-});
+final serviceConfirmationViewModelProvider = NotifierProvider<
+    ServiceConfirmationViewModel, ServiceConfirmationState>(ServiceConfirmationViewModel.new);

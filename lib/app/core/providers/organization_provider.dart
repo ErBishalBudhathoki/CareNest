@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/organization/models/organization_model.dart';
 import 'package:carenest/app/features/organization/models/organization_branding.dart';
 import 'package:carenest/app/features/organization/repositories/organization_repository.dart';
@@ -40,13 +39,16 @@ class OrganizationState {
 }
 
 // Notifier
-class OrganizationNotifier extends StateNotifier<OrganizationState> {
-  final OrganizationRepository _repository;
-  final SharedPreferencesUtils _prefs;
+class OrganizationNotifier extends Notifier<OrganizationState> {
+  late final OrganizationRepository _repository;
+  late final SharedPreferencesUtils _prefs;
 
-  OrganizationNotifier(this._repository, this._prefs)
-      : super(const OrganizationState()) {
+  @override
+  OrganizationState build() {
+    _repository = ref.watch(organizationRepositoryProvider);
+    _prefs = ref.watch(sharedPreferencesProvider);
     loadUserOrganizations();
+    return const OrganizationState();
   }
 
   Future<void> loadUserOrganizations() async {
@@ -132,8 +134,4 @@ class OrganizationNotifier extends StateNotifier<OrganizationState> {
 
 // Provider
 final organizationProvider =
-    StateNotifierProvider<OrganizationNotifier, OrganizationState>((ref) {
-  final repository = ref.watch(organizationRepositoryProvider);
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return OrganizationNotifier(repository, prefs);
-});
+    NotifierProvider<OrganizationNotifier, OrganizationState>(OrganizationNotifier.new);

@@ -1,23 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/communication/repositories/communication_repository.dart';
 import 'package:carenest/app/features/communication/models/communication_models.dart';
 
-final communicationViewModelProvider =
-    StateNotifierProvider<CommunicationViewModel, CommunicationState>((ref) {
-  final repository = ref.watch(communicationRepositoryProvider);
-  return CommunicationViewModel(repository);
-});
+final communicationViewModelProvider = NotifierProvider<CommunicationViewModel, CommunicationState>(CommunicationViewModel.new);
 
 class HubBroadcastMessage {
-  final String id;
-  final String message;
-  final String type;
-  final String initiatorName;
-  final String group;
-  final String status;
-  final List<String> acknowledgments;
-  final DateTime createdAt;
+  late final String id;
+  late final String message;
+  late final String type;
+  late final String initiatorName;
+  late final String group;
+  late final String status;
+  late final List<String> acknowledgments;
+  late final DateTime createdAt;
 
   HubBroadcastMessage({
     required this.id,
@@ -47,15 +42,15 @@ class HubBroadcastMessage {
 }
 
 class CommunicationState {
-  final bool isLoading;
-  final String? error;
-  final List<Conversation> conversations;
-  final List<Message> messages;
-  final List<MessageTemplate> templates;
-  final MessageStatus? messageStatus;
-  final bool isSending;
-  final List<HubBroadcastMessage> activeBroadcasts;
-  final List<HubBroadcastMessage> broadcastHistory;
+  late final bool isLoading;
+  late final String? error;
+  late final List<Conversation> conversations;
+  late final List<Message> messages;
+  late final List<MessageTemplate> templates;
+  late final MessageStatus? messageStatus;
+  late final bool isSending;
+  late final List<HubBroadcastMessage> activeBroadcasts;
+  late final List<HubBroadcastMessage> broadcastHistory;
 
   CommunicationState({
     this.isLoading = false,
@@ -94,10 +89,16 @@ class CommunicationState {
   }
 }
 
-class CommunicationViewModel extends StateNotifier<CommunicationState> {
-  final CommunicationRepository _repository;
+class CommunicationViewModel extends Notifier<CommunicationState> {
+  late final CommunicationRepository _repository;
 
-  CommunicationViewModel(this._repository) : super(CommunicationState());
+  
+  @override
+  CommunicationState build() {
+    final repository = ref.watch(communicationRepositoryProvider);
+    
+    return CommunicationState();
+  }
 
   Future<void> loadConversations(String userId) async {
     state = state.copyWith(isLoading: true, error: null);

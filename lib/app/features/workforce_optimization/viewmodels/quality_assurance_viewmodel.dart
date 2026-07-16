@@ -1,18 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/workforce_planning_viewmodel.dart';
 
 // State class for Quality Assurance
 class QualityAssuranceState {
-  final bool isLoading;
-  final QualityScore? qualityScore;
-  final List<ComplianceCheck> complianceChecks;
-  final List<SentimentAnalysis> sentiments;
-  final List<RiskAssessment> riskAssessments;
-  final IncidentPattern? incidentPattern;
-  final String? error;
+  late final bool isLoading;
+  late final QualityScore? qualityScore;
+  late final List<ComplianceCheck> complianceChecks;
+  late final List<SentimentAnalysis> sentiments;
+  late final List<RiskAssessment> riskAssessments;
+  late final IncidentPattern? incidentPattern;
+  late final String? error;
 
   QualityAssuranceState({
     this.isLoading = false,
@@ -46,10 +45,16 @@ class QualityAssuranceState {
 }
 
 // StateNotifier for Quality Assurance
-class QualityAssuranceViewModel extends StateNotifier<QualityAssuranceState> {
-  final WorkforceRepository _repository;
+class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
+  late final WorkforceRepository _repository;
 
-  QualityAssuranceViewModel(this._repository) : super(QualityAssuranceState());
+  
+  @override
+  QualityAssuranceState build() {
+    final repository = ref.watch(workforceRepositoryProvider);
+    
+    return QualityAssuranceState();
+  }
 
   // Score service quality
   Future<void> scoreServiceQuality({
@@ -233,8 +238,4 @@ class QualityAssuranceViewModel extends StateNotifier<QualityAssuranceState> {
 }
 
 // Provider for QualityAssuranceViewModel
-final qualityAssuranceViewModelProvider =
-    StateNotifierProvider<QualityAssuranceViewModel, QualityAssuranceState>((ref) {
-  final repository = ref.watch(workforceRepositoryProvider);
-  return QualityAssuranceViewModel(repository);
-});
+final qualityAssuranceViewModelProvider = NotifierProvider<QualityAssuranceViewModel, QualityAssuranceState>(QualityAssuranceViewModel.new);

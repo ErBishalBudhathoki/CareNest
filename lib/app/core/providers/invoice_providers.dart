@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
-import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
+ import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_data_processor.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_helpers.dart';
 import 'package:carenest/app/features/invoice/repositories/invoice_repository.dart';
@@ -35,10 +34,12 @@ final enhancedInvoiceServiceProvider = Provider((ref) {
 });
 
 /// State provider for tracking invoice generation process
+class InvoiceGenerationStateNotifier extends Notifier<InvoiceGenerationState> {
+  @override
+  InvoiceGenerationState build() => InvoiceGenerationState.initial;
+}
 final invoiceGenerationStateProvider =
-    StateProvider<InvoiceGenerationState>((ref) {
-  return InvoiceGenerationState.initial;
-});
+    NotifierProvider<InvoiceGenerationStateNotifier, InvoiceGenerationState>(InvoiceGenerationStateNotifier.new);
 
 /// Enum for tracking invoice generation state
 enum InvoiceGenerationState {
@@ -51,11 +52,15 @@ enum InvoiceGenerationState {
 }
 
 /// Provider for invoice generation error message
-final invoiceGenerationErrorProvider = StateProvider<String>((ref) {
-  return '';
-});
+class InvoiceGenerationErrorNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+}
+final invoiceGenerationErrorProvider = NotifierProvider<InvoiceGenerationErrorNotifier, String>(InvoiceGenerationErrorNotifier.new);
 
 /// Provider for generated invoice paths
-final generatedInvoicePathsProvider = StateProvider<List<String>>((ref) {
-  return [];
-});
+class GeneratedInvoicePathsNotifier extends Notifier<List<String>> {
+  @override
+  List<String> build() => [];
+}
+final generatedInvoicePathsProvider = NotifierProvider<GeneratedInvoicePathsNotifier, List<String>>(GeneratedInvoicePathsNotifier.new);

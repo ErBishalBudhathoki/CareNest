@@ -1,12 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../repositories/compliance_repository.dart';
 
-final complianceDashboardViewModelProvider = StateNotifierProvider.autoDispose<
-    ComplianceDashboardViewModel, ComplianceState>((ref) {
-  final repository = ref.watch(complianceRepositoryProvider);
-  return ComplianceDashboardViewModel(repository);
-});
+final complianceDashboardViewModelProvider = NotifierProvider.autoDispose<
+    ComplianceDashboardViewModel, ComplianceState>(ComplianceDashboardViewModel.new);
 
 class ComplianceState {
   final bool isLoading;
@@ -32,12 +28,16 @@ class ComplianceState {
   }
 }
 
-class ComplianceDashboardViewModel extends StateNotifier<ComplianceState> {
-  final ComplianceRepository _repository;
+class ComplianceDashboardViewModel extends Notifier<ComplianceState> {
+  late final ComplianceRepository _repository;
 
-  ComplianceDashboardViewModel(this._repository)
-      : super(const ComplianceState()) {
-    loadData();
+  @override
+  ComplianceState build() {
+    _repository = ref.watch(complianceRepositoryProvider);
+    // Loading data asynchronously in build can be done without awaiting,
+    // or typically we might just invoke it right away.
+    Future.microtask(() => loadData());
+    return const ComplianceState();
   }
 
   Future<void> loadData() async {

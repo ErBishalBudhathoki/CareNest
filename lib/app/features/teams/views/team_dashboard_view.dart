@@ -33,9 +33,9 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('TeamDashboardView: Triggering initial loads');
-      ref.read(teamViewModelProvider).loadMyTeams();
-      ref.read(teamViewModelProvider).loadActiveBroadcasts();
-      ref.read(teamViewModelProvider).loadBroadcastHistory(silent: true);
+      ref.read(teamViewModelProvider.notifier).loadMyTeams();
+      ref.read(teamViewModelProvider.notifier).loadActiveBroadcasts();
+      ref.read(teamViewModelProvider.notifier).loadBroadcastHistory(silent: true);
     });
   }
 
@@ -119,9 +119,9 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                         availableUsers: viewModel.availableUsers,
                         isAdmin: ref.watch(userRoleProvider) == UserRole.admin,
                         onInvite: (teamId, email, role) async {
-                          await viewModel.inviteMember(teamId, email, role);
+                          await ref.read(teamViewModelProvider.notifier).inviteMember(teamId, email, role);
                           // Reload to show new member
-                          viewModel.loadMyTeams();
+                          ref.read(teamViewModelProvider.notifier).loadMyTeams();
                         },
                       ),
                     ),
@@ -173,9 +173,9 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
           icon: const Icon(Icons.refresh, color: BauhausDesign.textLight),
           onPressed: () {
             HapticFeedback.lightImpact();
-            ref.read(teamViewModelProvider).loadMyTeams();
-            ref.read(teamViewModelProvider).loadActiveBroadcasts();
-            ref.read(teamViewModelProvider).loadBroadcastHistory(silent: true);
+            ref.read(teamViewModelProvider.notifier).loadMyTeams();
+            ref.read(teamViewModelProvider.notifier).loadActiveBroadcasts();
+            ref.read(teamViewModelProvider.notifier).loadBroadcastHistory(silent: true);
           },
         ),
       ],
@@ -299,7 +299,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                           HapticFeedback.mediumImpact();
                           if (b.id != null) {
                             ref
-                                .read(teamViewModelProvider)
+                                .read(teamViewModelProvider.notifier)
                                 .acknowledgeBroadcast(b.id!);
                           }
                         },
@@ -509,7 +509,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                       final name = nameCtrl.text.trim();
                       if (name.isEmpty) return;
                       HapticFeedback.mediumImpact();
-                      ref.read(teamViewModelProvider).createTeam(name);
+                      ref.read(teamViewModelProvider.notifier).createTeam(name);
                       Navigator.pop(ctx);
                     },
                   ),
@@ -1123,7 +1123,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                       final name = nameCtrl.text.trim();
                       if (name.isEmpty) return;
                       await ref
-                          .read(teamViewModelProvider)
+                          .read(teamViewModelProvider.notifier)
                           .updateTeam(widget.team.id!, name);
                       if (context.mounted) Navigator.pop(ctx);
                     },
@@ -1167,7 +1167,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                     color: BauhausDesign.primary,
                     onTap: () async {
                       await ref
-                          .read(teamViewModelProvider)
+                          .read(teamViewModelProvider.notifier)
                           .deleteTeam(widget.team.id!);
                       if (context.mounted) Navigator.pop(ctx);
                     },
@@ -1211,7 +1211,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                     color: BauhausDesign.info,
                     onTap: () async {
                       await ref
-                          .read(teamViewModelProvider)
+                          .read(teamViewModelProvider.notifier)
                           .squashTeam(widget.team.id!);
                       if (context.mounted) Navigator.pop(ctx);
                     },

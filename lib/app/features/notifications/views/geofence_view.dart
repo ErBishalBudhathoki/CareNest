@@ -17,13 +17,14 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(geofenceViewModelProvider).loadGeofences();
+      ref.read(geofenceViewModelProvider.notifier).loadGeofences();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(geofenceViewModelProvider);
+    final state = ref.watch(geofenceViewModelProvider);
+    final notifier = ref.read(geofenceViewModelProvider.notifier);
 
     return Scaffold(
       appBar: const AppBarWidget(
@@ -34,16 +35,16 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
         onPressed: () => _showAddGeofenceDialog(context),
         child: const Icon(Icons.add),
       ),
-      body: viewModel.isLoading
+      body: state.isLoading
           ? const Center(child: LoadingIndicator())
-          : viewModel.geofences.isEmpty
+          : state.geofences.isEmpty
               ? _buildEmptyState()
               : ListView.builder(
                   padding: const EdgeInsets.all(16.0),
-                  itemCount: viewModel.geofences.length,
+                  itemCount: state.geofences.length,
                   itemBuilder: (context, index) {
-                    final geofence = viewModel.geofences[index];
-                    return _buildGeofenceItem(geofence, viewModel);
+                    final geofence = state.geofences[index];
+                    return _buildGeofenceItem(geofence, notifier);
                   },
                 ),
     );
@@ -70,7 +71,7 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
     );
   }
 
-  Widget _buildGeofenceItem(GeofenceModel geofence, dynamic viewModel) {
+  Widget _buildGeofenceItem(GeofenceModel geofence, dynamic notifier) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       child: ListTile(
@@ -82,13 +83,13 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
         isThreeLine: true,
         trailing: IconButton(
           icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () => _confirmDelete(geofence, viewModel),
+          onPressed: () => _confirmDelete(geofence, notifier),
         ),
       ),
     );
   }
 
-  Future<void> _confirmDelete(GeofenceModel geofence, dynamic viewModel) async {
+  Future<void> _confirmDelete(GeofenceModel geofence, dynamic notifier) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -108,7 +109,7 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
     );
 
     if (confirm == true) {
-      await viewModel.deleteGeofence(geofence.id);
+      await ref.read(geofenceViewModelProvider.notifier).deleteGeofence(geofence.id);
     }
   }
 
@@ -223,7 +224,7 @@ class _AddGeofenceDialogState extends ConsumerState<AddGeofenceDialog> {
       );
 
       try {
-        await ref.read(geofenceViewModelProvider).addGeofence(geofence);
+        await ref.read(geofenceViewModelProvider.notifier).addGeofence(geofence);
         if (mounted) Navigator.pop(context);
       } catch (e) {
         // Handle error (maybe show snackbar)

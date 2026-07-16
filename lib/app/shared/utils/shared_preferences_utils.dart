@@ -65,6 +65,7 @@ class SharedPreferencesUtils {
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
       _initCompleter!.complete();
+      _initCompleter = null; // Reset to allow subsequent initializations in testing
     } catch (e) {
       debugPrint('Error initializing SharedPreferences: $e');
       _initCompleter!.completeError(e);

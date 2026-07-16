@@ -1,5 +1,5 @@
+import 'package:carenest/app/features/training_compliance/providers/training_compliance_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:carenest/app/features/training_compliance/models/compliance_checklist.dart';
 import 'package:carenest/app/features/training_compliance/repositories/training_compliance_repository.dart';
@@ -15,10 +15,14 @@ abstract class ComplianceState with _$ComplianceState {
   }) = _ComplianceState;
 }
 
-class ComplianceViewModel extends StateNotifier<ComplianceState> {
-  final TrainingComplianceRepository _repository;
+class ComplianceViewModel extends Notifier<ComplianceState> {
+  late final TrainingComplianceRepository _repository;
 
-  ComplianceViewModel(this._repository) : super(const ComplianceState());
+  @override
+  ComplianceState build() {
+    _repository = ref.watch(trainingComplianceRepositoryProvider);
+    return const ComplianceState();
+  }
 
   Future<void> loadChecklists() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
@@ -40,16 +44,27 @@ class ComplianceViewModel extends StateNotifier<ComplianceState> {
     }
   }
 
-  Future<void> updateChecklistStatus(String checklistId, Map<String, bool> itemsStatus, bool isCompleted) async {
+  Future<void> updateChecklistStatus(
+    String checklistId,
+    Map<String, bool> itemsStatus,
+    bool isCompleted,
+  ) async {
     try {
-      await _repository.updateChecklistStatus(checklistId, itemsStatus, isCompleted);
+      await _repository.updateChecklistStatus(
+        checklistId,
+        itemsStatus,
+        isCompleted,
+      );
       await loadChecklists();
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
 
-  Future<void> updateChecklist(String checklistId, Map<String, dynamic> data) async {
+  Future<void> updateChecklist(
+    String checklistId,
+    Map<String, dynamic> data,
+  ) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       await _repository.updateChecklist(checklistId, data);

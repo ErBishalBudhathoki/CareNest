@@ -87,8 +87,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
     if (widget.prefilledOrgCode != null &&
         widget.prefilledOrgCode!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final signupViewModel = ref.read(signupViewModelProvider);
-        signupViewModel.prefillOrganizationCode(widget.prefilledOrgCode!);
+        ref.read(signupViewModelProvider.notifier).prefillOrganizationCode(widget.prefilledOrgCode!);
       });
     }
   }

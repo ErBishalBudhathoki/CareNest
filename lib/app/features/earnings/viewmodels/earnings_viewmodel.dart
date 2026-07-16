@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:carenest/app/features/earnings/models/earnings_data.dart';
 import 'package:carenest/app/features/earnings/repositories/earnings_repository.dart';
@@ -11,14 +10,14 @@ enum TaxFrequency { weekly, fortnightly, monthly, annually }
 
 // State class
 class EarningsState {
-  final bool isLoading;
-  final String? error;
-  final EarningsSummary? summary;
-  final ProjectedEarnings? projection;
-  final EarningsPeriodHistory? periodHistory;
-  final EarningsPeriod period;
-  final DateTime anchorDate;
-  final TaxFrequency taxFrequency;
+  late final bool isLoading;
+  late final String? error;
+  late final EarningsSummary? summary;
+  late final ProjectedEarnings? projection;
+  late final EarningsPeriodHistory? periodHistory;
+  late final EarningsPeriod period;
+  late final DateTime anchorDate;
+  late final TaxFrequency taxFrequency;
 
   EarningsState({
     this.isLoading = false,
@@ -54,27 +53,23 @@ class EarningsState {
   }
 }
 
-final earningsViewModelProvider =
-    StateNotifierProvider<EarningsViewModel, EarningsState>((ref) {
-  final repository = ref.watch(earningsRepositoryProvider);
-  final userAsync = ref.watch(currentUserProvider);
-  final userEmail = userAsync.value?.email ?? '';
-  return EarningsViewModel(repository, userEmail);
-});
+final earningsViewModelProvider = NotifierProvider<EarningsViewModel, EarningsState>(EarningsViewModel.new);
 
-class EarningsViewModel extends StateNotifier<EarningsState> {
-  final EarningsRepository _repository;
-  final String _userEmail;
+class EarningsViewModel extends Notifier<EarningsState> {
+  late final EarningsRepository _repository;
+  late final String _userEmail;
   Map<String, dynamic>? _taxConfig;
 
-  EarningsViewModel(
-    this._repository,
-    this._userEmail, {
-    bool autoLoad = true,
-  }) : super(EarningsState()) {
-    if (autoLoad && _userEmail.isNotEmpty) {
-      loadDashboardData();
+  
+  @override
+  EarningsState build() {
+    _repository = ref.watch(earningsRepositoryProvider);
+    final userAsync = ref.watch(currentUserProvider);
+    _userEmail = userAsync.value?.email ?? '';
+    if (_userEmail.isNotEmpty) {
+      Future.microtask(() => loadDashboardData());
     }
+    return EarningsState();
   }
 
   Future<void> loadDashboardData() async {
@@ -135,7 +130,7 @@ class EarningsViewModel extends StateNotifier<EarningsState> {
 
   void goToPreviousPeriod() {
     final d = state.anchorDate;
-    final DateTime prev;
+    late final DateTime prev;
     if (state.period == EarningsPeriod.weekly) {
       prev = d.subtract(const Duration(days: 7));
     } else {
@@ -147,7 +142,7 @@ class EarningsViewModel extends StateNotifier<EarningsState> {
 
   void goToNextPeriod() {
     final d = state.anchorDate;
-    final DateTime next;
+    late final DateTime next;
     if (state.period == EarningsPeriod.weekly) {
       next = d.add(const Duration(days: 7));
     } else {

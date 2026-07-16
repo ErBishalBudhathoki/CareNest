@@ -1,15 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import '../models/notification_preferences.dart';
 
-class NotificationPreferencesViewModel
-    extends StateNotifier<AsyncValue<NotificationPreferences>> {
-  final ApiMethod _apiMethod;
-  final SharedPreferencesUtils _sharedPrefs;
+class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPreferences> {
+  late final ApiMethod _apiMethod;
+  late final SharedPreferencesUtils _sharedPrefs;
   bool _hasUnsavedChanges = false;
   bool _isSaving = false;
   String? _saveError;
@@ -25,9 +23,11 @@ class NotificationPreferencesViewModel
         normalized == 'local-user';
   }
 
-  NotificationPreferencesViewModel(this._apiMethod, this._sharedPrefs)
-      : super(const AsyncValue.loading()) {
-    loadPreferences();
+  @override
+  Future<NotificationPreferences> build() async {
+    _apiMethod = ref.watch(app_providers.apiMethodProvider);
+    _sharedPrefs = await SharedPreferencesUtils.getInstance();
+    return _fetchPreferences();
   }
 
   bool get hasUnsavedChanges => _hasUnsavedChanges;
@@ -65,23 +65,21 @@ class NotificationPreferencesViewModel
   void _refreshState() {
     final current = state.value;
     if (current != null) {
-      state = AsyncValue.data(current.copyWith());
+      state = AsyncData(current.copyWith());
     }
   }
 
-  Future<void> loadPreferences() async {
-    state = const AsyncValue.loading();
-
+  Future<NotificationPreferences> _fetchPreferences() async {
     try {
       final candidates = await _resolveUserIdentifierCandidates();
       if (candidates.isEmpty) {
         final localFallback =
             NotificationPreferences.defaultPreferences('local-user');
-        state = AsyncValue.data(localFallback);
+        state = AsyncData(localFallback);
         _hasUnsavedChanges = false;
         _saveError = 'User session not found. Please log in again.';
         _refreshState();
-        return;
+        return state.value!;
       }
 
       Map<String, dynamic>? successfulResponse;
@@ -101,19 +99,20 @@ class NotificationPreferencesViewModel
         final canonicalIdentifier = candidates.first;
         final preferences =
             parsedPreferences.copyWith(userId: canonicalIdentifier);
-        state = AsyncValue.data(preferences);
+        state = AsyncData(preferences);
         _hasUnsavedChanges = false;
         _saveError = null;
-        return;
+        return state.value!;
       }
 
       final defaultPrefs =
           NotificationPreferences.defaultPreferences(candidates.first);
-      state = AsyncValue.data(defaultPrefs);
+      state = AsyncData(defaultPrefs);
       _hasUnsavedChanges = true;
       _saveError = 'No saved notification preferences found yet.';
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      return defaultPrefs;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -132,7 +131,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -169,7 +168,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -183,7 +182,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -197,7 +196,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -211,7 +210,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -225,7 +224,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -239,7 +238,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -253,7 +252,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -267,7 +266,7 @@ class NotificationPreferencesViewModel
       lastUpdated: DateTime.now(),
     );
 
-    state = AsyncValue.data(updatedPrefs);
+    state = AsyncData(updatedPrefs);
     _hasUnsavedChanges = true;
     _saveError = null;
   }
@@ -312,7 +311,7 @@ class NotificationPreferencesViewModel
         return false;
       }
 
-      state = AsyncValue.data(
+      state = AsyncData(
         preferences.copyWith(userId: resolvedIdentifier),
       );
       _hasUnsavedChanges = false;
@@ -330,11 +329,6 @@ class NotificationPreferencesViewModel
   }
 }
 
-final notificationPreferencesViewModelProvider = StateNotifierProvider<
-    NotificationPreferencesViewModel,
-    AsyncValue<NotificationPreferences>>((ref) {
-  return NotificationPreferencesViewModel(
-    ref.read(app_providers.apiMethodProvider),
-    ref.read(app_providers.sharedPreferencesProvider),
-  );
-});
+final notificationPreferencesViewModelProvider =
+    AsyncNotifierProvider<NotificationPreferencesViewModel, NotificationPreferences>(
+        NotificationPreferencesViewModel.new);
