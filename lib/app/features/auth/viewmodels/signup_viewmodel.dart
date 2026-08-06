@@ -22,6 +22,14 @@ class SignupViewModel extends Notifier<int> {
   int build() {
     apiMethod = ref.watch(app_providers.apiMethodProvider);
     _firebaseAuthService = FirebaseAuthService();
+    
+    ref.onDispose(() {
+      emailController.dispose();
+      passwordController.dispose();
+      confirmPasswordController.dispose();
+      model.dispose();
+    });
+    
     return 0;
   }
 
@@ -229,12 +237,4 @@ class SignupViewModel extends Notifier<int> {
     }
   }
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    model.dispose();
-    
-  }
 }
