@@ -1,0 +1,33 @@
+# Gitleaks configuration for the CareNest repo.
+# Extends the default rule set and allow-lists known-benign values.
+# Allowlist entries cover:
+#   - Firebase client API keys baked into historical firebase_options.dart
+#     (client-side keys, safe to be public; current code reads them via _getEnv)
+#   - ios/Podfile.lock entries (plugin commit hashes / :path: strings)
+#   - Documentation placeholder PEM blocks and truncated example JWT tokens
+
+title = "CareNest gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known-benign values verified by manual review (2026-08-06)"
+paths = [
+  # Generated dependency lockfile: plugin source paths and revision hashes.
+  '''(^|/)ios/Podfile\.lock$''',
+  # API documentation showing truncated example tokens.
+  '''(^|/)docs/api/auth\.md$''',
+  # Docs containing placeholder service-account examples.
+  '''Restore Missing Frontend Files\.md''',
+  '''(^|/)FIREBASE_ADMIN_SDK_GUIDE\.md$''',
+  '''(^|/)FIREBASE_DEPLOYMENT_GUIDE\.md$''',
+]
+regexes = [
+  # Firebase client API keys (public by design; embedded in the app).
+  '''REDACTED_FIREBASE_API_KEY''',
+  '''REDACTED_FIREBASE_API_KEY''',
+  '''REDACTED_FIREBASE_API_KEY''',
+  # Truncated example JWT header placeholder in docs.
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.\.\.''',
+]

@@ -61,6 +61,9 @@ CONTENT_SCAN_SKIP_BASENAMES=(
   "pnpm-lock.yaml"
   "CHANGELOG.md"
   "CHANGELOG.txt"
+
+  # Gitleaks allowlist config - contains benign regex rules, not secrets
+  ".gitleaks.toml"
 )
 
 # Marker that lets the script skip itself regardless of what it's named.
