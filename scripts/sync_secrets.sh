@@ -80,7 +80,7 @@ ensure_parents() {
   if [[ "$dst" == *@*:* ]]; then
     local target="${dst%%:*}" dir="${dst#*:}"
     dir="$(dirname "$dir")"
-    ssh_run "$target" "sudo mkdir -p " 2>/dev/null || true
+    ssh_run "$target" "sudo mkdir -p \"$dir\"" 2>/dev/null || true
   else
     mkdir -p "$(dirname "$dst")"
   fi
