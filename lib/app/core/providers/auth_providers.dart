@@ -3,7 +3,7 @@
 // Contains providers for user authentication, login state, and role management.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
- // needed for ChangeNotifier auth viewmodels
+// needed for ChangeNotifier auth viewmodels
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:carenest/app/features/auth/viewmodels/signup_viewmodel.dart';
@@ -12,8 +12,6 @@ import 'package:carenest/app/features/auth/viewmodels/verify_otp_viewmodel.dart'
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
-import 'package:carenest/app/core/providers/app_providers.dart'
-    as app_providers;
 
 // ==================== AUTH STATE ====================
 
@@ -82,7 +80,9 @@ class AuthNotifier extends Notifier<AuthState> {
 }
 
 // Main auth state provider
-final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);
 
 // ==================== USER ROLE ====================
 
@@ -104,8 +104,9 @@ class UserRoleNotifier extends Notifier<UserRole> {
 }
 
 // User role provider
-final userRoleProvider =
-    NotifierProvider<UserRoleNotifier, UserRole>(UserRoleNotifier.new);
+final userRoleProvider = NotifierProvider<UserRoleNotifier, UserRole>(
+  UserRoleNotifier.new,
+);
 
 // ==================== AUTH VIEW MODEL PROVIDERS ====================
 
@@ -114,13 +115,17 @@ final loginViewModelProvider =
     NotifierProvider.autoDispose<LoginViewModel, int>(LoginViewModel.new);
 
 // Signup view model provider with autoDispose
-final signupViewModelProvider = NotifierProvider.autoDispose<SignupViewModel, int>(SignupViewModel.new);
+final signupViewModelProvider =
+    NotifierProvider.autoDispose<SignupViewModel, int>(SignupViewModel.new);
 
 // Forgot password view model provider with autoDispose
-final forgotPasswordViewModelProvider = NotifierProvider.autoDispose<ForgotPasswordViewModel, bool>(ForgotPasswordViewModel.new);
+final forgotPasswordViewModelProvider =
+    NotifierProvider.autoDispose<ForgotPasswordViewModel, bool>(
+      ForgotPasswordViewModel.new,
+    );
 
 // OTP verification view model provider with autoDispose
 final verifyOTPViewModelProvider =
-    NotifierProvider.autoDispose<VerifyOTPViewModel, void>(VerifyOTPViewModel.new);
-
-
+    NotifierProvider.autoDispose<VerifyOTPViewModel, void>(
+      VerifyOTPViewModel.new,
+    );

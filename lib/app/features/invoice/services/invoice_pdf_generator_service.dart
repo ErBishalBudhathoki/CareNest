@@ -219,6 +219,7 @@ class InvoicePdfGenerator {
     } catch (e, st) {
       debugPrint('Error generating PDFs: $e');
       debugPrint('Stack trace: $st');
+      rethrow;
     }
 
     debugPrint(
