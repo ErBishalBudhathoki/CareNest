@@ -478,3 +478,16 @@ node-compile-cache/
 appstore_screenshots/
 screenshot-generator/
 skills-lock.json
+
+# ==========================================
+# VPS/dev scratch utilities (root only)
+# ==========================================
+# Root-level python refactor/scratch scripts (none tracked; keep out of git)
+/*.py
+TRACKING.md
+task.md
+walkthrough.md
+state_logic.txt
+vm_logic.txt
+riverpod_3_migration_plan.md
+.kimchi/
