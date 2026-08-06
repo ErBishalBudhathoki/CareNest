@@ -2725,7 +2725,7 @@ app.post("/login", async function (req, res) {
     
     const token = jwt.sign(
       tokenPayload,
-      process.env.PRIVATE_KEY || 'REDACTED', // Fallback to default if env var not set
+      process.env.PRIVATE_KEY || 'REDACTED-JWT-SIGNING-KEY', // Fallback to default if env var not set
       { 
         expiresIn: '24h',
         issuer: 'invoice-app',
