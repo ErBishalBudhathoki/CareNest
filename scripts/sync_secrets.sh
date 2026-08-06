@@ -12,12 +12,15 @@
 #   ./scripts/sync_secrets.sh to-mac <ssh-target> [ssh-key] [remote-project-root]
 #
 # Examples (VPS = ubuntu@140.238.197.220, key = ~/.ssh/hermes_oci_key):
-#   ./scripts/sync_secrets.sh to-mac "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key" "/home/coder/projects/invoice"
-#   ./scripts/sync_secrets.sh to-vps "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key" "/home/coder/projects/invoice"
+#   ./scripts/sync_secrets.sh to-mac "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key" "/home/opc/projects/invoice"
+#   ./scripts/sync_secrets.sh to-vps "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key" "/home/opc/projects/invoice"
 #
 # remote-project-root is the repo path on the OTHER machine. Default:
-#   /home/coder/projects/invoice  (VPS code-server container mount)
+#   /home/opc/projects/invoice  (host path on the Oracle VPS)
 # Tilde in ssh-key or project-root is expanded.
+#
+# The VPS repo is owned by user "opc" with 700/600 perms, so the remote
+# rsync runs via sudo (the "ubuntu" user has passwordless sudo).
 # ==============================================================================
 
 set -euo pipefail
@@ -25,7 +28,7 @@ set -euo pipefail
 DIRECTION="${1:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key] [remote-project-root]}"
 SSH_TARGET="${2:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key] [remote-project-root]}"
 SSH_KEY="${3:-}"
-REMOTE_ROOT="${4:-/home/coder/projects/invoice}"
+REMOTE_ROOT="${4:-/home/opc/projects/invoice}"
 
 # Expand a leading tilde in any path argument (quoted ~ stays literal otherwise).
 expand_tilde() {
@@ -43,6 +46,9 @@ if rsync --help 2>/dev/null | grep -q -- "--mkpath"; then
 else
   MKPATH=""
 fi
+
+# Remote-side rsync runs with sudo to read/write opc-owned files.
+RSYNC_PATH="sudo rsync"
 
 # ── Explicit whitelist of crucial git-ignored files (repo-relative) ──────────
 REPO_FILES=(
@@ -68,13 +74,13 @@ ssh_run() {
   ssh "${SSH_ARGS[@]}" "$@"
 }
 
-# Create the destination directory before copying.
+# Create the destination directory before copying (used when --mkpath is absent).
 ensure_parents() {
   local dst="$1"
   if [[ "$dst" == *@*:* ]]; then
     local target="${dst%%:*}" dir="${dst#*:}"
     dir="$(dirname "$dir")"
-    ssh_run "$target" "mkdir -p " 2>/dev/null || true
+    ssh_run "$target" "sudo mkdir -p " 2>/dev/null || true
   else
     mkdir -p "$(dirname "$dst")"
   fi
@@ -86,9 +92,9 @@ run_rsync() {
   echo "    -> $dst"
   ensure_parents "$dst"
   if [ -n "$SSH_KEY" ]; then
-    rsync -avz --checksum $MKPATH -e "ssh -i $SSH_KEY" "$src" "$dst"
+    rsync -avz --checksum $MKPATH --rsync-path="$RSYNC_PATH" -e "ssh -i $SSH_KEY" "$src" "$dst"
   else
-    rsync -avz --checksum $MKPATH -e "ssh" "$src" "$dst"
+    rsync -avz --checksum $MKPATH --rsync-path="$RSYNC_PATH" -e "ssh" "$src" "$dst"
   fi
 }
 
