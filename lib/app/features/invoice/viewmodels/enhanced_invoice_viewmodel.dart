@@ -16,7 +16,7 @@ class EnhancedInvoiceViewModel extends Notifier<EnhancedInvoiceState> {
   
   @override
   EnhancedInvoiceState build() {
-    final invoiceService = ref.watch(enhancedInvoiceServiceProvider);
+    _invoiceService = ref.watch(enhancedInvoiceServiceProvider);
     
     return EnhancedInvoiceState();
   }

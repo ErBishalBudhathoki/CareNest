@@ -15,7 +15,8 @@ import 'package:carenest/app/features/onboarding/services/onboarding_gate_servic
 import 'package:device_info_plus/device_info_plus.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class LoginViewModel extends Notifier<int> {
   final LoginModel model = LoginModel();
@@ -35,7 +36,6 @@ class LoginViewModel extends Notifier<int> {
   final List<DateTime> _recentAttempts = [];
 
   final List<Map<String, dynamic>> _securityLogs = [];
-
   @override
   int build() {
     _apiMethod = ref.watch(app_providers.apiMethodProvider);
@@ -43,6 +43,11 @@ class LoginViewModel extends Notifier<int> {
     _fcmTokenManager = ref.watch(app_providers.fcmTokenManagerProvider);
     _firebaseAuth = FirebaseAuthService();
     _initializeSecurityContext();
+
+    ref.onDispose(() {
+      model.dispose();
+    });
+
     return 0;
   }
 
@@ -104,17 +109,16 @@ class LoginViewModel extends Notifier<int> {
         return;
       } else {
         _recentAttempts.removeRange(
-            0, _recentAttempts.length - maxAttemptsPerMinute + 1);
+          0,
+          _recentAttempts.length - maxAttemptsPerMinute + 1,
+        );
       }
     }
 
     if (!model.validateForm()) {
       _logSecurityEvent('login_validation_failed', {
         'email': model.getSanitizedEmail(),
-        'errors': {
-          'email': model.emailError,
-          'password': model.passwordError,
-        }
+        'errors': {'email': model.emailError, 'password': model.passwordError},
       });
       return;
     }
@@ -212,17 +216,25 @@ class LoginViewModel extends Notifier<int> {
         // Save user data locally
         await _sharedPrefs.saveAuthToken('Bearer $idToken');
         await _sharedPrefs.setString(
-            'userEmail', userData['email'] ?? credential.user!.email ?? '');
+          'userEmail',
+          userData['email'] ?? credential.user!.email ?? '',
+        );
         await _sharedPrefs.setString('userId', userData['_id'] ?? '');
         await _sharedPrefs.setString('firebaseUid', credential.user!.uid);
         await _sharedPrefs.setString('clientId', clientId);
         await _sharedPrefs.setString(
-            'organizationId', userData['organizationId'] ?? '');
+          'organizationId',
+          userData['organizationId'] ?? '',
+        );
         await _sharedPrefs.setRole(resolvedRole);
         await _sharedPrefs.setString(
-            'organizationName', userData['organizationName'] ?? '');
+          'organizationName',
+          userData['organizationName'] ?? '',
+        );
         await _sharedPrefs.setString(
-            'organizationCode', userData['organizationCode'] ?? '');
+          'organizationCode',
+          userData['organizationCode'] ?? '',
+        );
 
         // Save user name
         final firstName = userData['firstName'] ?? '';
@@ -232,13 +244,15 @@ class LoginViewModel extends Notifier<int> {
           await _sharedPrefs.setString('First LastName', fullName);
         }
 
-        if ((resolvedRole == UserRole.client || resolvedRole == UserRole.family) && clientId.isEmpty) {
-          throw Exception(
-              'Account is not linked yet. Please contact support.');
+        if ((resolvedRole == UserRole.client ||
+                resolvedRole == UserRole.family) &&
+            clientId.isEmpty) {
+          throw Exception('Account is not linked yet. Please contact support.');
         }
 
-        await SessionTimeoutService(sharedPrefs: _sharedPrefs)
-            .markSessionStarted();
+        await SessionTimeoutService(
+          sharedPrefs: _sharedPrefs,
+        ).markSessionStarted();
 
         // Register FCM token NOW that we have valid email + organizationId.
         // NotificationHandler.initState runs at app startup before login, so
@@ -280,7 +294,9 @@ class LoginViewModel extends Notifier<int> {
   }
 
   Future<void> _handleFirebaseError(
-      BuildContext context, FirebaseAuthException e) async {
+    BuildContext context,
+    FirebaseAuthException e,
+  ) async {
     String errorMessage;
     switch (e.code) {
       case 'user-not-found':
@@ -322,7 +338,9 @@ class LoginViewModel extends Notifier<int> {
   }
 
   void _navigateBasedOnRole(
-      BuildContext context, Map<String, dynamic> userData) {
+    BuildContext context,
+    Map<String, dynamic> userData,
+  ) {
     final resolvedRole = UserRoleResolver.resolve(
       role: userData['role'],
       roles: userData['roles'],
@@ -367,10 +385,7 @@ class LoginViewModel extends Notifier<int> {
       Navigator.pushReplacementNamed(
         context,
         Routes.clientDashboard,
-        arguments: {
-          'email': userData['email'],
-          'clientId': clientId,
-        },
+        arguments: {'email': userData['email'], 'clientId': clientId},
       );
       return;
     }
@@ -380,10 +395,7 @@ class LoginViewModel extends Notifier<int> {
       Navigator.pushReplacementNamed(
         context,
         Routes.clientDashboard,
-        arguments: {
-          'clientId': clientId,
-          'isFamilyViewer': true,
-        },
+        arguments: {'clientId': clientId, 'isFamilyViewer': true},
       );
       return;
     }
@@ -414,29 +426,31 @@ class LoginViewModel extends Notifier<int> {
     required String organizationId,
   }) {
     if (email.isEmpty || organizationId.isEmpty) {
-      debugPrint('🔔 FCM_REG: Skipping post-login registration — missing email/orgId');
+      debugPrint(
+        '🔔 FCM_REG: Skipping post-login registration — missing email/orgId',
+      );
       return;
     }
     // Run async registration without awaiting — don't block navigation.
     Future(() async {
       try {
-        debugPrint('🔔 FCM_REG: Post-login registration for $email (org: $organizationId)');
+        debugPrint(
+          '🔔 FCM_REG: Post-login registration for $email (org: $organizationId)',
+        );
         await _fcmTokenManager.initialize(
           email,
           organizationId,
           deviceId: _deviceId,
           deviceInfo: _deviceInfo,
         );
-        debugPrint('🔔 FCM_REG: ✅ Post-login FCM token registration successful');
+        debugPrint(
+          '🔔 FCM_REG: ✅ Post-login FCM token registration successful',
+        );
       } catch (e) {
-        debugPrint('🔔 FCM_REG: ❌ Post-login FCM token registration failed: $e');
+        debugPrint(
+          '🔔 FCM_REG: ❌ Post-login FCM token registration failed: $e',
+        );
       }
     });
-  }
-
-  @override
-  void dispose() {
-    model.dispose();
-    
   }
 }

@@ -42,7 +42,7 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
   
   @override
   InvoiceListState build() {
-    final invoiceService = ref.watch(invoiceManagementServiceProvider);
+    _invoiceService = ref.watch(invoiceManagementServiceProvider);
     
     return InvoiceListState();
   }
