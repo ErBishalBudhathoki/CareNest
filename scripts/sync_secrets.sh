@@ -1,18 +1,24 @@
 #!/bin/bash
 
 # ==============================================================================
-# sync_secrets.sh — Sync ONLY the git-ignored (sensitive) project files
-# between the VPS and your Mac. Nothing else ever crosses the wire.
+# sync_secrets.sh — Sync ONLY git-ignored project files between the VPS and
+# your Mac. Nothing else ever crosses the wire.
 #
 # Tracked code travels via git (this repo is public). These files CANNOT live
 # in git, so they are synced explicitly with rsync + checksums.
+#
+# Two categories are synced:
+#   1. SECRETS  — keys/credentials required to build & run the app.
+#   2. DEV NOTES — gitignored scratch files (docs, *.py helpers) so both
+#      machines share the same working context.
 #
 # Usage:
 #   ./scripts/sync_secrets.sh to-vps <ssh-target> [ssh-key] [remote-project-root] [remote-keystore]
 #   ./scripts/sync_secrets.sh to-mac <ssh-target> [ssh-key] [remote-project-root] [remote-keystore]
 #
 # Examples (VPS = ubuntu@140.238.197.220, key = ~/.ssh/hermes_oci_key):
-#   ./scripts/sync_secrets.sh to-mac "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key" "/home/opc/projects/invoice"
+#   ./scripts/sync_secrets.sh to-mac "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key"
+#   ./scripts/sync_secrets.sh to-vps "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key"
 #
 # remote-project-root: repo path on the OTHER machine (default /home/opc/projects/invoice).
 # remote-keystore:     debug.keystore path on the OTHER machine
@@ -53,8 +59,9 @@ fi
 # Remote-side rsync runs with sudo to read/write opc-owned files.
 RSYNC_PATH="sudo rsync"
 
-# ── Explicit whitelist of crucial git-ignored files (repo-relative) ──────────
-REPO_FILES=(
+# ── Whitelist of crucial git-ignored files (repo-relative) ──────────────────
+# Category 1: SECRETS — required to build & run the app.
+SECRET_FILES=(
   "android/app/google-services.json"
   "android/app/src/development/google-services.json"
   "android/app/src/production/google-services.json"
@@ -62,6 +69,18 @@ REPO_FILES=(
   "android/key.properties"
   "android/fastlane/google-play-service-key.json"
   ".env"
+)
+
+# Category 2: DEV NOTES — gitignored scratch files shared between machines.
+DEV_FILES=(
+  "TRACKING.md"
+  "task.md"
+  "walkthrough.md"
+  "state_logic.txt"
+  "vm_logic.txt"
+  "riverpod_3_migration_plan.md"
+  "AGENTS.md"
+  "TODO.md"
 )
 
 if [ -n "$SSH_KEY" ]; then
@@ -98,6 +117,16 @@ run_rsync() {
   fi
 }
 
+# List root-level *.py scratch scripts on the SOURCE side (local or remote).
+list_py_scripts() {
+  local side="$1"
+  if [[ "$side" == "remote" ]]; then
+    ssh_run "$SSH_TARGET" "ls -1 $REMOTE_ROOT/*.py 2>/dev/null || true"
+  else
+    ls -1 "$LOCAL_ROOT"/*.py 2>/dev/null || true
+  fi
+}
+
 echo "Local root     : $LOCAL_ROOT"
 echo "Remote root    : $REMOTE_ROOT"
 echo "Local keystore : $LOCAL_KEYSTORE"
@@ -110,15 +139,21 @@ echo
 case "$DIRECTION" in
   to-vps)
     # Local (Mac) is source; remote (VPS) is destination.
-    for f in "${REPO_FILES[@]}"; do
-      run_rsync "$LOCAL_ROOT/$f" "${SSH_TARGET}:${REMOTE_ROOT}/$f"
+    for f in "${SECRET_FILES[@]}" "${DEV_FILES[@]}"; do
+      [ -f "$LOCAL_ROOT/$f" ] && run_rsync "$LOCAL_ROOT/$f" "${SSH_TARGET}:${REMOTE_ROOT}/$f"
+    done
+    for py in $(list_py_scripts local); do
+      run_rsync "$py" "${SSH_TARGET}:${REMOTE_ROOT}/$(basename "$py")"
     done
     run_rsync "$LOCAL_KEYSTORE" "${SSH_TARGET}:${REMOTE_KEYSTORE}"
     ;;
   to-mac)
     # Remote (VPS) is source; local (Mac) is destination.
-    for f in "${REPO_FILES[@]}"; do
+    for f in "${SECRET_FILES[@]}" "${DEV_FILES[@]}"; do
       run_rsync "${SSH_TARGET}:${REMOTE_ROOT}/$f" "$LOCAL_ROOT/$f"
+    done
+    for py in $(list_py_scripts remote); do
+      run_rsync "${SSH_TARGET}:$py" "$LOCAL_ROOT/$(basename "$py")"
     done
     run_rsync "${SSH_TARGET}:${REMOTE_KEYSTORE}" "$LOCAL_KEYSTORE"
     ;;
