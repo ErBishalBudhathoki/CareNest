@@ -18,8 +18,8 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
   
   @override
   AutomaticInvoiceState build() {
-    final invoiceService = ref.watch(enhancedInvoiceServiceProvider);
-    final apiMethod = ref.read(app_providers.apiMethodProvider);
+    _invoiceService = ref.watch(enhancedInvoiceServiceProvider);
+    _apiMethod = ref.read(app_providers.apiMethodProvider);
     
     return AutomaticInvoiceState();
   }

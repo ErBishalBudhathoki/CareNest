@@ -37,6 +37,9 @@ final enhancedInvoiceServiceProvider = Provider((ref) {
 class InvoiceGenerationStateNotifier extends Notifier<InvoiceGenerationState> {
   @override
   InvoiceGenerationState build() => InvoiceGenerationState.initial;
+
+  @override
+  set state(InvoiceGenerationState newState) => super.state = newState;
 }
 final invoiceGenerationStateProvider =
     NotifierProvider<InvoiceGenerationStateNotifier, InvoiceGenerationState>(InvoiceGenerationStateNotifier.new);
@@ -55,6 +58,9 @@ enum InvoiceGenerationState {
 class InvoiceGenerationErrorNotifier extends Notifier<String> {
   @override
   String build() => '';
+
+  @override
+  set state(String newState) => super.state = newState;
 }
 final invoiceGenerationErrorProvider = NotifierProvider<InvoiceGenerationErrorNotifier, String>(InvoiceGenerationErrorNotifier.new);
 
@@ -62,5 +68,8 @@ final invoiceGenerationErrorProvider = NotifierProvider<InvoiceGenerationErrorNo
 class GeneratedInvoicePathsNotifier extends Notifier<List<String>> {
   @override
   List<String> build() => [];
+
+  @override
+  set state(List<String> newState) => super.state = newState;
 }
 final generatedInvoicePathsProvider = NotifierProvider<GeneratedInvoicePathsNotifier, List<String>>(GeneratedInvoicePathsNotifier.new);
