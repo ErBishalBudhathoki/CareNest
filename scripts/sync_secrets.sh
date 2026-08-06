@@ -8,23 +8,34 @@
 # in git, so they are synced explicitly with rsync + checksums.
 #
 # Usage:
-#   Mac -> VPS : ./scripts/sync_secrets.sh to-vps   <ssh-target> [ssh-key]
-#   VPS -> Mac : ./scripts/sync_secrets.sh to-mac   <ssh-target> [ssh-key]
+#   ./scripts/sync_secrets.sh to-vps <ssh-target> [ssh-key] [remote-project-root]
+#   ./scripts/sync_secrets.sh to-mac <ssh-target> [ssh-key] [remote-project-root]
 #
-# Examples:
-#   ./scripts/sync_secrets.sh to-vps   "ubuntu@100.64.0.1"
-#   ./scripts/sync_secrets.sh to-mac   "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key"
+# Examples (VPS = ubuntu@140.238.197.220, key = ~/.ssh/hermes_oci_key):
+#   ./scripts/sync_secrets.sh to-mac "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key" "/home/coder/projects/invoice"
+#   ./scripts/sync_secrets.sh to-vps "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key" "/home/coder/projects/invoice"
 #
-# ssh-key is optional: use it when the host requires a specific identity file
-# (e.g. Oracle OCI: -i ~/.ssh/hermes_oci_key).
+# remote-project-root is the repo path on the OTHER machine. Default:
+#   /home/coder/projects/invoice  (VPS code-server container mount)
+# Tilde in ssh-key or project-root is expanded.
 # ==============================================================================
 
 set -euo pipefail
 
-DIRECTION="${1:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key]}"
-SSH_TARGET="${2:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key]}"
+DIRECTION="${1:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key] [remote-project-root]}"
+SSH_TARGET="${2:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key] [remote-project-root]}"
 SSH_KEY="${3:-}"
-PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+REMOTE_ROOT="${4:-/home/coder/projects/invoice}"
+
+# Expand a leading tilde in any path argument (quoted ~ stays literal otherwise).
+expand_tilde() {
+  local p="$1"
+  if [[ "$p" == "~/"* ]]; then echo "${HOME}${p#\~/}"; else echo "$p"; fi
+}
+SSH_KEY="$(expand_tilde "$SSH_KEY")"
+REMOTE_ROOT="$(expand_tilde "$REMOTE_ROOT")"
+
+LOCAL_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # --mkpath needs rsync >= 3.2.3 (macOS ships older rsync) — detect support.
 if rsync --help 2>/dev/null | grep -q -- "--mkpath"; then
@@ -58,8 +69,6 @@ ssh_run() {
 }
 
 # Create the destination directory before copying.
-#   local_path : plain path            (e.g. /Users/bishal/projects/invoice/.env)
-#   remote_path: ssh-target:path      (e.g. ubuntu@140.238.197.220:/home/coder/projects/invoice/.env)
 ensure_parents() {
   local dst="$1"
   if [[ "$dst" == *@*:* ]]; then
@@ -83,24 +92,25 @@ run_rsync() {
   fi
 }
 
-echo "Project root : $PROJECT_ROOT"
-echo "Direction    : $DIRECTION"
-echo "SSH target   : $SSH_TARGET"
-echo "SSH key      : ${SSH_KEY:-<default>}"
+echo "Local root  : $LOCAL_ROOT"
+echo "Remote root : $REMOTE_ROOT"
+echo "Direction   : $DIRECTION"
+echo "SSH target  : $SSH_TARGET"
+echo "SSH key     : ${SSH_KEY:-<default>}"
 echo
 
 case "$DIRECTION" in
   to-vps)
     # Local (Mac) is source; remote (VPS) is destination.
     for f in "${REPO_FILES[@]}"; do
-      run_rsync "$PROJECT_ROOT/$f" "${SSH_TARGET}:${PROJECT_ROOT}/$f"
+      run_rsync "$LOCAL_ROOT/$f" "${SSH_TARGET}:${REMOTE_ROOT}/$f"
     done
     run_rsync "$HOME/$KEYSTORE_REL" "${SSH_TARGET}:\$HOME/$KEYSTORE_REL"
     ;;
   to-mac)
     # Remote (VPS) is source; local (Mac) is destination.
     for f in "${REPO_FILES[@]}"; do
-      run_rsync "${SSH_TARGET}:${PROJECT_ROOT}/$f" "$PROJECT_ROOT/$f"
+      run_rsync "${SSH_TARGET}:${REMOTE_ROOT}/$f" "$LOCAL_ROOT/$f"
     done
     run_rsync "${SSH_TARGET}:\$HOME/$KEYSTORE_REL" "$HOME/$KEYSTORE_REL"
     ;;
