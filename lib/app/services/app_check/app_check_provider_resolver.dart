@@ -24,6 +24,12 @@ class AppCheckProviderResolver {
       MethodChannel('com.bishal.invoice/app_check');
   static const String _playStoreInstallerPackage = 'com.android.vending';
 
+  // Fixed debug token registered in Firebase App Check (dev app). Seeding it
+  // into the native debug store keeps it stable across reinstalls, so the
+  // token never needs re-registration.
+  static const String fixedDebugToken =
+      'E276BDC2-0B80-417E-9111-0A13765F1120';
+
   static Future<AndroidAppCheckSelection> resolveAndroidSelection() async {
     final isDevelopmentFlavor = AppConfig.appFlavor == Flavor.development;
 
@@ -63,6 +69,34 @@ class AppCheckProviderResolver {
           : 'Non-release production build',
       installerPackage: installerPackage,
     );
+  }
+
+  /// Seeds the fixed debug token into the native App Check debug store so the
+  /// same token is used on every install. Must run before activate().
+  static Future<void> seedFixedDebugToken() async {
+    try {
+      await _channel.invokeMethod<void>(
+        'seedDebugSecret',
+        {'token': fixedDebugToken},
+      );
+    } on PlatformException catch (e) {
+      debugPrint('App Check debug secret seeding failed: ${e.message}');
+    } catch (e) {
+      debugPrint('App Check debug secret seeding failed: $e');
+    }
+  }
+
+  /// Returns the currently stored debug secret (the seeded fixed token).
+  static Future<String?> getDebugSecret() async {
+    try {
+      return await _channel.invokeMethod<String>('getDebugSecret');
+    } on PlatformException catch (e) {
+      debugPrint('App Check debug secret lookup failed: ${e.message}');
+      return null;
+    } catch (e) {
+      debugPrint('App Check debug secret lookup failed: $e');
+      return null;
+    }
   }
 
   static Future<String?> _getInstallerPackageName() async {

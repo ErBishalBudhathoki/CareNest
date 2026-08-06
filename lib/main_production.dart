@@ -236,6 +236,11 @@ Future<void> _initializeAppCheck() async {
   final androidSelection =
       await AppCheckProviderResolver.resolveAndroidSelection();
 
+  if (androidSelection.provider == AndroidProvider.debug) {
+    // Pin a stable debug token so reinstalls never generate a new one.
+    await AppCheckProviderResolver.seedFixedDebugToken();
+  }
+
   try {
     await FirebaseAppCheck.instance.activate(
       webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
@@ -254,33 +259,24 @@ Future<void> _initializeAppCheck() async {
       'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}');
 
   if (androidSelection.provider == AndroidProvider.debug) {
-    // Small delay to allow the native SDK to print the debug secret first
-    Future.delayed(const Duration(milliseconds: 500), () {
-      debugPrint('');
-      debugPrint(
-          '╔════════════════════════════════════════════════════════════════════════╗');
-      debugPrint(
-          '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
-      debugPrint(
-          '╠════════════════════════════════════════════════════════════════════════╣');
-      debugPrint(
-          '║ 1. LOOK BELOW in this terminal for a line starting with:               ║');
-      debugPrint(
-          '║    D/DebugAppCheckProvider: Enter this debug secret...                 ║');
-      debugPrint(
-          '║                                                                        ║');
-      debugPrint(
-          '║ 2. COPY the secret (UUID format) and register it at:                   ║');
-      debugPrint(
-          '║    Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
-      debugPrint(
-          '║                                                                        ║');
-      debugPrint(
-          '║ 3. RESTART the app after registering the token to fix 403 errors.      ║');
-      debugPrint(
-          '╚════════════════════════════════════════════════════════════════════════╝');
-      debugPrint('');
-    });
+    final debugSecret = await AppCheckProviderResolver.getDebugSecret();
+    debugPrint('');
+    debugPrint(
+        '╔════════════════════════════════════════════════════════════════════════╗');
+    debugPrint(
+        '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
+    debugPrint(
+        '╠════════════════════════════════════════════════════════════════════════╣');
+    debugPrint(
+        '║ Fixed debug token (already registered; stable across reinstalls):      ║');
+    debugPrint('║   $debugSecret');
+    debugPrint(
+        '║ If you ever change it, re-register at:                                 ║');
+    debugPrint(
+        '║   Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
+    debugPrint(
+        '╚════════════════════════════════════════════════════════════════════════╝');
+    debugPrint('');
   }
 
   // Attempt to obtain a token to verify activation worked.

@@ -22,6 +22,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:carenest/app/services/app_check/app_check_provider_resolver.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
@@ -233,6 +234,8 @@ Future<void> _initializeAppCheck() async {
 
   try {
     // Development entry point always uses Debug provider for Android/Apple
+    await AppCheckProviderResolver.seedFixedDebugToken();
+
     await FirebaseAppCheck.instance.activate(
       webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
       androidProvider: AndroidProvider.debug,
@@ -243,33 +246,24 @@ Future<void> _initializeAppCheck() async {
     debugPrint('Android Provider: Debug');
     debugPrint('Apple Provider: Debug');
 
-    // Small delay to allow the native SDK to print the debug secret first
-    Future.delayed(const Duration(milliseconds: 500), () {
-      debugPrint('');
-      debugPrint(
-          '╔════════════════════════════════════════════════════════════════════════╗');
-      debugPrint(
-          '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
-      debugPrint(
-          '╠════════════════════════════════════════════════════════════════════════╣');
-      debugPrint(
-          '║ 1. LOOK BELOW in this terminal for a line starting with:               ║');
-      debugPrint(
-          '║    D/DebugAppCheckProvider: Enter this debug secret...                 ║');
-      debugPrint(
-          '║                                                                        ║');
-      debugPrint(
-          '║ 2. COPY the secret (UUID format) and register it at:                   ║');
-      debugPrint(
-          '║    Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
-      debugPrint(
-          '║                                                                        ║');
-      debugPrint(
-          '║ 3. RESTART the app after registering the token to fix 403 errors.      ║');
-      debugPrint(
-          '╚════════════════════════════════════════════════════════════════════════╝');
-      debugPrint('');
-    });
+    final debugSecret = await AppCheckProviderResolver.getDebugSecret();
+    debugPrint('');
+    debugPrint(
+        '╔════════════════════════════════════════════════════════════════════════╗');
+    debugPrint(
+        '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
+    debugPrint(
+        '╠════════════════════════════════════════════════════════════════════════╣');
+    debugPrint(
+        '║ Fixed debug token (already registered; stable across reinstalls):      ║');
+    debugPrint('║   $debugSecret');
+    debugPrint(
+        '║ If you ever change it, re-register at:                                 ║');
+    debugPrint(
+        '║   Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
+    debugPrint(
+        '╚════════════════════════════════════════════════════════════════════════╝');
+    debugPrint('');
 
     // Force-fetch token to verify Firebase Console registration worked.
     try {
