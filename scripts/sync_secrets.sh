@@ -8,20 +8,22 @@
 # in git, so they are synced explicitly with rsync + checksums.
 #
 # Usage:
-#   Mac -> VPS : ./scripts/sync_secrets.sh to-vps   <vps-ssh-alias-or-user@host>
-#   VPS -> Mac : ./scripts/sync_secrets.sh to-mac   <mac-ssh-alias-or-user@host>
+#   Mac -> VPS : ./scripts/sync_secrets.sh to-vps   <ssh-target> [ssh-key]
+#   VPS -> Mac : ./scripts/sync_secrets.sh to-mac   <ssh-target> [ssh-key]
 #
 # Examples:
-#   ./scripts/sync_secrets.sh to-vps "ubuntu@100.64.0.1"
-#   ./scripts/sync_secrets.sh to-mac "bishal@192.168.1.50"
+#   ./scripts/sync_secrets.sh to-vps   "ubuntu@100.64.0.1"
+#   ./scripts/sync_secrets.sh to-mac   "ubuntu@140.238.197.220" "~/.ssh/hermes_oci_key"
 #
-# SSH keys must already be set up for the target host.
+# ssh-key is optional: use it when the host requires a specific identity file
+# (e.g. Oracle OCI: -i ~/.ssh/hermes_oci_key).
 # ==============================================================================
 
 set -euo pipefail
 
-DIRECTION="${1:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target>}"
-SSH_TARGET="${2:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target>}"
+DIRECTION="${1:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key]}"
+SSH_TARGET="${2:?Usage: sync_secrets.sh (to-vps|to-mac) <ssh-target> [ssh-key]}"
+SSH_KEY="${3:-}"
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # --mkpath needs rsync >= 3.2.3 (macOS ships older rsync) — detect support.
@@ -45,15 +47,25 @@ REPO_FILES=(
 # ── debug.keystore lives outside the repo (in ~/.android on both machines) ───
 KEYSTORE_REL=".android/debug.keystore"   # relative to $HOME on both sides
 
+if [ -n "$SSH_KEY" ]; then
+  SSH_ARGS=(-i "$SSH_KEY")
+else
+  SSH_ARGS=()
+fi
+
+ssh_run() {
+  ssh "${SSH_ARGS[@]}" "$@"
+}
+
 # Create the destination directory before copying.
 #   local_path : plain path            (e.g. /Users/bishal/projects/invoice/.env)
-#   remote_path: ssh-target:path      (e.g. ubuntu@100.64.0.1:/home/coder/projects/invoice/.env)
+#   remote_path: ssh-target:path      (e.g. ubuntu@140.238.197.220:/home/coder/projects/invoice/.env)
 ensure_parents() {
   local dst="$1"
   if [[ "$dst" == *@*:* ]]; then
     local target="${dst%%:*}" dir="${dst#*:}"
     dir="$(dirname "$dir")"
-    ssh "$target" "mkdir -p " 2>/dev/null || true
+    ssh_run "$target" "mkdir -p " 2>/dev/null || true
   else
     mkdir -p "$(dirname "$dst")"
   fi
@@ -64,12 +76,17 @@ run_rsync() {
   echo "  $src"
   echo "    -> $dst"
   ensure_parents "$dst"
-  rsync -avz --checksum $MKPATH -e "ssh" "$src" "$dst"
+  if [ -n "$SSH_KEY" ]; then
+    rsync -avz --checksum $MKPATH -e "ssh -i $SSH_KEY" "$src" "$dst"
+  else
+    rsync -avz --checksum $MKPATH -e "ssh" "$src" "$dst"
+  fi
 }
 
 echo "Project root : $PROJECT_ROOT"
 echo "Direction    : $DIRECTION"
 echo "SSH target   : $SSH_TARGET"
+echo "SSH key      : ${SSH_KEY:-<default>}"
 echo
 
 case "$DIRECTION" in
