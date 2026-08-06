@@ -136,6 +136,8 @@ dependency_overrides:
     path: third_party/google_mlkit_commons
   google_mlkit_text_recognition:
     path: third_party/google_mlkit_text_recognition
+  # Server-only pin: avoid jni native build on aarch64 container
+  path_provider_android: 2.2.23
 
 flutter:
   generate: true
