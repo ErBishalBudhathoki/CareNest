@@ -30,7 +30,7 @@ REMOTE_ROOT="${4:-/home/coder/projects/invoice}"
 # Expand a leading tilde in any path argument (quoted ~ stays literal otherwise).
 expand_tilde() {
   local p="$1"
-  if [[ "$p" == "~/"* ]]; then echo "${HOME}${p#\~/}"; else echo "$p"; fi
+  if [[ "$p" == "~/"* ]]; then echo "${p/#\~/${HOME}}"; else echo "$p"; fi
 }
 SSH_KEY="$(expand_tilde "$SSH_KEY")"
 REMOTE_ROOT="$(expand_tilde "$REMOTE_ROOT")"
